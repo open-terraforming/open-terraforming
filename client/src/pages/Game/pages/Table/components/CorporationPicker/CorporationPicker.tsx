@@ -19,9 +19,8 @@ export const CorporationPicker = () => {
 	}
 
 	return (
-		<Modal open={true}>
+		<Modal open={true} closeOnEscape={false} header={'Pick corporation'}>
 			<Container>
-				<h2>Pick a corporation</h2>
 				{Corporations.map(c => (
 					<Button disabled={loading} key={c.code} onClick={() => handlePick(c)}>
 						{c.name}

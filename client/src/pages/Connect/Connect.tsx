@@ -39,15 +39,13 @@ export const Connect = () => {
 
 	return (
 		<Container>
-			{reconnecting ? (
-				failed ? (
-					<>
-						<div>Connecting failed</div>
-						<Button onClick={handleReconnect}>Reconnect</Button>
-					</>
-				) : (
-					'Reconnecting ...'
-				)
+			{failed ? (
+				<>
+					<div>Connecting failed</div>
+					<Button onClick={handleReconnect}>Reconnect</Button>
+				</>
+			) : reconnecting ? (
+				'Reconnecting ...'
 			) : initializing ? (
 				'Waiting for server...'
 			) : (

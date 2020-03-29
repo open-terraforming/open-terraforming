@@ -39,14 +39,18 @@ const typeToColor = {
 
 const Container = styled.div<{ selected: boolean }>`
 	background: #fff;
-	box-shadow: 2px 2px 10px 2px #ccc;
 	padding: 0.25rem;
 	border-radius: 12px;
+	color: #000;
+	width: 200px;
+	flex-shrink: 0;
+	min-width: 0;
+	margin: 0 0.5rem;
 
 	${props =>
 		props.selected &&
 		css`
-			background: #9fd2f9;
+			box-shadow: 0px 0px 5px 5px #ffffaa;
 		`}
 `
 

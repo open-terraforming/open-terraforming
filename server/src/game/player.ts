@@ -4,6 +4,7 @@ import { Game } from './game'
 import { v4 as uuidv4 } from 'uuid'
 import { Corporations } from '@shared/corporations'
 import { CARD_PRICE } from '@shared/constants'
+import { CardsLookup } from '@shared/cards'
 
 export class Player {
 	static idCounter = 1
@@ -159,25 +160,46 @@ export class Player {
 			...cards.map(c => this.gameState.cardsPick[c])
 		]
 
+		this.gameState.cardsPick = []
 		this.gameState.state = PlayerStateValue.WaitingForTurn
 		this.updated()
 		this.game.checkState()
 	}
 
-	buyCard(card: string, index: number) {
+	buyCard(cardCode: string, index: number) {
 		if (!this.isPlaying) {
 			return
 		}
 
-		if (this.gameState.cards[index] !== card) {
+		if (this.gameState.cards[index] !== cardCode) {
 			throw new Error(
 				'Something is wrong, incorrect card index and card type combination'
 			)
 		}
 
+		const card = CardsLookup[cardCode]
+
+		if (!card) {
+			throw new Error(`Unknown card ${cardCode}`)
+		}
+
+		if (this.gameState.money < card.cost) {
+			throw new Error("You don't have money for that")
+		}
+
+		this.gameState.money -= card.cost
+
 		// TODO: Actually play the card
 
+		this.gameState.usedCards.push({
+			code: cardCode,
+			animals: 0,
+			microbes: 0,
+			played: false,
+			science: 0
+		})
 		this.gameState.cards.splice(index, 1)
+		this.actionPlayed()
 		this.updated()
 	}
 

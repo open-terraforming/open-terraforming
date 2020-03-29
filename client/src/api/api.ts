@@ -2,7 +2,7 @@ import { GameMessage } from '@shared/index'
 
 export class Client {
 	server: string
-	socket: WebSocket
+	socket?: WebSocket
 
 	onOpen?: () => void
 	onClose?: () => void
@@ -18,15 +18,15 @@ export class Client {
 			throw new Error('Trying to send non-object - no!')
 		}
 
-		return this.socket.send(JSON.stringify(msg))
+		return this.socket?.send(JSON.stringify(msg))
 	}
 
 	connect() {
 		this.socket = new WebSocket(this.server)
 
 		const timeout = setTimeout(() => {
-			if (this.socket.readyState !== this.socket.OPEN) {
-				this.socket.close()
+			if (this.socket?.readyState !== this.socket?.OPEN) {
+				this.socket?.close()
 			}
 		}, 2 * 1000)
 

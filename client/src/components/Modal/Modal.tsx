@@ -94,14 +94,15 @@ const PopupBackground = styled.div`
 	background: rgba(0, 0, 0, 0.5);
 	display: flex;
 	z-index: 999;
+	color: #fff;
 `
 
 const Popup = styled.div`
 	position: relative;
-	background: #fff;
+	background: rgba(14, 129, 214, 0.8);
 	width: 400px;
 	margin: auto;
-	border: 1px solid rgb(187, 187, 187);
+	border: 1px solid rgba(14, 129, 214, 0.8);
 	padding: 0px;
 	border-radius: 0px;
 `

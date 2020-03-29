@@ -62,24 +62,24 @@ export class Client {
 				case MessageType.HandshakeRequest: {
 					const { name, version, session } = message.data
 
-					if (this.game.inProgress) {
-						if (session) {
-							const p = this.game.players.find(p => p.state.session === session)
-							if (p) {
-								this.player = p
-								this.player.state.connected = true
-								this.player.updated()
+					if (session) {
+						const p = this.game.players.find(p => p.state.session === session)
+						if (p) {
+							this.player = p
+							this.player.state.connected = true
+							this.player.updated()
 
-								return handshakeResponse(
-									undefined,
-									this.player.state.session,
-									this.player.state.id
-								)
-							} else {
-								return handshakeResponse(HandshakeError.InvalidSession)
-							}
+							return handshakeResponse(
+								undefined,
+								this.player.state.session,
+								this.player.state.id
+							)
+						} else {
+							return handshakeResponse(HandshakeError.InvalidSession)
 						}
+					}
 
+					if (this.game.inProgress) {
 						return handshakeResponse(HandshakeError.GameInProgress)
 					}
 

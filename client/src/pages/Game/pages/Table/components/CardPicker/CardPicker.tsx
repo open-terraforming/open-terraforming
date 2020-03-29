@@ -7,6 +7,7 @@ import { CARD_PRICE } from '@shared/constants'
 import { CardView } from '../CardView/CardView'
 import { Button } from '@/components'
 import { pickCards } from '@shared/index'
+import { CardsContainer } from '../CardsContainer/CardsContainer'
 
 export const CardPicker = () => {
 	const api = useApi()
@@ -30,8 +31,27 @@ export const CardPicker = () => {
 	}
 
 	return (
-		<Modal open={true} contentStyle={{ width: '90%' }}>
-			<h2>Pick cards</h2>
+		<Modal
+			open={true}
+			contentStyle={{ width: '90%' }}
+			closeOnEscape={false}
+			header={'Pick cards'}
+			footer={
+				!canAfford ? (
+					`You can afford ${selected.length} cards for ${price}`
+				) : (
+					<Button
+						onClick={handleConfirm}
+						disabled={loading}
+						isLoading={loading}
+					>
+						{selected.length > 0
+							? `Buy ${selected.length} cards for ${price}`
+							: 'Buy nothing'}
+					</Button>
+				)
+			}
+		>
 			<CardsContainer>
 				{cardsToPick?.map(
 					(c, i) =>
@@ -55,20 +75,6 @@ export const CardPicker = () => {
 						)
 				)}
 			</CardsContainer>
-			{!canAfford ? (
-				`You can afford ${selected.length} cards for ${price}`
-			) : (
-				<Button onClick={handleConfirm} disabled={loading} isLoading={loading}>
-					{selected.length > 0
-						? `Buy ${selected.length} cards for ${price}`
-						: 'Buy nothing'}
-				</Button>
-			)}
 		</Modal>
 	)
 }
-
-const CardsContainer = styled.div`
-	display: flex;
-	flex-wrap: wrap;
-`

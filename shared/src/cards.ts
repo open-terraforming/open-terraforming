@@ -55,3 +55,8 @@ export const Cards = [
 		victoryPoints: 2,
 	}),
 ] as Card[]
+
+export const CardsLookup = Cards.reduce((acc, c) => {
+	acc[c.code] = c
+	return acc
+}, {} as Record<string, Card | undefined>)

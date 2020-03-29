@@ -24,3 +24,8 @@ export const Corporations = [
 		startingTitan: 0,
 	}),
 ]
+
+export const CorporationsLookup = Corporations.reduce((acc, c) => {
+	acc[c.code] = c
+	return acc
+}, {} as Record<string, Corporation | undefined>)
