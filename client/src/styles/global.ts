@@ -21,6 +21,7 @@ body {
 }
 
 input[type=text],
+input[type=number],
 input[type=password],
 textarea,
 select {
@@ -28,6 +29,10 @@ select {
 	padding: 0.25rem 0.5rem;
 	transition: border-color, background-color, box-shadow 0.2s ease;
 	color: #eee;
+}
+
+select option {
+	color: #000;
 }
 
 button, a {

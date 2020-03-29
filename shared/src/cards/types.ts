@@ -13,13 +13,13 @@ export enum CardCategory {
 	Science,
 	Space,
 	Building,
-	Microbes,
-	Animals,
-	Plants,
+	Microbe,
+	Animal,
+	Plant,
 	Jupiter,
-	Energy,
+	Power,
 	Earth,
-	Town,
+	City,
 	Event,
 }
 

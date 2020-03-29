@@ -16,16 +16,21 @@ const pickBotName = () => {
 }
 
 export class Bot extends Player {
+	passing?: ReturnType<typeof setTimeout>
+
 	constructor(game: Game) {
 		super(game)
 
 		this.name = pickBotName()
 		this.state.connected = true
 		this.state.bot = true
+		this.gameState.state = PlayerStateValue.Ready
 		this.updated()
+
+		this.game.onStateUpdated.on(() => this.updated(false))
 	}
 
-	updated() {
+	updated(broadcast = true) {
 		switch (this.gameState.state) {
 			case PlayerStateValue.Waiting: {
 				this.setState(PlayerStateValue.Ready)
@@ -43,11 +48,18 @@ export class Bot extends Player {
 			}
 
 			case PlayerStateValue.Playing: {
-				this.pass(true)
+				if (!this.passing) {
+					this.passing = setTimeout(() => {
+						this.pass(true)
+						this.passing = undefined
+					}, 1000 + Math.random() * 1000)
+				}
 				break
 			}
 		}
 
-		super.updated()
+		if (broadcast) {
+			super.updated()
+		}
 	}
 }

@@ -87,29 +87,41 @@ export const CardBuy = ({ index, onClose }: Props) => {
 			</CardContainer>
 
 			{canUseOre && (
-				<div>
+				<UseContainer>
 					Use{' '}
 					<Input
 						type="number"
 						max={state?.ore}
 						value={ore.toString()}
-						onChange={v => setOre(parseInt(v, 10))}
+						onChange={v => {
+							const val = parseInt(v, 10)
+
+							if (val >= 0 && val <= state?.ore) {
+								setOre(val)
+							}
+						}}
 					/>{' '}
 					U of ore
-				</div>
+				</UseContainer>
 			)}
 
 			{canUseTitan && (
-				<div>
+				<UseContainer>
 					Use{' '}
 					<Input
 						type="number"
 						max={state?.titan}
 						value={titan.toString()}
-						onChange={v => setTitan(parseInt(v, 10))}
+						onChange={v => {
+							const val = parseInt(v, 10)
+
+							if (val >= 0 && val <= state?.titan) {
+								setTitan(val)
+							}
+						}}
 					/>{' '}
 					U of titan
-				</div>
+				</UseContainer>
 			)}
 
 			<div>Adjusted price: {price} $</div>
@@ -130,6 +142,16 @@ export const CardBuy = ({ index, onClose }: Props) => {
 		<></>
 	)
 }
+
+const UseContainer = styled.div`
+	display: flex;
+	align-items: center;
+
+	input {
+		margin: 0 0.5rem;
+		width: 5rem;
+	}
+`
 
 const CardContainer = styled.div`
 	display: flex;

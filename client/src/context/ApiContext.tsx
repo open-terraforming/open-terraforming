@@ -104,6 +104,11 @@ export const ApiContextProvider = ({
 				break
 			}
 
+			case MessageType.ServerMessage: {
+				dispatch(setApiError(m.data.message))
+				break
+			}
+
 			case MessageType.GameStateUpdate: {
 				dispatch(setGameState(m.data))
 				break

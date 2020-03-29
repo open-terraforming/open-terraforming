@@ -34,7 +34,9 @@ export const CardView = ({
 		<Container selected={selected} onClick={onClick}>
 			<Inner type={card.type}>
 				<Head>
-					<Cost>{card.cost}</Cost>
+					<Cost>
+						<div>{card.cost}</div>
+					</Cost>
 					<Categories>
 						{card.categories.map(c => (
 							<Category key={c}>{CardCategory[c]}</Category>
@@ -69,9 +71,10 @@ const Container = styled.div<{ selected: boolean }>`
 	min-width: 0;
 	min-height: 300px;
 	max-height: 300px;
-	overflow: auto;
+	overflow: visible;
 	margin: 0 0.5rem;
 	display: flex;
+	position: relative;
 
 	${props =>
 		props.selected &&
@@ -86,10 +89,31 @@ const Head = styled.div`
 `
 
 const Cost = styled.div`
-	background: #e8e800;
-	color: #000;
-	padding: 0.5rem;
-	border-radius: 12px;
+	height: 2rem;
+
+	> div {
+		border-top: 2px solid rgb(221, 221, 221);
+		border-left: 2px solid rgb(221, 221, 221);
+		border-bottom: 2px solid rgb(137, 137, 137);
+		border-right: 2px solid rgb(137, 137, 137);
+		position: absolute;
+		background: linear-gradient(
+			rgb(255, 208, 4),
+			rgb(255, 255, 104),
+			rgb(255, 208, 4),
+			rgb(255, 208, 4)
+		);
+		color: #000;
+		width: 3rem;
+		height: 3rem;
+		line-height: 3rem;
+		text-align: center;
+		border-radius: 4px;
+		font-size: 150%;
+		float: left;
+		margin-top: -0.75rem;
+		margin-left: -0.75rem;
+	}
 `
 
 const Categories = styled.div`
@@ -113,8 +137,9 @@ const Inner = styled.div<{ type: CardType }>`
 	border-radius: 12px;
 	display: flex;
 	flex-direction: column;
-	overflow: auto;
+	overflow: visible;
 	min-height: 0;
+	width: 100%;
 
 	${Title} {
 		background: ${props => typeToColor[props.type]};

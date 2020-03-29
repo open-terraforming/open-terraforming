@@ -11,7 +11,7 @@ export class Server {
 
 	clients: Client[] = []
 
-	constructor(socket: WebSocket.Server, bots: number) {
+	constructor(socket: WebSocket.Server, bots = 0) {
 		this.game = new Game()
 		this.game.onStateUpdated.on(s => {
 			const update = gameStateUpdate(s)

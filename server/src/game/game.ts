@@ -3,6 +3,7 @@ import { Card, Cards } from '@shared/cards'
 import { Player } from './player'
 import { MyEvent } from 'src/utils/events'
 import { shuffle } from '@/utils/collections'
+import { defaultMap } from '@shared/map'
 
 export class Game {
 	state = {
@@ -12,7 +13,8 @@ export class Game {
 		players: [],
 		oceans: 0,
 		oxygen: 0,
-		temperature: -30
+		temperature: -30,
+		map: defaultMap()
 	} as GameState
 
 	players: Player[] = []

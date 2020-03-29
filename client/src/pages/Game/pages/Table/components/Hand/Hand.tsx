@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { Modal } from '@/components/Modal/Modal'
 import { useAppStore, useApi, useAppDispatch } from '@/utils/hooks'
-import { CardsLookup } from '@shared/cards'
+import { CardsLookup, CardCategory } from '@shared/cards'
 import { CardView } from '../CardView/CardView'
 import { Button } from '@/components'
 import { buyCard } from '@shared/index'
@@ -28,11 +28,22 @@ export const Hand = ({
 	const [loading, setLoading] = useState(false)
 
 	const selectedCard = useMemo(
-		() => selected !== undefined && cards && cards[selected],
+		() => (selected !== undefined ? cards && cards[selected] : undefined),
 		[selected]
 	)
 
-	const canAfford = state && selectedCard && selectedCard.cost <= state.money
+	const adjusted =
+		!selectedCard || !state
+			? 0
+			: selectedCard.cost -
+			  (selectedCard.categories.includes(CardCategory.Building)
+					? state.ore * state.orePrice
+					: 0) -
+			  (selectedCard.categories.includes(CardCategory.Space)
+					? state?.titan * state?.titanPrice
+					: 0)
+
+	const canAfford = state && selectedCard && adjusted <= state.money
 
 	const handleConfirm = () => {
 		if (selectedCard && selected !== undefined && canAfford) {
@@ -63,7 +74,7 @@ export const Hand = ({
 						disabled={loading}
 						isLoading={loading}
 					>
-						{selectedCard ? `Play for ${selectedCard.cost}` : 'Close'}
+						{selectedCard ? `Play selected` : 'Close'}
 					</Button>
 				)
 			}

@@ -43,6 +43,55 @@ export interface GameState {
 	/**  Player index (NOT ID) currently playing round (only for GenerationInProgress) */
 	currentPlayer: number
 	players: PlayerState[]
+
+	map: MapState
+}
+
+export interface MapState {
+	width: number
+	height: number
+
+	grid: GridField[][]
+}
+
+export enum GridFieldType {
+	Ocean,
+	General,
+	NoctisCity,
+	GanymedeColony,
+	PhobosSpaceHaven,
+}
+
+export enum GridFieldSpecial {
+	NoctisCity,
+	TharsisTholus,
+	AscraeusMons,
+	PavonisMons,
+	ArsiaMons,
+	GanymedeColony,
+	PhobosSpaceHaven,
+}
+
+export enum GridFieldContent {
+	City,
+	Forest,
+	Ocean,
+	Building,
+}
+
+export interface GridField {
+	enabled: boolean
+	type: GridFieldType
+	special?: GridFieldSpecial
+	ore: number
+	titan: number
+	plants: number
+	cards: number
+	x: number
+	y: number
+
+	content?: GridFieldContent
+	ownerId?: number
 }
 
 export interface PlayerState {

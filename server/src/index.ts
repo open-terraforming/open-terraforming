@@ -15,7 +15,7 @@ async function main() {
 		})
 	})
 
-	const gameServer = new Server(wsServer)
+	const gameServer = new Server(wsServer, 3)
 
 	app.use(express.static(join(__dirname, '..', 'static')))
 

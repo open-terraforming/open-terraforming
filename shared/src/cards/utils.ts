@@ -7,8 +7,10 @@ import {
 	CardEffectArgument,
 	CardEffectTarget,
 	GameProgress,
+	CardCategory,
 } from './types'
 import { GameState } from '../game'
+import { CardsLookup } from '.'
 
 const resourceProduction = {
 	money: 'moneyProduction',
@@ -43,6 +45,15 @@ export const effectArg = (
 	} as CardEffectArgument)
 
 export const condition = (c: CardCondition) => c
+
+export const cardCountCondition = (category: CardCategory, value: number) =>
+	condition({
+		evaluate: (state) =>
+			state.usedCards
+				.map((c) => CardsLookup[c.code])
+				.filter((c) => c && c.categories.includes(category)).length >= value,
+		description: `Requires ${value} of ${CardCategory[category]} cards`,
+	})
 
 export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 	condition({

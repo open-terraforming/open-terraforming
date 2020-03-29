@@ -6,7 +6,10 @@ import {
 } from './utils'
 import { CardCategory, CardType, Card } from './types'
 export * from './types'
+import { Cards } from './exported'
+export { Cards } from './exported'
 
+/*
 export const Cards = [
 	card({
 		code: 'asteroid_mining',
@@ -33,6 +36,7 @@ export const Cards = [
 		],
 	}),
 ] as Card[]
+*/
 
 export const CardsLookup = Cards.reduce((acc, c) => {
 	acc[c.code] = c

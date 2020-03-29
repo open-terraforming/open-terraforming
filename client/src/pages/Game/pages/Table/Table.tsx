@@ -9,6 +9,7 @@ import { CardPicker } from './components/CardPicker/CardPicker'
 import { CorporationPicker } from './components/CorporationPicker/CorporationPicker'
 
 import background from '@/assets/stars.jpg'
+import { GameMap } from './components/GameMap/GameMap'
 
 export const Table = () => {
 	const gameState = useAppStore(state => state.game.state?.state)
@@ -22,6 +23,7 @@ export const Table = () => {
 			{playerState === PlayerStateValue.PickingCards && <CardPicker />}
 			<GameContainer>
 				<Players />
+				<GameMap />
 				<GlobalState />
 			</GameContainer>
 			<Controls />
