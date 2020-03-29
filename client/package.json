@@ -1,31 +1,19 @@
 {
-  "name": "mdd-frontend",
+  "name": "card-game-client",
   "version": "0.7.20",
-  "description": "MDD Frontend",
+  "description": "Card game client",
   "main": "src/index.ts",
   "scripts": {
     "lint": "eslint \"src/\" --ext .ts,.tsx",
     "lint:css": "stylelint ./src/**/*.{ts,tsx}",
     "start": "webpack-dev-server --config config/webpack.dev.ts",
     "build": "webpack --config config/webpack.prod.ts",
-    "build-dev": "webpack --config config/webpack.prod.ts --server dev-server",
-    "build-test": "webpack --config config/webpack.prod.ts --server test-server",
-    "build-uat": "webpack --config config/webpack.prod.ts --server uat-server",
-    "build-prod": "webpack --config config/webpack.prod.ts --server prod-server",
-    "build-docker": "webpack --config config/webpack.prod.ts --server docker",
     "bundle-size": "webpack --config config/webpack.prod.ts --bundle-size",
-    "swagger": "ts-node scripts/swagger.ts",
-    "translations": "ts-node scripts/translations.ts",
     "start-prod": "npm run build && serve dist",
     "test": "jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@bitbucket.org/AdastraGrp/mdd-frontend.git"
-  },
-  "author": "Adastra",
+  "author": "Kamen",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/AdastraGrp/mdd-frontend#readme",
   "dependencies": {
     "@emotion/core": "^10.0.21",
     "@emotion/styled": "^10.0.17",
