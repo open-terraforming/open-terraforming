@@ -47,16 +47,16 @@ export function keyValueMap<T, K1 extends keyof T, K2 extends keyof T>(
 export function uniqueMerge<T>(...arrays: T[][]) {
 	const items: NativeMap<T> = {}
 
-	arrays.forEach((array) => {
-		array.forEach((item) => {
+	arrays.forEach(array => {
+		array.forEach(item => {
 			items[JSON.stringify(item)] = item
 		})
 	})
 
-	return Object.keys(items).map((key) => items[key])
+	return Object.keys(items).map(key => items[key])
 }
 
-const ucfirst = (value: string) =>
+export const ucFirst = (value: string) =>
 	value.charAt(0).toUpperCase() + value.slice(1)
 
 /**
@@ -219,9 +219,9 @@ export function enumToValueLabelCollection(enumeration: {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	[key: string]: any
 }): { value: string; label: string }[] {
-	return Object.keys(enumeration).map((entry) => ({
+	return Object.keys(enumeration).map(entry => ({
 		value: entry,
-		label: enumeration[entry],
+		label: enumeration[entry]
 	}))
 }
 

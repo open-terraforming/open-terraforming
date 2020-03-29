@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useAppStore, useApi } from '@/utils/hooks'
+import { useAppStore, useApi, useAppDispatch } from '@/utils/hooks'
 import { Resources } from './components/Resources'
 import { Button } from '@/components'
 import { Corporations } from '@shared/corporations'
@@ -8,10 +8,14 @@ import { playerPass, PlayerStateValue } from '@shared/index'
 import { faArrowRight, faAngleUp } from '@fortawesome/free-solid-svg-icons'
 import { Hand } from '../Hand/Hand'
 import { PlayedCards } from '../PlayedCards/PlayedCards'
+import { setTableState } from '@/store/modules/table'
+import { CardBuy } from '../CardBuy/CardBuy'
 
 export const Controls = () => {
 	const api = useApi()
+	const dispatch = useAppDispatch()
 	const player = useAppStore(state => state.game.player)
+	const buyingCardIndex = useAppStore(state => state.table.buyingCardIndex)
 	const state = player?.gameState
 	const corporation = Corporations.find(c => c.code === state?.corporation)
 	const [handOpened, setHandOpened] = useState(false)
@@ -32,6 +36,18 @@ export const Controls = () => {
 				<PlayedCards
 					playing={isPlaying}
 					onClose={() => setCardsOpened(false)}
+				/>
+			)}
+			{buyingCardIndex !== undefined && (
+				<CardBuy
+					index={buyingCardIndex}
+					onClose={() =>
+						dispatch(
+							setTableState({
+								buyingCardIndex: undefined
+							})
+						)
+					}
 				/>
 			)}
 

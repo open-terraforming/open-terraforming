@@ -80,7 +80,7 @@ export const PlayedCards = ({
 			open={true}
 			contentStyle={{ maxWidth: '90%', width: 'auto' }}
 			onClose={onClose}
-			header={'Cards in your hand'}
+			header={'Cards on table'}
 			footer={
 				!playing ? (
 					<Button onClick={onClose}>Close</Button>

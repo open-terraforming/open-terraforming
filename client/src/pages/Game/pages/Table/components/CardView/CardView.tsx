@@ -1,5 +1,5 @@
-import React from 'react'
-import { Card, CardType, CardCategory } from '@shared/cards'
+import React, { useMemo } from 'react'
+import { Card, CardType, CardCategory, CardCondition } from '@shared/cards'
 import styled, { css } from 'styled-components'
 
 export const CardView = ({
@@ -11,6 +11,25 @@ export const CardView = ({
 	selected?: boolean
 	onClick?: () => void
 }) => {
+	const description = useMemo(() => {
+		const conditions = [
+			...card.conditions,
+			...card.playEffects.reduce(
+				(acc, e) => [...acc, ...e.conditions],
+				[] as CardCondition[]
+			)
+		]
+
+		return [
+			...(card.victoryPoints > 0
+				? [`+ ${card.victoryPoints} VICTORY POINTS`]
+				: []),
+			card.description,
+			...conditions.map(c => c.description),
+			...card.playEffects.map(e => e.description)
+		]
+	}, [card])
+
 	return (
 		<Container selected={selected} onClick={onClick}>
 			<Inner type={card.type}>
@@ -23,8 +42,11 @@ export const CardView = ({
 					</Categories>
 				</Head>
 				<Title>{card.title}</Title>
-				<CardImage />
-				<Description>{card.description}</Description>
+				<Description>
+					{description.map((d, i) => (
+						<div key={i}>{d}</div>
+					))}
+				</Description>
 			</Inner>
 		</Container>
 	)
@@ -45,7 +67,11 @@ const Container = styled.div<{ selected: boolean }>`
 	width: 200px;
 	flex-shrink: 0;
 	min-width: 0;
+	min-height: 300px;
+	max-height: 300px;
+	overflow: auto;
 	margin: 0 0.5rem;
+	display: flex;
 
 	${props =>
 		props.selected &&
@@ -82,13 +108,13 @@ const Title = styled.div`
 	color: #fff;
 `
 
-const CardImage = styled.div`
-	height: 200px;
-`
-
 const Inner = styled.div<{ type: CardType }>`
 	border: 4px solid ${props => typeToColor[props.type]};
 	border-radius: 12px;
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	min-height: 0;
 
 	${Title} {
 		background: ${props => typeToColor[props.type]};
@@ -96,5 +122,13 @@ const Inner = styled.div<{ type: CardType }>`
 `
 
 const Description = styled.div`
-	padding: 1rem;
+	padding: 1rem 0.5rem 0.5rem 0.5rem;
+	overflow: auto;
+	min-height: 0;
+	flex-grow: 1;
+	font-size: 85%;
+
+	> div {
+		margin-bottom: 0.25rem;
+	}
 `

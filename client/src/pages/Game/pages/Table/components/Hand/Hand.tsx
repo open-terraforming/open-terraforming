@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react'
 import { Modal } from '@/components/Modal/Modal'
-import { useAppStore, useApi } from '@/utils/hooks'
+import { useAppStore, useApi, useAppDispatch } from '@/utils/hooks'
 import { CardsLookup } from '@shared/cards'
 import { CardView } from '../CardView/CardView'
 import { Button } from '@/components'
 import { buyCard } from '@shared/index'
 import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
+import { setTableState } from '@/store/modules/table'
 
 export const Hand = ({
 	onClose,
@@ -15,6 +16,7 @@ export const Hand = ({
 	playing: boolean
 }) => {
 	const api = useApi()
+	const dispatch = useAppDispatch()
 	const player = useAppStore(state => state.game.player)
 	const state = player?.gameState
 
@@ -34,8 +36,11 @@ export const Hand = ({
 
 	const handleConfirm = () => {
 		if (selectedCard && selected !== undefined && canAfford) {
-			setLoading(true)
-			api.send(buyCard(selectedCard.code, selected))
+			dispatch(
+				setTableState({
+					buyingCardIndex: selected
+				})
+			)
 		}
 
 		onClose()

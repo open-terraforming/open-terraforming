@@ -1,4 +1,5 @@
 import { GameState } from '.'
+import { CardEffectArgumentType } from './cards'
 
 export enum HandshakeError {
 	InvalidVersion = 'InvalidVersion',
@@ -79,6 +80,9 @@ export interface BuyCard {
 	data: {
 		card: string
 		index: number
+		useOre: number
+		useTitan: number
+		args: CardEffectArgumentType[][]
 	}
 }
 
@@ -95,6 +99,7 @@ export interface PlayCard {
 	data: {
 		card: string
 		index: number
+		args: CardEffectArgumentType[][]
 	}
 }
 

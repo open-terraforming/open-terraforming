@@ -50,6 +50,6 @@ export class Client {
 	}
 
 	disconnect() {
-		this.socket.close()
+		this.socket?.close()
 	}
 }

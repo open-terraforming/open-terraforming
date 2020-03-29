@@ -4,7 +4,12 @@ import { Game } from './game'
 import { v4 as uuidv4 } from 'uuid'
 import { Corporations } from '@shared/corporations'
 import { CARD_PRICE } from '@shared/constants'
-import { CardsLookup } from '@shared/cards'
+import {
+	CardsLookup,
+	CardCondition,
+	CardCategory,
+	CardEffectArgumentType
+} from '@shared/cards'
 
 export class Player {
 	static idCounter = 1
@@ -12,6 +17,7 @@ export class Player {
 	state = {
 		connected: false,
 		id: Player.idCounter++,
+		bot: false,
 		gameState: {
 			actionsPlayed: 0,
 			energy: 0,
@@ -22,8 +28,10 @@ export class Player {
 			moneyProduction: 1,
 			ore: 0,
 			oreProduction: 1,
+			orePrice: 2,
 			titan: 0,
 			titanProduction: 1,
+			titanPrice: 2,
 			plants: 0,
 			plantsProduction: 1,
 			passed: false,
@@ -166,7 +174,13 @@ export class Player {
 		this.game.checkState()
 	}
 
-	buyCard(cardCode: string, index: number) {
+	buyCard(
+		cardCode: string,
+		index: number,
+		useOre: number,
+		useTitan: number,
+		playArguments: CardEffectArgumentType[][]
+	) {
 		if (!this.isPlaying) {
 			return
 		}
@@ -183,21 +197,77 @@ export class Player {
 			throw new Error(`Unknown card ${cardCode}`)
 		}
 
-		if (this.gameState.money < card.cost) {
-			throw new Error("You don't have money for that")
+		let adjustedCost = card.cost
+
+		if (useOre > 0) {
+			if (!card.categories.includes(CardCategory.Building)) {
+				throw new Error('You can only use ore to pay for buildings')
+			}
+
+			if (useOre > this.gameState.ore) {
+				throw new Error("You don't have that much ore")
+			}
+
+			adjustedCost -= useOre * this.gameState.orePrice
 		}
 
-		this.gameState.money -= card.cost
+		if (useTitan > 0) {
+			if (!card.categories.includes(CardCategory.Space)) {
+				throw new Error('You can only use titan to pay for space cards')
+			}
 
-		// TODO: Actually play the card
+			if (useTitan > this.gameState.titan) {
+				throw new Error("You don't have that much titan")
+			}
 
-		this.gameState.usedCards.push({
+			adjustedCost -= useTitan * this.gameState.titanPrice
+		}
+
+		if (this.gameState.money < adjustedCost) {
+			throw new Error(
+				`You don't have money for that, adjusted price was ${adjustedCost}.`
+			)
+		}
+
+		const cardState = {
 			code: cardCode,
 			animals: 0,
 			microbes: 0,
 			played: false,
 			science: 0
-		})
+		}
+
+		const errorConditions = [
+			...card.conditions,
+			...card.playEffects.reduce(
+				(acc, p) => [...acc, ...p.conditions],
+				[] as CardCondition[]
+			)
+		].filter(c => !c.evaluate(this.gameState, this.game.state, cardState))
+
+		if (errorConditions.length > 0) {
+			throw new Error(
+				`Card conditions not met! ${errorConditions
+					.map(c => c.description)
+					.filter(c => !!c)
+					.join('. ')}`
+			)
+		}
+
+		this.gameState.money -= Math.max(0, adjustedCost)
+		this.gameState.titan -= useTitan
+		this.gameState.ore -= useOre
+
+		card.playEffects.forEach((e, i) =>
+			e.perform(
+				this.gameState,
+				this.game.state,
+				cardState,
+				...(playArguments[i] || [])
+			)
+		)
+
+		this.gameState.usedCards.push(cardState)
 		this.gameState.cards.splice(index, 1)
 		this.actionPlayed()
 		this.updated()
@@ -230,15 +300,19 @@ export class Player {
 		this.onStateChanged.emit(this.state)
 	}
 
-	doProduction() {
+	endGeneration() {
 		const state = this.state.gameState
+
+		// Perform production
 		state.heat += state.energy + state.energyProduction
 		state.energy += state.energyProduction
 		state.ore += state.oreProduction
 		state.titan += state.titanProduction
 		state.plants += state.plantsProduction
 		state.money += state.terraformRating + state.moneyProduction
-		this.updated()
+
+		// Reset playable cards
+		state.usedCards.forEach(c => (c.played = false))
 	}
 
 	reset() {

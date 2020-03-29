@@ -50,6 +50,7 @@ export interface PlayerState {
 	name: string
 	session: string
 	connected: boolean
+	bot: boolean
 
 	gameState: PlayerGameState
 }
@@ -65,8 +66,10 @@ export interface PlayerGameState {
 	moneyProduction: number
 	ore: number
 	oreProduction: number
+	orePrice: number
 	titan: number
 	titanProduction: number
+	titanPrice: number
 	plants: number
 	plantsProduction: number
 	energy: number

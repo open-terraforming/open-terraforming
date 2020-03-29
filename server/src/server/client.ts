@@ -123,7 +123,13 @@ export class Client {
 				}
 
 				case MessageType.BuyCard: {
-					return this.player.buyCard(message.data.card, message.data.index)
+					return this.player.buyCard(
+						message.data.card,
+						message.data.index,
+						message.data.useOre,
+						message.data.useTitan,
+						message.data.args
+					)
 				}
 			}
 		} catch (e) {

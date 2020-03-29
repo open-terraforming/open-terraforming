@@ -22,7 +22,8 @@ body {
 
 input[type=text],
 input[type=password],
-textarea {
+textarea,
+select {
 	border: 1px solid #eee;
 	padding: 0.25rem 0.5rem;
 	transition: border-color, background-color, box-shadow 0.2s ease;
@@ -32,4 +33,5 @@ textarea {
 button, a {
 	cursor: pointer;
 }
+
 `

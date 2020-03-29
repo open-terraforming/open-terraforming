@@ -14,6 +14,7 @@ import {
 	PlayerPass,
 } from './messages'
 import { GameState } from './game'
+import { CardEffectArgumentType } from './cards'
 
 export const handshakeRequest = (
 	version: string,
@@ -67,10 +68,16 @@ export const pickCards = (cards: number[]) =>
 		data: { cards },
 	} as PickCards)
 
-export const buyCard = (card: string, index: number) =>
+export const buyCard = (
+	card: string,
+	index: number,
+	useOre: number,
+	useTitan: number,
+	args: CardEffectArgumentType[][]
+) =>
 	({
 		type: MessageType.BuyCard,
-		data: { card, index },
+		data: { card, index, args, useOre, useTitan },
 	} as BuyCard)
 
 export const sellCard = (card: string, index: number) =>
@@ -79,8 +86,12 @@ export const sellCard = (card: string, index: number) =>
 		data: { card, index },
 	} as SellCard)
 
-export const playCard = (card: string, index: number) =>
+export const playCard = (
+	card: string,
+	index: number,
+	args: CardEffectArgumentType[][]
+) =>
 	({
 		type: MessageType.PlayCard,
-		data: { card, index },
+		data: { card, index, args },
 	} as PlayCard)

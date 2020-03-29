@@ -100,7 +100,7 @@ export class Game {
 
 	endGeneration() {
 		this.players.forEach(p => {
-			p.doProduction()
+			p.endGeneration()
 			p.gameState.state = PlayerStateValue.PickingCards
 		})
 

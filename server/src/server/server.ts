@@ -2,6 +2,8 @@ import WebSocket from 'ws'
 import { Client } from './client'
 import { gameStateUpdate } from '@shared/index'
 import { Game } from '@/game/game'
+import { range } from '@/utils/collections'
+import { Bot } from '@/game/bot'
 
 export class Server {
 	game: Game
@@ -9,7 +11,7 @@ export class Server {
 
 	clients: Client[] = []
 
-	constructor(socket: WebSocket.Server) {
+	constructor(socket: WebSocket.Server, bots: number) {
 		this.game = new Game()
 		this.game.onStateUpdated.on(s => {
 			const update = gameStateUpdate(s)
@@ -25,6 +27,10 @@ export class Server {
 				this.clients = this.clients.filter(i => i !== client)
 			})
 			this.clients.push(client)
+		})
+
+		range(0, bots - 1).forEach(() => {
+			this.game.add(new Bot(this.game))
 		})
 	}
 }
