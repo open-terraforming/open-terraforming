@@ -1,0 +1,9 @@
+CLIENT TODO:
+ - placing tile
+ - implement arguments
+ - special tiles
+ - mind effect choice!
+ - card exchange!
+
+OTHER TODO:
+ - effect choice without player choice (just choose the best)

@@ -1,6 +1,6 @@
 import { Resource } from './cards'
 
-export const withUnits = (res: Resource, amount: number) => {
+export const withUnits = (res: Resource, amount: number | string) => {
 	switch (res) {
 		case 'money':
 			return `${amount} $`

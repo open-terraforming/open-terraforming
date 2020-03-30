@@ -1,3 +1,5 @@
+import { PlacementCode, PlacementState } from './placements'
+
 export enum GameStateValue {
 	/** Waiting for all players to connect */
 	WaitingForPlayers,
@@ -32,6 +34,8 @@ export enum PlayerStateValue {
 	WaitingForTurn,
 	/** Is placing tile */
 	PlacingTile,
+	/** Is exchanging card */
+	ExchangingCard,
 }
 
 export interface GameState {
@@ -53,6 +57,7 @@ export interface MapState {
 	width: number
 	height: number
 
+	special: GridCell[]
 	grid: GridCell[][]
 }
 
@@ -83,6 +88,15 @@ export enum GridCellContent {
 
 export enum GridCellOther {
 	Capital,
+	Mars,
+	Mine,
+	CommercialDistrict,
+	NuclearZone,
+	IndustrialCenter,
+	EcologicalZone,
+	Volcano,
+	Mohole,
+	Restricted,
 }
 
 export interface GridCell {
@@ -101,6 +115,8 @@ export interface GridCell {
 
 	ownerId?: number
 	ownerCard?: number
+
+	claimantId?: number
 }
 
 export interface PlayerState {
@@ -135,6 +151,13 @@ export interface PlayerGameState {
 	heat: number
 	heatProduction: number
 
+	/** General card price change */
+	cardPriceChange: number
+	/** Space card price change */
+	spacePriceChange: number
+	/** Earth card price change */
+	earthPriceChange: number
+
 	/** Player TR */
 	terraformRating: number
 
@@ -149,14 +172,14 @@ export interface PlayerGameState {
 
 	/** List of cards to pick from */
 	cardsPick: string[]
+	cardsPickLimit: number
+	cardsPickFree: boolean
 
 	/** Is placing a tile */
-	placingTile: {
-		type: GridCellContent
-		other?: GridCellOther
-		ownerCard?: number
-		special?: GridCellSpecial
-	}
+	placingTile: PlacementState[]
+
+	/** List of cards that are to be played - index in usedCards */
+	cardsToPlay: number[]
 }
 
 export interface UsedCardState {
@@ -171,4 +194,9 @@ export interface UsedCardState {
 	animals: number
 	/** Number of science points on the card */
 	science: number
+	/** Number of fighter points on the card */
+	fighters: number
+
+	/** Index of card that triggered last passive effect */
+	triggeredByCard?: number
 }

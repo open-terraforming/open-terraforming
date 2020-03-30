@@ -12,6 +12,9 @@ import {
 	CardResource,
 	CardEffectArgumentType,
 	PlayerCondition,
+	CardPassiveEffect,
+	CellCondition,
+	CardEffectType,
 } from './types'
 import {
 	GameState,
@@ -23,10 +26,13 @@ import {
 } from '../game'
 import { CardsLookup, CardsLookupApi } from '.'
 import { withUnits } from '../units'
+import { PlacementCode, PlacementConditionsLookup } from '../placements'
 
 export const vpCb = (cb: CardVictoryPointsCallback) => cb
 
-const resourceProduction = {
+const flatten = <T>(a: T[][]) => a.reduce((acc, a) => [...acc, ...a], [] as T[])
+
+export const resourceProduction = {
 	money: 'moneyProduction',
 	ore: 'oreProduction',
 	titan: 'titanProduction',
@@ -43,9 +49,38 @@ const gamePlayer = (game: GameState, playerId: number) => {
 	return p.gameState
 }
 
-export const countGridContent = (game: GameState, content: GridCellContent) => {
+export const cellByCoords = (game: GameState, x: number, y: number) => {
+	const spec = game.map.special.find((s) => s.x === x && s.y === y)
+	if (spec) {
+		return spec
+	}
+
+	let cell: GridCell | undefined
+
+	if (x >= 0 && x < game.map.width) {
+		cell = game.map.grid[x][y]
+	}
+
+	if (!cell) {
+		throw new Error(`No cell at ${x},${y}`)
+	}
+
+	return cell
+}
+
+export const countGridContent = (
+	game: GameState,
+	content: GridCellContent,
+	playerId?: number
+) => {
 	return game.map.grid.reduce(
-		(acc, c) => acc + c.filter((c) => c.content === content).length,
+		(acc, c) =>
+			acc +
+			c.filter(
+				(c) =>
+					c.content === content &&
+					(playerId === undefined || c.ownerId === playerId)
+			).length,
 		0
 	)
 }
@@ -71,24 +106,35 @@ export const adjacentCells = (game: GameState, x: number, y: number) => {
 	].filter((c) => c && c.enabled) as GridCell[]
 }
 
+export const passiveEffect = (e: CardPassiveEffect) => e
+
 export const effect = <T extends CardEffectArgumentType[]>(
-	c: WithOptional<CardEffect<T>, 'args' | 'conditions'>
+	c: WithOptional<CardEffect<T>, 'args' | 'conditions' | 'type'>
 ): CardEffect<T> =>
 	({
 		args: [],
 		conditions: [],
+		type: CardEffectType.Other,
 		...c,
-	} as CardEffect)
+	} as CardEffect<T>)
 
 export const effectArg = (
-	c: WithOptional<CardEffectArgument, 'playerConditions'>
+	c: WithOptional<
+		CardEffectArgument,
+		'playerConditions' | 'cardConditions' | 'optional' | 'cellConditions'
+	>
 ) =>
 	({
 		playerConditions: [],
+		cardConditions: [],
+		cellConditions: [],
+		optional: true,
 		...c,
 	} as CardEffectArgument)
 
-export const condition = (c: CardCondition) => c
+export const condition = <T extends CardEffectArgumentType[]>(
+	c: CardCondition<T>
+): CardCondition<T> => c
 
 export const drawnCards = (amount = 1) =>
 	effectArg({
@@ -120,13 +166,20 @@ export const gameProgressConditionMax = (res: GameProgress, value: number) =>
 export const resourceCondition = (res: Resource, value: number) =>
 	condition({
 		evaluate: ({ player }) => player[res] >= value,
-		description: `You have to at least ${value} of ${res}`,
+		description: `You have to have at least ${value} of ${res}`,
 	})
 
 export const cellTypeCondition = (type: GridCellContent, amount: number) =>
 	condition({
 		description: `Requires at least ${amount} of ${type} to be placed`,
 		evaluate: ({ game }) => countGridContent(game, type) >= amount,
+	})
+
+export const ownedCellTypeCondition = (type: GridCellContent, amount: number) =>
+	condition({
+		description: `Requires at least ${amount} of ${type} to be placed`,
+		evaluate: ({ game, playerId }) =>
+			countGridContent(game, type, playerId) >= amount,
 	})
 
 export const resourceChange = (res: Resource, change: number) =>
@@ -136,6 +189,7 @@ export const resourceChange = (res: Resource, change: number) =>
 			change > 0
 				? `You'll receive ${change} of ${res}`
 				: `You'll loose ${-change} of ${res}`,
+		type: CardEffectType.Resource,
 		perform: ({ player }) => {
 			player[res] += change
 		},
@@ -154,6 +208,7 @@ export const productionChange = (res: Resource, change: number) => {
 	return effect({
 		conditions:
 			change < 0 && res !== 'money' ? [productionCondition(res, -change)] : [],
+		type: CardEffectType.Production,
 		description:
 			change > 0
 				? `Your production of ${res} will increase by ${change}`
@@ -164,23 +219,55 @@ export const productionChange = (res: Resource, change: number) => {
 	})
 }
 
-export const playerResourceChange = (res: Resource, change: number) => {
+export const playerResourceChange = (
+	res: Resource,
+	change: number,
+	optional = true
+) => {
 	return effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.PlayerResource,
-				maxAmount: change,
-				resource: res,
+				description: `From player`,
+				type: CardEffectTarget.Player,
 				playerConditions:
-					change < 0 ? [resourceCondition(res, 1) as PlayerCondition] : [],
+					change < 0
+						? [
+								resourceCondition(
+									res,
+									optional ? 1 : -change
+								) as PlayerCondition,
+						  ]
+						: [],
+			}),
+			effectArg({
+				description: `remove`,
+				type: CardEffectTarget.Resource,
+				maxAmount: Math.abs(change),
+				resource: res,
+				optional,
+				playerConditions:
+					change < 0
+						? [
+								resourceCondition(
+									res,
+									optional ? 1 : -change
+								) as PlayerCondition,
+						  ]
+						: [],
 			}),
 		],
 		description:
 			change > 0
 				? `Give up to ${withUnits(res, change)} to any player`
 				: `Remove up to ${withUnits(res, change)} from any player`,
-		perform: ({ game }, playerId: number) => {
-			playerId >= 0 && (gamePlayer(game, playerId)[res] += change)
+		perform: ({ game }, playerId: number, amount: number) => {
+			const actualChange = optional
+				? change
+				: change < 0
+				? Math.max(change, -amount)
+				: Math.min(change, amount)
+
+			playerId >= 0 && (gamePlayer(game, playerId)[res] += actualChange)
 		},
 	})
 }
@@ -232,25 +319,41 @@ export const minCardResourceToVP = (
 		},
 	})
 
-export const placeTile = (
-	type: GridCellContent,
-	other?: GridCellOther,
-	special?: GridCellSpecial
-) =>
-	effect({
-		description: `Place a ${
-			other ? GridCellOther[other] : GridCellContent[type]
-		} tile`,
+// TODO: Check of ocean counts
+// TODO: Check for conditions
+export function placeTile({
+	type,
+	other,
+	special,
+	conditions,
+}: {
+	type: GridCellContent
+	other?: GridCellOther
+	special?: GridCellSpecial[]
+	isolated?: boolean
+	allowOcean?: boolean
+	conditions?: PlacementCode[]
+}) {
+	return effect({
+		description:
+			`Place a ${other ? GridCellOther[other] : GridCellContent[type]} tile` +
+			(conditions && conditions.length > 0
+				? ` (${conditions
+						?.map((c) => PlacementConditionsLookup.get(c).description)
+						.join(',')})`
+				: ''),
 		perform: ({ player, cardIndex }) => {
-			player.placingTile = {
+			player.placingTile.push({
 				type,
 				other,
 				ownerCard: cardIndex,
 				special,
-			}
+				conditions,
+			})
 			player.state = PlayerStateValue.PlacingTile
 		},
 	})
+}
 
 export const vpsForAdjacentTiles = (type: GridCellContent, perTile: number) =>
 	vpCb({
@@ -281,6 +384,24 @@ export const vpsForCards = (category: CardCategory, vpPerCategory: number) =>
 						acc + c.categories.filter((cat) => cat === category).length,
 					0
 				)
+		},
+	})
+
+export const vpsForCardResources = (res: CardResource, vpPerUnit: number) =>
+	vpCb({
+		description: `${vpPerUnit >= 1 ? vpPerUnit : 1} VP per ${
+			vpPerUnit >= 1 ? 1 : Math.ceil(1 / vpPerUnit)
+		} ${res}`,
+		compute: ({ card }) => {
+			return Math.floor(card[res] * vpPerUnit)
+		},
+	})
+
+export const vpsForTiles = (type: GridCellContent, perTile: number) =>
+	vpCb({
+		description: `${perTile} VPs for each ${GridCellContent[type]} tile in game`,
+		compute: ({ game }) => {
+			return countGridContent(game, type) * perTile
 		},
 	})
 
@@ -324,21 +445,184 @@ export const terraformRatingChange = (change: number) =>
 		},
 	})
 
+export const effectChoiceArg = (effects: CardEffect[]) =>
+	effectArg({
+		type: CardEffectTarget.EffectChoice,
+		effects,
+	})
+
+export const effectChoice = (effects: CardEffect[]) =>
+	effect({
+		args: [effectChoiceArg(effects)],
+		conditions: [
+			condition({
+				evaluate: (
+					ctx,
+					chosenEffect: number,
+					chosenArgs: CardEffectArgumentType[]
+				) => {
+					if (chosenEffect === undefined) {
+						return true
+					}
+
+					const effect = effects[chosenEffect]
+					if (!effect) {
+						throw new Error(`Unknown effect choice ${chosenEffect}`)
+					}
+
+					return effect.conditions.every((c) => c.evaluate(ctx, ...chosenArgs))
+				},
+			}),
+		],
+		description: effects.map((e) => e.description || '').join(' OR '),
+		perform: (
+			ctx,
+			chosenEffect: number,
+			chosenArgs: CardEffectArgumentType[]
+		) => {
+			const effect = effects[chosenEffect]
+			if (!effect) {
+				throw new Error(`Unknown effect choice ${chosenEffect}`)
+			}
+
+			effect.perform(ctx, ...chosenArgs)
+		},
+	})
+
+export const joinedEffects = (effects: CardEffect[]) =>
+	effect({
+		args: flatten(effects.map((e) => e.args)),
+		description: effects.map((e) => e.description || '').join(' and '),
+		perform: (ctx, ...args) => {
+			effects.forEach((e) => {
+				e.perform(
+					ctx,
+					...(e.args.length > 0 ? args.splice(0, e.args.length) : [])
+				)
+			})
+		},
+	})
+
+export const cardArg = (conditions: CardCondition[] = []) =>
+	effectArg({
+		type: CardEffectTarget.Card,
+		cardConditions: conditions,
+	})
+
+export const cardResourceCondition = (res: CardResource, amount: number) =>
+	condition({
+		description: `Card has to have at least ${amount} of ${res} units`,
+		evaluate: ({ card }) => card[res] >= amount,
+	})
+
+export const otherCardResourceChange = (res: CardResource, amount: number) =>
+	effect({
+		args: amount < 0 ? [cardArg([cardResourceCondition(res, amount)])] : [],
+		conditions: [],
+		perform: ({ player }, [cardCode, cardIndex]: [string, number]) => {
+			const card = CardsLookupApi.get(cardCode)
+			const cardState = player.usedCards[cardIndex]
+
+			if (!cardState || cardState.code !== card.code) {
+				throw new Error(
+					`Invalid card target (state found: ${!!cardState}, card code: ${cardCode} ?= ${
+						card.code
+					}`
+				)
+			}
+
+			// TODO: Check if player can place it on this card
+			cardState[res] += amount
+		},
+	})
+
+export const cardResourceChange = (res: CardResource, amount: number) =>
+	effect({
+		description:
+			amount >= 0
+				? `Add ${amount} of ${res} units to this card`
+				: `Remove ${amount} of ${res} units from this card`,
+		conditions: amount < 0 ? [cardResourceCondition(res, -amount)] : [],
+		perform: ({ card }) => {
+			card[res] += amount
+		},
+	})
+
+export const playerCardArg = (conditions: CardCondition[] = [], amount = 0) =>
+	effectArg({
+		type: CardEffectTarget.PlayerCardResource,
+		cardConditions: conditions,
+		amount,
+	})
+
+export const playerCardResourceChange = (res: CardResource, amount: number) =>
+	effect({
+		args:
+			amount < 0
+				? [playerCardArg([cardResourceCondition(res, -amount)], -amount)]
+				: [],
+		conditions: [],
+		perform: (
+			{ game },
+			[playerId, cardCode, cardIndex]: [number, string, number]
+		) => {
+			const player = game.players.find((p) => p.id === playerId)?.gameState
+			if (!player) {
+				throw new Error(`Invalid player id ${playerId}`)
+			}
+
+			const card = CardsLookupApi.get(cardCode)
+			const cardState = player.usedCards[cardIndex]
+
+			if (!cardState || cardState.code !== card.code) {
+				throw new Error(
+					`Invalid card target (state found: ${!!cardState}, card code: ${cardCode} ?= ${
+						card.code
+					}`
+				)
+			}
+
+			// TODO: Check if player can place it on this card
+			cardState[res] += amount
+		},
+	})
+
+export const productionChangeForTags = (
+	res: Resource,
+	change: number,
+	tag: CardCategory
+) => {
+	const prod = resourceProduction[res]
+	return effect({
+		description: `Increase your ${res} production by ${change} for each ${CardCategory[tag]} card`,
+		perform: ({ player }) => {
+			player[prod] += change
+		},
+	})
+}
+
+export const cellArg = (conditions: CellCondition[], description?: string) =>
+	effectArg({
+		type: CardEffectTarget.Cell,
+		description,
+		cellConditions: conditions,
+	})
+
 export const card = (
 	c: WithOptional<
 		Card,
 		| 'conditions'
 		| 'playEffects'
-		| 'permanentEffects'
-		| 'actionEvents'
+		| 'passiveEffects'
+		| 'actionEffects'
 		| 'victoryPoints'
 	>
 ) =>
 	({
 		victoryPoints: 0,
 		conditions: [],
-		permanentEffects: [],
+		passiveEffects: [],
 		playEffects: [],
-		actionEvents: [],
+		actionEffects: [],
 		...c,
 	} as Card)

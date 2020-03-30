@@ -1,5 +1,17 @@
 import { MapState, GridCell, GridCellType, GridCellSpecial } from './game'
 
+const cell = (c: Partial<GridCell>): GridCell => ({
+	x: -1,
+	y: -1,
+	enabled: true,
+	type: GridCellType.General,
+	cards: 0,
+	ore: 0,
+	plants: 0,
+	titan: 0,
+	...c,
+})
+
 const generateGrid = (
 	w: number,
 	h: number,
@@ -115,11 +127,23 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 
 export const defaultMap = () => {
 	const grid = generateGrid(9, 9, (x, y) => preset[y][x])
-	const map = {
+	const map: MapState = {
 		width: 9,
 		height: 9,
 		grid,
-	} as MapState
+		special: [
+			cell({
+				x: -1,
+				y: -1,
+				special: GridCellSpecial.PhobosSpaceHaven,
+			}),
+			cell({
+				x: -2,
+				y: -1,
+				special: GridCellSpecial.GanymedeColony,
+			}),
+		],
+	}
 
 	return map
 }
