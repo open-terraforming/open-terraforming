@@ -1,20 +1,20 @@
-import { MapState, GridField, GridFieldType, GridFieldSpecial } from './game'
+import { MapState, GridCell, GridCellType, GridCellSpecial } from './game'
 
 const generateGrid = (
 	w: number,
 	h: number,
-	cb: (x: number, y: number) => Partial<GridField> | undefined
+	cb: (x: number, y: number) => Partial<GridCell> | undefined
 ) => {
-	const grid = [] as GridField[][]
+	const grid = [] as GridCell[][]
 	for (let x = 0; x < w; x++) {
-		const col = [] as GridField[]
+		const col = [] as GridCell[]
 		for (let y = 0; y < h; y++) {
 			const update = cb(x, y)
 			col.push({
 				x,
 				y,
 				enabled: !!update,
-				type: GridFieldType.General,
+				type: GridCellType.General,
 				cards: 0,
 				ore: 0,
 				plants: 0,
@@ -27,24 +27,24 @@ const generateGrid = (
 	return grid
 }
 
-const preset: Record<number, Record<number, Partial<GridField>>> = {
+const preset: Record<number, Record<number, Partial<GridCell>>> = {
 	0: {
 		2: { ore: 2 },
 		3: { ore: 2 },
 		4: {},
-		5: { cards: 1, type: GridFieldType.Ocean },
-		6: { type: GridFieldType.Ocean },
+		5: { cards: 1, type: GridCellType.Ocean },
+		6: { type: GridCellType.Ocean },
 	},
 	1: {
 		1: {},
-		2: { ore: 1, special: GridFieldSpecial.TharsisTholus },
+		2: { ore: 1, special: GridCellSpecial.TharsisTholus },
 		3: {},
 		4: {},
 		5: {},
-		6: { cards: 2, type: GridFieldType.Ocean },
+		6: { cards: 2, type: GridCellType.Ocean },
 	},
 	2: {
-		1: { cards: 1, special: GridFieldSpecial.AscraeusMons },
+		1: { cards: 1, special: GridCellSpecial.AscraeusMons },
 		2: {},
 		3: {},
 		4: {},
@@ -53,26 +53,26 @@ const preset: Record<number, Record<number, Partial<GridField>>> = {
 		7: { ore: 1 },
 	},
 	3: {
-		0: { plants: 1, titan: 1, special: GridFieldSpecial.PavonisMons },
+		0: { plants: 1, titan: 1, special: GridCellSpecial.PavonisMons },
 		1: { plants: 1 },
 		2: { plants: 1 },
 		3: { plants: 1 },
 		4: { plants: 2 },
 		5: { plants: 1 },
 		6: { plants: 1 },
-		7: { plants: 2, type: GridFieldType.Ocean },
+		7: { plants: 2, type: GridCellType.Ocean },
 	},
 	4: {
-		0: { plants: 2, special: GridFieldSpecial.ArsiaMons },
+		0: { plants: 2, special: GridCellSpecial.ArsiaMons },
 		1: { plants: 2 },
 		2: {
 			plants: 2,
-			type: GridFieldType.NoctisCity,
-			special: GridFieldSpecial.NoctisCity,
+			type: GridCellType.NoctisCity,
+			special: GridCellSpecial.NoctisCity,
 		},
-		3: { plants: 2, type: GridFieldType.Ocean },
-		4: { plants: 2, type: GridFieldType.Ocean },
-		5: { plants: 2, type: GridFieldType.Ocean },
+		3: { plants: 2, type: GridCellType.Ocean },
+		4: { plants: 2, type: GridCellType.Ocean },
+		5: { plants: 2, type: GridCellType.Ocean },
 		6: { plants: 2 },
 		7: { plants: 2 },
 		8: { plants: 2 },
@@ -83,9 +83,9 @@ const preset: Record<number, Record<number, Partial<GridField>>> = {
 		2: { plants: 1 },
 		3: { plants: 1 },
 		4: { plants: 1 },
-		5: { plants: 1, type: GridFieldType.Ocean },
-		6: { plants: 1, type: GridFieldType.Ocean },
-		7: { plants: 1, type: GridFieldType.Ocean },
+		5: { plants: 1, type: GridCellType.Ocean },
+		6: { plants: 1, type: GridCellType.Ocean },
+		7: { plants: 1, type: GridCellType.Ocean },
 	},
 	6: {
 		1: {},
@@ -109,7 +109,7 @@ const preset: Record<number, Record<number, Partial<GridField>>> = {
 		3: { ore: 2 },
 		4: {},
 		5: {},
-		6: { titan: 2, type: GridFieldType.Ocean },
+		6: { titan: 2, type: GridCellType.Ocean },
 	},
 }
 

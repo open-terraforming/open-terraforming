@@ -1,4 +1,9 @@
-import { PlayerState, PlayerStateValue, GameStateValue } from '@shared/game'
+import {
+	PlayerState,
+	PlayerStateValue,
+	GameStateValue,
+	UsedCardState
+} from '@shared/game'
 import { MyEvent } from 'src/utils/events'
 import { Game } from './game'
 import { v4 as uuidv4 } from 'uuid'
@@ -8,8 +13,10 @@ import {
 	CardsLookup,
 	CardCondition,
 	CardCategory,
-	CardEffectArgumentType
+	CardEffectArgumentType,
+	CardEffectTarget
 } from '@shared/cards'
+import { range } from '@/utils/collections'
 
 export class Player {
 	static idCounter = 1
@@ -235,6 +242,13 @@ export class Player {
 			microbes: 0,
 			played: false,
 			science: 0
+		} as UsedCardState
+
+		const ctx = {
+			player: this.gameState,
+			game: this.game.state,
+			card: cardState,
+			cardIndex: this.gameState.usedCards.length
 		}
 
 		const errorConditions = [
@@ -243,7 +257,7 @@ export class Player {
 				(acc, p) => [...acc, ...p.conditions],
 				[] as CardCondition[]
 			)
-		].filter(c => !c.evaluate(this.gameState, this.game.state, cardState))
+		].filter(c => !c.evaluate(ctx))
 
 		if (errorConditions.length > 0) {
 			throw new Error(
@@ -258,14 +272,18 @@ export class Player {
 		this.gameState.titan -= useTitan
 		this.gameState.ore -= useOre
 
-		card.playEffects.forEach((e, i) =>
-			e.perform(
-				this.gameState,
-				this.game.state,
-				cardState,
-				...(playArguments[i] || [])
-			)
-		)
+		card.playEffects.forEach((e, i) => {
+			// Run dynamic arguments
+			e.args.forEach((a, ai) => {
+				if (a.type === CardEffectTarget.DrawnCards) {
+					playArguments[i][ai] = range(0, (a.drawnCards || 1) - 1).map(
+						() => this.game.nextCard().code
+					)
+				}
+			})
+
+			e.perform(ctx, ...(playArguments[i] || []))
+		})
 
 		this.gameState.usedCards.push(cardState)
 		this.gameState.cards.splice(index, 1)

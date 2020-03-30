@@ -16,7 +16,7 @@ type Props = {
 export const Arg = ({ arg, card, onChange }: Props) => {
 	switch (arg.type) {
 		case CardEffectTarget.Player:
-			return <PlayerArg arg={arg} card={card} onChange={onChange} />
+			return <PlayerArg arg={arg} onChange={onChange} />
 		default:
 			return <div>Unknown argument!</div>
 	}

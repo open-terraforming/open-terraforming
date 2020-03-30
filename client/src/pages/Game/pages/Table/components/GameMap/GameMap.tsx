@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAppStore } from '@/utils/hooks'
 import styled, { css } from 'styled-components'
-import { GridFieldType, GridFieldContent } from '@shared/game'
+import { GridCellType, GridCellContent } from '@shared/game'
 
 type Props = {}
 
@@ -67,14 +67,14 @@ const Container = styled.div`
 `
 
 const StyledHex = styled.g<{
-	gridType: GridFieldType
-	gridContent?: GridFieldContent
+	gridType: GridCellType
+	gridContent?: GridCellContent
 }>`
 	polygon {
 		${props =>
-			props.gridType === GridFieldType.Ocean &&
+			props.gridType === GridCellType.Ocean &&
 			css`
-				fill: ${props.gridContent === GridFieldContent.Ocean
+				fill: ${props.gridContent === GridCellContent.Ocean
 					? 'rgba(128,128,255,0.9)'
 					: 'url(#Ocean)'};
 			`}

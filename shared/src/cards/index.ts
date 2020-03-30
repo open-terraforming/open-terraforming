@@ -38,6 +38,16 @@ export const Cards = [
 ] as Card[]
 */
 
+export const CardsLookupApi = {
+	get(code: string) {
+		const c = CardsLookup[code]
+		if (!c) {
+			throw new Error(`Unknown card ${code}`)
+		}
+		return c
+	},
+}
+
 export const CardsLookup = Cards.reduce((acc, c) => {
 	acc[c.code] = c
 	return acc

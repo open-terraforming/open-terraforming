@@ -30,6 +30,8 @@ export enum PlayerStateValue {
 	Passed,
 	/**  Waiting for his turn */
 	WaitingForTurn,
+	/** Is placing tile */
+	PlacingTile,
 }
 
 export interface GameState {
@@ -51,10 +53,10 @@ export interface MapState {
 	width: number
 	height: number
 
-	grid: GridField[][]
+	grid: GridCell[][]
 }
 
-export enum GridFieldType {
+export enum GridCellType {
 	Ocean,
 	General,
 	NoctisCity,
@@ -62,7 +64,7 @@ export enum GridFieldType {
 	PhobosSpaceHaven,
 }
 
-export enum GridFieldSpecial {
+export enum GridCellSpecial {
 	NoctisCity,
 	TharsisTholus,
 	AscraeusMons,
@@ -72,17 +74,21 @@ export enum GridFieldSpecial {
 	PhobosSpaceHaven,
 }
 
-export enum GridFieldContent {
+export enum GridCellContent {
 	City,
 	Forest,
 	Ocean,
-	Building,
+	Other,
 }
 
-export interface GridField {
+export enum GridCellOther {
+	Capital,
+}
+
+export interface GridCell {
 	enabled: boolean
-	type: GridFieldType
-	special?: GridFieldSpecial
+	type: GridCellType
+	special?: GridCellSpecial
 	ore: number
 	titan: number
 	plants: number
@@ -90,8 +96,11 @@ export interface GridField {
 	x: number
 	y: number
 
-	content?: GridFieldContent
+	content?: GridCellContent
+	other?: GridCellOther
+
 	ownerId?: number
+	ownerCard?: number
 }
 
 export interface PlayerState {
@@ -140,6 +149,14 @@ export interface PlayerGameState {
 
 	/** List of cards to pick from */
 	cardsPick: string[]
+
+	/** Is placing a tile */
+	placingTile: {
+		type: GridCellContent
+		other?: GridCellOther
+		ownerCard?: number
+		special?: GridCellSpecial
+	}
 }
 
 export interface UsedCardState {
