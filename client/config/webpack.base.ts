@@ -156,7 +156,7 @@ const config = (env: ENV): webpack.Configuration => {
 					use: styleLoaders(env, { modules: false })
 				},
 				{
-					test: /\.jpg$/,
+					test: /\.(jpg|png)$/,
 					loader: 'file-loader'
 				}
 			]

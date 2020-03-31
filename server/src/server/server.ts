@@ -12,7 +12,7 @@ export class Server {
 	clients: Client[] = []
 
 	constructor(socket: WebSocket.Server, bots = 0) {
-		this.game = new Game()
+		this.game = new Game({ bots })
 		this.game.onStateUpdated.on(s => {
 			const update = gameStateUpdate(s)
 			this.clients.forEach(c => {
@@ -29,10 +29,6 @@ export class Server {
 				this.clients = this.clients.filter(i => i !== client)
 			})
 			this.clients.push(client)
-		})
-
-		range(0, bots - 1).forEach(() => {
-			this.game.add(new Bot(this.game))
 		})
 	}
 }

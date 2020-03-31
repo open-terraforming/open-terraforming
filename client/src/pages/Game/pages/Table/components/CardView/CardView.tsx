@@ -11,6 +11,7 @@ import { Condition } from './components/Condition'
 import { useAppStore } from '@/utils/hooks'
 import { UsedCardState } from '@shared/index'
 import { PlayEffect } from './components/PlayEffect'
+import { Tag } from './components/Tag'
 
 export const CardView = ({
 	card,
@@ -85,7 +86,7 @@ export const CardView = ({
 					</Cost>
 					<Categories>
 						{card.categories.map(c => (
-							<Category key={c}>{CardCategory[c]}</Category>
+							<Tag key={c} tag={c} />
 						))}
 					</Categories>
 				</Head>
@@ -172,10 +173,6 @@ const Categories = styled.div`
 	margin-left: auto;
 	display: flex;
 	align-items: center;
-`
-
-const Category = styled.div`
-	margin-right: 0.5rem;
 `
 
 const Title = styled.div`

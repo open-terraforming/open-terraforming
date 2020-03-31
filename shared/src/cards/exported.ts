@@ -870,7 +870,7 @@ export const BuiltCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.Mine,
-				conditions: [PlacementCode.NextToOwn, PlacementCode.TitanOreBonus],
+				conditions: [...OtherPlacement, PlacementCode.TitanOreBonus],
 			}),
 		],
 		passiveEffects: [productionChangeAfterPlace(1, GridCellOther.Mine)],

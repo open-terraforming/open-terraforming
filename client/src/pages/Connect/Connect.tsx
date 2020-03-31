@@ -16,6 +16,7 @@ export const Connect = () => {
 	const connected = useAppStore(state => state.api.connected)
 	const reconnecting = useAppStore(state => state.api.reconnecting)
 	const failed = useAppStore(state => state.api.failed)
+	const error = useAppStore(state => state.api.error)
 	const session = useAppStore(state => state.client.session)
 
 	const handleReconnect = () => {
@@ -36,7 +37,7 @@ export const Connect = () => {
 
 	useEffect(() => {
 		setInitializing(false)
-	}, [reconnecting, connected])
+	}, [reconnecting, connected, error])
 
 	return (
 		<Container>

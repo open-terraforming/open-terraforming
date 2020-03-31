@@ -7,10 +7,12 @@ import {
 	canPlace
 } from '@shared/placements'
 import { useAppStore } from '@/utils/hooks'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
 	cell: GridCell
-	pos: string
+	pos: { x: number; y: number }
 	placing?: PlacementState
 	onClick: () => void
 }
@@ -34,7 +36,7 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 			gridType={cell.type}
 			gridContent={cell.content}
 			gridActive={placing ? active : undefined}
-			transform={`translate(${pos})`}
+			transform={`translate(${pos.x},${pos.y})`}
 			onClick={active ? onClick : undefined}
 		>
 			<polygon

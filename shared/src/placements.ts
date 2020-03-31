@@ -76,7 +76,7 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 	}),
 	placement({
 		code: PlacementCode.NextToOwnOrFree,
-		description: 'next to your tile',
+		description: 'next to your tile (if possible)',
 		evaluate: ({ cell, game, playerId }) =>
 			!allCells(game).find(
 				(c) =>

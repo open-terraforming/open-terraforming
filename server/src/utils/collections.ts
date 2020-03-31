@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Shuffles array in place. ES6 version
  * @param {Array} a items An array containing the items.
@@ -72,15 +73,15 @@ export const ucFirst = (value: string) =>
 	value.charAt(0).toUpperCase() + value.slice(1)
 
 /**
- * Generates array containing numbers between start and end (including).
+ * Generates array containing numbers between start and end (excluding).
  * @param start beginning number
- * @param end ending number (including)
+ * @param end ending number (excluding)
  * @param step range step, defaults to 1
  */
 export function range(start: number, end: number, step = 1) {
 	const result = [] as number[]
 
-	for (let i = start; i <= end; i += step) {
+	for (let i = start; i < end; i += step) {
 		result.push(i)
 	}
 
@@ -251,4 +252,52 @@ export function isNotNull<T>(it: T): it is NonNullable<T> {
  */
 export function isNotUndefined<T>(it: T): it is NonNullable<T> {
 	return it != undefined
+}
+
+/**
+ * Extends specified object with specified object, the extension is deep,
+ * which means you can update only part of object in extended object.
+ *
+ * The extension is inplace.
+ *
+ * Note about extending arrays:
+ *  - when source value is array and target value is also array, it's replaced with target value and that's it
+ *  - when source value is array and target is object, it's expected that object only has numeric properties and only
+ *      values that correspond to the index (which is numeric prop of target object) are extended with object values
+ *
+ * @param source object to be extended
+ * @param extending extending object
+ * @returns the source (same reference that was in the source param)
+ */
+export const deepExtend = (source: any, extending: any) => {
+	Object.entries(extending).forEach(([key, value]: [string | number, any]) => {
+		let sourceValue = (source as any)[key]
+
+		if (typeof value === 'object') {
+			if (value === null) {
+				;(source as any)[key] = null
+			} else {
+				if (sourceValue === undefined) {
+					;(source as any)[key] = sourceValue = Array.isArray(value) ? [] : {}
+				} else {
+					/*
+					// eslint-disable-next-line padding-line-between-statements
+					;(source as any)[key] = sourceValue = Array.isArray(sourceValue)
+						? [...sourceValue]
+						: { ...sourceValue }
+					*/
+				}
+
+				if (Array.isArray(value)) {
+					;(source as any)[key] = [...value]
+				} else {
+					deepExtend(sourceValue, value)
+				}
+			}
+		} else {
+			;(source as any)[key] = value
+		}
+	})
+
+	return source
 }

@@ -79,6 +79,8 @@ export class Player {
 		session: uuidv4()
 	} as PlayerState
 
+	admin = false
+
 	onStateChanged = new MyEvent<Readonly<PlayerState>>()
 	onCardPlayed = new MyEvent<Readonly<CardPlayedEvent>>()
 	onTilePlaced = new MyEvent<Readonly<TilePlacedEvent>>()
@@ -180,7 +182,7 @@ export class Player {
 		this.gameState.heat = corp.startingHeat
 		this.gameState.energy = corp.startingEnergy
 
-		range(0, corp.startingCards + 1).forEach(() => {
+		range(0, corp.startingCards).forEach(() => {
 			this.gameState.cards.push(this.game.nextCard().code)
 		})
 
@@ -330,7 +332,7 @@ export class Player {
 				}
 
 				if (a.type === CardEffectTarget.DrawnCards) {
-					playArguments[i][ai] = range(0, (a.drawnCards || 1) - 1).map(
+					playArguments[i][ai] = range(0, a.drawnCards || 1).map(
 						() => this.game.nextCard().code
 					)
 				}
@@ -484,7 +486,7 @@ export class Player {
 				}
 
 				if (a.type === CardEffectTarget.DrawnCards) {
-					playArguments[i][ai] = range(0, (a.drawnCards || 1) - 1).map(
+					playArguments[i][ai] = range(0, a.drawnCards || 1).map(
 						() => this.game.nextCard().code
 					)
 				}

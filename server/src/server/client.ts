@@ -143,6 +143,12 @@ export class Client {
 				case MessageType.PlaceTile: {
 					return this.player.placeTile(message.data.x, message.data.y)
 				}
+
+				case MessageType.AdminChange: {
+					if (this.player.admin) {
+						this.game.adminChange(message.data)
+					}
+				}
 			}
 		} catch (e) {
 			console.error(e)

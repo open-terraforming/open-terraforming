@@ -23,6 +23,20 @@ export enum MessageType {
 	BuyTitle,
 	PlayerPass,
 	PlaceTile,
+	AdminChange,
+}
+
+/**
+ * Deep partial, where Arrays can also be objects with numeric indexes (updating only specific array key)
+ */
+export type UpdateDeepPartial<T> = {
+	[K in keyof T]?: T[K] extends (infer U)[]
+		? { [key: number]: UpdateDeepPartial<U> } | U[]
+		: T[K] extends object
+		? UpdateDeepPartial<T[K]>
+		: T[K] extends (infer U)[]
+		? { [key: string]: U }
+		: T[K]
 }
 
 export interface HandshakeRequest {
@@ -119,6 +133,11 @@ export interface PlaceTile {
 	}
 }
 
+export interface AdminChange {
+	type: typeof MessageType.AdminChange
+	data: UpdateDeepPartial<GameState>
+}
+
 export type GameMessage =
 	| HandshakeRequest
 	| HandshakeResponse
@@ -132,3 +151,4 @@ export type GameMessage =
 	| PlayCard
 	| PlayerPass
 	| PlaceTile
+	| AdminChange

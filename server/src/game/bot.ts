@@ -52,7 +52,7 @@ export class Bot extends Player {
 					this.passing = setTimeout(() => {
 						this.pass(true)
 						this.passing = undefined
-					}, 1000 + Math.random() * 1000)
+					}, 100 + Math.random() * 500)
 				}
 				break
 			}

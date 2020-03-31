@@ -13,6 +13,8 @@ import {
 	PlayCard,
 	PlayerPass,
 	PlaceTile,
+	AdminChange,
+	UpdateDeepPartial,
 } from './messages'
 import { GameState } from './game'
 import { CardEffectArgumentType } from './cards'
@@ -102,3 +104,9 @@ export const placeTile = (x: number, y: number) =>
 		type: MessageType.PlaceTile,
 		data: { x, y },
 	} as PlaceTile)
+
+export const adminChange = (state: UpdateDeepPartial<GameState>) =>
+	({
+		type: MessageType.AdminChange,
+		data: state,
+	} as AdminChange)

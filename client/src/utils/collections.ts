@@ -60,15 +60,15 @@ export const ucFirst = (value: string) =>
 	value.charAt(0).toUpperCase() + value.slice(1)
 
 /**
- * Generates array containing numbers between start and end (including).
+ * Generates array containing numbers between start and end (excluding).
  * @param start beginning number
- * @param end ending number (including)
+ * @param end ending number (excluding)
  * @param step range step, defaults to 1
  */
 export function range(start: number, end: number, step = 1) {
 	const result = [] as number[]
 
-	for (let i = start; i <= end; i += step) {
+	for (let i = start; i < end; i += step) {
 		result.push(i)
 	}
 

@@ -9,6 +9,7 @@ const cell = (c: Partial<GridCell>): GridCell => ({
 	ore: 0,
 	plants: 0,
 	titan: 0,
+	outside: false,
 	...c,
 })
 
@@ -22,18 +23,14 @@ const generateGrid = (
 		const col = [] as GridCell[]
 		for (let y = 0; y < h; y++) {
 			const update = cb(x, y)
-			col.push({
-				x,
-				y,
-				enabled: !!update,
-				type: GridCellType.General,
-				cards: 0,
-				ore: 0,
-				plants: 0,
-				titan: 0,
-				outside: false,
-				...update,
-			})
+			col.push(
+				cell({
+					x,
+					y,
+					enabled: !!update,
+					...update,
+				})
+			)
 		}
 		grid.push(col)
 	}

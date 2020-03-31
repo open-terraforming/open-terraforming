@@ -5,6 +5,7 @@ import { GridCellType, GridCellContent, GridCell } from '@shared/game'
 import { Cell } from './components/Cell'
 import { useApi } from '@/context/ApiContext'
 import { placeTile } from '@shared/actions'
+import { CellOverlay } from './components/CellOverlay'
 
 type Props = {}
 
@@ -13,7 +14,7 @@ const cellPos = (x: number, y: number) => {
 		x += 0.5
 	}
 
-	return `${15 + x * 18},${10 + y * 20 * 0.75}`
+	return { x: 15 + x * 18, y: 10 + y * 20 * 0.75 }
 }
 
 export const GameMap = ({}: Props) => {
@@ -33,13 +34,29 @@ export const GameMap = ({}: Props) => {
 		}
 	}
 
+	const width = ((map?.width || 0) + 0.5) * 18
+	const height = ((map?.height || 0) + 0.5) * 20 * 0.75
+
 	return map ? (
 		<Container>
-			<svg
-				viewBox={`0 0 ${(map.width + 0.5) * 18} ${(map.height + 0.5) *
-					20 *
-					0.75}`}
-			>
+			{map.grid.map(col =>
+				col
+					.filter(c => c.enabled)
+					.map(cell => (
+						<CellOverlay
+							cell={cell}
+							key={`${cell.x},${cell.y}`}
+							pos={{
+								x: (cellPos(cell.x, cell.y).x - 9) / width,
+								y: (cellPos(cell.x, cell.y).y - 10) / height
+							}}
+							width={18 / width}
+							height={20 / height}
+						/>
+					))
+			)}
+
+			<svg viewBox={`0 0 ${width} ${height}`}>
 				<defs>
 					<radialGradient id="Ocean" cx="0.5" cy="0.5" r="0.5">
 						<stop offset="0%" stopColor="rgba(0,0,0,0)" />
@@ -72,9 +89,19 @@ export const GameMap = ({}: Props) => {
 const Container = styled.div`
 	flex-grow: 1;
 	max-width: 800px;
-	margin: 0 auto;
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
+	margin: auto auto;
+	position: relative;
+
+	> svg {
+		position: relative;
+		z-index: 1;
+	}
+`
+
+const Overlay = styled.div`
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
 `

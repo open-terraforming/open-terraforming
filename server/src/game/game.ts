@@ -2,10 +2,18 @@ import { GameState, GameStateValue, PlayerStateValue } from '@shared/game'
 import { Card, CardsLookupApi } from '@shared/cards'
 import { Player } from './player'
 import { MyEvent } from 'src/utils/events'
-import { shuffle } from '@/utils/collections'
+import { shuffle, range, deepExtend } from '@/utils/collections'
 import { defaultMap } from '@shared/map'
+import { Bot } from './bot'
+import { UpdateDeepPartial } from '@shared/index'
+
+export interface GameConfig {
+	bots: number
+}
 
 export class Game {
+	config: GameConfig
+
 	state = {
 		state: GameStateValue.WaitingForPlayers,
 		generation: 1,
@@ -23,6 +31,13 @@ export class Game {
 
 	onStateUpdated = new MyEvent<Readonly<GameState>>()
 
+	constructor(config?: Partial<GameConfig>) {
+		this.config = {
+			bots: 0,
+			...config
+		}
+	}
+
 	get inProgress() {
 		return this.state.state !== GameStateValue.WaitingForPlayers
 	}
@@ -32,6 +47,10 @@ export class Game {
 	}
 
 	add(player: Player) {
+		if (this.players.length === 0) {
+			player.admin = true
+		}
+
 		this.players.push(player)
 		this.state.players.push(player.state)
 		player.onStateChanged.on(this.updated)
@@ -105,15 +124,25 @@ export class Game {
 		return this.players[this.state.currentPlayer]
 	}
 
+	startGame() {
+		if (this.players.length < this.config.bots) {
+			range(0, this.players.length - this.config.bots - 1).forEach(() => {
+				this.add(new Bot(this))
+			})
+		}
+
+		this.players.forEach(p => {
+			p.gameState.state = PlayerStateValue.PickingCorporation
+		})
+		this.state.state = GameStateValue.PickingCorporations
+		this.updated()
+	}
+
 	checkState() {
 		switch (this.state.state) {
 			case GameStateValue.WaitingForPlayers:
 				if (this.players.length > 0 && this.all(PlayerStateValue.Ready)) {
-					this.players.forEach(p => {
-						p.gameState.state = PlayerStateValue.PickingCorporation
-					})
-					this.state.state = GameStateValue.PickingCorporations
-					this.updated()
+					this.startGame()
 				}
 				break
 
@@ -172,5 +201,10 @@ export class Game {
 
 		this.deck = [...Object.values(allCards)]
 		shuffle(this.deck)
+	}
+
+	adminChange(data: UpdateDeepPartial<GameState>) {
+		deepExtend(this.state, data)
+		this.updated()
 	}
 }

@@ -335,7 +335,7 @@ export function placeTile({
 			(conditions && conditions.length > 0
 				? ` (${conditions
 						?.map((c) => PlacementConditionsLookup.get(c).description)
-						.join(',')})`
+						.join(', ')})`
 				: ''),
 		conditions: [
 			condition({

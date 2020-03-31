@@ -88,6 +88,12 @@ export const ApiContextProvider = ({
 
 				if (error) {
 					dispatch(setApiError(error.toString()))
+
+					dispatch(
+						setClientState({
+							initialized: false
+						})
+					)
 				} else {
 					localStorage['session'] = session
 					dispatch(setGamePlayer(id as number))
