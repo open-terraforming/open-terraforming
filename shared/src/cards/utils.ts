@@ -24,9 +24,10 @@ import {
 	GridCell,
 	GridCellSpecial,
 } from '../game'
-import { CardsLookup, CardsLookupApi } from '.'
-import { withUnits } from '../units'
+import { CardsLookupApi } from './lookup'
+import { withUnits, progressResToStr } from '../units'
 import { PlacementCode, PlacementConditionsLookup } from '../placements'
+import { allCells, adjacentCells } from '../utils'
 
 export const vpCb = (cb: CardVictoryPointsCallback) => cb
 
@@ -85,27 +86,6 @@ export const countGridContent = (
 	)
 }
 
-export const allCells = (game: GameState) => {
-	return game.map.grid.reduce((acc, c) => [...acc, ...c], [] as GridCell[])
-}
-
-export const adjacentCells = (game: GameState, x: number, y: number) => {
-	const g = game.map.grid
-	const w = game.map.width
-	const h = game.map.height
-
-	return [
-		...(y > 0
-			? [x > 0 && g[x - 1][y - 1], g[x][y - 1], x < w - 1 && g[x + 1][y - 1]]
-			: []),
-		x > 0 && g[x - 1][y],
-		x < w - 1 && g[x + 1][y],
-		...(y < h - 1
-			? [x > 0 && g[x - 1][y + 1], g[x][y + 1], x < w - 1 && g[x + 1][y + 1]]
-			: []),
-	].filter((c) => c && c.enabled) as GridCell[]
-}
-
 export const passiveEffect = (e: CardPassiveEffect) => e
 
 export const effect = <T extends CardEffectArgumentType[]>(
@@ -146,7 +126,7 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 	condition({
 		evaluate: ({ player }) =>
 			player.usedCards
-				.map((c) => CardsLookup[c.code])
+				.map((c) => CardsLookupApi.get(c.code))
 				.filter((c) => c && c.categories.includes(category)).length >= value,
 		description: `Requires ${value} of ${CardCategory[category]} cards`,
 	})
@@ -154,13 +134,13 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 	condition({
 		evaluate: ({ game }) => game[res] >= value,
-		description: `${res} has to be at least ${value}`,
+		description: `${progressResToStr(res)} has to be at least ${value}`,
 	})
 
 export const gameProgressConditionMax = (res: GameProgress, value: number) =>
 	condition({
 		evaluate: ({ game }) => game[res] >= value,
-		description: `${res} has to be at most ${value}`,
+		description: `${progressResToStr(res)} has to be at most ${value}`,
 	})
 
 export const resourceCondition = (res: Resource, value: number) =>
@@ -187,8 +167,8 @@ export const resourceChange = (res: Resource, change: number) =>
 		conditions: change < 0 ? [resourceCondition(res, -change)] : [],
 		description:
 			change > 0
-				? `You'll receive ${change} of ${res}`
-				: `You'll loose ${-change} of ${res}`,
+				? `You'll receive ${withUnits(res, change)}`
+				: `You'll loose ${withUnits(res, -change)}`,
 		type: CardEffectType.Resource,
 		perform: ({ player }) => {
 			player[res] += change
@@ -212,7 +192,7 @@ export const productionChange = (res: Resource, change: number) => {
 		description:
 			change > 0
 				? `Your production of ${res} will increase by ${change}`
-				: `Your production of ${res} will decrease by ${change}`,
+				: `Your production of ${res} will decrease by ${-change}`,
 		perform: ({ player }) => {
 			player[prod] += change
 		},
@@ -259,7 +239,7 @@ export const playerResourceChange = (
 		description:
 			change > 0
 				? `Give up to ${withUnits(res, change)} to any player`
-				: `Remove up to ${withUnits(res, change)} from any player`,
+				: `Remove up to ${withUnits(res, -change)} from any player`,
 		perform: ({ game }, playerId: number, amount: number) => {
 			const actualChange = optional
 				? change
@@ -282,13 +262,13 @@ export const playerProductionChange = (res: Resource, change: number) => {
 					change < 0
 						? [productionCondition(res, -change) as PlayerCondition]
 						: [],
-				description: `Decrease ${res} production by ${change} of`,
+				description: `Decrease ${res} production by ${-change} of`,
 			}),
 		],
 		description:
 			change > 0
 				? `Increase ${res} production of any player by ${change}`
-				: `Decrease ${res} production of any player by ${change}`,
+				: `Decrease ${res} production of any player by ${-change}`,
 		perform: ({ game }, playerId: number) => {
 			playerId >= 0 && (gamePlayer(game, playerId)[prod] += change)
 		},
@@ -300,7 +280,7 @@ export const gameProcessChange = (res: GameProgress, change: number) => {
 		description:
 			change > 0
 				? `Increase ${res} by ${change} step`
-				: `Decrease ${res} by ${change} step`,
+				: `Decrease ${res} by ${-change} step`,
 		perform: ({ game }) => {
 			game[res] += change
 		},
@@ -391,7 +371,7 @@ export const vpsForCardResources = (res: CardResource, vpPerUnit: number) =>
 	vpCb({
 		description: `${vpPerUnit >= 1 ? vpPerUnit : 1} VP per ${
 			vpPerUnit >= 1 ? 1 : Math.ceil(1 / vpPerUnit)
-		} ${res}`,
+		} ${res} on this card`,
 		compute: ({ card }) => {
 			return Math.floor(card[res] * vpPerUnit)
 		},
@@ -519,6 +499,10 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 	effect({
 		args: amount < 0 ? [cardArg([cardResourceCondition(res, amount)])] : [],
 		conditions: [],
+		description:
+			amount < 0
+				? `Remove ${-amount} ${res} from any other card`
+				: `Add ${amount} ${res} to any other card`,
 		perform: ({ player }, [cardCode, cardIndex]: [string, number]) => {
 			const card = CardsLookupApi.get(cardCode)
 			const cardState = player.usedCards[cardIndex]
@@ -561,7 +545,10 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 			amount < 0
 				? [playerCardArg([cardResourceCondition(res, -amount)], -amount)]
 				: [],
-		conditions: [],
+		description:
+			amount < 0
+				? `Remove ${-amount} ${res} from any other player card`
+				: `Add ${amount} ${res} to any other player card`,
 		perform: (
 			{ game },
 			[playerId, cardCode, cardIndex]: [number, string, number]
@@ -594,7 +581,7 @@ export const productionChangeForTags = (
 ) => {
 	const prod = resourceProduction[res]
 	return effect({
-		description: `Increase your ${res} production by ${change} for each ${CardCategory[tag]} card`,
+		description: `Increase your ${res} production by ${change} for each ${CardCategory[tag]} card you have`,
 		perform: ({ player }) => {
 			player[prod] += change
 		},

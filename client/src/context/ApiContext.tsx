@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useContext } from 'react'
 import { Client } from '@/api/api'
 import { setApiError, setApiState } from '@/store/modules/api'
 import {
@@ -117,4 +117,9 @@ export const ApiContextProvider = ({
 	}
 
 	return <ApiContext.Provider value={client}>{children}</ApiContext.Provider>
+}
+
+export const useApi = () => {
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	return useContext(ApiContext)!
 }

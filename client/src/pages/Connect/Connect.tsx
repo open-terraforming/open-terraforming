@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { useApi, useAppStore } from '@/utils/hooks'
+import { useAppStore } from '@/utils/hooks'
 import { Button } from '@/components'
 import { handshakeRequest, VERSION } from '@shared/index'
 import { Container } from '@/components/Container'
 import { useDispatch } from 'react-redux'
 import { setApiState } from '@/store/modules/api'
+import { useApi } from '@/context/ApiContext'
 
 export const Connect = () => {
 	const api = useApi()

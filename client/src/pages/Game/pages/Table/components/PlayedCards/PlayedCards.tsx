@@ -1,12 +1,13 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { Modal } from '@/components/Modal/Modal'
-import { useAppStore, useApi } from '@/utils/hooks'
-import { CardsLookup, Card, CardType } from '@shared/cards'
+import { useAppStore } from '@/utils/hooks'
+import { CardsLookupApi, Card, CardType } from '@shared/cards'
 import { CardView } from '../CardView/CardView'
 import { Button } from '@/components'
 import { buyCard, UsedCardState } from '@shared/index'
 import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
 import styled from 'styled-components'
+import { useApi } from '@/context/ApiContext'
 
 type CardInfo = {
 	card: Card
@@ -30,7 +31,7 @@ export const PlayedCards = ({
 	)?.map(
 		(c, i) =>
 			({
-				card: CardsLookup[c.code],
+				card: CardsLookupApi.get(c.code),
 				state: c,
 				index: i
 			} as CardInfo)

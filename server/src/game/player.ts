@@ -12,13 +12,11 @@ import { v4 as uuidv4 } from 'uuid'
 import { Corporations } from '@shared/corporations'
 import { CARD_PRICE } from '@shared/constants'
 import {
-	CardsLookup,
 	CardCondition,
 	CardCategory,
 	CardEffectArgumentType,
 	CardEffectTarget,
 	CardsLookupApi,
-	CardCallbackContext,
 	Card
 } from '@shared/cards'
 import { range } from '@/utils/collections'
@@ -170,7 +168,6 @@ export class Player {
 		}
 
 		this.gameState.corporation = code
-		this.gameState.state = PlayerStateValue.PickingCards
 
 		this.gameState.money = corp.startingMoney
 		this.gameState.ore = corp.startingOre
@@ -179,7 +176,19 @@ export class Player {
 		this.gameState.heat = corp.startingHeat
 		this.gameState.energy = corp.startingEnergy
 
+		range(0, corp.startingCards + 1).forEach(() => {
+			this.gameState.cards.push(this.game.nextCard().code)
+		})
+
+		if (corp.pickingCards) {
+			this.giveCards(10)
+			this.gameState.state = PlayerStateValue.PickingCards
+		} else {
+			this.gameState.state = PlayerStateValue.WaitingForTurn
+		}
+
 		this.updated()
+		this.game.checkState()
 	}
 
 	pickCards(cards: number[]) {
@@ -214,7 +223,20 @@ export class Player {
 		this.gameState.cardsPickFree = false
 		this.gameState.cardsPickLimit = 0
 
-		this.gameState.state = PlayerStateValue.WaitingForTurn
+		switch (this.game.state.state) {
+			case GameStateValue.PickingCorporations:
+			case GameStateValue.PickingCards: {
+				this.gameState.state = PlayerStateValue.WaitingForTurn
+				break
+			}
+
+			case GameStateValue.GenerationInProgress: {
+				this.gameState.state = PlayerStateValue.Playing
+				this.actionPlayed()
+				break
+			}
+		}
+
 		this.updated()
 		this.game.checkState()
 	}
@@ -236,7 +258,7 @@ export class Player {
 			)
 		}
 
-		const card = CardsLookup[cardCode]
+		const card = CardsLookupApi.get(cardCode)
 
 		if (!card) {
 			throw new Error(`Unknown card ${cardCode}`)
@@ -295,11 +317,13 @@ export class Player {
 			...card.playEffects.reduce(
 				(acc, p, ei) => [
 					...acc,
-					...p.conditions.filter(c => !c.evaluate(ctx, ...playArguments[ei]))
+					...p.conditions.filter(
+						c => !c.evaluate(ctx, ...(playArguments[ei] || []))
+					)
 				],
 				[] as CardCondition[]
 			)
-		].filter(c => !c.evaluate(ctx))
+		]
 
 		if (errorConditions.length > 0) {
 			throw new Error(
@@ -343,6 +367,13 @@ export class Player {
 		}
 
 		this.updated()
+	}
+
+	giveCards(count: number) {
+		this.gameState.cardsPick = []
+		for (let i = 0; i < count; i++) {
+			this.gameState.cardsPick.push(this.game.nextCard().code)
+		}
 	}
 
 	placeTile(x: number, y: number) {

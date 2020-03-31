@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { Modal } from '@/components/Modal/Modal'
 import styled from 'styled-components'
-import { useAppStore, useApi } from '@/utils/hooks'
-import { Cards } from '@shared/cards'
+import { useAppStore } from '@/utils/hooks'
+import { CardsLookupApi } from '@shared/cards'
 import { CARD_PRICE } from '@shared/constants'
 import { CardView } from '../CardView/CardView'
 import { Button } from '@/components'
 import { pickCards } from '@shared/index'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
+import { useApi } from '@/context/ApiContext'
 
 export const CardPicker = () => {
 	const api = useApi()
@@ -16,7 +17,7 @@ export const CardPicker = () => {
 
 	const cardsToPick = useAppStore(
 		state => state.game.player?.gameState.cardsPick
-	)?.map(c => Cards.find(i => i.code === c))
+	)?.map(c => CardsLookupApi.get(c))
 
 	const [selected, setSelected] = useState([] as number[])
 

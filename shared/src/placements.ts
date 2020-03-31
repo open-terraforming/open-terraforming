@@ -8,7 +8,7 @@ import {
 	GridCellSpecial,
 	PlayerState,
 } from './game'
-import { adjacentCells } from './cards/utils'
+import { adjacentCells } from './utils'
 
 const placement = (c: PlacementCondition) => c
 
@@ -57,7 +57,7 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 	}),
 	placement({
 		code: PlacementCode.NoOceans,
-		description: '',
+		description: 'outside oceans',
 		evaluate: ({ cell }) => cell.type !== GridCellType.Ocean,
 	}),
 	placement({
@@ -68,13 +68,13 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 	}),
 	placement({
 		code: PlacementCode.NextToOwn,
-		description: '',
+		description: 'next to your tile',
 		evaluate: ({ cell, game, playerId }) =>
 			!!adjacentCells(game, cell.x, cell.y).find((c) => c.ownerId === playerId),
 	}),
 	placement({
 		code: PlacementCode.TwoCities,
-		description: '',
+		description: 'next to at least two cities',
 		evaluate: ({ cell, game }) =>
 			adjacentCells(game, cell.x, cell.y).filter(
 				(c) => c.content === GridCellContent.City
@@ -82,7 +82,7 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 	}),
 	placement({
 		code: PlacementCode.OneCity,
-		description: '',
+		description: 'next to city',
 		evaluate: ({ cell, game }) =>
 			adjacentCells(game, cell.x, cell.y).filter(
 				(c) => c.content === GridCellContent.City
@@ -90,7 +90,7 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 	}),
 	placement({
 		code: PlacementCode.OneForest,
-		description: '',
+		description: 'next to forest',
 		evaluate: ({ cell, game }) =>
 			adjacentCells(game, cell.x, cell.y).filter(
 				(c) => c.content === GridCellContent.Forest

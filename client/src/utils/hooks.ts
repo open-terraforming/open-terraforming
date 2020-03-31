@@ -1,22 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-	useContext,
 	useState,
 	useEffect,
 	EffectCallback,
 	DependencyList,
 	useRef,
-	useCallback,
+	useCallback
 } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { StoreState } from '@/store'
 import { AppDispatch } from '@/store/utils'
-import { ApiContext } from '@/context/ApiContext'
-
-export const useApi = () => {
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	return useContext(ApiContext)!
-}
 
 export const useAppStore = <T>(selector: (state: StoreState) => T) => {
 	return useSelector(selector)
@@ -134,7 +127,7 @@ export const useEvent = <E extends Event>(
 	callbackRef.current = callback
 
 	// Since we use ref, .current will always be correct callback
-	const listener = useCallback((e) => {
+	const listener = useCallback(e => {
 		if (callbackRef.current) {
 			callbackRef.current(e as E)
 		}

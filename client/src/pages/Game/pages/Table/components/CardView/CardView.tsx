@@ -21,12 +21,22 @@ export const CardView = ({
 		]
 
 		return [
-			...(card.victoryPoints > 0
-				? [`+ ${card.victoryPoints} VICTORY POINTS`]
-				: []),
 			card.description,
 			...conditions.map(c => c.description),
-			...card.playEffects.map(e => e.description)
+			...(card.actionEffects.length
+				? [
+						`Action: [[ ${card.actionEffects
+							.map(e => e.description)
+							.join(' AND ')} ]]`
+				  ]
+				: []),
+			...card.playEffects.map(e => e.description),
+			...(card.victoryPointsCallback
+				? [card.victoryPointsCallback.description]
+				: []),
+			...(card.victoryPoints > 0
+				? [`+ ${card.victoryPoints} VICTORY POINTS`]
+				: [])
 		]
 	}, [card])
 
@@ -55,10 +65,10 @@ export const CardView = ({
 }
 
 const typeToColor = {
-	[CardType.Action]: '#FF6868',
+	[CardType.Action]: '#0F87E2',
 	[CardType.Building]: '#139B2F',
-	[CardType.Effect]: '#0F87E2',
-	[CardType.Event]: '#0F87E2'
+	[CardType.Effect]: '#0F87E2 ',
+	[CardType.Event]: '#FF6868'
 } as const
 
 const Container = styled.div<{ selected: boolean }>`

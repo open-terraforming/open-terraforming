@@ -26,7 +26,7 @@ import {
 	ownedCellTypeCondition,
 	vpsForTiles,
 } from './utils'
-import { CardType, CardCategory, Card } from '.'
+import { CardType, CardCategory, Card } from './types'
 import {
 	convertTopCardToCardResource,
 	pickTopCards,
@@ -64,7 +64,7 @@ import {
 import { GridCellContent, GridCellOther, GridCellSpecial } from '../game'
 import { PlacementCode, OtherPlacement, CityPlacement } from '../placements'
 
-export const Cards: Card[] = [
+export const BuiltCards: Card[] = [
 	card({
 		code: 'colonizer_training_camp',
 		title: 'COLONIZER TRAINING CAMP',
@@ -122,7 +122,6 @@ export const Cards: Card[] = [
 		description: '',
 		cost: 3,
 		categories: [CardCategory.Science],
-		victoryPoints: 3,
 		conditions: [gameProgressConditionMax('oxygen', 6)],
 		playEffects: [
 			convertTopCardToCardResource(CardCategory.Microbe, 'science', 1),
@@ -172,7 +171,7 @@ export const Cards: Card[] = [
 		playEffects: [
 			gameProcessChange('temperature', 1),
 			resourceChange('titan', 2),
-			playerResourceChange('plants', 3),
+			playerResourceChange('plants', -3),
 		],
 	}),
 	card({
@@ -185,7 +184,7 @@ export const Cards: Card[] = [
 		playEffects: [
 			placeTile({ type: GridCellContent.Ocean }),
 			gameProcessChange('temperature', 1),
-			playerResourceChange('plants', 3),
+			playerResourceChange('plants', -3),
 		],
 	}),
 	card({
@@ -198,7 +197,7 @@ export const Cards: Card[] = [
 		playEffects: [
 			gameProcessChange('temperature', 2),
 			resourceChange('titan', 4),
-			playerResourceChange('plants', 4),
+			playerResourceChange('plants', -4),
 		],
 	}),
 	card({

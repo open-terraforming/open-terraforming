@@ -1,5 +1,5 @@
 import { GameState, GameStateValue, PlayerStateValue } from '@shared/game'
-import { Card, Cards, CardsLookupApi } from '@shared/cards'
+import { Card, CardsLookupApi } from '@shared/cards'
 import { Player } from './player'
 import { MyEvent } from 'src/utils/events'
 import { shuffle } from '@/utils/collections'
@@ -109,7 +109,6 @@ export class Game {
 		switch (this.state.state) {
 			case GameStateValue.WaitingForPlayers:
 				if (this.players.length > 0 && this.all(PlayerStateValue.Ready)) {
-					this.giveCards(10)
 					this.players.forEach(p => {
 						p.gameState.state = PlayerStateValue.PickingCorporation
 					})
@@ -127,15 +126,6 @@ export class Game {
 				}
 				break
 		}
-	}
-
-	giveCards(count: number) {
-		this.players.forEach(p => {
-			p.gameState.cardsPick = []
-			for (let i = 0; i < count; i++) {
-				p.gameState.cardsPick.push(this.nextCard().code)
-			}
-		})
 	}
 
 	nextPlayer() {
@@ -156,9 +146,9 @@ export class Game {
 		this.players.forEach(p => {
 			p.endGeneration()
 			p.gameState.state = PlayerStateValue.PickingCards
+			p.giveCards(4)
 		})
 
-		this.giveCards(4)
 		this.state.state = GameStateValue.PickingCards
 
 		this.state.generation++
@@ -175,7 +165,12 @@ export class Game {
 	}
 
 	shuffleCards() {
-		this.deck = [...Cards]
+		const allCards = CardsLookupApi.data()
+		if (!allCards) {
+			throw new Error('No cards ready')
+		}
+
+		this.deck = [...Object.values(allCards)]
 		shuffle(this.deck)
 	}
 }

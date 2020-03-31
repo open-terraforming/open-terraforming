@@ -8,6 +8,9 @@ export interface Corporation {
 	startingHeat: number
 	startingPlants: number
 	startingEnergy: number
+
+	pickingCards: boolean
+	startingCards: number
 }
 
 const corp = (c: Corporation) => c
@@ -22,6 +25,8 @@ export const Corporations = [
 		startingOre: 0,
 		startingPlants: 0,
 		startingTitan: 0,
+		pickingCards: false,
+		startingCards: 10,
 	}),
 ]
 

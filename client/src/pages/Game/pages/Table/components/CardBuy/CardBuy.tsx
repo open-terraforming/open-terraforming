@@ -2,18 +2,18 @@ import React, { useState } from 'react'
 import { Modal } from '@/components/Modal/Modal'
 import { CardView } from '../CardView/CardView'
 import {
-	Card,
 	CardCategory,
 	CardEffectArgumentType,
-	CardsLookup
+	CardsLookupApi
 } from '@shared/cards'
-import { useAppStore, useApi } from '@/utils/hooks'
+import { useAppStore } from '@/utils/hooks'
 import { Input } from '@/components/Input/Input'
 import { Button } from '@/components'
 import { buyCard } from '@shared/index'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { ArgsPicker } from './components/ArgsPicker'
 import styled from 'styled-components'
+import { useApi } from '@/context/ApiContext'
 
 type Props = {
 	index: number
@@ -24,7 +24,7 @@ export const CardBuy = ({ index, onClose }: Props) => {
 	const api = useApi()
 	const state = useAppStore(state => state.game.player?.gameState)
 
-	const card = CardsLookup[state?.cards[index] as string] as Card
+	const card = CardsLookupApi.get(state?.cards[index] as string)
 
 	const [ore, setOre] = useState(0)
 	const [titan, setTitan] = useState(0)

@@ -1,9 +1,10 @@
 import React from 'react'
 import { Container } from '@/components/Container'
-import { useAppStore, useApi } from '@/utils/hooks'
+import { useAppStore } from '@/utils/hooks'
 import { Player } from './components/Player'
 import { PlayerStateValue, playerReady } from '@shared/index'
 import { Button } from '@/components'
+import { useApi } from '@/context/ApiContext'
 
 export const Lobby = () => {
 	const api = useApi()

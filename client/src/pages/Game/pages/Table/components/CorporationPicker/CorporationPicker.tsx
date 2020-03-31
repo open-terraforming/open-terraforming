@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Modal } from '@/components/Modal/Modal'
 import styled from 'styled-components'
-import { useApi } from '@/utils/hooks'
+import { useApi } from '@/context/ApiContext'
 import { Button } from '@/components'
 import { pickCorporation } from '@shared/index'
 import { Corporations, Corporation } from '@shared/corporations'

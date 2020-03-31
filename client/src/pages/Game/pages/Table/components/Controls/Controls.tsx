@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { useAppStore, useApi, useAppDispatch } from '@/utils/hooks'
+import { useAppStore, useAppDispatch } from '@/utils/hooks'
 import { Resources } from './components/Resources'
 import { Button } from '@/components'
 import { Corporations } from '@shared/corporations'
@@ -10,6 +10,7 @@ import { Hand } from '../Hand/Hand'
 import { PlayedCards } from '../PlayedCards/PlayedCards'
 import { setTableState } from '@/store/modules/table'
 import { CardBuy } from '../CardBuy/CardBuy'
+import { useApi } from '@/context/ApiContext'
 
 export const Controls = () => {
 	const api = useApi()

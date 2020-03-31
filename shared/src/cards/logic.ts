@@ -22,7 +22,7 @@ import {
 	cellByCoords,
 	cardArg,
 } from './utils'
-import { CardsLookupApi } from '.'
+import { CardsLookupApi } from './lookup'
 import {
 	PlayerStateValue,
 	GridCellContent,

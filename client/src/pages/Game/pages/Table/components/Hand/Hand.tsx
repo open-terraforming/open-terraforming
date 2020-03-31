@@ -1,12 +1,13 @@
 import React, { useState, useMemo } from 'react'
 import { Modal } from '@/components/Modal/Modal'
-import { useAppStore, useApi, useAppDispatch } from '@/utils/hooks'
-import { CardsLookup, CardCategory } from '@shared/cards'
+import { useAppStore, useAppDispatch } from '@/utils/hooks'
+import { CardsLookupApi, CardCategory } from '@shared/cards'
 import { CardView } from '../CardView/CardView'
 import { Button } from '@/components'
 import { buyCard } from '@shared/index'
 import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
 import { setTableState } from '@/store/modules/table'
+import { useApi } from '@/context/ApiContext'
 
 export const Hand = ({
 	onClose,
@@ -20,9 +21,9 @@ export const Hand = ({
 	const player = useAppStore(state => state.game.player)
 	const state = player?.gameState
 
-	const cards = useAppStore(state => state.game.player?.gameState.cards)?.map(
-		c => CardsLookup[c]
-	)
+	const cards = useAppStore(
+		state => state.game.player?.gameState.cards
+	)?.map(c => CardsLookupApi.get(c))
 
 	const [selected, setSelected] = useState(undefined as number | undefined)
 	const [loading, setLoading] = useState(false)
