@@ -1,28 +1,37 @@
 import React, { useMemo } from 'react'
-import { Card, CardType, CardCategory, CardCondition } from '@shared/cards'
+import {
+	Card,
+	CardType,
+	CardCategory,
+	CardCondition,
+	CardCallbackContext
+} from '@shared/cards'
 import styled, { css } from 'styled-components'
+import { Condition } from './components/Condition'
+import { useAppStore } from '@/utils/hooks'
+import { UsedCardState } from '@shared/index'
+import { PlayEffect } from './components/PlayEffect'
 
 export const CardView = ({
 	card,
 	selected = false,
+	state,
+	cardIndex,
 	onClick
 }: {
 	card: Card
+	state?: UsedCardState
+	cardIndex?: number
 	selected?: boolean
 	onClick?: () => void
 }) => {
-	const description = useMemo(() => {
-		const conditions = [
-			...card.conditions,
-			...card.playEffects.reduce(
-				(acc, e) => [...acc, ...e.conditions],
-				[] as CardCondition[]
-			)
-		]
+	const game = useAppStore(state => state.game.state)
+	const player = useAppStore(state => state.game.player)?.gameState
+	const playerId = useAppStore(state => state.game.playerId)
 
+	const description = useMemo(() => {
 		return [
 			card.description,
-			...conditions.map(c => c.description),
 			...(card.actionEffects.length
 				? [
 						`Action: [[ ${card.actionEffects
@@ -30,7 +39,6 @@ export const CardView = ({
 							.join(' AND ')} ]]`
 				  ]
 				: []),
-			...card.playEffects.map(e => e.description),
 			...(card.victoryPointsCallback
 				? [card.victoryPointsCallback.description]
 				: []),
@@ -39,6 +47,29 @@ export const CardView = ({
 				: [])
 		]
 	}, [card])
+
+	if (!player || !game || playerId === undefined) {
+		return
+	}
+
+	const condContext = useMemo(
+		() =>
+			({
+				card: state || {
+					code: card.code,
+					played: false,
+					animals: 0,
+					fighters: 0,
+					microbes: 0,
+					science: 0
+				},
+				cardIndex,
+				game,
+				player,
+				playerId
+			} as CardCallbackContext),
+		[state, card, cardIndex, game, playerId]
+	)
 
 	return (
 		<Container selected={selected} onClick={onClick}>
@@ -55,6 +86,12 @@ export const CardView = ({
 				</Head>
 				<Title>{card.title}</Title>
 				<Description>
+					{card.conditions.map((c, i) => (
+						<Condition key={i} cond={c} ctx={condContext} />
+					))}
+					{card.playEffects.map((e, i) => (
+						<PlayEffect key={i} effect={e} ctx={condContext} />
+					))}
 					{description.map((d, i) => (
 						<div key={i}>{d}</div>
 					))}

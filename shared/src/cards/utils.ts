@@ -151,13 +151,13 @@ export const resourceCondition = (res: Resource, value: number) =>
 
 export const cellTypeCondition = (type: GridCellContent, amount: number) =>
 	condition({
-		description: `Requires at least ${amount} of ${type} to be placed`,
+		description: `Requires at least ${amount} ${GridCellContent[type]} to be placed by anybody`,
 		evaluate: ({ game }) => countGridContent(game, type) >= amount,
 	})
 
 export const ownedCellTypeCondition = (type: GridCellContent, amount: number) =>
 	condition({
-		description: `Requires at least ${amount} of ${type} to be placed`,
+		description: `Requires at least ${amount} ${GridCellContent[type]} to be placed by you`,
 		evaluate: ({ game, playerId }) =>
 			countGridContent(game, type, playerId) >= amount,
 	})
@@ -219,22 +219,17 @@ export const playerResourceChange = (
 						  ]
 						: [],
 			}),
-			effectArg({
-				description: `remove`,
-				type: CardEffectTarget.Resource,
-				maxAmount: Math.abs(change),
-				resource: res,
-				optional,
-				playerConditions:
-					change < 0
-						? [
-								resourceCondition(
-									res,
-									optional ? 1 : -change
-								) as PlayerCondition,
-						  ]
-						: [],
-			}),
+			...(optional
+				? [
+						effectArg({
+							description: `remove`,
+							type: CardEffectTarget.Resource,
+							maxAmount: Math.abs(change),
+							resource: res,
+							optional,
+						}),
+				  ]
+				: []),
 		],
 		description:
 			change > 0
@@ -263,6 +258,14 @@ export const playerProductionChange = (res: Resource, change: number) => {
 						? [productionCondition(res, -change) as PlayerCondition]
 						: [],
 				description: `Decrease ${res} production by ${-change} of`,
+			}),
+		],
+		conditions: [
+			condition({
+				evaluate: ({ game, playerId }) =>
+					!!game.players.find(
+						(p) => p.id !== playerId && p.gameState[prod] >= -change
+					),
 			}),
 		],
 		description:

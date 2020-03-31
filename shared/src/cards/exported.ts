@@ -785,6 +785,7 @@ export const BuiltCards: Card[] = [
 		cost: 15,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 1,
+		playEffects: [productionChange('titan', 1)],
 	}),
 	card({
 		code: 'beam_from_a_thorium_asteroid',

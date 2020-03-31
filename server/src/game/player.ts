@@ -341,6 +341,10 @@ export class Player {
 		card.playEffects.forEach((e, i) => {
 			// Run dynamic arguments
 			e.args.forEach((a, ai) => {
+				if (!playArguments[i]) {
+					playArguments[i] = []
+				}
+
 				if (a.type === CardEffectTarget.DrawnCards) {
 					playArguments[i][ai] = range(0, (a.drawnCards || 1) - 1).map(
 						() => this.game.nextCard().code
@@ -394,7 +398,7 @@ export class Player {
 		}
 
 		if (
-			!cell.content ||
+			cell.content ||
 			(cell.claimantId !== undefined && cell.claimantId !== this.id)
 		) {
 			throw new Error(`Cell is already owned by someone else`)

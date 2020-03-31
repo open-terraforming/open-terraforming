@@ -41,6 +41,7 @@ const generateGrid = (
 
 const preset: Record<number, Record<number, Partial<GridCell>>> = {
 	0: {
+		0: { special: GridCellSpecial.PhobosSpaceHaven },
 		2: { ore: 2 },
 		3: { ore: 2 },
 		4: {},
@@ -117,6 +118,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		6: { titan: 1 },
 	},
 	8: {
+		0: { special: GridCellSpecial.GanymedeColony },
 		2: { ore: 1 },
 		3: { ore: 2 },
 		4: {},
@@ -131,18 +133,7 @@ export const defaultMap = () => {
 		width: 9,
 		height: 9,
 		grid,
-		special: [
-			cell({
-				x: -1,
-				y: -1,
-				special: GridCellSpecial.PhobosSpaceHaven,
-			}),
-			cell({
-				x: -2,
-				y: -1,
-				special: GridCellSpecial.GanymedeColony,
-			}),
-		],
+		special: [],
 	}
 
 	return map

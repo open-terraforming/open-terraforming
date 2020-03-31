@@ -1,7 +1,10 @@
 import React from 'react'
 import { useAppStore } from '@/utils/hooks'
 import styled, { css } from 'styled-components'
-import { GridCellType, GridCellContent } from '@shared/game'
+import { GridCellType, GridCellContent, GridCell } from '@shared/game'
+import { Cell } from './components/Cell'
+import { useApi } from '@/context/ApiContext'
+import { placeTile } from '@shared/actions'
 
 type Props = {}
 
@@ -14,7 +17,21 @@ const cellPos = (x: number, y: number) => {
 }
 
 export const GameMap = ({}: Props) => {
+	const api = useApi()
 	const map = useAppStore(state => state.game.state?.map)
+
+	const placingList = useAppStore(
+		state => state.game.player?.gameState.placingTile
+	)
+
+	const placing =
+		placingList && placingList.length > 0 ? placingList[0] : undefined
+
+	const handleCellClick = (cell: GridCell) => {
+		if (placing) {
+			api.send(placeTile(cell.x, cell.y))
+		}
+	}
 
 	return map ? (
 		<Container>
@@ -35,19 +52,13 @@ export const GameMap = ({}: Props) => {
 						col
 							.filter(c => c.enabled)
 							.map(cell => (
-								<StyledHex
-									gridType={cell.type}
-									gridContent={cell.content}
+								<Cell
+									cell={cell}
+									placing={placing}
 									key={`${cell.x},${cell.y}`}
-									transform={`translate(${cellPos(cell.x, cell.y)})`}
-								>
-									<polygon
-										stroke="#fff"
-										fill="transparent"
-										strokeWidth="0.5"
-										points="-9,5 -9,-5 0,-10 9,-5 9,5 0,10"
-									/>
-								</StyledHex>
+									pos={cellPos(cell.x, cell.y)}
+									onClick={() => handleCellClick(cell)}
+								/>
 							))
 					)}
 				</g>
@@ -64,19 +75,4 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-`
-
-const StyledHex = styled.g<{
-	gridType: GridCellType
-	gridContent?: GridCellContent
-}>`
-	polygon {
-		${props =>
-			props.gridType === GridCellType.Ocean &&
-			css`
-				fill: ${props.gridContent === GridCellContent.Ocean
-					? 'rgba(128,128,255,0.9)'
-					: 'url(#Ocean)'};
-			`}
-	}
 `
