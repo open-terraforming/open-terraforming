@@ -191,17 +191,29 @@ export class Player {
 			throw new Error('Invalid list of cards to pick')
 		}
 
-		if (cards.length * CARD_PRICE > this.gameState.money) {
-			throw new Error("You don't have money for that")
+		if (this.gameState.cardsPickLimit > 0) {
+			if (cards.length !== this.gameState.cardsPickLimit) {
+				throw new Error(`You have to pick ${cards.length} cards`)
+			}
 		}
 
-		this.gameState.money -= cards.length * CARD_PRICE
+		if (!this.gameState.cardsPickFree) {
+			if (cards.length * CARD_PRICE > this.gameState.money) {
+				throw new Error("You don't have money for that")
+			}
+
+			this.gameState.money -= cards.length * CARD_PRICE
+		}
+
 		this.gameState.cards = [
 			...this.gameState.cards,
 			...cards.map(c => this.gameState.cardsPick[c])
 		]
 
 		this.gameState.cardsPick = []
+		this.gameState.cardsPickFree = false
+		this.gameState.cardsPickLimit = 0
+
 		this.gameState.state = PlayerStateValue.WaitingForTurn
 		this.updated()
 		this.game.checkState()
