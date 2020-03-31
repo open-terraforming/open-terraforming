@@ -24,7 +24,6 @@ export class Server {
 
 		this.socket.on('connection', s => {
 			const client = new Client(this.game, s)
-			client.player.gameState.cards.push('artificial_lake')
 			client.onDisconnected.on(() => {
 				this.clients = this.clients.filter(i => i !== client)
 			})

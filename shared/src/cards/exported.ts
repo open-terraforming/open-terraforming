@@ -315,7 +315,7 @@ export const BuiltCards: Card[] = [
 			cardPriceChange(-1),
 			placeTile({
 				type: GridCellContent.City,
-				conditions: [PlacementCode.Isolated],
+				conditions: [PlacementCode.NoOceans, PlacementCode.Isolated],
 			}),
 		],
 	}),

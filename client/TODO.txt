@@ -7,3 +7,6 @@ PLACE TILE THAT'S NEXT TO SOMETHING
 
 OTHER TODO:
  - effect choice without player choice (just choose the best)?
+
+SERVER:
+ - player order is wrong

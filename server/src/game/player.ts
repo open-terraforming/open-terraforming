@@ -454,6 +454,14 @@ export class Player {
 		cell.other = pendingTile.other
 		cell.ownerCard = pendingTile.ownerCard
 
+		this.gameState.ore += cell.ore
+		this.gameState.titan += cell.titan
+		this.gameState.plants += cell.plants
+
+		range(0, cell.cards).forEach(() => {
+			this.gameState.cards.push(this.game.nextCard().code)
+		})
+
 		if (pendingTile.type !== GridCellContent.Ocean) {
 			cell.ownerId = this.state.id
 		}

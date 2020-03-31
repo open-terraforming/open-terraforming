@@ -126,7 +126,7 @@ export class Game {
 
 	startGame() {
 		if (this.players.length < this.config.bots) {
-			range(0, this.players.length - this.config.bots - 1).forEach(() => {
+			range(0, this.config.bots - this.players.length).forEach(() => {
 				this.add(new Bot(this))
 			})
 		}
