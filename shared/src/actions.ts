@@ -12,6 +12,7 @@ import {
 	SellCard,
 	PlayCard,
 	PlayerPass,
+	PlaceTile,
 } from './messages'
 import { GameState } from './game'
 import { CardEffectArgumentType } from './cards'
@@ -95,3 +96,9 @@ export const playCard = (
 		type: MessageType.PlayCard,
 		data: { card, index, args },
 	} as PlayCard)
+
+export const placeTile = (x: number, y: number) =>
+	({
+		type: MessageType.PlaceTile,
+		data: { x, y },
+	} as PlaceTile)

@@ -1,5 +1,5 @@
 import { GameState, GameStateValue, PlayerStateValue } from '@shared/game'
-import { Card, Cards } from '@shared/cards'
+import { Card, Cards, CardsLookupApi } from '@shared/cards'
 import { Player } from './player'
 import { MyEvent } from 'src/utils/events'
 import { shuffle } from '@/utils/collections'
@@ -35,6 +35,58 @@ export class Game {
 		this.players.push(player)
 		this.state.players.push(player.state)
 		player.onStateChanged.on(this.updated)
+
+		player.onCardPlayed.on(
+			({ player: playedBy, card, cardIndex: playedCardIndex }) => {
+				this.players.forEach(player => {
+					player.gameState.usedCards
+						.map(c => [c, CardsLookupApi.get(c.code)] as const)
+						.forEach(([s, c], cardIndex) => {
+							c.passiveEffects.forEach(
+								e =>
+									e.onCardPlayed &&
+									e.onCardPlayed(
+										{
+											card: s,
+											cardIndex,
+											game: this.state,
+											player: player.gameState,
+											playerId: player.id
+										},
+										card,
+										playedCardIndex,
+										playedBy.state
+									)
+							)
+						})
+				})
+			}
+		)
+
+		player.onTilePlaced.on(({ player: playedBy, cell }) => {
+			this.players.forEach(player => {
+				player.gameState.usedCards
+					.map(c => [c, CardsLookupApi.get(c.code)] as const)
+					.forEach(([s, c], cardIndex) => {
+						c.passiveEffects.forEach(
+							e =>
+								e.onTilePlaced &&
+								e.onTilePlaced(
+									{
+										card: s,
+										cardIndex,
+										game: this.state,
+										player: player.gameState,
+										playerId: player.id
+									},
+									cell,
+									playedBy.state
+								)
+						)
+					})
+			})
+		})
+
 		this.onStateUpdated.emit(this.state)
 	}
 

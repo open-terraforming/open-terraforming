@@ -131,6 +131,10 @@ export class Client {
 						message.data.args
 					)
 				}
+
+				case MessageType.PlaceTile: {
+					return this.player.placeTile(message.data.x, message.data.y)
+				}
 			}
 		} catch (e) {
 			console.error(e)

@@ -148,7 +148,7 @@ export interface CardPassiveEffect {
 	onTilePlaced?: (
 		ctx: CardCallbackContext,
 		cell: GridCell,
-		placedB: PlayerState
+		placedBy: PlayerState
 	) => void
 	onCardPlayed?: (
 		ctx: CardCallbackContext,

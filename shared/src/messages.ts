@@ -22,6 +22,7 @@ export enum MessageType {
 	SponsorCompetition,
 	BuyTitle,
 	PlayerPass,
+	PlaceTile,
 }
 
 export interface HandshakeRequest {
@@ -110,6 +111,14 @@ export interface PlayerPass {
 	}
 }
 
+export interface PlaceTile {
+	type: typeof MessageType.PlaceTile
+	data: {
+		x: number
+		y: number
+	}
+}
+
 export type GameMessage =
 	| HandshakeRequest
 	| HandshakeResponse
@@ -122,3 +131,4 @@ export type GameMessage =
 	| SellCard
 	| PlayCard
 	| PlayerPass
+	| PlaceTile

@@ -2,7 +2,9 @@ import {
 	PlayerState,
 	PlayerStateValue,
 	GameStateValue,
-	UsedCardState
+	UsedCardState,
+	GridCellSpecial,
+	GridCell
 } from '@shared/game'
 import { MyEvent } from 'src/utils/events'
 import { Game } from './game'
@@ -14,9 +16,24 @@ import {
 	CardCondition,
 	CardCategory,
 	CardEffectArgumentType,
-	CardEffectTarget
+	CardEffectTarget,
+	CardsLookupApi,
+	CardCallbackContext,
+	Card
 } from '@shared/cards'
 import { range } from '@/utils/collections'
+import { cellByCoords } from '@shared/cards/utils'
+import { PlacementConditionsLookup } from '@shared/placements'
+
+interface CardPlayedEvent {
+	player: Player
+	card: Card
+	cardIndex: number
+}
+interface TilePlacedEvent {
+	player: Player
+	cell: GridCell
+}
 
 export class Player {
 	static idCounter = 1
@@ -47,13 +64,22 @@ export class Player {
 			cards: [],
 			usedCards: [],
 			cardsPick: [],
-			corporation: ''
+			corporation: '',
+			spacePriceChange: 0,
+			cardPriceChange: 0,
+			cardsPickFree: false,
+			cardsPickLimit: 0,
+			cardsToPlay: [],
+			earthPriceChange: 0,
+			placingTile: []
 		},
 		name: '<unknown>',
 		session: uuidv4()
 	} as PlayerState
 
 	onStateChanged = new MyEvent<Readonly<PlayerState>>()
+	onCardPlayed = new MyEvent<Readonly<CardPlayedEvent>>()
+	onTilePlaced = new MyEvent<Readonly<TilePlacedEvent>>()
 
 	game: Game
 
@@ -246,15 +272,19 @@ export class Player {
 
 		const ctx = {
 			player: this.gameState,
+			playerId: this.id,
 			game: this.game.state,
 			card: cardState,
 			cardIndex: this.gameState.usedCards.length
 		}
 
 		const errorConditions = [
-			...card.conditions,
+			...card.conditions.filter(c => !c.evaluate(ctx)),
 			...card.playEffects.reduce(
-				(acc, p) => [...acc, ...p.conditions],
+				(acc, p, ei) => [
+					...acc,
+					...p.conditions.filter(c => !c.evaluate(ctx, ...playArguments[ei]))
+				],
 				[] as CardCondition[]
 			)
 		].filter(c => !c.evaluate(ctx))
@@ -287,7 +317,94 @@ export class Player {
 
 		this.gameState.usedCards.push(cardState)
 		this.gameState.cards.splice(index, 1)
-		this.actionPlayed()
+
+		this.onCardPlayed.emit({
+			card,
+			cardIndex: ctx.cardIndex,
+			player: this
+		})
+
+		if (this.gameState.placingTile.length > 0) {
+			this.gameState.state = PlayerStateValue.PlacingTile
+		} else {
+			this.actionPlayed()
+		}
+
+		this.updated()
+	}
+
+	placeTile(x: number, y: number) {
+		if (this.gameState.state !== PlayerStateValue.PlacingTile) {
+			throw new Error('Player is not placing tile right now')
+		}
+
+		const pendingTile = this.gameState.placingTile[0]
+
+		if (!pendingTile) {
+			throw new Error('No tile to place!')
+		}
+
+		const cell = cellByCoords(this.game.state, x, y)
+
+		if (!cell) {
+			throw new Error('Cell not found')
+		}
+
+		if (
+			!cell.content ||
+			(cell.claimantId !== undefined && cell.claimantId !== this.id)
+		) {
+			throw new Error(`Cell is already owned by someone else`)
+		}
+
+		if (pendingTile.conditions) {
+			const errors = pendingTile.conditions
+				.map(c => PlacementConditionsLookup.get(c))
+				.filter(
+					c =>
+						!c.evaluate({
+							game: this.game.state,
+							player: this.gameState,
+							playerId: this.id,
+							cell
+						})
+				)
+			if (errors.length > 0) {
+				throw new Error(
+					`Placement not possible: ${errors.map(e => e.description).join(', ')}`
+				)
+			}
+		}
+
+		if (
+			pendingTile.special &&
+			pendingTile.special.length &&
+			(!cell.special || !pendingTile.special.includes(cell.special))
+		) {
+			throw new Error(
+				`You cannot place tile here, can only be placed at: ${pendingTile.special
+					.map(s => GridCellSpecial[s])
+					.join(' or ')}`
+			)
+		}
+
+		cell.content = pendingTile.type
+		cell.other = pendingTile.other
+		cell.ownerCard = pendingTile.ownerCard
+		cell.ownerId = this.state.id
+
+		this.gameState.placingTile.shift()
+
+		this.onTilePlaced.emit({
+			cell,
+			player: this
+		})
+
+		if (this.gameState.placingTile.length === 0) {
+			this.gameState.state = PlayerStateValue.Playing
+			this.actionPlayed()
+		}
+
 		this.updated()
 	}
 
