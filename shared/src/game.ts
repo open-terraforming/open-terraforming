@@ -109,6 +109,7 @@ export interface GridCell {
 	cards: number
 	x: number
 	y: number
+	outside: boolean
 
 	content?: GridCellContent
 	other?: GridCellOther

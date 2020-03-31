@@ -4,7 +4,8 @@ import {
 	GameStateValue,
 	UsedCardState,
 	GridCellSpecial,
-	GridCell
+	GridCell,
+	GridCellContent
 } from '@shared/game'
 import { MyEvent } from 'src/utils/events'
 import { Game } from './game'
@@ -17,7 +18,10 @@ import {
 	CardEffectArgumentType,
 	CardEffectTarget,
 	CardsLookupApi,
-	Card
+	Card,
+	CardCallbackContext,
+	CardType,
+	CardEffect
 } from '@shared/cards'
 import { range } from '@/utils/collections'
 import { cellByCoords } from '@shared/cards/utils'
@@ -312,27 +316,7 @@ export class Player {
 			cardIndex: this.gameState.usedCards.length
 		}
 
-		const errorConditions = [
-			...card.conditions.filter(c => !c.evaluate(ctx)),
-			...card.playEffects.reduce(
-				(acc, p, ei) => [
-					...acc,
-					...p.conditions.filter(
-						c => !c.evaluate(ctx, ...(playArguments[ei] || []))
-					)
-				],
-				[] as CardCondition[]
-			)
-		]
-
-		if (errorConditions.length > 0) {
-			throw new Error(
-				`Card conditions not met! ${errorConditions
-					.map(c => c.description)
-					.filter(c => !!c)
-					.join('. ')}`
-			)
-		}
+		this.checkCardConditions(card, ctx, playArguments)
 
 		this.gameState.money -= Math.max(0, adjustedCost)
 		this.gameState.titan -= useTitan
@@ -371,6 +355,34 @@ export class Player {
 		}
 
 		this.updated()
+	}
+
+	checkCardConditions(
+		card: Card,
+		ctx: CardCallbackContext,
+		playArguments: CardEffectArgumentType[][]
+	) {
+		const errorConditions = [
+			...card.conditions.filter(c => !c.evaluate(ctx)),
+			...card.playEffects.reduce(
+				(acc, p, ei) => [
+					...acc,
+					...p.conditions.filter(
+						c => !c.evaluate(ctx, ...(playArguments[ei] || []))
+					)
+				],
+				[] as CardCondition[]
+			)
+		]
+
+		if (errorConditions.length > 0) {
+			throw new Error(
+				`Card conditions not met! ${errorConditions
+					.map(c => c.description)
+					.filter(c => !!c)
+					.join('. ')}`
+			)
+		}
 	}
 
 	giveCards(count: number) {
@@ -426,7 +438,8 @@ export class Player {
 		if (
 			pendingTile.special &&
 			pendingTile.special.length &&
-			(!cell.special || !pendingTile.special.includes(cell.special))
+			(cell.special === undefined ||
+				!pendingTile.special.includes(cell.special))
 		) {
 			throw new Error(
 				`You cannot place tile here, can only be placed at: ${pendingTile.special
@@ -438,7 +451,10 @@ export class Player {
 		cell.content = pendingTile.type
 		cell.other = pendingTile.other
 		cell.ownerCard = pendingTile.ownerCard
-		cell.ownerId = this.state.id
+
+		if (pendingTile.type !== GridCellContent.Ocean) {
+			cell.ownerId = this.state.id
+		}
 
 		this.gameState.placingTile.shift()
 
@@ -453,6 +469,29 @@ export class Player {
 		}
 
 		this.updated()
+	}
+
+	runCardEffects(
+		effects: CardEffect[],
+		ctx: CardCallbackContext,
+		playArguments: CardEffectArgumentType[][]
+	) {
+		effects.forEach((e, i) => {
+			// Run dynamic arguments
+			e.args.forEach((a, ai) => {
+				if (!playArguments[i]) {
+					playArguments[i] = []
+				}
+
+				if (a.type === CardEffectTarget.DrawnCards) {
+					playArguments[i][ai] = range(0, (a.drawnCards || 1) - 1).map(
+						() => this.game.nextCard().code
+					)
+				}
+			})
+
+			e.perform(ctx, ...(playArguments[i] || []))
+		})
 	}
 
 	actionPlayed() {
@@ -495,6 +534,66 @@ export class Player {
 
 		// Reset playable cards
 		state.usedCards.forEach(c => (c.played = false))
+	}
+
+	playCard(
+		cardCode: string,
+		index: number,
+		playArguments: CardEffectArgumentType[][]
+	) {
+		if (!this.isPlaying) {
+			return
+		}
+
+		const cardState = this.gameState.usedCards[index]
+
+		if (cardState === undefined || cardState?.code !== cardCode) {
+			throw new Error(
+				'Something is wrong, incorrect card index and card type combination'
+			)
+		}
+
+		if (cardState.played) {
+			throw new Error('Card was already played this generation')
+		}
+
+		const card = CardsLookupApi.get(cardCode)
+
+		if (!card) {
+			throw new Error(`Unknown card ${cardCode}`)
+		}
+
+		if (card.type !== CardType.Action) {
+			throw new Error("This card isn't playable")
+		}
+
+		const ctx = {
+			player: this.gameState,
+			playerId: this.id,
+			game: this.game.state,
+			card: cardState,
+			cardIndex: index
+		}
+
+		this.checkCardConditions(card, ctx, playArguments)
+
+		this.runCardEffects(card.actionEffects, ctx, playArguments)
+
+		cardState.played = true
+
+		this.onCardPlayed.emit({
+			card,
+			cardIndex: ctx.cardIndex,
+			player: this
+		})
+
+		if (this.gameState.placingTile.length > 0) {
+			this.gameState.state = PlayerStateValue.PlacingTile
+		} else {
+			this.actionPlayed()
+		}
+
+		this.updated()
 	}
 
 	reset() {

@@ -23,10 +23,15 @@ import {
 	PlayerStateValue,
 	GridCell,
 	GridCellSpecial,
+	PlayerState,
 } from '../game'
 import { CardsLookupApi } from './lookup'
 import { withUnits, progressResToStr } from '../units'
-import { PlacementCode, PlacementConditionsLookup } from '../placements'
+import {
+	PlacementCode,
+	PlacementConditionsLookup,
+	canPlace,
+} from '../placements'
 import { allCells, adjacentCells } from '../utils'
 
 export const vpCb = (cb: CardVictoryPointsCallback) => cb
@@ -317,6 +322,13 @@ export function placeTile({
 	allowOcean?: boolean
 	conditions?: PlacementCode[]
 }) {
+	const placementState = {
+		type,
+		other,
+		special,
+		conditions,
+	}
+
 	return effect({
 		description:
 			`Place a ${other ? GridCellOther[other] : GridCellContent[type]} tile` +
@@ -325,13 +337,24 @@ export function placeTile({
 						?.map((c) => PlacementConditionsLookup.get(c).description)
 						.join(',')})`
 				: ''),
+		conditions: [
+			condition({
+				evaluate: ({ game, playerId }) => {
+					return !!allCells(game).find((c) =>
+						canPlace(
+							game,
+							game.players.find((p) => p.id === playerId) as PlayerState,
+							c,
+							placementState
+						)
+					)
+				},
+			}),
+		],
 		perform: ({ player, cardIndex }) => {
 			player.placingTile.push({
-				type,
-				other,
+				...placementState,
 				ownerCard: cardIndex,
-				special,
-				conditions,
 			})
 			player.state = PlayerStateValue.PlacingTile
 		},

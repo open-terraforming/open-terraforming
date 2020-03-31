@@ -1,7 +1,8 @@
 type State = Readonly<typeof initialState>
 
 const initialState = {
-	buyingCardIndex: undefined as number | undefined
+	buyingCardIndex: undefined as number | undefined,
+	playingCardIndex: undefined as number | undefined
 }
 
 export default (state = initialState, action: Action): State => {

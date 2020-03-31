@@ -81,7 +81,7 @@ export default {
 			hover: {
 				background: 'none',
 				borderColor: 'transparent',
-				color: '#666'
+				color: '#ccc'
 			}
 		}
 	},

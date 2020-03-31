@@ -132,6 +132,14 @@ export class Client {
 					)
 				}
 
+				case MessageType.PlayCard: {
+					return this.player.playCard(
+						message.data.card,
+						message.data.index,
+						message.data.args
+					)
+				}
+
 				case MessageType.PlaceTile: {
 					return this.player.placeTile(message.data.x, message.data.y)
 				}

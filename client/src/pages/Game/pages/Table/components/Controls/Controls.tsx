@@ -17,6 +17,7 @@ export const Controls = () => {
 	const dispatch = useAppDispatch()
 	const player = useAppStore(state => state.game.player)
 	const buyingCardIndex = useAppStore(state => state.table.buyingCardIndex)
+	const playingCardIndex = useAppStore(state => state.table.playingCardIndex)
 	const state = player?.gameState
 	const corporation = Corporations.find(c => c.code === state?.corporation)
 	const [handOpened, setHandOpened] = useState(false)
@@ -39,8 +40,24 @@ export const Controls = () => {
 					onClose={() => setCardsOpened(false)}
 				/>
 			)}
+
+			{playingCardIndex !== undefined && (
+				<CardBuy
+					buying={false}
+					index={playingCardIndex}
+					onClose={() =>
+						dispatch(
+							setTableState({
+								playingCardIndex: undefined
+							})
+						)
+					}
+				/>
+			)}
+
 			{buyingCardIndex !== undefined && (
 				<CardBuy
+					buying={true}
 					index={buyingCardIndex}
 					onClose={() =>
 						dispatch(

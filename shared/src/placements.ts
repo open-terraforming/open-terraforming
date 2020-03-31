@@ -8,7 +8,7 @@ import {
 	GridCellSpecial,
 	PlayerState,
 } from './game'
-import { adjacentCells } from './utils'
+import { adjacentCells, allCells } from './utils'
 
 const placement = (c: PlacementCondition) => c
 
@@ -26,9 +26,11 @@ export enum PlacementCode {
 	Isolated = 'isolated',
 	NoOceans = 'no_oceans',
 	NextToOwn = 'next_to_owned',
+	NextToOwnOrFree = 'next_to_owned_or_free',
 	TwoCities = 'two_cities',
 	OneCity = 'one_city',
 	OneForest = 'one_forest',
+	NoCity = 'no_city',
 }
 
 export interface PlacementContext {
@@ -73,6 +75,17 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 			!!adjacentCells(game, cell.x, cell.y).find((c) => c.ownerId === playerId),
 	}),
 	placement({
+		code: PlacementCode.NextToOwnOrFree,
+		description: 'next to your tile',
+		evaluate: ({ cell, game, playerId }) =>
+			!allCells(game).find(
+				(c) =>
+					c.ownerId === playerId &&
+					!!adjacentCells(game, c.x, c.y).find((c) => !c.content)
+			) ||
+			!!adjacentCells(game, cell.x, cell.y).find((c) => c.ownerId === playerId),
+	}),
+	placement({
 		code: PlacementCode.TwoCities,
 		description: 'next to at least two cities',
 		evaluate: ({ cell, game }) =>
@@ -96,6 +109,16 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 				(c) => c.content === GridCellContent.Forest
 			).length >= 1,
 	}),
+	placement({
+		code: PlacementCode.NoCity,
+		description: 'next to no city',
+		evaluate: ({ cell, game }) =>
+			adjacentCells(game, cell.x, cell.y).filter(
+				(c) =>
+					c.content === GridCellContent.City &&
+					c.special !== GridCellSpecial.NoctisCity
+			).length === 0,
+	}),
 ] as const
 
 export const PlacementConditionsLookup = {
@@ -116,8 +139,14 @@ export const PlacementConditionsLookup = {
 
 export const OceanPlacement = [PlacementCode.OceanOnly]
 export const CityPlacement = [PlacementCode.NoOceans]
-export const OtherPlacement = [PlacementCode.NoOceans, PlacementCode.NextToOwn]
-export const ForestPlacement = [PlacementCode.NoOceans, PlacementCode.NextToOwn]
+export const OtherPlacement = [
+	PlacementCode.NoOceans,
+	PlacementCode.NextToOwnOrFree,
+]
+export const ForestPlacement = [
+	PlacementCode.NoOceans,
+	PlacementCode.NextToOwnOrFree,
+]
 
 export const ContentToPlacement = {
 	[GridCellContent.City]: CityPlacement,

@@ -1,9 +1,9 @@
 CLIENT TODO:
- - placing tile
- - implement arguments
- - special tiles
- - mind effect choice!
- - card exchange!
+ - card exchange
+ - card argument / (own and other players)
+
+PLACE TILE THAT'S NEXT TO SOMETHING
+ - check if it's possible (the tile exists and there's space around it)
 
 OTHER TODO:
- - effect choice without player choice (just choose the best)
+ - effect choice without player choice (just choose the best)?

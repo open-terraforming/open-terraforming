@@ -13,7 +13,7 @@ export class Game {
 		players: [],
 		oceans: 0,
 		oxygen: 0,
-		temperature: -30,
+		temperature: 0,
 		map: defaultMap()
 	} as GameState
 

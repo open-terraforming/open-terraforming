@@ -31,6 +31,7 @@ const generateGrid = (
 				ore: 0,
 				plants: 0,
 				titan: 0,
+				outside: false,
 				...update,
 			})
 		}
@@ -41,7 +42,7 @@ const generateGrid = (
 
 const preset: Record<number, Record<number, Partial<GridCell>>> = {
 	0: {
-		0: { special: GridCellSpecial.PhobosSpaceHaven },
+		0: { special: GridCellSpecial.PhobosSpaceHaven, outside: true },
 		2: { ore: 2 },
 		3: { ore: 2 },
 		4: {},
@@ -118,7 +119,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		6: { titan: 1 },
 	},
 	8: {
-		0: { special: GridCellSpecial.GanymedeColony },
+		0: { special: GridCellSpecial.GanymedeColony, outside: true },
 		2: { ore: 1 },
 		3: { ore: 2 },
 		4: {},

@@ -1,7 +1,11 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { GridCellType, GridCellContent, GridCell } from '@shared/index'
-import { PlacementState, PlacementConditionsLookup } from '@shared/placements'
+import {
+	PlacementState,
+	PlacementConditionsLookup,
+	canPlace
+} from '@shared/placements'
 import { useAppStore } from '@/utils/hooks'
 
 type Props = {
@@ -13,7 +17,7 @@ type Props = {
 
 export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 	const game = useAppStore(state => state.game.state)
-	const player = useAppStore(state => state.game.player?.gameState)
+	const player = useAppStore(state => state.game.player)
 	const playerId = useAppStore(state => state.game.playerId)
 
 	const active =
@@ -23,17 +27,7 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 		playerId !== undefined &&
 		cell.content === undefined &&
 		(cell.claimantId === undefined || cell.claimantId === playerId) &&
-		!placing.conditions
-			?.map(c => PlacementConditionsLookup.get(c))
-			.find(
-				c =>
-					!c.evaluate({
-						player,
-						playerId,
-						cell,
-						game
-					})
-			)
+		canPlace(game, player, cell, placing)
 
 	return (
 		<StyledHex
@@ -65,6 +59,29 @@ const StyledHex = styled.g<{
 				fill: ${props.gridContent === GridCellContent.Ocean
 					? 'rgba(128,128,255,0.9)'
 					: 'url(#Ocean)'};
+			`}
+		${props =>
+			props.gridContent === GridCellContent.Ocean &&
+			css`
+				fill: rgba(128, 128, 255, 0.9);
+			`}
+
+		${props =>
+			props.gridContent === GridCellContent.City &&
+			css`
+				fill: rgba(128, 128, 128, 0.9);
+			`}
+
+		${props =>
+			props.gridContent === GridCellContent.Forest &&
+			css`
+				fill: rgba(128, 255, 128, 0.9);
+			`}
+
+		${props =>
+			props.gridContent === GridCellContent.Other &&
+			css`
+				fill: rgba(128, 64, 0, 0.9);
 			`}
 
 		${props =>

@@ -39,17 +39,22 @@ export const CardView = ({
 							.join(' AND ')} ]]`
 				  ]
 				: []),
+			...card.passiveEffects.map(e => e.description).filter(e => !!e),
 			...(card.victoryPointsCallback
 				? [card.victoryPointsCallback.description]
 				: []),
-			...(card.victoryPoints > 0
-				? [`+ ${card.victoryPoints} VICTORY POINTS`]
+			...(card.victoryPoints !== 0
+				? [
+						`${card.victoryPoints > 0 ? '+' : ''} ${
+							card.victoryPoints
+						} VICTORY POINTS`
+				  ]
 				: [])
 		]
 	}, [card])
 
 	if (!player || !game || playerId === undefined) {
-		return
+		return <></>
 	}
 
 	const condContext = useMemo(

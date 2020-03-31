@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { Modal } from '@/components/Modal/Modal'
-import { useAppStore } from '@/utils/hooks'
+import { useAppStore, useAppDispatch } from '@/utils/hooks'
 import { CardsLookupApi, Card, CardType } from '@shared/cards'
 import { CardView } from '../CardView/CardView'
 import { Button } from '@/components'
@@ -8,6 +8,7 @@ import { buyCard, UsedCardState } from '@shared/index'
 import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
 import styled from 'styled-components'
 import { useApi } from '@/context/ApiContext'
+import { setTableState } from '@/store/modules/table'
 
 type CardInfo = {
 	card: Card
@@ -23,6 +24,7 @@ export const PlayedCards = ({
 	playing: boolean
 }) => {
 	const api = useApi()
+	const dispatch = useAppDispatch()
 	const player = useAppStore(state => state.game.player)
 	const state = player?.gameState
 
@@ -41,7 +43,7 @@ export const PlayedCards = ({
 		CardType.Action as CardType | undefined
 	)
 
-	const [selected, setSelected] = useState(undefined as CardInfo | undefined)
+	const [selected, setSelected] = useState(undefined as number | undefined)
 
 	const filtered = useMemo(
 		() =>
@@ -71,7 +73,13 @@ export const PlayedCards = ({
 	}, [category, categories])
 
 	const handleConfirm = () => {
-		// TODO: Play action card if selected
+		if (selected !== undefined) {
+			dispatch(
+				setTableState({
+					playingCardIndex: selected
+				})
+			)
+		}
 
 		onClose()
 	}
@@ -92,14 +100,17 @@ export const PlayedCards = ({
 				)
 			}
 		>
-			{!category && <NoCards>No cards</NoCards>}
-			{filtered && category && (
+			{category === undefined && <NoCards>No cards</NoCards>}
+			{filtered && category !== undefined && (
 				<>
 					<Categories>
 						{categories.map(([c, t]) => (
 							<Button
 								schema={c === category ? 'primary' : 'transparent'}
-								onClick={() => setCategory(c)}
+								onClick={() => {
+									setSelected(undefined)
+									setCategory(c)
+								}}
 								key={c}
 							>
 								{t} ({filtered[c]?.length})
@@ -114,12 +125,14 @@ export const PlayedCards = ({
 								c && (
 									<CardView
 										card={c.card}
-										selected={selected === c}
+										selected={selected === c.index}
 										key={c.index}
 										onClick={
 											playing && category === CardType.Action && !c.state.played
 												? () => {
-														setSelected(selected === c ? undefined : c)
+														setSelected(
+															selected === c.index ? undefined : c.index
+														)
 												  }
 												: undefined
 										}
@@ -135,4 +148,5 @@ export const PlayedCards = ({
 
 const Categories = styled.div`
 	display: flex;
+	justify-content: center;
 `

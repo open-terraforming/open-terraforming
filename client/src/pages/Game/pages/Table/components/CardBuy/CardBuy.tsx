@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Modal } from '@/components/Modal/Modal'
 import { CardView } from '../CardView/CardView'
 import {
@@ -9,7 +9,7 @@ import {
 import { useAppStore } from '@/utils/hooks'
 import { Input } from '@/components/Input/Input'
 import { Button } from '@/components'
-import { buyCard } from '@shared/index'
+import { buyCard, playCard } from '@shared/index'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { ArgsPicker } from './components/ArgsPicker'
 import styled from 'styled-components'
@@ -18,13 +18,23 @@ import { useApi } from '@/context/ApiContext'
 type Props = {
 	index: number
 	onClose: () => void
+	buying: boolean
 }
 
-export const CardBuy = ({ index, onClose }: Props) => {
+export const CardBuy = ({ index, onClose, buying }: Props) => {
 	const api = useApi()
 	const state = useAppStore(state => state.game.player?.gameState)
 
-	const card = CardsLookupApi.get(state?.cards[index] as string)
+	const cardState = useMemo(
+		() => (!buying ? state?.usedCards[index] : undefined),
+		[buying, index]
+	)
+
+	const card = CardsLookupApi.get(
+		buying
+			? (state?.cards[index] as string)
+			: (state?.usedCards[index].code as string)
+	)
 
 	const [ore, setOre] = useState(0)
 	const [titan, setTitan] = useState(0)
@@ -44,7 +54,7 @@ export const CardBuy = ({ index, onClose }: Props) => {
 		(canUseOre ? ore : 0) * (state?.orePrice || 2) -
 		(canUseTitan ? titan : 0) * (state?.titanPrice || 3)
 
-	const canAfford = (state?.money || 0) >= price
+	const canAfford = !buying || (state?.money || 0) >= price
 
 	const handleUse = () => {
 		if (!canAfford) {
@@ -52,13 +62,19 @@ export const CardBuy = ({ index, onClose }: Props) => {
 		}
 
 		api.send(
-			buyCard(
-				card.code,
-				index,
-				canUseOre ? ore : 0,
-				canUseTitan ? titan : 0,
-				effectsArgs.map(a => a || [])
-			)
+			buying
+				? buyCard(
+						card.code,
+						index,
+						canUseOre ? ore : 0,
+						canUseTitan ? titan : 0,
+						effectsArgs.map(a => a || [])
+				  )
+				: playCard(
+						card.code,
+						index,
+						effectsArgs.map(a => a || [])
+				  )
 		)
 
 		onClose()
@@ -83,60 +99,79 @@ export const CardBuy = ({ index, onClose }: Props) => {
 			}
 		>
 			<CardContainer>
-				<CardView card={card} />
+				<CardView card={card} state={cardState} cardIndex={index} />
 			</CardContainer>
 
-			{canUseOre && (
-				<UseContainer>
-					Use{' '}
-					<Input
-						type="number"
-						max={state?.ore}
-						value={ore.toString()}
-						onChange={v => {
-							const val = parseInt(v, 10)
+			{buying ? (
+				<>
+					{canUseOre && (
+						<UseContainer>
+							Use{' '}
+							<Input
+								type="number"
+								max={state?.ore}
+								value={ore.toString()}
+								onChange={v => {
+									const val = parseInt(v, 10)
 
-							if (val >= 0 && val <= state?.ore) {
-								setOre(val)
-							}
-						}}
-					/>{' '}
-					U of ore
-				</UseContainer>
+									if (val >= 0 && val <= state?.ore) {
+										setOre(val)
+									}
+								}}
+							/>{' '}
+							U of ore
+						</UseContainer>
+					)}
+
+					{canUseTitan && (
+						<UseContainer>
+							Use{' '}
+							<Input
+								type="number"
+								max={state?.titan}
+								value={titan.toString()}
+								onChange={v => {
+									const val = parseInt(v, 10)
+
+									if (val >= 0 && val <= state?.titan) {
+										setTitan(val)
+									}
+								}}
+							/>{' '}
+							U of titan
+						</UseContainer>
+					)}
+
+					<div>Adjusted price: {price} $</div>
+
+					{card.playEffects.map((e, i) => (
+						<ArgsPicker
+							key={i}
+							effect={e}
+							onChange={v => {
+								const updated = [...effectsArgs]
+								updated[i] = v
+								setEffectsArgs(updated)
+							}}
+						/>
+					))}
+				</>
+			) : (
+				<>
+					{card.actionEffects.map((e, i) => (
+						<ArgsPicker
+							key={i}
+							effect={e}
+							cardState={cardState}
+							onChange={v => {
+								const updated = [...effectsArgs]
+								updated[i] = v
+								setEffectsArgs(updated)
+							}}
+						/>
+					))}
+				</>
 			)}
-
-			{canUseTitan && (
-				<UseContainer>
-					Use{' '}
-					<Input
-						type="number"
-						max={state?.titan}
-						value={titan.toString()}
-						onChange={v => {
-							const val = parseInt(v, 10)
-
-							if (val >= 0 && val <= state?.titan) {
-								setTitan(val)
-							}
-						}}
-					/>{' '}
-					U of titan
-				</UseContainer>
-			)}
-
-			<div>Adjusted price: {price} $</div>
-
-			{card.playEffects.map((e, i) => (
-				<ArgsPicker
-					key={i}
-					effect={e}
-					onChange={v => {
-						const updated = [...effectsArgs]
-						updated[i] = v
-						setEffectsArgs(updated)
-					}}
-				/>
-			))}
 		</Modal>
 	) : (
 		<></>

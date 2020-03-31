@@ -23,6 +23,8 @@ export const Arg = ({ arg, card, onChange }: Props) => {
 			return <ResourceArg arg={arg} onChange={onChange} />
 		case CardEffectTarget.EffectChoice:
 			return <ChoiceArg arg={arg} onChange={onChange} />
+		case CardEffectTarget.DrawnCards:
+			return <></>
 		default:
 			return (
 				<div style={{ color: '#FFB0B7' }}>

@@ -390,7 +390,9 @@ export const cardExchangeEffect = (tag: CardCategory) =>
 
 export const playWhenCard = (tags: CardCategory[]) =>
 	passiveEffect({
-		description: '',
+		description: `Action triggered when you play ${tags
+			.map((t) => CardCategory[t])
+			.join(' or ')} card`,
 		onCardPlayed: (
 			{ playerId, player, card: cardState },
 			card,

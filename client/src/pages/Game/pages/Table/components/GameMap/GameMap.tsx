@@ -71,6 +71,8 @@ export const GameMap = ({}: Props) => {
 
 const Container = styled.div`
 	flex-grow: 1;
+	max-width: 800px;
+	margin: 0 auto;
 	height: 100%;
 	display: flex;
 	flex-direction: column;
