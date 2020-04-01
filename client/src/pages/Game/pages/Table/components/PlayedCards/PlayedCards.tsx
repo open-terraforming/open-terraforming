@@ -9,6 +9,7 @@ import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
 import styled from 'styled-components'
 import { useApi } from '@/context/ApiContext'
 import { setTableState } from '@/store/modules/table'
+import { isCardPlayable, isCardActionable } from '@shared/cards/utils'
 
 type CardInfo = {
 	card: Card
@@ -25,6 +26,7 @@ export const PlayedCards = ({
 }) => {
 	const api = useApi()
 	const dispatch = useAppDispatch()
+	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
 	const state = player?.gameState
 
@@ -84,6 +86,24 @@ export const PlayedCards = ({
 		onClose()
 	}
 
+	const selectedCard =
+		selected !== undefined && cards ? cards[selected] : undefined
+
+	const selectedPlayable = useMemo(
+		() =>
+			selectedCard &&
+			game &&
+			player &&
+			isCardActionable(selectedCard.card, {
+				card: selectedCard.state,
+				cardIndex: selectedCard.index,
+				player: player.gameState,
+				playerId: player.id,
+				game: game
+			}),
+		[selectedCard]
+	)
+
 	return (
 		<Modal
 			open={true}
@@ -94,8 +114,13 @@ export const PlayedCards = ({
 				!playing ? (
 					<Button onClick={onClose}>Close</Button>
 				) : (
-					<Button onClick={handleConfirm}>
-						{selected ? `Play card` : 'Close'}
+					<Button
+						onClick={handleConfirm}
+						disabled={selected !== undefined && !selectedPlayable}
+					>
+						{selected !== undefined
+							? `Play ${selectedCard?.card.title}`
+							: 'Close'}
 					</Button>
 				)
 			}
@@ -127,6 +152,7 @@ export const PlayedCards = ({
 										card={c.card}
 										selected={selected === c.index}
 										key={c.index}
+										state={c.state}
 										onClick={
 											playing && category === CardType.Action && !c.state.played
 												? () => {

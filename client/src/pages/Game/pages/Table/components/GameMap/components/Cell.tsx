@@ -89,7 +89,9 @@ const StyledHex = styled.g<{
 		${props =>
 			props.gridActive !== undefined &&
 			css`
-				stroke: ${props.gridActive ? '#24BB17' : '#FF9999'};
+				fill: ${props.gridActive
+					? 'rgba(36,187,23,0.2)'
+					: 'rgba(187,23,36,0.2)'};
 				${props.gridActive ? 'cursor: pointer;' : ''}
 			`}
 	}

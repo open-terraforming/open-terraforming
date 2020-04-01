@@ -292,8 +292,13 @@ export const gameProcessChange = (res: GameProgress, change: number) => {
 			change > 0
 				? `Increase ${res} by ${change} step`
 				: `Decrease ${res} by ${-change} step`,
-		perform: ({ game }) => {
-			game[res] += change
+		perform: ({ game, player }) => {
+			const update = Math.min(game.map[res] - game[res], change)
+
+			if (update > 0) {
+				game[res] += update
+				player.terraformRating += update
+			}
 		},
 	})
 }
@@ -476,7 +481,9 @@ export const effectChoice = (effects: CardEffect[]) =>
 					chosenArgs: CardEffectArgumentType[]
 				) => {
 					if (chosenEffect === undefined) {
-						return true
+						return !!effects.find((e) =>
+							e.conditions.every((c) => c.evaluate(ctx, ...chosenArgs))
+						)
 					}
 
 					const effect = effects[chosenEffect]
@@ -507,6 +514,7 @@ export const joinedEffects = (effects: CardEffect[]) =>
 	effect({
 		args: flatten(effects.map((e) => e.args)),
 		description: effects.map((e) => e.description || '').join(' and '),
+		conditions: flatten(effects.map((e) => e.conditions)),
 		perform: (ctx, ...args) => {
 			effects.forEach((e) => {
 				e.perform(
@@ -531,7 +539,15 @@ export const cardResourceCondition = (res: CardResource, amount: number) =>
 
 export const otherCardResourceChange = (res: CardResource, amount: number) =>
 	effect({
-		args: amount < 0 ? [cardArg([cardResourceCondition(res, amount)])] : [],
+		args: [
+			{
+				...cardArg([cardResourceCondition(res, amount)]),
+				description:
+					amount > 0
+						? `Add ${amount} ${res} to`
+						: `Remove ${-amount} ${res} from`,
+			},
+		],
 		conditions: [],
 		description:
 			amount < 0
@@ -651,3 +667,16 @@ export const card = (
 export const isCardPlayable = (card: Card, ctx: CardCallbackContext) =>
 	!card.conditions.find((c) => !c.evaluate(ctx)) &&
 	!card.playEffects.find((e) => e.conditions.find((c) => !c.evaluate(ctx)))
+
+export const isCardActionable = (card: Card, ctx: CardCallbackContext) =>
+	!ctx.card.played &&
+	!card.actionEffects.find((e) => e.conditions.find((c) => !c.evaluate(ctx)))
+
+export const emptyCardState = (cardCode: string) => ({
+	code: cardCode,
+	played: false,
+	animals: 0,
+	fighters: 0,
+	microbes: 0,
+	science: 0,
+})

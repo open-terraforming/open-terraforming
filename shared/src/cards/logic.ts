@@ -273,7 +273,7 @@ export const cardResourcePerCardPlayed = (
 	passiveEffect({
 		description: `When you play a ${categories
 			.map((c) => CardCategory[c])
-			.join(' ')} card, place ${amount} of ${res} on this card`,
+			.join(' or ')} card, place ${amount} ${res} on this card`,
 		onCardPlayed: (
 			{ playerId, card: cardState },
 			card,
@@ -282,7 +282,7 @@ export const cardResourcePerCardPlayed = (
 		) => {
 			if (
 				playedBy.id === playerId &&
-				categories.every((c) => card.categories.includes(c))
+				categories.find((c) => card.categories.includes(c))
 			) {
 				cardState[res] += amount
 			}

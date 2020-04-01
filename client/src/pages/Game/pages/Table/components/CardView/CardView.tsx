@@ -12,7 +12,8 @@ import { useAppStore } from '@/utils/hooks'
 import { UsedCardState } from '@shared/index'
 import { PlayEffect } from './components/PlayEffect'
 import { Tag } from './components/Tag'
-import { isCardPlayable } from '@shared/cards/utils'
+import { isCardPlayable, isCardActionable } from '@shared/cards/utils'
+import { Resource } from './components/Resource'
 
 export const CardView = ({
 	card,
@@ -34,13 +35,6 @@ export const CardView = ({
 	const description = useMemo(() => {
 		return [
 			card.description,
-			...(card.actionEffects.length
-				? [
-						`Action: [[ ${card.actionEffects
-							.map(e => e.description)
-							.join(' AND ')} ]]`
-				  ]
-				: []),
 			...card.passiveEffects.map(e => e.description).filter(e => !!e),
 			...(card.victoryPointsCallback
 				? [card.victoryPointsCallback.description]
@@ -78,14 +72,12 @@ export const CardView = ({
 		[state, card, cardIndex, game, playerId]
 	)
 
-	const playable = isCardPlayable(card, condContext)
+	const playable = state
+		? isCardActionable(card, condContext)
+		: isCardPlayable(card, condContext)
 
 	return (
-		<Container
-			selected={selected}
-			onClick={playable ? onClick : undefined}
-			playable={playable}
-		>
+		<Container selected={selected} onClick={onClick} playable={playable}>
 			<Inner type={card.type}>
 				<Head>
 					<Cost>
@@ -99,15 +91,27 @@ export const CardView = ({
 				</Head>
 				<Title>{card.title}</Title>
 				<Description>
+					{state && state.played && (
+						<Played>Card already played this generation</Played>
+					)}
 					{card.conditions.map((c, i) => (
 						<Condition key={i} cond={c} ctx={condContext} />
 					))}
+					{card.actionEffects.length > 0 && (
+						<Action>
+							Action:
+							{card.actionEffects.map((e, i) => (
+								<PlayEffect key={i} effect={e} ctx={condContext} />
+							))}
+						</Action>
+					)}
 					{card.playEffects.map((e, i) => (
 						<PlayEffect key={i} effect={e} ctx={condContext} />
 					))}
 					{description.map((d, i) => (
 						<div key={i}>{d}</div>
 					))}
+					{state && <Resource card={card} state={state} />}
 				</Description>
 			</Inner>
 		</Container>
@@ -146,6 +150,15 @@ const Container = styled.div<{ selected: boolean; playable: boolean }>`
 const Head = styled.div`
 	display: flex;
 	align-items: center;
+`
+
+const Action = styled.div`
+	background: #eee;
+	padding: 0.5rem;
+	border-top: 2px solid rgb(221, 221, 221);
+	border-left: 2px solid rgb(221, 221, 221);
+	border-bottom: 2px solid rgb(137, 137, 137);
+	border-right: 2px solid rgb(137, 137, 137);
 `
 
 const Cost = styled.div`
@@ -212,4 +225,8 @@ const Description = styled.div`
 	> div {
 		margin-bottom: 0.25rem;
 	}
+`
+
+const Played = styled.div`
+	color: #e10011;
 `

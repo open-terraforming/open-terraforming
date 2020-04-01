@@ -63,21 +63,23 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 			{cell.special !== undefined && (
 				<Special>{specialToName[cell.special]}</Special>
 			)}
-			<Resources>
-				{range(0, cell.plants).map(i => (
-					<FontAwesomeIcon key={i} icon={faSeedling} color="#54A800" />
-				))}
-				{range(0, cell.ore).map(i => (
-					<FontAwesomeIcon key={i} icon={faHammer} color="#AA5500" />
-				))}
-				{range(0, cell.titan).map(i => (
-					<FontAwesomeIcon key={i} icon={faStar} color="#FFFFAC" />
-				))}
-				{range(0, cell.cards).map(i => (
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					<FontAwesomeIcon key={i} icon={cardIcon as any} color="#0F87E2" />
-				))}
-			</Resources>
+			{cell.content === undefined && (
+				<Resources>
+					{range(0, cell.plants).map(i => (
+						<FontAwesomeIcon key={i} icon={faSeedling} color="#54A800" />
+					))}
+					{range(0, cell.ore).map(i => (
+						<FontAwesomeIcon key={i} icon={faHammer} color="#AA5500" />
+					))}
+					{range(0, cell.titan).map(i => (
+						<FontAwesomeIcon key={i} icon={faStar} color="#FFFFAC" />
+					))}
+					{range(0, cell.cards).map(i => (
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						<FontAwesomeIcon key={i} icon={cardIcon as any} color="#0F87E2" />
+					))}
+				</Resources>
+			)}
 		</HexOverlay>
 	)
 }

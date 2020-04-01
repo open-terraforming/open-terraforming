@@ -361,11 +361,12 @@ export class Player {
 	checkCardConditions(
 		card: Card,
 		ctx: CardCallbackContext,
-		playArguments: CardEffectArgumentType[][]
+		playArguments: CardEffectArgumentType[][],
+		action = false
 	) {
 		const errorConditions = [
 			...card.conditions.filter(c => !c.evaluate(ctx)),
-			...card.playEffects.reduce(
+			...(action ? card.actionEffects : card.playEffects).reduce(
 				(acc, p, ei) => [
 					...acc,
 					...p.conditions.filter(
@@ -471,6 +472,7 @@ export class Player {
 			}
 			case GridCellContent.Ocean: {
 				this.gameState.terraformRating++
+				this.game.state.oceans++
 				break
 			}
 		}
@@ -598,7 +600,7 @@ export class Player {
 			cardIndex: index
 		}
 
-		this.checkCardConditions(card, ctx, playArguments)
+		this.checkCardConditions(card, ctx, playArguments, true)
 
 		this.runCardEffects(card.actionEffects, ctx, playArguments)
 

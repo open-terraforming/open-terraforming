@@ -8,6 +8,7 @@ import { buyCard } from '@shared/index'
 import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
 import { setTableState } from '@/store/modules/table'
 import { useApi } from '@/context/ApiContext'
+import { isCardPlayable, emptyCardState } from '@shared/cards/utils'
 
 export const Hand = ({
 	onClose,
@@ -19,6 +20,7 @@ export const Hand = ({
 	const api = useApi()
 	const dispatch = useAppDispatch()
 	const player = useAppStore(state => state.game.player)
+	const game = useAppStore(state => state.game.state)
 	const state = player?.gameState
 
 	const cards = useAppStore(
@@ -58,6 +60,21 @@ export const Hand = ({
 		onClose()
 	}
 
+	const selectedPlayable = useMemo(
+		() =>
+			selectedCard &&
+			game &&
+			player &&
+			isCardPlayable(selectedCard, {
+				card: emptyCardState(selectedCard.code),
+				cardIndex: -1,
+				player: player.gameState,
+				playerId: player.id,
+				game: game
+			}),
+		[selectedCard]
+	)
+
 	return (
 		<Modal
 			open={true}
@@ -72,7 +89,7 @@ export const Hand = ({
 				) : (
 					<Button
 						onClick={handleConfirm}
-						disabled={loading}
+						disabled={loading || (selected !== undefined && !selectedPlayable)}
 						isLoading={loading}
 					>
 						{selectedCard ? `Play selected` : 'Close'}

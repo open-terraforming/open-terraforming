@@ -904,7 +904,7 @@ export const BuiltCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.Mine,
-				conditions: [PlacementCode.TitanOreBonus],
+				conditions: [PlacementCode.NoOceans, PlacementCode.TitanOreBonus],
 			}),
 		],
 		passiveEffects: [productionChangeAfterPlace(1, GridCellOther.Mine)],
@@ -1608,17 +1608,25 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'ecological_zone',
 		title: 'Ecological Zone',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 12,
 		categories: [CardCategory.Plant, CardCategory.Animal],
 		conditions: [ownedCellTypeCondition(GridCellContent.Forest, 1)],
+		resource: 'animals',
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.EcologicalZone,
 				conditions: [...OtherPlacement, PlacementCode.OneForest],
 			}),
+		],
+		passiveEffects: [
+			cardResourcePerCardPlayed(
+				[CardCategory.Microbe, CardCategory.Animal],
+				'animals',
+				1
+			),
 		],
 	}),
 	card({
