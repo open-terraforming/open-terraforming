@@ -1,5 +1,9 @@
 TODO:
- - client - endgame
+ - client - player colors
+ - client - show owners of cells
+ - client - events!
+ - client - card filtering (both player and in hand)
+ - client - connect should autofocus on name & prefill previously entered name
  - server - handle disconnected clients properly
  - server - save & load state
  - server - picking card shouldn't count as an action
