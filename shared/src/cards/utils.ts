@@ -475,11 +475,9 @@ export const effectChoice = (effects: CardEffect[]) =>
 		args: [effectChoiceArg(effects)],
 		conditions: [
 			condition({
-				evaluate: (
-					ctx,
-					chosenEffect: number,
-					chosenArgs: CardEffectArgumentType[]
-				) => {
+				evaluate: (ctx, args: [number, CardEffectArgumentType[]]) => {
+					const [chosenEffect, chosenArgs] = args || [undefined, []]
+
 					if (chosenEffect === undefined) {
 						return !!effects.find((e) =>
 							e.conditions.every((c) => c.evaluate(ctx, ...chosenArgs))
@@ -496,11 +494,9 @@ export const effectChoice = (effects: CardEffect[]) =>
 			}),
 		],
 		description: effects.map((e) => e.description || '').join(' OR '),
-		perform: (
-			ctx,
-			chosenEffect: number,
-			chosenArgs: CardEffectArgumentType[]
-		) => {
+		perform: (ctx, args: [number, CardEffectArgumentType[]]) => {
+			const [chosenEffect, chosenArgs] = args || [undefined, []]
+
 			const effect = effects[chosenEffect]
 			if (!effect) {
 				throw new Error(`Unknown effect choice ${chosenEffect}`)
@@ -541,28 +537,36 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 	effect({
 		args: [
 			{
-				...cardArg([cardResourceCondition(res, amount)]),
+				...cardArg(amount < 0 ? [cardResourceCondition(res, amount)] : []),
 				description:
 					amount > 0
 						? `Add ${amount} ${res} to`
 						: `Remove ${-amount} ${res} from`,
 			},
 		],
-		conditions: [],
+		conditions: [
+			condition({
+				description: `Player has to have a card that accepts ${res}`,
+				evaluate: ({ player }) =>
+					!!player.usedCards
+						.map((c) => CardsLookupApi.get(c.code))
+						.find((c) => c.resource === res),
+			}),
+		],
 		description:
 			amount < 0
 				? `Remove ${-amount} ${res} from any other card`
 				: `Add ${amount} ${res} to any other card`,
-		perform: ({ player }, [cardCode, cardIndex]: [string, number]) => {
-			const card = CardsLookupApi.get(cardCode)
+		perform: ({ player }, cardIndex: number) => {
 			const cardState = player.usedCards[cardIndex]
+			if (!cardState) {
+				throw new Error(`Invalid card target ${cardIndex}`)
+			}
 
-			if (!cardState || cardState.code !== card.code) {
-				throw new Error(
-					`Invalid card target (state found: ${!!cardState}, card code: ${cardCode} ?= ${
-						card.code
-					}`
-				)
+			const card = CardsLookupApi.get(cardState?.code)
+
+			if (card.resource !== res) {
+				throw new Error(`${card.title} doesn't accept ${res}`)
 			}
 
 			// TODO: Check if player can place it on this card

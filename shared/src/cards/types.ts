@@ -114,9 +114,9 @@ export interface CardEffect<T extends Array<CardEffectArgumentType> = any> {
 export enum CardEffectTarget {
 	// Type - player: number
 	Player,
-	// Resource - amount: number
+	// Type - amount: number
 	Resource,
-	// Resource - cardIndex: number
+	// Type - cardIndex: number
 	Card,
 	// Type - [player: number, card: number]
 	PlayerCardResource,

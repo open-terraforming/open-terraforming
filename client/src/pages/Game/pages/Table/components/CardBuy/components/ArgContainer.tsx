@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Button } from '@/components'
 
 export const ArgContainer = styled.div`
 	display: flex;
@@ -6,7 +7,8 @@ export const ArgContainer = styled.div`
 	align-items: center;
 
 	select,
-	input {
+	input,
+	button {
 		margin: 0 0.4rem;
 	}
 `

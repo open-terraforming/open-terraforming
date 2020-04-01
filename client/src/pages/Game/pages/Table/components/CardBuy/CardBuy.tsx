@@ -158,6 +158,7 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 						<ArgsPicker
 							key={i}
 							effect={e}
+							card={card.code}
 							onChange={v => {
 								const updated = [...effectsArgs]
 								updated[i] = v
@@ -172,7 +173,9 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 						<ArgsPicker
 							key={i}
 							effect={e}
+							card={card.code}
 							cardState={cardState}
+							cardIndex={index}
 							onChange={v => {
 								const updated = [...effectsArgs]
 								updated[i] = v

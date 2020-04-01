@@ -1,7 +1,7 @@
-CLIENT TODO:
- - card exchange
- - card argument / (own and other players)
- - limit ore/titan
-
-OTHER TODO:
- - effect choice without player choice (just choose the best)?
+TODO:
+ - client - stacked actions
+ - client - implement card exchange
+ - client - implement card argument / (own and other players)
+ - client - endgame
+ - server - handle disconnected clients properly
+ - server - save & load state
