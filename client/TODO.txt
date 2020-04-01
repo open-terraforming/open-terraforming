@@ -1,12 +1,7 @@
 CLIENT TODO:
  - card exchange
  - card argument / (own and other players)
-
-PLACE TILE THAT'S NEXT TO SOMETHING
- - check if it's possible (the tile exists and there's space around it)
+ - limit ore/titan
 
 OTHER TODO:
  - effect choice without player choice (just choose the best)?
-
-SERVER:
- - player order is wrong

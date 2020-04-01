@@ -49,10 +49,12 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 	const canUseTitan =
 		(state?.titan || 0) > 0 && card.categories.includes(CardCategory.Space)
 
-	const price =
+	const price = Math.max(
+		0,
 		card.cost -
-		(canUseOre ? ore : 0) * (state?.orePrice || 2) -
-		(canUseTitan ? titan : 0) * (state?.titanPrice || 3)
+			(canUseOre ? ore : 0) * (state?.orePrice || 2) -
+			(canUseTitan ? titan : 0) * (state?.titanPrice || 3)
+	)
 
 	const canAfford = !buying || (state?.money || 0) >= price
 
@@ -114,7 +116,11 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 								onChange={v => {
 									const val = parseInt(v, 10)
 
-									if (val >= 0 && val <= state?.ore) {
+									if (
+										val >= 0 &&
+										val <= state?.ore &&
+										val <= Math.ceil(card.cost / state.orePrice)
+									) {
 										setOre(val)
 									}
 								}}
@@ -133,7 +139,11 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 								onChange={v => {
 									const val = parseInt(v, 10)
 
-									if (val >= 0 && val <= state?.titan) {
+									if (
+										val >= 0 &&
+										val <= state?.titan &&
+										val <= Math.ceil(card.cost / state.titanPrice)
+									) {
 										setTitan(val)
 									}
 								}}

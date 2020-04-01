@@ -5,7 +5,8 @@ import {
 	UsedCardState,
 	GridCellSpecial,
 	GridCell,
-	GridCellContent
+	GridCellContent,
+	GridCellType
 } from '@shared/game'
 import { MyEvent } from 'src/utils/events'
 import { Game } from './game'
@@ -26,6 +27,7 @@ import {
 import { range } from '@/utils/collections'
 import { cellByCoords } from '@shared/cards/utils'
 import { PlacementConditionsLookup } from '@shared/placements'
+import { allCells, adjacentCells } from '@shared/utils'
 
 interface CardPlayedEvent {
 	player: Player
@@ -137,7 +139,6 @@ export class Player {
 			case PlayerStateValue.Ready: {
 				if (this.game.state.state === GameStateValue.WaitingForPlayers) {
 					this.state.gameState.state = state
-					this.game.checkState()
 				} else {
 					throw new Error(
 						`Player cannot switch to Ready when game is at ${
@@ -194,7 +195,6 @@ export class Player {
 		}
 
 		this.updated()
-		this.game.checkState()
 	}
 
 	pickCards(cards: number[]) {
@@ -244,7 +244,6 @@ export class Player {
 		}
 
 		this.updated()
-		this.game.checkState()
 	}
 
 	buyCard(
@@ -462,6 +461,20 @@ export class Player {
 			this.gameState.cards.push(this.game.nextCard().code)
 		})
 
+		switch (pendingTile.type) {
+			case GridCellContent.Forest: {
+				if (this.game.state.oxygen < this.game.state.map.oxygen) {
+					this.game.state.oxygen++
+					this.gameState.terraformRating++
+				}
+				break
+			}
+			case GridCellContent.Ocean: {
+				this.gameState.terraformRating++
+				break
+			}
+		}
+
 		if (pendingTile.type !== GridCellContent.Ocean) {
 			cell.ownerId = this.state.id
 		}
@@ -622,5 +635,44 @@ export class Player {
 			titan: 0,
 			titanProduction: 1
 		}
+	}
+
+	finishGame() {
+		const cardVps = this.gameState.usedCards.reduce((acc, state, cardIndex) => {
+			const card = CardsLookupApi.get(state.code)
+			acc += card.victoryPoints
+			if (card.victoryPointsCallback) {
+				acc += card.victoryPointsCallback.compute({
+					card: state,
+					cardIndex,
+					game: this.game.state,
+					player: this.gameState,
+					playerId: this.id
+				})
+			}
+			return acc
+		}, 0)
+
+		const tileVps = allCells(this.game.state).reduce((acc, cell) => {
+			if (cell.ownerId === this.id) {
+				switch (cell.content) {
+					case GridCellContent.Forest: {
+						return acc + 1
+					}
+					case GridCellContent.City: {
+						return (
+							acc +
+							adjacentCells(this.game.state, cell.x, cell.y).filter(
+								c => c.content === GridCellContent.Forest
+							).length
+						)
+					}
+				}
+			}
+			return acc
+		}, 0)
+
+		this.gameState.terraformRating += cardVps
+		this.gameState.terraformRating += tileVps
 	}
 }

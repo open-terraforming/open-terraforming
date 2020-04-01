@@ -18,10 +18,11 @@ export class Game {
 		state: GameStateValue.WaitingForPlayers,
 		generation: 1,
 		currentPlayer: 0,
+		startingPlayer: 0,
 		players: [],
 		oceans: 0,
 		oxygen: 0,
-		temperature: 0,
+		temperature: -30,
 		map: defaultMap()
 	} as GameState
 
@@ -43,6 +44,7 @@ export class Game {
 	}
 
 	updated = () => {
+		this.checkState()
 		this.onStateUpdated.emit(this.state)
 	}
 
@@ -131,11 +133,14 @@ export class Game {
 			})
 		}
 
+		this.state.startingPlayer = Math.round(
+			Math.random() * (this.players.length - 1)
+		)
+
 		this.players.forEach(p => {
 			p.gameState.state = PlayerStateValue.PickingCorporation
 		})
 		this.state.state = GameStateValue.PickingCorporations
-		this.updated()
 	}
 
 	checkState() {
@@ -149,12 +154,20 @@ export class Game {
 			case GameStateValue.PickingCorporations:
 			case GameStateValue.PickingCards:
 				if (this.all(PlayerStateValue.WaitingForTurn)) {
+					this.state.currentPlayer = this.state.startingPlayer - 1
 					this.nextPlayer()
 					this.state.state = GameStateValue.GenerationInProgress
-					this.updated()
 				}
 				break
 		}
+	}
+
+	finishGame() {
+		this.state.state == GameStateValue.Ended
+
+		this.players.forEach(p => {
+			p.finishGame()
+		})
 	}
 
 	nextPlayer() {
@@ -172,15 +185,24 @@ export class Game {
 	}
 
 	endGeneration() {
-		this.players.forEach(p => {
-			p.endGeneration()
-			p.gameState.state = PlayerStateValue.PickingCards
-			p.giveCards(4)
-		})
+		if (
+			this.state.oceans >= this.state.map.oceans &&
+			this.state.oxygen >= this.state.map.oxygen &&
+			this.state.temperature >= this.state.map.temperature
+		) {
+			this.finishGame()
+		} else {
+			this.players.forEach(p => {
+				p.endGeneration()
+				p.gameState.state = PlayerStateValue.PickingCards
+				p.giveCards(4)
+			})
 
-		this.state.state = GameStateValue.PickingCards
+			this.state.state = GameStateValue.PickingCards
 
-		this.state.generation++
+			this.state.generation++
+		}
+
 		this.updated()
 	}
 

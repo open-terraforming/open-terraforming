@@ -47,7 +47,7 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 		<ArgContainer>
 			{arg.description || 'Target player'}
 			<select value={value} onChange={handleChange}>
-				<option value={-1}>Nobody</option>
+				{arg.optional && <option value={-1}>Nobody</option>}
 				{possiblePlayers.map(p => (
 					<option key={p.id} value={p.id}>
 						{p.name}

@@ -12,6 +12,7 @@ import { useAppStore } from '@/utils/hooks'
 import { UsedCardState } from '@shared/index'
 import { PlayEffect } from './components/PlayEffect'
 import { Tag } from './components/Tag'
+import { isCardPlayable } from '@shared/cards/utils'
 
 export const CardView = ({
 	card,
@@ -77,8 +78,14 @@ export const CardView = ({
 		[state, card, cardIndex, game, playerId]
 	)
 
+	const playable = isCardPlayable(card, condContext)
+
 	return (
-		<Container selected={selected} onClick={onClick}>
+		<Container
+			selected={selected}
+			onClick={playable ? onClick : undefined}
+			playable={playable}
+		>
 			<Inner type={card.type}>
 				<Head>
 					<Cost>
@@ -114,8 +121,8 @@ const typeToColor = {
 	[CardType.Event]: '#FF6868'
 } as const
 
-const Container = styled.div<{ selected: boolean }>`
-	background: #fff;
+const Container = styled.div<{ selected: boolean; playable: boolean }>`
+	background: ${props => (props.playable ? '#fff' : '#eee')};
 	padding: 0.25rem;
 	border-radius: 12px;
 	color: #000;

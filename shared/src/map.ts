@@ -132,6 +132,9 @@ export const defaultMap = () => {
 		height: 9,
 		grid,
 		special: [],
+		oceans: 9,
+		temperature: 8,
+		oxygen: 14,
 	}
 
 	return map

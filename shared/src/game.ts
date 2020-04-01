@@ -48,6 +48,9 @@ export interface GameState {
 
 	/**  Player index (NOT ID) currently playing round (only for GenerationInProgress) */
 	currentPlayer: number
+
+	startingPlayer: number
+
 	players: PlayerState[]
 
 	map: MapState
@@ -56,6 +59,10 @@ export interface GameState {
 export interface MapState {
 	width: number
 	height: number
+
+	oceans: number
+	temperature: number
+	oxygen: number
 
 	special: GridCell[]
 	grid: GridCell[][]

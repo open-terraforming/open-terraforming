@@ -15,6 +15,7 @@ import {
 	CardPassiveEffect,
 	CellCondition,
 	CardEffectType,
+	CardCallbackContext,
 } from './types'
 import {
 	GameState,
@@ -133,7 +134,7 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 			player.usedCards
 				.map((c) => CardsLookupApi.get(c.code))
 				.filter((c) => c && c.categories.includes(category)).length >= value,
-		description: `Requires ${value} of ${CardCategory[category]} cards`,
+		description: `Requires ${value} ${CardCategory[category]} cards`,
 	})
 
 export const gameProgressConditionMin = (res: GameProgress, value: number) =>
@@ -144,14 +145,14 @@ export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 
 export const gameProgressConditionMax = (res: GameProgress, value: number) =>
 	condition({
-		evaluate: ({ game }) => game[res] >= value,
+		evaluate: ({ game }) => game[res] <= value,
 		description: `${progressResToStr(res)} has to be at most ${value}`,
 	})
 
 export const resourceCondition = (res: Resource, value: number) =>
 	condition({
 		evaluate: ({ player }) => player[res] >= value,
-		description: `You have to have at least ${value} of ${res}`,
+		description: `You have to have at least ${withUnits(res, value)}`,
 	})
 
 export const cellTypeCondition = (type: GridCellContent, amount: number) =>
@@ -184,7 +185,7 @@ export const productionCondition = (res: Resource, value: number) => {
 	const prod = resourceProduction[res]
 	return condition({
 		evaluate: ({ player }) => player[prod] >= value,
-		description: `Your production of ${res} has to be at least ${value}`,
+		description: `Your ${res} production has to be at least ${value}`,
 	})
 }
 
@@ -196,8 +197,8 @@ export const productionChange = (res: Resource, change: number) => {
 		type: CardEffectType.Production,
 		description:
 			change > 0
-				? `Your production of ${res} will increase by ${change}`
-				: `Your production of ${res} will decrease by ${-change}`,
+				? `Your ${res} production will increase by ${change}`
+				: `Your ${res} production will decrease by ${-change}`,
 		perform: ({ player }) => {
 			player[prod] += change
 		},
@@ -278,7 +279,9 @@ export const playerProductionChange = (res: Resource, change: number) => {
 				? `Increase ${res} production of any player by ${change}`
 				: `Decrease ${res} production of any player by ${-change}`,
 		perform: ({ game }, playerId: number) => {
-			playerId >= 0 && (gamePlayer(game, playerId)[prod] += change)
+			const player = gamePlayer(game, playerId)
+
+			player[prod] += change
 		},
 	})
 }
@@ -351,7 +354,12 @@ export function placeTile({
 				},
 			}),
 		],
-		perform: ({ player, cardIndex }) => {
+		perform: ({ player, cardIndex, game }) => {
+			// Only limited number of ocean tiles an be placed
+			if (type === GridCellContent.Ocean && game.oceans >= game.map.oceans) {
+				return
+			}
+
 			player.placingTile.push({
 				...placementState,
 				ownerCard: cardIndex,
@@ -639,3 +647,7 @@ export const card = (
 		actionEffects: [],
 		...c,
 	} as Card)
+
+export const isCardPlayable = (card: Card, ctx: CardCallbackContext) =>
+	!card.conditions.find((c) => !c.evaluate(ctx)) &&
+	!card.playEffects.find((e) => e.conditions.find((c) => !c.evaluate(ctx)))
