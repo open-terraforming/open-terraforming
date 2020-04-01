@@ -11,4 +11,8 @@ export const ArgContainer = styled.div`
 	button {
 		margin: 0 0.4rem;
 	}
+
+	input[type='number'] {
+		width: 64px;
+	}
 `

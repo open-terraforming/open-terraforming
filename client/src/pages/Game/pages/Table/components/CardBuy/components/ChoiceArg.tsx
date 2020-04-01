@@ -22,7 +22,7 @@ export const ChoiceArg = ({
 	cardIndex,
 	cardState
 }: Props) => {
-	const [selected, setSelected] = useState(undefined as number | undefined)
+	const [selected, setSelected] = useState(0 as number)
 	const [args, setArgs] = useState([] as CardEffectArgumentType[][])
 
 	const player = useAppStore(state => state.game.player)

@@ -248,7 +248,9 @@ export const playerResourceChange = (
 				? Math.max(change, -amount)
 				: Math.min(change, amount)
 
-			playerId >= 0 && (gamePlayer(game, playerId)[res] += actualChange)
+			playerId !== null &&
+				playerId >= 0 &&
+				(gamePlayer(game, playerId)[res] += actualChange)
 		},
 	})
 }
@@ -595,35 +597,48 @@ export const playerCardArg = (conditions: CardCondition[] = [], amount = 0) =>
 
 export const playerCardResourceChange = (res: CardResource, amount: number) =>
 	effect({
-		args:
+		args: [
+			{
+				...playerCardArg(
+					amount < 0 ? [cardResourceCondition(res, -amount)] : [],
+					-amount
+				),
+				description:
+					amount > 0 ? `add ${amount} ${res}` : `remove ${-amount} ${res}`,
+			},
+		],
+		conditions:
 			amount < 0
-				? [playerCardArg([cardResourceCondition(res, -amount)], -amount)]
+				? [
+						condition({
+							evaluate: ({ game }) =>
+								!!game.players.find(
+									(p) => !!p.gameState.usedCards.find((c) => c[res] >= -amount)
+								),
+						}),
+				  ]
 				: [],
 		description:
 			amount < 0
 				? `Remove ${-amount} ${res} from any other player card`
 				: `Add ${amount} ${res} to any other player card`,
-		perform: (
-			{ game },
-			[playerId, cardCode, cardIndex]: [number, string, number]
-		) => {
+		perform: ({ game }, [playerId, cardIndex]: [number, number]) => {
 			const player = game.players.find((p) => p.id === playerId)?.gameState
 			if (!player) {
 				throw new Error(`Invalid player id ${playerId}`)
 			}
-
-			const card = CardsLookupApi.get(cardCode)
 			const cardState = player.usedCards[cardIndex]
 
-			if (!cardState || cardState.code !== card.code) {
-				throw new Error(
-					`Invalid card target (state found: ${!!cardState}, card code: ${cardCode} ?= ${
-						card.code
-					}`
-				)
+			if (!cardState) {
+				throw new Error(`Invalid card target ${cardIndex}`)
 			}
 
-			// TODO: Check if player can place it on this card
+			const card = CardsLookupApi.get(cardState?.code)
+
+			if (card.resource !== res) {
+				throw new Error(`${card.title} doesn't accept ${res}`)
+			}
+
 			cardState[res] += amount
 		},
 	})

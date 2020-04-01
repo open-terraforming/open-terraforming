@@ -570,6 +570,15 @@ export class Player {
 			return
 		}
 
+		if (
+			this.gameState.cardsToPlay.length > 0 &&
+			this.gameState.cardsToPlay[0] !== index
+		) {
+			throw new Error(
+				'You have to resolve pending events before playing other cards'
+			)
+		}
+
 		const cardState = this.gameState.usedCards[index]
 
 		if (cardState === undefined || cardState?.code !== cardCode) {
@@ -588,7 +597,7 @@ export class Player {
 			throw new Error(`Unknown card ${cardCode}`)
 		}
 
-		if (card.type !== CardType.Action) {
+		if (card.type !== CardType.Action && card.type !== CardType.Effect) {
 			throw new Error("This card isn't playable")
 		}
 
@@ -604,18 +613,22 @@ export class Player {
 
 		this.runCardEffects(card.actionEffects, ctx, playArguments)
 
-		cardState.played = true
-
-		this.onCardPlayed.emit({
-			card,
-			cardIndex: ctx.cardIndex,
-			player: this
-		})
-
-		if (this.gameState.placingTile.length > 0) {
-			this.gameState.state = PlayerStateValue.PlacingTile
+		if (this.gameState.cardsToPlay.length > 0) {
+			this.gameState.cardsToPlay.shift()
 		} else {
-			this.actionPlayed()
+			cardState.played = true
+
+			this.onCardPlayed.emit({
+				card,
+				cardIndex: ctx.cardIndex,
+				player: this
+			})
+
+			if (this.gameState.placingTile.length > 0) {
+				this.gameState.state = PlayerStateValue.PlacingTile
+			} else {
+				this.actionPlayed()
+			}
 		}
 
 		this.updated()

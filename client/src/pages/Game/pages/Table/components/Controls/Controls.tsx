@@ -22,6 +22,7 @@ export const Controls = () => {
 	const corporation = Corporations.find(c => c.code === state?.corporation)
 	const [handOpened, setHandOpened] = useState(false)
 	const [cardsOpened, setCardsOpened] = useState(false)
+	const stackedActions = player?.gameState.cardsToPlay
 
 	const isPlaying = state?.state === PlayerStateValue.Playing
 
@@ -38,6 +39,14 @@ export const Controls = () => {
 				<PlayedCards
 					playing={isPlaying}
 					onClose={() => setCardsOpened(false)}
+				/>
+			)}
+
+			{stackedActions && stackedActions.length > 0 && (
+				<CardBuy
+					buying={false}
+					index={stackedActions[0]}
+					onClose={() => false}
 				/>
 			)}
 

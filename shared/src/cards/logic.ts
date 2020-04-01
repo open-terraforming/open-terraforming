@@ -394,16 +394,16 @@ export const playWhenCard = (tags: CardCategory[]) =>
 			.map((t) => CardCategory[t])
 			.join(' or ')} card`,
 		onCardPlayed: (
-			{ playerId, player, card: cardState },
-			card,
-			cardIndex,
+			{ playerId, player, card: cardState, cardIndex },
+			playedCard,
+			playedCardIndex,
 			playedBy
 		) => {
 			if (
 				playerId === playedBy.id &&
-				tags.find((t) => card.categories.includes(t))
+				tags.find((t) => playedCard.categories.includes(t))
 			) {
-				cardState.triggeredByCard = cardIndex
+				cardState.triggeredByCard = playedCardIndex
 				player.cardsToPlay.push(cardIndex)
 			}
 		},

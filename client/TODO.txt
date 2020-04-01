@@ -1,7 +1,5 @@
 TODO:
- - client - stacked actions
  - client - implement card exchange
- - client - implement card argument / (own and other players)
  - client - endgame
  - server - handle disconnected clients properly
  - server - save & load state

@@ -1,70 +1,145 @@
-import React, { useState, useMemo, useCallback } from 'react'
-import { CardEffectArgument, CardsLookupApi } from '@shared/cards'
+import React, { useState, useMemo, useCallback, useEffect } from 'react'
+import {
+	CardEffectArgument,
+	CardsLookupApi,
+	CardCondition,
+	CardCallbackContext
+} from '@shared/cards'
 import { CardInfo } from '../../CardDisplay/CardDisplay'
 import { Button } from '@/components'
 import { ArgContainer } from './ArgContainer'
 import { CardSelector } from '../../CardSelector/CardSelector'
 import { useAppStore } from '@/utils/hooks'
 import { emptyCardState } from '@shared/cards/utils'
+import { UsedCardState } from '@shared/index'
 
 type Props = {
 	arg: CardEffectArgument
-	onChange: (v: number) => void
+	otherPlayer?: boolean
+	onChange: (v: number | [number, number]) => void
 }
 
-export const CardArg = ({ arg, onChange }: Props) => {
+const cardsToCardList = (
+	cards: UsedCardState[],
+	conditions: CardCondition[],
+	ctx: Partial<CardCallbackContext>
+) =>
+	cards
+		.map(
+			(c, i) =>
+				({
+					card: CardsLookupApi.get(c.code),
+					index: i,
+					state: c
+				} as CardInfo)
+		)
+		.filter(item =>
+			conditions.every(c =>
+				c.evaluate({
+					...ctx,
+					card: item.state || emptyCardState(item.card.code),
+					cardIndex: item.index
+				} as CardCallbackContext)
+			)
+		)
+
+export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 	const [picking, setPicking] = useState(false)
+	const player = useAppStore(state => state.game.player)
 	const [selected, setSelected] = useState(undefined as CardInfo | undefined)
 
-	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
 	const playerState = player?.gameState
 	const playerId = player?.id
 	const usedCards = useAppStore(state => state.game.player?.gameState.usedCards)
 
+	const players = useMemo(
+		() =>
+			otherPlayer && game
+				? game.players
+						.map(p => ({
+							player: p,
+							cards: cardsToCardList(
+								p.gameState.usedCards,
+								arg.cardConditions,
+								{
+									game,
+									player: p.gameState,
+									playerId: p.id
+								}
+							)
+						}))
+						.filter(({ cards }) => cards.length > 0)
+				: [],
+		[otherPlayer, game, arg]
+	)
+
+	const [selectedPlayer, setSelectedPlayer] = useState(0)
+
 	const cards = useMemo(
 		() =>
 			usedCards && game && playerState && playerId
-				? usedCards
-						.map(
-							(c, i) =>
-								({
-									card: CardsLookupApi.get(c.code),
-									index: i,
-									state: c
-								} as CardInfo)
-						)
-						.filter(item =>
-							arg.cardConditions.every(c =>
-								c.evaluate({
-									card: item.state || emptyCardState(item.card.code),
-									cardIndex: item.index,
-									game,
-									player: playerState,
-									playerId
-								})
-							)
-						)
+				? cardsToCardList(usedCards, arg.cardConditions, {
+						game,
+						player: playerState,
+						playerId
+				  })
 				: [],
 		[usedCards]
 	)
 
 	const handleSubmit = useCallback((cards: CardInfo[]) => {
-		setSelected(cards[0])
 		setPicking(false)
-		onChange(cards[0]?.index)
+
+		if (cards.length === 0) {
+			return
+		}
+
+		setSelected(cards[0])
+
+		if (otherPlayer) {
+			onChange([players[selectedPlayer].player.id, cards[0]?.index])
+		} else {
+			onChange(cards[0]?.index)
+		}
 	}, [])
+
+	const choice = !otherPlayer ? cards : players[selectedPlayer].cards
+
+	useEffect(() => {
+		if (!choice.find(c => c.index === selected?.index)) {
+			handleSubmit(choice)
+		}
+	}, [choice, selected, handleSubmit])
 
 	return (
 		<ArgContainer>
-			<span>{arg.description}</span>{' '}
-			<Button onClick={() => setPicking(true)}>
-				{selected ? selected.card.title : 'Pick card'}
-			</Button>
+			From
+			{otherPlayer && (
+				<select
+					value={selectedPlayer}
+					onChange={e => {
+						setSelectedPlayer(parseInt(e.target.value, 10))
+					}}
+				>
+					{players.map((p, i) => (
+						<option key={p.player.id} value={i}>
+							{p.player.name}
+						</option>
+					))}
+				</select>
+			)}
+			{!otherPlayer ||
+				(selectedPlayer !== undefined && players[selectedPlayer] && (
+					<Button onClick={() => setPicking(true)}>
+						{selected ? selected.card.title : 'Pick card'}
+					</Button>
+				))}
+			<span>{arg.description}</span>
 			{picking && (
 				<CardSelector
 					title={arg.description}
-					cards={cards}
+					cards={choice}
 					limit={1}
 					onSubmit={handleSubmit}
 					filters={false}

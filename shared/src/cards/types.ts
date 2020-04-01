@@ -118,7 +118,7 @@ export enum CardEffectTarget {
 	Resource,
 	// Type - cardIndex: number
 	Card,
-	// Type - [player: number, card: number]
+	// Type - [player: number, cardIndex: number]
 	PlayerCardResource,
 	// Type - codes: string[]
 	DrawnCards,
@@ -152,8 +152,8 @@ export interface CardPassiveEffect {
 	) => void
 	onCardPlayed?: (
 		ctx: CardCallbackContext,
-		card: Card,
-		cardIndex: number,
+		playedCard: Card,
+		playedCardIndex: number,
 		playedBy: PlayerState
 	) => void
 }

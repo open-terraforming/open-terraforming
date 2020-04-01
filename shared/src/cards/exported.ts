@@ -696,7 +696,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 1,
 		categories: [CardCategory.Event, CardCategory.Microbe],
-		actionEffects: [
+		playEffects: [
 			effectChoice([
 				playerResourceChange('plants', -5),
 				playerCardResourceChange('animals', -2),
