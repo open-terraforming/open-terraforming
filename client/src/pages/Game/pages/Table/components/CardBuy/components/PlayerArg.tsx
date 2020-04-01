@@ -45,7 +45,7 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 
 	return (
 		<ArgContainer>
-			{arg.description || 'Target player'}
+			<span>{arg.descriptionPrefix || 'Target player'}</span>
 			<select value={value} onChange={handleChange}>
 				{arg.optional && <option value={-1}>Nobody</option>}
 				{possiblePlayers.map(p => (
@@ -54,6 +54,7 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 					</option>
 				))}
 			</select>
+			<span>{arg.descriptionPostfix}</span>
 		</ArgContainer>
 	)
 }

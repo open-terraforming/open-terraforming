@@ -52,6 +52,7 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 	const playerState = player?.gameState
 	const playerId = player?.id
 	const usedCards = useAppStore(state => state.game.player?.gameState.usedCards)
+	const handCards = useAppStore(state => state.game.player?.gameState.cards)
 
 	const players = useMemo(
 		() =>
@@ -78,12 +79,16 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 
 	const cards = useMemo(
 		() =>
-			usedCards && game && playerState && playerId
-				? cardsToCardList(usedCards, arg.cardConditions, {
-						game,
-						player: playerState,
-						playerId
-				  })
+			usedCards && handCards && game && playerState && playerId
+				? cardsToCardList(
+						arg.fromHand ? handCards.map(c => emptyCardState(c)) : usedCards,
+						arg.cardConditions,
+						{
+							game,
+							player: playerState,
+							playerId
+						}
+				  )
 				: [],
 		[usedCards]
 	)
@@ -112,9 +117,12 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 		}
 	}, [choice, selected, handleSubmit])
 
+	const enableCardPicker =
+		!otherPlayer || (selectedPlayer !== undefined && players[selectedPlayer])
+
 	return (
 		<ArgContainer>
-			From
+			<span>{arg.descriptionPrefix}</span>
 			{otherPlayer && (
 				<select
 					value={selectedPlayer}
@@ -129,16 +137,15 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 					))}
 				</select>
 			)}
-			{!otherPlayer ||
-				(selectedPlayer !== undefined && players[selectedPlayer] && (
-					<Button onClick={() => setPicking(true)}>
-						{selected ? selected.card.title : 'Pick card'}
-					</Button>
-				))}
-			<span>{arg.description}</span>
+			{enableCardPicker && (
+				<Button onClick={() => setPicking(true)}>
+					{selected ? selected.card.title : 'Pick card'}
+				</Button>
+			)}
+			<span>{arg.descriptionPostfix}</span>
 			{picking && (
 				<CardSelector
-					title={arg.description}
+					title={'Select a card'}
 					cards={choice}
 					limit={1}
 					onSubmit={handleSubmit}

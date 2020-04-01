@@ -31,6 +31,7 @@ export enum PlacementCode {
 	OneCity = 'one_city',
 	OneForest = 'one_forest',
 	NoCity = 'no_city',
+	NoctisCity = 'noctis_city',
 }
 
 export interface PlacementContext {
@@ -119,6 +120,11 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 					c.special !== GridCellSpecial.NoctisCity
 			).length === 0,
 	}),
+	placement({
+		code: PlacementCode.NoctisCity,
+		description: 'on Noctis City',
+		evaluate: ({ cell }) => cell.type === GridCellType.NoctisCity,
+	}),
 ] as const
 
 export const PlacementConditionsLookup = {
@@ -162,6 +168,13 @@ export const canPlace = (
 	state: PlacementState
 ) => {
 	let conditions = ContentToPlacement[state.type]
+
+	if (
+		cell.type === GridCellType.NoctisCity &&
+		!state.special?.includes(GridCellSpecial.NoctisCity)
+	) {
+		return false
+	}
 
 	if (state.conditions) {
 		conditions = state.conditions

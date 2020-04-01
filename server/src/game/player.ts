@@ -566,10 +566,6 @@ export class Player {
 		index: number,
 		playArguments: CardEffectArgumentType[][]
 	) {
-		if (!this.isPlaying) {
-			return
-		}
-
 		if (
 			this.gameState.cardsToPlay.length > 0 &&
 			this.gameState.cardsToPlay[0] !== index
@@ -577,6 +573,10 @@ export class Player {
 			throw new Error(
 				'You have to resolve pending events before playing other cards'
 			)
+		}
+
+		if (this.gameState.cardsToPlay.length === 0 && !this.isPlaying) {
+			throw new Error("You're not playing")
 		}
 
 		const cardState = this.gameState.usedCards[index]

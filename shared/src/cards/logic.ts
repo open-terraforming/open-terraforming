@@ -111,7 +111,7 @@ export const resourcesForTiles = (
 				  } on Mars`
 				: `${withUnits(res, 1)} per ${Math.ceil(1 / resPerTile)} ${
 						GridCellContent[tile]
-				  }on Mars`
+				  } on Mars`
 		}`,
 		perform: ({ player, game }) => {
 			player[res] += Math.floor(countGridContent(game, tile) * resPerTile)
@@ -150,7 +150,8 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 			effectArg({
 				type: CardEffectTarget.Resource,
 				resource: res,
-				description: `Use ${res} to pay `,
+				descriptionPrefix: `Use`,
+				descriptionPostfix: `of ${res} to pay`,
 			}),
 		],
 		conditions: [
@@ -372,18 +373,37 @@ export const titanPriceChange = (change: number) =>
 
 export const cardExchange = () =>
 	effect({
+		args: [
+			effectArg({
+				type: CardEffectTarget.Card,
+				cardConditions: [],
+				descriptionPrefix: 'Discard',
+				optional: true,
+				fromHand: true,
+			}),
+			drawnCards(1),
+		],
 		description: `Discard a card from hand to draw a new card`,
-		perform: ({ player }) => {
-			player.state = PlayerStateValue.ExchangingCard
+		perform: ({ player }, cardIndex: number, [cardCode]: [string]) => {
+			player.cards.splice(cardIndex, 1)
+			player.cards.push(cardCode)
 		},
 	})
 
 export const cardExchangeEffect = (tag: CardCategory) =>
 	passiveEffect({
-		description: `When you play a ${CardCategory[tag]} card, you may discard a card from hand to draw a card`,
-		onCardPlayed: ({ player }, card) => {
-			if (CardsLookupApi.get(card.code).categories.includes(tag)) {
-				player.state = PlayerStateValue.ExchangingCard
+		description: `Effect: Action is triggered when you play a ${CardCategory[tag]} card`,
+		onCardPlayed: (
+			{ player, playerId, cardIndex },
+			playedCard,
+			_playedCardIndex,
+			playedBy
+		) => {
+			if (
+				CardsLookupApi.get(playedCard.code).categories.includes(tag) &&
+				playedBy.id === playerId
+			) {
+				player.cardsToPlay.push(cardIndex)
 			}
 		},
 	})
@@ -448,19 +468,22 @@ export const duplicateProduction = (type: CardCategory) =>
 	effect({
 		description: `Duplicate only the production effect of one of your ${CardCategory[type]} cards`,
 		args: [
-			cardArg([
-				{
-					evaluate: ({ card }) => {
-						const data = CardsLookupApi.get(card.code)
-						return (
-							data.categories.includes(type) &&
-							!!data.playEffects.find((e) => {
-								return e.type === CardEffectType.Production
-							})
-						)
+			cardArg(
+				[
+					{
+						evaluate: ({ card }) => {
+							const data = CardsLookupApi.get(card.code)
+							return (
+								data.categories.includes(type) &&
+								!!data.playEffects.find((e) => {
+									return e.type === CardEffectType.Production
+								})
+							)
+						},
 					},
-				},
-			]),
+				],
+				'Duplicate production of'
+			),
 		],
 		perform: (ctx, cardIndex: number) => {
 			const { player } = ctx
@@ -471,6 +494,7 @@ export const duplicateProduction = (type: CardCategory) =>
 			}
 
 			const cardData = CardsLookupApi.get(card.code)
+
 			cardData.playEffects.forEach((e) => {
 				if (e.type === CardEffectType.Production) {
 					e.perform({ ...ctx, card, cardIndex })

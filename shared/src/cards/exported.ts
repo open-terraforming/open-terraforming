@@ -25,6 +25,7 @@ import {
 	productionChangeForTags,
 	ownedCellTypeCondition,
 	vpsForTiles,
+	doNothing,
 } from './utils'
 import { CardType, CardCategory, Card } from './types'
 import {
@@ -269,7 +270,7 @@ export const BuiltCards: Card[] = [
 			placeTile({
 				type: GridCellContent.City,
 				special: [GridCellSpecial.NoctisCity],
-				conditions: [],
+				conditions: [PlacementCode.NoctisCity],
 			}),
 		],
 	}),
@@ -970,12 +971,12 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'mars_university',
 		title: 'Mars University',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 8,
 		categories: [CardCategory.Building, CardCategory.Science],
 		victoryPoints: 1,
-		playEffects: [cardExchange()],
+		actionEffects: [effectChoice([doNothing(), cardExchange()])],
 		passiveEffects: [cardExchangeEffect(CardCategory.Science)],
 	}),
 	card({

@@ -84,8 +84,8 @@ export const CardView = ({
 						<div>{card.cost}</div>
 					</Cost>
 					<Categories>
-						{card.categories.map(c => (
-							<Tag key={c} tag={c} />
+						{card.categories.map((c, i) => (
+							<Tag key={i} tag={c} />
 						))}
 					</Categories>
 				</Head>

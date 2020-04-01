@@ -240,3 +240,6 @@ export function isNotNull<T>(it: T): it is NonNullable<T> {
 export function isNotUndefined<T>(it: T): it is NonNullable<T> {
 	return it != undefined
 }
+
+export const flatten = <T>(a: T[][]) =>
+	a.reduce((acc, a) => [...acc, ...a], [] as T[])

@@ -130,7 +130,8 @@ export enum CardEffectTarget {
 
 export interface CardEffectArgument {
 	type: CardEffectTarget
-	description?: string
+	descriptionPrefix?: string
+	descriptionPostfix?: string
 	playerConditions: PlayerCondition[]
 	cardConditions: CardCondition[]
 	cellConditions: CellCondition[]
@@ -139,6 +140,7 @@ export interface CardEffectArgument {
 	maxAmount?: number
 	optional: boolean
 	resource?: Resource
+	fromHand?: boolean
 	effects?: CardEffect[]
 }
 

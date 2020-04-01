@@ -205,6 +205,14 @@ export const productionChange = (res: Resource, change: number) => {
 	})
 }
 
+export const doNothing = () =>
+	effect({
+		description: 'Do nothing',
+		perform: () => {
+			void 0
+		},
+	})
+
 export const playerResourceChange = (
 	res: Resource,
 	change: number,
@@ -213,7 +221,7 @@ export const playerResourceChange = (
 	return effect({
 		args: [
 			effectArg({
-				description: `From player`,
+				descriptionPrefix: `From`,
 				type: CardEffectTarget.Player,
 				playerConditions:
 					change < 0
@@ -228,7 +236,7 @@ export const playerResourceChange = (
 			...(optional
 				? [
 						effectArg({
-							description: `remove`,
+							descriptionPrefix: `remove`,
 							type: CardEffectTarget.Resource,
 							maxAmount: Math.abs(change),
 							resource: res,
@@ -265,7 +273,8 @@ export const playerProductionChange = (res: Resource, change: number) => {
 					change < 0
 						? [productionCondition(res, -change) as PlayerCondition]
 						: [],
-				description: `Decrease ${res} production by ${-change} of`,
+				descriptionPrefix: `Decrease ${res} production of`,
+				descriptionPostfix: `by ${-change} of`,
 			}),
 		],
 		conditions: [
@@ -523,10 +532,16 @@ export const joinedEffects = (effects: CardEffect[]) =>
 		},
 	})
 
-export const cardArg = (conditions: CardCondition[] = []) =>
+export const cardArg = (
+	conditions: CardCondition[] = [],
+	descriptionPrefix?: string,
+	descriptionPostfix?: string
+) =>
 	effectArg({
 		type: CardEffectTarget.Card,
 		cardConditions: conditions,
+		descriptionPrefix,
+		descriptionPostfix,
 	})
 
 export const cardResourceCondition = (res: CardResource, amount: number) =>
@@ -540,7 +555,7 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 		args: [
 			{
 				...cardArg(amount < 0 ? [cardResourceCondition(res, amount)] : []),
-				description:
+				descriptionPrefix:
 					amount > 0
 						? `Add ${amount} ${res} to`
 						: `Remove ${-amount} ${res} from`,
@@ -603,8 +618,10 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 					amount < 0 ? [cardResourceCondition(res, -amount)] : [],
 					-amount
 				),
-				description:
-					amount > 0 ? `add ${amount} ${res}` : `remove ${-amount} ${res}`,
+				descriptionPrefix:
+					amount > 0
+						? `add ${amount} ${res} to `
+						: `remove ${-amount} ${res} from`,
 			},
 		],
 		conditions:
@@ -657,10 +674,15 @@ export const productionChangeForTags = (
 	})
 }
 
-export const cellArg = (conditions: CellCondition[], description?: string) =>
+export const cellArg = (
+	conditions: CellCondition[],
+	descriptionPrefix?: string,
+	descriptionPostfix?: string
+) =>
 	effectArg({
 		type: CardEffectTarget.Cell,
-		description,
+		descriptionPrefix,
+		descriptionPostfix,
 		cellConditions: conditions,
 	})
 

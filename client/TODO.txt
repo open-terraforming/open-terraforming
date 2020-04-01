@@ -1,5 +1,5 @@
 TODO:
- - client - implement card exchange
  - client - endgame
  - server - handle disconnected clients properly
  - server - save & load state
+ - server - picking card shouldn't count as an action

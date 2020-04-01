@@ -163,7 +163,7 @@ export class Game {
 	}
 
 	finishGame() {
-		this.state.state == GameStateValue.Ended
+		this.state.state = GameStateValue.Ended
 
 		this.players.forEach(p => {
 			p.finishGame()

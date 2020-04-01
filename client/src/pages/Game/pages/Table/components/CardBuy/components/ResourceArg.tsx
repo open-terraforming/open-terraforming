@@ -17,7 +17,7 @@ export const ResourceArg = ({ arg, onChange }: Props) => {
 
 	return (
 		<ArgContainer>
-			{arg.description}
+			{arg.descriptionPrefix}
 			<Input
 				type="number"
 				value={value.toString()}
@@ -31,6 +31,7 @@ export const ResourceArg = ({ arg, onChange }: Props) => {
 				}}
 			/>
 			{arg.resource}
+			{arg.descriptionPostfix}
 		</ArgContainer>
 	)
 }
