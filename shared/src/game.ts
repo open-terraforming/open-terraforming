@@ -32,8 +32,6 @@ export enum PlayerStateValue {
 	Passed,
 	/**  Waiting for his turn */
 	WaitingForTurn,
-	/** Is placing tile */
-	PlacingTile,
 }
 
 export interface GameState {

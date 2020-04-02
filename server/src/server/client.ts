@@ -52,6 +52,14 @@ export class Client {
 		})
 		this.socket.on('close', () => {
 			this.player.state.connected = false
+
+			// Pass if player is playing now
+			if (this.player.gameState.state === PlayerStateValue.Playing) {
+				this.player.pass(true)
+			} else {
+				this.player.updated()
+			}
+
 			this.onDisconnected.emit()
 		})
 	}

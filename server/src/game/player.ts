@@ -349,9 +349,7 @@ export class Player {
 			player: this
 		})
 
-		if (this.gameState.placingTile.length > 0) {
-			this.gameState.state = PlayerStateValue.PlacingTile
-		} else {
+		if (this.gameState.placingTile.length === 0) {
 			this.actionPlayed()
 		}
 
@@ -395,8 +393,8 @@ export class Player {
 	}
 
 	placeTile(x: number, y: number) {
-		if (this.gameState.state !== PlayerStateValue.PlacingTile) {
-			throw new Error('Player is not placing tile right now')
+		if (!this.isPlaying) {
+			throw new Error('Player is not playing now')
 		}
 
 		const pendingTile = this.gameState.placingTile[0]
@@ -624,9 +622,7 @@ export class Player {
 				player: this
 			})
 
-			if (this.gameState.placingTile.length > 0) {
-				this.gameState.state = PlayerStateValue.PlacingTile
-			} else {
+			if (this.gameState.placingTile.length === 0) {
 				this.actionPlayed()
 			}
 		}

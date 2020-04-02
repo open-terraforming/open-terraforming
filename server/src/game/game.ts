@@ -159,6 +159,13 @@ export class Game {
 					this.state.state = GameStateValue.GenerationInProgress
 				}
 				break
+
+			case GameStateValue.GenerationInProgress:
+				if (!this.currentPlayer.state.connected) {
+					this.currentPlayer.gameState.state = PlayerStateValue.Passed
+					this.nextPlayer()
+				}
+				break
 		}
 	}
 
@@ -177,7 +184,10 @@ export class Game {
 			do {
 				this.state.currentPlayer =
 					(this.state.currentPlayer + 1) % this.players.length
-			} while (this.currentPlayer.gameState.state === PlayerStateValue.Passed)
+			} while (
+				this.currentPlayer.gameState.state === PlayerStateValue.Passed ||
+				!this.currentPlayer.state.connected
+			)
 
 			this.currentPlayer.gameState.state = PlayerStateValue.Playing
 			this.currentPlayer.gameState.actionsPlayed = 0

@@ -12,8 +12,7 @@ const stateToStr = {
 	[PlayerStateValue.PickingCorporation]: 'Picking corporation',
 	[PlayerStateValue.Connecting]: 'Connecting',
 	[PlayerStateValue.Waiting]: null,
-	[PlayerStateValue.Ready]: null,
-	[PlayerStateValue.PlacingTile]: 'Placing tile'
+	[PlayerStateValue.Ready]: null
 } as const
 
 export const Player = ({ player }: { player: PlayerState }) => {

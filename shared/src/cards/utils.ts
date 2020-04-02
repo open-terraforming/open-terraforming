@@ -380,7 +380,7 @@ export function placeTile({
 				...placementState,
 				ownerCard: cardIndex,
 			})
-			player.state = PlayerStateValue.PlacingTile
+			// player.state = PlayerStateValue.PlacingTile
 		},
 	})
 }
