@@ -221,7 +221,11 @@ export const playerResourceChange = (
 	return effect({
 		args: [
 			effectArg({
-				descriptionPrefix: `From`,
+				descriptionPrefix: !optional
+					? change > 0
+						? `Give ${withUnits(res, change)} to`
+						: `Remove ${withUnits(res, -change)} from`
+					: `From`,
 				type: CardEffectTarget.Player,
 				playerConditions:
 					change < 0
@@ -245,10 +249,31 @@ export const playerResourceChange = (
 				  ]
 				: []),
 		],
+		conditions:
+			!optional && change < 0
+				? [
+						condition({
+							description: `There has to be player with at leas ${withUnits(
+								res,
+								-change
+							)}`,
+							evaluate: ({ game, playerId }) =>
+								!!game.players.find(
+									(p) => p.id !== playerId && p.gameState[res] >= -change
+								),
+						}),
+				  ]
+				: [],
 		description:
 			change > 0
-				? `Give up to ${withUnits(res, change)} to any player`
-				: `Remove up to ${withUnits(res, -change)} from any player`,
+				? `Give ${optional ? ' up to' : ''} ${withUnits(
+						res,
+						change
+				  )} to any player`
+				: `Remove ${optional ? ' up to' : ''} ${withUnits(
+						res,
+						-change
+				  )} from any player`,
 		perform: ({ game }, playerId: number, amount: number) => {
 			const actualChange = optional
 				? change

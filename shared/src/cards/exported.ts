@@ -563,7 +563,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'rover_construction',
 		title: 'Rover Construction',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 8,
 		categories: [CardCategory.Building],
@@ -1629,6 +1629,7 @@ export const BuiltCards: Card[] = [
 				1
 			),
 		],
+		victoryPointsCallback: vpsForCardResources('animals', 1 / 2),
 	}),
 	card({
 		code: 'zeppelins',
@@ -2481,7 +2482,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'immigrant_city',
 		title: 'Immigrant City',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 13,
 		categories: [CardCategory.Building, CardCategory.City],

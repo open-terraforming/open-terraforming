@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useAppStore, useAppDispatch } from '@/utils/hooks'
 import { Resources } from './components/Resources'
 import { Button } from '@/components'
@@ -26,12 +26,14 @@ export const Controls = () => {
 
 	const isPlaying = state?.state === PlayerStateValue.Playing
 
+	const faded = state?.placingTile.length !== 0
+
 	const handlePass = () => {
 		api.send(playerPass(false))
 	}
 
 	return state ? (
-		<Container>
+		<Container faded={faded}>
 			{handOpened && (
 				<Hand playing={isPlaying} onClose={() => setHandOpened(false)} />
 			)}
@@ -78,31 +80,65 @@ export const Controls = () => {
 				/>
 			)}
 
-			<Resources state={state} />
-			<div>
-				<Button icon={faAngleUp} onClick={() => setHandOpened(true)}>
+			<Flexed>
+				<Resources state={state} />
+			</Flexed>
+			<CardButtons>
+				<Button
+					icon={faAngleUp}
+					disabled={state.cards.length === 0 || faded}
+					onClick={() => setHandOpened(true)}
+				>
 					{state.cards.length} cards in hand
 				</Button>
-			</div>
-			<div>
-				<Button icon={faAngleUp} onClick={() => setCardsOpened(true)}>
+				<Button
+					icon={faAngleUp}
+					disabled={state.usedCards.length === 0 || faded}
+					onClick={() => setCardsOpened(true)}
+				>
 					{state.usedCards.length} cards played
 				</Button>
-			</div>
-			<div>{corporation?.name}</div>
-			<div style={{ marginLeft: 'auto' }}>
-				<Button disabled={!isPlaying} onClick={handlePass} icon={faArrowRight}>
+			</CardButtons>
+			{/*<div>{corporation?.name}</div>*/}
+			<Flexed>
+				<PassButton
+					disabled={!isPlaying || faded}
+					onClick={handlePass}
+					icon={faArrowRight}
+				>
 					Pass
-				</Button>
-			</div>
+				</PassButton>
+			</Flexed>
 		</Container>
 	) : (
 		<></>
 	)
 }
 
-const Container = styled.div`
+const Container = styled.div<{ faded: boolean }>`
 	display: flex;
-	align-items: center;
+	justify-content: space-between;
 	background-color: rgba(14, 129, 214, 0.8);
+	${props =>
+		props.faded &&
+		css`
+			opacity: 0.7;
+		`}
+`
+
+const Flexed = styled.div`
+	flex: 1;
+	display: flex;
+`
+
+const CardButtons = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-content: center;
+	justify-content: space-around;
+	margin: 0 1rem;
+`
+
+const PassButton = styled(Button)`
+	margin-left: auto;
 `

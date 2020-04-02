@@ -129,7 +129,7 @@ export const productionForTiles = (
 				? `${resPerTile} for each ${GridCellContent[tile]} on Mars`
 				: `${resPerTile} per ${Math.ceil(1 / resPerTile)} ${
 						GridCellContent[tile]
-				  }on Mars`
+				  } on Mars`
 		}`,
 		type: CardEffectType.Production,
 		perform: ({ player, game }) => {
@@ -562,7 +562,7 @@ export const productionForTags = (
 				  )} ${CardCategory[tag]} card(s) you played`,
 		type: CardEffectType.Production,
 		perform: ({ player }) => {
-			player[res] += Math.floor(
+			player[resourceProduction[res]] += Math.floor(
 				player.usedCards
 					.map((c) => CardsLookupApi.get(c.code))
 					.reduce(

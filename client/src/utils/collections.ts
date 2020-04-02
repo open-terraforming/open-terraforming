@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface NativeMap<T> {
 	[key: string]: T | undefined
 }
@@ -243,3 +244,79 @@ export function isNotUndefined<T>(it: T): it is NonNullable<T> {
 
 export const flatten = <T>(a: T[][]) =>
 	a.reduce((acc, a) => [...acc, ...a], [] as T[])
+
+const valueDiff = (aValue: any, bValue: any): [boolean, any?] => {
+	if (
+		typeof aValue !== typeof bValue ||
+		(Array.isArray(aValue) && !Array.isArray(bValue)) ||
+		(!Array.isArray(aValue) && Array.isArray(bValue))
+	) {
+		return [true, bValue]
+	} else {
+		if (typeof aValue === 'undefined') {
+			return [false]
+		}
+
+		if (typeof aValue !== 'object' || aValue === null || bValue === null) {
+			if (aValue !== bValue) {
+				return [true, bValue]
+			}
+		} else {
+			if (!Array.isArray(aValue)) {
+				const changes = objDiff(aValue, bValue)
+
+				if (Object.keys(changes).length > 0) {
+					return [true, changes]
+				}
+			} else {
+				const diff = {} as Record<string, any>
+
+				for (let i = 0; i < Math.max(aValue.length, bValue.length); i++) {
+					const itemDiff = valueDiff(aValue[i], bValue[i])
+
+					if (itemDiff[0]) {
+						diff[i] = itemDiff[1]
+					}
+				}
+
+				if (Object.keys(diff).length > 0) {
+					return [true, diff]
+				}
+			}
+		}
+	}
+
+	return [false]
+}
+
+/**
+ * Diff format:
+ *    [key]: undefined   // key is missing from b
+ *    [key]:
+ *
+ * @param a
+ * @param b
+ */
+export const objDiff = (a: any, b: any) => {
+	const result = {} as Record<string, any>
+	const bKeys = Object.keys(b)
+
+	Object.keys(a)
+		.filter(k => !bKeys.includes(k))
+		.forEach(key => {
+			result[key] = undefined
+		})
+
+	bKeys.forEach(key => {
+		const aValue = a[key]
+		const bValue = b[key]
+
+		const diff = valueDiff(aValue, bValue)
+
+		if (diff[0]) {
+			result[key] = diff[1]
+		}
+	})
+
+	return result
+}

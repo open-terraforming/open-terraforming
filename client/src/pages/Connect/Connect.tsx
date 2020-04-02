@@ -11,7 +11,7 @@ export const Connect = () => {
 	const api = useApi()
 	const dispatch = useDispatch()
 
-	const [name, setName] = useState('')
+	const [name, setName] = useState(localStorage['lastName'] || '')
 	const [initializing, setInitializing] = useState(false)
 	const connected = useAppStore(state => state.api.connected)
 	const reconnecting = useAppStore(state => state.api.reconnecting)
@@ -32,6 +32,7 @@ export const Connect = () => {
 
 	const handleConnect = () => {
 		setInitializing(true)
+		localStorage['lastName'] = name
 		api.send(handshakeRequest(VERSION, name, session))
 	}
 
@@ -59,6 +60,12 @@ export const Connect = () => {
 								type="text"
 								value={name}
 								onChange={e => setName(e.target.value)}
+								onKeyUp={e => {
+									if (e.key === 'Enter') {
+										handleConnect()
+									}
+								}}
+								autoFocus
 							/>
 							<Button onClick={handleConnect}>Connect</Button>
 						</>

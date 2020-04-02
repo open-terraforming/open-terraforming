@@ -10,6 +10,7 @@ import { CorporationPicker } from './components/CorporationPicker/CorporationPic
 
 import background from '@/assets/stars.jpg'
 import { GameMap } from './components/GameMap/GameMap'
+import { Events } from './components/Events/Events'
 
 export const Table = () => {
 	const gameState = useAppStore(state => state.game.state?.state)
@@ -27,6 +28,7 @@ export const Table = () => {
 				<GlobalState />
 			</GameContainer>
 			<Controls />
+			<Events />
 		</TableContainer>
 	)
 }
@@ -36,6 +38,8 @@ const TableContainer = styled.div`
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+	overflow: hidden;
+	min-width: 0;
 	background: url('${background}');
 `
 
