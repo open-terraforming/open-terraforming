@@ -320,7 +320,7 @@ export const productionChangeAfterPlace = (
 	type: GridCellOther
 ) =>
 	passiveEffect({
-		description: '',
+		description: `Your production of resource which has bonus on selected tile will increase by ${amount}`,
 		onTilePlaced: ({ player, card }, cell) => {
 			if (card.played) {
 				return

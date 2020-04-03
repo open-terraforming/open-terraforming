@@ -18,6 +18,7 @@ import { Resource } from './components/Resource'
 export const CardView = ({
 	card,
 	selected = false,
+	buying = false,
 	state,
 	cardIndex,
 	onClick
@@ -27,6 +28,7 @@ export const CardView = ({
 	cardIndex?: number
 	selected?: boolean
 	onClick?: () => void
+	buying?: boolean
 }) => {
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)?.gameState
@@ -72,15 +74,31 @@ export const CardView = ({
 		[state, card, cardIndex, game, playerId]
 	)
 
+	const adjusted = !buying
+		? card.cost
+		: card.cost -
+		  (card.categories.includes(CardCategory.Building)
+				? player.ore * player.orePrice
+				: 0) -
+		  (card.categories.includes(CardCategory.Space)
+				? player.titan * player.titanPrice
+				: 0)
+
+	const affordable = !buying || adjusted <= player.money
+
 	const playable = state
 		? isCardActionable(card, condContext)
 		: isCardPlayable(card, condContext)
 
 	return (
-		<Container selected={selected} onClick={onClick} playable={playable}>
+		<Container
+			selected={selected}
+			onClick={onClick}
+			playable={playable && affordable}
+		>
 			<Inner type={card.type}>
 				<Head>
-					<Cost>
+					<Cost affordable={affordable}>
 						<div>{card.cost}</div>
 					</Cost>
 					<Categories>
@@ -161,7 +179,7 @@ const Action = styled.div`
 	border-left: 2px solid rgb(137, 137, 137);
 `
 
-const Cost = styled.div`
+const Cost = styled.div<{ affordable: boolean }>`
 	height: 2rem;
 
 	> div {
@@ -170,13 +188,27 @@ const Cost = styled.div`
 		border-bottom: 2px solid rgb(137, 137, 137);
 		border-right: 2px solid rgb(137, 137, 137);
 		position: absolute;
-		background: linear-gradient(
-			rgb(255, 208, 4),
-			rgb(255, 255, 104),
-			rgb(255, 208, 4),
-			rgb(255, 208, 4)
-		);
-		color: #000;
+		${props =>
+			props.affordable
+				? css`
+						background: linear-gradient(
+							rgb(255, 208, 4),
+							rgb(255, 255, 104),
+							rgb(255, 208, 4),
+							rgb(255, 208, 4)
+						);
+						color: #000;
+				  `
+				: css`
+						background: linear-gradient(
+							to bottom,
+							rgba(255, 135, 135, 1) 0%,
+							rgba(255, 201, 201, 1) 33%,
+							rgba(255, 134, 134, 1) 66%,
+							rgba(255, 137, 135, 1) 100%
+						);
+						color: #000;
+				  `}
 		width: 2.5rem;
 		height: 2.5rem;
 		line-height: 2.5rem;

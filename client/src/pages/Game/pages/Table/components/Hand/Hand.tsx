@@ -28,28 +28,47 @@ export const Hand = ({
 	)?.map(c => CardsLookupApi.get(c))
 
 	const [selected, setSelected] = useState(undefined as number | undefined)
-	const [loading, setLoading] = useState(false)
 
 	const selectedCard = useMemo(
 		() => (selected !== undefined ? cards && cards[selected] : undefined),
 		[selected]
 	)
 
-	const adjusted =
-		!selectedCard || !state
-			? 0
-			: selectedCard.cost -
-			  (selectedCard.categories.includes(CardCategory.Building)
-					? state.ore * state.orePrice
-					: 0) -
-			  (selectedCard.categories.includes(CardCategory.Space)
-					? state?.titan * state?.titanPrice
-					: 0)
+	const handleSelect = (index: number | undefined) => {
+		if (index && cards && state && player && game) {
+			const card = cards[index]
 
-	const canAfford = state && selectedCard && adjusted <= state.money
+			const adjusted =
+				!card || !state
+					? 0
+					: card.cost -
+					  (card.categories.includes(CardCategory.Building)
+							? state.ore * state.orePrice
+							: 0) -
+					  (card.categories.includes(CardCategory.Space)
+							? state?.titan * state?.titanPrice
+							: 0)
+
+			const playable =
+				card &&
+				isCardPlayable(card, {
+					card: emptyCardState(card.code),
+					cardIndex: -1,
+					player: player.gameState,
+					playerId: player.id,
+					game: game
+				})
+
+			if (adjusted > state.money || !playable) {
+				return
+			}
+		}
+
+		setSelected(index)
+	}
 
 	const handleConfirm = () => {
-		if (selectedCard && selected !== undefined && canAfford) {
+		if (selectedCard && selected !== undefined) {
 			dispatch(
 				setTableState({
 					buyingCardIndex: selected
@@ -84,13 +103,10 @@ export const Hand = ({
 			footer={
 				!playing ? (
 					<Button onClick={onClose}>Close</Button>
-				) : !canAfford && selectedCard ? (
-					`You cannot afford card for ${selectedCard.cost}`
 				) : (
 					<Button
 						onClick={handleConfirm}
-						disabled={loading || (selected !== undefined && !selectedPlayable)}
-						isLoading={loading}
+						disabled={selected !== undefined && !selectedPlayable}
 					>
 						{selectedCard ? `Play selected` : 'Close'}
 					</Button>
@@ -103,13 +119,14 @@ export const Hand = ({
 					(c, i) =>
 						c && (
 							<CardView
+								buying
 								card={c}
 								selected={selected === i}
 								key={i}
 								onClick={
-									!loading && playing
+									playing
 										? () => {
-												setSelected(selected === i ? undefined : i)
+												handleSelect(selected === i ? undefined : i)
 										  }
 										: undefined
 								}
