@@ -11,6 +11,7 @@ import { PlayedCards } from '../PlayedCards/PlayedCards'
 import { setTableState } from '@/store/modules/table'
 import { CardBuy } from '../CardBuy/CardBuy'
 import { useApi } from '@/context/ApiContext'
+import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 
 export const Controls = () => {
 	const api = useApi()
@@ -22,6 +23,7 @@ export const Controls = () => {
 	const corporation = Corporations.find(c => c.code === state?.corporation)
 	const [handOpened, setHandOpened] = useState(false)
 	const [cardsOpened, setCardsOpened] = useState(false)
+	const [projectsOpened, setProjectsOpened] = useState(false)
 	const stackedActions = player?.gameState.cardsToPlay
 
 	const isPlaying = state?.state === PlayerStateValue.Playing
@@ -80,6 +82,10 @@ export const Controls = () => {
 				/>
 			)}
 
+			{projectsOpened && (
+				<StandardProjectModal onClose={() => setProjectsOpened(false)} />
+			)}
+
 			<Flexed>
 				<Resources state={state} />
 			</Flexed>
@@ -101,6 +107,10 @@ export const Controls = () => {
 			</CardButtons>
 			{/*<div>{corporation?.name}</div>*/}
 			<Flexed>
+				<Button onClick={() => setProjectsOpened(true)}>
+					Standard projects
+				</Button>
+
 				<PassButton
 					disabled={!isPlaying || faded}
 					onClick={handlePass}

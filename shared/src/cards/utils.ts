@@ -228,12 +228,12 @@ export const playerResourceChange = (
 		args: [
 			!optional
 				? effectArg({
-						descriptionPrefix: !optional
-							? change > 0
+						descriptionPrefix:
+							change > 0
 								? `Give ${withUnits(res, change)} to`
-								: `Remove ${withUnits(res, -change)} from`
-							: `From`,
+								: `Remove ${withUnits(res, -change)} from`,
 						type: CardEffectTarget.Player,
+						optional: false,
 						playerConditions:
 							change < 0
 								? [
@@ -286,7 +286,9 @@ export const playerResourceChange = (
 						res,
 						-change
 				  )} from any player`,
-		perform: ({ game }, [playerId, amount]: [number, number] = [-1, 0]) => {
+		perform: ({ game }, arg: number | [number, number] = [-1, 0]) => {
+			const [playerId, amount] = Array.isArray(arg) ? arg : [arg, 0]
+
 			if (playerId === null || playerId < 0) {
 				return
 			}

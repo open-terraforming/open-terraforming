@@ -101,16 +101,17 @@ export const Hand = ({
 			onClose={onClose}
 			header={'Cards in your hand'}
 			footer={
-				!playing ? (
+				<>
+					{playing && selectedCard && (
+						<Button
+							onClick={handleConfirm}
+							disabled={selected !== undefined && !selectedPlayable}
+						>
+							{selectedCard ? `Play selected` : 'Close'}
+						</Button>
+					)}
 					<Button onClick={onClose}>Close</Button>
-				) : (
-					<Button
-						onClick={handleConfirm}
-						disabled={selected !== undefined && !selectedPlayable}
-					>
-						{selectedCard ? `Play selected` : 'Close'}
-					</Button>
-				)
+				</>
 			}
 		>
 			<CardsContainer>

@@ -1561,7 +1561,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 1,
 		categories: [CardCategory.Event],
-		actionEffects: [
+		playEffects: [
 			effectChoice([
 				joinedEffects([
 					playerResourceChange('ore', -2, false),

@@ -5,15 +5,16 @@ import {
 	PlayerState,
 	StandardProjectType,
 } from './game'
-import { allCells } from './utils'
+import { allCells, keyMap } from './utils'
 import { canPlace } from './placements'
 
-interface StandardProjectContext {
+export interface StandardProjectContext {
 	player: PlayerState
 	game: GameState
 }
 
 export interface StandardProject {
+	type: StandardProjectType
 	description: string
 	cost: number
 	conditions: ((ctx: StandardProjectContext) => boolean)[]
@@ -45,8 +46,9 @@ const canPlaceTile = (type: GridCellContent) => ({
 		})
 	)
 
-export const Projects = ({
-	[StandardProjectType.SellPatents]: project({
+const ProjectsList = [
+	project({
+		type: StandardProjectType.SellPatents,
 		description: 'Sell patents',
 		cost: 0,
 		conditions: [({ player }) => player.gameState.cards.length > 0],
@@ -63,7 +65,8 @@ export const Projects = ({
 			player.money += cards.length
 		},
 	}),
-	[StandardProjectType.PowerPlant]: project({
+	project({
+		type: StandardProjectType.PowerPlant,
 		description: 'Power plant',
 		cost: 11,
 		execute: ({ player: { gameState: player } }) => {
@@ -71,7 +74,8 @@ export const Projects = ({
 			player.energyProduction += 1
 		},
 	}),
-	[StandardProjectType.Asteroid]: project({
+	project({
+		type: StandardProjectType.Asteroid,
 		description: 'Asteroid',
 		cost: 14,
 		conditions: [({ game }) => game.temperature < game.map.temperature],
@@ -81,7 +85,8 @@ export const Projects = ({
 			game.temperature += 1
 		},
 	}),
-	[StandardProjectType.Aquifer]: project({
+	project({
+		type: StandardProjectType.Aquifer,
 		description: 'Aquifer',
 		cost: 18,
 		conditions: [({ game }) => game.oceans < game.map.oceans],
@@ -92,7 +97,8 @@ export const Projects = ({
 			})
 		},
 	}),
-	[StandardProjectType.Greenery]: project({
+	project({
+		type: StandardProjectType.Greenery,
 		description: 'Greenery',
 		cost: 23,
 		conditions: [canPlaceTile(GridCellContent.Forest)],
@@ -103,19 +109,22 @@ export const Projects = ({
 			})
 		},
 	}),
-	[StandardProjectType.City]: project({
+	project({
+		type: StandardProjectType.City,
 		description: 'City',
 		cost: 25,
 		conditions: [canPlaceTile(GridCellContent.City)],
 		execute: ({ player: { gameState: player } }) => {
 			player.money -= 25
+			player.moneyProduction += 1
 			player.placingTile.push({
 				type: GridCellContent.City,
 			})
 		},
 	}),
-	[StandardProjectType.GreeneryForPlants]: project({
-		description: 'Greenery',
+	project({
+		type: StandardProjectType.GreeneryForPlants,
+		description: 'Greenery bought using 8 pants',
 		cost: 0,
 		conditions: [
 			canPlaceTile(GridCellContent.Forest),
@@ -128,8 +137,9 @@ export const Projects = ({
 			})
 		},
 	}),
-	[StandardProjectType.TemperatureForHeat]: project({
-		description: 'Greenery',
+	project({
+		type: StandardProjectType.TemperatureForHeat,
+		description: 'Temperature increase using 8 heat',
 		cost: 0,
 		conditions: [
 			({ game }) => game.temperature < game.map.temperature,
@@ -141,4 +151,6 @@ export const Projects = ({
 			game.temperature += 1
 		},
 	}),
-} as const) as Record<StandardProjectType, StandardProject>
+]
+
+export const Projects = keyMap(ProjectsList, 'type')

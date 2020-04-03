@@ -701,6 +701,11 @@ export class Player {
 		}
 
 		project.execute(ctx, cards)
+
+		if (this.gameState.placingTile.length === 0) {
+			this.actionPlayed()
+		}
+
 		this.updated()
 	}
 }

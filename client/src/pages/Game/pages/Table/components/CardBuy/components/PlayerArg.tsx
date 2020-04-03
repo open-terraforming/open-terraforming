@@ -14,18 +14,6 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 	const playerId = useAppStore(state => state.game.playerId)
 	const playerState = useAppStore(state => state.game.player?.gameState)
 
-	const [value, setValue] = useState(-1)
-
-	const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const value = parseInt(e.target.value, 10)
-		setValue(value)
-		onChange(value)
-	}
-
-	useEffect(() => {
-		onChange(value)
-	}, [])
-
 	const possiblePlayers = useMemo(
 		() =>
 			gameState && playerState
@@ -42,6 +30,18 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 				: [],
 		[gameState, playerState]
 	)
+
+	const [value, setValue] = useState(arg.optional ? -1 : possiblePlayers[0].id)
+
+	const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const value = parseInt(e.target.value, 10)
+		setValue(value)
+		onChange(value)
+	}
+
+	useEffect(() => {
+		onChange(value)
+	}, [])
 
 	return (
 		<ArgContainer>
