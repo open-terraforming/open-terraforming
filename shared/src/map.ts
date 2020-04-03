@@ -1,4 +1,53 @@
-import { MapState, GridCell, GridCellType, GridCellSpecial } from './game'
+import {
+	MapState,
+	GridCell,
+	GridCellType,
+	GridCellSpecial,
+	ProgressMilestone,
+	ProgressMilestoneType,
+	GridCellContent,
+} from './game'
+import { WithOptional } from './cards'
+
+const milestone = (
+	m: WithOptional<ProgressMilestone, 'used'>
+): ProgressMilestone => ({ ...m, used: false })
+
+const heatAt = (value: number) =>
+	milestone({
+		icon: ProgressMilestoneType.Heat,
+		value,
+		effects: [(_game, player) => (player.gameState.heatProduction += 1)],
+	})
+
+const temperatureAt = (value: number) =>
+	milestone({
+		icon: ProgressMilestoneType.Temperature,
+		value,
+		effects: [
+			(game, player) => {
+				if (game.temperature < game.map.temperature) {
+					player.gameState.terraformRating++
+					game.temperature++
+				}
+			},
+		],
+	})
+
+const oceanAt = (value: number) =>
+	milestone({
+		icon: ProgressMilestoneType.Ocean,
+		value,
+		effects: [
+			(game, player) => {
+				if (game.oceans < game.map.oceans) {
+					player.gameState.placingTile.push({
+						type: GridCellContent.Ocean,
+					})
+				}
+			},
+		],
+	})
 
 const cell = (c: Partial<GridCell>): GridCell => ({
 	x: -1,
@@ -138,6 +187,8 @@ export const defaultMap = () => {
 		oceans: 9,
 		temperature: 4,
 		oxygen: 14,
+		temperatureMilestones: [heatAt(12), heatAt(10), oceanAt(0)],
+		oxygenMilestones: [temperatureAt(8)],
 	}
 
 	return map

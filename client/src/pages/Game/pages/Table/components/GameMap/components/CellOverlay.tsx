@@ -91,4 +91,6 @@ const Resources = styled.div`
 const Special = styled.div`
 	margin-bottom: 0.5rem;
 	text-align: center;
+	margin-left: 0.25rem;
+	margin-right: 0.25rem;
 `

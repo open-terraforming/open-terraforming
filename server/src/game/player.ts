@@ -13,7 +13,14 @@ import { MyEvent } from 'src/utils/events'
 import { Game } from './game'
 import { v4 as uuidv4 } from 'uuid'
 import { Corporations } from '@shared/corporations'
-import { CARD_PRICE } from '@shared/constants'
+import {
+	CARD_PRICE,
+	MILESTONES_LIMIT,
+	MILESTONE_PRICE,
+	COMPETITION_LIMIT,
+	COMPETITIONS_LIMIT,
+	COMPETITIONS_PRICES
+} from '@shared/constants'
 import {
 	CardCondition,
 	CardCategory,
@@ -30,6 +37,8 @@ import { cellByCoords } from '@shared/cards/utils'
 import { PlacementConditionsLookup } from '@shared/placements'
 import { allCells, adjacentCells } from '@shared/utils'
 import { Projects } from '@shared/projects'
+import { MilestoneType, Milestones } from '@shared/milestones'
+import { CompetitionType } from '@shared/competitions'
 
 interface CardPlayedEvent {
 	player: Player
@@ -551,7 +560,7 @@ export class Player {
 
 		// Perform production
 		state.heat += state.energy + state.energyProduction
-		state.energy += state.energyProduction
+		state.energy = state.energyProduction
 		state.ore += state.oreProduction
 		state.titan += state.titanProduction
 		state.plants += state.plantsProduction
@@ -707,5 +716,53 @@ export class Player {
 		}
 
 		this.updated()
+	}
+
+	buyMilestone(type: MilestoneType) {
+		if (!this.isPlaying) {
+			throw new Error("You're not playing")
+		}
+
+		if (this.game.state.milestones.length >= MILESTONES_LIMIT) {
+			throw new Error('All milestones are taken')
+		}
+
+		if (this.gameState.money < MILESTONE_PRICE) {
+			throw new Error("You can't afford a milestone")
+		}
+
+		const milestone = Milestones[type]
+
+		if (!milestone.condition(this.game.state, this.state)) {
+			throw new Error("You haven't reached this milestone")
+		}
+
+		this.gameState.money -= MILESTONE_PRICE
+		this.game.state.milestones.push({
+			playerId: this.state.id,
+			type
+		})
+	}
+
+	sponsorCompetition(type: CompetitionType) {
+		if (!this.isPlaying) {
+			throw new Error("You're not playing")
+		}
+
+		const sponsored = this.game.state.competitions.length
+		if (sponsored >= COMPETITIONS_LIMIT) {
+			throw new Error('All competitions are taken')
+		}
+
+		const cost = COMPETITIONS_PRICES[sponsored]
+
+		if (this.gameState.money < cost) {
+			throw new Error("You can't afford a competition")
+		}
+
+		this.game.state.competitions.push({
+			playerId: this.state.id,
+			type
+		})
 	}
 }

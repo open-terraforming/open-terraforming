@@ -1,7 +1,8 @@
 TODO:
+ - server - discard oceans when there is no more space
  - client - display cards played by enemy
- - client - standard projects
- - client - convert resources to game progress
+ - server - check if player is playing
+ - client - check if player is playing
  - functionality - competitions
  - functionality - titles
  - functionality - milestones in game progress

@@ -23,7 +23,9 @@ export class Game {
 		oceans: 0,
 		oxygen: 0,
 		temperature: 0,
-		map: defaultMap()
+		map: defaultMap(),
+		competitions: [],
+		milestones: []
 	} as GameState
 
 	players: Player[] = []
@@ -165,10 +167,25 @@ export class Game {
 				break
 
 			case GameStateValue.GenerationInProgress:
+				this.state.map.oxygenMilestones.forEach(m => {
+					if (!m.used && m.value < this.state.oxygen) {
+						m.used = true
+						m.effects.forEach(e => e(this.state, this.currentPlayer.state))
+					}
+				})
+
+				this.state.map.temperatureMilestones.forEach(m => {
+					if (!m.used && m.value < this.state.temperature) {
+						m.used = true
+						m.effects.forEach(e => e(this.state, this.currentPlayer.state))
+					}
+				})
+
 				if (!this.currentPlayer.state.connected) {
 					this.currentPlayer.gameState.state = PlayerStateValue.Passed
 					this.nextPlayer()
 				}
+
 				break
 		}
 	}

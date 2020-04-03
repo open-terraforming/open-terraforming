@@ -1,6 +1,8 @@
 import { GameState } from '.'
 import { CardEffectArgumentType } from './cards'
 import { StandardProjectType } from './game'
+import { MilestoneType } from './milestones'
+import { CompetitionType } from './competitions'
 
 export enum HandshakeError {
 	InvalidVersion = 'InvalidVersion',
@@ -148,6 +150,20 @@ export interface BuyStandardProject {
 	}
 }
 
+export interface BuyMilestone {
+	type: typeof MessageType.BuyMilestone
+	data: {
+		type: MilestoneType
+	}
+}
+
+export interface SponsorCompetition {
+	type: typeof MessageType.SponsorCompetition
+	data: {
+		type: CompetitionType
+	}
+}
+
 export type GameMessage =
 	| HandshakeRequest
 	| HandshakeResponse
@@ -163,3 +179,5 @@ export type GameMessage =
 	| PlaceTile
 	| AdminChange
 	| BuyStandardProject
+	| BuyMilestone
+	| SponsorCompetition

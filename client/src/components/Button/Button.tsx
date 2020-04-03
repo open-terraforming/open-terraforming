@@ -144,6 +144,10 @@ const Container = styled.button<{
 			opacity: 0.5;
 			background: ${props.theme.colors.button.disabledBackground} !important;
 		`}
+
+	> * {
+		margin: 0 0.25rem;
+	}
 `
 
 const Icon = styled.span<{

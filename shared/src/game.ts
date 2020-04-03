@@ -1,4 +1,6 @@
-import { PlacementCode, PlacementState } from './placements'
+import { PlacementState } from './placements'
+import { MilestoneType } from './milestones'
+import { CompetitionType } from './competitions'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
@@ -50,6 +52,19 @@ export interface GameState {
 	players: PlayerState[]
 
 	map: MapState
+
+	milestones: MilestoneState[]
+	competitions: CompetitionState[]
+}
+
+export interface MilestoneState {
+	type: MilestoneType
+	playerId: number
+}
+
+export interface CompetitionState {
+	type: CompetitionType
+	playerId: number
 }
 
 export interface MapState {
@@ -66,6 +81,9 @@ export interface MapState {
 
 	special: GridCell[]
 	grid: GridCell[][]
+
+	temperatureMilestones: ProgressMilestone[]
+	oxygenMilestones: ProgressMilestone[]
 }
 
 export enum GridCellType {
@@ -218,4 +236,17 @@ export enum StandardProjectType {
 	City,
 	GreeneryForPlants,
 	TemperatureForHeat,
+}
+
+export enum ProgressMilestoneType {
+	Ocean = 1,
+	Heat,
+	Temperature,
+}
+
+export interface ProgressMilestone {
+	icon: ProgressMilestoneType
+	value: number
+	used: boolean
+	effects: ((game: GameState, player: PlayerState) => void)[]
 }

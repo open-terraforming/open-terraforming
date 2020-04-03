@@ -4,14 +4,26 @@ import { useAppStore, useAppDispatch } from '@/utils/hooks'
 import { Resources } from './components/Resources'
 import { Button } from '@/components'
 import { Corporations } from '@shared/corporations'
-import { playerPass, PlayerStateValue } from '@shared/index'
-import { faArrowRight, faAngleUp } from '@fortawesome/free-solid-svg-icons'
+import {
+	playerPass,
+	PlayerStateValue,
+	buyStandardProject,
+	StandardProjectType
+} from '@shared/index'
+import {
+	faArrowRight,
+	faAngleUp,
+	faThermometerHalf,
+	faTree
+} from '@fortawesome/free-solid-svg-icons'
 import { Hand } from '../Hand/Hand'
 import { PlayedCards } from '../PlayedCards/PlayedCards'
 import { setTableState } from '@/store/modules/table'
 import { CardBuy } from '../CardBuy/CardBuy'
 import { useApi } from '@/context/ApiContext'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 
 export const Controls = () => {
 	const api = useApi()
@@ -32,6 +44,18 @@ export const Controls = () => {
 
 	const handlePass = () => {
 		api.send(playerPass(false))
+	}
+
+	const buyTemperature = () => {
+		if (player && player.gameState.heat >= 8) {
+			api.send(buyStandardProject(StandardProjectType.TemperatureForHeat))
+		}
+	}
+
+	const buyForest = () => {
+		if (player && player.gameState.plants >= 8) {
+			api.send(buyStandardProject(StandardProjectType.GreeneryForPlants))
+		}
 	}
 
 	return state ? (
@@ -110,6 +134,23 @@ export const Controls = () => {
 				<Button onClick={() => setProjectsOpened(true)}>
 					Standard projects
 				</Button>
+
+				<CardButtons>
+					<Button
+						disabled={(player?.gameState.heat || 0) < 8}
+						onClick={buyTemperature}
+					>
+						+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}
+						<ResourceIcon res="heat" />
+					</Button>
+					<Button
+						disabled={(player?.gameState.plants || 0) < 8}
+						onClick={buyForest}
+					>
+						Build <FontAwesomeIcon icon={faTree} /> for 8{' '}
+						<ResourceIcon res="plants" />
+					</Button>
+				</CardButtons>
 
 				<PassButton
 					disabled={!isPlaying || faded}

@@ -16,9 +16,13 @@ import {
 	AdminChange,
 	UpdateDeepPartial,
 	BuyStandardProject,
+	BuyMilestone,
+	SponsorCompetition,
 } from './messages'
 import { GameState, StandardProjectType } from './game'
 import { CardEffectArgumentType } from './cards'
+import { MilestoneType } from './milestones'
+import { CompetitionType } from './competitions'
 
 export const handshakeRequest = (
 	version: string,
@@ -123,3 +127,19 @@ export const buyStandardProject = (
 			cards,
 		},
 	} as BuyStandardProject)
+
+export const buyMilestone = (type: MilestoneType) =>
+	({
+		type: MessageType.BuyMilestone,
+		data: {
+			type,
+		},
+	} as BuyMilestone)
+
+export const sponsorCompetition = (type: CompetitionType) =>
+	({
+		type: MessageType.SponsorCompetition,
+		data: {
+			type,
+		},
+	} as SponsorCompetition)

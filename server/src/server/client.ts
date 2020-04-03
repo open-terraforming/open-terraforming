@@ -166,6 +166,14 @@ export class Client {
 						message.data.cards
 					)
 				}
+
+				case MessageType.BuyMilestone: {
+					return this.player.buyMilestone(message.data.type)
+				}
+
+				case MessageType.SponsorCompetition: {
+					return this.player.sponsorCompetition(message.data.type)
+				}
 			}
 		} catch (e) {
 			console.error(e)
