@@ -2,7 +2,7 @@ import { PlacementCode, PlacementState } from './placements'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
-	WaitingForPlayers,
+	WaitingForPlayers = 1,
 	/**  Players are picking companies */
 	PickingCorporations,
 	/** Players are picking cards */
@@ -17,7 +17,7 @@ export enum GameStateValue {
 
 export enum PlayerStateValue {
 	/**  Is in progress of connecting */
-	Connecting,
+	Connecting = 1,
 	/**  Waiting for other players */
 	Waiting,
 	/** Player is picking corporation */
@@ -69,7 +69,7 @@ export interface MapState {
 }
 
 export enum GridCellType {
-	Ocean,
+	Ocean = 1,
 	General,
 	NoctisCity,
 	GanymedeColony,
@@ -77,7 +77,7 @@ export enum GridCellType {
 }
 
 export enum GridCellSpecial {
-	NoctisCity,
+	NoctisCity = 1,
 	TharsisTholus,
 	AscraeusMons,
 	PavonisMons,
@@ -87,14 +87,14 @@ export enum GridCellSpecial {
 }
 
 export enum GridCellContent {
-	City,
+	City = 1,
 	Forest,
 	Ocean,
 	Other,
 }
 
 export enum GridCellOther {
-	Capital,
+	Capital = 1,
 	Mars,
 	Mine,
 	CommercialDistrict,

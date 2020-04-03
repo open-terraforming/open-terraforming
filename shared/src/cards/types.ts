@@ -37,7 +37,7 @@ export interface CellCallbackContext {
 }
 
 export enum CardCategory {
-	Science,
+	Science = 1,
 	Space,
 	Building,
 	Microbe,
@@ -51,7 +51,7 @@ export enum CardCategory {
 }
 
 export enum CardType {
-	Event,
+	Event = 1,
 	Action,
 	Effect,
 	Building,
@@ -99,7 +99,7 @@ export type CellCondition = {
 }
 
 export enum CardEffectType {
-	Production,
+	Production = 1,
 	Resource,
 	Other,
 }
@@ -117,7 +117,7 @@ export interface CardEffect<
 
 export enum CardEffectTarget {
 	// Type - player: number
-	Player,
+	Player = 1,
 	// Type - [player: number, amount: number]
 	PlayerResource,
 	// Type - amount: number
