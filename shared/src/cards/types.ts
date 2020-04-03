@@ -81,7 +81,9 @@ export interface Card {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type CardCondition<T extends CardEffectArgumentType[] = any> = {
+export type CardCondition<
+	T extends (CardEffectArgumentType | undefined)[] = any
+> = {
 	description?: string
 	evaluate: (ctx: CardCallbackContext, ...args: T) => boolean
 }
@@ -103,7 +105,9 @@ export enum CardEffectType {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface CardEffect<T extends Array<CardEffectArgumentType> = any> {
+export interface CardEffect<
+	T extends Array<CardEffectArgumentType | undefined> = any
+> {
 	args: CardEffectArgument[]
 	conditions: CardCondition[]
 	description?: string
@@ -114,6 +118,8 @@ export interface CardEffect<T extends Array<CardEffectArgumentType> = any> {
 export enum CardEffectTarget {
 	// Type - player: number
 	Player,
+	// Type - [player: number, amount: number]
+	PlayerResource,
 	// Type - amount: number
 	Resource,
 	// Type - cardIndex: number

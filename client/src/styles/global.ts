@@ -1,5 +1,7 @@
 import { createGlobalStyle } from 'styled-components'
 import reset from './reset'
+import mainColors from './mainColors'
+import { rgba, darken } from 'polished'
 
 export const GlobalStyle = createGlobalStyle`
 ${reset} 
@@ -25,7 +27,8 @@ input[type=number],
 input[type=password],
 textarea,
 select {
-	border: 1px solid #eee;
+	border: 1px solid ${rgba(mainColors.application, 0.8)};
+	background-color: ${rgba(darken(0.2, mainColors.application), 0.5)};
 	padding: 0.25rem 0.5rem;
 	transition: border-color, background-color, box-shadow 0.2s ease;
 	color: #eee;

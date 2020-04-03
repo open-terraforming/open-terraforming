@@ -14,6 +14,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { ArgsPicker } from './components/ArgsPicker'
 import styled from 'styled-components'
 import { useApi } from '@/context/ApiContext'
+import { ResourceInput } from './components/ResourceInput'
 
 type Props = {
 	index: number
@@ -109,46 +110,26 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 					{canUseOre && (
 						<UseContainer>
 							Use{' '}
-							<Input
-								type="number"
+							<ResourceInput
 								max={state?.ore}
-								value={ore.toString()}
+								res={'ore'}
 								onChange={v => {
-									const val = parseInt(v, 10)
-
-									if (
-										val >= 0 &&
-										val <= state?.ore &&
-										val <= Math.ceil(card.cost / state.orePrice)
-									) {
-										setOre(val)
-									}
+									setOre(Math.min(v, Math.ceil(card.cost / state.orePrice)))
 								}}
-							/>{' '}
-							U of ore
+							/>
 						</UseContainer>
 					)}
 
 					{canUseTitan && (
 						<UseContainer>
 							Use{' '}
-							<Input
-								type="number"
+							<ResourceInput
 								max={state?.titan}
-								value={titan.toString()}
+								res={'titan'}
 								onChange={v => {
-									const val = parseInt(v, 10)
-
-									if (
-										val >= 0 &&
-										val <= state?.titan &&
-										val <= Math.ceil(card.cost / state.titanPrice)
-									) {
-										setTitan(val)
-									}
+									setTitan(Math.min(v, Math.ceil(card.cost / state.titanPrice)))
 								}}
-							/>{' '}
-							U of titan
+							/>
 						</UseContainer>
 					)}
 

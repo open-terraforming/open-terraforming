@@ -94,7 +94,7 @@ export const countGridContent = (
 
 export const passiveEffect = (e: CardPassiveEffect) => e
 
-export const effect = <T extends CardEffectArgumentType[]>(
+export const effect = <T extends (CardEffectArgumentType | undefined)[]>(
 	c: WithOptional<CardEffect<T>, 'args' | 'conditions' | 'type'>
 ): CardEffect<T> =>
 	({
@@ -118,7 +118,7 @@ export const effectArg = (
 		...c,
 	} as CardEffectArgument)
 
-export const condition = <T extends CardEffectArgumentType[]>(
+export const condition = <T extends (CardEffectArgumentType | undefined)[]>(
 	c: CardCondition<T>
 ): CardCondition<T> => c
 
@@ -226,34 +226,40 @@ export const playerResourceChange = (
 ) => {
 	return effect({
 		args: [
-			effectArg({
-				descriptionPrefix: !optional
-					? change > 0
-						? `Give ${withUnits(res, change)} to`
-						: `Remove ${withUnits(res, -change)} from`
-					: `From`,
-				type: CardEffectTarget.Player,
-				playerConditions:
-					change < 0
-						? [
-								resourceCondition(
-									res,
-									optional ? 1 : -change
-								) as PlayerCondition,
-						  ]
-						: [],
-			}),
-			...(optional
-				? [
-						effectArg({
-							descriptionPrefix: `remove`,
-							type: CardEffectTarget.Resource,
-							maxAmount: Math.abs(change),
-							resource: res,
-							optional,
-						}),
-				  ]
-				: []),
+			!optional
+				? effectArg({
+						descriptionPrefix: !optional
+							? change > 0
+								? `Give ${withUnits(res, change)} to`
+								: `Remove ${withUnits(res, -change)} from`
+							: `From`,
+						type: CardEffectTarget.Player,
+						playerConditions:
+							change < 0
+								? [
+										resourceCondition(
+											res,
+											optional ? 1 : -change
+										) as PlayerCondition,
+								  ]
+								: [],
+				  })
+				: effectArg({
+						descriptionPrefix: change > 0 ? 'Give to' : `Remove from`,
+						type: CardEffectTarget.PlayerResource,
+						maxAmount: Math.abs(change),
+						resource: res,
+						optional,
+						playerConditions:
+							change < 0
+								? [
+										resourceCondition(
+											res,
+											optional ? 1 : -change
+										) as PlayerCondition,
+								  ]
+								: [],
+				  }),
 		],
 		conditions:
 			!optional && change < 0
@@ -280,16 +286,24 @@ export const playerResourceChange = (
 						res,
 						-change
 				  )} from any player`,
-		perform: ({ game }, playerId: number, amount: number) => {
-			const actualChange = optional
+		perform: ({ game }, [playerId, amount]: [number, number] = [-1, 0]) => {
+			if (playerId === null || playerId < 0) {
+				return
+			}
+
+			const player = gamePlayer(game, playerId)
+
+			const actualChange = !optional
 				? change
 				: change < 0
 				? Math.max(change, -amount)
 				: Math.min(change, amount)
 
-			playerId !== null &&
-				playerId >= 0 &&
-				(gamePlayer(game, playerId)[res] += actualChange)
+			if (actualChange < 0 && player[res] < -actualChange) {
+				throw new Error(`Player doesn't have ${withUnits(res, -actualChange)}`)
+			}
+
+			player[res] += actualChange
 		},
 	})
 }

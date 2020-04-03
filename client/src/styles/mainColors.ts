@@ -4,5 +4,7 @@ export default {
 	info: '#265560',
 	success: '#37B479',
 	danger: '#DB433A',
-	warn: '#FAA94B'
+	warn: '#FAA94B',
+
+	application: 'rgb(14, 129, 214)'
 }

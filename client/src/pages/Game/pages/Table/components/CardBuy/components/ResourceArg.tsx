@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { ArgContainer } from './ArgContainer'
 import { Input } from '@/components/Input/Input'
-import { CardEffectArgument } from '@shared/cards'
+import { CardEffectArgument, Resource } from '@shared/cards'
+import { ResourceInput } from './ResourceInput'
+import { useAppStore } from '@/utils/hooks'
 
 type Props = {
 	arg: CardEffectArgument
@@ -9,28 +11,28 @@ type Props = {
 }
 
 export const ResourceArg = ({ arg, onChange }: Props) => {
-	const [value, setValue] = useState(0 as number)
+	const player = useAppStore(state => state.game.player)?.gameState
 
 	useEffect(() => {
-		onChange(value)
+		onChange(0)
 	}, [])
+
+	if (!player || !arg.resource) {
+		return <>No player or no resource for arg</>
+	}
 
 	return (
 		<ArgContainer>
 			{arg.descriptionPrefix}
-			<Input
-				type="number"
-				value={value.toString()}
-				onChange={v => {
-					const p = parseInt(v, 10)
-
-					if (p >= 0 && (arg.maxAmount === undefined || p < arg.maxAmount)) {
-						setValue(p)
-						onChange(p)
-					}
-				}}
+			<ResourceInput
+				res={arg.resource as Resource}
+				onChange={v => onChange(v)}
+				max={
+					arg.maxAmount !== undefined && arg.maxAmount !== 0
+						? Math.min(arg.maxAmount, player[arg.resource])
+						: player[arg.resource]
+				}
 			/>
-			{arg.resource}
 			{arg.descriptionPostfix}
 		</ArgContainer>
 	)

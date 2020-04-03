@@ -1,12 +1,15 @@
 TODO:
+ [
  - add PlayerResource argument
  - add PlayerProduction argument
  - Insulation - limit player resources
  - client - display cards played by enemy
+ ]
  - functionality - standard projects
  - functionality - competitions
  - functionality - titles
  - functionality - convert resources to game progress
+ - functionality - milestones in game progress
  - client - player colors
  - client - show owners of cells
  - client - card filtering (both player and in hand)
@@ -14,6 +17,7 @@ TODO:
  - client - mark starting player
  - client - better played card display in controls
  - shared - effects icons
+ - server - disconnected player handling (picking cards is never finished)
  - server - picking card shouldn't count as an action
  - server - check if Effects card can actually be played
 

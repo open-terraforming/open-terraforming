@@ -660,6 +660,8 @@ export const exchangeResources = (srcRes: Resource, dstRes: Resource) =>
 			effectArg({
 				type: CardEffectTarget.Resource,
 				resource: srcRes,
+				descriptionPrefix: 'Exchange',
+				descriptionPostfix: `for ${dstRes}`,
 			}),
 		],
 		description: `Exchange ${withUnits(srcRes, 'X')} for ${withUnits(
