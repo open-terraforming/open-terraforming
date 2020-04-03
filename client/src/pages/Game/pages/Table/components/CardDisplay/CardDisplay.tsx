@@ -105,7 +105,7 @@ export const CardDisplay = <T extends CardInfo>({
 					.filter(isNotUndefined)
 			)
 		}
-	})
+	}, [type, selectedCategory])
 
 	return (
 		<>
@@ -161,12 +161,9 @@ export const CardDisplay = <T extends CardInfo>({
 								state={c.state}
 								onClick={() => {
 									onSelect(
-										(selected.map(s => s.index).includes(c.index)
+										selected.find(s => s.index === c.index)
 											? selected.filter(s => s.index !== c.index)
-											: [...selected, c.index]
-										)
-											.map(i => cards.find(c => c.index === i))
-											.filter(isNotUndefined)
+											: [...selected, c]
 									)
 								}}
 							/>

@@ -111,7 +111,10 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 						<UseContainer>
 							Use{' '}
 							<ResourceInput
-								max={state?.ore}
+								max={Math.min(
+									state?.ore,
+									Math.ceil(card.cost / state.orePrice)
+								)}
 								res={'ore'}
 								onChange={v => {
 									setOre(Math.min(v, Math.ceil(card.cost / state.orePrice)))
@@ -124,7 +127,10 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 						<UseContainer>
 							Use{' '}
 							<ResourceInput
-								max={state?.titan}
+								max={Math.min(
+									state?.titan,
+									Math.ceil(card.cost / state.titanPrice)
+								)}
 								res={'titan'}
 								onChange={v => {
 									setTitan(Math.min(v, Math.ceil(card.cost / state.titanPrice)))

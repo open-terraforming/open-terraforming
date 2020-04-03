@@ -476,7 +476,12 @@ export const vpsForCardResources = (res: CardResource, vpPerUnit: number) =>
 
 export const vpsForTiles = (type: GridCellContent, perTile: number) =>
 	vpCb({
-		description: `${perTile} VPs for each ${GridCellContent[type]} tile in game`,
+		description:
+			perTile >= 1
+				? `${perTile} VPs for each ${GridCellContent[type]} tile in game`
+				: `1 VPs for every ${Math.ceil(1 / perTile)} ${
+						GridCellContent[type]
+				  } tiles in game`,
 		compute: ({ game }) => {
 			return countGridContent(game, type) * perTile
 		},

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Modal } from '@/components/Modal/Modal'
 import { StandardProjectType, buyStandardProject } from '@shared/index'
 import {
@@ -10,6 +10,8 @@ import styled from 'styled-components'
 import { Button } from '@/components'
 import { useAppStore } from '@/utils/hooks'
 import { useApi } from '@/context/ApiContext'
+import { ProjectDescription } from './components/ProjectDescription'
+import { SellCardsModal } from './components/SellCardsModal'
 
 type Props = {
 	onClose: () => void
@@ -28,6 +30,7 @@ export const StandardProjectModal = ({ onClose }: Props) => {
 	const api = useApi()
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
+	const [selling, setSelling] = useState(false)
 
 	const ctx = useMemo(
 		() =>
@@ -39,8 +42,12 @@ export const StandardProjectModal = ({ onClose }: Props) => {
 	)
 
 	const handleSubmit = (p: StandardProject) => {
-		api.send(buyStandardProject(p.type))
-		onClose()
+		if (p.type === StandardProjectType.SellPatents) {
+			setSelling(true)
+		} else {
+			api.send(buyStandardProject(p.type))
+			onClose()
+		}
 	}
 
 	if (!game || !player) {
@@ -48,24 +55,30 @@ export const StandardProjectModal = ({ onClose }: Props) => {
 	}
 
 	return (
-		<Modal
-			open={true}
-			header={'Standard projects'}
-			onClose={onClose}
-			footer={<Button onClick={onClose}>Close</Button>}
-		>
-			{projects.map((p, i) => (
-				<Project key={i}>
-					<Button
-						disabled={!p.conditions.every(c => c(ctx))}
-						onClick={() => handleSubmit(p)}
-					>
-						Buy
-					</Button>
-					<div>{p.description}</div>
-				</Project>
-			))}
-		</Modal>
+		<>
+			<Modal
+				contentStyle={{ width: '600px' }}
+				open={true}
+				header={'Standard projects'}
+				onClose={onClose}
+				footer={<Button onClick={onClose}>Close</Button>}
+			>
+				{projects.map((p, i) => (
+					<Project key={i}>
+						<Button
+							disabled={!p.conditions.every(c => c(ctx))}
+							onClick={() => handleSubmit(p)}
+						>
+							{p.type === StandardProjectType.SellPatents
+								? 'Sell cards'
+								: `Buy ${p.description}`}
+						</Button>
+						<ProjectDescription project={p} />
+					</Project>
+				))}
+			</Modal>
+			{selling && <SellCardsModal onClose={onClose} />}
+		</>
 	)
 }
 
@@ -76,5 +89,10 @@ const Project = styled.div`
 
 	button {
 		margin-right: 1rem;
+		flex: 1;
+	}
+
+	> div {
+		flex: 2;
 	}
 `
