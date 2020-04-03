@@ -140,13 +140,19 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 	condition({
 		evaluate: ({ game }) => game[res] >= value,
-		description: `${progressResToStr(res)} has to be at least ${value}`,
+		description: `${progressResToStr(res)} has to be at least ${withUnits(
+			res,
+			value
+		)}`,
 	})
 
 export const gameProgressConditionMax = (res: GameProgress, value: number) =>
 	condition({
 		evaluate: ({ game }) => game[res] <= value,
-		description: `${progressResToStr(res)} has to be at most ${value}`,
+		description: `${progressResToStr(res)} has to be at most ${withUnits(
+			res,
+			value
+		)}`,
 	})
 
 export const resourceCondition = (res: Resource, value: number) =>
@@ -253,7 +259,7 @@ export const playerResourceChange = (
 			!optional && change < 0
 				? [
 						condition({
-							description: `There has to be player with at leas ${withUnits(
+							description: `There has to be player with at least ${withUnits(
 								res,
 								-change
 							)}`,

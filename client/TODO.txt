@@ -10,7 +10,6 @@ TODO:
  - client - player colors
  - client - show owners of cells
  - client - card filtering (both player and in hand)
- - client - connect should autofocus on name & prefill previously entered name
  - client - see others played cards
  - client - mark starting player
  - client - better played card display in controls

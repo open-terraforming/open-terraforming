@@ -1,57 +1,127 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { CardCategory } from '@shared/cards'
-
-import tagWild from '@/assets/tag-wild.png'
-import tagBuilding from '@/assets/tag-building.png'
-import tagSpace from '@/assets/tag-space.png'
-import tagPower from '@/assets/tag-power.png'
-import tagJovian from '@/assets/tag-jovian.png'
-import tagVenus from '@/assets/tag-venus.png'
-import tagEarth from '@/assets/tag-earth.png'
-import tagCity from '@/assets/tag-city.png'
-import tagMicrobe from '@/assets/tag-microbe.png'
-import tagPlant from '@/assets/tag-plant.png'
-import tagAnimal from '@/assets/tag-animal.png'
-import tagEvent from '@/assets/tag-event.png'
-import tagScience from '@/assets/tag-science.png'
-import tagNone from '@/assets/tag-none.png'
-import styled from 'styled-components'
-
-const categoryToImage = {
-	[CardCategory.Building]: tagBuilding,
-	[CardCategory.Space]: tagSpace,
-	[CardCategory.Power]: tagPower,
-	[CardCategory.Jupiter]: tagJovian,
-	[CardCategory.Earth]: tagEarth,
-	[CardCategory.City]: tagCity,
-	[CardCategory.Microbe]: tagMicrobe,
-	[CardCategory.Plant]: tagPlant,
-	[CardCategory.Animal]: tagAnimal,
-	[CardCategory.Event]: tagEvent,
-	[CardCategory.Science]: tagScience
-} as const
+import styled, { css } from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import {
+	faPaw,
+	faSeedling,
+	faAtom,
+	faGlobeEurope,
+	faArrowDown,
+	faBolt,
+	faSun,
+	faCity,
+	faWarehouse,
+	faMicroscope
+} from '@fortawesome/free-solid-svg-icons'
+import { Jupiter } from './Jupiter'
 
 type Props = {
 	tag: CardCategory
 }
 
 export const Tag = ({ tag }: Props) => {
+	const image = useMemo(() => {
+		switch (tag) {
+			case CardCategory.Animal:
+				return (
+					<IconContainer background="#266020">
+						<FontAwesomeIcon icon={faPaw} />
+					</IconContainer>
+				)
+			case CardCategory.Plant:
+				return (
+					<IconContainer background="#09AA09">
+						<FontAwesomeIcon icon={faSeedling} />
+					</IconContainer>
+				)
+			case CardCategory.Science:
+				return (
+					<IconContainer background="#fff">
+						<FontAwesomeIcon icon={faAtom} color="#000" />
+					</IconContainer>
+				)
+			case CardCategory.Earth:
+				return (
+					<IconContainer background="#0F6097">
+						<FontAwesomeIcon icon={faGlobeEurope} color="#fff" size="lg" />
+					</IconContainer>
+				)
+			case CardCategory.Event:
+				return (
+					<IconContainer background="#FFE623">
+						<FontAwesomeIcon icon={faArrowDown} color="#000" size="lg" />
+					</IconContainer>
+				)
+			case CardCategory.Power:
+				return (
+					<IconContainer background="#AE00FF">
+						<FontAwesomeIcon icon={faBolt} color="#fff" />
+					</IconContainer>
+				)
+			case CardCategory.Space:
+				return (
+					<IconContainer background="#000">
+						<FontAwesomeIcon icon={faSun} color="#FFFF00" />
+					</IconContainer>
+				)
+			case CardCategory.City:
+				return (
+					<IconContainer background="#BEBEBE">
+						<FontAwesomeIcon icon={faCity} color="#333" />
+					</IconContainer>
+				)
+			case CardCategory.Jupiter:
+				return (
+					<IconContainer background="transparent">
+						<Jupiter />
+					</IconContainer>
+				)
+			case CardCategory.Building:
+				return (
+					<IconContainer background="#805700">
+						<FontAwesomeIcon icon={faWarehouse} color="#493628" />
+					</IconContainer>
+				)
+			case CardCategory.Microbe:
+				return (
+					<IconContainer background="#BCE444">
+						<FontAwesomeIcon icon={faMicroscope} color="#5A703B" />
+					</IconContainer>
+				)
+		}
+	}, [tag])
+
 	return (
-		<Category title={CardCategory[tag]}>
-			<img src={categoryToImage[tag]} />
-		</Category>
+		<Category title={CardCategory[tag]}>{image || CardCategory[tag]}</Category>
 	)
 }
 
 const Category = styled.div`
-	margin-right: 0.5rem;
 	width: 2rem;
 	height: 2rem;
-	border-radius: 50%;
-	overflow: hidden;
 
 	img {
 		width: 100%;
 		height: 100%;
+		border-radius: 50%;
 	}
+`
+
+const IconContainer = styled.div<{ background: string }>`
+	${props => css`
+		background: ${props.background};
+		width: 100%;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 50%;
+		border-top: 2px solid rgb(221, 221, 221);
+		border-left: 2px solid rgb(221, 221, 221);
+		border-bottom: 2px solid rgb(137, 137, 137);
+		border-right: 2px solid rgb(137, 137, 137);
+		margin-top: -2px;
+		margin-left: -2px;
+	`}
 `

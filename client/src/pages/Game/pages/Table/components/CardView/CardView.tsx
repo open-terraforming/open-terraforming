@@ -155,10 +155,10 @@ const Head = styled.div`
 const Action = styled.div`
 	background: #eee;
 	padding: 0.5rem;
-	border-top: 2px solid rgb(221, 221, 221);
-	border-left: 2px solid rgb(221, 221, 221);
-	border-bottom: 2px solid rgb(137, 137, 137);
-	border-right: 2px solid rgb(137, 137, 137);
+	border-bottom: 2px solid rgb(221, 221, 221);
+	border-right: 2px solid rgb(221, 221, 221);
+	border-top: 2px solid rgb(137, 137, 137);
+	border-left: 2px solid rgb(137, 137, 137);
 `
 
 const Cost = styled.div`
@@ -177,15 +177,15 @@ const Cost = styled.div`
 			rgb(255, 208, 4)
 		);
 		color: #000;
-		width: 3rem;
-		height: 3rem;
-		line-height: 3rem;
+		width: 2.5rem;
+		height: 2.5rem;
+		line-height: 2.5rem;
 		text-align: center;
 		border-radius: 4px;
 		font-size: 150%;
 		float: left;
-		margin-top: -0.75rem;
-		margin-left: -0.75rem;
+		margin-top: -0.5rem;
+		margin-left: -0.5rem;
 	}
 `
 

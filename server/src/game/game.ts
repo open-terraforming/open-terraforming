@@ -22,7 +22,7 @@ export class Game {
 		players: [],
 		oceans: 0,
 		oxygen: 0,
-		temperature: -30,
+		temperature: 0,
 		map: defaultMap()
 	} as GameState
 
@@ -127,6 +127,10 @@ export class Game {
 	}
 
 	startGame() {
+		this.state.oxygen = this.state.map.initialOxygen
+		this.state.oceans = this.state.map.initialOceans
+		this.state.temperature = this.state.map.initialTemperature
+
 		if (this.players.length < this.config.bots) {
 			range(0, this.config.bots - this.players.length).forEach(() => {
 				this.add(new Bot(this))

@@ -1,21 +1,11 @@
-import React, { useState, useMemo, useEffect } from 'react'
-import { Modal } from '@/components/Modal/Modal'
-import { useAppStore, useAppDispatch } from '@/utils/hooks'
-import { CardsLookupApi, Card, CardType } from '@shared/cards'
-import { CardView } from '../CardView/CardView'
 import { Button } from '@/components'
-import { buyCard, UsedCardState } from '@shared/index'
-import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
-import styled from 'styled-components'
-import { useApi } from '@/context/ApiContext'
+import { Modal } from '@/components/Modal/Modal'
 import { setTableState } from '@/store/modules/table'
-import { isCardPlayable, isCardActionable } from '@shared/cards/utils'
-
-type CardInfo = {
-	card: Card
-	state: UsedCardState
-	index: number
-}
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { CardsLookupApi, CardType } from '@shared/cards'
+import { isCardActionable, card } from '@shared/cards/utils'
+import React, { useMemo, useState } from 'react'
+import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
 
 export const PlayedCards = ({
 	onClose,
@@ -24,11 +14,9 @@ export const PlayedCards = ({
 	onClose: () => void
 	playing: boolean
 }) => {
-	const api = useApi()
 	const dispatch = useAppDispatch()
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
-	const state = player?.gameState
 
 	const cards = useAppStore(
 		state => state.game.player?.gameState.usedCards
@@ -38,47 +26,18 @@ export const PlayedCards = ({
 				card: CardsLookupApi.get(c.code),
 				state: c,
 				index: i
-			} as CardInfo)
+			} as Required<CardInfo>)
 	)
 
-	const [category, setCategory] = useState(
-		CardType.Action as CardType | undefined
+	const [selected, setSelected] = useState(
+		undefined as Required<CardInfo> | undefined
 	)
-
-	const [selected, setSelected] = useState(undefined as number | undefined)
-
-	const filtered = useMemo(
-		() =>
-			cards?.reduce((acc, c) => {
-				acc[c.card.type] = [...(acc[c.card.type] || []), c]
-
-				return acc
-			}, {} as Record<CardType, CardInfo[]>),
-		[cards]
-	)
-
-	const categories = useMemo(
-		() =>
-			[
-				[CardType.Action, 'Playable actions'] as const,
-				[CardType.Effect, 'Effects'] as const,
-				[CardType.Building, 'Buildable'] as const,
-				[CardType.Event, 'Events'] as const
-			].filter(([c]) => filtered && filtered[c] && filtered[c].length > 0),
-		[filtered]
-	)
-
-	useEffect(() => {
-		if (category && !categories.find(([c]) => c === category)) {
-			setCategory(categories.length > 0 ? categories[0][0] : undefined)
-		}
-	}, [category, categories])
 
 	const handleConfirm = () => {
 		if (selected !== undefined) {
 			dispatch(
 				setTableState({
-					playingCardIndex: selected
+					playingCardIndex: selected.index
 				})
 			)
 		}
@@ -86,28 +45,39 @@ export const PlayedCards = ({
 		onClose()
 	}
 
-	const selectedCard =
-		selected !== undefined && cards ? cards[selected] : undefined
+	const handleSelect = (cards: Required<CardInfo>[]) => {
+		const selected = cards[0]
+
+		if (selected) {
+			if (selected.card.type !== CardType.Action || selected.state.played) {
+				return
+			}
+		}
+
+		setSelected(selected)
+	}
 
 	const selectedPlayable = useMemo(
 		() =>
-			selectedCard &&
+			selected &&
 			game &&
 			player &&
-			isCardActionable(selectedCard.card, {
-				card: selectedCard.state,
-				cardIndex: selectedCard.index,
+			isCardActionable(selected.card, {
+				card: selected.state,
+				cardIndex: selected.index,
 				player: player.gameState,
 				playerId: player.id,
 				game: game
 			}),
-		[selectedCard]
+		[selected]
 	)
+
+	const selectedList = useMemo(() => (selected ? [selected] : []), [selected])
 
 	return (
 		<Modal
 			open={true}
-			contentStyle={{ maxWidth: '90%', width: 'auto' }}
+			contentStyle={{ width: '90%' }}
 			onClose={onClose}
 			header={'Cards on table'}
 			footer={
@@ -118,61 +88,17 @@ export const PlayedCards = ({
 						onClick={handleConfirm}
 						disabled={selected !== undefined && !selectedPlayable}
 					>
-						{selected !== undefined
-							? `Play ${selectedCard?.card.title}`
-							: 'Close'}
+						{selected !== undefined ? `Play ${selected.card.title}` : 'Close'}
 					</Button>
 				)
 			}
 		>
-			{category === undefined && <NoCards>No cards</NoCards>}
-			{filtered && category !== undefined && (
-				<>
-					<Categories>
-						{categories.map(([c, t]) => (
-							<Button
-								schema={c === category ? 'primary' : 'transparent'}
-								onClick={() => {
-									setSelected(undefined)
-									setCategory(c)
-								}}
-								key={c}
-							>
-								{t} ({filtered[c]?.length})
-							</Button>
-						))}
-					</Categories>
-
-					<CardsContainer>
-						{filtered[category]?.length === 0 && <NoCards>No cards</NoCards>}
-						{filtered[category]?.map(
-							c =>
-								c && (
-									<CardView
-										card={c.card}
-										selected={selected === c.index}
-										key={c.index}
-										state={c.state}
-										onClick={
-											playing && category === CardType.Action && !c.state.played
-												? () => {
-														setSelected(
-															selected === c.index ? undefined : c.index
-														)
-												  }
-												: undefined
-										}
-									/>
-								)
-						)}
-					</CardsContainer>
-				</>
-			)}
+			<CardDisplay
+				cards={cards || []}
+				onSelect={handleSelect}
+				selected={selectedList}
+				defaultType={CardType.Action}
+			/>
 		</Modal>
 	)
 }
-
-const Categories = styled.div`
-	display: flex;
-	justify-content: center;
-`

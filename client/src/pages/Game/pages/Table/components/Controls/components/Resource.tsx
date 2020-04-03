@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { popOut } from '@/styles/animations'
 
 export const Resource = ({
 	name,
@@ -88,23 +89,9 @@ const DiffAnim = styled.div<{ positive: boolean }>`
 	top: 0;
 	right: 0;
 	background: ${props => (props.positive ? '#fff' : '#FF2F3F')};
-	animation-name: diff-anim;
+	animation-name: ${popOut};
 	animation-duration: 200ms;
 	animation-timing-function: ease-in;
 	opacity: 0;
 	border-radius: 50%;
-
-	@keyframes diff-anim {
-		0% {
-			opacity: 0;
-			transform: scale(1);
-		}
-		5% {
-			opacity: 0.5;
-		}
-		100% {
-			opacity: 0;
-			transform: scale(2);
-		}
-	}
 `

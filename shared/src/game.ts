@@ -60,6 +60,10 @@ export interface MapState {
 	temperature: number
 	oxygen: number
 
+	initialOceans: number
+	initialTemperature: number
+	initialOxygen: number
+
 	special: GridCell[]
 	grid: GridCell[][]
 }

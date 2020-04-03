@@ -2,8 +2,8 @@ import { Button } from '@/components'
 import { Card, CardCategory, CardType } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import React, { useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
-import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
+import styled, { css } from 'styled-components'
+import { NoCards } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
 import { Tag } from '../CardView/components/Tag'
 import { isNotUndefined } from '@/utils/collections'
@@ -14,23 +14,23 @@ export type CardInfo = {
 	index: number
 }
 
-export const CardDisplay = ({
+export const CardDisplay = <T extends CardInfo>({
 	onSelect,
 	selected,
 	cards,
 	filters = true,
 	defaultType
 }: {
-	onSelect: (cards: CardInfo[]) => void
-	cards: CardInfo[]
-	selected: CardInfo[]
+	onSelect: (cards: T[]) => void
+	cards: T[]
+	selected: T[]
 	defaultType?: CardType
 	filters?: boolean
 }) => {
 	const [type, setType] = useState(defaultType)
 
-	const [selectedCategories, setSelectedCategories] = useState(
-		[] as CardCategory[]
+	const [selectedCategory, setSelectedCategory] = useState(
+		undefined as CardCategory | undefined
 	)
 
 	const categories = useMemo(
@@ -47,24 +47,26 @@ export const CardDisplay = ({
 				CardCategory.Animal,
 				CardCategory.Event,
 				CardCategory.Science
-			].map(
-				cat =>
-					[
-						cat,
-						cards.filter(c => c.card.categories.includes(cat)).length
-					] as const
-			),
+			]
+				.map(
+					cat =>
+						[
+							cat,
+							cards.filter(c => c.card.categories.includes(cat)).length
+						] as const
+				)
+				.filter(([, count]) => count > 0),
 		[cards]
 	)
 
 	const types = useMemo(
 		() =>
 			[
-				[CardType.Action, 'Playable actions'] as const,
+				[undefined, 'All'] as const,
+				[CardType.Action, 'Playable'] as const,
 				[CardType.Effect, 'Effects'] as const,
 				[CardType.Building, 'Automated'] as const,
-				[CardType.Event, 'Events'] as const,
-				[undefined, 'All'] as const
+				[CardType.Event, 'Events'] as const
 			]
 				.map(
 					([c, title]) =>
@@ -79,8 +81,14 @@ export const CardDisplay = ({
 	)
 
 	const filtered = useMemo(
-		() => cards.filter(ci => !type || ci.card.type === type),
-		[cards, type]
+		() =>
+			cards.filter(
+				ci =>
+					(!type || ci.card.type === type) &&
+					(selectedCategory === undefined ||
+						ci.card.categories.includes(selectedCategory))
+			),
+		[cards, type, selectedCategory]
 	)
 
 	useEffect(() => {
@@ -105,35 +113,37 @@ export const CardDisplay = ({
 				<Filters>
 					<Types>
 						{types.map(([cat, t, count]) => (
-							<Button
-								schema={cat === type ? 'primary' : 'transparent'}
+							<FilterTag
+								selected={cat === type}
 								onClick={() => {
 									setType(cat)
 								}}
 								key={cat}
 							>
-								{t} ({count})
-							</Button>
+								<Type>{t}</Type>
+								<Count>
+									<div>{count}</div>
+								</Count>
+							</FilterTag>
 						))}
 					</Types>
 
 					<Categories>
 						{categories.map(([cat, count]) => (
-							<Button
-								schema={
-									selectedCategories.includes(cat) ? 'primary' : 'transparent'
-								}
+							<FilterTag
+								selected={selectedCategory === cat}
 								onClick={() => {
-									setSelectedCategories(
-										selectedCategories.includes(cat)
-											? selectedCategories.filter(c => c !== cat)
-											: [...selectedCategories, cat]
+									setSelectedCategory(
+										selectedCategory === cat ? undefined : cat
 									)
 								}}
 								key={cat}
 							>
-								<Tag tag={cat} /> ({count})
-							</Button>
+								<Tag tag={cat} />
+								<Count>
+									<div>{count}</div>
+								</Count>
+							</FilterTag>
 						))}
 					</Categories>
 				</Filters>
@@ -167,17 +177,62 @@ export const CardDisplay = ({
 	)
 }
 
+const CardsContainer = styled.div`
+	display: flex;
+	overflow-x: scroll;
+	justify-content: flex-start;
+	min-width: 0;
+	padding: 1rem 0;
+`
+
 const Types = styled.div`
 	display: flex;
 	justify-content: center;
+	align-items: center;
 `
 
 const Categories = styled.div`
 	display: flex;
 	justify-content: center;
+	margin-left: auto;
 `
 
 const Filters = styled.div`
 	display: flex;
 	justify-content: center;
+	margin-bottom: 1rem;
+`
+
+const FilterTag = styled.div<{ selected: boolean }>`
+	margin: 0 0.2rem;
+	padding: 0.2rem;
+	position: relative;
+	cursor: pointer;
+
+	${props =>
+		props.selected &&
+		css`
+			background: #44a8f2;
+		`}
+`
+
+const Count = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 25px;
+
+	> div {
+		border-radius: 3px;
+		background: rgba(98, 98, 255, 0.8);
+		padding: 0.25rem;
+	}
+`
+
+const Type = styled.div`
+	padding: 0.5rem 0;
+	margin: 0 0.5rem;
 `

@@ -304,7 +304,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'research_outpost',
 		title: 'RESEARCH OUTPOST',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 18,
 		categories: [
@@ -377,7 +377,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'space_station',
 		title: 'Space Station',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 10,
 		categories: [CardCategory.Space],
@@ -939,7 +939,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'earth_catapult',
 		title: 'Earth Catapult',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 23,
 		categories: [CardCategory.Earth],
@@ -1209,7 +1209,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'mass_converter',
 		title: 'Mass Converter',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 8,
 		categories: [CardCategory.Power, CardCategory.Science],
@@ -1335,7 +1335,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'earth_office',
 		title: 'Earth Office',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 1,
 		categories: [CardCategory.Earth],
@@ -1900,7 +1900,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'anti-gravity_technology',
 		title: 'Anti-gravity Technology',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 14,
 		categories: [CardCategory.Science],
@@ -2076,7 +2076,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'shuttles',
 		title: 'Shuttles',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 10,
 		categories: [CardCategory.Space],

@@ -1,7 +1,10 @@
 import { Resource, GameProgress } from './cards'
 import { ucFirst } from './utils'
 
-export const withUnits = (res: Resource, amount: number | string) => {
+export const withUnits = (
+	res: Resource | GameProgress,
+	amount: number | string
+) => {
 	switch (res) {
 		case 'money':
 			return `${amount} $`
@@ -15,6 +18,10 @@ export const withUnits = (res: Resource, amount: number | string) => {
 			return `${amount} titan`
 		case 'plants':
 			return `${amount} plants`
+		case 'temperature':
+			return `${(amount as number) * 2} °`
+		case 'oxygen':
+			return `${amount} %`
 		default:
 			return amount
 	}
