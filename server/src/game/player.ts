@@ -6,7 +6,8 @@ import {
 	GridCellSpecial,
 	GridCell,
 	GridCellContent,
-	GridCellType
+	GridCellType,
+	StandardProjectType
 } from '@shared/game'
 import { MyEvent } from 'src/utils/events'
 import { Game } from './game'
@@ -28,6 +29,7 @@ import { range } from '@/utils/collections'
 import { cellByCoords } from '@shared/cards/utils'
 import { PlacementConditionsLookup } from '@shared/placements'
 import { allCells, adjacentCells } from '@shared/utils'
+import { Projects } from '@shared/projects'
 
 interface CardPlayedEvent {
 	player: Player
@@ -685,5 +687,20 @@ export class Player {
 
 		this.gameState.terraformRating += cardVps
 		this.gameState.terraformRating += tileVps
+	}
+
+	buyStandardProject(projectType: StandardProjectType, cards: number[]) {
+		const project = Projects[projectType]
+		const ctx = {
+			game: this.game.state,
+			player: this.state
+		}
+
+		if (!project.conditions.every(c => c(ctx))) {
+			throw new Error(`You can execute ${StandardProjectType[projectType]}`)
+		}
+
+		project.execute(ctx, cards)
+		this.updated()
 	}
 }

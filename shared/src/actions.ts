@@ -15,8 +15,9 @@ import {
 	PlaceTile,
 	AdminChange,
 	UpdateDeepPartial,
+	BuyStandardProject,
 } from './messages'
-import { GameState } from './game'
+import { GameState, StandardProjectType } from './game'
 import { CardEffectArgumentType } from './cards'
 
 export const handshakeRequest = (
@@ -110,3 +111,15 @@ export const adminChange = (state: UpdateDeepPartial<GameState>) =>
 		type: MessageType.AdminChange,
 		data: state,
 	} as AdminChange)
+
+export const buyStandardProject = (
+	project: StandardProjectType,
+	cards: number[] = []
+) =>
+	({
+		type: MessageType.BuyStandardProject,
+		data: {
+			project,
+			cards,
+		},
+	} as BuyStandardProject)

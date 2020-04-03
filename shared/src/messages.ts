@@ -1,5 +1,6 @@
 import { GameState } from '.'
 import { CardEffectArgumentType } from './cards'
+import { StandardProjectType } from './game'
 
 export enum HandshakeError {
 	InvalidVersion = 'InvalidVersion',
@@ -20,7 +21,8 @@ export enum MessageType {
 	SellCard,
 	PlayCard,
 	SponsorCompetition,
-	BuyTitle,
+	BuyMilestone,
+	BuyStandardProject,
 	PlayerPass,
 	PlaceTile,
 	AdminChange,
@@ -138,6 +140,14 @@ export interface AdminChange {
 	data: UpdateDeepPartial<GameState>
 }
 
+export interface BuyStandardProject {
+	type: typeof MessageType.BuyStandardProject
+	data: {
+		project: StandardProjectType
+		cards: number[]
+	}
+}
+
 export type GameMessage =
 	| HandshakeRequest
 	| HandshakeResponse
@@ -152,3 +162,4 @@ export type GameMessage =
 	| PlayerPass
 	| PlaceTile
 	| AdminChange
+	| BuyStandardProject

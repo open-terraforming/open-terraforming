@@ -1,14 +1,9 @@
 TODO:
- [
- - add PlayerResource argument
- - add PlayerProduction argument
- - Insulation - limit player resources
  - client - display cards played by enemy
- ]
- - functionality - standard projects
+ - client - standard projects
+ - client - convert resources to game progress
  - functionality - competitions
  - functionality - titles
- - functionality - convert resources to game progress
  - functionality - milestones in game progress
  - client - player colors
  - client - show owners of cells

@@ -208,3 +208,14 @@ export interface UsedCardState {
 	/** Index of card that triggered last passive effect */
 	triggeredByCard?: number
 }
+
+export enum StandardProjectType {
+	SellPatents = 1,
+	PowerPlant,
+	Asteroid,
+	Aquifer,
+	Greenery,
+	City,
+	GreeneryForPlants,
+	TemperatureForHeat,
+}
