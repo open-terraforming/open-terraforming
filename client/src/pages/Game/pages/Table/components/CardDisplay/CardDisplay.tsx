@@ -73,7 +73,7 @@ export const CardDisplay = <T extends CardInfo>({
 						[
 							c,
 							title,
-							cards.filter(ci => !c || ci.card.type === c).length
+							cards.filter(ci => c === undefined || ci.card.type === c).length
 						] as const
 				)
 				.filter(([, , count]) => count > 0),
@@ -84,7 +84,7 @@ export const CardDisplay = <T extends CardInfo>({
 		() =>
 			cards.filter(
 				ci =>
-					(!type || ci.card.type === type) &&
+					(type === undefined || ci.card.type === type) &&
 					(selectedCategory === undefined ||
 						ci.card.categories.includes(selectedCategory))
 			),
