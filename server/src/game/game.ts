@@ -14,6 +14,7 @@ import { UpdateDeepPartial } from '@shared/index'
 import { Competitions } from '@shared/competitions'
 import { COMPETITIONS_REWARDS } from '@shared/constants'
 import { nextColor } from '@/utils/colors'
+import { Corporations } from '@shared/corporations'
 
 export interface GameConfig {
 	bots: number
@@ -159,6 +160,21 @@ export class Game {
 	}
 
 	checkState() {
+		// Make sure disconnected players are not stalling others
+		this.players.forEach(p => {
+			if (!p.state.connected) {
+				if (p.gameState.state === PlayerStateValue.PickingCorporation) {
+					p.pickCorporation(Corporations[0].code)
+				}
+				if (p.gameState.state === PlayerStateValue.PickingCards) {
+					p.pickCards([])
+				}
+				if (p.gameState.state === PlayerStateValue.Playing) {
+					p.pass(true)
+				}
+			}
+		})
+
 		switch (this.state.state) {
 			case GameStateValue.WaitingForPlayers:
 				if (this.players.length > 0 && this.all(PlayerStateValue.Ready)) {

@@ -6,7 +6,9 @@ import {
 	faEthernet,
 	faHourglassHalf,
 	faUserClock,
-	faChevronRight
+	faChevronRight,
+	faUserSlash,
+	faRobot
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { PlayerState, PlayerStateValue } from '@shared/index'
@@ -55,6 +57,22 @@ export const Player = ({
 			<InfoContainer>
 				<NameContainer>
 					<Name>
+						{!player.connected && (
+							<FontAwesomeIcon
+								className="mr-2"
+								size="sm"
+								title="Disconnected"
+								icon={faUserSlash}
+							/>
+						)}
+						{player.bot && (
+							<FontAwesomeIcon
+								className="mr-2"
+								size="sm"
+								title="Bot"
+								icon={faRobot}
+							/>
+						)}
 						{player.name}
 						{isPlayer ? ' (You)' : ''}
 					</Name>

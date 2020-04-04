@@ -369,7 +369,10 @@ export class Player {
 			player: this
 		})
 
-		if (this.gameState.placingTile.length === 0) {
+		if (
+			this.gameState.placingTile.length === 0 &&
+			this.gameState.state !== PlayerStateValue.PickingCards
+		) {
 			this.actionPlayed()
 		}
 
@@ -642,7 +645,10 @@ export class Player {
 				player: this
 			})
 
-			if (this.gameState.placingTile.length === 0) {
+			if (
+				this.gameState.placingTile.length === 0 &&
+				this.gameState.state !== PlayerStateValue.PickingCards
+			) {
 				this.actionPlayed()
 			}
 		}

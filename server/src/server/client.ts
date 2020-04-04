@@ -8,7 +8,8 @@ import {
 	VERSION,
 	HandshakeError,
 	PlayerStateValue,
-	serverMessage
+	serverMessage,
+	GameStateValue
 } from '@shared/index'
 import { Game } from '@/game/game'
 
@@ -51,13 +52,11 @@ export class Client {
 			}
 		})
 		this.socket.on('close', () => {
-			this.player.state.connected = false
-
-			// Pass if player is playing now
-			if (this.player.gameState.state === PlayerStateValue.Playing) {
-				this.player.pass(true)
+			if (this.game.state.state === GameStateValue.WaitingForPlayers) {
+				this.game.remove(this.player)
 			} else {
-				this.player.updated()
+				this.player.state.connected = false
+				this.game.checkState()
 			}
 
 			this.onDisconnected.emit()

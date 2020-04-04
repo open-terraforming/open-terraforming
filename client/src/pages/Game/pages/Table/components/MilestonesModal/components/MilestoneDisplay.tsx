@@ -12,7 +12,7 @@ type Props = {
 	canAfford: boolean
 	owner?: PlayerState
 	cost?: number
-	playing: booolean
+	playing: boolean
 	onBuy: (milestone: Milestone) => void
 }
 

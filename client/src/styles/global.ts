@@ -42,4 +42,8 @@ button, a {
 	cursor: pointer;
 }
 
+.mr-2 {
+	margin-right: 0.5rem;
+}
+
 `
