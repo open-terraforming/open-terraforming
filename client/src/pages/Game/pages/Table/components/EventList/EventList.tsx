@@ -69,46 +69,56 @@ export const EventList = ({}: Props) => {
 
 					const gameChanges = changes.gameState
 
-					if (gameChanges.usedCards) {
-						Object.entries(gameChanges.usedCards).forEach(
-							([cardIndex, cardChanges]) => {
-								const oldCard = player.gameState.usedCards[parseInt(cardIndex)]
+					if (gameChanges) {
+						if (gameChanges.usedCards) {
+							Object.entries(gameChanges.usedCards).forEach(
+								([cardIndex, cardChanges]) => {
+									const oldCard =
+										player.gameState.usedCards[parseInt(cardIndex)]
 
-								if (!oldCard) {
-									newEvents.push({
-										type: EventType.CardPlayed,
-										playerId: player.id,
-										card: cardChanges.code
-									})
-								} else {
-									const card = CardsLookupApi.get(oldCard.code)
-
-									if (card.resource && cardChanges[card.resource]) {
+									if (!oldCard) {
 										newEvents.push({
-											type: EventType.CardResourceChanged,
+											type: EventType.CardPlayed,
 											playerId: player.id,
-											card: cardChanges.code,
-											resource: card.resource,
-											index: parseInt(cardIndex),
-											amount:
-												cardChanges[card.resource] - oldCard[card.resource]
+											card: cardChanges.code
 										})
-									}
+									} else {
+										const card = CardsLookupApi.get(oldCard.code)
 
-									if (cardChanges.played === true) {
-										newEvents.push({
-											type: EventType.CardUsed,
-											playerId: player.id,
-											card: oldCard.code,
-											index: parseInt(cardIndex)
-										})
+										if (card.resource && cardChanges[card.resource]) {
+											newEvents.push({
+												type: EventType.CardResourceChanged,
+												playerId: player.id,
+												card: cardChanges.code,
+												resource: card.resource,
+												index: parseInt(cardIndex),
+												amount:
+													cardChanges[card.resource] - oldCard[card.resource]
+											})
+										}
+
+										if (cardChanges.played === true) {
+											newEvents.push({
+												type: EventType.CardUsed,
+												playerId: player.id,
+												card: oldCard.code,
+												index: parseInt(cardIndex)
+											})
+										}
 									}
 								}
-							}
-						)
-					}
+							)
+						}
 
-					if (gameChanges) {
+						if (gameChanges.terraformRating) {
+							newEvents.push({
+								type: EventType.RatingChanged,
+								playerId: player.id,
+								amount:
+									gameChanges.terraformRating - player.gameState.terraformRating
+							})
+						}
+
 						resources.forEach(res => {
 							const prod = resourceProduction[res]
 

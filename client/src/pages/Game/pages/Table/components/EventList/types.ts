@@ -10,7 +10,8 @@ export enum EventType {
 	CardResourceChanged,
 	GameProgressChanged,
 	TilePlaced,
-	CorporationPicked
+	CorporationPicked,
+	RatingChanged
 }
 
 type CardPlayed = {
@@ -73,6 +74,12 @@ type CorporationPicked = {
 	corporation: string
 }
 
+type RatingChanged = {
+	type: typeof EventType.RatingChanged
+	playerId: number
+	amount: number
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -83,3 +90,4 @@ export type GameEvent =
 	| GameProgressChanged
 	| TilePlaced
 	| CorporationPicked
+	| RatingChanged

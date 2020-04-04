@@ -68,6 +68,13 @@ export const EventLine = ({ event, players, animated, onDone }: Props) => {
 						{` got ${event.amount} cards`}
 					</>
 				)
+			case EventType.RatingChanged:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} />
+						{` + ${event.amount} TR`}
+					</>
+				)
 			case EventType.CorporationPicked:
 				return (
 					<>
