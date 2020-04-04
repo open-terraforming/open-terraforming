@@ -663,6 +663,8 @@ export class Player {
 	checkTilePlacement() {
 		this.gameState.placingTile = this.gameState.placingTile.filter(
 			t =>
+				(t.type !== GridCellContent.Ocean ||
+					this.game.state.oceans < this.game.state.map.oceans) &&
 				!!allCells(this.game.state).find(c =>
 					canPlace(this.game.state, this.state, c, t)
 				)

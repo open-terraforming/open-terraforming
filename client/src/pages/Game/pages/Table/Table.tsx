@@ -44,5 +44,6 @@ const GameContainer = styled.div`
 	display: flex;
 	flex-grow: 1;
 	width: 100%;
-	align-items: flex-start;
+	min-height: 0;
+	max-height: 100%;
 `

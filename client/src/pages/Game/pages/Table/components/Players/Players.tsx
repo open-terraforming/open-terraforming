@@ -3,6 +3,7 @@ import { useAppStore } from '@/utils/hooks'
 import { Player } from './components/Player'
 import styled from 'styled-components'
 import { PlayerInfo } from './components/PlayerInfo/PlayerInfo'
+import { EventList } from '../EventList/EventList'
 
 export const Players = () => {
 	const startingPlayer = useAppStore(state => state.game.state?.startingPlayer)
@@ -29,10 +30,15 @@ export const Players = () => {
 					onClick={() => setShowingPlayerId(p.id)}
 				/>
 			))}
+
+			<EventList />
 		</PlayersContainer>
 	)
 }
 
 const PlayersContainer = styled.div`
 	margin-top: 5rem;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
 `

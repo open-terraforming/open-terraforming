@@ -1380,7 +1380,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'media_group',
 		title: 'Media Group',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 6,
 		categories: [CardCategory.Earth],
@@ -1462,7 +1462,6 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Ocean,
-				// TODO: Enough?
 				conditions: [PlacementCode.NoOceans],
 			}),
 		],

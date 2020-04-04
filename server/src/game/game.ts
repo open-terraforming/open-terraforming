@@ -160,20 +160,22 @@ export class Game {
 	}
 
 	checkState() {
-		// Make sure disconnected players are not stalling others
-		this.players.forEach(p => {
-			if (!p.state.connected) {
-				if (p.gameState.state === PlayerStateValue.PickingCorporation) {
-					p.pickCorporation(Corporations[0].code)
+		if (!this.players.every(p => !p.state.connected || p.state.bot)) {
+			// Make sure disconnected players are not stalling others
+			this.players.forEach(p => {
+				if (!p.state.connected) {
+					if (p.gameState.state === PlayerStateValue.PickingCorporation) {
+						p.pickCorporation(Corporations[0].code)
+					}
+					if (p.gameState.state === PlayerStateValue.PickingCards) {
+						p.pickCards([])
+					}
+					if (p.gameState.state === PlayerStateValue.Playing) {
+						p.pass(true)
+					}
 				}
-				if (p.gameState.state === PlayerStateValue.PickingCards) {
-					p.pickCards([])
-				}
-				if (p.gameState.state === PlayerStateValue.Playing) {
-					p.pass(true)
-				}
-			}
-		})
+			})
+		}
 
 		switch (this.state.state) {
 			case GameStateValue.WaitingForPlayers:

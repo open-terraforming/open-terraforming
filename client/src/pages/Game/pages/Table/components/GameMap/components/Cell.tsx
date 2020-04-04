@@ -113,7 +113,7 @@ const StyledHex = styled.g<{
 			css`
 				fill: ${props.gridActive
 					? 'rgba(36,187,23,0.2)'
-					: 'rgba(187,23,36,0.2)'};
+					: 'rgba(187,23,36,0.5)'};
 				${props.gridActive ? 'cursor: pointer;' : ''}
 			`}
 	}

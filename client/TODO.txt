@@ -1,8 +1,6 @@
 TODO:
- - server - discard tiles when not placeable (there is no more space, oceans limit reached)
  - server - only send data, that should be visible to the player
  - shared - effects icons
- - server - disconnected player handling (picking cards is never finished)
  - server - check if Effects card can actually be played
 
 NICE TODO:
