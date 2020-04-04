@@ -89,6 +89,7 @@ export class Player {
 			placingTile: []
 		},
 		name: '<unknown>',
+		color: '#000',
 		session: uuidv4()
 	} as PlayerState
 
@@ -180,6 +181,10 @@ export class Player {
 	}
 
 	pickCorporation(code: string) {
+		if (this.gameState.state !== PlayerStateValue.PickingCorporation) {
+			throw new Error('You are not picking corporations right now')
+		}
+
 		const corp = Corporations.find(c => c.code === code)
 		if (!corp) {
 			throw new Error(`Unknown corporation ${code}`)
@@ -209,6 +214,10 @@ export class Player {
 	}
 
 	pickCards(cards: number[]) {
+		if (this.gameState.state !== PlayerStateValue.PickingCards) {
+			throw new Error('You are not picking cards right now')
+		}
+
 		if (new Set(cards).size !== cards.length) {
 			throw new Error('You cant pick one card twice')
 		}
@@ -265,7 +274,7 @@ export class Player {
 		playArguments: CardEffectArgumentType[][]
 	) {
 		if (!this.isPlaying) {
-			return
+			throw new Error("You're not playing")
 		}
 
 		if (this.gameState.cards[index] !== cardCode) {
@@ -704,6 +713,10 @@ export class Player {
 	}
 
 	buyStandardProject(projectType: StandardProjectType, cards: number[]) {
+		if (!this.isPlaying) {
+			throw new Error("You're not playing")
+		}
+
 		const project = Projects[projectType]
 		const ctx = {
 			game: this.game.state,
@@ -775,6 +788,7 @@ export class Player {
 			throw new Error('This competition is already sponsored')
 		}
 
+		this.gameState.money -= cost
 		this.game.state.competitions.push({
 			playerId: this.state.id,
 			type

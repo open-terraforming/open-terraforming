@@ -187,7 +187,7 @@ export const defaultMap = () => {
 		oceans: 9,
 		temperature: 4,
 		oxygen: 14,
-		temperatureMilestones: [heatAt(12), heatAt(10), oceanAt(0)],
+		temperatureMilestones: [heatAt(-12), heatAt(-10), oceanAt(0)],
 		oxygenMilestones: [temperatureAt(8)],
 	}
 

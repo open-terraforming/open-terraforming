@@ -1,4 +1,4 @@
-import { Button } from '@/components'
+import { isNotUndefined } from '@/utils/collections'
 import { Card, CardCategory, CardType } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -6,7 +6,6 @@ import styled, { css } from 'styled-components'
 import { NoCards } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
 import { Tag } from '../CardView/components/Tag'
-import { isNotUndefined } from '@/utils/collections'
 
 export type CardInfo = {
 	card: Card
@@ -118,7 +117,7 @@ export const CardDisplay = <T extends CardInfo>({
 								onClick={() => {
 									setType(cat)
 								}}
-								key={cat}
+								key={cat === undefined ? -1 : cat}
 							>
 								<Type>{t}</Type>
 								<Count>

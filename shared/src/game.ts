@@ -148,6 +148,7 @@ export interface GridCell {
 export interface PlayerState {
 	id: number
 	name: string
+	color: string
 	session: string
 	connected: boolean
 	bot: boolean

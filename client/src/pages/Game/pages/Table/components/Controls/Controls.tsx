@@ -8,7 +8,9 @@ import {
 	playerPass,
 	PlayerStateValue,
 	buyStandardProject,
-	StandardProjectType
+	StandardProjectType,
+	GridCellContent,
+	GridCellOther
 } from '@shared/index'
 import {
 	faArrowRight,
@@ -26,6 +28,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
+import { colors } from '@/styles'
+import { rgba } from 'polished'
 
 export const Controls = () => {
 	const api = useApi()
@@ -44,7 +48,7 @@ export const Controls = () => {
 
 	const isPlaying = state?.state === PlayerStateValue.Playing
 
-	const faded = state?.placingTile.length !== 0
+	const placingTile = state?.placingTile[0]
 
 	const handlePass = () => {
 		api.send(playerPass(false))
@@ -63,7 +67,7 @@ export const Controls = () => {
 	}
 
 	return state ? (
-		<Container faded={faded}>
+		<Container faded={!!placingTile}>
 			{handOpened && (
 				<Hand playing={isPlaying} onClose={() => setHandOpened(false)} />
 			)}
@@ -145,14 +149,14 @@ export const Controls = () => {
 			<CardButtons>
 				<Button
 					icon={faAngleUp}
-					disabled={state.cards.length === 0 || faded}
+					disabled={state.cards.length === 0 || !!placingTile}
 					onClick={() => setHandOpened(true)}
 				>
 					{state.cards.length} cards in hand
 				</Button>
 				<Button
 					icon={faAngleUp}
-					disabled={state.usedCards.length === 0 || faded}
+					disabled={state.usedCards.length === 0 || !!placingTile}
 					onClick={() => setCardsOpened(true)}
 				>
 					{state.usedCards.length} cards played
@@ -172,13 +176,23 @@ export const Controls = () => {
 				</CardButtons>
 
 				<PassButton
-					disabled={!isPlaying || faded}
+					disabled={!isPlaying || !!placingTile}
 					onClick={handlePass}
 					icon={faArrowRight}
 				>
 					Pass
 				</PassButton>
 			</Flexed>
+			{placingTile && (
+				<Fade>
+					<div>
+						Placing{' '}
+						{placingTile.type === GridCellContent.Other
+							? GridCellOther[placingTile.other as GridCellOther]
+							: GridCellContent[placingTile.type]}{' '}
+					</div>
+				</Fade>
+			)}
 		</Container>
 	) : (
 		<></>
@@ -186,6 +200,7 @@ export const Controls = () => {
 }
 
 const Container = styled.div<{ faded: boolean }>`
+	position: relative;
 	display: flex;
 	justify-content: space-between;
 	background-color: rgba(14, 129, 214, 0.8);
@@ -194,6 +209,21 @@ const Container = styled.div<{ faded: boolean }>`
 		css`
 			opacity: 0.7;
 		`}
+`
+
+const Fade = styled.div`
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: ${rgba(colors.background, 0.5)};
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 125%;
+	font-weight: bold;
+	color: #fff;
 `
 
 const Flexed = styled.div`

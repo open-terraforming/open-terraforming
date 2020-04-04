@@ -50,11 +50,13 @@ export const GlobalState = () => {
 					start={game.map.initialTemperature}
 					current={game.temperature}
 					target={game.map.temperature}
+					milestones={game.map.temperatureMilestones}
 				/>
 				<Oxygen
 					start={game.map.initialOxygen}
 					current={game.oxygen}
 					target={game.map.oxygen}
+					milestones={game.map.oxygenMilestones}
 				/>
 			</div>
 		</div>

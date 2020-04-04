@@ -1,19 +1,18 @@
-import React, { useMemo } from 'react'
+import { useAppStore } from '@/utils/hooks'
 import {
 	Card,
-	CardType,
+	CardCallbackContext,
 	CardCategory,
-	CardCondition,
-	CardCallbackContext
+	CardType
 } from '@shared/cards'
+import { isCardActionable, isCardPlayable } from '@shared/cards/utils'
+import { UsedCardState } from '@shared/index'
+import React, { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Condition } from './components/Condition'
-import { useAppStore } from '@/utils/hooks'
-import { UsedCardState } from '@shared/index'
 import { PlayEffect } from './components/PlayEffect'
-import { Tag } from './components/Tag'
-import { isCardPlayable, isCardActionable } from '@shared/cards/utils'
 import { Resource } from './components/Resource'
+import { Tag } from './components/Tag'
 
 export const CardView = ({
 	card,

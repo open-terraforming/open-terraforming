@@ -12,36 +12,13 @@ import { CardSelector } from '../../CardSelector/CardSelector'
 import { useAppStore } from '@/utils/hooks'
 import { emptyCardState } from '@shared/cards/utils'
 import { UsedCardState } from '@shared/index'
+import { cardsToCardList } from '@/utils/cards'
 
 type Props = {
 	arg: CardEffectArgument
 	otherPlayer?: boolean
 	onChange: (v: number | [number, number]) => void
 }
-
-const cardsToCardList = (
-	cards: UsedCardState[],
-	conditions: CardCondition[],
-	ctx: Partial<CardCallbackContext>
-) =>
-	cards
-		.map(
-			(c, i) =>
-				({
-					card: CardsLookupApi.get(c.code),
-					index: i,
-					state: c
-				} as CardInfo)
-		)
-		.filter(item =>
-			conditions.every(c =>
-				c.evaluate({
-					...ctx,
-					card: item.state || emptyCardState(item.card.code),
-					cardIndex: item.index
-				} as CardCallbackContext)
-			)
-		)
 
 export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 	const [picking, setPicking] = useState(false)

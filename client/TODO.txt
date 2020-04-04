@@ -1,13 +1,10 @@
 TODO:
- - client - milestones in game progress
+ - server - skip card picking for disconnected players
  - server - discard tiles when not placeable (there is no more space, oceans limit reached)
- - client - display cards played by enemy
  - server - check if player is playing
  - client - check if player is playing
- - client - player colors
- - client - show owners of cells
- - client - card filtering (both player and in hand)
- - client - see others played cards
+ - server - only send data, that should be visible to the player
+ - client - disable all controls when player is placing a tile
  - client - mark starting player
  - client - better played card display in controls
  - shared - effects icons

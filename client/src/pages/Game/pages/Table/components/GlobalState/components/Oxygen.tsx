@@ -1,18 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import styled, { css } from 'styled-components'
-import { range } from '@/utils/collections'
-import { popOut } from '@/styles/animations'
+import { range, keyMap } from '@/utils/collections'
 import { DiffAnim } from './DiffAnim'
+import { ProgressMilestone } from '@shared/index'
+import { MilestoneDisplay } from './MilestoneDisplay'
 
 type Props = {
 	start: number
 	current: number
 	target: number
+	milestones: ProgressMilestone[]
 }
 
-export const Oxygen = ({ current, target, start }: Props) => {
+export const Oxygen = ({ current, target, start, milestones }: Props) => {
 	const [lastValue, setLastValue] = useState(current)
 	const [diff, setDiff] = useState(0)
+
+	const milestoneArray = useMemo(() => keyMap(milestones, 'value'), [
+		milestones
+	])
 
 	useEffect(() => {
 		const diff = current - lastValue
@@ -30,6 +36,9 @@ export const Oxygen = ({ current, target, start }: Props) => {
 			{range(target, start - 1, -1).map(t => (
 				<Step passed={current > t} active={current === t} key={t}>
 					{t}
+					{milestoneArray[t] && (
+						<MilestoneDisplay side="right" milestone={milestoneArray[t]} />
+					)}
 				</Step>
 			))}
 			<Icon>
@@ -46,6 +55,7 @@ const Container = styled.div`
 	background-color: rgba(14, 129, 214, 0.5);
 	margin: 0 1rem;
 	position: relative;
+	margin-right: 2rem;
 `
 
 const Step = styled.div<{ passed: boolean; active: boolean }>`
@@ -53,6 +63,7 @@ const Step = styled.div<{ passed: boolean; active: boolean }>`
 	padding: 0.55rem 1rem;
 	color: #fff;
 	opacity: ${props => (props.active ? 1 : props.passed ? 0.8 : 0.5)};
+	position: relative;
 	${props =>
 		(props.passed || props.active) &&
 		css`

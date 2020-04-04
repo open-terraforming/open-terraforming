@@ -13,6 +13,7 @@ import { Bot } from './bot'
 import { UpdateDeepPartial } from '@shared/index'
 import { Competitions } from '@shared/competitions'
 import { COMPETITIONS_REWARDS } from '@shared/constants'
+import { nextColor } from '@/utils/colors'
 
 export interface GameConfig {
 	bots: number
@@ -151,6 +152,7 @@ export class Game {
 		)
 
 		this.players.forEach(p => {
+			p.state.color = nextColor()
 			p.gameState.state = PlayerStateValue.PickingCorporation
 		})
 		this.state.state = GameStateValue.PickingCorporations
@@ -167,7 +169,9 @@ export class Game {
 			case GameStateValue.PickingCorporations:
 			case GameStateValue.PickingCards:
 				if (this.all(PlayerStateValue.WaitingForTurn)) {
-					this.state.currentPlayer = this.state.startingPlayer - 1
+					this.state.currentPlayer = this.state.startingPlayer
+					this.state.startingPlayer =
+						(this.state.startingPlayer + 1) % this.players.length
 					this.nextPlayer()
 					this.state.state = GameStateValue.GenerationInProgress
 				}
@@ -175,14 +179,14 @@ export class Game {
 
 			case GameStateValue.GenerationInProgress:
 				this.state.map.oxygenMilestones.forEach(m => {
-					if (!m.used && m.value < this.state.oxygen) {
+					if (!m.used && m.value <= this.state.oxygen) {
 						m.used = true
 						m.effects.forEach(e => e(this.state, this.currentPlayer.state))
 					}
 				})
 
 				this.state.map.temperatureMilestones.forEach(m => {
-					if (!m.used && m.value < this.state.temperature) {
+					if (!m.used && m.value <= this.state.temperature) {
 						m.used = true
 						m.effects.forEach(e => e(this.state, this.currentPlayer.state))
 					}

@@ -19,7 +19,7 @@ export const withUnits = (
 		case 'plants':
 			return `${amount} plants`
 		case 'temperature':
-			return `${(amount as number) * 2} °`
+			return `${(amount as number) * 2}° C`
 		case 'oxygen':
 			return `${amount} %`
 		default:

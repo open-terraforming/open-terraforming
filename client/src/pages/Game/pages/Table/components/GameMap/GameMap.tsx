@@ -6,6 +6,7 @@ import { Cell } from './components/Cell'
 import { useApi } from '@/context/ApiContext'
 import { placeTile } from '@shared/actions'
 import { CellOverlay } from './components/CellOverlay'
+import background from '@/assets/mars-background.jpg'
 
 type Props = {}
 
@@ -39,6 +40,10 @@ export const GameMap = ({}: Props) => {
 
 	return map ? (
 		<Container>
+			<Background>
+				<img src={background} />
+			</Background>
+
 			{map.grid.map(col =>
 				col
 					.filter(c => c.enabled)
@@ -104,4 +109,18 @@ const Overlay = styled.div`
 	top: 0;
 	right: 0;
 	bottom: 0;
+`
+
+const Background = styled.div`
+	position: absolute;
+	top: -10%;
+	left: 1%;
+	right: 1%;
+
+	> img {
+		margin: auto;
+		width: 100%;
+		border-radius: 50%;
+		box-shadow: 0px 0px 20px 14px rgba(200, 200, 255, 0.4);
+	}
 `

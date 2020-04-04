@@ -885,6 +885,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Building],
 		playEffects: [productionChange('energy', -1), productionChange('ore', 2)],
 	}),
+	/*
 	card({
 		code: 'land_claim',
 		title: 'Land Claim',
@@ -894,6 +895,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Event],
 		playEffects: [claimCell()],
 	}),
+	*/
 	card({
 		code: 'mining_rights',
 		title: 'Mining Rights',

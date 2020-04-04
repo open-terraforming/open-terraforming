@@ -471,13 +471,16 @@ export const duplicateProduction = (type: CardCategory) =>
 			cardArg(
 				[
 					{
-						evaluate: ({ card }) => {
-							const data = CardsLookupApi.get(card.code)
+						evaluate: (ctx) => {
+							const data = CardsLookupApi.get(ctx.card.code)
 							return (
 								data.categories.includes(type) &&
-								!!data.playEffects.find((e) => {
-									return e.type === CardEffectType.Production
-								})
+								!!data.playEffects.find(
+									(e) => e.type === CardEffectType.Production
+								) &&
+								!!data.playEffects
+									.filter((e) => e.type === CardEffectType.Production)
+									.every((e) => e.conditions.every((c) => c.evaluate(ctx)))
 							)
 						},
 					},
