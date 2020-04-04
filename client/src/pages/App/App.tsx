@@ -7,6 +7,7 @@ import { Connect } from '../Connect/Connect'
 import { useAppStore, useAppDispatch } from '@/utils/hooks'
 import { Game } from '../Game/Game'
 import { setClientState } from '@/store/modules/client'
+import background from '@/assets/stars.jpg'
 
 export const App = () => {
 	const dispatch = useAppDispatch()
@@ -47,4 +48,5 @@ const AppContainer = styled.div`
 	justify-content: center;
 	background-color: #000;
 	color: #eee;
+	background-image: url('${background}');
 `

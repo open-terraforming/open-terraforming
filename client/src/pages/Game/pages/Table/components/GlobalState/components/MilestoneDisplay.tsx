@@ -50,6 +50,7 @@ const E = styled.div<{ side: Side }>`
 
 	> * {
 		padding: 0.5rem;
+		border: 2px solid ${colors.background};
 		background: ${colors.background};
 	}
 
@@ -62,6 +63,7 @@ const E = styled.div<{ side: Side }>`
 					* {
 						border-top-left-radius: 0.5rem;
 						border-bottom-left-radius: 0.5rem;
+						border-right: 0;
 					}
 			  `
 			: css`
@@ -71,6 +73,7 @@ const E = styled.div<{ side: Side }>`
 					* {
 						border-top-right-radius: 0.5rem;
 						border-bottom-right-radius: 0.5rem;
+						border-left: 0;
 					}
 			  `}
 `

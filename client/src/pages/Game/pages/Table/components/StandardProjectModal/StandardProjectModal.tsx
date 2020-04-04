@@ -14,6 +14,7 @@ import { ProjectDescription } from './components/ProjectDescription'
 import { SellCardsModal } from './components/SellCardsModal'
 
 type Props = {
+	playing: boolean
 	onClose: () => void
 }
 
@@ -26,7 +27,7 @@ const projects = [
 	Projects[StandardProjectType.City]
 ]
 
-export const StandardProjectModal = ({ onClose }: Props) => {
+export const StandardProjectModal = ({ onClose, playing }: Props) => {
 	const api = useApi()
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
@@ -66,7 +67,7 @@ export const StandardProjectModal = ({ onClose }: Props) => {
 				{projects.map((p, i) => (
 					<Project key={i}>
 						<Button
-							disabled={!p.conditions.every(c => c(ctx))}
+							disabled={!playing || !p.conditions.every(c => c(ctx))}
 							onClick={() => handleSubmit(p)}
 						>
 							{p.type === StandardProjectType.SellPatents

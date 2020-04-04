@@ -64,6 +64,8 @@ const Step = styled.div<{ passed: boolean; active: boolean }>`
 	color: #fff;
 	opacity: ${props => (props.active ? 1 : props.passed ? 0.8 : 0.5)};
 	position: relative;
+	transition: background 500ms, opacity 500ms;
+
 	${props =>
 		(props.passed || props.active) &&
 		css`

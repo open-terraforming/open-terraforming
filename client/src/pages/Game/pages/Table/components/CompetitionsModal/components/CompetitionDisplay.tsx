@@ -12,6 +12,7 @@ type Props = {
 	canAfford: boolean
 	sponsored?: PlayerState
 	cost: number
+	playing: boolean
 	onBuy: (competition: Competition) => void
 }
 
@@ -20,6 +21,7 @@ export const CompetitionDisplay = ({
 	canAfford,
 	onBuy,
 	sponsored,
+	playing,
 	cost
 }: Props) => {
 	const game = useAppStore(state => state.game.state)
@@ -53,7 +55,7 @@ export const CompetitionDisplay = ({
 				<Title>{competition.title}</Title>
 				{(cost !== undefined || sponsored) && (
 					<Button
-						disabled={!canAfford || !!sponsored}
+						disabled={!playing || !canAfford || !!sponsored}
 						onClick={() => onBuy(competition)}
 						icon={sponsored ? faCheck : undefined}
 					>

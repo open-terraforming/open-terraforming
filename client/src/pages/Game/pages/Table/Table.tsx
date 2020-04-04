@@ -7,8 +7,6 @@ import { GlobalState } from './components/GlobalState/GlobalState'
 import { Controls } from './components/Controls/Controls'
 import { CardPicker } from './components/CardPicker/CardPicker'
 import { CorporationPicker } from './components/CorporationPicker/CorporationPicker'
-
-import background from '@/assets/stars.jpg'
 import { GameMap } from './components/GameMap/GameMap'
 import { Events } from './components/Events/Events'
 
@@ -40,7 +38,6 @@ const TableContainer = styled.div`
 	flex-direction: column;
 	overflow: hidden;
 	min-width: 0;
-	background: url('${background}');
 `
 
 const GameContainer = styled.div`

@@ -6,6 +6,9 @@ import { EndGame } from '../EndGame/EndGame'
 import { Button } from '@/components'
 import { Temperature } from './components/Temperature'
 import { Oxygen } from './components/Oxygen'
+import { Oceans } from './components/Oceans'
+import { colors } from '@/styles'
+import { faPoll } from '@fortawesome/free-solid-svg-icons'
 
 export const GlobalState = () => {
 	const game = useAppStore(state => state.game.state)
@@ -23,22 +26,20 @@ export const GlobalState = () => {
 	return game && player ? (
 		<div>
 			<Container>
-				<div>Game State: {game && GameStateValue[game?.state]}</div>
-				<div>
-					Player State: {player && PlayerStateValue[player.gameState.state]}
-				</div>
-				<div>Generation: {game?.generation}</div>
-				<div>
-					Oceans: {game?.oceans} / {game?.map.oceans}
-				</div>
+				<div>Generation</div>
 
-				{game.state === GameStateValue.Ended && (
-					<>
-						<Button onClick={handleShow}>Show result</Button>
-						{showEnd && <EndGame onClose={handleHide} />}
-					</>
-				)}
+				<Generation>{game?.generation}</Generation>
 			</Container>
+
+			{game.state === GameStateValue.Ended && (
+				<Results>
+					<Button onClick={handleShow} icon={faPoll}>
+						Results
+					</Button>
+					{showEnd && <EndGame onClose={handleHide} />}
+				</Results>
+			)}
+
 			<div
 				style={{
 					display: 'flex',
@@ -59,6 +60,8 @@ export const GlobalState = () => {
 					milestones={game.map.oxygenMilestones}
 				/>
 			</div>
+
+			<Oceans current={game.oceans} target={game.map.oceans} />
 		</div>
 	) : (
 		<></>
@@ -67,6 +70,24 @@ export const GlobalState = () => {
 
 const Container = styled.div`
 	background-color: rgba(14, 129, 214, 0.8);
-	padding: 0.5rem;
+	border: 2px solid ${colors.border};
+	padding: 0.25rem 0.5rem;
 	margin-bottom: 1rem;
+	margin-right: 2rem;
+	margin-top: 1rem;
+	text-align: center;
+	line-height: 150%;
+`
+
+const Generation = styled.div`
+	font-size: 150%;
+`
+
+const Results = styled.div`
+	margin-bottom: 1rem;
+	margin-right: 2rem;
+
+	> button {
+		width: 100%;
+	}
 `

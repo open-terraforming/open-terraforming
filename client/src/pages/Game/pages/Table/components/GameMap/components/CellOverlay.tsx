@@ -58,7 +58,7 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 						<FontAwesomeIcon key={i} icon={faSeedling} color="#54A800" />
 					))}
 					{range(0, cell.ore).map(i => (
-						<FontAwesomeIcon key={i} icon={faHammer} color="#AA5500" />
+						<FontAwesomeIcon key={i} icon={faHammer} color="#FF8811" />
 					))}
 					{range(0, cell.titan).map(i => (
 						<FontAwesomeIcon key={i} icon={faStar} color="#FFFFAC" />

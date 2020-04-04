@@ -115,15 +115,24 @@ export const Controls = () => {
 			)}
 
 			{projectsOpened && (
-				<StandardProjectModal onClose={() => setProjectsOpened(false)} />
+				<StandardProjectModal
+					playing={isPlaying}
+					onClose={() => setProjectsOpened(false)}
+				/>
 			)}
 
 			{competitionsOpened && (
-				<CompetitionsModal onClose={() => setCompetitionsOpened(false)} />
+				<CompetitionsModal
+					playing={isPlaying}
+					onClose={() => setCompetitionsOpened(false)}
+				/>
 			)}
 
 			{milestonesOpened && (
-				<MilestonesModal onClose={() => setMilestonesOpened(false)} />
+				<MilestonesModal
+					playing={isPlaying}
+					onClose={() => setMilestonesOpened(false)}
+				/>
 			)}
 
 			<Flexed>
@@ -131,14 +140,14 @@ export const Controls = () => {
 
 				<CardButtons>
 					<Button
-						disabled={(player?.gameState.heat || 0) < 8}
+						disabled={!isPlaying || (player?.gameState.heat || 0) < 8}
 						onClick={buyTemperature}
 					>
 						+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}
 						<ResourceIcon res="heat" />
 					</Button>
 					<Button
-						disabled={(player?.gameState.plants || 0) < 8}
+						disabled={!isPlaying || (player?.gameState.plants || 0) < 8}
 						onClick={buyForest}
 					>
 						Build <FontAwesomeIcon icon={faTree} /> for 8{' '}

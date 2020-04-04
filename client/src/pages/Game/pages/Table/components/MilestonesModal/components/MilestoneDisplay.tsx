@@ -12,6 +12,7 @@ type Props = {
 	canAfford: boolean
 	owner?: PlayerState
 	cost?: number
+	playing: booolean
 	onBuy: (milestone: Milestone) => void
 }
 
@@ -20,7 +21,8 @@ export const MilestoneDisplay = ({
 	canAfford,
 	onBuy,
 	owner,
-	cost
+	cost,
+	playing
 }: Props) => {
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
@@ -42,7 +44,7 @@ export const MilestoneDisplay = ({
 				<Title>{milestone.title}</Title>
 				{(cost !== undefined || owner) && (
 					<Button
-						disabled={!reached || !canAfford || !!owner}
+						disabled={!playing || !reached || !canAfford || !!owner}
 						onClick={() => onBuy(milestone)}
 						icon={owner ? faCheck : undefined}
 					>

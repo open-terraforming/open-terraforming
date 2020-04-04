@@ -17,6 +17,7 @@ import { MilestoneDisplay } from './components/MilestoneDisplay'
 
 type Props = {
 	onClose: () => void
+	playing: boolean
 }
 
 const milestones = [
@@ -27,7 +28,7 @@ const milestones = [
 	Milestones[MilestoneType.Planner]
 ]
 
-export const MilestonesModal = ({ onClose }: Props) => {
+export const MilestonesModal = ({ onClose, playing }: Props) => {
 	const api = useApi()
 	const bought = useAppStore(state => state.game.state?.milestones) || []
 	const players = useAppStore(state => state.game.state?.players) || []
@@ -76,6 +77,7 @@ export const MilestonesModal = ({ onClose }: Props) => {
 					cost={bought.length < MILESTONES_LIMIT ? MILESTONE_PRICE : undefined}
 					milestone={c}
 					key={c.type}
+					playing={playing}
 					onBuy={handleBuy}
 					canAfford={affordable}
 				/>

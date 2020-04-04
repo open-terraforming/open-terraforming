@@ -16,6 +16,7 @@ import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 
 type Props = {
 	onClose: () => void
+	playing: boolean
 }
 
 const competitions = [
@@ -26,7 +27,7 @@ const competitions = [
 	Competitions[CompetitionType.Miner]
 ]
 
-export const CompetitionsModal = ({ onClose }: Props) => {
+export const CompetitionsModal = ({ onClose, playing }: Props) => {
 	const api = useApi()
 	const sponsored = useAppStore(state => state.game.state?.competitions) || []
 	const players = useAppStore(state => state.game.state?.players) || []
@@ -76,6 +77,7 @@ export const CompetitionsModal = ({ onClose }: Props) => {
 						p => p.id === sponsored.find(i => i.type === c.type)?.playerId
 					)}
 					cost={cost}
+					playing={playing}
 					competition={c}
 					key={c.type}
 					onBuy={handleBuy}
