@@ -24,6 +24,8 @@ import { useApi } from '@/context/ApiContext'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
+import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
+import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 
 export const Controls = () => {
 	const api = useApi()
@@ -36,6 +38,8 @@ export const Controls = () => {
 	const [handOpened, setHandOpened] = useState(false)
 	const [cardsOpened, setCardsOpened] = useState(false)
 	const [projectsOpened, setProjectsOpened] = useState(false)
+	const [competitionsOpened, setCompetitionsOpened] = useState(false)
+	const [milestonesOpened, setMilestonesOpened] = useState(false)
 	const stackedActions = player?.gameState.cardsToPlay
 
 	const isPlaying = state?.state === PlayerStateValue.Playing
@@ -110,8 +114,33 @@ export const Controls = () => {
 				<StandardProjectModal onClose={() => setProjectsOpened(false)} />
 			)}
 
+			{competitionsOpened && (
+				<CompetitionsModal onClose={() => setCompetitionsOpened(false)} />
+			)}
+
+			{milestonesOpened && (
+				<MilestonesModal onClose={() => setMilestonesOpened(false)} />
+			)}
+
 			<Flexed>
 				<Resources state={state} />
+
+				<CardButtons>
+					<Button
+						disabled={(player?.gameState.heat || 0) < 8}
+						onClick={buyTemperature}
+					>
+						+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}
+						<ResourceIcon res="heat" />
+					</Button>
+					<Button
+						disabled={(player?.gameState.plants || 0) < 8}
+						onClick={buyForest}
+					>
+						Build <FontAwesomeIcon icon={faTree} /> for 8{' '}
+						<ResourceIcon res="plants" />
+					</Button>
+				</CardButtons>
 			</Flexed>
 			<CardButtons>
 				<Button
@@ -136,19 +165,9 @@ export const Controls = () => {
 				</Button>
 
 				<CardButtons>
-					<Button
-						disabled={(player?.gameState.heat || 0) < 8}
-						onClick={buyTemperature}
-					>
-						+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}
-						<ResourceIcon res="heat" />
-					</Button>
-					<Button
-						disabled={(player?.gameState.plants || 0) < 8}
-						onClick={buyForest}
-					>
-						Build <FontAwesomeIcon icon={faTree} /> for 8{' '}
-						<ResourceIcon res="plants" />
+					<Button onClick={() => setMilestonesOpened(true)}>Milestones</Button>
+					<Button onClick={() => setCompetitionsOpened(true)}>
+						Competitions
 					</Button>
 				</CardButtons>
 

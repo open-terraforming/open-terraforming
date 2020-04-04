@@ -8,6 +8,9 @@ export const Header = styled.div`
 
 export const Body = styled.div`
 	padding: 15px 20px;
+	overflow: auto;
+	flex: 1;
+	min-height: 0;
 `
 
 export const Footer = styled.div<{ stretchFooterButtons: boolean }>`

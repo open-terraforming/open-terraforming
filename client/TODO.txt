@@ -1,11 +1,9 @@
 TODO:
- - server - discard oceans when there is no more space
+ - client - milestones in game progress
+ - server - discard tiles when not placeable (there is no more space, oceans limit reached)
  - client - display cards played by enemy
  - server - check if player is playing
  - client - check if player is playing
- - functionality - competitions
- - functionality - titles
- - functionality - milestones in game progress
  - client - player colors
  - client - show owners of cells
  - client - card filtering (both player and in hand)

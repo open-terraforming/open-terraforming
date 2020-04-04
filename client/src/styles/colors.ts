@@ -1,7 +1,11 @@
 import MainColor from './mainColors'
-import { lighten, darken } from 'polished'
+import { lighten, darken, rgba } from 'polished'
+import mainColors from './mainColors'
 
 export default {
+	background: rgba(mainColors.application, 0.9),
+	border: rgba(lighten(0.1, mainColors.application), 0.8),
+
 	button: {
 		disabledBackground: '#eee',
 		primary: {

@@ -1,0 +1,133 @@
+import { Button } from '@/components'
+import { colors } from '@/styles'
+import { useAppStore } from '@/utils/hooks'
+import { Competition } from '@shared/competitions'
+import { PlayerState } from '@shared/index'
+import React, { useMemo } from 'react'
+import styled from 'styled-components'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
+
+type Props = {
+	competition: Competition
+	canAfford: boolean
+	sponsored?: PlayerState
+	cost: number
+	onBuy: (competition: Competition) => void
+}
+
+export const CompetitionDisplay = ({
+	competition,
+	canAfford,
+	onBuy,
+	sponsored,
+	cost
+}: Props) => {
+	const game = useAppStore(state => state.game.state)
+	const playerId = useAppStore(state => state.game.playerId)
+
+	const score = useMemo(
+		() =>
+			game
+				? game.players.reduce((acc, p) => {
+						const s = competition.getScore(game, p)
+
+						if (!acc[s]) {
+							acc[s] = []
+						}
+
+						acc[s].push(p)
+
+						return acc
+				  }, {} as Record<number, PlayerState[]>)
+				: ({} as Record<number, PlayerState[]>),
+		[game, competition]
+	)
+
+	if (!game || !playerId) {
+		return <>No game / player</>
+	}
+
+	return (
+		<E>
+			<Head>
+				<Title>{competition.title}</Title>
+				{(cost !== undefined || sponsored) && (
+					<Button
+						disabled={!canAfford || !!sponsored}
+						onClick={() => onBuy(competition)}
+						icon={sponsored ? faCheck : undefined}
+					>
+						{sponsored
+							? `Sponsored by ${sponsored?.name}`
+							: `Sponsor for ${cost}`}
+					</Button>
+				)}
+			</Head>
+			<ScoreList>
+				{Object.entries(score)
+					.sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
+					.map(([score, players], index) => (
+						<Position key={score}>
+							<Index>{index + 1}.</Index>
+							<Name>{players.map(p => p.name).join(', ')}</Name>
+							<Score>{score}</Score>
+						</Position>
+					))}
+			</ScoreList>
+			<Info>{competition.description}</Info>
+		</E>
+	)
+}
+
+const E = styled.div`
+	margin-bottom: 0.5rem;
+`
+
+const Head = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: ${colors.border};
+
+	> button {
+		margin: 0;
+	}
+`
+
+const Title = styled.div`
+	padding: 0.25rem 0.5rem;
+	font-size: 125%;
+`
+
+const Info = styled.div`
+	background: ${colors.border};
+	padding: 0.5rem 0.5rem;
+`
+
+const ScoreList = styled.div`
+	padding: 0.25rem 0.5rem;
+	max-height: 4rem;
+	overflow: auto;
+	border-left: 2px solid ${colors.border};
+	border-right: 2px solid ${colors.border};
+`
+
+const Position = styled.div`
+	display: flex;
+	align-items: center;
+	margin-bottom: 0.25rem;
+	&:last-child {
+		margin-bottom: 0;
+	}
+`
+
+const Index = styled.div`
+	margin-right: 0.25rem;
+`
+
+const Name = styled.div``
+
+const Score = styled.div`
+	margin-left: auto;
+	font-size: 150%;
+`

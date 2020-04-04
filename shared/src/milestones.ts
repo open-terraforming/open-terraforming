@@ -1,5 +1,6 @@
-import { GameState, PlayerState, GridCellType, GridCellContent } from './game'
+import { GameState, PlayerState, GridCellContent } from './game'
 import { allCells, keyMap } from './utils'
+import { CardsLookupApi, CardCategory } from './cards'
 
 export enum MilestoneType {
 	Terraformer = 1,
@@ -11,9 +12,10 @@ export enum MilestoneType {
 
 export interface Milestone {
 	type: MilestoneType
+	title: string
 	description: string
 	limit: number
-	condition: (game: GameState, player: PlayerState) => boolean
+	getValue: (game: GameState, player: PlayerState) => number
 }
 
 const milestone = (m: Milestone) => m
@@ -21,42 +23,47 @@ const milestone = (m: Milestone) => m
 const MilestonesList = [
 	milestone({
 		type: MilestoneType.Terraformer,
-		description: 'Terraformer',
+		title: 'Terraformer',
+		description: 'Terraforming rating',
 		limit: 35,
-		condition: (_game, player) => player.gameState.terraformRating >= 35,
+		getValue: (_game, player) => player.gameState.terraformRating,
 	}),
 	milestone({
 		type: MilestoneType.Mayor,
-		description: 'Mayor',
+		title: 'Mayor',
+		description: 'Cities owned',
 		limit: 3,
-		condition: (game, player) =>
+		getValue: (game, player) =>
 			allCells(game).filter(
 				(c) => c.content === GridCellContent.City && c.ownerId === player.id
-			).length >= 3,
+			).length,
 	}),
 	milestone({
 		type: MilestoneType.Gardener,
-		description: 'Gardener',
+		title: 'Gardener',
+		description: 'Forests owned',
 		limit: 3,
-		condition: (game, player) =>
+		getValue: (game, player) =>
 			allCells(game).filter(
 				(c) => c.content === GridCellContent.Forest && c.ownerId === player.id
-			).length >= 3,
+			).length,
 	}),
 	milestone({
 		type: MilestoneType.Builder,
-		description: 'Builder',
+		title: 'Builder',
+		description: 'Cards with Building tag played',
 		limit: 9,
-		condition: (game, player) =>
-			allCells(game).filter(
-				(c) => c.content === GridCellContent.Other && c.ownerId === player.id
-			).length >= 3,
+		getValue: (_game, player) =>
+			player.gameState.usedCards
+				.map((c) => CardsLookupApi.get(c.code))
+				.filter((c) => c.categories.includes(CardCategory.Building)).length,
 	}),
 	milestone({
 		type: MilestoneType.Planner,
-		description: 'Planner',
+		title: 'Planner',
+		description: 'Cards in your hand',
 		limit: 16,
-		condition: (_game, player) => player.gameState.cards.length >= 16,
+		getValue: (_game, player) => player.gameState.cards.length,
 	}),
 ]
 

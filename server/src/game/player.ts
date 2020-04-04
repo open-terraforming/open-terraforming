@@ -17,9 +17,9 @@ import {
 	CARD_PRICE,
 	MILESTONES_LIMIT,
 	MILESTONE_PRICE,
-	COMPETITION_LIMIT,
 	COMPETITIONS_LIMIT,
-	COMPETITIONS_PRICES
+	COMPETITIONS_PRICES,
+	MILESTONE_REWARD
 } from '@shared/constants'
 import {
 	CardCondition,
@@ -694,8 +694,13 @@ export class Player {
 			return acc
 		}, 0)
 
+		const milestonesVps =
+			this.game.state.milestones.filter(m => m.playerId === this.state.id)
+				.length * MILESTONE_REWARD
+
 		this.gameState.terraformRating += cardVps
 		this.gameState.terraformRating += tileVps
+		this.gameState.terraformRating += milestonesVps
 	}
 
 	buyStandardProject(projectType: StandardProjectType, cards: number[]) {
@@ -706,7 +711,7 @@ export class Player {
 		}
 
 		if (!project.conditions.every(c => c(ctx))) {
-			throw new Error(`You can execute ${StandardProjectType[projectType]}`)
+			throw new Error(`You cannot execute ${StandardProjectType[projectType]}`)
 		}
 
 		project.execute(ctx, cards)
@@ -731,9 +736,13 @@ export class Player {
 			throw new Error("You can't afford a milestone")
 		}
 
+		if (this.game.state.milestones.find(c => c.type === type)) {
+			throw new Error('This milestone is already owned')
+		}
+
 		const milestone = Milestones[type]
 
-		if (!milestone.condition(this.game.state, this.state)) {
+		if (milestone.getValue(this.game.state, this.state) < milestone.limit) {
 			throw new Error("You haven't reached this milestone")
 		}
 
@@ -742,6 +751,8 @@ export class Player {
 			playerId: this.state.id,
 			type
 		})
+
+		this.updated()
 	}
 
 	sponsorCompetition(type: CompetitionType) {
@@ -760,9 +771,15 @@ export class Player {
 			throw new Error("You can't afford a competition")
 		}
 
+		if (this.game.state.competitions.find(c => c.type === type)) {
+			throw new Error('This competition is already sponsored')
+		}
+
 		this.game.state.competitions.push({
 			playerId: this.state.id,
 			type
 		})
+
+		this.updated()
 	}
 }

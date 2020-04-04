@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { popOut } from '@/styles/animations'
+import { colors } from '@/styles'
 
 export const Resource = ({
 	name,
@@ -54,13 +55,14 @@ export const Resource = ({
 }
 
 const Container = styled.div`
-	border-right: 0.2rem solid rgba(14, 129, 214, 0.8);
+	border-right: 0.2rem solid ${colors.background};
 	position: relative;
+	width: 3.5rem;
 `
 
 const Name = styled.div`
 	text-align: center;
-	background: rgba(14, 129, 214, 0.8);
+	background: ${colors.background};
 	padding: 0.2rem 0.5rem;
 `
 
@@ -73,6 +75,8 @@ const Value = styled.div`
 const Production = styled.div<{ negative: boolean }>`
 	text-align: center;
 	padding: 0.2rem 0.5rem;
+	background: ${colors.background};
+
 	${props =>
 		props.negative &&
 		css`

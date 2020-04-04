@@ -1,8 +1,10 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo, CSSProperties } from 'react'
 import { Header, Footer, Body } from './styles'
 import { Portal } from '../Portal/Portal'
 import styled from 'styled-components'
 import { useWindowEvent } from '@/utils/hooks'
+import { rgba, darken, lighten } from 'polished'
+import { mainColors, colors } from '@/styles'
 
 export interface ModalProps {
 	children: React.ReactNode | ((close: () => void) => React.ReactNode)
@@ -48,7 +50,7 @@ export const Modal = ({
 			{open && (
 				<PopupBackground>
 					<Popup style={contentStyle}>
-						<div role="dialog" onClick={stopEvent}>
+						<Dialog role="dialog" onClick={stopEvent}>
 							{header && (
 								<Header style={headerStyle}>
 									{typeof header === 'function'
@@ -71,7 +73,7 @@ export const Modal = ({
 										: footer}
 								</Footer>
 							)}
-						</div>
+						</Dialog>
 					</Popup>
 				</PopupBackground>
 			)}
@@ -99,10 +101,23 @@ const PopupBackground = styled.div`
 
 const Popup = styled.div`
 	position: relative;
-	background: rgba(14, 129, 214, 0.8);
+	background: ${colors.background};
 	width: 400px;
 	margin: auto;
-	border: 1px solid rgba(14, 129, 214, 0.8);
+	border: 2px solid ${colors.border};
 	padding: 0px;
 	border-radius: 0px;
+
+	max-height: 80%;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+`
+
+const Dialog = styled.div`
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	max-height: 100%;
 `

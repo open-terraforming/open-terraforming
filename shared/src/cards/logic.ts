@@ -39,7 +39,7 @@ export const convertTopCardToCardResource = (
 	effect({
 		args: [drawnCards(1)],
 		conditions: [resourceCondition('money', 1)],
-		description: `Spend 1 $ to reveal top card of the draw deck. If the card has ${category} tag, add ${amount} ${res} resource here`,
+		description: `Spend 1 $ to reveal top card of the draw deck. If the card has ${CardCategory[category]} tag, add ${amount} ${res} resource here`,
 		perform: ({ player, card }, drawnCards: string[]) => {
 			const drawn = CardsLookupApi.get(drawnCards[0])
 

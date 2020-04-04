@@ -1,4 +1,9 @@
-import { GameState, GameStateValue, PlayerStateValue } from '@shared/game'
+import {
+	GameState,
+	GameStateValue,
+	PlayerStateValue,
+	PlayerState
+} from '@shared/game'
 import { Card, CardsLookupApi } from '@shared/cards'
 import { Player } from './player'
 import { MyEvent } from 'src/utils/events'
@@ -6,6 +11,8 @@ import { shuffle, range, deepExtend } from '@/utils/collections'
 import { defaultMap } from '@shared/map'
 import { Bot } from './bot'
 import { UpdateDeepPartial } from '@shared/index'
+import { Competitions } from '@shared/competitions'
+import { COMPETITIONS_REWARDS } from '@shared/constants'
 
 export interface GameConfig {
 	bots: number
@@ -192,6 +199,30 @@ export class Game {
 
 	finishGame() {
 		this.state.state = GameStateValue.Ended
+
+		this.state.competitions.forEach(({ type }) => {
+			const competition = Competitions[type]
+			const score = this.state.players.reduce((acc, p) => {
+				const s = competition.getScore(this.state, p)
+
+				if (!acc[s]) {
+					acc[s] = []
+				}
+
+				acc[s].push(p)
+
+				return acc
+			}, {} as Record<number, PlayerState[]>)
+
+			Object.entries(score)
+				.sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
+				.slice(0, 2)
+				.forEach(([, players], index) => {
+					players.forEach(p => {
+						p.gameState.terraformRating += COMPETITIONS_REWARDS[index]
+					})
+				})
+		})
 
 		this.players.forEach(p => {
 			p.finishGame()
