@@ -34,7 +34,7 @@ import {
 } from '@shared/cards'
 import { range } from '@/utils/collections'
 import { cellByCoords } from '@shared/cards/utils'
-import { PlacementConditionsLookup } from '@shared/placements'
+import { PlacementConditionsLookup, canPlace } from '@shared/placements'
 import { allCells, adjacentCells } from '@shared/utils'
 import { Projects } from '@shared/projects'
 import { MilestoneType, Milestones } from '@shared/milestones'
@@ -509,6 +509,8 @@ export class Player {
 			player: this
 		})
 
+		this.checkTilePlacement()
+
 		if (this.gameState.placingTile.length === 0) {
 			this.gameState.state = PlayerStateValue.Playing
 			this.actionPlayed()
@@ -538,6 +540,8 @@ export class Player {
 
 			e.perform(ctx, ...(playArguments[i] || []))
 		})
+
+		this.checkTilePlacement()
 	}
 
 	actionPlayed() {
@@ -654,6 +658,15 @@ export class Player {
 		}
 
 		this.updated()
+	}
+
+	checkTilePlacement() {
+		this.gameState.placingTile = this.gameState.placingTile.filter(
+			t =>
+				!!allCells(this.game.state).find(c =>
+					canPlace(this.game.state, this.state, c, t)
+				)
+		)
 	}
 
 	reset() {
