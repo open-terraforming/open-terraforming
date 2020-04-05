@@ -93,7 +93,7 @@ export class Player {
 		session: uuidv4()
 	} as PlayerState
 
-	admin = false
+	admin = true
 
 	onStateChanged = new MyEvent<Readonly<PlayerState>>()
 	onCardPlayed = new MyEvent<Readonly<CardPlayedEvent>>()
@@ -136,6 +136,8 @@ export class Player {
 	}
 
 	get isPlaying() {
+		console.log(this.game.currentPlayer.id, this.id, this.gameState.state)
+
 		return (
 			this.game.currentPlayer.id === this.id &&
 			this.gameState.state === PlayerStateValue.Playing
