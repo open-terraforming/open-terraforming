@@ -22,4 +22,4 @@ NICE TODO:
  * You can -> You can't afford (when picking card)
  * poke button
  * show current progress when picking cards (smaller picking dialog?)
- * 
+ * admin should be assigned by some logic = admin password?

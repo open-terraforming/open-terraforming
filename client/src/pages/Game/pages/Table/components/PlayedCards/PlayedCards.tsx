@@ -85,7 +85,7 @@ export const PlayedCards = ({
 			header={'Cards on table'}
 			footer={
 				<>
-					{selected && (
+					{selected && playing && (
 						<Button
 							onClick={handleConfirm}
 							disabled={selected !== undefined && !selectedPlayable}

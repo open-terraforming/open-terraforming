@@ -33,7 +33,7 @@ import {
 	CardEffect
 } from '@shared/cards'
 import { range } from '@/utils/collections'
-import { cellByCoords } from '@shared/cards/utils'
+import { cellByCoords, adjustedCardPrice } from '@shared/cards/utils'
 import { PlacementConditionsLookup, canPlace } from '@shared/placements'
 import { allCells, adjacentCells } from '@shared/utils'
 import { Projects } from '@shared/projects'
@@ -70,7 +70,7 @@ export class Player {
 			orePrice: 2,
 			titan: 0,
 			titanProduction: 1,
-			titanPrice: 2,
+			titanPrice: 3,
 			plants: 0,
 			plantsProduction: 1,
 			passed: false,
@@ -289,7 +289,7 @@ export class Player {
 			throw new Error(`Unknown card ${cardCode}`)
 		}
 
-		let adjustedCost = card.cost
+		let cost = adjustedCardPrice(card, this.gameState)
 
 		if (useOre > 0) {
 			if (!card.categories.includes(CardCategory.Building)) {
@@ -300,7 +300,7 @@ export class Player {
 				throw new Error("You don't have that much ore")
 			}
 
-			adjustedCost -= useOre * this.gameState.orePrice
+			cost -= useOre * this.gameState.orePrice
 		}
 
 		if (useTitan > 0) {
@@ -312,12 +312,12 @@ export class Player {
 				throw new Error("You don't have that much titan")
 			}
 
-			adjustedCost -= useTitan * this.gameState.titanPrice
+			cost -= useTitan * this.gameState.titanPrice
 		}
 
-		if (this.gameState.money < adjustedCost) {
+		if (this.gameState.money < cost) {
 			throw new Error(
-				`You don't have money for that, adjusted price was ${adjustedCost}.`
+				`You don't have money for that, adjusted price was ${cost}.`
 			)
 		}
 
@@ -339,7 +339,7 @@ export class Player {
 
 		this.checkCardConditions(card, ctx, playArguments)
 
-		this.gameState.money -= Math.max(0, adjustedCost)
+		this.gameState.money -= Math.max(0, cost)
 		this.gameState.titan -= useTitan
 		this.gameState.ore -= useOre
 
@@ -588,7 +588,7 @@ export class Player {
 		const state = this.state.gameState
 
 		// Perform production
-		state.heat += state.energy + state.energyProduction
+		state.heat += state.energy + state.heatProduction
 		state.energy = state.energyProduction
 		state.ore += state.oreProduction
 		state.titan += state.titanProduction
