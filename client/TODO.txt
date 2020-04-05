@@ -23,3 +23,26 @@ NICE TODO:
  * poke button
  * show current progress when picking cards (smaller picking dialog?)
  * admin should be assigned by some logic = admin password?
+ * EQUATORIAL MAGNETIZER
+ * add card pack to game state
+ * milestones contain conditions in their effects, which are in serialized state
+ * fighters are not properly displayed in card view
+
+TypeError: Cannot read property 'Symbol(Symbol.iterator)' of undefined
+    at Object.perform (/home/kamen/card-game/shared/src/cards/logic.ts:387:15)
+    at Object.perform (/home/kamen/card-game/shared/src/cards/utils.ts:567:11)
+    at effects.forEach (/home/kamen/card-game/server/src/game/player.ts:547:6)
+    at Array.forEach (<anonymous>)
+    at Player.runCardEffects (/home/kamen/card-game/server/src/game/player.ts:533:11)
+    at Player.playCard (/home/kamen/card-game/server/src/game/player.ts:654:8)
+    at Client.handleMessage (/home/kamen/card-game/server/src/server/client.ts:153:25)
+    at WebSocket.Client.socket.on.data (/home/kamen/card-game/server/src/server/client.ts:49:24)
+    at WebSocket.emit (events.js:198:13)
+    at WebSocket.EventEmitter.emit (domain.js:448:20)
+
+	* Symbiotic Fungus - card filter not working
+	* Action - should it count as "onCardPlayed" ?
+	* MEDICAL LAB - including this
+	* buy temperature/forest for heat/plants - disable when not possible
+	* Miranda Resort - check if works
+	* Adjacent cells don't work

@@ -73,7 +73,9 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 		code: PlacementCode.NextToOwn,
 		description: 'next to your tile',
 		evaluate: ({ cell, game, playerId }) =>
-			!!adjacentCells(game, cell.x, cell.y).find((c) => c.ownerId === playerId),
+			!!adjacentCells(game, cell.x, cell.y).find(
+				(c) => c.ownerId === playerId && c.content !== GridCellContent.Ocean
+			),
 	}),
 	placement({
 		code: PlacementCode.NextToOwnOrFree,
@@ -84,7 +86,9 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 					c.ownerId === playerId &&
 					!!adjacentCells(game, c.x, c.y).find((c) => !c.content)
 			) ||
-			!!adjacentCells(game, cell.x, cell.y).find((c) => c.ownerId === playerId),
+			!!adjacentCells(game, cell.x, cell.y).find(
+				(c) => c.ownerId === playerId && c.content !== GridCellContent.Ocean
+			),
 	}),
 	placement({
 		code: PlacementCode.TwoCities,
@@ -144,7 +148,7 @@ export const PlacementConditionsLookup = {
 }
 
 export const OceanPlacement = [PlacementCode.OceanOnly]
-export const CityPlacement = [PlacementCode.NoOceans]
+export const CityPlacement = [PlacementCode.NoOceans, PlacementCode.NoCity]
 export const OtherPlacement = [
 	PlacementCode.NoOceans,
 	PlacementCode.NextToOwnOrFree,

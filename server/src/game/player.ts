@@ -390,7 +390,7 @@ export class Player {
 		action = false
 	) {
 		const errorConditions = [
-			...card.conditions.filter(c => !c.evaluate(ctx)),
+			...(action ? [] : card.conditions.filter(c => !c.evaluate(ctx))),
 			...(action ? card.actionEffects : card.playEffects).reduce(
 				(acc, p, ei) => [
 					...acc,
@@ -801,6 +801,8 @@ export class Player {
 			type
 		})
 
+		this.actionPlayed()
+
 		this.updated()
 	}
 
@@ -829,6 +831,8 @@ export class Player {
 			playerId: this.state.id,
 			type
 		})
+
+		this.actionPlayed()
 
 		this.updated()
 	}
