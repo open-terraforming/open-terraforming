@@ -65,7 +65,7 @@ export class Game {
 		}
 
 		this.players.push(player)
-		if (this.state.players.find(p => p.id === player.id)) {
+		if (!this.state.players.find(p => p.id === player.id)) {
 			this.state.players.push(player.state)
 		}
 
