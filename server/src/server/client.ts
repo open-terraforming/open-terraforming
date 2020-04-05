@@ -72,14 +72,9 @@ export class Client {
 					if (session) {
 						const p = this.game.state.players.find(p => p.session === session)
 						if (p) {
-							const exs = this.game.players.find(ep => ep.id === p.id)
-							if (!exs) {
-								this.player = new Player(this.game)
-								this.player.state = p
-								this.game.add(this.player)
-							} else {
-								this.player = exs
-							}
+							this.player = new Player(this.game)
+							this.player.state = p
+							this.game.add(this.player)
 
 							this.player.state.connected = true
 							this.player.updated()
