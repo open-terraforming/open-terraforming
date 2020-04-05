@@ -1520,9 +1520,11 @@ export const BuiltCards: Card[] = [
 		cost: 1,
 		categories: [CardCategory.Event],
 		playEffects: [
-			playerResourceChange('titan', -3),
-			playerResourceChange('ore', -4),
-			playerResourceChange('money', -7),
+			effectChoice([
+				playerResourceChange('titan', -3),
+				playerResourceChange('ore', -4),
+				playerResourceChange('money', -7),
+			]),
 		],
 	}),
 	card({

@@ -51,11 +51,13 @@ export const EventList = ({}: Props) => {
 		setDisplayedEvents(d => d.slice(0, d.length - 1))
 	}
 
+	/*
 	useEffect(() => {
 		if (events.length > 100) {
 			setEvents(events.slice(events.length - 100))
 		}
 	}, [events])
+	*/
 
 	useEffect(() => {
 		if (game && lastGame) {

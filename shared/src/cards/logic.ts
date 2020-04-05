@@ -227,7 +227,7 @@ export const resourcePerPlacedTile = (
 			GridCellContent[content]
 		} tile, gain ${withUnits(res, amount)}`,
 		onTilePlaced: ({ player }, cell) => {
-			if (cell.content === GridCellContent.Ocean) {
+			if (cell.content === content) {
 				player[res] += amount
 			}
 		},
@@ -241,7 +241,7 @@ export const productionPerPlacedTile = (
 	passiveEffect({
 		description: `When anyone places an ${GridCellContent[content]} tile, increase ${res} production by ${amount}`,
 		onTilePlaced: ({ player }, cell) => {
-			if (cell.content === GridCellContent.Ocean) {
+			if (cell.content === content) {
 				player[resourceProduction[res]] += amount
 			}
 		},

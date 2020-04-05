@@ -6,3 +6,22 @@ TODO:
 NICE TODO:
  - wait for people to reconnect
  - server - save & load state
+
+
+ TODO
+ * Notifications when it's your turn
+ * Media Group - will you only receive selected cards?
+ * playerProductionChange - money can be negative :D
+ * Special animation when card is played
+ * Animation when tile is placed
+ * Other = display what was placed
+ * Cards should be reversed
+ * Show resources/production of players when picking them
+ * Starting player should move at the start of generation, not at start of the round
+ * Event list should be unlimited, or fixed
+ * +2$ for oceans near placed blocks
+ * Spectator mode
+ * You can -> You can't afford (when picking card)
+ * poke button
+ * show current progress when picking cards (smaller picking dialog?)
+ * 
