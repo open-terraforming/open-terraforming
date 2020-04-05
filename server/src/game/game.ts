@@ -134,7 +134,7 @@ export class Game {
 	}
 
 	get currentPlayer() {
-		return this.players[this.state.currentPlayer]
+		return this.state.players[this.state.currentPlayer]
 	}
 
 	startGame() {
@@ -199,18 +199,18 @@ export class Game {
 				this.state.map.oxygenMilestones.forEach(m => {
 					if (!m.used && m.value <= this.state.oxygen) {
 						m.used = true
-						m.effects.forEach(e => e(this.state, this.currentPlayer.state))
+						m.effects.forEach(e => e(this.state, this.currentPlayer))
 					}
 				})
 
 				this.state.map.temperatureMilestones.forEach(m => {
 					if (!m.used && m.value <= this.state.temperature) {
 						m.used = true
-						m.effects.forEach(e => e(this.state, this.currentPlayer.state))
+						m.effects.forEach(e => e(this.state, this.currentPlayer))
 					}
 				})
 
-				if (!this.currentPlayer.state.connected) {
+				if (!this.currentPlayer.connected) {
 					this.currentPlayer.gameState.state = PlayerStateValue.Passed
 					this.nextPlayer()
 				}
@@ -260,7 +260,7 @@ export class Game {
 					(this.state.currentPlayer + 1) % this.players.length
 			} while (
 				this.currentPlayer.gameState.state === PlayerStateValue.Passed ||
-				!this.currentPlayer.state.connected
+				!this.currentPlayer.connected
 			)
 
 			this.currentPlayer.gameState.state = PlayerStateValue.Playing

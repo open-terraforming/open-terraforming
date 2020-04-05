@@ -137,7 +137,7 @@ export class Player {
 
 	get isPlaying() {
 		return (
-			this.game.currentPlayer === this &&
+			this.game.currentPlayer.id === this.id &&
 			this.gameState.state === PlayerStateValue.Playing
 		)
 	}
