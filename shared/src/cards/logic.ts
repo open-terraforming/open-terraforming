@@ -642,6 +642,14 @@ export const addResourceToCard = () =>
 				},
 			]),
 		],
+		conditions: [
+			condition({
+				evaluate: ({ player }) =>
+					!!player.usedCards.find(
+						(c) => c[CardsLookupApi.get(c.code).resource || 'animals'] > 0
+					),
+			}),
+		],
 		perform: ({ player }, cardIndex: number) => {
 			const card = player.usedCards[cardIndex]
 			if (!card) {
