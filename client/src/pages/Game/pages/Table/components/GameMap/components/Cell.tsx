@@ -44,7 +44,7 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 				strokeWidth="0.5"
 				points="-9,5 -9,-5 0,-10 9,-5 9,5 0,10"
 			/>
-			{owner && (
+			{owner && cell.content !== GridCellContent.Ocean && (
 				<polygon
 					stroke={owner.color}
 					fill="transparent"
@@ -87,7 +87,7 @@ const StyledHex = styled.g<{
 		${props =>
 			props.gridContent === GridCellContent.Ocean &&
 			css`
-				fill: rgba(128, 128, 255, 0.9);
+				fill: rgba(15, 135, 226, 0.9);
 			`}
 
 		${props =>

@@ -3,7 +3,7 @@ import { StandardProject } from '@shared/projects'
 import { StandardProjectType } from '@shared/index'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { cardIcon } from '@/icons/card'
+import { cardIcon, Card } from '@/icons/card'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
@@ -17,7 +17,7 @@ const typeToContent = (project: StandardProject) => {
 			return (
 				<>
 					<span>X</span>
-					<FontAwesomeIcon icon={cardIcon} size="lg" />
+					<Card />
 					<FontAwesomeIcon icon={faArrowRight} />
 					<span>X</span>
 					<ResourceIcon res="money" size="lg" />

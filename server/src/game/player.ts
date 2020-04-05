@@ -561,7 +561,7 @@ export class Player {
 		// Force pass if everybody else passed
 		if (
 			this.game.state.players.every(
-				p => p.id !== this.id && p.gameState.state === PlayerStateValue.Passed
+				p => p.id === this.id || p.gameState.state === PlayerStateValue.Passed
 			)
 		) {
 			force = true

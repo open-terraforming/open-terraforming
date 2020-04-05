@@ -1,26 +1,10 @@
-import React from 'react'
-import styled, { css } from 'styled-components'
-import {
-	GridCellType,
-	GridCellContent,
-	GridCell,
-	GridCellSpecial
-} from '@shared/index'
-import {
-	PlacementState,
-	PlacementConditionsLookup,
-	canPlace
-} from '@shared/placements'
-import { useAppStore } from '@/utils/hooks'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import {
-	faPlus,
-	faSeedling,
-	faHammer,
-	faStar
-} from '@fortawesome/free-solid-svg-icons'
 import { range } from '@/utils/collections'
-import { cardIcon } from '@/icons/card'
+import { faHammer, faSeedling, faStar } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { GridCell, GridCellSpecial } from '@shared/index'
+import React from 'react'
+import styled from 'styled-components'
+import { Card } from '@/icons/card'
 
 type Props = {
 	cell: GridCell
@@ -55,17 +39,20 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 			{cell.content === undefined && (
 				<Resources>
 					{range(0, cell.plants).map(i => (
-						<FontAwesomeIcon key={i} icon={faSeedling} color="#54A800" />
+						<PlantRes key={i}>
+							<FontAwesomeIcon icon={faSeedling} color="#356A00" />
+						</PlantRes>
 					))}
 					{range(0, cell.ore).map(i => (
-						<FontAwesomeIcon key={i} icon={faHammer} color="#FF8811" />
+						<OreRes key={i}>
+							<FontAwesomeIcon icon={faHammer} color="#8A4500" />
+						</OreRes>
 					))}
 					{range(0, cell.titan).map(i => (
 						<FontAwesomeIcon key={i} icon={faStar} color="#FFFFAC" />
 					))}
 					{range(0, cell.cards).map(i => (
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						<FontAwesomeIcon key={i} icon={cardIcon as any} color="#0F87E2" />
+						<Card key={i} />
 					))}
 				</Resources>
 			)}
@@ -93,4 +80,21 @@ const Special = styled.div`
 	text-align: center;
 	margin-left: 0.25rem;
 	margin-right: 0.25rem;
+`
+
+const Res = styled.div`
+	padding: 0.1rem;
+	margin: 0 0.1rem;
+	border-radius: 0.25rem;
+	border: 1px solid #fff;
+`
+
+const PlantRes = styled(Res)`
+	background: #54a800;
+	border-color: #356a00;
+`
+
+const OreRes = styled(Res)`
+	background: #ff8811;
+	border-color: #8a4500;
 `

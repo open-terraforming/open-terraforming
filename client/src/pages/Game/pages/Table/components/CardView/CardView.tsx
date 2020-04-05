@@ -167,7 +167,7 @@ const Container = styled.div<{
 	${props =>
 		props.played &&
 		css`
-			transform: rotate(10deg);
+			transform: rotate(1deg);
 		`}
 `
 
