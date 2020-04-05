@@ -355,7 +355,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 12,
 		categories: [CardCategory.Plant],
-		conditions: [gameProgressConditionMax('temperature', -12)],
+		conditions: [gameProgressConditionMax('temperature', -12 / 2)],
 		passiveEffects: [resourcePerPlacedTile(GridCellContent.Ocean, 'plants', 2)],
 	}),
 	card({
@@ -391,7 +391,7 @@ export const BuiltCards: Card[] = [
 		cost: 16,
 		categories: [CardCategory.Building, CardCategory.Plant],
 		victoryPoints: 1,
-		conditions: [gameProgressConditionMin('temperature', -12)],
+		conditions: [gameProgressConditionMin('temperature', -12 / 2)],
 		playEffects: [
 			otherCardResourceChange('animals', 1),
 			resourceChange('plants', 3),
@@ -609,7 +609,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 6,
 		categories: [CardCategory.Microbe],
-		conditions: [gameProgressConditionMax('temperature', -18)],
+		conditions: [gameProgressConditionMax('temperature', -18 / 2)],
 		playEffects: [productionChange('plants', 1)],
 	}),
 	card({
@@ -721,7 +721,7 @@ export const BuiltCards: Card[] = [
 		cost: 9,
 		resource: 'animals',
 		categories: [CardCategory.Animal],
-		conditions: [gameProgressConditionMin('temperature', 2)],
+		conditions: [gameProgressConditionMin('temperature', 2 / 2)],
 		playEffects: [playerProductionChange('plants', -1)],
 		actionEffects: [cardResourceChange('animals', 1)],
 		victoryPointsCallback: vpsForCardResources('animals', 1),
@@ -734,7 +734,7 @@ export const BuiltCards: Card[] = [
 		cost: 18,
 		categories: [],
 		victoryPoints: 2,
-		conditions: [gameProgressConditionMin('temperature', 0)],
+		conditions: [gameProgressConditionMin('temperature', 0 / 2)],
 		playEffects: [
 			placeTile({ type: GridCellContent.Ocean }),
 			placeTile({ type: GridCellContent.Ocean }),
@@ -806,7 +806,7 @@ export const BuiltCards: Card[] = [
 		cost: 12,
 		categories: [CardCategory.Plant],
 		victoryPoints: 1,
-		conditions: [gameProgressConditionMin('temperature', 4)],
+		conditions: [gameProgressConditionMin('temperature', 4 / 2)],
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Forest,
@@ -822,7 +822,7 @@ export const BuiltCards: Card[] = [
 		cost: 13,
 		categories: [CardCategory.Plant],
 		victoryPoints: 1,
-		conditions: [gameProgressConditionMin('temperature', -4)],
+		conditions: [gameProgressConditionMin('temperature', -4 / 2)],
 		playEffects: [productionChange('plants', 3), resourceChange('plants', 1)],
 	}),
 	card({
@@ -1141,7 +1141,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 11,
 		categories: [CardCategory.Plant],
-		conditions: [gameProgressConditionMin('temperature', -16)],
+		conditions: [gameProgressConditionMin('temperature', -16 / 2)],
 		playEffects: [productionChange('plants', 1), resourceChange('plants', 3)],
 	}),
 	card({
@@ -1151,7 +1151,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 6,
 		categories: [CardCategory.Plant],
-		conditions: [gameProgressConditionMin('temperature', -14)],
+		conditions: [gameProgressConditionMin('temperature', -14 / 2)],
 		playEffects: [productionChange('plants', 1), resourceChange('plants', 1)],
 	}),
 	card({
@@ -1202,7 +1202,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 10,
 		categories: [CardCategory.Plant],
-		conditions: [gameProgressConditionMin('temperature', -10)],
+		conditions: [gameProgressConditionMin('temperature', -10 / 2)],
 		playEffects: [productionChange('plants', 2), resourceChange('plants', 2)],
 	}),
 	card({
@@ -1399,7 +1399,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Earth],
-		conditions: [gameProgressConditionMin('temperature', 4)],
+		conditions: [gameProgressConditionMin('temperature', 4 / 2)],
 		playEffects: [pickTopCards(4, 2, true)],
 	}),
 	card({
@@ -1454,7 +1454,7 @@ export const BuiltCards: Card[] = [
 		cost: 15,
 		categories: [CardCategory.Building],
 		victoryPoints: 1,
-		conditions: [gameProgressConditionMin('temperature', -6)],
+		conditions: [gameProgressConditionMin('temperature', -6 / 2)],
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Ocean,
@@ -1479,7 +1479,7 @@ export const BuiltCards: Card[] = [
 		cost: 16,
 		categories: [CardCategory.Plant],
 		victoryPoints: 2,
-		conditions: [gameProgressConditionMin('temperature', 4)],
+		conditions: [gameProgressConditionMin('temperature', 4 / 2)],
 		playEffects: [
 			productionChange('money', 2),
 			productionChange('plants', 2),
@@ -1686,7 +1686,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 4,
 		categories: [CardCategory.Microbe],
-		conditions: [gameProgressConditionMin('temperature', -14)],
+		conditions: [gameProgressConditionMin('temperature', -14 / 2)],
 		actionEffects: [otherCardResourceChange('microbes', 1)],
 	}),
 	card({
@@ -1696,7 +1696,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 13,
 		categories: [CardCategory.Microbe],
-		conditions: [gameProgressConditionMax('temperature', -10)],
+		conditions: [gameProgressConditionMax('temperature', -10 / 2)],
 		actionEffects: [
 			effectChoice([
 				resourceChange('plants', 1),
@@ -1942,7 +1942,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 3,
 		categories: [],
-		conditions: [gameProgressConditionMin('temperature', 0)],
+		conditions: [gameProgressConditionMin('temperature', 0 / 2)],
 		actionEffects: [resourceChange('heat', -8), terraformRatingChange(1)],
 	}),
 	card({
@@ -1952,7 +1952,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 16,
 		categories: [CardCategory.Microbe, CardCategory.Science],
-		conditions: [gameProgressConditionMax('temperature', -14)],
+		conditions: [gameProgressConditionMax('temperature', -14 / 2)],
 		playEffects: [productionChange('plants', 2)],
 	}),
 	/*
@@ -2001,7 +2001,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 7,
 		categories: [CardCategory.Plant],
-		conditions: [gameProgressConditionMin('temperature', -24)],
+		conditions: [gameProgressConditionMin('temperature', -24 / 2)],
 		playEffects: [productionChange('plants', 1)],
 	}),
 	card({
@@ -2113,7 +2113,7 @@ export const BuiltCards: Card[] = [
 		cost: 16,
 		categories: [CardCategory.Plant],
 		victoryPoints: 2,
-		conditions: [gameProgressConditionMin('temperature', -6)],
+		conditions: [gameProgressConditionMin('temperature', -6 / 2)],
 		playEffects: [
 			productionChange('plants', 1),
 			productionChange('money', 2),
@@ -2197,7 +2197,7 @@ export const BuiltCards: Card[] = [
 		cost: 10,
 		categories: [CardCategory.Plant, CardCategory.Building],
 		victoryPoints: 1,
-		conditions: [gameProgressConditionMin('temperature', -20)],
+		conditions: [gameProgressConditionMin('temperature', -20 / 2)],
 		playEffects: [productionChange('money', 1), resourceChange('plants', 2)],
 	}),
 	card({
@@ -2259,7 +2259,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 5,
 		categories: [CardCategory.Event],
-		conditions: [gameProgressConditionMin('temperature', 2)],
+		conditions: [gameProgressConditionMin('temperature', 2 / 2)],
 		playEffects: [placeTile({ type: GridCellContent.Ocean })],
 	}),
 	card({
@@ -2330,7 +2330,7 @@ export const BuiltCards: Card[] = [
 		cost: 6,
 		categories: [],
 		victoryPoints: 1,
-		conditions: [gameProgressConditionMin('temperature', 2)],
+		conditions: [gameProgressConditionMin('temperature', 2 / 2)],
 		playEffects: [productionChange('money', 1)],
 	}),
 	card({
@@ -2385,7 +2385,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 8,
 		categories: [CardCategory.Event],
-		conditions: [gameProgressConditionMin('temperature', -8)],
+		conditions: [gameProgressConditionMin('temperature', -8 / 2)],
 		playEffects: [placeTile({ type: GridCellContent.Ocean })],
 	}),
 	card({
@@ -2395,7 +2395,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 2,
 		categories: [CardCategory.Event, CardCategory.Science],
-		conditions: [gameProgressConditionMin('temperature', 3)],
+		conditions: [gameProgressConditionMin('temperature', 3 / 2)],
 		playEffects: [pickTopCards(3, 1, true)],
 	}),
 	card({

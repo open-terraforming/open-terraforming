@@ -25,7 +25,9 @@ export const ApiContextProvider = ({
 	const [reconnectCount, setReconnectCount] = useState(0)
 
 	const client = useMemo(() => {
-		const client = new Client(process.env.APP_API_URL)
+		const client = new Client(
+			'ws://' + (process.env.APP_API_URL || window.location.host)
+		)
 
 		return client
 	}, [])

@@ -154,8 +154,6 @@ export const EventList = ({}: Props) => {
 								c => !player.gameState.cards.includes(c)
 							).length
 
-							console.log(newPlayer.gameState.cards, player.gameState.cards)
-
 							if (diff > 0) {
 								newEvents.push({
 									type: EventType.CardsReceived,

@@ -116,7 +116,7 @@ export const Hand = ({
 				buying
 				onSelect={c => {
 					handleSelect(
-						c[c.length - 1].index !== selected
+						c.length > 0 && c[c.length - 1].index !== selected
 							? c[c.length - 1].index
 							: undefined
 					)
