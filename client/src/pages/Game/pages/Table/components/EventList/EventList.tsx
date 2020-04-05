@@ -45,7 +45,7 @@ export const EventList = ({}: Props) => {
 
 			setLastDisplayed(e => e + 1)
 		}
-	}, 500)
+	}, 250)
 
 	const handleDone = () => {
 		setDisplayedEvents(d => d.slice(0, d.length - 1))
@@ -61,8 +61,6 @@ export const EventList = ({}: Props) => {
 		if (game && lastGame) {
 			const diff = objDiff(lastGame, game) as GameState
 			const newEvents = [] as GameEvent[]
-
-			console.log(diff)
 
 			if (diff.players) {
 				Object.entries(diff.players).forEach(([playerIndex, changes]) => {

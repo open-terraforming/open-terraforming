@@ -170,7 +170,8 @@ const config = (env: ENV): webpack.Configuration => {
 			new webpack.DefinePlugin(getEnvValues(env, pkg.version)),
 
 			new HtmlWebpackPlugin({
-				template: srcPath('index.html')
+				template: srcPath('index.html'),
+				favicon: srcPath('assets/favicon.ico')
 			}),
 
 			new PreloadWebpackPlugin({
