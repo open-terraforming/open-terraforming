@@ -39,7 +39,7 @@ export const CardPicker = () => {
 			header={'Pick cards'}
 			footer={
 				!canAfford ? (
-					`You can afford ${selected.length} cards for ${price}`
+					`You can't afford ${selected.length} cards for ${price}`
 				) : (
 					<Button
 						onClick={handleConfirm}

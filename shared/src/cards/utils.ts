@@ -317,7 +317,7 @@ export const playerProductionChange = (res: Resource, change: number) => {
 			effectArg({
 				type: CardEffectTarget.Player,
 				playerConditions:
-					change < 0
+					change < 0 && res !== 'money'
 						? [productionCondition(res, -change) as PlayerCondition]
 						: [],
 				descriptionPrefix: `Decrease ${res} production of`,

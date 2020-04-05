@@ -501,6 +501,11 @@ export class Player {
 			}
 		}
 
+		this.gameState.money +=
+			adjacentCells(this.game.state, cell.x, cell.y).filter(
+				c => c.content === GridCellContent.Ocean
+			).length * 2
+
 		this.gameState.placingTile.shift()
 
 		this.onTilePlaced.emit({
