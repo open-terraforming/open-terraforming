@@ -5,6 +5,7 @@ import {
 	GridCellOther,
 	GridCellSpecial,
 	PlayerState,
+	PlayerGameState,
 } from '../game'
 import {
 	canPlace,
@@ -771,3 +772,18 @@ export const emptyCardState = (cardCode: string) => ({
 	microbes: 0,
 	science: 0,
 })
+
+export const minimalCardPrice = (card: Card, player: PlayerGameState) =>
+	adjustedCardPrice(card, player) -
+	(card.categories.includes(CardCategory.Building)
+		? player.ore * player.orePrice
+		: 0) -
+	(card.categories.includes(CardCategory.Space)
+		? player?.titan * player?.titanPrice
+		: 0)
+
+export const adjustedCardPrice = (card: Card, player: PlayerGameState) =>
+	card.cost +
+	(card.categories.includes(CardCategory.Space) ? player.spacePriceChange : 0) +
+	(card.categories.includes(CardCategory.Earth) ? player.earthPriceChange : 0) +
+	player.cardPriceChange

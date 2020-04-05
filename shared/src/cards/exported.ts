@@ -124,7 +124,7 @@ export const BuiltCards: Card[] = [
 		cost: 3,
 		categories: [CardCategory.Science],
 		conditions: [gameProgressConditionMax('oxygen', 6)],
-		playEffects: [
+		actionEffects: [
 			convertTopCardToCardResource(CardCategory.Microbe, 'science', 1),
 		],
 		victoryPointsCallback: minCardResourceToVP('science', 1, 3),
@@ -136,7 +136,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 9,
 		categories: [CardCategory.Science],
-		playEffects: [pickTopCards(1)],
+		actionEffects: [pickTopCards(1)],
 	}),
 	card({
 		code: 'martian_rails',
@@ -351,7 +351,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'arctic_algae',
 		title: 'ARCTIC ALGAE',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 12,
 		categories: [CardCategory.Plant],
@@ -452,7 +452,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'optimal_aerobraking',
 		title: 'Optimal Aerobraking',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 7,
 		categories: [CardCategory.Space],
@@ -1652,7 +1652,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'decomposers',
 		title: 'Decomposers',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 5,
 		categories: [CardCategory.Microbe],
@@ -1861,7 +1861,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'herbivores',
 		title: 'Herbivores',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 12,
 		categories: [CardCategory.Animal],

@@ -61,6 +61,7 @@ export const CardPicker = () => {
 								card={c}
 								selected={selected.includes(i)}
 								key={i}
+								evaluate={false}
 								onClick={
 									!loading
 										? () => {

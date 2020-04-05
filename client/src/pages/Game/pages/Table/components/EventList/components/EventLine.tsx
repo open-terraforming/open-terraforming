@@ -148,7 +148,6 @@ const Animation = keyframes`
 
 const CardSpanE = styled.span`
 	color: #91c8ff;
-	font-weight: bold;
 	cursor: pointer;
 
 	&:hover {

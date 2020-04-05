@@ -9,12 +9,13 @@ import {
 import { useAppStore } from '@/utils/hooks'
 import { Input } from '@/components/Input/Input'
 import { Button } from '@/components'
-import { buyCard, playCard } from '@shared/index'
+import { buyCard, playCard, PlayerGameState } from '@shared/index'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { ArgsPicker } from './components/ArgsPicker'
 import styled from 'styled-components'
 import { useApi } from '@/context/ApiContext'
 import { ResourceInput } from './components/ResourceInput'
+import { adjustedCardPrice } from '@shared/cards/utils'
 
 type Props = {
 	index: number
@@ -52,7 +53,7 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 
 	const price = Math.max(
 		0,
-		card.cost -
+		adjustedCardPrice(card, state as PlayerGameState) -
 			(canUseOre ? ore : 0) * (state?.orePrice || 2) -
 			(canUseTitan ? titan : 0) * (state?.titanPrice || 3)
 	)

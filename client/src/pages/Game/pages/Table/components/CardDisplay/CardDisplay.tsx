@@ -18,6 +18,7 @@ export const CardDisplay = <T extends CardInfo>({
 	selected,
 	cards,
 	filters = true,
+	buying = false,
 	defaultType
 }: {
 	onSelect: (cards: T[]) => void
@@ -25,6 +26,7 @@ export const CardDisplay = <T extends CardInfo>({
 	selected: T[]
 	defaultType?: CardType
 	filters?: boolean
+	buying?: boolean
 }) => {
 	const [type, setType] = useState(defaultType)
 
@@ -62,7 +64,7 @@ export const CardDisplay = <T extends CardInfo>({
 		() =>
 			[
 				[undefined, 'All'] as const,
-				[CardType.Action, 'Playable'] as const,
+				[CardType.Action, 'With Action'] as const,
 				[CardType.Effect, 'Effects'] as const,
 				[CardType.Building, 'Automated'] as const,
 				[CardType.Event, 'Events'] as const
@@ -154,6 +156,7 @@ export const CardDisplay = <T extends CardInfo>({
 					c =>
 						c && (
 							<CardView
+								buying={buying}
 								card={c.card}
 								selected={selected.map(s => s.index).includes(c.index)}
 								key={c.index}

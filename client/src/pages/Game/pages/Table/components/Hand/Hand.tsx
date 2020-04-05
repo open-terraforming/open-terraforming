@@ -8,7 +8,11 @@ import { buyCard } from '@shared/index'
 import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
 import { setTableState } from '@/store/modules/table'
 import { useApi } from '@/context/ApiContext'
-import { isCardPlayable, emptyCardState } from '@shared/cards/utils'
+import {
+	isCardPlayable,
+	emptyCardState,
+	minimalCardPrice
+} from '@shared/cards/utils'
 import { CardDisplay } from '../CardDisplay/CardDisplay'
 import { cardsToCardList } from '@/utils/cards'
 
@@ -41,16 +45,7 @@ export const Hand = ({
 		if (index && cards && state && player && game) {
 			const card = cards[index]
 
-			const adjusted =
-				!card || !state
-					? 0
-					: card.cost -
-					  (card.categories.includes(CardCategory.Building)
-							? state.ore * state.orePrice
-							: 0) -
-					  (card.categories.includes(CardCategory.Space)
-							? state?.titan * state?.titanPrice
-							: 0)
+			const adjusted = minimalCardPrice(card, state)
 
 			const playable =
 				card &&
@@ -118,6 +113,7 @@ export const Hand = ({
 			}
 		>
 			<CardDisplay
+				buying
 				onSelect={c =>
 					handleSelect(
 						c.length > 0 && c[0].index !== selected ? c[0].index : undefined

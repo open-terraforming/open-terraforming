@@ -5,7 +5,11 @@ import {
 	CardCategory,
 	CardType
 } from '@shared/cards'
-import { isCardActionable, isCardPlayable } from '@shared/cards/utils'
+import {
+	isCardActionable,
+	isCardPlayable,
+	minimalCardPrice
+} from '@shared/cards/utils'
 import { UsedCardState } from '@shared/index'
 import React, { useMemo } from 'react'
 import styled, { css } from 'styled-components'
@@ -19,6 +23,7 @@ export const CardView = ({
 	card,
 	selected = false,
 	buying = false,
+	evaluate = true,
 	state,
 	cardIndex,
 	onClick
@@ -29,6 +34,7 @@ export const CardView = ({
 	selected?: boolean
 	onClick?: () => void
 	buying?: boolean
+	evaluate?: boolean
 }) => {
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)?.gameState
@@ -67,15 +73,7 @@ export const CardView = ({
 		[state, card, cardIndex, game, playerId]
 	)
 
-	const adjusted = !buying
-		? card.cost
-		: card.cost -
-		  (card.categories.includes(CardCategory.Building)
-				? player.ore * player.orePrice
-				: 0) -
-		  (card.categories.includes(CardCategory.Space)
-				? player.titan * player.titanPrice
-				: 0)
+	const adjusted = !buying ? card.cost : minimalCardPrice(card, player)
 
 	const affordable = !buying || adjusted <= player.money
 
@@ -87,7 +85,10 @@ export const CardView = ({
 		<Container
 			selected={selected}
 			onClick={onClick}
-			playable={playable && affordable}
+			playable={!evaluate || (playable && affordable)}
+			className={
+				!evaluate || (playable && affordable) ? 'playable' : 'unplayable'
+			}
 		>
 			<Inner type={card.type}>
 				<Head>
@@ -138,7 +139,7 @@ const typeToColor = {
 } as const
 
 const Container = styled.div<{ selected: boolean; playable: boolean }>`
-	background: ${props => (props.playable ? '#fff' : '#eee')};
+	background: ${props => (props.playable ? '#fff' : '#ddd')};
 	padding: 0.25rem;
 	border-radius: 12px;
 	color: #000;
