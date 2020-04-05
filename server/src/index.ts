@@ -3,10 +3,20 @@ import { join } from 'path'
 import WebSocket from 'ws'
 import { createServer } from 'http'
 import { Server } from './server/server'
+import yargs from 'yargs'
 
 async function main() {
 	const app = express()
 	const wsServer = new WebSocket.Server({ noServer: true })
+
+	const argv = yargs
+		.scriptName('card-game-server')
+		.command('', 'Starts the server')
+		.option('port', {
+			type: 'number',
+			alias: 'p',
+			default: 8090
+		}).argv
 
 	const server = createServer(app)
 	server.on('upgrade', (request, socket, head) => {
@@ -19,8 +29,8 @@ async function main() {
 
 	app.use(express.static(join(__dirname, '..', 'static')))
 
-	server.listen(8090, () => {
-		console.log('Listening on 8090')
+	server.listen(argv.port, () => {
+		console.log('Listening on', argv.port)
 	})
 }
 
