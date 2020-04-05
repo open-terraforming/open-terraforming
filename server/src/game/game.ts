@@ -65,7 +65,10 @@ export class Game {
 		}
 
 		this.players.push(player)
-		this.state.players.push(player.state)
+		if (this.state.players.find(p => p.id === player.id)) {
+			this.state.players.push(player.state)
+		}
+
 		player.onStateChanged.on(this.updated)
 
 		player.onCardPlayed.on(
