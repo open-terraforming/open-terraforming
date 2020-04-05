@@ -90,7 +90,7 @@ export class Client {
 						return handshakeResponse(HandshakeError.GameInProgress)
 					}
 
-					if (!name || name.trim().length < 3) {
+					if (!name || name.trim().length < 3 || name.length > 10) {
 						return handshakeResponse(HandshakeError.InvalidName)
 					}
 

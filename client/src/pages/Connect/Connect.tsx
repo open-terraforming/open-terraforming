@@ -6,6 +6,9 @@ import { Container } from '@/components/Container'
 import { useDispatch } from 'react-redux'
 import { setApiState } from '@/store/modules/api'
 import { useApi } from '@/context/ApiContext'
+import { Mars } from '@/components/Mars/Mars'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import styled from 'styled-components'
 
 export const Connect = () => {
 	const api = useApi()
@@ -41,37 +44,52 @@ export const Connect = () => {
 	}, [reconnecting, connected, error])
 
 	return (
-		<Container>
-			{failed ? (
-				<>
-					<div>Connecting failed</div>
-					<Button onClick={handleReconnect}>Reconnect</Button>
-				</>
-			) : reconnecting ? (
-				'Reconnecting ...'
-			) : initializing ? (
-				'Waiting for server...'
-			) : (
-				<>
-					{!connected && 'Connecting....'}
-					{connected && (
-						<>
-							<input
-								type="text"
-								value={name}
-								onChange={e => setName(e.target.value)}
-								onKeyUp={e => {
-									if (e.key === 'Enter') {
-										handleConnect()
-									}
-								}}
-								autoFocus
-							/>
-							<Button onClick={handleConnect}>Connect</Button>
-						</>
-					)}
-				</>
-			)}
-		</Container>
+		<>
+			<Mars />
+			<Container header="Join game">
+				{failed ? (
+					<>
+						<div>Connecting failed</div>
+						<Button onClick={handleReconnect}>Reconnect</Button>
+					</>
+				) : reconnecting ? (
+					'Reconnecting ...'
+				) : initializing ? (
+					'Waiting for server...'
+				) : (
+					<>
+						{!connected && 'Connecting....'}
+						{connected && (
+							<>
+								<input
+									type="text"
+									value={name}
+									minLength={3}
+									maxLength={10}
+									onChange={e => setName(e.target.value)}
+									onKeyUp={e => {
+										if (e.key === 'Enter') {
+											handleConnect()
+										}
+									}}
+									autoFocus
+								/>
+								<ConnectButton
+									disabled={name.length < 3 || name.length > 10}
+									onClick={handleConnect}
+									icon={faArrowRight}
+								>
+									Connect
+								</ConnectButton>
+							</>
+						)}
+					</>
+				)}
+			</Container>
+		</>
 	)
 }
+
+const ConnectButton = styled(Button)`
+	margin: 0.5rem auto 0 auto;
+`

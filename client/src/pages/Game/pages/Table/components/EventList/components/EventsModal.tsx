@@ -19,7 +19,7 @@ export const EventsModal = ({ onClose, events, players }: Props) => {
 			header="Events"
 			footer={<Button onClick={onClose}>Close</Button>}
 		>
-			{events.reverse().map((e, i) => (
+			{[...events].reverse().map((e, i) => (
 				<EventLine key={i} event={e} players={players} animated={false} />
 			))}
 		</Modal>

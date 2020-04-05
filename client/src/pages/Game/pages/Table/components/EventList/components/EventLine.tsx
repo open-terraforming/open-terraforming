@@ -8,6 +8,8 @@ import { ucFirst } from '@shared/utils'
 import { CorporationsLookup } from '@shared/corporations'
 import { lighten } from 'polished'
 import { CardModal } from './CardModal'
+import { Competitions } from '@shared/competitions'
+import { Milestones } from '@shared/milestones'
 
 type Props = {
 	event: GameEvent
@@ -111,6 +113,20 @@ export const EventLine = ({ event, players, animated, onDone }: Props) => {
 						<PlayerSpan player={players[event.playerId]} />
 						{' placed '}
 						<CardSpanE>{GridCellContent[event.tile]}</CardSpanE>
+					</>
+				)
+			case EventType.CompetitionSponsored:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} />
+						{` sponsored ${Competitions[event.competition].title} competition`}
+					</>
+				)
+			case EventType.MilestoneBought:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} />
+						{` bought ${Milestones[event.milestone].title} milestone`}
 					</>
 				)
 			case EventType.GameProgressChanged:

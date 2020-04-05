@@ -194,6 +194,26 @@ export const EventList = ({}: Props) => {
 				})
 			}
 
+			if (diff.competitions) {
+				Object.values(diff.competitions).forEach(c => {
+					newEvents.push({
+						type: EventType.CompetitionSponsored,
+						playerId: c.playerId,
+						competition: c.type
+					})
+				})
+			}
+
+			if (diff.milestones) {
+				Object.values(diff.milestones).forEach(c => {
+					newEvents.push({
+						type: EventType.MilestoneBought,
+						playerId: c.playerId,
+						milestone: c.type
+					})
+				})
+			}
+
 			if (newEvents.length > 0) {
 				setEvents([...events, ...newEvents])
 			}
@@ -234,10 +254,11 @@ const Centered = styled.div`
 	margin-top: 1rem;
 	flex: 1;
 	min-height: 0;
-	overflow: hidden;
+	overflow: visible;
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
-	max-width: 100%;
+	max-width: 13rem;
+	width: 13rem;
 	min-width: 0;
 `

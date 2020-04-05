@@ -1,8 +1,10 @@
 import { Resource, CardResource, GameProgress } from '@shared/cards'
 import { GridCellContent } from '@shared/index'
+import { CompetitionType } from '@shared/competitions'
+import { MilestoneType } from '@shared/milestones'
 
 export enum EventType {
-	CardPlayed,
+	CardPlayed = 1,
 	CardUsed,
 	CardsReceived,
 	ResourceChanged,
@@ -11,7 +13,9 @@ export enum EventType {
 	GameProgressChanged,
 	TilePlaced,
 	CorporationPicked,
-	RatingChanged
+	RatingChanged,
+	CompetitionSponsored,
+	MilestoneBought
 }
 
 type CardPlayed = {
@@ -80,6 +84,18 @@ type RatingChanged = {
 	amount: number
 }
 
+type CompetitionSponsored = {
+	type: typeof EventType.CompetitionSponsored
+	competition: CompetitionType
+	playerId: number
+}
+
+type MilestoneBought = {
+	type: typeof EventType.MilestoneBought
+	milestone: MilestoneType
+	playerId: number
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -91,3 +107,5 @@ export type GameEvent =
 	| TilePlaced
 	| CorporationPicked
 	| RatingChanged
+	| MilestoneBought
+	| CompetitionSponsored
