@@ -9,6 +9,8 @@ import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
 import { setTableState } from '@/store/modules/table'
 import { useApi } from '@/context/ApiContext'
 import { isCardPlayable, emptyCardState } from '@shared/cards/utils'
+import { CardDisplay } from '../CardDisplay/CardDisplay'
+import { cardsToCardList } from '@/utils/cards'
 
 export const Hand = ({
 	onClose,
@@ -23,9 +25,10 @@ export const Hand = ({
 	const game = useAppStore(state => state.game.state)
 	const state = player?.gameState
 
-	const cards = useAppStore(
-		state => state.game.player?.gameState.cards
-	)?.map(c => CardsLookupApi.get(c))
+	const cards =
+		useAppStore(state => state.game.player?.gameState.cards)?.map(c =>
+			CardsLookupApi.get(c)
+		) || []
 
 	const [selected, setSelected] = useState(undefined as number | undefined)
 
@@ -97,7 +100,7 @@ export const Hand = ({
 	return (
 		<Modal
 			open={true}
-			contentStyle={{ maxWidth: '90%', width: 'auto', minWidth: '400px' }}
+			contentStyle={{ width: '90%' }}
 			onClose={onClose}
 			header={'Cards in your hand'}
 			footer={
@@ -107,14 +110,28 @@ export const Hand = ({
 							onClick={handleConfirm}
 							disabled={selected !== undefined && !selectedPlayable}
 						>
-							{selectedCard ? `Play selected` : 'Close'}
+							{`Play ${selectedCard.title}`}
 						</Button>
 					)}
 					<Button onClick={onClose}>Close</Button>
 				</>
 			}
 		>
-			<CardsContainer>
+			<CardDisplay
+				onSelect={c =>
+					handleSelect(
+						c.length > 0 && c[0].index !== selected ? c[0].index : undefined
+					)
+				}
+				selected={
+					selectedCard && selected !== undefined
+						? [{ card: selectedCard, index: selected }]
+						: []
+				}
+				cards={cards.map((c, i) => ({ card: c, index: i }))}
+			/>
+
+			{/*<CardsContainer>
 				{cards?.length === 0 && <NoCards>No cards</NoCards>}
 				{cards?.map(
 					(c, i) =>
@@ -135,6 +152,7 @@ export const Hand = ({
 						)
 				)}
 			</CardsContainer>
+							*/}
 		</Modal>
 	)
 }

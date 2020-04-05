@@ -208,7 +208,6 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 25,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
-		victoryPoints: 1,
 		actionEffects: [moneyOrResForOcean('titan', 12)],
 		victoryPointsCallback: vpsForCards(CardCategory.Jupiter, 1),
 	}),
@@ -1073,7 +1072,6 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 20,
 		categories: [CardCategory.City, CardCategory.Space, CardCategory.Jupiter],
-		victoryPoints: 1,
 		playEffects: [
 			placeTile({
 				type: GridCellContent.City,
@@ -1194,7 +1192,6 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 41,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
-		victoryPoints: 1,
 		playEffects: [productionChange('titan', 2), productionChange('money', 2)],
 		victoryPointsCallback: vpsForCards(CardCategory.Jupiter, 1),
 	}),
@@ -1225,7 +1222,6 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 12,
 		categories: [CardCategory.Building, CardCategory.Science],
-		victoryPoints: 2,
 		resource: 'science',
 		actionEffects: [
 			resourceChange('energy', -6),

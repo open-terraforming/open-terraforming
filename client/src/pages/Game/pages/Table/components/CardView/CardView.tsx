@@ -13,6 +13,7 @@ import { Condition } from './components/Condition'
 import { PlayEffect } from './components/PlayEffect'
 import { Resource } from './components/Resource'
 import { Tag } from './components/Tag'
+import mars from '@/assets/mars-icon.png'
 
 export const CardView = ({
 	card,
@@ -39,13 +40,6 @@ export const CardView = ({
 			...card.passiveEffects.map(e => e.description).filter(e => !!e),
 			...(card.victoryPointsCallback
 				? [card.victoryPointsCallback.description]
-				: []),
-			...(card.victoryPoints !== 0
-				? [
-						`${card.victoryPoints > 0 ? '+' : ''} ${
-							card.victoryPoints
-						} VICTORY POINTS`
-				  ]
 				: [])
 		]
 	}, [card])
@@ -111,17 +105,17 @@ export const CardView = ({
 					{state && state.played && (
 						<Played>Card already played this generation</Played>
 					)}
-					{card.conditions.map((c, i) => (
-						<Condition key={i} cond={c} ctx={condContext} />
-					))}
 					{card.actionEffects.length > 0 && (
 						<Action>
-							Action:
+							<ActionTitle>Action</ActionTitle>
 							{card.actionEffects.map((e, i) => (
 								<PlayEffect key={i} effect={e} ctx={condContext} />
 							))}
 						</Action>
 					)}
+					{card.conditions.map((c, i) => (
+						<Condition key={i} cond={c} ctx={condContext} />
+					))}
 					{card.playEffects.map((e, i) => (
 						<PlayEffect key={i} effect={e} ctx={condContext} />
 					))}
@@ -129,6 +123,7 @@ export const CardView = ({
 						<div key={i}>{d}</div>
 					))}
 					{state && <Resource card={card} state={state} />}
+					{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
 				</Description>
 			</Inner>
 		</Container>
@@ -176,6 +171,22 @@ const Action = styled.div`
 	border-right: 2px solid rgb(221, 221, 221);
 	border-top: 2px solid rgb(137, 137, 137);
 	border-left: 2px solid rgb(137, 137, 137);
+	&& {
+		margin-bottom: 1rem;
+	}
+`
+
+const ActionTitle = styled.div`
+	margin-left: auto;
+	margin-right: auto;
+	width: 5rem;
+	margin-top: -1rem;
+	background: #fff;
+	border-top: 2px solid rgb(221, 221, 221);
+	border-left: 2px solid rgb(221, 221, 221);
+	border-bottom: 2px solid rgb(137, 137, 137);
+	border-right: 2px solid rgb(137, 137, 137);
+	text-align: center;
 `
 
 const Cost = styled.div<{ affordable: boolean }>`
@@ -260,4 +271,25 @@ const Description = styled.div`
 
 const Played = styled.div`
 	color: #e10011;
+`
+
+const VP = styled.div`
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	border-radius: 50%;
+	width: 3rem;
+	height: 3rem;
+	line-height: 3rem;
+	text-align: center;
+	font-size: 200%;
+	color: #fff;
+
+	border-top: 2px solid rgb(221, 221, 221);
+	border-left: 2px solid rgb(221, 221, 221);
+	border-bottom: 2px solid rgb(137, 137, 137);
+	border-right: 2px solid rgb(137, 137, 137);
+
+	background-image: url('${mars}');
+	background-size: 100% 100%;
 `

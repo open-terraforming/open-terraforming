@@ -1,39 +1,38 @@
 import {
-	WithOptional,
-	CardEffect,
-	CardCondition,
-	Resource,
-	Card,
-	CardEffectArgument,
-	CardEffectTarget,
-	GameProgress,
-	CardCategory,
-	CardVictoryPointsCallback,
-	CardResource,
-	CardEffectArgumentType,
-	PlayerCondition,
-	CardPassiveEffect,
-	CellCondition,
-	CardEffectType,
-	CardCallbackContext,
-} from './types'
-import {
 	GameState,
+	GridCell,
 	GridCellContent,
 	GridCellOther,
-	PlayerStateValue,
-	GridCell,
 	GridCellSpecial,
 	PlayerState,
 } from '../game'
-import { CardsLookupApi } from './lookup'
-import { withUnits, progressResToStr } from '../units'
 import {
+	canPlace,
 	PlacementCode,
 	PlacementConditionsLookup,
-	canPlace,
 } from '../placements'
-import { allCells, adjacentCells } from '../utils'
+import { progressResToStr, withUnits } from '../units'
+import { adjacentCells, allCells } from '../utils'
+import { CardsLookupApi } from './lookup'
+import {
+	Card,
+	CardCallbackContext,
+	CardCategory,
+	CardCondition,
+	CardEffect,
+	CardEffectArgument,
+	CardEffectArgumentType,
+	CardEffectTarget,
+	CardEffectType,
+	CardPassiveEffect,
+	CardResource,
+	CardVictoryPointsCallback,
+	CellCondition,
+	GameProgress,
+	PlayerCondition,
+	Resource,
+	WithOptional,
+} from './types'
 
 export const vpCb = (cb: CardVictoryPointsCallback) => cb
 
@@ -179,8 +178,8 @@ export const resourceChange = (res: Resource, change: number) =>
 		conditions: change < 0 ? [resourceCondition(res, -change)] : [],
 		description:
 			change > 0
-				? `You'll receive ${withUnits(res, change)}`
-				: `You'll loose ${withUnits(res, -change)}`,
+				? `+ ${withUnits(res, change)}`
+				: `- ${withUnits(res, -change)}`,
 		type: CardEffectType.Resource,
 		perform: ({ player }) => {
 			player[res] += change
@@ -203,8 +202,8 @@ export const productionChange = (res: Resource, change: number) => {
 		type: CardEffectType.Production,
 		description:
 			change > 0
-				? `Your ${res} production will increase by ${change}`
-				: `Your ${res} production will decrease by ${-change}`,
+				? `+ ${change} ${res} production`
+				: `- ${-change} ${res} production`,
 		perform: ({ player }) => {
 			player[prod] += change
 		},
@@ -397,7 +396,7 @@ export function placeTile({
 
 	return effect({
 		description:
-			`Place a ${other ? GridCellOther[other] : GridCellContent[type]} tile` +
+			`Place a ${other ? GridCellOther[other] : GridCellContent[type]}` +
 			(conditions && conditions.length > 0
 				? ` (${conditions
 						?.map((c) => PlacementConditionsLookup.get(c).description)
@@ -427,7 +426,6 @@ export function placeTile({
 				...placementState,
 				ownerCard: cardIndex,
 			})
-			// player.state = PlayerStateValue.PlacingTile
 		},
 	})
 }
@@ -520,8 +518,8 @@ export const terraformRatingChange = (change: number) =>
 	effect({
 		description:
 			change >= 0
-				? `Increase your Terraform rating by ${change} step(s)`
-				: `Decrease your Terraform rating by ${-change} step(s)`,
+				? `+ ${change} Terraform Rating`
+				: `- ${-change} Terraform Rating`,
 		perform: ({ player }) => {
 			player.terraformRating += change
 		},
