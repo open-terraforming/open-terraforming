@@ -199,6 +199,7 @@ export class Game {
 				break
 
 			case GameStateValue.GenerationInProgress:
+				/*
 				this.state.map.oxygenMilestones.forEach(m => {
 					if (!m.used && m.value <= this.state.oxygen) {
 						m.used = true
@@ -212,6 +213,7 @@ export class Game {
 						m.effects.forEach(e => e(this.state, this.currentPlayer))
 					}
 				})
+				*/
 
 				if (!this.currentPlayer.connected) {
 					this.currentPlayer.gameState.state = PlayerStateValue.Passed
