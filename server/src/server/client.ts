@@ -75,6 +75,7 @@ export class Client {
 							const exs = this.game.players.find(ep => ep.id === p.id)
 							if (!exs) {
 								this.player = new Player(this.game)
+								this.game.add(this.player)
 							} else {
 								this.player = exs
 							}
