@@ -86,6 +86,7 @@ export const CardView = ({
 			selected={selected}
 			onClick={onClick}
 			playable={!evaluate || (playable && affordable)}
+			played={!!(state && state.played)}
 			className={
 				!evaluate || (playable && affordable) ? 'playable' : 'unplayable'
 			}
@@ -138,7 +139,11 @@ const typeToColor = {
 	[CardType.Event]: '#FF6868'
 } as const
 
-const Container = styled.div<{ selected: boolean; playable: boolean }>`
+const Container = styled.div<{
+	selected: boolean
+	playable: boolean
+	played: boolean
+}>`
 	background: ${props => (props.playable ? '#fff' : '#ddd')};
 	padding: 0.25rem;
 	border-radius: 12px;
@@ -157,6 +162,12 @@ const Container = styled.div<{ selected: boolean; playable: boolean }>`
 		props.selected &&
 		css`
 			box-shadow: 0px 0px 5px 5px #ffffaa;
+		`}
+
+	${props =>
+		props.played &&
+		css`
+			transform: rotate(10deg);
 		`}
 `
 

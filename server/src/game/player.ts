@@ -351,9 +351,11 @@ export class Player {
 				}
 
 				if (a.type === CardEffectTarget.DrawnCards) {
+					console.log('Drawing', a.drawnCards)
 					playArguments[i][ai] = range(0, a.drawnCards || 1).map(
 						() => this.game.nextCard().code
 					)
+					console.log(playArguments[i][ai])
 				}
 			})
 
@@ -474,6 +476,7 @@ export class Player {
 		cell.content = pendingTile.type
 		cell.other = pendingTile.other
 		cell.ownerCard = pendingTile.ownerCard
+		cell.ownerId = this.state.id
 
 		this.gameState.ore += cell.ore
 		this.gameState.titan += cell.titan
@@ -496,10 +499,6 @@ export class Player {
 				this.game.state.oceans++
 				break
 			}
-		}
-
-		if (pendingTile.type !== GridCellContent.Ocean) {
-			cell.ownerId = this.state.id
 		}
 
 		this.gameState.placingTile.shift()

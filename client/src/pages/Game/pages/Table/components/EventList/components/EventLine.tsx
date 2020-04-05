@@ -17,7 +17,9 @@ type Props = {
 }
 
 const PlayerSpan = ({ player }: { player: PlayerState }) => (
-	<span style={{ color: lighten(0.2, player.color) }}>{player.name}</span>
+	<span style={{ color: player && lighten(0.2, player.color) }}>
+		{player?.name}
+	</span>
 )
 
 const CardSpan = React.memo(({ card }: { card: string }) => {

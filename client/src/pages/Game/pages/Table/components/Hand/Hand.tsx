@@ -114,11 +114,13 @@ export const Hand = ({
 		>
 			<CardDisplay
 				buying
-				onSelect={c =>
+				onSelect={c => {
 					handleSelect(
-						c.length > 0 && c[0].index !== selected ? c[0].index : undefined
+						c[c.length - 1].index !== selected
+							? c[c.length - 1].index
+							: undefined
 					)
-				}
+				}}
 				selected={
 					selectedCard && selected !== undefined
 						? [{ card: selectedCard, index: selected }]
@@ -126,29 +128,6 @@ export const Hand = ({
 				}
 				cards={cards.map((c, i) => ({ card: c, index: i }))}
 			/>
-
-			{/*<CardsContainer>
-				{cards?.length === 0 && <NoCards>No cards</NoCards>}
-				{cards?.map(
-					(c, i) =>
-						c && (
-							<CardView
-								buying
-								card={c}
-								selected={selected === i}
-								key={i}
-								onClick={
-									playing
-										? () => {
-												handleSelect(selected === i ? undefined : i)
-										  }
-										: undefined
-								}
-							/>
-						)
-				)}
-			</CardsContainer>
-							*/}
 		</Modal>
 	)
 }

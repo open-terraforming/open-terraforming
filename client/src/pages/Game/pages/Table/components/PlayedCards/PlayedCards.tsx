@@ -46,15 +46,18 @@ export const PlayedCards = ({
 	}
 
 	const handleSelect = (cards: Required<CardInfo>[]) => {
-		const selected = cards[0]
+		const newlySelected = cards[cards.length - 1]
 
-		if (selected) {
-			if (selected.card.type !== CardType.Action || selected.state.played) {
+		if (newlySelected) {
+			if (
+				newlySelected.card.type !== CardType.Action ||
+				newlySelected.state.played
+			) {
 				return
 			}
 		}
 
-		setSelected(selected)
+		setSelected(newlySelected)
 	}
 
 	const selectedPlayable = useMemo(
@@ -81,16 +84,17 @@ export const PlayedCards = ({
 			onClose={onClose}
 			header={'Cards on table'}
 			footer={
-				!playing ? (
+				<>
+					{selected && (
+						<Button
+							onClick={handleConfirm}
+							disabled={selected !== undefined && !selectedPlayable}
+						>
+							{`Play ${selected.card.title}`}
+						</Button>
+					)}
 					<Button onClick={onClose}>Close</Button>
-				) : (
-					<Button
-						onClick={handleConfirm}
-						disabled={selected !== undefined && !selectedPlayable}
-					>
-						{selected !== undefined ? `Play ${selected.card.title}` : 'Close'}
-					</Button>
-				)
+				</>
 			}
 		>
 			<CardDisplay

@@ -29,6 +29,7 @@ export const CardDisplay = <T extends CardInfo>({
 	buying?: boolean
 }) => {
 	const [type, setType] = useState(defaultType)
+	const [playable, setPlayable] = useState(false)
 
 	const [selectedCategory, setSelectedCategory] = useState(
 		undefined as CardCategory | undefined
@@ -129,6 +130,15 @@ export const CardDisplay = <T extends CardInfo>({
 						))}
 					</Types>
 
+					<label>
+						<input
+							type="checkbox"
+							checked={playable}
+							onChange={e => setPlayable(e.target.checked)}
+						/>
+						Only playable
+					</label>
+
 					<Categories>
 						{categories.map(([cat, count]) => (
 							<FilterTag
@@ -150,7 +160,7 @@ export const CardDisplay = <T extends CardInfo>({
 				</Filters>
 			)}
 
-			<CardsContainer>
+			<CardsContainer playableOnly={playable}>
 				{filtered.length === 0 && <NoCards>No cards</NoCards>}
 				{filtered.map(
 					c =>
@@ -176,12 +186,20 @@ export const CardDisplay = <T extends CardInfo>({
 	)
 }
 
-const CardsContainer = styled.div`
+const CardsContainer = styled.div<{ playableOnly: boolean }>`
 	display: flex;
 	overflow-x: scroll;
 	justify-content: flex-start;
 	min-width: 0;
 	padding: 1rem 0;
+
+	${props =>
+		props.playableOnly &&
+		css`
+			.unplayable {
+				display: none;
+			}
+		`}
 `
 
 const Types = styled.div`
@@ -193,12 +211,12 @@ const Types = styled.div`
 const Categories = styled.div`
 	display: flex;
 	justify-content: center;
-	margin-left: auto;
 `
 
 const Filters = styled.div`
 	display: flex;
-	justify-content: center;
+	justify-content: space-between;
+	align-items: center;
 	margin-bottom: 1rem;
 `
 
