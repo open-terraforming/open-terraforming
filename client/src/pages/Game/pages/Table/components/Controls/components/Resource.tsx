@@ -28,7 +28,7 @@ export const Resource = ({
 		if (diff !== 0) {
 			setTimeout(() => {
 				setValueDiff(0)
-			}, 600)
+			}, 1000)
 		}
 	}, [value])
 
@@ -40,7 +40,7 @@ export const Resource = ({
 		if (diff !== 0) {
 			setTimeout(() => {
 				setProductionDiff(0)
-			}, 600)
+			}, 1000)
 		}
 	}, [production])
 
@@ -146,7 +146,7 @@ const DiffAnim = styled.div<{ positive: boolean }>`
 	left: 0;
 	top: 0;
 	animation-name: ${props => (props.positive ? popIn : popOut)};
-	animation-duration: 600ms;
+	animation-duration: 1000ms;
 	animation-timing-function: ${props =>
 		props.positive ? 'ease-out' : 'ease-in-out'};
 	opacity: 0;

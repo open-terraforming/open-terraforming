@@ -35,6 +35,8 @@ export const Controls = () => {
 	const api = useApi()
 	const dispatch = useAppDispatch()
 	const player = useAppStore(state => state.game.player)
+	const game = useAppStore(state => state.game.state)
+
 	const buyingCardIndex = useAppStore(state => state.table.buyingCardIndex)
 	const playingCardIndex = useAppStore(state => state.table.playingCardIndex)
 	const state = player?.gameState
@@ -169,7 +171,11 @@ export const Controls = () => {
 
 				<CardButtons>
 					<Button
-						disabled={!isPlaying || (player?.gameState.heat || 0) < 8}
+						disabled={
+							!isPlaying ||
+							(player?.gameState.heat || 0) < 8 ||
+							(game?.temperature || 0) >= (game?.map.temperature || 0)
+						}
 						onClick={buyTemperature}
 					>
 						+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}

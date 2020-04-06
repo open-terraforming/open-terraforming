@@ -9,12 +9,11 @@ NICE TODO:
 
 
  TODO
- * Notifications when it's your turn
+ * disconnected - doesn't work
  * Media Group - will you only receive selected cards?
  * Special animation when card is played
  * Animation when tile is placed
  * Spectator mode
  * poke button
  * show current progress when picking cards (smaller picking dialog?)
- * buy temperature/forest for heat/plants - disable when not possible
  * effects arguments -> check if selected player/card is acceptable by arguments
