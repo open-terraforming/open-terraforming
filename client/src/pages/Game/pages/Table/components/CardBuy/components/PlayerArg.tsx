@@ -51,6 +51,10 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 				{possiblePlayers.map(p => (
 					<option key={p.id} value={p.id}>
 						{p.name}
+						{(arg.resource || arg.production) &&
+							` (has ${
+								p.gameState[arg.resource || arg.production || 'money']
+							})`}
 					</option>
 				))}
 			</select>

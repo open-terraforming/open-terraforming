@@ -24,7 +24,7 @@ const specialToName = {
 } as const
 
 export const CellOverlay = ({ cell, pos, width, height }: Props) => {
-	return (
+	return !cell.content ? (
 		<HexOverlay
 			style={{
 				top: `${pos.y * 100}%`,
@@ -57,6 +57,8 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 				</Resources>
 			)}
 		</HexOverlay>
+	) : (
+		<></>
 	)
 }
 

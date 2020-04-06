@@ -108,7 +108,7 @@ const popIn = keyframes`
 const Popup = styled.div`
 	position: relative;
 	background: ${colors.background};
-	width: 400px;
+	min-width: 200px;
 	margin: auto;
 	border: 2px solid ${colors.border};
 	padding: 0px;

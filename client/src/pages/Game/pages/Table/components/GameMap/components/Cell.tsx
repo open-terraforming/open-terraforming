@@ -62,7 +62,7 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 			)}
 			{cell.content === GridCellContent.Forest && (
 				<path
-					fill="#139B2F"
+					fill="#0E7222"
 					d="M14.16 11.25C14.87 11.25 15.27 11.25 15.35 11.25C15.71 11.25 16.02 11.05 16.17 10.74C16.31 10.43 16.26 10.07 16.04 9.8C15.83 9.56 14.82 8.38 12.99 6.25C13.66 6.25 14.04 6.25 14.11 6.25C14.47 6.25 14.79 6.04 14.93 5.72C15.07 5.4 15 5.03 14.76 4.78C14.33 4.32 10.89 0.65 10.46 0.19C10.22 -0.06 9.78 -0.06 9.54 0.19C9.11 0.65 5.67 4.32 5.24 4.78C5 5.03 4.93 5.4 5.07 5.72C5.21 6.04 5.53 6.25 5.89 6.25C5.96 6.25 6.34 6.25 7.01 6.25C5.18 8.38 4.17 9.56 3.96 9.8C3.74 10.07 3.69 10.43 3.83 10.74C3.98 11.05 4.29 11.25 4.65 11.25C4.73 11.25 5.13 11.25 5.84 11.25C3.97 13.37 2.93 14.55 2.72 14.78C2.49 15.05 2.43 15.41 2.58 15.73C2.73 16.05 3.05 16.25 3.4 16.25C3.76 16.25 5.54 16.25 8.75 16.25L8.75 17.21C8.04 18.34 7.65 18.97 7.57 19.1C7.36 19.51 7.66 20 8.13 20C8.5 20 11.5 20 11.87 20C12.34 20 12.64 19.51 12.43 19.1C12.35 18.97 11.96 18.34 11.25 17.21L11.25 16.25C14.46 16.25 16.24 16.25 16.6 16.25C16.95 16.25 17.27 16.05 17.42 15.73C17.57 15.41 17.51 15.05 17.28 14.78C16.86 14.31 15.82 13.14 14.16 11.25Z"
 					transform="translate(-4, -4) scale(0.4)"
 				></path>
@@ -79,33 +79,32 @@ const StyledHex = styled.g<{
 	polygon {
 		${props =>
 			props.gridType === GridCellType.Ocean &&
+			!props.gridContent &&
 			css`
-				fill: ${props.gridContent === GridCellContent.Ocean
-					? 'rgba(128,128,255,0.9)'
-					: 'url(#Ocean)'};
+				fill: url(#Ocean);
 			`}
 		${props =>
 			props.gridContent === GridCellContent.Ocean &&
 			css`
-				fill: rgba(15, 135, 226, 0.9);
+				fill: rgba(15, 135, 226, 0.6);
 			`}
 
 		${props =>
 			props.gridContent === GridCellContent.City &&
 			css`
-				fill: rgba(128, 128, 128, 0.9);
+				fill: rgba(128, 128, 128, 0.3);
 			`}
 
 		${props =>
 			props.gridContent === GridCellContent.Forest &&
 			css`
-				fill: rgba(128, 255, 128, 0.9);
+				fill: rgba(19, 155, 47, 0.3);
 			`}
 
 		${props =>
 			props.gridContent === GridCellContent.Other &&
 			css`
-				fill: rgba(128, 64, 0, 0.9);
+				fill: rgba(128, 64, 0, 0.4);
 			`}
 
 		${props =>

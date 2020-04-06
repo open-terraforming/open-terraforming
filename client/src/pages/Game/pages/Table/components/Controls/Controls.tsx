@@ -137,23 +137,6 @@ export const Controls = () => {
 
 			<Flexed>
 				<Resources state={state} />
-
-				<CardButtons>
-					<Button
-						disabled={!isPlaying || (player?.gameState.heat || 0) < 8}
-						onClick={buyTemperature}
-					>
-						+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}
-						<ResourceIcon res="heat" />
-					</Button>
-					<Button
-						disabled={!isPlaying || (player?.gameState.plants || 0) < 8}
-						onClick={buyForest}
-					>
-						Build <FontAwesomeIcon icon={faTree} /> for 8{' '}
-						<ResourceIcon res="plants" />
-					</Button>
-				</CardButtons>
 			</Flexed>
 			<CardButtons>
 				<Button
@@ -184,6 +167,23 @@ export const Controls = () => {
 					</Button>
 				</CardButtons>
 
+				<CardButtons>
+					<Button
+						disabled={!isPlaying || (player?.gameState.heat || 0) < 8}
+						onClick={buyTemperature}
+					>
+						+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}
+						<ResourceIcon res="heat" />
+					</Button>
+					<Button
+						disabled={!isPlaying || (player?.gameState.plants || 0) < 8}
+						onClick={buyForest}
+					>
+						Build <FontAwesomeIcon icon={faTree} /> for 8{' '}
+						<ResourceIcon res="plants" />
+					</Button>
+				</CardButtons>
+
 				<PassButton
 					disabled={!isPlaying || !!placingTile}
 					onClick={handlePass}
@@ -211,8 +211,10 @@ export const Controls = () => {
 const Container = styled.div<{ faded: boolean }>`
 	position: relative;
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	background-color: ${colors.background};
+	border-top: 0.2rem solid ${colors.border};
+
 	${props =>
 		props.faded &&
 		css`

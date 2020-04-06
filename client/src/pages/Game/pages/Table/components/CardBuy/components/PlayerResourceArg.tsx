@@ -57,7 +57,7 @@ export const PlayerResourceArg = ({ arg, onChange }: Props) => {
 				<option value={-1}>Nobody</option>
 				{players.map(p => (
 					<option key={p.id} value={p.id}>
-						{p.name}
+						{p.name} (has {p.gameState[arg.resource as Resource]})
 					</option>
 				))}
 			</select>

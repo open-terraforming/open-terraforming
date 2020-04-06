@@ -109,6 +109,10 @@ const Container = styled.div<{ diffAnim: boolean }>`
 	height: 100%;
 	display: flex;
 	flex-direction: column;
+
+	&:first-child {
+		border-left: 0.2rem solid ${colors.border};
+	}
 `
 
 const Value = styled.div`

@@ -2,13 +2,14 @@ import { objDiff, keyMap } from '@/utils/collections'
 import { useAppStore, useInterval } from '@/utils/hooks'
 import { CardsLookupApi, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
-import { GameState } from '@shared/index'
+import { GameState, PlayerStateValue } from '@shared/index'
 import React, { useEffect, useState, useMemo } from 'react'
 import { EventType, GameEvent } from './types'
 import styled from 'styled-components'
 import { EventLine } from './components/EventLine'
 import { EventsModal } from './components/EventsModal'
 import { Button } from '@/components'
+import mars from '@/assets/mars-icon.png'
 
 type Props = {}
 
@@ -30,6 +31,8 @@ const progress: GameProgress[] = ['oxygen', 'temperature']
 
 export const EventList = ({}: Props) => {
 	const game = useAppStore(state => state.game.state)
+	const player = useAppStore(state => state.game.player)
+
 	const [events, setEvents] = useState([] as GameEvent[])
 	const [lastDisplayed, setLastDisplayed] = useState(0 as number)
 	const [displayedEvents, setDisplayedEvents] = useState([] as DisplayedEvent[])
@@ -219,6 +222,26 @@ export const EventList = ({}: Props) => {
 
 		setLastGame(game)
 	}, [game])
+
+	useEffect(() => {
+		if (
+			document.hidden &&
+			(player?.gameState.state === PlayerStateValue.Playing ||
+				player?.gameState.state === PlayerStateValue.PickingCards)
+		) {
+			if (Notification.permission === 'granted') {
+				const notification = new Notification("It's your turn!", {
+					icon: mars
+				})
+
+				notification.onclick = () => {
+					window.focus()
+					parent.focus()
+					notification.close()
+				}
+			}
+		}
+	}, [player?.gameState.state])
 
 	const playerMap = useMemo(() => (game ? keyMap(game.players, 'id') : {}), [
 		game

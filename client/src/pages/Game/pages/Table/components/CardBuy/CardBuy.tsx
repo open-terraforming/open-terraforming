@@ -16,6 +16,7 @@ import styled from 'styled-components'
 import { useApi } from '@/context/ApiContext'
 import { ResourceInput } from './components/ResourceInput'
 import { adjustedCardPrice } from '@shared/cards/utils'
+import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 
 type Props = {
 	index: number
@@ -94,7 +95,14 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 						disabled={!canAfford}
 						onClick={canAfford ? handleUse : undefined}
 					>
-						Use card
+						{buying ? (
+							<>
+								Use card for {price}
+								<ResourceIcon res="money" />
+							</>
+						) : (
+							'Use card'
+						)}
 					</Button>
 					<Button schema="transparent" icon={faTimes} onClick={onClose}>
 						Cancel
@@ -140,8 +148,6 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 						</UseContainer>
 					)}
 
-					<div>Adjusted price: {price} $</div>
-
 					{card.playEffects.map((e, i) => (
 						<ArgsPicker
 							key={i}
@@ -182,6 +188,7 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 const UseContainer = styled.div`
 	display: flex;
 	align-items: center;
+	justify-content: center;
 
 	input {
 		margin: 0 0.5rem;

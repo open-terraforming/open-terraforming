@@ -13,14 +13,8 @@ NICE TODO:
  * Media Group - will you only receive selected cards?
  * Special animation when card is played
  * Animation when tile is placed
- * Show resources/production of players when picking them
- * Starting player should move at the start of generation, not at start of the round
  * Spectator mode
  * poke button
  * show current progress when picking cards (smaller picking dialog?)
- * admin should be assigned by some logic = admin password?
- * milestones contain conditions in their effects, which are in serialized state
  * buy temperature/forest for heat/plants - disable when not possible
  * effects arguments -> check if selected player/card is acceptable by arguments
-
- * REDO SERVER -> game/player should only be shells for state, no additional state should be stored in them

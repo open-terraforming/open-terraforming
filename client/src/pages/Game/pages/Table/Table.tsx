@@ -1,18 +1,27 @@
-import React, { useState } from 'react'
 import { useAppStore } from '@/utils/hooks'
 import { PlayerStateValue } from '@shared/index'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
-import { Players } from './components/Players/Players'
-import { GlobalState } from './components/GlobalState/GlobalState'
-import { Controls } from './components/Controls/Controls'
 import { CardPicker } from './components/CardPicker/CardPicker'
+import { Controls } from './components/Controls/Controls'
 import { CorporationPicker } from './components/CorporationPicker/CorporationPicker'
-import { GameMap } from './components/GameMap/GameMap'
 import { Events } from './components/Events/Events'
+import { GameMap } from './components/GameMap/GameMap'
+import { GlobalState } from './components/GlobalState/GlobalState'
+import { Players } from './components/Players/Players'
 
 export const Table = () => {
-	const gameState = useAppStore(state => state.game.state?.state)
+	const gameState = useAppStore(state => state.game.state)
 	const playerState = useAppStore(state => state.game.player?.gameState.state)
+
+	useEffect(() => {
+		if (
+			Notification.permission !== 'granted' &&
+			Notification.permission !== 'denied'
+		) {
+			Notification.requestPermission()
+		}
+	}, [Notification.permission])
 
 	return (
 		<TableContainer>

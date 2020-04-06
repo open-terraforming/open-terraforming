@@ -250,9 +250,11 @@ const Categories = styled.div`
 `
 
 const Title = styled.div`
-	padding: 0.25rem 1rem;
+	padding: 0.5rem 1rem;
 	text-align: center;
 	color: #fff;
+	text-transform: uppercase;
+	font-size: 125%;
 `
 
 const Inner = styled.div<{ type: CardType }>`
@@ -275,6 +277,7 @@ const Description = styled.div`
 	min-height: 0;
 	flex-grow: 1;
 	font-size: 85%;
+	text-align: center;
 
 	> div {
 		margin-bottom: 0.25rem;

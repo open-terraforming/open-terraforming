@@ -1,4 +1,4 @@
-import { GameMessage, adminChange } from '@shared/index'
+import { GameMessage, adminChange, adminLogin } from '@shared/index'
 
 export class Client {
 	server: string
@@ -42,6 +42,11 @@ export class Client {
 
 		this.socket.onclose = () => {
 			this.onClose && this.onClose()
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		;(window as any)['adminLogin'] = (password: string) => {
+			this.send(adminLogin(password))
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
