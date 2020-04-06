@@ -212,7 +212,7 @@ const Container = styled.div<{ faded: boolean }>`
 	position: relative;
 	display: flex;
 	justify-content: space-between;
-	background-color: rgba(14, 129, 214, 0.8);
+	background-color: ${colors.background};
 	${props =>
 		props.faded &&
 		css`

@@ -17,9 +17,9 @@ html, body, #application {
 }
 
 body {
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: Oswald, Arial, Helvetica, sans-serif;
 	font-size: 14px;
-	color: #333;
+	color: #ccc;
 }
 
 input[type=text],

@@ -6,6 +6,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { DiffAnim } from './DiffAnim'
 import { MilestoneDisplay } from './MilestoneDisplay'
+import { colors } from '@/styles'
 
 type Props = {
 	start: number
@@ -53,8 +54,8 @@ export const Temperature = ({ start, current, target, milestones }: Props) => {
 
 const Container = styled.div`
 	width: 3rem;
-	border: 2px solid rgba(14, 129, 214, 0.8);
-	background-color: rgba(14, 129, 214, 0.5);
+	border: 2px solid ${colors.border};
+	background-color: ${colors.background};
 	position: relative;
 `
 
@@ -64,12 +65,12 @@ const Step = styled.div<{ passed: boolean; active: boolean }>`
 	color: #fff;
 	opacity: ${props => (props.active ? 1 : props.passed ? 0.8 : 0.5)};
 	position: relative;
-	transition: background 500ms, opacity 500ms;
+	transition: background-color 500ms, opacity 500ms;
 
 	${props =>
 		(props.passed || props.active) &&
 		css`
-			background: rgba(14, 129, 214, 0.8);
+			background: ${colors.border};
 		`}
 `
 

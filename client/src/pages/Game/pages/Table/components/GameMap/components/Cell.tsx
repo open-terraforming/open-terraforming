@@ -39,7 +39,7 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 			onClick={active ? onClick : undefined}
 		>
 			<polygon
-				stroke={'#fff'}
+				stroke={'rgba(255,255,255,0.3)'}
 				fill="transparent"
 				strokeWidth="0.5"
 				points="-9,5 -9,-5 0,-10 9,-5 9,5 0,10"

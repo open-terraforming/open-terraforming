@@ -3,7 +3,7 @@ import { lighten, darken, rgba } from 'polished'
 import mainColors from './mainColors'
 
 export default {
-	background: rgba(mainColors.application, 0.9),
+	background: rgba(mainColors.application, 0.8),
 	border: rgba(lighten(0.1, mainColors.application), 0.8),
 
 	button: {
@@ -11,21 +11,21 @@ export default {
 		primary: {
 			background: MainColor.primary,
 			borderColor: MainColor.primary,
-			color: '#fff',
+			color: '#eee',
 			hover: {
-				background: lighten(0.2, MainColor.primary),
-				borderColor: lighten(0.2, MainColor.primary),
-				color: '#fff'
+				background: lighten(0.1, MainColor.primary),
+				borderColor: lighten(0.1, MainColor.primary),
+				color: '#eee'
 			}
 		},
 		secondary: {
 			background: MainColor.secondary,
 			borderColor: MainColor.secondary,
-			color: '#fff',
+			color: '#eee',
 			hover: {
 				background: lighten(0.2, MainColor.primary),
 				borderColor: lighten(0.2, MainColor.primary),
-				color: '#fff'
+				color: '#eee'
 			}
 		},
 		default: {

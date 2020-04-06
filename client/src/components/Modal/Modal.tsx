@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, CSSProperties } from 'react'
 import { Header, Footer, Body } from './styles'
 import { Portal } from '../Portal/Portal'
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { useWindowEvent } from '@/utils/hooks'
 import { rgba, darken, lighten } from 'polished'
 import { mainColors, colors } from '@/styles'
@@ -99,6 +99,12 @@ const PopupBackground = styled.div`
 	color: #fff;
 `
 
+const popIn = keyframes`
+	0% { transform: scale(1, 0); opacity: 0; }
+	75% { opacity: 1; }
+	100% { transform: scale(1, 1); }
+`
+
 const Popup = styled.div`
 	position: relative;
 	background: ${colors.background};
@@ -112,6 +118,10 @@ const Popup = styled.div`
 	overflow: auto;
 	display: flex;
 	flex-direction: column;
+
+	animation-name: ${popIn};
+	animation-duration: 150ms;
+	animation-timing-function: ease-out;
 `
 
 const Dialog = styled.div`

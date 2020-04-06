@@ -1,14 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import styled, { css } from 'styled-components'
-import { popOut } from '@/styles/animations'
 import { colors } from '@/styles'
+import { Resource as Res } from '@shared/cards'
+import React, { useEffect, useState } from 'react'
+import styled, { css, keyframes } from 'styled-components'
+import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 
 export const Resource = ({
 	name,
+	res,
 	value = 0,
 	production = 0
 }: {
 	name: string
+	res: Res
 	value: number | undefined
 	production: number | undefined
 }) => {
@@ -19,63 +22,109 @@ export const Resource = ({
 
 	useEffect(() => {
 		const diff = value - lastValue
-		setLastValue(lastValue)
+		setLastValue(value)
 		setValueDiff(diff)
 
 		if (diff !== 0) {
 			setTimeout(() => {
 				setValueDiff(0)
-			}, 500)
+			}, 600)
 		}
 	}, [value])
 
 	useEffect(() => {
 		const diff = production - lastProduction
-		setLastProduction(lastProduction)
+		setLastProduction(production)
 		setProductionDiff(diff)
 
 		if (diff !== 0) {
 			setTimeout(() => {
 				setProductionDiff(0)
-			}, 500)
+			}, 600)
 		}
 	}, [production])
 
 	return (
-		<Container>
-			<Name>{name}</Name>
-			<Value>{value}</Value>
+		<Container diffAnim={productionDiff !== 0 || valueDiff !== 0}>
+			<Value title={name}>
+				{value} <ResourceIcon res={res} />
+			</Value>
 			<Production negative={production < 0}>
 				{production >= 0 ? `+${production}` : production}
 			</Production>
-			{valueDiff !== 0 && <DiffAnim positive={valueDiff > 0} />}
-			{productionDiff !== 0 && <DiffAnim positive={productionDiff > 0} />}
+			{valueDiff !== 0 && (
+				<DiffAnim positive={valueDiff > 0}>
+					{valueDiff > 0 ? `+${valueDiff}` : valueDiff}
+					<ResourceIcon res={res} />
+				</DiffAnim>
+			)}
+			{productionDiff !== 0 && (
+				<DiffAnim positive={productionDiff > 0}>
+					{productionDiff > 0 ? `+${productionDiff}` : productionDiff}
+					<ResourceIcon res={res} production />
+				</DiffAnim>
+			)}
 		</Container>
 	)
 }
 
-const Container = styled.div`
-	border-right: 0.2rem solid ${colors.background};
-	position: relative;
-	width: 3.5rem;
+const popOut = keyframes`
+	0% {
+		opacity: 0;
+		transform: translate(0, 0);
+	}
+	5% {
+		opacity: 1;
+	}
+	75% {
+		opacity: 1;
+		transform: translate(0, -10rem);
+	}
+	100% {
+		opacity: 0;
+		transform: translate(0, -10rem);
+	}
 `
 
-const Name = styled.div`
-	text-align: center;
-	background: ${colors.background};
-	padding: 0.2rem 0.5rem;
+const popIn = keyframes`
+	0% {
+		opacity: 0;
+		transform: translate(0, -10rem);
+	}
+	75% {
+		opacity: 1;
+		transform: translate(0, -0.5rem);
+	}
+	100% {
+		opacity: 0;
+		transform: translate(0, -0.5rem);
+	}
+`
+
+const Container = styled.div<{ diffAnim: boolean }>`
+	border-right: 0.2rem solid ${colors.border};
+	position: relative;
+	width: 3.5rem;
+	transition: background-color 0.2s;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
 `
 
 const Value = styled.div`
 	text-align: center;
 	font-size: 150%;
 	padding: 0.2rem 0.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-evenly;
+	flex: 1;
 `
 
 const Production = styled.div<{ negative: boolean }>`
 	text-align: center;
 	padding: 0.2rem 0.5rem;
-	background: ${colors.background};
+	background: ${colors.border};
 
 	${props =>
 		props.negative &&
@@ -87,15 +136,16 @@ const Production = styled.div<{ negative: boolean }>`
 
 const DiffAnim = styled.div<{ positive: boolean }>`
 	position: absolute;
-	height: 0;
-	padding-bottom: 100%;
 	left: 0;
 	top: 0;
-	right: 0;
-	background: ${props => (props.positive ? '#fff' : '#FF2F3F')};
-	animation-name: ${popOut};
-	animation-duration: 200ms;
-	animation-timing-function: ease-in;
+	animation-name: ${props => (props.positive ? popIn : popOut)};
+	animation-duration: 600ms;
+	animation-timing-function: ${props =>
+		props.positive ? 'ease-out' : 'ease-in-out'};
 	opacity: 0;
-	border-radius: 50%;
+	color: #fff;
+	text-align: center;
+	font-size: 150%;
+	display: flex;
+	align-items: center;
 `

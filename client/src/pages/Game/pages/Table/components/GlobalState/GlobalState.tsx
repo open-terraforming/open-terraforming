@@ -69,7 +69,7 @@ export const GlobalState = () => {
 }
 
 const Container = styled.div`
-	background-color: rgba(14, 129, 214, 0.8);
+	background-color: ${colors.background};
 	border: 2px solid ${colors.border};
 	padding: 0.25rem 0.5rem;
 	margin-bottom: 1rem;

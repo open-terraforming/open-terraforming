@@ -35,7 +35,7 @@ const Icon = styled.div`
 	align-items: center;
 	border: 2px solid ${colors.border};
 	border-right: 0;
-	background-color: rgba(14, 129, 214, 0.5);
+	background-color: ${colors.background};
 `
 
 const Value = styled.div`

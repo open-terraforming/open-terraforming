@@ -130,11 +130,11 @@ const Container = styled.div<{ isPlaying: boolean }>`
 
 const InfoContainer = styled.div`
 	width: 10rem;
-	background-color: rgba(14, 129, 214, 0.8);
+	background-color: ${colors.background};
 `
 
 const Name = styled.div`
-	background-color: rgba(14, 129, 214, 0.8);
+	background-color: ${colors.background};
 	padding: 0.2rem 0.5rem;
 	flex-grow: 1;
 	text-overflow: ellipsis;
