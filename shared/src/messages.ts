@@ -28,6 +28,7 @@ export enum MessageType {
 	PlayerPass,
 	PlaceTile,
 	AdminChange,
+	AdminLogin,
 }
 
 /**
@@ -164,6 +165,13 @@ export interface SponsorCompetition {
 	}
 }
 
+export interface AdminLogin {
+	type: typeof MessageType.AdminLogin
+	data: {
+		password: string
+	}
+}
+
 export type GameMessage =
 	| HandshakeRequest
 	| HandshakeResponse
@@ -181,3 +189,4 @@ export type GameMessage =
 	| BuyStandardProject
 	| BuyMilestone
 	| SponsorCompetition
+	| AdminLogin

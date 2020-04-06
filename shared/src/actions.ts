@@ -18,6 +18,7 @@ import {
 	BuyStandardProject,
 	BuyMilestone,
 	SponsorCompetition,
+	AdminLogin,
 } from './messages'
 import { GameState, StandardProjectType } from './game'
 import { CardEffectArgumentType } from './cards'
@@ -143,3 +144,11 @@ export const sponsorCompetition = (type: CompetitionType) =>
 			type,
 		},
 	} as SponsorCompetition)
+
+export const adminLogin = (password: string) =>
+	({
+		type: MessageType.AdminLogin,
+		data: {
+			password,
+		},
+	} as AdminLogin)

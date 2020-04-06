@@ -1,9 +1,7 @@
+import { Game } from '@/game/game'
+import { GameState, gameStateUpdate } from '@shared/index'
 import WebSocket from 'ws'
 import { Client } from './client'
-import { gameStateUpdate } from '@shared/index'
-import { Game } from '@/game/game'
-import { range } from '@/utils/collections'
-import { Bot } from '@/game/bot'
 
 export class Server {
 	game: Game
@@ -13,21 +11,26 @@ export class Server {
 
 	constructor(socket: WebSocket.Server, bots = 0) {
 		this.game = new Game({ bots })
-		this.game.onStateUpdated.on(s => {
-			const update = gameStateUpdate(s)
-			this.clients.forEach(c => {
-				c.send(update)
-			})
-		})
+		this.game.onStateUpdated.on(this.handleGameUpdate)
 
 		this.socket = socket
+		this.socket.on('connection', this.handleConnection)
+	}
 
-		this.socket.on('connection', s => {
-			const client = new Client(this.game, s)
-			client.onDisconnected.on(() => {
-				this.clients = this.clients.filter(i => i !== client)
-			})
-			this.clients.push(client)
+	handleConnection = (s: WebSocket) => {
+		const client = new Client(this.game, s)
+		client.onDisconnected.on(() => this.handleDisconnect(client))
+		this.clients.push(client)
+	}
+
+	handleDisconnect = (client: Client) => {
+		this.clients = this.clients.filter(i => i !== client)
+	}
+
+	handleGameUpdate = (s: GameState) => {
+		const update = gameStateUpdate(s)
+		this.clients.forEach(c => {
+			c.send(update)
 		})
 	}
 }

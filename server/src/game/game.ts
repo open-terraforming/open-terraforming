@@ -1,27 +1,27 @@
+import { deepExtend, range, shuffle } from '@/utils/collections'
+import { nextColor } from '@/utils/colors'
+import { CardsLookupApi } from '@shared/cards'
+import { Competitions } from '@shared/competitions'
+import { COMPETITIONS_REWARDS } from '@shared/constants'
+import { Corporations } from '@shared/corporations'
 import {
 	GameState,
 	GameStateValue,
-	PlayerStateValue,
-	PlayerState
+	PlayerState,
+	PlayerStateValue
 } from '@shared/game'
-import { Card, CardsLookupApi } from '@shared/cards'
-import { Player } from './player'
-import { MyEvent } from 'src/utils/events'
-import { shuffle, range, deepExtend } from '@/utils/collections'
-import { defaultMap } from '@shared/map'
-import { Bot } from './bot'
 import { UpdateDeepPartial } from '@shared/index'
-import { Competitions } from '@shared/competitions'
-import { COMPETITIONS_REWARDS } from '@shared/constants'
-import { nextColor } from '@/utils/colors'
-import { Corporations } from '@shared/corporations'
-import { Cards } from '@shared/cards/list'
+import { defaultMap } from '@shared/map'
 import { drawCard } from '@shared/utils'
+import { MyEvent } from 'src/utils/events'
+import { Bot } from './bot'
+import { Player, CardPlayedEvent, TilePlacedEvent } from './player'
+import { randomPassword } from '@/utils/password'
 
 export interface GameConfig {
 	bots: number
+	adminPassword: string
 }
-
 export class Game {
 	config: GameConfig
 
@@ -48,6 +48,7 @@ export class Game {
 	constructor(config?: Partial<GameConfig>) {
 		this.config = {
 			bots: 0,
+			adminPassword: randomPassword(10),
 			...config
 		}
 	}
@@ -62,69 +63,72 @@ export class Game {
 	}
 
 	add(player: Player) {
-		if (this.players.length === 0) {
-			player.admin = true
+		if (this.players.find(p => p.id === player.id)) {
+			throw new Error(`ID ${player.id} is not unique player id`)
 		}
 
-		this.players.push(player)
-		if (!this.state.players.find(p => p.id === player.id)) {
-			this.state.players.push(player.state)
-		}
+		this.state.players.push(player.state)
 
 		player.onStateChanged.on(this.updated)
 
-		player.onCardPlayed.on(
-			({ player: playedBy, card, cardIndex: playedCardIndex }) => {
-				this.players.forEach(player => {
-					player.gameState.usedCards
-						.map(c => [c, CardsLookupApi.get(c.code)] as const)
-						.forEach(([s, c], cardIndex) => {
-							c.passiveEffects.forEach(
-								e =>
-									e.onCardPlayed &&
-									e.onCardPlayed(
-										{
-											card: s,
-											cardIndex,
-											game: this.state,
-											player: player.gameState,
-											playerId: player.id
-										},
-										card,
-										playedCardIndex,
-										playedBy.state
-									)
+		// Dispatch passive events on player events
+		player.onCardPlayed.on(this.handleCardPlayed)
+		player.onTilePlaced.on(this.handleTilePlaced)
+
+		this.updated()
+	}
+
+	handleCardPlayed = ({
+		player: playedBy,
+		card,
+		cardIndex: playedCardIndex
+	}: CardPlayedEvent) => {
+		this.players.forEach(player => {
+			player.gameState.usedCards
+				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c], cardIndex) => {
+					c.passiveEffects.forEach(
+						e =>
+							e.onCardPlayed &&
+							e.onCardPlayed(
+								{
+									card: s,
+									cardIndex,
+									game: this.state,
+									player: player.gameState,
+									playerId: player.id
+								},
+								card,
+								playedCardIndex,
+								playedBy.state
 							)
-						})
+					)
 				})
-			}
-		)
-
-		player.onTilePlaced.on(({ player: playedBy, cell }) => {
-			this.players.forEach(player => {
-				player.gameState.usedCards
-					.map(c => [c, CardsLookupApi.get(c.code)] as const)
-					.forEach(([s, c], cardIndex) => {
-						c.passiveEffects.forEach(
-							e =>
-								e.onTilePlaced &&
-								e.onTilePlaced(
-									{
-										card: s,
-										cardIndex,
-										game: this.state,
-										player: player.gameState,
-										playerId: player.id
-									},
-									cell,
-									playedBy.state
-								)
-						)
-					})
-			})
 		})
+	}
 
-		this.onStateUpdated.emit(this.state)
+	handleTilePlaced = ({ player: playedBy, cell }: TilePlacedEvent) => {
+		this.players.forEach(player => {
+			player.gameState.usedCards
+				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c], cardIndex) => {
+					c.passiveEffects.forEach(
+						e =>
+							e.onTilePlaced &&
+							e.onTilePlaced(
+								{
+									card: s,
+									cardIndex,
+									game: this.state,
+									player: player.gameState,
+									playerId: player.id
+								},
+								cell,
+								playedBy.state
+							)
+					)
+				})
+		})
 	}
 
 	remove(player: Player) {
@@ -135,7 +139,7 @@ export class Game {
 	}
 
 	all(state: PlayerStateValue) {
-		return this.state.players.every(p => p.gameState.state === state)
+		return this.players.every(p => p.gameState.state === state)
 	}
 
 	get currentPlayer() {

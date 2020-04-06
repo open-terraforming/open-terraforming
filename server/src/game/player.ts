@@ -38,12 +38,12 @@ import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
 
-interface CardPlayedEvent {
+export interface CardPlayedEvent {
 	player: Player
 	card: Card
 	cardIndex: number
 }
-interface TilePlacedEvent {
+export interface TilePlacedEvent {
 	player: Player
 	cell: GridCell
 }
@@ -91,7 +91,7 @@ export class Player {
 		session: uuidv4()
 	} as PlayerState
 
-	admin = true
+	admin = false
 
 	onStateChanged = new MyEvent<Readonly<PlayerState>>()
 	onCardPlayed = new MyEvent<Readonly<CardPlayedEvent>>()
@@ -829,5 +829,13 @@ export class Player {
 		this.actionPlayed()
 
 		this.updated()
+	}
+
+	adminLogin(password: string) {
+		if (this.game.config.adminPassword !== password) {
+			throw new Error('Invalid admin password')
+		}
+
+		this.admin = true
 	}
 }
