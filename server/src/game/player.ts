@@ -1,44 +1,42 @@
+import { range } from '@/utils/collections'
 import {
-	PlayerState,
-	PlayerStateValue,
-	GameStateValue,
-	UsedCardState,
-	GridCellSpecial,
-	GridCell,
-	GridCellContent,
-	GridCellType,
-	StandardProjectType
-} from '@shared/game'
-import { MyEvent } from 'src/utils/events'
-import { Game } from './game'
-import { v4 as uuidv4 } from 'uuid'
-import { Corporations } from '@shared/corporations'
-import {
-	CARD_PRICE,
-	MILESTONES_LIMIT,
-	MILESTONE_PRICE,
-	COMPETITIONS_LIMIT,
-	COMPETITIONS_PRICES,
-	MILESTONE_REWARD
-} from '@shared/constants'
-import {
-	CardCondition,
-	CardCategory,
-	CardEffectArgumentType,
-	CardEffectTarget,
-	CardsLookupApi,
 	Card,
 	CardCallbackContext,
-	CardType,
-	CardEffect
+	CardCategory,
+	CardCondition,
+	CardEffect,
+	CardEffectArgumentType,
+	CardsLookupApi,
+	CardType
 } from '@shared/cards'
-import { range } from '@/utils/collections'
-import { cellByCoords, adjustedCardPrice } from '@shared/cards/utils'
-import { PlacementConditionsLookup, canPlace } from '@shared/placements'
-import { allCells, adjacentCells } from '@shared/utils'
-import { Projects } from '@shared/projects'
-import { MilestoneType, Milestones } from '@shared/milestones'
+import { adjustedCardPrice, cellByCoords } from '@shared/cards/utils'
 import { CompetitionType } from '@shared/competitions'
+import {
+	CARD_PRICE,
+	COMPETITIONS_LIMIT,
+	COMPETITIONS_PRICES,
+	MILESTONES_LIMIT,
+	MILESTONE_PRICE,
+	MILESTONE_REWARD
+} from '@shared/constants'
+import { Corporations } from '@shared/corporations'
+import {
+	GameStateValue,
+	GridCell,
+	GridCellContent,
+	GridCellSpecial,
+	PlayerState,
+	PlayerStateValue,
+	StandardProjectType,
+	UsedCardState
+} from '@shared/game'
+import { Milestones, MilestoneType } from '@shared/milestones'
+import { canPlace, PlacementConditionsLookup } from '@shared/placements'
+import { Projects } from '@shared/projects'
+import { adjacentCells, allCells, drawCards } from '@shared/utils'
+import { MyEvent } from 'src/utils/events'
+import { v4 as uuidv4 } from 'uuid'
+import { Game } from './game'
 
 interface CardPlayedEvent {
 	player: Player
@@ -136,8 +134,6 @@ export class Player {
 	}
 
 	get isPlaying() {
-		console.log(this.game.currentPlayer.id, this.id, this.gameState.state)
-
 		return (
 			this.game.currentPlayer.id === this.id &&
 			this.gameState.state === PlayerStateValue.Playing
@@ -201,9 +197,11 @@ export class Player {
 		this.gameState.heat = corp.startingHeat
 		this.gameState.energy = corp.startingEnergy
 
-		range(0, corp.startingCards).forEach(() => {
-			this.gameState.cards.push(this.game.nextCard().code)
-		})
+		if (corp.startingCards > 0) {
+			this.gameState.cards.push(
+				...drawCards(this.game.state, corp.startingCards)
+			)
+		}
 
 		if (corp.pickingCards) {
 			this.giveCards(10)
@@ -246,6 +244,10 @@ export class Player {
 			...this.gameState.cards,
 			...cards.map(c => this.gameState.cardsPick[c])
 		]
+
+		this.game.state.discarded.push(
+			...this.gameState.cardsPick.filter((_c, i) => !cards.includes(i))
+		)
 
 		this.gameState.cardsPick = []
 		this.gameState.cardsPickFree = false
@@ -323,13 +325,14 @@ export class Player {
 			)
 		}
 
-		const cardState = {
+		const cardState: UsedCardState = {
 			code: cardCode,
 			animals: 0,
 			microbes: 0,
 			played: false,
-			science: 0
-		} as UsedCardState
+			science: 0,
+			fighters: 0
+		}
 
 		const ctx = {
 			player: this.gameState,
@@ -346,18 +349,16 @@ export class Player {
 		this.gameState.ore -= useOre
 
 		card.playEffects.forEach((e, i) => {
-			// Run dynamic arguments
-			e.args.forEach((a, ai) => {
-				if (!playArguments[i]) {
-					playArguments[i] = []
-				}
+			// Make sure arguments exist
+			if (!playArguments[i]) {
+				playArguments[i] = []
+			}
 
-				if (a.type === CardEffectTarget.DrawnCards) {
-					console.log('Drawing', a.drawnCards)
-					playArguments[i][ai] = range(0, a.drawnCards || 1).map(
-						() => this.game.nextCard().code
+			e.args.forEach((_a, ai) => {
+				if (playArguments[i][ai] === undefined) {
+					throw new Error(
+						`Argument #${ai} of playEffect ${i} (${e.description}) is missing`
 					)
-					console.log(playArguments[i][ai])
 				}
 			})
 
@@ -413,10 +414,7 @@ export class Player {
 	}
 
 	giveCards(count: number) {
-		this.gameState.cardsPick = []
-		for (let i = 0; i < count; i++) {
-			this.gameState.cardsPick.push(this.game.nextCard().code)
-		}
+		this.gameState.cardsPick = drawCards(this.game.state, count)
 	}
 
 	placeTile(x: number, y: number) {
@@ -484,9 +482,9 @@ export class Player {
 		this.gameState.titan += cell.titan
 		this.gameState.plants += cell.plants
 
-		range(0, cell.cards).forEach(() => {
-			this.gameState.cards.push(this.game.nextCard().code)
-		})
+		if (cell.cards > 0) {
+			this.gameState.cards.push(...drawCards(this.game.state, cell.cards))
+		}
 
 		switch (pendingTile.type) {
 			case GridCellContent.Forest: {
@@ -535,12 +533,6 @@ export class Player {
 			e.args.forEach((a, ai) => {
 				if (!playArguments[i]) {
 					playArguments[i] = []
-				}
-
-				if (a.type === CardEffectTarget.DrawnCards) {
-					playArguments[i][ai] = range(0, a.drawnCards || 1).map(
-						() => this.game.nextCard().code
-					)
 				}
 			})
 
@@ -658,11 +650,13 @@ export class Player {
 		} else {
 			cardState.played = true
 
+			/*
 			this.onCardPlayed.emit({
 				card,
 				cardIndex: ctx.cardIndex,
 				player: this
 			})
+			*/
 
 			if (
 				this.gameState.placingTile.length === 0 &&

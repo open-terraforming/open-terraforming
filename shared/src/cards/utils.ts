@@ -4,8 +4,8 @@ import {
 	GridCellContent,
 	GridCellOther,
 	GridCellSpecial,
-	PlayerState,
 	PlayerGameState,
+	PlayerState,
 } from '../game'
 import {
 	canPlace,
@@ -13,7 +13,7 @@ import {
 	PlacementConditionsLookup,
 } from '../placements'
 import { progressResToStr, withUnits } from '../units'
-import { adjacentCells, allCells } from '../utils'
+import { adjacentCells, allCells, drawCards } from '../utils'
 import { CardsLookupApi } from './lookup'
 import {
 	Card,
@@ -121,12 +121,6 @@ export const effectArg = (
 export const condition = <T extends (CardEffectArgumentType | undefined)[]>(
 	c: CardCondition<T>
 ): CardCondition<T> => c
-
-export const drawnCards = (amount = 1) =>
-	effectArg({
-		type: CardEffectTarget.DrawnCards,
-		drawnCards: amount,
-	})
 
 export const cardCountCondition = (category: CardCategory, value: number) =>
 	condition({
@@ -506,12 +500,11 @@ export const convertResource = (
 
 export const cardsForResource = (res: Resource, count: number, cards: number) =>
 	effect({
-		args: [drawnCards(1)],
 		conditions: [resourceCondition(res, count)],
 		description: `Spend ${withUnits(res, count)} to draw ${cards} cards`,
-		perform: ({ player }, drawnCards: string[]) => {
+		perform: ({ player, game }) => {
 			player[res] -= count
-			player.cards.push(...drawnCards)
+			player.cards.push(...drawCards(game, cards))
 		},
 	})
 
@@ -601,11 +594,21 @@ export const cardResourceCondition = (res: CardResource, amount: number) =>
 		evaluate: ({ card }) => card[res] >= amount,
 	})
 
+export const cardHasResource = (res: CardResource) =>
+	condition({
+		description: `Card accepts ${res}`,
+		evaluate: ({ card }) => CardsLookupApi.get(card.code).resource === res,
+	})
+
 export const otherCardResourceChange = (res: CardResource, amount: number) =>
 	effect({
 		args: [
 			{
-				...cardArg(amount < 0 ? [cardResourceCondition(res, amount)] : []),
+				...cardArg(
+					amount < 0
+						? [cardResourceCondition(res, amount)]
+						: [cardHasResource(res)]
+				),
 				descriptionPrefix:
 					amount > 0
 						? `Add ${amount} ${res} to`
@@ -720,7 +723,15 @@ export const productionChangeForTags = (
 	return effect({
 		description: `Increase your ${res} production by ${change} for each ${CardCategory[tag]} card you have`,
 		perform: ({ player }) => {
-			player[prod] += change
+			player[prod] +=
+				change *
+				player.usedCards.reduce(
+					(acc, c) =>
+						acc +
+						CardsLookupApi.get(c.code).categories.filter((c) => c === tag)
+							.length,
+					0
+				)
 		},
 	})
 }

@@ -13,7 +13,6 @@ import {
 	countGridContent,
 	condition,
 	placeTile,
-	drawnCards,
 	passiveEffect,
 	productionChange,
 	cardCountCondition,
@@ -30,6 +29,7 @@ import {
 	GridCellType,
 } from '../game'
 import { withUnits } from '../units'
+import { drawCard, drawCards } from '../utils'
 
 export const convertTopCardToCardResource = (
 	category: CardCategory,
@@ -37,26 +37,27 @@ export const convertTopCardToCardResource = (
 	amount: number
 ) =>
 	effect({
-		args: [drawnCards(1)],
 		conditions: [resourceCondition('money', 1)],
 		description: `Spend 1 $ to reveal top card of the draw deck. If the card has ${CardCategory[category]} tag, add ${amount} ${res} resource here`,
-		perform: ({ player, card }, drawnCards: string[]) => {
-			const drawn = CardsLookupApi.get(drawnCards[0])
+		perform: ({ player, game, card }) => {
+			const drawnCard = drawCard(game)
+			const drawn = CardsLookupApi.get(drawnCard)
 
 			player.money -= 1
 
 			if (drawn.categories.includes(category)) {
 				card[res] += amount
 			}
+
+			game.discarded.push(drawnCard)
 		},
 	})
 
 export const pickTopCards = (count: number, pickCount?: number, free = false) =>
 	effect({
-		args: [drawnCards(count)],
 		description: `Look at top ${count} cards and either buy them or discard them`,
-		perform: ({ player }, drawnCards: string[]) => {
-			player.cardsPick = drawnCards
+		perform: ({ player, game }) => {
+			player.cardsPick = drawCards(game, count)
 			player.cardsPickFree = free
 			player.cardsPickLimit = pickCount || 0
 			player.state = PlayerStateValue.PickingCards
@@ -65,10 +66,9 @@ export const pickTopCards = (count: number, pickCount?: number, free = false) =>
 
 export const getTopCards = (count: number) =>
 	effect({
-		args: [drawnCards(count)],
 		description: `Draw ${count} card(s)`,
-		perform: ({ player }, drawnCards: string[]) => {
-			player.cards.push(...drawnCards)
+		perform: ({ player, game }) => {
+			player.cards.push(...drawCards(game, count))
 		},
 	})
 
@@ -378,15 +378,18 @@ export const cardExchange = () =>
 				type: CardEffectTarget.Card,
 				cardConditions: [],
 				descriptionPrefix: 'Discard',
-				optional: true,
 				fromHand: true,
 			}),
-			drawnCards(1),
 		],
 		description: `Discard a card from hand to draw a new card`,
-		perform: ({ player }, cardIndex: number, [cardCode]: [string]) => {
+		perform: ({ player, game }, cardIndex: number) => {
+			if (cardIndex < 0 || cardIndex >= player.cards.length) {
+				throw new Error(`Invalid card index ${cardIndex}`)
+			}
+
+			game.discarded.push(player.cards[cardIndex])
 			player.cards.splice(cardIndex, 1)
-			player.cards.push(cardCode)
+			player.cards.push(drawCard(game))
 		},
 	})
 
@@ -559,18 +562,22 @@ export const productionForTags = (
 	return effect({
 		description:
 			resPerCard >= 1
-				? `Increase your ${res} production by ${resPerCard} per every ${CardCategory[tag]} card you played`
+				? `Increase your ${res} production by ${resPerCard} per every ${CardCategory[tag]} card you played (including this if applicable)`
 				: `Increase your ${res} production by 1 per every ${Math.round(
 						1 / resPerCard
-				  )} ${CardCategory[tag]} card(s) you played`,
+				  )} ${
+						CardCategory[tag]
+				  } card(s) you played (including this if applicable)`,
 		type: CardEffectType.Production,
-		perform: ({ player }) => {
+		perform: ({ player, card }) => {
 			player[resourceProduction[res]] += Math.floor(
 				player.usedCards
 					.map((c) => CardsLookupApi.get(c.code))
 					.reduce(
 						(acc, c) => acc + c.categories.filter((cat) => cat === tag).length,
-						0
+						CardsLookupApi.get(card.code).categories.filter(
+							(cat) => cat === tag
+						).length
 					) * resPerCard
 			)
 		},

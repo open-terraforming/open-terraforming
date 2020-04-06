@@ -40,3 +40,47 @@ export function keyMap<T, K extends KeysMatching<T, string | number>>(
 		return acc
 	}, source)
 }
+
+/**
+ * Shuffles array in place. ES6 version
+ * @param {Array} a items An array containing the items.
+ */
+export function shuffle<T>(a: T[]) {
+	for (let i = a.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1))
+		;[a[i], a[j]] = [a[j], a[i]]
+	}
+	return a
+}
+
+export const drawCard = (game: GameState) => {
+	if (game.cards.length === 0) {
+		game.cards = shuffle(game.discarded.slice(0))
+		game.discarded = []
+	}
+
+	if (game.cards.length === 0) {
+		throw new Error('There are no more cards')
+	}
+
+	return game.cards.pop() as string
+}
+
+export const drawCards = (game: GameState, count: number) =>
+	range(0, count).map(() => drawCard(game))
+
+/**
+ * Generates array containing numbers between start and end (excluding).
+ * @param start beginning number
+ * @param end ending number (excluding)
+ * @param step range step, defaults to 1
+ */
+export function range(start: number, end: number, step = 1) {
+	const result = [] as number[]
+
+	for (let i = start; i < end; i += step) {
+		result.push(i)
+	}
+
+	return result
+}

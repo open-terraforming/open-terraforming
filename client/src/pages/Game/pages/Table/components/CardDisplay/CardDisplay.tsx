@@ -1,4 +1,4 @@
-import { isNotUndefined } from '@/utils/collections'
+import { isNotUndefined, mapRight } from '@/utils/collections'
 import { Card, CardCategory, CardType } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -162,7 +162,8 @@ export const CardDisplay = <T extends CardInfo>({
 
 			<CardsContainer playableOnly={playable}>
 				{filtered.length === 0 && <NoCards>No cards</NoCards>}
-				{filtered.map(
+				{mapRight(
+					filtered,
 					c =>
 						c && (
 							<CardView

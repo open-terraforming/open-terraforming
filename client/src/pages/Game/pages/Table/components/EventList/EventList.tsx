@@ -51,14 +51,6 @@ export const EventList = ({}: Props) => {
 		setDisplayedEvents(d => d.slice(0, d.length - 1))
 	}
 
-	/*
-	useEffect(() => {
-		if (events.length > 100) {
-			setEvents(events.slice(events.length - 100))
-		}
-	}, [events])
-	*/
-
 	useEffect(() => {
 		if (game && lastGame) {
 			const diff = objDiff(lastGame, game) as GameState
@@ -187,7 +179,8 @@ export const EventList = ({}: Props) => {
 							newEvents.push({
 								type: EventType.TilePlaced,
 								playerId: cellChange.ownerId as number,
-								tile: cellChange.content
+								tile: cellChange.content,
+								other: cellChange.other
 							})
 						}
 					})

@@ -1,5 +1,5 @@
 import { Resource, CardResource, GameProgress } from '@shared/cards'
-import { GridCellContent } from '@shared/index'
+import { GridCellContent, GridCellOther } from '@shared/index'
 import { CompetitionType } from '@shared/competitions'
 import { MilestoneType } from '@shared/milestones'
 
@@ -69,6 +69,7 @@ type GameProgressChanged = {
 type TilePlaced = {
 	type: typeof EventType.TilePlaced
 	tile: GridCellContent
+	other?: GridCellOther
 	playerId: number
 }
 

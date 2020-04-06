@@ -15,6 +15,8 @@ import { Competitions } from '@shared/competitions'
 import { COMPETITIONS_REWARDS } from '@shared/constants'
 import { nextColor } from '@/utils/colors'
 import { Corporations } from '@shared/corporations'
+import { Cards } from '@shared/cards/list'
+import { drawCard } from '@shared/utils'
 
 export interface GameConfig {
 	bots: number
@@ -34,12 +36,12 @@ export class Game {
 		temperature: 0,
 		map: defaultMap(),
 		competitions: [],
-		milestones: []
+		milestones: [],
+		cards: shuffle(Object.keys(CardsLookupApi.data())),
+		discarded: []
 	} as GameState
 
 	players: Player[] = []
-
-	deck: Card[] = []
 
 	onStateUpdated = new MyEvent<Readonly<GameState>>()
 
@@ -295,23 +297,8 @@ export class Game {
 		this.updated()
 	}
 
-	nextCard(): Card {
-		if (this.deck && this.deck.length > 0) {
-			return this.deck.pop() as Card
-		}
-
-		this.shuffleCards()
-		return this.nextCard()
-	}
-
-	shuffleCards() {
-		const allCards = CardsLookupApi.data()
-		if (!allCards) {
-			throw new Error('No cards ready')
-		}
-
-		this.deck = [...Object.values(allCards)]
-		shuffle(this.deck)
+	nextCard() {
+		return drawCard(this.state)
 	}
 
 	adminChange(data: UpdateDeepPartial<GameState>) {

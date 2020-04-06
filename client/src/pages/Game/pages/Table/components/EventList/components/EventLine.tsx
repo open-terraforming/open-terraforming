@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useRef, useState } from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import { EventType, GameEvent } from '../types'
-import { PlayerState, GridCellContent } from '@shared/index'
+import { PlayerState, GridCellContent, GridCellOther } from '@shared/index'
 import { CardsLookupApi } from '@shared/cards'
 import { withUnits } from '@shared/units'
 import { ucFirst } from '@shared/utils'
@@ -112,7 +112,11 @@ export const EventLine = ({ event, players, animated, onDone }: Props) => {
 					<>
 						<PlayerSpan player={players[event.playerId]} />
 						{' placed '}
-						<CardSpanE>{GridCellContent[event.tile]}</CardSpanE>
+						<CardSpanE>
+							{event.other !== undefined
+								? GridCellOther[event.other]
+								: GridCellContent[event.tile]}
+						</CardSpanE>
 					</>
 				)
 			case EventType.CompetitionSponsored:

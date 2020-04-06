@@ -55,6 +55,9 @@ export interface GameState {
 
 	milestones: MilestoneState[]
 	competitions: CompetitionState[]
+
+	cards: string[]
+	discarded: string[]
 }
 
 export interface MilestoneState {

@@ -126,8 +126,6 @@ export enum CardEffectTarget {
 	Card,
 	// Type - [player: number, cardIndex: number]
 	PlayerCardResource,
-	// Type - codes: string[]
-	DrawnCards,
 	// Type - [choice: number, choiceParams: any[]]
 	EffectChoice,
 	// Type - [x: number, y: number]

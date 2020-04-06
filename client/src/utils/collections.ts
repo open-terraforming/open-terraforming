@@ -342,3 +342,23 @@ export const voidReduce = <T, R>(
 		return acc
 	}, accumulator)
 }
+
+export const voidReduceRight = <T, R>(
+	array: T[],
+	accumulator: R,
+	callback: (accumulator: R, item: T, index: number) => any
+) => {
+	return array.reduceRight((acc, item, index) => {
+		callback(acc, item, index)
+
+		return acc
+	}, accumulator)
+}
+
+export const mapRight = <T, R>(
+	array: T[],
+	callback: (item: T, index: number) => R
+): R[] =>
+	voidReduceRight(array, [] as R[], (acc, item, index) =>
+		acc.push(callback(item, index))
+	)
