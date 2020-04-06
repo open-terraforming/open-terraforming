@@ -104,6 +104,8 @@ const popIn = keyframes`
 const Container = styled.div<{ diffAnim: boolean }>`
 	border-right: 0.2rem solid ${colors.border};
 	position: relative;
+
+	z-index: 3;
 	width: 3.5rem;
 	transition: background-color 0.2s;
 	height: 100%;
@@ -140,6 +142,7 @@ const Production = styled.div<{ negative: boolean }>`
 
 const DiffAnim = styled.div<{ positive: boolean }>`
 	position: absolute;
+	z-index: 3;
 	left: 0;
 	top: 0;
 	animation-name: ${props => (props.positive ? popIn : popOut)};

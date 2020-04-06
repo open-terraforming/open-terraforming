@@ -35,7 +35,7 @@ export const CardPicker = () => {
 		<Modal
 			open={true}
 			contentStyle={{ width: '90%' }}
-			closeOnEscape={false}
+			allowClose={false}
 			header={'Pick cards'}
 			footer={
 				!canAfford ? (

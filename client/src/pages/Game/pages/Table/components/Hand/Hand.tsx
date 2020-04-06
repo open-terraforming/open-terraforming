@@ -23,7 +23,6 @@ export const Hand = ({
 	onClose: () => void
 	playing: boolean
 }) => {
-	const api = useApi()
 	const dispatch = useAppDispatch()
 	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
@@ -34,15 +33,8 @@ export const Hand = ({
 			CardsLookupApi.get(c)
 		) || []
 
-	const [selected, setSelected] = useState(undefined as number | undefined)
-
-	const selectedCard = useMemo(
-		() => (selected !== undefined ? cards && cards[selected] : undefined),
-		[selected]
-	)
-
 	const handleSelect = (index: number | undefined) => {
-		if (index && cards && state && player && game) {
+		if (index !== undefined && cards && state && player && game) {
 			const card = cards[index]
 
 			const adjusted = minimalCardPrice(card, state)
@@ -60,37 +52,16 @@ export const Hand = ({
 			if (adjusted > state.money || !playable) {
 				return
 			}
-		}
 
-		setSelected(index)
-	}
-
-	const handleConfirm = () => {
-		if (selectedCard && selected !== undefined) {
 			dispatch(
 				setTableState({
-					buyingCardIndex: selected
+					buyingCardIndex: index
 				})
 			)
+
+			onClose()
 		}
-
-		onClose()
 	}
-
-	const selectedPlayable = useMemo(
-		() =>
-			selectedCard &&
-			game &&
-			player &&
-			isCardPlayable(selectedCard, {
-				card: emptyCardState(selectedCard.code),
-				cardIndex: -1,
-				player: player.gameState,
-				playerId: player.id,
-				game: game
-			}),
-		[selectedCard]
-	)
 
 	return (
 		<Modal
@@ -98,34 +69,14 @@ export const Hand = ({
 			contentStyle={{ width: '90%' }}
 			onClose={onClose}
 			header={'Cards in your hand'}
-			footer={
-				<>
-					{playing && selectedCard && (
-						<Button
-							onClick={handleConfirm}
-							disabled={selected !== undefined && !selectedPlayable}
-						>
-							{`Play ${selectedCard.title}`}
-						</Button>
-					)}
-					<Button onClick={onClose}>Close</Button>
-				</>
-			}
+			footer={<Button onClick={onClose}>Close</Button>}
 		>
 			<CardDisplay
 				buying
 				onSelect={c => {
-					handleSelect(
-						c.length > 0 && c[c.length - 1].index !== selected
-							? c[c.length - 1].index
-							: undefined
-					)
+					handleSelect(c.length > 0 ? c[c.length - 1].index : undefined)
 				}}
-				selected={
-					selectedCard && selected !== undefined
-						? [{ card: selectedCard, index: selected }]
-						: []
-				}
+				selected={[]}
 				cards={cards.map((c, i) => ({ card: c, index: i }))}
 			/>
 		</Modal>

@@ -1,7 +1,6 @@
+import { CardCallbackContext, CardCondition } from '@shared/cards'
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { UsedCardState } from '@shared/index'
-import { CardCondition, CardCallbackContext } from '@shared/cards'
 
 type Props = {
 	cond: CardCondition
@@ -16,6 +15,6 @@ const Container = styled.div<{ fine: boolean }>`
 	${props =>
 		!props.fine &&
 		css`
-			color: #e10011;
+			color: #f12e41;
 		`}
 `

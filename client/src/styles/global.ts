@@ -2,6 +2,7 @@ import { createGlobalStyle } from 'styled-components'
 import reset from './reset'
 import mainColors from './mainColors'
 import { rgba, darken } from 'polished'
+import { colors } from '.'
 
 export const GlobalStyle = createGlobalStyle`
 ${reset} 
@@ -21,6 +22,21 @@ body {
 	font-size: 14px;
 	color: #ccc;
 }
+
+
+div::-webkit-scrollbar {
+	width: 1rem;
+	height: 1rem;
+}
+
+div::-webkit-scrollbar-track {
+	background-color: ${colors.background};
+}
+
+div::-webkit-scrollbar-thumb {
+	background-color: ${colors.border};
+}
+
 
 input[type=text],
 input[type=number],

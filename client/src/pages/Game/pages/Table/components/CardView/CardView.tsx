@@ -18,6 +18,7 @@ import { PlayEffect } from './components/PlayEffect'
 import { Resource } from './components/Resource'
 import { Tag } from './components/Tag'
 import mars from '@/assets/mars-icon.png'
+import { colors } from '@/styles'
 
 export const CardView = ({
 	card,
@@ -83,6 +84,7 @@ export const CardView = ({
 
 	return (
 		<Container
+			type={card.type}
 			selected={selected}
 			onClick={onClick}
 			playable={!evaluate || (playable && affordable)}
@@ -134,7 +136,7 @@ export const CardView = ({
 
 const typeToColor = {
 	[CardType.Action]: '#0F87E2',
-	[CardType.Building]: '#139B2F',
+	[CardType.Building]: '#56BA1B',
 	[CardType.Effect]: '#0F87E2 ',
 	[CardType.Event]: '#FF6868'
 } as const
@@ -143,11 +145,11 @@ const Container = styled.div<{
 	selected: boolean
 	playable: boolean
 	played: boolean
+	type: CardType
 }>`
-	background: ${props => (props.playable ? '#fff' : '#ddd')};
-	padding: 0.25rem;
-	border-radius: 12px;
-	color: #000;
+	border: 0.2rem solid ${props => typeToColor[props.type]};
+	background: ${colors.background};
+	color: #eee;
 	width: 200px;
 	flex-shrink: 0;
 	min-width: 0;
@@ -157,6 +159,12 @@ const Container = styled.div<{
 	margin: 0 0.5rem;
 	display: flex;
 	position: relative;
+
+	${props =>
+		!props.playable &&
+		css`
+			opacity: 0.6;
+		`}
 
 	${props =>
 		props.selected &&
@@ -177,12 +185,9 @@ const Head = styled.div`
 `
 
 const Action = styled.div`
-	background: #eee;
+	background: ${colors.background};
 	padding: 0.5rem;
-	border-bottom: 2px solid rgb(221, 221, 221);
-	border-right: 2px solid rgb(221, 221, 221);
-	border-top: 2px solid rgb(137, 137, 137);
-	border-left: 2px solid rgb(137, 137, 137);
+	border: 0.1rem solid ${colors.border};
 	&& {
 		margin-bottom: 1rem;
 	}
@@ -193,12 +198,12 @@ const ActionTitle = styled.div`
 	margin-right: auto;
 	width: 5rem;
 	margin-top: -1rem;
-	background: #fff;
-	border-top: 2px solid rgb(221, 221, 221);
-	border-left: 2px solid rgb(221, 221, 221);
-	border-bottom: 2px solid rgb(137, 137, 137);
-	border-right: 2px solid rgb(137, 137, 137);
+	background: ${colors.background};
+	border: 0.1rem solid ${colors.border};
 	text-align: center;
+	padding: 0.1rem 0;
+	color: #ccc;
+	margin-bottom: 0.2rem;
 `
 
 const Cost = styled.div<{ affordable: boolean }>`
@@ -209,6 +214,7 @@ const Cost = styled.div<{ affordable: boolean }>`
 		border-left: 2px solid rgb(221, 221, 221);
 		border-bottom: 2px solid rgb(137, 137, 137);
 		border-right: 2px solid rgb(137, 137, 137);
+
 		position: absolute;
 		${props =>
 			props.affordable
@@ -258,8 +264,6 @@ const Title = styled.div`
 `
 
 const Inner = styled.div<{ type: CardType }>`
-	border: 4px solid ${props => typeToColor[props.type]};
-	border-radius: 12px;
 	display: flex;
 	flex-direction: column;
 	overflow: visible;
@@ -285,7 +289,7 @@ const Description = styled.div`
 `
 
 const Played = styled.div`
-	color: #e10011;
+	color: #f12e41;
 `
 
 const VP = styled.div`

@@ -3,8 +3,8 @@ import { Modal } from '@/components/Modal/Modal'
 import { setTableState } from '@/store/modules/table'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { CardsLookupApi, CardType } from '@shared/cards'
-import { isCardActionable, card } from '@shared/cards/utils'
-import React, { useMemo, useState } from 'react'
+import { isCardActionable } from '@shared/cards/utils'
+import React from 'react'
 import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
 
 export const PlayedCards = ({
@@ -29,78 +29,50 @@ export const PlayedCards = ({
 			} as Required<CardInfo>)
 	)
 
-	const [selected, setSelected] = useState(
-		undefined as Required<CardInfo> | undefined
-	)
-
-	const handleConfirm = () => {
-		if (selected !== undefined) {
-			dispatch(
-				setTableState({
-					playingCardIndex: selected.index
-				})
-			)
-		}
-
-		onClose()
-	}
-
 	const handleSelect = (cards: Required<CardInfo>[]) => {
 		const newlySelected = cards[cards.length - 1]
 
 		if (newlySelected) {
-			if (
-				newlySelected.card.type !== CardType.Action ||
-				newlySelected.state.played
-			) {
-				return
+			const card = newlySelected.card
+
+			const playable =
+				card &&
+				player &&
+				game &&
+				card.type === CardType.Action &&
+				isCardActionable(card, {
+					card: newlySelected.state,
+					cardIndex: newlySelected.index,
+					player: player.gameState,
+					playerId: player.id,
+					game: game
+				})
+
+			if (playable) {
+				dispatch(
+					setTableState({
+						playingCardIndex: newlySelected.index
+					})
+				)
+
+				onClose()
 			}
 		}
-
-		setSelected(newlySelected)
 	}
-
-	const selectedPlayable = useMemo(
-		() =>
-			selected &&
-			game &&
-			player &&
-			isCardActionable(selected.card, {
-				card: selected.state,
-				cardIndex: selected.index,
-				player: player.gameState,
-				playerId: player.id,
-				game: game
-			}),
-		[selected]
-	)
-
-	const selectedList = useMemo(() => (selected ? [selected] : []), [selected])
 
 	return (
 		<Modal
-			open={true}
+			open
+			allowClose
 			contentStyle={{ width: '90%' }}
 			onClose={onClose}
 			header={'Cards on table'}
-			footer={
-				<>
-					{selected && playing && (
-						<Button
-							onClick={handleConfirm}
-							disabled={selected !== undefined && !selectedPlayable}
-						>
-							{`Play ${selected.card.title}`}
-						</Button>
-					)}
-					<Button onClick={onClose}>Close</Button>
-				</>
-			}
+			footer={<Button onClick={onClose}>Close</Button>}
 		>
 			<CardDisplay
 				cards={cards || []}
 				onSelect={handleSelect}
-				selected={selectedList}
+				selected={[]}
 				defaultType={CardType.Action}
 			/>
 		</Modal>

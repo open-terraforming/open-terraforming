@@ -43,7 +43,7 @@ export const CardSelector = ({
 		<Modal
 			open={true}
 			contentStyle={{ width: '90%' }}
-			closeOnEscape={false}
+			allowClose={false}
 			header={title}
 			footer={
 				<Button

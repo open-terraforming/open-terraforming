@@ -19,6 +19,6 @@ const Container = styled.div<{ fine: boolean }>`
 	${props =>
 		!props.fine &&
 		css`
-			color: #e10011;
+			color: #f12e41;
 		`}
 `

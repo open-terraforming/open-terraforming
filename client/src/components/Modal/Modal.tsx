@@ -17,7 +17,7 @@ export interface ModalProps {
 	open?: boolean
 	onClose?: () => void
 	disablePortal?: boolean
-	closeOnEscape?: boolean
+	allowClose?: boolean
 	stretchFooterButtons?: boolean
 }
 
@@ -33,14 +33,15 @@ export const Modal = ({
 	footerStyle,
 	bodyStyle,
 	stretchFooterButtons = true,
-	closeOnEscape = true
+	allowClose: allowClose = true
 }: ModalProps) => {
 	const stopEvent = useCallback((e: React.MouseEvent) => {
+		e.stopPropagation()
 		e.nativeEvent.stopImmediatePropagation()
 	}, [])
 
 	useWindowEvent('keyup', (e: KeyboardEvent) => {
-		if (closeOnEscape && open && onClose && e.key === 'Escape') {
+		if (allowClose && open && onClose && e.key === 'Escape') {
 			onClose()
 		}
 	})
@@ -48,7 +49,7 @@ export const Modal = ({
 	const popup = (
 		<>
 			{open && (
-				<PopupBackground>
+				<PopupBackground onClick={allowClose ? onClose : undefined}>
 					<Popup style={contentStyle}>
 						<Dialog role="dialog" onClick={stopEvent}>
 							{header && (

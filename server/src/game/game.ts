@@ -39,7 +39,8 @@ export class Game {
 		competitions: [],
 		milestones: [],
 		cards: shuffle(Object.keys(CardsLookupApi.data())),
-		discarded: []
+		discarded: [],
+		started: new Date().toISOString()
 	} as GameState
 
 	players: Player[] = []

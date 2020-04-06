@@ -58,6 +58,9 @@ export interface GameState {
 
 	cards: string[]
 	discarded: string[]
+
+	/** ISO Date of game start */
+	started: string
 }
 
 export interface MilestoneState {
