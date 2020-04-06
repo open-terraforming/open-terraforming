@@ -84,6 +84,7 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 			!allCells(game).find(
 				(c) =>
 					c.ownerId === playerId &&
+					c.content !== GridCellContent.Ocean &&
 					!!adjacentCells(game, c.x, c.y).find((c) => !c.content)
 			) ||
 			!!adjacentCells(game, cell.x, cell.y).find(

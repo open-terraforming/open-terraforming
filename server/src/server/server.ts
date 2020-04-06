@@ -13,12 +13,14 @@ export class Server {
 		this.game = new Game({ bots })
 		this.game.onStateUpdated.on(this.handleGameUpdate)
 
+		console.log('Admin password', this.game.config.adminPassword)
+
 		this.socket = socket
 		this.socket.on('connection', this.handleConnection)
 	}
 
 	handleConnection = (s: WebSocket) => {
-		const client = new Client(this.game, s)
+		const client = new Client(this, s)
 		client.onDisconnected.on(() => this.handleDisconnect(client))
 		this.clients.push(client)
 	}

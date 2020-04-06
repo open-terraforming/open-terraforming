@@ -10,6 +10,13 @@ export type WithOptional<T, K extends keyof T> = Omit<T, K> &
 	Partial<Pick<T, K>>
 
 export type Resource = 'money' | 'ore' | 'titan' | 'plants' | 'energy' | 'heat'
+export type Production =
+	| 'moneyProduction'
+	| 'oreProduction'
+	| 'titanProduction'
+	| 'plantsProduction'
+	| 'energyProduction'
+	| 'heatProduction'
 
 export type CardResource = 'microbes' | 'animals' | 'science' | 'fighters'
 
@@ -144,6 +151,7 @@ export interface CardEffectArgument {
 	maxAmount?: number
 	optional: boolean
 	resource?: Resource
+	production?: Production
 	fromHand?: boolean
 	effects?: CardEffect[]
 }

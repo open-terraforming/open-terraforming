@@ -1,17 +1,17 @@
-import WebSocket from 'ws'
 import { Player } from '@/game/player'
 import { MyEvent } from '@/utils/events'
 import {
 	GameMessage,
-	MessageType,
-	handshakeResponse,
-	VERSION,
+	GameStateValue,
 	HandshakeError,
+	handshakeResponse,
+	MessageType,
 	PlayerStateValue,
 	serverMessage,
-	GameStateValue
+	VERSION
 } from '@shared/index'
-import { Game } from '@/game/game'
+import WebSocket from 'ws'
+import { Server } from './server'
 
 enum ClientState {
 	Initializing,
@@ -19,7 +19,7 @@ enum ClientState {
 }
 
 export class Client {
-	game: Game
+	server: Server
 	socket: WebSocket
 	state: ClientState
 
@@ -27,8 +27,12 @@ export class Client {
 
 	onDisconnected = new MyEvent()
 
-	constructor(game: Game, socket: WebSocket) {
-		this.game = game
+	get game() {
+		return this.server.game
+	}
+
+	constructor(server: Server, socket: WebSocket) {
+		this.server = server
 		this.state = ClientState.Initializing
 
 		this.socket = socket
@@ -37,12 +41,15 @@ export class Client {
 	}
 
 	handleClose = () => {
-		if (this.player) {
+		const player = this.player
+		if (player) {
 			// Remove player when in lobby, mark as disconnected otherwise
 			if (this.game.state.state === GameStateValue.WaitingForPlayers) {
-				this.game.remove(this.player)
+				this.game.remove(player)
 			} else {
-				this.player.state.connected = false
+				player.state.connected = !!this.server.clients.find(
+					p => p.player?.id === player.id
+				)
 				this.game.checkState()
 			}
 		}
@@ -75,6 +82,8 @@ export class Client {
 						if (session) {
 							const p = this.game.players.find(p => p.state.session === session)
 							if (p) {
+								console.log('Session matched, joining as existing player')
+
 								this.player = p
 								this.player.state.connected = true
 								this.player.updated()

@@ -112,6 +112,7 @@ export const playerResourceChange = (
 								: `Remove ${withUnits(res, -change)} from`,
 						type: CardEffectTarget.Player,
 						optional: false,
+						resource: res,
 						playerConditions:
 							change < 0
 								? [
@@ -200,6 +201,7 @@ export const playerProductionChange = (res: Resource, change: number) => {
 						: [],
 				descriptionPrefix: `Decrease ${res} production of`,
 				descriptionPostfix: `by ${-change} of`,
+				production: prod,
 			}),
 		],
 		conditions: [
