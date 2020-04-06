@@ -85,8 +85,8 @@ export interface MapState {
 	special: GridCell[]
 	grid: GridCell[][]
 
-	temperatureMilestones: ProgressMilestone[]
-	oxygenMilestones: ProgressMilestone[]
+	temperatureMilestones: ProgressMilestoneItem[]
+	oxygenMilestones: ProgressMilestoneItem[]
 }
 
 export enum GridCellType {
@@ -248,9 +248,8 @@ export enum ProgressMilestoneType {
 	Temperature,
 }
 
-export interface ProgressMilestone {
-	icon: ProgressMilestoneType
+export interface ProgressMilestoneItem {
+	type: ProgressMilestoneType
 	value: number
 	used: boolean
-	effects: ((game: GameState, player: PlayerState) => void)[]
 }

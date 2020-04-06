@@ -1,7 +1,7 @@
 import { colors } from '@/styles'
 import { faTint, faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ProgressMilestone, ProgressMilestoneType } from '@shared/index'
+import { ProgressMilestoneType, ProgressMilestoneItem } from '@shared/index'
 import React, { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
@@ -9,13 +9,13 @@ import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 type Side = 'left' | 'right'
 
 type Props = {
-	milestone: ProgressMilestone
+	milestone: ProgressMilestoneItem
 	side: Side
 }
 
 export const MilestoneDisplay = ({ milestone, side }: Props) => {
 	const icon = useMemo(() => {
-		switch (milestone.icon) {
+		switch (milestone.type) {
 			case ProgressMilestoneType.Ocean:
 				return <FontAwesomeIcon icon={faTint} title={'Build an Ocean'} />
 			case ProgressMilestoneType.Heat:
@@ -32,9 +32,9 @@ export const MilestoneDisplay = ({ milestone, side }: Props) => {
 					/>
 				)
 			default:
-				return <>{ProgressMilestoneType[milestone.icon]}</>
+				return <>{ProgressMilestoneType[milestone.type]}</>
 		}
-	}, [milestone.icon])
+	}, [milestone.type])
 
 	return <E side={side}>{icon}</E>
 }

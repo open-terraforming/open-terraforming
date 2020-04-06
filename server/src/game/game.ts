@@ -17,6 +17,7 @@ import { MyEvent } from 'src/utils/events'
 import { Bot } from './bot'
 import { Player, CardPlayedEvent, TilePlacedEvent } from './player'
 import { randomPassword } from '@/utils/password'
+import { ProgressMilestones } from '@shared/progress-milestones'
 
 export interface GameConfig {
 	bots: number
@@ -67,6 +68,7 @@ export class Game {
 			throw new Error(`ID ${player.id} is not unique player id`)
 		}
 
+		this.players.push(player)
 		this.state.players.push(player.state)
 
 		player.onStateChanged.on(this.updated)
@@ -197,29 +199,29 @@ export class Game {
 			case GameStateValue.PickingCards:
 				if (this.all(PlayerStateValue.WaitingForTurn)) {
 					this.state.currentPlayer = this.state.startingPlayer
-					this.state.startingPlayer =
-						(this.state.startingPlayer + 1) % this.players.length
 					this.nextPlayer()
 					this.state.state = GameStateValue.GenerationInProgress
 				}
 				break
 
 			case GameStateValue.GenerationInProgress:
-				/*
 				this.state.map.oxygenMilestones.forEach(m => {
 					if (!m.used && m.value <= this.state.oxygen) {
 						m.used = true
-						m.effects.forEach(e => e(this.state, this.currentPlayer))
+						ProgressMilestones[m.type].effects.forEach(e =>
+							e(this.state, this.currentPlayer)
+						)
 					}
 				})
 
 				this.state.map.temperatureMilestones.forEach(m => {
 					if (!m.used && m.value <= this.state.temperature) {
 						m.used = true
-						m.effects.forEach(e => e(this.state, this.currentPlayer))
+						ProgressMilestones[m.type].effects.forEach(e =>
+							e(this.state, this.currentPlayer)
+						)
 					}
 				})
-				*/
 
 				if (!this.currentPlayer.connected) {
 					this.currentPlayer.gameState.state = PlayerStateValue.Passed
@@ -297,6 +299,9 @@ export class Game {
 
 			this.state.generation++
 		}
+
+		this.state.startingPlayer =
+			(this.state.startingPlayer + 1) % this.players.length
 
 		this.updated()
 	}

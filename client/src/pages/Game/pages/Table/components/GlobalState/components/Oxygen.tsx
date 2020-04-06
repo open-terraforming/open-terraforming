@@ -2,14 +2,14 @@ import React, { useState, useEffect, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { range, keyMap } from '@/utils/collections'
 import { DiffAnim } from './DiffAnim'
-import { ProgressMilestone } from '@shared/index'
+import { ProgressMilestoneItem } from '@shared/index'
 import { MilestoneDisplay } from './MilestoneDisplay'
 
 type Props = {
 	start: number
 	current: number
 	target: number
-	milestones: ProgressMilestone[]
+	milestones: ProgressMilestoneItem[]
 }
 
 export const Oxygen = ({ current, target, start, milestones }: Props) => {

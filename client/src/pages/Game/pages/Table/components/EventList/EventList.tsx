@@ -61,6 +61,11 @@ export const EventList = ({}: Props) => {
 					const player = lastGame.players[parseInt(playerIndex)]
 					const newPlayer = game.players[parseInt(playerIndex)]
 
+					// New player
+					if (!player) {
+						return
+					}
+
 					const gameChanges = changes.gameState
 
 					if (gameChanges) {

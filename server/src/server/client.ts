@@ -104,6 +104,7 @@ export class Client {
 						this.state = ClientState.Connected
 						this.player = new Player(this.game)
 						this.player.state.name = name
+						this.player.state.connected = true
 						this.game.add(this.player)
 
 						return handshakeResponse(

@@ -1,7 +1,7 @@
 import { keyMap, range } from '@/utils/collections'
 import { faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ProgressMilestone } from '@shared/index'
+import { ProgressMilestoneItem } from '@shared/index'
 import React, { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { DiffAnim } from './DiffAnim'
@@ -11,7 +11,7 @@ type Props = {
 	start: number
 	current: number
 	target: number
-	milestones: ProgressMilestone[]
+	milestones: ProgressMilestoneItem[]
 }
 
 export const Temperature = ({ start, current, target, milestones }: Props) => {
