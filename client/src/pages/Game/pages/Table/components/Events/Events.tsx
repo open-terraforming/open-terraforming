@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { PlayingChanged } from './components/PlayingChanged'
-import { effect } from '@shared/cards/utils'
 import { useAppStore } from '@/utils/hooks'
 import { objDiff } from '@/utils/collections'
 import { GameState } from '@shared/index'

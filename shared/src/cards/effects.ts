@@ -1,35 +1,518 @@
 import {
-	CardResource,
-	CardCategory,
-	CardEffectTarget,
-	Resource,
-	CardEffectType,
-} from './types'
-import {
-	effect,
-	resourceCondition,
-	effectArg,
-	cellTypeCondition,
-	countGridContent,
-	condition,
-	placeTile,
-	passiveEffect,
-	productionChange,
-	cardCountCondition,
-	resourceProduction,
-	cellArg,
-	cellByCoords,
-	cardArg,
-} from './utils'
-import { CardsLookupApi } from './lookup'
-import {
-	PlayerStateValue,
 	GridCellContent,
 	GridCellOther,
+	GridCellSpecial,
 	GridCellType,
+	PlayerState,
+	PlayerStateValue,
 } from '../game'
+import {
+	canPlace,
+	PlacementCode,
+	PlacementConditionsLookup,
+} from '../placements'
 import { withUnits } from '../units'
-import { drawCard, drawCards } from '../utils'
+import { allCells, drawCard, drawCards, flatten } from '../utils'
+import {
+	cardArg,
+	cellArg,
+	effectArg,
+	effectChoiceArg,
+	playerCardArg,
+} from './args'
+import {
+	cardCountCondition,
+	cardHasResource,
+	cardResourceCondition,
+	cellTypeCondition,
+	condition,
+	productionCondition,
+	resourceCondition,
+} from './conditions'
+import { CardsLookupApi } from './lookup'
+import {
+	CardCategory,
+	CardEffect,
+	CardEffectArgumentType,
+	CardEffectTarget,
+	CardEffectType,
+	CardResource,
+	GameProgress,
+	PlayerCondition,
+	Resource,
+	WithOptional,
+} from './types'
+import {
+	cellByCoords,
+	countGridContent,
+	gamePlayer,
+	resourceProduction,
+	resToPrice,
+} from './utils'
+
+export const effect = <T extends (CardEffectArgumentType | undefined)[]>(
+	c: WithOptional<CardEffect<T>, 'args' | 'conditions' | 'type'>
+): CardEffect<T> =>
+	({
+		args: [],
+		conditions: [],
+		type: CardEffectType.Other,
+		...c,
+	} as CardEffect<T>)
+
+export const resourceChange = (res: Resource, change: number) =>
+	effect({
+		conditions: change < 0 ? [resourceCondition(res, -change)] : [],
+		description:
+			change > 0
+				? `+ ${withUnits(res, change)}`
+				: `- ${withUnits(res, -change)}`,
+		type: CardEffectType.Resource,
+		perform: ({ player }) => {
+			player[res] += change
+		},
+	})
+
+export const productionChange = (res: Resource, change: number) => {
+	const prod = resourceProduction[res]
+	return effect({
+		conditions:
+			change < 0 && res !== 'money' ? [productionCondition(res, -change)] : [],
+		type: CardEffectType.Production,
+		description:
+			change > 0
+				? `+ ${change} ${res} production`
+				: `- ${-change} ${res} production`,
+		perform: ({ player }) => {
+			player[prod] += change
+		},
+	})
+}
+
+export const doNothing = () =>
+	effect({
+		description: 'Do nothing',
+		perform: () => {
+			void 0
+		},
+	})
+
+export const playerResourceChange = (
+	res: Resource,
+	change: number,
+	optional = true
+) => {
+	return effect({
+		args: [
+			!optional
+				? effectArg({
+						descriptionPrefix:
+							change > 0
+								? `Give ${withUnits(res, change)} to`
+								: `Remove ${withUnits(res, -change)} from`,
+						type: CardEffectTarget.Player,
+						optional: false,
+						playerConditions:
+							change < 0
+								? [
+										resourceCondition(
+											res,
+											optional ? 1 : -change
+										) as PlayerCondition,
+								  ]
+								: [],
+				  })
+				: effectArg({
+						descriptionPrefix: change > 0 ? 'Give to' : `Remove from`,
+						type: CardEffectTarget.PlayerResource,
+						maxAmount: Math.abs(change),
+						resource: res,
+						optional,
+						playerConditions:
+							change < 0
+								? [
+										resourceCondition(
+											res,
+											optional ? 1 : -change
+										) as PlayerCondition,
+								  ]
+								: [],
+				  }),
+		],
+		conditions:
+			!optional && change < 0
+				? [
+						condition({
+							description: `There has to be player with at least ${withUnits(
+								res,
+								-change
+							)}`,
+							evaluate: ({ game, playerId }) =>
+								!!game.players.find(
+									(p) => p.id !== playerId && p.gameState[res] >= -change
+								),
+						}),
+				  ]
+				: [],
+		description:
+			change > 0
+				? `Give ${optional ? ' up to' : ''} ${withUnits(
+						res,
+						change
+				  )} to any player`
+				: `Remove ${optional ? ' up to' : ''} ${withUnits(
+						res,
+						-change
+				  )} from any player`,
+		perform: ({ game }, arg: number | [number, number] = [-1, 0]) => {
+			const [playerId, amount] = Array.isArray(arg) ? arg : [arg, 0]
+
+			if (playerId === null || playerId < 0) {
+				return
+			}
+
+			const player = gamePlayer(game, playerId)
+
+			const actualChange = !optional
+				? change
+				: change < 0
+				? Math.max(change, -amount)
+				: Math.min(change, amount)
+
+			if (actualChange < 0 && player[res] < -actualChange) {
+				throw new Error(`Player doesn't have ${withUnits(res, -actualChange)}`)
+			}
+
+			player[res] += actualChange
+		},
+	})
+}
+
+export const playerProductionChange = (res: Resource, change: number) => {
+	const prod = resourceProduction[res]
+	return effect({
+		args: [
+			effectArg({
+				type: CardEffectTarget.Player,
+				playerConditions:
+					change < 0 && res !== 'money'
+						? [productionCondition(res, -change) as PlayerCondition]
+						: [],
+				descriptionPrefix: `Decrease ${res} production of`,
+				descriptionPostfix: `by ${-change} of`,
+			}),
+		],
+		conditions: [
+			condition({
+				evaluate: ({ game, playerId }) =>
+					!!game.players.find(
+						(p) => p.id !== playerId && p.gameState[prod] >= -change
+					),
+			}),
+		],
+		description:
+			change > 0
+				? `Increase ${res} production of any player by ${change}`
+				: `Decrease ${res} production of any player by ${-change}`,
+		perform: ({ game }, playerId: number) => {
+			const player = gamePlayer(game, playerId)
+
+			player[prod] += change
+		},
+	})
+}
+
+export const gameProcessChange = (res: GameProgress, change: number) => {
+	return effect({
+		description:
+			change > 0
+				? `Increase ${res} by ${change} step`
+				: `Decrease ${res} by ${-change} step`,
+		perform: ({ game, player }) => {
+			const update = Math.min(game.map[res] - game[res], change)
+
+			if (update > 0) {
+				game[res] += update
+				player.terraformRating += update
+			}
+		},
+	})
+}
+
+export function placeTile({
+	type,
+	other,
+	special,
+	conditions,
+}: {
+	type: GridCellContent
+	other?: GridCellOther
+	special?: GridCellSpecial[]
+	isolated?: boolean
+	allowOcean?: boolean
+	conditions?: PlacementCode[]
+}) {
+	const placementState = {
+		type,
+		other,
+		special,
+		conditions,
+	}
+
+	return effect({
+		description:
+			`Place a ${other ? GridCellOther[other] : GridCellContent[type]}` +
+			(conditions && conditions.length > 0
+				? ` (${conditions
+						?.map((c) => PlacementConditionsLookup.get(c).description)
+						.join(', ')})`
+				: ''),
+		conditions: [
+			condition({
+				evaluate: ({ game, playerId }) => {
+					return !!allCells(game).find((c) =>
+						canPlace(
+							game,
+							game.players.find((p) => p.id === playerId) as PlayerState,
+							c,
+							placementState
+						)
+					)
+				},
+			}),
+		],
+		perform: ({ player, cardIndex, game }) => {
+			// Only limited number of ocean tiles an be placed
+			if (type === GridCellContent.Ocean && game.oceans >= game.map.oceans) {
+				return
+			}
+
+			player.placingTile.push({
+				...placementState,
+				ownerCard: cardIndex,
+			})
+		},
+	})
+}
+
+export const convertResource = (
+	srcRes: Resource,
+	srcCount: number,
+	dstRes: Resource,
+	dstCount: number
+) =>
+	effect({
+		conditions: [resourceCondition(srcRes, srcCount)],
+		description: `Spend ${withUnits(srcRes, srcCount)} to gain ${withUnits(
+			dstRes,
+			dstCount
+		)}`,
+		perform: ({ player }) => {
+			player[srcRes] -= srcCount
+			player[dstRes] += dstCount
+		},
+	})
+
+export const cardsForResource = (res: Resource, count: number, cards: number) =>
+	effect({
+		conditions: [resourceCondition(res, count)],
+		description: `Spend ${withUnits(res, count)} to draw ${cards} cards`,
+		perform: ({ player, game }) => {
+			player[res] -= count
+			player.cards.push(...drawCards(game, cards))
+		},
+	})
+
+export const terraformRatingChange = (change: number) =>
+	effect({
+		description:
+			change >= 0
+				? `+ ${change} Terraform Rating`
+				: `- ${-change} Terraform Rating`,
+		perform: ({ player }) => {
+			player.terraformRating += change
+		},
+	})
+
+export const effectChoice = (effects: CardEffect[]) =>
+	effect({
+		args: [effectChoiceArg(effects)],
+		conditions: [
+			condition({
+				evaluate: (ctx, args: [number, CardEffectArgumentType[]]) => {
+					const [chosenEffect, chosenArgs] = args || [undefined, []]
+
+					if (chosenEffect === undefined) {
+						return !!effects.find((e) =>
+							e.conditions.every((c) => c.evaluate(ctx, ...chosenArgs))
+						)
+					}
+
+					const effect = effects[chosenEffect]
+					if (!effect) {
+						throw new Error(`Unknown effect choice ${chosenEffect}`)
+					}
+
+					return effect.conditions.every((c) => c.evaluate(ctx, ...chosenArgs))
+				},
+			}),
+		],
+		description: effects.map((e) => e.description || '').join(' OR '),
+		perform: (ctx, args: [number, CardEffectArgumentType[]]) => {
+			const [chosenEffect, chosenArgs] = args || [undefined, []]
+
+			const effect = effects[chosenEffect]
+			if (!effect) {
+				throw new Error(`Unknown effect choice ${chosenEffect}`)
+			}
+
+			effect.perform(ctx, ...chosenArgs)
+		},
+	})
+
+export const joinedEffects = (effects: CardEffect[]) =>
+	effect({
+		args: flatten(effects.map((e) => e.args)),
+		description: effects.map((e) => e.description || '').join(' and '),
+		conditions: flatten(effects.map((e) => e.conditions)),
+		perform: (ctx, ...args) => {
+			effects.forEach((e) => {
+				e.perform(
+					ctx,
+					...(e.args.length > 0 ? args.splice(0, e.args.length) : [])
+				)
+			})
+		},
+	})
+
+export const otherCardResourceChange = (res: CardResource, amount: number) =>
+	effect({
+		args: [
+			{
+				...cardArg(
+					amount < 0
+						? [cardResourceCondition(res, amount)]
+						: [cardHasResource(res)]
+				),
+				descriptionPrefix:
+					amount > 0
+						? `Add ${amount} ${res} to`
+						: `Remove ${-amount} ${res} from`,
+			},
+		],
+		conditions: [
+			condition({
+				description: `Player has to have a card that accepts ${res}`,
+				evaluate: ({ player }) =>
+					!!player.usedCards
+						.map((c) => CardsLookupApi.get(c.code))
+						.find((c) => c.resource === res),
+			}),
+		],
+		description:
+			amount < 0
+				? `Remove ${-amount} ${res} from any other card`
+				: `Add ${amount} ${res} to any other card`,
+		perform: ({ player }, cardIndex: number) => {
+			const cardState = player.usedCards[cardIndex]
+			if (!cardState) {
+				throw new Error(`Invalid card target ${cardIndex}`)
+			}
+
+			const card = CardsLookupApi.get(cardState?.code)
+
+			if (card.resource !== res) {
+				throw new Error(`${card.title} doesn't accept ${res}`)
+			}
+
+			// TODO: Check if player can place it on this card
+			cardState[res] += amount
+		},
+	})
+
+export const cardResourceChange = (res: CardResource, amount: number) =>
+	effect({
+		description:
+			amount >= 0
+				? `Add ${amount} of ${res} units to this card`
+				: `Remove ${amount} of ${res} units from this card`,
+		conditions: amount < 0 ? [cardResourceCondition(res, -amount)] : [],
+		perform: ({ card }) => {
+			card[res] += amount
+		},
+	})
+
+export const playerCardResourceChange = (res: CardResource, amount: number) =>
+	effect({
+		args: [
+			{
+				...playerCardArg(
+					amount < 0 ? [cardResourceCondition(res, -amount)] : [],
+					-amount
+				),
+				descriptionPrefix:
+					amount > 0
+						? `add ${amount} ${res} to `
+						: `remove ${-amount} ${res} from`,
+			},
+		],
+		conditions:
+			amount < 0
+				? [
+						condition({
+							evaluate: ({ game }) =>
+								!!game.players.find(
+									(p) => !!p.gameState.usedCards.find((c) => c[res] >= -amount)
+								),
+						}),
+				  ]
+				: [],
+		description:
+			amount < 0
+				? `Remove ${-amount} ${res} from any other player card`
+				: `Add ${amount} ${res} to any other player card`,
+		perform: ({ game }, [playerId, cardIndex]: [number, number]) => {
+			const player = game.players.find((p) => p.id === playerId)?.gameState
+			if (!player) {
+				throw new Error(`Invalid player id ${playerId}`)
+			}
+			const cardState = player.usedCards[cardIndex]
+
+			if (!cardState) {
+				throw new Error(`Invalid card target ${cardIndex}`)
+			}
+
+			const card = CardsLookupApi.get(cardState?.code)
+
+			if (card.resource !== res) {
+				throw new Error(`${card.title} doesn't accept ${res}`)
+			}
+
+			cardState[res] += amount
+		},
+	})
+
+export const productionChangeForTags = (
+	res: Resource,
+	change: number,
+	tag: CardCategory
+) => {
+	const prod = resourceProduction[res]
+	return effect({
+		description: `Increase your ${res} production by ${change} for each ${CardCategory[tag]} card you have`,
+		perform: ({ player }) => {
+			player[prod] +=
+				change *
+				player.usedCards.reduce(
+					(acc, c) =>
+						acc +
+						CardsLookupApi.get(c.code).categories.filter((c) => c === tag)
+							.length,
+					0
+				)
+		},
+	})
+}
 
 export const convertTopCardToCardResource = (
 	category: CardCategory,
@@ -139,11 +622,6 @@ export const productionForTiles = (
 		},
 	})
 
-const resToPrice = {
-	ore: 'orePrice',
-	titan: 'titanPrice',
-} as const
-
 export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 	effect({
 		args: [
@@ -217,93 +695,6 @@ export const earthCardPriceChange = (change: number) =>
 		},
 	})
 
-export const resourcePerPlacedTile = (
-	content: GridCellContent,
-	res: Resource,
-	amount: number
-) =>
-	passiveEffect({
-		description: `When anyone places an ${
-			GridCellContent[content]
-		} tile, gain ${withUnits(res, amount)}`,
-		onTilePlaced: ({ player }, cell) => {
-			if (cell.content === content) {
-				player[res] += amount
-			}
-		},
-	})
-
-export const productionPerPlacedTile = (
-	content: GridCellContent,
-	res: Resource,
-	amount: number
-) =>
-	passiveEffect({
-		description: `When anyone places an ${GridCellContent[content]} tile, increase ${res} production by ${amount}`,
-		onTilePlaced: ({ player }, cell) => {
-			if (cell.content === content) {
-				player[resourceProduction[res]] += amount
-			}
-		},
-	})
-
-export const resourcePerCardPlayed = (
-	categories: CardCategory[],
-	res: Resource,
-	amount: number
-) =>
-	passiveEffect({
-		description: `When you play a ${categories
-			.map((c) => CardCategory[c])
-			.join(' ')} card, you gain ${withUnits(res, amount)}`,
-		onCardPlayed: ({ player, playerId }, card, _cardIndex, playedBy) => {
-			if (
-				playedBy.id === playerId &&
-				categories.every((c) => card.categories.includes(c))
-			) {
-				player[res] += amount
-			}
-		},
-	})
-
-export const cardResourcePerCardPlayed = (
-	categories: CardCategory[],
-	res: CardResource,
-	amount: number
-) =>
-	passiveEffect({
-		description: `When you play a ${categories
-			.map((c) => CardCategory[c])
-			.join(' or ')} card, place ${amount} ${res} on this card`,
-		onCardPlayed: (
-			{ playerId, card: cardState },
-			card,
-			_cardIndex,
-			playedBy
-		) => {
-			if (
-				playedBy.id === playerId &&
-				categories.find((c) => card.categories.includes(c))
-			) {
-				cardState[res] += amount
-			}
-		},
-	})
-
-export const cardResourcePerTilePlaced = (
-	tile: GridCellContent,
-	res: CardResource,
-	amount: number
-) =>
-	passiveEffect({
-		description: `When you play place a ${GridCellContent[tile]} tile, place ${amount} of ${res} on this card`,
-		onTilePlaced: ({ playerId, card }, cell, playedBy) => {
-			if (playedBy.id === playerId && cell.content === tile) {
-				card[res] += amount
-			}
-		},
-	})
-
 export const resourceChangeIfTags = (
 	res: Resource,
 	amount: number,
@@ -313,25 +704,6 @@ export const resourceChangeIfTags = (
 	effect({
 		...productionChange(res, amount),
 		conditions: [cardCountCondition(tag, tagCount)],
-	})
-
-export const productionChangeAfterPlace = (
-	amount: number,
-	type: GridCellOther
-) =>
-	passiveEffect({
-		description: `Your production of resource which has bonus on selected tile will increase by ${amount}`,
-		onTilePlaced: ({ player, card }, cell) => {
-			if (card.played) {
-				return
-			}
-
-			if (cell.other === type) {
-				const res = cell.titan > 0 ? 'titan' : 'ore'
-				player[resourceProduction[res]] += amount
-				card.played = true
-			}
-		},
 	})
 
 export const claimCell = () =>
@@ -390,45 +762,6 @@ export const cardExchange = () =>
 			game.discarded.push(player.cards[cardIndex])
 			player.cards.splice(cardIndex, 1)
 			player.cards.push(drawCard(game))
-		},
-	})
-
-export const cardExchangeEffect = (tag: CardCategory) =>
-	passiveEffect({
-		description: `Effect: Action is triggered when you play a ${CardCategory[tag]} card`,
-		onCardPlayed: (
-			{ player, playerId, cardIndex },
-			playedCard,
-			_playedCardIndex,
-			playedBy
-		) => {
-			if (
-				CardsLookupApi.get(playedCard.code).categories.includes(tag) &&
-				playedBy.id === playerId
-			) {
-				player.cardsToPlay.push(cardIndex)
-			}
-		},
-	})
-
-export const playWhenCard = (tags: CardCategory[]) =>
-	passiveEffect({
-		description: `Action triggered when you play ${tags
-			.map((t) => CardCategory[t])
-			.join(' or ')} card`,
-		onCardPlayed: (
-			{ playerId, player, card: cardState, cardIndex },
-			playedCard,
-			playedCardIndex,
-			playedBy
-		) => {
-			if (
-				playerId === playedBy.id &&
-				tags.find((t) => playedCard.categories.includes(t))
-			) {
-				cardState.triggeredByCard = playedCardIndex
-				player.cardsToPlay.push(cardIndex)
-			}
 		},
 	})
 

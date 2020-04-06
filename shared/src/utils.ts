@@ -84,3 +84,6 @@ export function range(start: number, end: number, step = 1) {
 
 	return result
 }
+
+export const flatten = <T>(a: T[][]) =>
+	a.reduce((acc, a) => [...acc, ...a], [] as T[])

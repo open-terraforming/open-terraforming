@@ -1,49 +1,40 @@
+import { card } from './utils'
+import { CardType, CardCategory, Card } from './types'
+import { GridCellContent, GridCellOther, GridCellSpecial } from '../game'
+import { PlacementCode, OtherPlacement, CityPlacement } from '../placements'
 import {
-	card,
 	gameProgressConditionMax,
+	productionCondition,
 	gameProgressConditionMin,
 	cardCountCondition,
-	productionCondition,
+	ownedCellTypeCondition,
+} from './conditions'
+import {
 	playerProductionChange,
 	productionChange,
 	gameProcessChange,
-	minCardResourceToVP,
-	placeTile,
-	vpsForAdjacentTiles,
+	convertTopCardToCardResource,
+	pickTopCards,
+	resourceForCities,
 	resourceChange,
 	playerResourceChange,
-	vpsForCards,
+	moneyOrResForOcean,
 	convertResource,
 	cardsForResource,
 	terraformRatingChange,
 	effectChoice,
 	otherCardResourceChange,
-	vpsForCardResources,
+	cardPriceChange,
 	cardResourceChange,
+	spaceCardPriceChange,
 	joinedEffects,
+	resourceChangeIfTags,
 	playerCardResourceChange,
 	productionChangeForTags,
-	ownedCellTypeCondition,
-	vpsForTiles,
-	doNothing,
-} from './utils'
-import { CardType, CardCategory, Card } from './types'
-import {
-	convertTopCardToCardResource,
-	pickTopCards,
-	resourceForCities,
-	cardPriceChange,
-	resourcePerPlacedTile,
-	spaceCardPriceChange,
-	resourcePerCardPlayed,
-	resourceChangeIfTags,
-	productionChangeAfterPlace,
-	claimCell,
 	orePriceChange,
 	titanPriceChange,
-	cardExchangeEffect,
+	doNothing,
 	cardExchange,
-	playWhenCard,
 	triggerCardResourceChange,
 	duplicateProduction,
 	resourcesForTiles,
@@ -52,18 +43,29 @@ import {
 	earthCardPriceChange,
 	resourcesForPlayersTags,
 	productionForTiles,
-	cardResourcePerCardPlayed,
 	getTopCards,
-	cardResourcePerTilePlaced,
 	addResourceToCard,
 	exchangeResources,
-	moneyOrResForOcean,
 	terraformRatingForTags,
+	placeTile,
+} from './effects'
+import {
+	minCardResourceToVP,
+	vpsForAdjacentTiles,
+	vpsForCards,
+	vpsForCardResources,
+	vpsForTiles,
+} from './vps'
+import {
+	resourcePerPlacedTile,
+	resourcePerCardPlayed,
+	productionChangeAfterPlace,
+	cardExchangeEffect,
+	playWhenCard,
+	cardResourcePerCardPlayed,
+	cardResourcePerTilePlaced,
 	productionPerPlacedTile,
-	resourcesForTags,
-} from './logic'
-import { GridCellContent, GridCellOther, GridCellSpecial } from '../game'
-import { PlacementCode, OtherPlacement, CityPlacement } from '../placements'
+} from './passive-effects'
 
 export const BuiltCards: Card[] = [
 	card({

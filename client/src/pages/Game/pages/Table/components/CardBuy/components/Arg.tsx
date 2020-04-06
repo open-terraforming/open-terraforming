@@ -41,8 +41,6 @@ export const Arg = ({ arg, cardState, card, cardIndex, onChange }: Props) => {
 			return <CardArg arg={arg} onChange={onChange} otherPlayer={true} />
 		case CardEffectTarget.PlayerResource:
 			return <PlayerResourceArg arg={arg} onChange={onChange} />
-		case CardEffectTarget.DrawnCards:
-			return <></>
 		default:
 			return (
 				<div style={{ color: '#FFB0B7' }}>
