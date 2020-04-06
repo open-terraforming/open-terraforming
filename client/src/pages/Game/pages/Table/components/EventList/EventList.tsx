@@ -4,12 +4,13 @@ import { CardsLookupApi, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
 import { GameState, PlayerStateValue } from '@shared/index'
 import React, { useEffect, useState, useMemo } from 'react'
-import { EventType, GameEvent } from './types'
+import { EventType, GameEvent, CardUsed, CardPlayed } from './types'
 import styled from 'styled-components'
 import { EventLine } from './components/EventLine'
 import { EventsModal } from './components/EventsModal'
 import { Button } from '@/components'
 import mars from '@/assets/mars-icon.png'
+import { CardModal } from './components/CardModal'
 
 type Props = {}
 
@@ -38,6 +39,10 @@ export const EventList = ({}: Props) => {
 	const [displayedEvents, setDisplayedEvents] = useState([] as DisplayedEvent[])
 	const [lastGame, setLastGame] = useState(game)
 	const [displayModal, setDisplayModal] = useState(false)
+
+	const [cardsPlayed, setCardsPlayed] = useState(
+		[] as (CardUsed | CardPlayed)[]
+	)
 
 	useInterval(() => {
 		if (lastDisplayed < events.length) {
@@ -217,6 +222,16 @@ export const EventList = ({}: Props) => {
 
 			if (newEvents.length > 0) {
 				setEvents([...events, ...newEvents])
+
+				setCardsPlayed(e => [
+					...e,
+					...(newEvents.filter(
+						e =>
+							(e.type === EventType.CardPlayed ||
+								e.type === EventType.CardUsed) &&
+							e.playerId !== player?.id
+					) as (CardPlayed | CardUsed)[])
+				])
 			}
 		}
 
@@ -249,6 +264,18 @@ export const EventList = ({}: Props) => {
 
 	return (
 		<Centered>
+			{cardsPlayed.map(c => (
+				<CardModal
+					key={c.card}
+					card={c.card}
+					title={
+						c.type === EventType.CardPlayed
+							? `Card played by ${playerMap[c.playerId].name}`
+							: `Action played by ${playerMap[c.playerId].name}`
+					}
+					onClose={() => setCardsPlayed(e => e.filter(i => i !== c))}
+				/>
+			))}
 			{displayModal && (
 				<EventsModal
 					events={events}

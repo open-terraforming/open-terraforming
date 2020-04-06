@@ -5,16 +5,18 @@ import { CardView } from '../../CardView/CardView'
 import { Button } from '@/components'
 
 type Props = {
+	title?: string
 	card: string
 	onClose: () => void
 }
 
-export const CardModal = ({ card, onClose }: Props) => {
+export const CardModal = ({ card, onClose, title }: Props) => {
 	const info = CardsLookupApi.get(card)
 
 	return (
 		<Modal
 			open={true}
+			header={title}
 			onClose={onClose}
 			footer={<Button onClick={onClose}>Close</Button>}
 		>

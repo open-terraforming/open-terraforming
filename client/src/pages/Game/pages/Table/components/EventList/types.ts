@@ -18,13 +18,13 @@ export enum EventType {
 	MilestoneBought
 }
 
-type CardPlayed = {
+export type CardPlayed = {
 	type: typeof EventType.CardPlayed
 	playerId: number
 	card: string
 }
 
-type CardUsed = {
+export type CardUsed = {
 	type: typeof EventType.CardUsed
 	playerId: number
 	card: string
