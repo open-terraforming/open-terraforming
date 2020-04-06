@@ -1,8 +1,31 @@
-import {
-	MessageType,
+import { GameState, StandardProjectType } from './game'
+import { CardEffectArgumentType } from './cards'
+import { MilestoneType } from './milestones'
+import { CompetitionType } from './competitions'
+
+/**
+ * Deep partial, where Arrays can also be objects with numeric indexes (updating only specific array key)
+ */
+export type UpdateDeepPartial<T> = {
+	[K in keyof T]?: T[K] extends (infer U)[]
+		? { [key: number]: UpdateDeepPartial<U> } | U[]
+		: T[K] extends object
+		? UpdateDeepPartial<T[K]>
+		: T[K] extends (infer U)[]
+		? { [key: string]: U }
+		: T[K]
+}
+
+export enum HandshakeError {
+	InvalidVersion = 'InvalidVersion',
+	InvalidName = 'InvalidName',
+	GameInProgress = 'GameInProgress',
+	InvalidSession = 'InvalidSession',
+}
+
+export enum MessageType {
+	HandshakeRequest = 1,
 	HandshakeResponse,
-	HandshakeRequest,
-	HandshakeError,
 	PlayerReady,
 	ServerMessage,
 	GameStateUpdate,
@@ -11,19 +34,14 @@ import {
 	BuyCard,
 	SellCard,
 	PlayCard,
+	SponsorCompetition,
+	BuyMilestone,
+	BuyStandardProject,
 	PlayerPass,
 	PlaceTile,
 	AdminChange,
-	UpdateDeepPartial,
-	BuyStandardProject,
-	BuyMilestone,
-	SponsorCompetition,
 	AdminLogin,
-} from './messages'
-import { GameState, StandardProjectType } from './game'
-import { CardEffectArgumentType } from './cards'
-import { MilestoneType } from './milestones'
-import { CompetitionType } from './competitions'
+}
 
 export const handshakeRequest = (
 	version: string,
@@ -37,7 +55,7 @@ export const handshakeRequest = (
 			name,
 			session,
 		},
-	} as HandshakeRequest)
+	} as const)
 
 export const handshakeResponse = (
 	error?: HandshakeError,
@@ -51,31 +69,31 @@ export const handshakeResponse = (
 			session,
 			id,
 		},
-	} as HandshakeResponse)
+	} as const)
 
 export const playerReady = (ready = true) =>
-	({ type: MessageType.PlayerReady, data: { ready } } as PlayerReady)
+	({ type: MessageType.PlayerReady, data: { ready } } as const)
 
 export const playerPass = (force = false) =>
-	({ type: MessageType.PlayerPass, data: { force } } as PlayerPass)
+	({ type: MessageType.PlayerPass, data: { force } } as const)
 
 export const serverMessage = (message: string) =>
-	({ type: MessageType.ServerMessage, data: { message } } as ServerMessage)
+	({ type: MessageType.ServerMessage, data: { message } } as const)
 
 export const gameStateUpdate = (data: GameState) =>
-	({ type: MessageType.GameStateUpdate, data } as GameStateUpdate)
+	({ type: MessageType.GameStateUpdate, data } as const)
 
 export const pickCorporation = (code: string) =>
 	({
 		type: MessageType.PickCorporation,
 		data: { code },
-	} as PickCorporation)
+	} as const)
 
 export const pickCards = (cards: number[]) =>
 	({
 		type: MessageType.PickCards,
 		data: { cards },
-	} as PickCards)
+	} as const)
 
 export const buyCard = (
 	card: string,
@@ -87,13 +105,13 @@ export const buyCard = (
 	({
 		type: MessageType.BuyCard,
 		data: { card, index, args, useOre, useTitan },
-	} as BuyCard)
+	} as const)
 
 export const sellCard = (card: string, index: number) =>
 	({
 		type: MessageType.SellCard,
 		data: { card, index },
-	} as SellCard)
+	} as const)
 
 export const playCard = (
 	card: string,
@@ -103,19 +121,19 @@ export const playCard = (
 	({
 		type: MessageType.PlayCard,
 		data: { card, index, args },
-	} as PlayCard)
+	} as const)
 
 export const placeTile = (x: number, y: number) =>
 	({
 		type: MessageType.PlaceTile,
 		data: { x, y },
-	} as PlaceTile)
+	} as const)
 
 export const adminChange = (state: UpdateDeepPartial<GameState>) =>
 	({
 		type: MessageType.AdminChange,
 		data: state,
-	} as AdminChange)
+	} as const)
 
 export const buyStandardProject = (
 	project: StandardProjectType,
@@ -127,7 +145,7 @@ export const buyStandardProject = (
 			project,
 			cards,
 		},
-	} as BuyStandardProject)
+	} as const)
 
 export const buyMilestone = (type: MilestoneType) =>
 	({
@@ -135,7 +153,7 @@ export const buyMilestone = (type: MilestoneType) =>
 		data: {
 			type,
 		},
-	} as BuyMilestone)
+	} as const)
 
 export const sponsorCompetition = (type: CompetitionType) =>
 	({
@@ -143,7 +161,7 @@ export const sponsorCompetition = (type: CompetitionType) =>
 		data: {
 			type,
 		},
-	} as SponsorCompetition)
+	} as const)
 
 export const adminLogin = (password: string) =>
 	({
@@ -151,4 +169,23 @@ export const adminLogin = (password: string) =>
 		data: {
 			password,
 		},
-	} as AdminLogin)
+	} as const)
+
+export type GameMessage =
+	| ReturnType<typeof handshakeRequest>
+	| ReturnType<typeof handshakeResponse>
+	| ReturnType<typeof playerReady>
+	| ReturnType<typeof playerPass>
+	| ReturnType<typeof serverMessage>
+	| ReturnType<typeof gameStateUpdate>
+	| ReturnType<typeof pickCorporation>
+	| ReturnType<typeof pickCards>
+	| ReturnType<typeof buyCard>
+	| ReturnType<typeof sellCard>
+	| ReturnType<typeof playCard>
+	| ReturnType<typeof placeTile>
+	| ReturnType<typeof adminChange>
+	| ReturnType<typeof buyStandardProject>
+	| ReturnType<typeof buyMilestone>
+	| ReturnType<typeof sponsorCompetition>
+	| ReturnType<typeof adminLogin>
