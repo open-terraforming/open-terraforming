@@ -190,6 +190,7 @@ export const CardDisplay = <T extends CardInfo>({
 const CardsContainer = styled.div<{ playableOnly: boolean }>`
 	display: flex;
 	overflow-x: scroll;
+	overflow-y: visible;
 	justify-content: flex-start;
 	min-width: 0;
 	padding: 1rem 0;

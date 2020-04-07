@@ -17,3 +17,4 @@ NICE TODO:
  * poke button
  * show current progress when picking cards (smaller picking dialog?)
  * effects arguments -> check if selected player/card is acceptable by arguments
+ * exchange X for X -> condition that X > 0

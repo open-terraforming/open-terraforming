@@ -161,10 +161,19 @@ const Container = styled.div<{
 	position: relative;
 
 	${props =>
-		!props.playable &&
-		css`
-			opacity: 0.6;
-		`}
+		!props.playable
+			? css`
+					opacity: 0.6;
+			  `
+			: css`
+					cursor: pointer;
+					transition: transform 0.1s;
+
+					&:hover {
+						/*box-shadow: 0px 0px 3px 3px ${colors.border};*/
+						transform: scale(1.07);
+					}
+			  `}
 
 	${props =>
 		props.selected &&

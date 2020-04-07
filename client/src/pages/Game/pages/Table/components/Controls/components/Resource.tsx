@@ -28,7 +28,7 @@ export const Resource = ({
 		if (diff !== 0) {
 			setTimeout(() => {
 				setValueDiff(0)
-			}, 1000)
+			}, 1500)
 		}
 	}, [value])
 
@@ -40,7 +40,7 @@ export const Resource = ({
 		if (diff !== 0) {
 			setTimeout(() => {
 				setProductionDiff(0)
-			}, 1000)
+			}, 1500)
 		}
 	}, [production])
 
@@ -73,10 +73,11 @@ const popOut = keyframes`
 		opacity: 0;
 		transform: translate(0, 0);
 	}
-	5% {
-		opacity: 1;
-	}
 	75% {
+		opacity: 1;
+		transform: translate(0, -10rem);
+	}
+	90% {
 		opacity: 1;
 		transform: translate(0, -10rem);
 	}
@@ -91,8 +92,12 @@ const popIn = keyframes`
 		opacity: 0;
 		transform: translate(0, -10rem);
 	}
-	75% {
+	50% {
 		opacity: 1;
+		transform: translate(0, -10rem);
+	}
+	90% {
+		opacity: 0.6;
 		transform: translate(0, -0.5rem);
 	}
 	100% {
@@ -146,9 +151,8 @@ const DiffAnim = styled.div<{ positive: boolean }>`
 	left: 0;
 	top: 0;
 	animation-name: ${props => (props.positive ? popIn : popOut)};
-	animation-duration: 1000ms;
-	animation-timing-function: ${props =>
-		props.positive ? 'ease-out' : 'ease-in-out'};
+	animation-duration: 1500ms;
+	animation-timing-function: ease-out;
 	opacity: 0;
 	color: #fff;
 	text-align: center;
