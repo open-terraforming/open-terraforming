@@ -105,6 +105,13 @@ export const CardView = ({
 					</Categories>
 				</Head>
 				<Title>{card.title}</Title>
+				<Image
+					style={{
+						backgroundImage: `url('${
+							process.env.APP_API_URL ? `http://${process.env.APP_API_URL}` : ''
+						}/card/${card.code}')`
+					}}
+				/>
 				<Description>
 					{state && state.played && (
 						<Played>Card already played this generation</Played>
@@ -265,11 +272,11 @@ const Categories = styled.div`
 `
 
 const Title = styled.div`
-	padding: 0.5rem 1rem;
+	padding: 0.5rem 0.5rem;
 	text-align: center;
 	color: #fff;
 	text-transform: uppercase;
-	font-size: 125%;
+	font-size: 100%;
 `
 
 const Inner = styled.div<{ type: CardType }>`
@@ -320,4 +327,11 @@ const VP = styled.div`
 
 	background-image: url('${mars}');
 	background-size: 100% 100%;
+`
+
+const Image = styled.div`
+	height: 30%;
+	background-position: center center;
+	background-size: 100% auto;
+	opacity: 0.5;
 `

@@ -4,6 +4,7 @@ import WebSocket from 'ws'
 import { createServer } from 'http'
 import { Server } from './server/server'
 import yargs from 'yargs'
+import { cardsImagesMiddleware } from './server/images'
 
 async function main() {
 	const app = express()
@@ -28,6 +29,7 @@ async function main() {
 	const gameServer = new Server(wsServer, 3)
 
 	app.use(express.static(join(__dirname, '..', 'static')))
+	app.use(cardsImagesMiddleware())
 
 	server.listen(argv.port, () => {
 		console.log('Listening on', argv.port)

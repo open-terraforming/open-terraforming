@@ -132,7 +132,7 @@ export const BuiltCards: Card[] = [
 		victoryPointsCallback: minCardResourceToVP('science', 1, 3),
 	}),
 	card({
-		code: "inventors'_guild",
+		code: 'inventors_guild',
 		title: "INVENTORS' GUILD",
 		type: CardType.Action,
 		description: '',
