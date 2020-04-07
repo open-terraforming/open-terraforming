@@ -69,6 +69,9 @@ export const resourceChange = (res: Resource, change: number) =>
 				: `- ${withUnits(res, -change)}`,
 		type: CardEffectType.Resource,
 		perform: ({ player }) => {
+			if (res !== 'money' && change < 0 && player[res] < -change) {
+				throw new Error(`Player doesn't have ${-change} of ${res}!`)
+			}
 			player[res] += change
 		},
 	})
@@ -393,7 +396,7 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 			{
 				...cardArg(
 					amount < 0
-						? [cardResourceCondition(res, amount)]
+						? [cardResourceCondition(res, -amount)]
 						: [cardHasResource(res)]
 				),
 				descriptionPrefix:

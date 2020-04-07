@@ -61,7 +61,7 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 	placement({
 		code: PlacementCode.NoOceans,
 		description: 'outside oceans',
-		evaluate: ({ cell }) => cell.type !== GridCellType.Ocean,
+		evaluate: ({ cell }) => cell.type === GridCellType.General,
 	}),
 	placement({
 		code: PlacementCode.Isolated,
@@ -172,14 +172,14 @@ export const canPlace = (
 	cell: GridCell,
 	state: PlacementState
 ) => {
-	let conditions = ContentToPlacement[state.type]
-
 	if (
-		cell.type === GridCellType.NoctisCity &&
-		!state.special?.includes(GridCellSpecial.NoctisCity)
+		cell.content !== undefined ||
+		(cell.claimantId !== undefined && cell.claimantId !== player.id)
 	) {
 		return false
 	}
+
+	let conditions = ContentToPlacement[state.type]
 
 	if (state.conditions) {
 		conditions = state.conditions

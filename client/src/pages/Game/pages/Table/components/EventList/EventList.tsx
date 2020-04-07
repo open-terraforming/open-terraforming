@@ -1,6 +1,6 @@
 import { objDiff, keyMap } from '@/utils/collections'
 import { useAppStore, useInterval } from '@/utils/hooks'
-import { CardsLookupApi, GameProgress, Resource } from '@shared/cards'
+import { CardsLookupApi, GameProgress, Resource, CardType } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
 import { GameState, PlayerStateValue } from '@shared/index'
 import React, { useEffect, useState, useMemo } from 'react'
@@ -104,7 +104,10 @@ export const EventList = ({}: Props) => {
 											})
 										}
 
-										if (cardChanges.played === true) {
+										if (
+											cardChanges.played === true &&
+											card.type === CardType.Action
+										) {
 											newEvents.push({
 												type: EventType.CardUsed,
 												playerId: player.id,
@@ -266,7 +269,7 @@ export const EventList = ({}: Props) => {
 		<Centered>
 			{cardsPlayed.map(c => (
 				<CardModal
-					key={c.card}
+					key={`${c.card}_${c.type}`}
 					card={c.card}
 					title={
 						c.type === EventType.CardPlayed

@@ -9,7 +9,12 @@ import {
 import { useAppStore } from '@/utils/hooks'
 import { Input } from '@/components/Input/Input'
 import { Button } from '@/components'
-import { buyCard, playCard, PlayerGameState } from '@shared/index'
+import {
+	buyCard,
+	playCard,
+	PlayerGameState,
+	PlayerStateValue
+} from '@shared/index'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { ArgsPicker } from './components/ArgsPicker'
 import styled from 'styled-components'
@@ -45,6 +50,8 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 	const [effectsArgs, setEffectsArgs] = useState(
 		[] as CardEffectArgumentType[][]
 	)
+
+	const isPlaying = state?.state === PlayerStateValue.Playing
 
 	const canUseOre =
 		(state?.ore || 0) > 0 && card.categories.includes(CardCategory.Building)
@@ -92,7 +99,7 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 			footer={
 				<>
 					<Button
-						disabled={!canAfford}
+						disabled={!canAfford || !isPlaying}
 						onClick={canAfford ? handleUse : undefined}
 					>
 						{buying ? (

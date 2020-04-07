@@ -952,7 +952,7 @@ export const BuiltCards: Card[] = [
 	card({
 		code: 'advanced_alloys',
 		title: 'Advanced Alloys',
-		type: CardType.Action,
+		type: CardType.Effect,
 		description: '',
 		cost: 9,
 		categories: [CardCategory.Science],
@@ -1661,6 +1661,7 @@ export const BuiltCards: Card[] = [
 		cost: 5,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMin('oxygen', 3)],
+		resource: 'microbes',
 		passiveEffects: [
 			cardResourcePerCardPlayed(
 				[CardCategory.Microbe, CardCategory.Animal, CardCategory.Plant],
@@ -1668,6 +1669,7 @@ export const BuiltCards: Card[] = [
 				1
 			),
 		],
+		victoryPointsCallback: vpsForCardResources('microbes', 1 / 3),
 	}),
 	card({
 		code: 'fusion_power',

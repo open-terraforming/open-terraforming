@@ -18,7 +18,10 @@ export const condition = <T extends (CardEffectArgumentType | undefined)[]>(
 export const cardResourceCondition = (res: CardResource, amount: number) =>
 	condition({
 		description: `Card has to have at least ${amount} of ${res} units`,
-		evaluate: ({ card }) => card[res] >= amount,
+		evaluate: ({ card }) => {
+			console.log(card[res], amount, card)
+			return card[res] >= amount
+		},
 	})
 
 export const cardHasResource = (res: CardResource) =>

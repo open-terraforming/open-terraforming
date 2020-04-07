@@ -304,6 +304,7 @@ export class Player {
 				throw new Error("You don't have that much ore")
 			}
 
+			useOre = Math.min(useOre, Math.ceil(cost / this.gameState.orePrice))
 			cost -= useOre * this.gameState.orePrice
 		}
 
@@ -316,6 +317,7 @@ export class Player {
 				throw new Error("You don't have that much titan")
 			}
 
+			useOre = Math.min(useTitan, Math.ceil(cost / this.gameState.titanPrice))
 			cost -= useTitan * this.gameState.titanPrice
 		}
 
@@ -629,7 +631,7 @@ export class Player {
 			throw new Error(`Unknown card ${cardCode}`)
 		}
 
-		if (card.type !== CardType.Action && card.type !== CardType.Effect) {
+		if (card.type !== CardType.Action) {
 			throw new Error("This card isn't playable")
 		}
 

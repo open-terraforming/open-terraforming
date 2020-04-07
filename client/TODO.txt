@@ -8,7 +8,7 @@ NICE TODO:
  - server - save & load state
 
 
- TODO
+TODO
  * disconnected - doesn't work
  * Media Group - will you only receive selected cards?
  * Special animation when card is played
@@ -17,4 +17,11 @@ NICE TODO:
  * poke button
  * show current progress when picking cards (smaller picking dialog?)
  * effects arguments -> check if selected player/card is acceptable by arguments
- * exchange X for X -> condition that X > 0
+ * exchange X for Y -> condition that player have more than 0 of X
+ * card played - ignore evaluation, player color, join into one modal per player
+ * card list - min-height
+ * check CARTEL
+ * city can't be placed next to another city
+ * better EFFECTS text
+ * action played when there's card to be played
+ * starting player is wrong (off by 1)

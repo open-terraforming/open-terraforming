@@ -199,7 +199,7 @@ export class Game {
 			case GameStateValue.PickingCorporations:
 			case GameStateValue.PickingCards:
 				if (this.all(PlayerStateValue.WaitingForTurn)) {
-					this.state.currentPlayer = this.state.startingPlayer
+					this.state.currentPlayer = this.state.startingPlayer - 1
 					this.nextPlayer()
 					this.state.state = GameStateValue.GenerationInProgress
 				}

@@ -1,5 +1,11 @@
 import { GameState, GridCell, GridCellContent, PlayerGameState } from '../game'
-import { Card, CardCallbackContext, CardCategory, WithOptional } from './types'
+import {
+	Card,
+	CardCallbackContext,
+	CardCategory,
+	WithOptional,
+	CardType,
+} from './types'
 
 export const resourceProduction = {
 	money: 'moneyProduction',
@@ -83,6 +89,7 @@ export const isCardPlayable = (card: Card, ctx: CardCallbackContext) =>
 	!card.playEffects.find((e) => e.conditions.find((c) => !c.evaluate(ctx)))
 
 export const isCardActionable = (card: Card, ctx: CardCallbackContext) =>
+	card.type === CardType.Action &&
 	!ctx.card.played &&
 	!card.actionEffects.find((e) => e.conditions.find((c) => !c.evaluate(ctx)))
 

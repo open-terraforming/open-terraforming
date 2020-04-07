@@ -1,20 +1,15 @@
-import React, { useState, useMemo } from 'react'
-import { Modal } from '@/components/Modal/Modal'
-import { useAppStore, useAppDispatch } from '@/utils/hooks'
-import { CardsLookupApi, CardCategory } from '@shared/cards'
-import { CardView } from '../CardView/CardView'
 import { Button } from '@/components'
-import { buyCard } from '@shared/index'
-import { CardsContainer, NoCards } from '../CardsContainer/CardsContainer'
+import { Modal } from '@/components/Modal/Modal'
 import { setTableState } from '@/store/modules/table'
-import { useApi } from '@/context/ApiContext'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { CardsLookupApi } from '@shared/cards'
 import {
-	isCardPlayable,
 	emptyCardState,
+	isCardPlayable,
 	minimalCardPrice
 } from '@shared/cards/utils'
+import React from 'react'
 import { CardDisplay } from '../CardDisplay/CardDisplay'
-import { cardsToCardList } from '@/utils/cards'
 
 export const Hand = ({
 	onClose,
@@ -34,6 +29,10 @@ export const Hand = ({
 		) || []
 
 	const handleSelect = (index: number | undefined) => {
+		if (!playing) {
+			return
+		}
+
 		if (index !== undefined && cards && state && player && game) {
 			const card = cards[index]
 
