@@ -16,14 +16,14 @@ const milestone = (m: ProgressMilestone): ProgressMilestone => m
 const ProgressMilestonesList = [
 	milestone({
 		type: ProgressMilestoneType.Heat,
-		effects: [(_game, player) => (player.gameState.heatProduction += 1)],
+		effects: [(_game, player) => (player.heatProduction += 1)],
 	}),
 	milestone({
 		type: ProgressMilestoneType.Temperature,
 		effects: [
 			(game, player) => {
 				if (game.temperature < game.map.temperature) {
-					player.gameState.terraformRating++
+					player.terraformRating++
 					game.temperature++
 				}
 			},
@@ -34,7 +34,7 @@ const ProgressMilestonesList = [
 		effects: [
 			(game, player) => {
 				if (game.oceans < game.map.oceans) {
-					player.gameState.placingTile.push({
+					player.placingTile.push({
 						type: GridCellContent.Ocean,
 					})
 				}

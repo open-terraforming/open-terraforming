@@ -46,7 +46,7 @@ export const Player = ({
 	starting: boolean
 	onClick: () => void
 }) => {
-	const state = player?.gameState
+	const state = player
 
 	const isPlaying = state.state === PlayerStateValue.Playing
 

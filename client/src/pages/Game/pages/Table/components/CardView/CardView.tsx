@@ -38,7 +38,7 @@ export const CardView = ({
 	evaluate?: boolean
 }) => {
 	const game = useAppStore(state => state.game.state)
-	const player = useAppStore(state => state.game.player)?.gameState
+	const player = useAppStore(state => state.game.player)
 	const playerId = useAppStore(state => state.game.playerId)
 
 	const description = useMemo(() => {
@@ -335,5 +335,6 @@ const Image = styled.div`
 	height: 30%;
 	background-position: center center;
 	background-size: 100% auto;
+	background-repeat: no-repeat;
 	opacity: 0.5;
 `

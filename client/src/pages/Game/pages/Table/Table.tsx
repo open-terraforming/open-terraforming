@@ -12,7 +12,7 @@ import { Players } from './components/Players/Players'
 
 export const Table = () => {
 	const gameState = useAppStore(state => state.game.state)
-	const playerState = useAppStore(state => state.game.player?.gameState.state)
+	const playerState = useAppStore(state => state.game.player?.state)
 
 	useEffect(() => {
 		if (

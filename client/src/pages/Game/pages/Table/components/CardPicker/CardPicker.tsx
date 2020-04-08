@@ -13,10 +13,10 @@ import { useApi } from '@/context/ApiContext'
 export const CardPicker = () => {
 	const api = useApi()
 	const player = useAppStore(state => state.game.player)
-	const state = player?.gameState
+	const state = player
 
 	const cardsToPick = useAppStore(
-		state => state.game.player?.gameState.cardsPick
+		state => state.game.player?.cardsPick
 	)?.map(c => CardsLookupApi.get(c))
 
 	const [selected, setSelected] = useState([] as number[])

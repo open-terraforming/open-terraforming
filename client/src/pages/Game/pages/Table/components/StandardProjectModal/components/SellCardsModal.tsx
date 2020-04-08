@@ -15,7 +15,7 @@ type Props = {
 
 export const SellCardsModal = ({ onClose }: Props) => {
 	const api = useApi()
-	const playerCards = useAppStore(state => state.game.player?.gameState.cards)
+	const playerCards = useAppStore(state => state.game.player?.cards)
 	const [selected, setSelected] = useState([] as CardInfo[])
 
 	const cards = useMemo(

@@ -21,10 +21,10 @@ export const Hand = ({
 	const dispatch = useAppDispatch()
 	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
-	const state = player?.gameState
+	const state = player
 
 	const cards =
-		useAppStore(state => state.game.player?.gameState.cards)?.map(c =>
+		useAppStore(state => state.game.player?.cards)?.map(c =>
 			CardsLookupApi.get(c)
 		) || []
 
@@ -43,7 +43,7 @@ export const Hand = ({
 				isCardPlayable(card, {
 					card: emptyCardState(card.code),
 					cardIndex: -1,
-					player: player.gameState,
+					player: player,
 					playerId: player.id,
 					game: game
 				})

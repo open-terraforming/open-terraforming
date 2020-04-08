@@ -28,7 +28,7 @@ export const gamePlayer = (game: GameState, playerId: number) => {
 	if (!p) {
 		throw new Error(`Failed to find player #${playerId}`)
 	}
-	return p.gameState
+	return p
 }
 
 export const cellByCoords = (game: GameState, x: number, y: number) => {
@@ -147,5 +147,5 @@ export const updatePlayerProduction = (
 		throw new Error(`Player doesn't have ${res} production of ${-amount}!`)
 	}
 
-	player[res] += amount
+	player[prod] += amount
 }

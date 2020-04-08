@@ -12,36 +12,36 @@ const prepareState = () => {
 test('playerResourceChange should change resources of right player', () => {
 	const card = emptyCardState('void')
 	const state = prepareState()
-	state.players[0].gameState.ore = 2
-	state.players[1].gameState.ore = 3
+	state.players[0].ore = 2
+	state.players[1].ore = 3
 
 	playerResourceChange('ore', -2).perform(
 		{
 			card,
 			cardIndex: 0,
-			player: state.players[0].gameState,
+			player: state.players[0],
 			playerId: state.players[0].id,
 			game: state
 		},
 		[state.players[1].id, 2]
 	)
 
-	expect(state.players[0].gameState.ore).toBe(2)
-	expect(state.players[1].gameState.ore).toBe(1)
+	expect(state.players[0].ore).toBe(2)
+	expect(state.players[1].ore).toBe(1)
 })
 
 test("playerResourceChange won't remove more than player owns", () => {
 	const card = emptyCardState('void')
 	const state = prepareState()
-	state.players[0].gameState.ore = 2
-	state.players[1].gameState.ore = 3
+	state.players[0].ore = 2
+	state.players[1].ore = 3
 
 	expect(() => {
 		playerResourceChange('ore', -5).perform(
 			{
 				card,
 				cardIndex: 0,
-				player: state.players[0].gameState,
+				player: state.players[0],
 				playerId: state.players[0].id,
 				game: state
 			},
@@ -49,22 +49,22 @@ test("playerResourceChange won't remove more than player owns", () => {
 		)
 	}).toThrow()
 
-	expect(state.players[0].gameState.ore).toBe(2)
-	expect(state.players[1].gameState.ore).toBe(3)
+	expect(state.players[0].ore).toBe(2)
+	expect(state.players[1].ore).toBe(3)
 })
 
 test('joinedEffect should properly work with arguments', () => {
 	const card = emptyCardState('void')
 	const state = prepareState()
 
-	state.players[0].gameState = {
-		...state.players[0].gameState,
+	state.players[0] = {
+		...state.players[0],
 		ore: 3,
 		money: 5
 	}
 
-	state.players[1].gameState = {
-		...state.players[1].gameState,
+	state.players[1] = {
+		...state.players[1],
 		ore: 2,
 		money: 3
 	}
@@ -76,13 +76,13 @@ test('joinedEffect should properly work with arguments', () => {
 		{
 			card,
 			cardIndex: 0,
-			player: state.players[0].gameState,
+			player: state.players[0],
 			playerId: state.players[0].id,
 			game: state
 		},
 		[state.players[1].id, 2]
 	)
 
-	expect(state.players[0].gameState.ore).toBe(5)
-	expect(state.players[1].gameState.ore).toBe(0)
+	expect(state.players[0].ore).toBe(5)
+	expect(state.players[1].ore).toBe(0)
 })

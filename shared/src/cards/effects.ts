@@ -155,9 +155,7 @@ export const playerResourceChange = (
 								-change
 							)}`,
 							evaluate: ({ game, playerId }) =>
-								!!game.players.find(
-									p => p.id !== playerId && p.gameState[res] >= -change
-								)
+								!!game.players.find(p => p.id !== playerId && p[res] >= -change)
 						})
 				  ]
 				: [],
@@ -209,17 +207,21 @@ export const playerProductionChange = (res: Resource, change: number) => {
 						: [],
 				descriptionPrefix: `Decrease ${res} production of`,
 				descriptionPostfix: `by ${-change} of`,
-				production: prod
+				production: prod,
+				optional: false
 			})
 		],
-		conditions: [
-			condition({
-				evaluate: ({ game, playerId }) =>
-					!!game.players.find(
-						p => p.id !== playerId && p.gameState[prod] >= -change
-					)
-			})
-		],
+		conditions:
+			change < 0
+				? [
+						condition({
+							evaluate: ({ game, playerId }) =>
+								!!game.players.find(
+									p => p.id !== playerId && p[prod] >= -change
+								)
+						})
+				  ]
+				: [],
 		description:
 			change > 0
 				? `Increase ${res} production of any player by ${change}`
@@ -477,7 +479,7 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 						condition({
 							evaluate: ({ game }) =>
 								!!game.players.find(
-									p => !!p.gameState.usedCards.find(c => c[res] >= -amount)
+									p => !!p.usedCards.find(c => c[res] >= -amount)
 								)
 						})
 				  ]
@@ -487,7 +489,7 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 				? `Remove ${-amount} ${res} from any other player card`
 				: `Add ${amount} ${res} to any other player card`,
 		perform: ({ game }, [playerId, cardIndex]: [number, number]) => {
-			const player = game.players.find(p => p.id === playerId)?.gameState
+			const player = game.players.find(p => p.id === playerId)
 			if (!player) {
 				throw new Error(`Invalid player id ${playerId}`)
 			}
@@ -918,7 +920,7 @@ export const productionForPlayersTags = (
 					if (self || p.id !== playerId) {
 						return (
 							acc +
-							p.gameState.usedCards
+							p.usedCards
 								.map(c => CardsLookupApi.get(c.code))
 								.reduce(
 									(acc, c) =>
@@ -1001,7 +1003,7 @@ export const resourcesForPlayersTags = (
 					if (self || p.id !== playerId) {
 						return (
 							acc +
-							p.gameState.usedCards
+							p.usedCards
 								.map(c => CardsLookupApi.get(c.code))
 								.reduce(
 									(acc, c) =>

@@ -1,3 +1,5 @@
+import { Logger } from '@/utils/log'
+import { f } from '@/utils/string'
 import {
 	Card,
 	CardCallbackContext,
@@ -31,8 +33,7 @@ import {
 	PlayerState,
 	PlayerStateValue,
 	StandardProjectType,
-	UsedCardState,
-	GridCellType
+	UsedCardState
 } from '@shared/game'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, PlacementConditionsLookup } from '@shared/placements'
@@ -42,8 +43,6 @@ import { adjacentCells, allCells, drawCards } from '@shared/utils'
 import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
-import { Logger } from '@/utils/log'
-import { f } from '@/utils/string'
 
 export interface CardPlayedEvent {
 	player: Player
@@ -70,11 +69,11 @@ export class Player {
 	game: Game
 
 	get gameState() {
-		return this.state.gameState
+		return this.state.state
 	}
 
 	get corporation() {
-		return Corporations.find(c => c.code === this.state.gameState.corporation)
+		return Corporations.find(c => c.code === this.state.corporation)
 	}
 
 	get name() {
@@ -96,17 +95,17 @@ export class Player {
 	}
 
 	get actionsPlayed() {
-		return this.state.gameState.actionsPlayed
+		return this.state.actionsPlayed
 	}
 
 	set actionsPlayer(number: number) {
-		this.state.gameState.actionsPlayed = number
+		this.state.actionsPlayed = number
 	}
 
 	get isPlaying() {
 		return (
 			this.game.currentPlayer.id === this.id &&
-			this.gameState.state === PlayerStateValue.Playing
+			this.state.state === PlayerStateValue.Playing
 		)
 	}
 
@@ -118,7 +117,7 @@ export class Player {
 		switch (state) {
 			case PlayerStateValue.Ready: {
 				if (this.game.state.state === GameStateValue.WaitingForPlayers) {
-					this.state.gameState.state = state
+					this.state.state = state
 				} else {
 					throw new Error(
 						`Player cannot switch to Ready when game is at ${
@@ -132,7 +131,7 @@ export class Player {
 
 			case PlayerStateValue.Waiting: {
 				if (this.game.state.state === GameStateValue.WaitingForPlayers) {
-					this.state.gameState.state = state
+					this.state.state = state
 				} else {
 					throw new Error(
 						`Player cannot switch to Waiting when game is at ${
@@ -149,7 +148,7 @@ export class Player {
 	}
 
 	pickCorporation(code: string) {
-		if (this.gameState.state !== PlayerStateValue.PickingCorporation) {
+		if (this.state.state !== PlayerStateValue.PickingCorporation) {
 			throw new Error('You are not picking corporations right now')
 		}
 
@@ -160,33 +159,31 @@ export class Player {
 
 		this.logger.log(f('Picked corporation {0}', code))
 
-		this.gameState.corporation = code
+		this.state.corporation = code
 
-		this.gameState.money = corp.startingMoney
-		this.gameState.ore = corp.startingOre
-		this.gameState.plants = corp.startingPlants
-		this.gameState.titan = corp.startingTitan
-		this.gameState.heat = corp.startingHeat
-		this.gameState.energy = corp.startingEnergy
+		this.state.money = corp.startingMoney
+		this.state.ore = corp.startingOre
+		this.state.plants = corp.startingPlants
+		this.state.titan = corp.startingTitan
+		this.state.heat = corp.startingHeat
+		this.state.energy = corp.startingEnergy
 
 		if (corp.startingCards > 0) {
-			this.gameState.cards.push(
-				...drawCards(this.game.state, corp.startingCards)
-			)
+			this.state.cards.push(...drawCards(this.game.state, corp.startingCards))
 		}
 
 		if (corp.pickingCards) {
 			this.giveCards(10)
-			this.gameState.state = PlayerStateValue.PickingCards
+			this.state.state = PlayerStateValue.PickingCards
 		} else {
-			this.gameState.state = PlayerStateValue.WaitingForTurn
+			this.state.state = PlayerStateValue.WaitingForTurn
 		}
 
 		this.updated()
 	}
 
 	pickCards(cards: number[]) {
-		if (this.gameState.state !== PlayerStateValue.PickingCards) {
+		if (this.state.state !== PlayerStateValue.PickingCards) {
 			throw new Error('You are not picking cards right now')
 		}
 
@@ -194,53 +191,50 @@ export class Player {
 			throw new Error('You cant pick one card twice')
 		}
 
-		if (cards.find(c => c >= this.gameState.cardsPick.length || c < 0)) {
+		if (cards.find(c => c >= this.state.cardsPick.length || c < 0)) {
 			throw new Error('Invalid list of cards to pick')
 		}
 
-		if (this.gameState.cardsPickLimit > 0) {
-			if (cards.length !== this.gameState.cardsPickLimit) {
+		if (this.state.cardsPickLimit > 0) {
+			if (cards.length !== this.state.cardsPickLimit) {
 				throw new Error(`You have to pick ${cards.length} cards`)
 			}
 		}
 
-		if (!this.gameState.cardsPickFree) {
-			if (cards.length * CARD_PRICE > this.gameState.money) {
+		if (!this.state.cardsPickFree) {
+			if (cards.length * CARD_PRICE > this.state.money) {
 				throw new Error("You don't have money for that")
 			}
 
-			this.gameState.money -= cards.length * CARD_PRICE
+			this.state.money -= cards.length * CARD_PRICE
 		}
 
 		this.logger.log(
-			f(
-				'Picked cards: {0}',
-				cards.map(c => this.gameState.cardsPick[c]).join(', ')
-			)
+			f('Picked cards: {0}', cards.map(c => this.state.cardsPick[c]).join(', '))
 		)
 
-		this.gameState.cards = [
-			...this.gameState.cards,
-			...cards.map(c => this.gameState.cardsPick[c])
+		this.state.cards = [
+			...this.state.cards,
+			...cards.map(c => this.state.cardsPick[c])
 		]
 
 		this.game.state.discarded.push(
-			...this.gameState.cardsPick.filter((_c, i) => !cards.includes(i))
+			...this.state.cardsPick.filter((_c, i) => !cards.includes(i))
 		)
 
-		this.gameState.cardsPick = []
-		this.gameState.cardsPickFree = false
-		this.gameState.cardsPickLimit = 0
+		this.state.cardsPick = []
+		this.state.cardsPickFree = false
+		this.state.cardsPickLimit = 0
 
 		switch (this.game.state.state) {
 			case GameStateValue.PickingCorporations:
 			case GameStateValue.PickingCards: {
-				this.gameState.state = PlayerStateValue.WaitingForTurn
+				this.state.state = PlayerStateValue.WaitingForTurn
 				break
 			}
 
 			case GameStateValue.GenerationInProgress: {
-				this.gameState.state = PlayerStateValue.Playing
+				this.state.state = PlayerStateValue.Playing
 				this.actionPlayed()
 				break
 			}
@@ -260,7 +254,7 @@ export class Player {
 			throw new Error("You're not playing")
 		}
 
-		if (this.gameState.cards[index] !== cardCode) {
+		if (this.state.cards[index] !== cardCode) {
 			throw new Error(
 				'Something is wrong, incorrect card index and card type combination'
 			)
@@ -272,19 +266,19 @@ export class Player {
 			throw new Error(`Unknown card ${cardCode}`)
 		}
 
-		let cost = adjustedCardPrice(card, this.gameState)
+		let cost = adjustedCardPrice(card, this.state)
 
 		if (useOre > 0) {
 			if (!card.categories.includes(CardCategory.Building)) {
 				throw new Error('You can only use ore to pay for buildings')
 			}
 
-			if (useOre > this.gameState.ore) {
+			if (useOre > this.state.ore) {
 				throw new Error("You don't have that much ore")
 			}
 
-			useOre = Math.min(useOre, Math.ceil(cost / this.gameState.orePrice))
-			cost -= useOre * this.gameState.orePrice
+			useOre = Math.min(useOre, Math.ceil(cost / this.state.orePrice))
+			cost -= useOre * this.state.orePrice
 		}
 
 		if (useTitan > 0) {
@@ -292,15 +286,15 @@ export class Player {
 				throw new Error('You can only use titan to pay for space cards')
 			}
 
-			if (useTitan > this.gameState.titan) {
+			if (useTitan > this.state.titan) {
 				throw new Error("You don't have that much titan")
 			}
 
-			useTitan = Math.min(useTitan, Math.ceil(cost / this.gameState.titanPrice))
-			cost -= useTitan * this.gameState.titanPrice
+			useTitan = Math.min(useTitan, Math.ceil(cost / this.state.titanPrice))
+			cost -= useTitan * this.state.titanPrice
 		}
 
-		if (this.gameState.money < cost) {
+		if (this.state.money < cost) {
 			throw new Error(
 				`You don't have money for that, adjusted price was ${cost}.`
 			)
@@ -316,20 +310,20 @@ export class Player {
 		}
 
 		const ctx = {
-			player: this.gameState,
+			player: this.state,
 			playerId: this.id,
 			game: this.game.state,
 			card: cardState,
-			cardIndex: this.gameState.usedCards.length
+			cardIndex: this.state.usedCards.length
 		}
 
 		this.checkCardConditions(card, ctx, playArguments)
 
 		this.logger.log(`Bought ${card.code} with`, playArguments)
 
-		updatePlayerResource(this.gameState, 'money', -Math.max(0, cost))
-		updatePlayerResource(this.gameState, 'titan', -useTitan)
-		updatePlayerResource(this.gameState, 'ore', -useOre)
+		updatePlayerResource(this.state, 'money', -Math.max(0, cost))
+		updatePlayerResource(this.state, 'titan', -useTitan)
+		updatePlayerResource(this.state, 'ore', -useOre)
 
 		card.playEffects.forEach((e, i) => {
 			// Make sure arguments exist
@@ -348,8 +342,8 @@ export class Player {
 			e.perform(ctx, ...(playArguments[i] || []))
 		})
 
-		this.gameState.usedCards.push(cardState)
-		this.gameState.cards.splice(index, 1)
+		this.state.usedCards.push(cardState)
+		this.state.cards.splice(index, 1)
 
 		this.onCardPlayed.emit({
 			card,
@@ -358,8 +352,8 @@ export class Player {
 		})
 
 		if (
-			this.gameState.placingTile.length === 0 &&
-			this.gameState.state !== PlayerStateValue.PickingCards
+			this.state.placingTile.length === 0 &&
+			this.state.state !== PlayerStateValue.PickingCards
 		) {
 			this.actionPlayed()
 		}
@@ -396,7 +390,7 @@ export class Player {
 	}
 
 	giveCards(count: number) {
-		this.gameState.cardsPick = drawCards(
+		this.state.cardsPick = drawCards(
 			this.game.state,
 			Math.min(
 				this.game.state.cards.length + this.game.state.discarded.length,
@@ -410,7 +404,7 @@ export class Player {
 			throw new Error('Player is not playing now')
 		}
 
-		const pendingTile = this.gameState.placingTile[0]
+		const pendingTile = this.state.placingTile[0]
 
 		if (!pendingTile) {
 			throw new Error('No tile to place!')
@@ -436,7 +430,7 @@ export class Player {
 					c =>
 						!c.evaluate({
 							game: this.game.state,
-							player: this.gameState,
+							player: this.state,
 							playerId: this.id,
 							cell
 						})
@@ -475,35 +469,35 @@ export class Player {
 		cell.ownerCard = pendingTile.ownerCard
 		cell.ownerId = this.state.id
 
-		updatePlayerResource(this.gameState, 'ore', cell.ore)
-		updatePlayerResource(this.gameState, 'titan', cell.titan)
-		updatePlayerResource(this.gameState, 'plants', cell.plants)
+		updatePlayerResource(this.state, 'ore', cell.ore)
+		updatePlayerResource(this.state, 'titan', cell.titan)
+		updatePlayerResource(this.state, 'plants', cell.plants)
 
 		if (cell.cards > 0) {
-			this.gameState.cards.push(...drawCards(this.game.state, cell.cards))
+			this.state.cards.push(...drawCards(this.game.state, cell.cards))
 		}
 
 		switch (pendingTile.type) {
 			case GridCellContent.Forest: {
 				if (this.game.state.oxygen < this.game.state.map.oxygen) {
 					this.game.state.oxygen++
-					this.gameState.terraformRating++
+					this.state.terraformRating++
 				}
 				break
 			}
 			case GridCellContent.Ocean: {
-				this.gameState.terraformRating++
+				this.state.terraformRating++
 				this.game.state.oceans++
 				break
 			}
 		}
 
-		this.gameState.money +=
+		this.state.money +=
 			adjacentCells(this.game.state, cell.x, cell.y).filter(
 				c => c.content === GridCellContent.Ocean
 			).length * 2
 
-		this.gameState.placingTile.shift()
+		this.state.placingTile.shift()
 
 		this.onTilePlaced.emit({
 			cell,
@@ -512,8 +506,8 @@ export class Player {
 
 		this.checkTilePlacement()
 
-		if (this.gameState.placingTile.length === 0) {
-			this.gameState.state = PlayerStateValue.Playing
+		if (this.state.placingTile.length === 0) {
+			this.state.state = PlayerStateValue.Playing
 			this.actionPlayed()
 		}
 
@@ -540,10 +534,10 @@ export class Player {
 	}
 
 	actionPlayed() {
-		this.gameState.actionsPlayed++
+		this.state.actionsPlayed++
 
-		if (this.gameState.actionsPlayed >= 2) {
-			this.gameState.state = PlayerStateValue.WaitingForTurn
+		if (this.state.actionsPlayed >= 2) {
+			this.state.state = PlayerStateValue.WaitingForTurn
 			this.game.nextPlayer()
 			this.game.updated()
 		}
@@ -559,14 +553,14 @@ export class Player {
 		// Force pass if everybody else passed
 		if (
 			this.game.state.players.every(
-				p => p.id === this.id || p.gameState.state === PlayerStateValue.Passed
+				p => p.id === this.id || p.state === PlayerStateValue.Passed
 			)
 		) {
 			force = true
 		}
 
-		this.gameState.state =
-			this.gameState.actionsPlayed === 0 || force
+		this.state.state =
+			this.state.actionsPlayed === 0 || force
 				? PlayerStateValue.Passed
 				: PlayerStateValue.WaitingForTurn
 		this.game.nextPlayer()
@@ -579,7 +573,7 @@ export class Player {
 	}
 
 	endGeneration() {
-		const state = this.state.gameState
+		const state = this.state
 
 		// Perform production
 		state.heat += state.energy + state.heatProduction
@@ -599,19 +593,19 @@ export class Player {
 		playArguments: CardEffectArgumentType[][]
 	) {
 		if (
-			this.gameState.cardsToPlay.length > 0 &&
-			this.gameState.cardsToPlay[0] !== index
+			this.state.cardsToPlay.length > 0 &&
+			this.state.cardsToPlay[0] !== index
 		) {
 			throw new Error(
 				'You have to resolve pending events before playing other cards'
 			)
 		}
 
-		if (this.gameState.cardsToPlay.length === 0 && !this.isPlaying) {
+		if (this.state.cardsToPlay.length === 0 && !this.isPlaying) {
 			throw new Error("You're not playing")
 		}
 
-		const cardState = this.gameState.usedCards[index]
+		const cardState = this.state.usedCards[index]
 
 		if (cardState === undefined || cardState?.code !== cardCode) {
 			throw new Error(
@@ -629,15 +623,12 @@ export class Player {
 			throw new Error(`Unknown card ${cardCode}`)
 		}
 
-		if (
-			this.gameState.cardsToPlay.length === 0 &&
-			card.type !== CardType.Action
-		) {
+		if (this.state.cardsToPlay.length === 0 && card.type !== CardType.Action) {
 			throw new Error(`${card.title} isn't playable`)
 		}
 
 		const ctx = {
-			player: this.gameState,
+			player: this.state,
 			playerId: this.id,
 			game: this.game.state,
 			card: cardState,
@@ -650,8 +641,8 @@ export class Player {
 
 		this.runCardEffects(card.actionEffects, ctx, playArguments)
 
-		if (this.gameState.cardsToPlay.length > 0) {
-			this.gameState.cardsToPlay.shift()
+		if (this.state.cardsToPlay.length > 0) {
+			this.state.cardsToPlay.shift()
 		} else {
 			cardState.played = true
 
@@ -664,8 +655,8 @@ export class Player {
 			*/
 
 			if (
-				this.gameState.placingTile.length === 0 &&
-				this.gameState.state !== PlayerStateValue.PickingCards
+				this.state.placingTile.length === 0 &&
+				this.state.state !== PlayerStateValue.PickingCards
 			) {
 				this.actionPlayed()
 			}
@@ -675,7 +666,7 @@ export class Player {
 	}
 
 	checkTilePlacement() {
-		this.gameState.placingTile = this.gameState.placingTile.filter(
+		this.state.placingTile = this.state.placingTile.filter(
 			t =>
 				(t.type !== GridCellContent.Ocean ||
 					this.game.state.oceans < this.game.state.map.oceans) &&
@@ -685,26 +676,8 @@ export class Player {
 		)
 	}
 
-	reset() {
-		this.state.gameState = {
-			...this.state.gameState,
-			actionsPlayed: 0,
-			energy: 0,
-			energyProduction: 1,
-			heat: 0,
-			heatProduction: 1,
-			money: 0,
-			moneyProduction: 1,
-			ore: 0,
-			oreProduction: 1,
-			terraformRating: 20,
-			titan: 0,
-			titanProduction: 1
-		}
-	}
-
 	finishGame() {
-		const cardVps = this.gameState.usedCards.reduce((acc, state, cardIndex) => {
+		const cardVps = this.state.usedCards.reduce((acc, state, cardIndex) => {
 			const card = CardsLookupApi.get(state.code)
 			acc += card.victoryPoints
 			if (card.victoryPointsCallback) {
@@ -712,7 +685,7 @@ export class Player {
 					card: state,
 					cardIndex,
 					game: this.game.state,
-					player: this.gameState,
+					player: this.state,
 					playerId: this.id
 				})
 			}
@@ -742,9 +715,9 @@ export class Player {
 			this.game.state.milestones.filter(m => m.playerId === this.state.id)
 				.length * MILESTONE_REWARD
 
-		this.gameState.terraformRating += cardVps
-		this.gameState.terraformRating += tileVps
-		this.gameState.terraformRating += milestonesVps
+		this.state.terraformRating += cardVps
+		this.state.terraformRating += tileVps
+		this.state.terraformRating += milestonesVps
 	}
 
 	buyStandardProject(projectType: StandardProjectType, cards: number[]) {
@@ -768,7 +741,7 @@ export class Player {
 			f('Bought standard project {0}', StandardProjectType[projectType])
 		)
 
-		if (this.gameState.placingTile.length === 0) {
+		if (this.state.placingTile.length === 0) {
 			this.actionPlayed()
 		}
 
@@ -784,7 +757,7 @@ export class Player {
 			throw new Error('All milestones are taken')
 		}
 
-		if (this.gameState.money < MILESTONE_PRICE) {
+		if (this.state.money < MILESTONE_PRICE) {
 			throw new Error("You can't afford a milestone")
 		}
 
@@ -800,7 +773,7 @@ export class Player {
 
 		this.logger.log(f('Bought milestone {0}', MilestoneType[type]))
 
-		updatePlayerResource(this.gameState, 'money', -MILESTONE_PRICE)
+		updatePlayerResource(this.state, 'money', -MILESTONE_PRICE)
 		this.game.state.milestones.push({
 			playerId: this.state.id,
 			type
@@ -823,7 +796,7 @@ export class Player {
 
 		const cost = COMPETITIONS_PRICES[sponsored]
 
-		if (this.gameState.money < cost) {
+		if (this.state.money < cost) {
 			throw new Error("You can't afford a competition")
 		}
 
@@ -833,7 +806,7 @@ export class Player {
 
 		this.logger.log(f('Sponsored {0} competition', CompetitionType[type]))
 
-		updatePlayerResource(this.gameState, 'money', -cost)
+		updatePlayerResource(this.state, 'money', -cost)
 
 		this.game.state.competitions.push({
 			playerId: this.state.id,

@@ -12,7 +12,7 @@ type Props = {
 export const PlayerArg = ({ arg, onChange }: Props) => {
 	const gameState = useAppStore(state => state.game.state)
 	const playerId = useAppStore(state => state.game.playerId)
-	const playerState = useAppStore(state => state.game.player?.gameState)
+	const playerState = useAppStore(state => state.game.player)
 
 	const possiblePlayers = useMemo(
 		() =>
@@ -22,7 +22,7 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 							p.id !== playerId &&
 							arg.playerConditions.every(c =>
 								c.evaluate({
-									player: p.gameState,
+									player: p,
 									game: gameState
 								})
 							)
@@ -52,9 +52,7 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 					<option key={p.id} value={p.id}>
 						{p.name}
 						{(arg.resource || arg.production) &&
-							` (has ${
-								p.gameState[arg.resource || arg.production || 'money']
-							})`}
+							` (has ${p[arg.resource || arg.production || 'money']})`}
 					</option>
 				))}
 			</select>

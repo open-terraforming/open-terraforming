@@ -26,10 +26,10 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 	const [selected, setSelected] = useState(undefined as CardInfo | undefined)
 
 	const game = useAppStore(state => state.game.state)
-	const playerState = player?.gameState
+	const playerState = player
 	const playerId = player?.id
-	const usedCards = useAppStore(state => state.game.player?.gameState.usedCards)
-	const handCards = useAppStore(state => state.game.player?.gameState.cards)
+	const usedCards = useAppStore(state => state.game.player?.usedCards)
+	const handCards = useAppStore(state => state.game.player?.cards)
 
 	const players = useMemo(
 		() =>
@@ -37,15 +37,11 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 				? game.players
 						.map(p => ({
 							player: p,
-							cards: cardsToCardList(
-								p.gameState.usedCards,
-								arg.cardConditions,
-								{
-									game,
-									player: p.gameState,
-									playerId: p.id
-								}
-							)
+							cards: cardsToCardList(p.usedCards, arg.cardConditions, {
+								game,
+								player: p,
+								playerId: p.id
+							})
 						}))
 						.filter(({ cards }) => cards.length > 0)
 				: [],

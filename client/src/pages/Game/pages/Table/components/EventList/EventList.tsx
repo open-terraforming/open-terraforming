@@ -74,14 +74,14 @@ export const EventList = ({}: Props) => {
 						return
 					}
 
-					const gameChanges = changes.gameState
+					const gameChanges = changes
 
 					if (gameChanges) {
 						if (gameChanges.usedCards) {
 							Object.entries(gameChanges.usedCards).forEach(
 								([cardIndex, cardChanges]) => {
 									const oldCard =
-										player.gameState.usedCards[parseInt(cardIndex)]
+										player.usedCards[parseInt(cardIndex)]
 
 									if (!oldCard) {
 										newEvents.push({
@@ -125,7 +125,7 @@ export const EventList = ({}: Props) => {
 								type: EventType.RatingChanged,
 								playerId: player.id,
 								amount:
-									gameChanges.terraformRating - player.gameState.terraformRating
+									gameChanges.terraformRating - player.terraformRating
 							})
 						}
 
@@ -137,7 +137,7 @@ export const EventList = ({}: Props) => {
 									type: EventType.ResourceChanged,
 									playerId: player.id,
 									resource: res,
-									amount: gameChanges[res] - player.gameState[res]
+									amount: gameChanges[res] - player[res]
 								})
 							}
 
@@ -146,7 +146,7 @@ export const EventList = ({}: Props) => {
 									type: EventType.ProductionChanged,
 									playerId: player.id,
 									resource: res,
-									amount: gameChanges[prod] - player.gameState[prod]
+									amount: gameChanges[prod] - player[prod]
 								})
 							}
 						})
@@ -160,8 +160,8 @@ export const EventList = ({}: Props) => {
 						}
 
 						if (gameChanges.cards) {
-							const diff = newPlayer.gameState.cards.filter(
-								c => !player.gameState.cards.includes(c)
+							const diff = newPlayer.cards.filter(
+								c => !player.cards.includes(c)
 							).length
 
 							if (diff > 0) {
@@ -244,8 +244,8 @@ export const EventList = ({}: Props) => {
 	useEffect(() => {
 		if (
 			document.hidden &&
-			(player?.gameState.state === PlayerStateValue.Playing ||
-				player?.gameState.state === PlayerStateValue.PickingCards)
+			(player?.state === PlayerStateValue.Playing ||
+				player?.state === PlayerStateValue.PickingCards)
 		) {
 			if (Notification.permission === 'granted') {
 				const notification = new Notification("It's your turn!", {
@@ -259,7 +259,7 @@ export const EventList = ({}: Props) => {
 				}
 			}
 		}
-	}, [player?.gameState.state])
+	}, [player?.state])
 
 	const playerMap = useMemo(() => (game ? keyMap(game.players, 'id') : {}), [
 		game

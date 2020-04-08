@@ -37,7 +37,7 @@ export const ChoiceArg = ({
 							c.evaluate({
 								card: cardState || emptyCardState(card),
 								cardIndex: cardIndex === undefined ? -1 : cardIndex,
-								player: player.gameState,
+								player: player,
 								game,
 								playerId: player.id
 							})

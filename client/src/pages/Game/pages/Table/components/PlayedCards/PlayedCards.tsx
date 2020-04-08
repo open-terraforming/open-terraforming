@@ -19,7 +19,7 @@ export const PlayedCards = ({
 	const player = useAppStore(state => state.game.player)
 
 	const cards = useAppStore(
-		state => state.game.player?.gameState.usedCards
+		state => state.game.player?.usedCards
 	)?.map(
 		(c, i) =>
 			({
@@ -43,7 +43,7 @@ export const PlayedCards = ({
 				isCardActionable(card, {
 					card: newlySelected.state,
 					cardIndex: newlySelected.index,
-					player: player.gameState,
+					player: player,
 					playerId: player.id,
 					game: game
 				})

@@ -1,6 +1,8 @@
 import { deepExtend, range } from '@/utils/collections'
 import { nextColor } from '@/utils/colors'
+import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
+import { f } from '@/utils/string'
 import { CardsLookupApi } from '@shared/cards'
 import { Competitions, CompetitionType } from '@shared/competitions'
 import { COMPETITIONS_REWARDS } from '@shared/constants'
@@ -15,12 +17,9 @@ import {
 import { UpdateDeepPartial } from '@shared/index'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
-import { drawCard } from '@shared/utils'
 import { MyEvent } from 'src/utils/events'
 import { Bot } from './bot'
 import { CardPlayedEvent, Player, TilePlacedEvent } from './player'
-import { Logger } from '@/utils/log'
-import { f } from '@/utils/string'
 
 export interface GameConfig {
 	bots: number
@@ -78,8 +77,8 @@ export class Game {
 		card,
 		cardIndex: playedCardIndex
 	}: CardPlayedEvent) => {
-		this.players.forEach(player => {
-			player.gameState.usedCards
+		this.state.players.forEach(player => {
+			player.usedCards
 				.map(c => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c], cardIndex) => {
 					c.passiveEffects.forEach(
@@ -90,7 +89,7 @@ export class Game {
 									card: s,
 									cardIndex,
 									game: this.state,
-									player: player.gameState,
+									player: player,
 									playerId: player.id
 								},
 								card,
@@ -103,8 +102,8 @@ export class Game {
 	}
 
 	handleTilePlaced = ({ player: playedBy, cell }: TilePlacedEvent) => {
-		this.players.forEach(player => {
-			player.gameState.usedCards
+		this.state.players.forEach(player => {
+			player.usedCards
 				.map(c => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c], cardIndex) => {
 					c.passiveEffects.forEach(
@@ -115,7 +114,7 @@ export class Game {
 									card: s,
 									cardIndex,
 									game: this.state,
-									player: player.gameState,
+									player: player,
 									playerId: player.id
 								},
 								cell,
@@ -139,7 +138,7 @@ export class Game {
 	}
 
 	all(state: PlayerStateValue) {
-		return this.players.every(p => p.gameState.state === state)
+		return this.state.players.every(p => p.state === state)
 	}
 
 	get currentPlayer() {
@@ -166,9 +165,9 @@ export class Game {
 			Math.random() * (this.players.length - 1)
 		)
 
-		this.players.forEach(p => {
-			p.state.color = nextColor()
-			p.gameState.state = PlayerStateValue.PickingCorporation
+		this.state.players.forEach(p => {
+			p.color = nextColor()
+			p.state = PlayerStateValue.PickingCorporation
 		})
 	}
 
@@ -177,19 +176,19 @@ export class Game {
 			// Make sure disconnected players are not stalling others
 			this.players.forEach(p => {
 				if (!p.state.connected) {
-					if (p.gameState.state === PlayerStateValue.PickingCorporation) {
+					if (p.state.state === PlayerStateValue.PickingCorporation) {
 						this.logger.log(
 							`${p.name} is disconnected, picking first corporation`
 						)
 						p.pickCorporation(Corporations[0].code)
 					}
-					if (p.gameState.state === PlayerStateValue.PickingCards) {
+					if (p.state.state === PlayerStateValue.PickingCards) {
 						this.logger.log(
 							`${p.name} is disconnected, cancelling card picking`
 						)
 						p.pickCards([])
 					}
-					if (p.gameState.state === PlayerStateValue.Playing) {
+					if (p.state.state === PlayerStateValue.Playing) {
 						this.logger.log(`${p.name} is disconnected, passing`)
 						p.pass(true)
 					}
@@ -248,7 +247,7 @@ export class Game {
 				})
 
 				if (!this.currentPlayer.connected) {
-					this.currentPlayer.gameState.state = PlayerStateValue.Passed
+					this.currentPlayer.state = PlayerStateValue.Passed
 					this.nextPlayer()
 					this.updated()
 				}
@@ -289,7 +288,7 @@ export class Game {
 								CompetitionType[type]
 							)
 						)
-						p.gameState.terraformRating += COMPETITIONS_REWARDS[index]
+						p.terraformRating += COMPETITIONS_REWARDS[index]
 					})
 				})
 		})
@@ -306,12 +305,12 @@ export class Game {
 			do {
 				this.state.currentPlayer =
 					(this.state.currentPlayer + 1) % this.players.length
-			} while (this.currentPlayer.gameState.state === PlayerStateValue.Passed)
+			} while (this.currentPlayer.state === PlayerStateValue.Passed)
 
 			this.logger.log(f(`Next player: {0}`, this.currentPlayer.name))
 
-			this.currentPlayer.gameState.state = PlayerStateValue.Playing
-			this.currentPlayer.gameState.actionsPlayed = 0
+			this.currentPlayer.state = PlayerStateValue.Playing
+			this.currentPlayer.actionsPlayed = 0
 		}
 	}
 
@@ -325,7 +324,7 @@ export class Game {
 		} else {
 			this.players.forEach(p => {
 				p.endGeneration()
-				p.gameState.state = PlayerStateValue.PickingCards
+				p.state.state = PlayerStateValue.PickingCards
 				p.giveCards(4)
 			})
 

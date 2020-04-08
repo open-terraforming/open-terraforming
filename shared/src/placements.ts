@@ -195,7 +195,7 @@ export const canPlace = (
 
 	const ctx: PlacementContext = {
 		game,
-		player: player.gameState,
+		player: player,
 		playerId: player.id,
 		cell,
 	}

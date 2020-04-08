@@ -31,7 +31,7 @@ type Props = {
 
 export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 	const api = useApi()
-	const state = useAppStore(state => state.game.player?.gameState)
+	const state = useAppStore(state => state.game.player)
 
 	const cardState = useMemo(
 		() => (!buying ? state?.usedCards[index] : undefined),
@@ -44,20 +44,32 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 			: (state?.usedCards[index].code as string)
 	)
 
-	const [ore, setOre] = useState(0)
-	const [titan, setTitan] = useState(0)
+	const canUseOre =
+		(state?.ore || 0) > 0 && card?.categories.includes(CardCategory.Building)
+
+	const canUseTitan =
+		(state?.titan || 0) > 0 && card?.categories.includes(CardCategory.Space)
+
+	const maxOre =
+		canUseOre && state && card
+			? Math.min(state.ore, Math.ceil(card.cost / state.orePrice))
+			: 0
+
+	console.log('max ore', maxOre)
+
+	const maxTitan =
+		canUseTitan && state && card
+			? Math.min(state.titan || 0, Math.ceil(card.cost / state.titanPrice))
+			: 0
+
+	const [ore, setOre] = useState(maxOre)
+	const [titan, setTitan] = useState(maxTitan)
 
 	const [effectsArgs, setEffectsArgs] = useState(
 		[] as CardEffectArgumentType[][]
 	)
 
 	const isPlaying = state?.state === PlayerStateValue.Playing
-
-	const canUseOre =
-		(state?.ore || 0) > 0 && card?.categories.includes(CardCategory.Building)
-
-	const canUseTitan =
-		(state?.titan || 0) > 0 && card?.categories.includes(CardCategory.Space)
 
 	const price = card
 		? Math.max(
@@ -134,13 +146,11 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 						<UseContainer>
 							Use{' '}
 							<ResourceInput
-								max={Math.min(
-									state?.ore,
-									Math.ceil(card.cost / state.orePrice)
-								)}
+								max={maxOre}
 								res={'ore'}
+								initialValue={ore}
 								onChange={v => {
-									setOre(Math.min(v, Math.ceil(card.cost / state.orePrice)))
+									setOre(Math.min(v, maxOre))
 								}}
 							/>
 						</UseContainer>
@@ -150,13 +160,11 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 						<UseContainer>
 							Use{' '}
 							<ResourceInput
-								max={Math.min(
-									state?.titan,
-									Math.ceil(card.cost / state.titanPrice)
-								)}
+								max={maxTitan}
 								res={'titan'}
+								initialValue={titan}
 								onChange={v => {
-									setTitan(Math.min(v, Math.ceil(card.cost / state.titanPrice)))
+									setTitan(Math.min(v, maxTitan))
 								}}
 							/>
 						</UseContainer>

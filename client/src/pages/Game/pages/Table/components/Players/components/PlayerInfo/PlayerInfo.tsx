@@ -1,10 +1,9 @@
-import React, { useMemo } from 'react'
-import { useAppStore } from '@/utils/hooks'
-import { cardsToCardList } from '@/utils/cards'
 import { Modal } from '@/components/Modal/Modal'
-import { CardDisplay } from '../../../CardDisplay/CardDisplay'
-import { Button } from '@/components'
+import { cardsToCardList } from '@/utils/cards'
+import { useAppStore } from '@/utils/hooks'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
+import { CardDisplay } from '../../../CardDisplay/CardDisplay'
 
 type Props = {
 	playerId: number
@@ -16,9 +15,8 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 		state.game.state?.players.find(p => p.id === playerId)
 	)
 
-	const state = player?.gameState
-
-	const usedCards = player?.gameState.usedCards
+	const state = player
+	const usedCards = player?.usedCards
 
 	const cards = useMemo(() => (usedCards ? cardsToCardList(usedCards) : []), [
 		usedCards

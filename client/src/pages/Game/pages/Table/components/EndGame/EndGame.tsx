@@ -18,7 +18,7 @@ export const EndGame = ({ onClose }: Props) => {
 			game
 				? Object.entries(
 						game.players.reduce((acc, player) => {
-							const score = player.gameState.terraformRating
+							const score = player.terraformRating
 
 							if (!acc[score]) {
 								acc[score] = []
@@ -50,7 +50,7 @@ export const EndGame = ({ onClose }: Props) => {
 					>
 						<span>{position + 1}.</span>
 						<span>{players.map(p => p.name).join(', ')}</span>
-						<span>({players[0].gameState.terraformRating})</span>
+						<span>({players[0].terraformRating})</span>
 					</Place>
 				))}
 			</CharContainer>

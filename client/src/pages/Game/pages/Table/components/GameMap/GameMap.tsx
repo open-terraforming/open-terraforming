@@ -23,7 +23,7 @@ export const GameMap = ({}: Props) => {
 	const map = useAppStore(state => state.game.state?.map)
 
 	const placingList = useAppStore(
-		state => state.game.player?.gameState.placingTile
+		state => state.game.player?.placingTile
 	)
 
 	const placing =

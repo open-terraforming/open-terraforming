@@ -74,7 +74,7 @@ export const drawCard = (game: GameState) => {
 
 	if (game.cards.length === 0) {
 		const played = game.players.reduce(
-			(acc, p) => acc + p.gameState.cards.length + p.gameState.usedCards.length,
+			(acc, p) => acc + p.cards.length + p.usedCards.length,
 			0
 		)
 

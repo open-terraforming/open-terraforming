@@ -39,14 +39,14 @@ export const Controls = () => {
 
 	const buyingCardIndex = useAppStore(state => state.table.buyingCardIndex)
 	const playingCardIndex = useAppStore(state => state.table.playingCardIndex)
-	const state = player?.gameState
+	const state = player
 	const corporation = Corporations.find(c => c.code === state?.corporation)
 	const [handOpened, setHandOpened] = useState(false)
 	const [cardsOpened, setCardsOpened] = useState(false)
 	const [projectsOpened, setProjectsOpened] = useState(false)
 	const [competitionsOpened, setCompetitionsOpened] = useState(false)
 	const [milestonesOpened, setMilestonesOpened] = useState(false)
-	const stackedActions = player?.gameState.cardsToPlay
+	const stackedActions = player?.cardsToPlay
 
 	const isPlaying = state?.state === PlayerStateValue.Playing
 
@@ -57,13 +57,13 @@ export const Controls = () => {
 	}
 
 	const buyTemperature = () => {
-		if (player && player.gameState.heat >= 8) {
+		if (player && player.heat >= 8) {
 			api.send(buyStandardProject(StandardProjectType.TemperatureForHeat))
 		}
 	}
 
 	const buyForest = () => {
-		if (player && player.gameState.plants >= 8) {
+		if (player && player.plants >= 8) {
 			api.send(buyStandardProject(StandardProjectType.GreeneryForPlants))
 		}
 	}
@@ -173,7 +173,7 @@ export const Controls = () => {
 					<Button
 						disabled={
 							!isPlaying ||
-							(player?.gameState.heat || 0) < 8 ||
+							(player?.heat || 0) < 8 ||
 							(game?.temperature || 0) >= (game?.map.temperature || 0)
 						}
 						onClick={buyTemperature}
@@ -182,7 +182,7 @@ export const Controls = () => {
 						<ResourceIcon res="heat" />
 					</Button>
 					<Button
-						disabled={!isPlaying || (player?.gameState.plants || 0) < 8}
+						disabled={!isPlaying || (player?.plants || 0) < 8}
 						onClick={buyForest}
 					>
 						Build <FontAwesomeIcon icon={faTree} /> for 8{' '}

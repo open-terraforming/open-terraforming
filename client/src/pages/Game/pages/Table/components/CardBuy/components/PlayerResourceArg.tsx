@@ -24,7 +24,7 @@ export const PlayerResourceArg = ({ arg, onChange }: Props) => {
 							arg.playerConditions.every(c =>
 								c.evaluate({
 									game,
-									player: p.gameState
+									player: p
 								})
 							)
 				  )
@@ -57,7 +57,7 @@ export const PlayerResourceArg = ({ arg, onChange }: Props) => {
 				<option value={-1}>Nobody</option>
 				{players.map(p => (
 					<option key={p.id} value={p.id}>
-						{p.name} (has {p.gameState[arg.resource as Resource]})
+						{p.name} (has {p[arg.resource as Resource]})
 					</option>
 				))}
 			</select>
@@ -65,8 +65,8 @@ export const PlayerResourceArg = ({ arg, onChange }: Props) => {
 				<ResourceInput
 					res={arg.resource as Resource}
 					max={Math.min(
-						arg.maxAmount || selectedPlayer.gameState[arg.resource as Resource],
-						selectedPlayer.gameState[arg.resource as Resource]
+						arg.maxAmount || selectedPlayer[arg.resource as Resource],
+						selectedPlayer[arg.resource as Resource]
 					)}
 					onChange={v => setAmount(v)}
 				/>

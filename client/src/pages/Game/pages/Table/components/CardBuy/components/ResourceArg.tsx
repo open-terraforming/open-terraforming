@@ -11,7 +11,7 @@ type Props = {
 }
 
 export const ResourceArg = ({ arg, onChange }: Props) => {
-	const player = useAppStore(state => state.game.player)?.gameState
+	const player = useAppStore(state => state.game.player)
 
 	useEffect(() => {
 		onChange(0)

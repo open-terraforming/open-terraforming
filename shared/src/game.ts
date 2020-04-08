@@ -159,10 +159,6 @@ export interface PlayerState {
 	connected: boolean
 	bot: boolean
 
-	gameState: PlayerGameState
-}
-
-export interface PlayerGameState {
 	state: PlayerStateValue
 
 	/** Code of player corporation */
@@ -214,6 +210,8 @@ export interface PlayerGameState {
 	/** List of cards that are to be played - index in usedCards */
 	cardsToPlay: number[]
 }
+
+export type PlayerGameState = PlayerState
 
 export interface UsedCardState {
 	/** Used car code */

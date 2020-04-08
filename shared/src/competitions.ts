@@ -31,14 +31,14 @@ const CompetitionsList = [
 		type: CompetitionType.Banker,
 		title: 'Banker',
 		description: 'Biggest money income (without TR)',
-		getScore: (_game, player) => player.gameState.moneyProduction,
+		getScore: (_game, player) => player.moneyProduction,
 	}),
 	competition({
 		type: CompetitionType.Scientist,
 		title: 'Scientist',
 		description: "Most science cards on the table (Events don't count)",
 		getScore: (_game, player) =>
-			player.gameState.usedCards
+			player.usedCards
 				.map((c) => CardsLookupApi.get(c.code))
 				.reduce(
 					(acc, c) =>
@@ -53,13 +53,13 @@ const CompetitionsList = [
 		type: CompetitionType.Thermalist,
 		title: 'Thermalist',
 		description: 'Most accumulated heat',
-		getScore: (_game, player) => player.gameState.heat,
+		getScore: (_game, player) => player.heat,
 	}),
 	competition({
 		type: CompetitionType.Miner,
 		title: 'Miner',
 		description: 'Most accumulated ore and titan combined',
-		getScore: (_game, player) => player.gameState.ore + player.gameState.titan,
+		getScore: (_game, player) => player.ore + player.titan,
 	}),
 ]
 

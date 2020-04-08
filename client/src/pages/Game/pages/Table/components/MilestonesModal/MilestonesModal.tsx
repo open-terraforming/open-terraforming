@@ -34,7 +34,7 @@ export const MilestonesModal = ({ onClose, playing }: Props) => {
 	const players = useAppStore(state => state.game.state?.players) || []
 
 	const playerMoney =
-		useAppStore(state => state.game.player?.gameState.money) || 0
+		useAppStore(state => state.game.player?.money) || 0
 
 	const affordable =
 		bought.length < MILESTONES_LIMIT && playerMoney >= MILESTONE_PRICE

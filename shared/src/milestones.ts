@@ -26,7 +26,7 @@ const MilestonesList = [
 		title: 'Terraformer',
 		description: 'Terraforming rating',
 		limit: 35,
-		getValue: (_game, player) => player.gameState.terraformRating,
+		getValue: (_game, player) => player.terraformRating,
 	}),
 	milestone({
 		type: MilestoneType.Mayor,
@@ -54,7 +54,7 @@ const MilestonesList = [
 		description: 'Cards with Building tag played',
 		limit: 9,
 		getValue: (_game, player) =>
-			player.gameState.usedCards
+			player.usedCards
 				.map((c) => CardsLookupApi.get(c.code))
 				.filter((c) => c.categories.includes(CardCategory.Building)).length,
 	}),
@@ -63,7 +63,7 @@ const MilestonesList = [
 		title: 'Planner',
 		description: 'Cards in your hand',
 		limit: 16,
-		getValue: (_game, player) => player.gameState.cards.length,
+		getValue: (_game, player) => player.cards.length,
 	}),
 ]
 

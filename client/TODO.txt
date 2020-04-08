@@ -27,3 +27,5 @@ TODO
  * starting player is wrong (off by 1)
  * HIRED RAIDERS issue - it can cause player to go negative somehow
  * HAND/TABLE CARDS - remember filters? Reopen after playing card
+ * Mining Rights - 2* the expected production, why?
+ * get rid of player gameState

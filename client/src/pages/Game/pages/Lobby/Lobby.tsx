@@ -13,7 +13,7 @@ export const Lobby = () => {
 	const api = useApi()
 	const players = useAppStore(state => state.game.state?.players)
 	const player = useAppStore(state => state.game.player)
-	const isReady = player?.gameState.state === PlayerStateValue.Ready
+	const isReady = player?.state === PlayerStateValue.Ready
 
 	const handleReady = () => {
 		api.send(playerReady(!isReady))
@@ -25,7 +25,7 @@ export const Lobby = () => {
 				<Player
 					name={p.name}
 					key={p.id}
-					ready={p.gameState.state === PlayerStateValue.Ready}
+					ready={p.state === PlayerStateValue.Ready}
 				/>
 			))}
 
