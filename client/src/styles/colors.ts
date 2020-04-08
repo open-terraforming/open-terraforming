@@ -11,11 +11,11 @@ export default {
 		primary: {
 			background: MainColor.primary,
 			borderColor: MainColor.primary,
-			color: '#eee',
+			color: mainColors.text,
 			hover: {
 				background: lighten(0.1, MainColor.primary),
 				borderColor: lighten(0.1, MainColor.primary),
-				color: '#eee'
+				color: mainColors.text
 			}
 		},
 		secondary: {

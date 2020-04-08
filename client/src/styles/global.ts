@@ -20,7 +20,7 @@ html, body, #application {
 body {
 	font-family: Oswald, Arial, Helvetica, sans-serif;
 	font-size: 14px;
-	color: #ccc;
+	color: #4267B2;
 }
 
 

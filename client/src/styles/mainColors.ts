@@ -1,6 +1,7 @@
 import { lighten } from 'polished'
 
 const application = '#182541'
+const text = '#BDCBEE'
 
 export default {
 	primary: lighten(0.1, application),
@@ -10,5 +11,6 @@ export default {
 	danger: '#DB433A',
 	warn: '#FAA94B',
 
-	application
+	application,
+	text
 }

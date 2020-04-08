@@ -38,7 +38,7 @@ export const Temperature = ({ start, current, target, milestones }: Props) => {
 		<Container>
 			{range(target, start - 1, -1).map(t => (
 				<Step passed={current > t} active={current === t} key={t}>
-					{t * 2}
+					{t >= current ? t * 2 : '\u00A0'}
 					{milestoneArray[t] && (
 						<MilestoneDisplay side="left" milestone={milestoneArray[t]} />
 					)}
@@ -62,8 +62,7 @@ const Container = styled.div`
 const Step = styled.div<{ passed: boolean; active: boolean }>`
 	text-align: center;
 	padding: 0.3rem 1rem;
-	color: #fff;
-	opacity: ${props => (props.active ? 1 : props.passed ? 0.8 : 0.5)};
+	opacity: ${props => (props.active || props.passed ? 1 : 0.5)};
 	position: relative;
 	transition: background-color 500ms, opacity 500ms;
 

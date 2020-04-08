@@ -8,6 +8,7 @@ import { useAppStore, useAppDispatch } from '@/utils/hooks'
 import { Game } from '../Game/Game'
 import { setClientState } from '@/store/modules/client'
 import background from '@/assets/stars.jpg'
+import { mainColors } from '@/styles'
 
 export const App = () => {
 	const dispatch = useAppDispatch()
@@ -47,6 +48,6 @@ const AppContainer = styled.div`
 	align-items: center;
 	justify-content: center;
 	background-color: #000;
-	color: #eee;
+	color: ${mainColors.text};
 	background-image: url('${background}');
 `

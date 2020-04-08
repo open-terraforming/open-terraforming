@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { useAppStore, useAppDispatch } from '@/utils/hooks'
 import { Resources } from './components/Resources'
 import { Button } from '@/components'
@@ -29,7 +29,7 @@ import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { colors } from '@/styles'
-import { rgba } from 'polished'
+import { rgba, lighten, darken } from 'polished'
 
 export const Controls = () => {
 	const api = useApi()
@@ -214,12 +214,32 @@ export const Controls = () => {
 	)
 }
 
+const BackgroundAnimation = keyframes`
+	0% { background-position: 0 0; }
+	100% { background-position: 80px 40px; }
+`
+
 const Container = styled.div<{ faded: boolean }>`
 	position: relative;
 	display: flex;
 	justify-content: center;
 	background-color: ${colors.background};
 	border-top: 0.2rem solid ${colors.border};
+	background: linear-gradient(
+		45deg,
+		${darken(0.01, colors.background)} 25%,
+		${colors.background} 25%,
+		${colors.background} 50%,
+		${darken(0.01, colors.background)} 50%,
+		${darken(0.01, colors.background)} 75%,
+		${colors.background} 75%,
+		${colors.background}
+	);
+	background-size: 40px 40px;
+	animation-name: ${BackgroundAnimation};
+	animation-duration: 1000ms;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
 
 	${props =>
 		props.faded &&

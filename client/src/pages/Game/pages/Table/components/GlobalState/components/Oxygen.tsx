@@ -4,7 +4,7 @@ import { range, keyMap } from '@/utils/collections'
 import { DiffAnim } from './DiffAnim'
 import { ProgressMilestoneItem } from '@shared/index'
 import { MilestoneDisplay } from './MilestoneDisplay'
-import { colors } from '@/styles'
+import { colors, mainColors } from '@/styles'
 
 type Props = {
 	start: number
@@ -36,7 +36,7 @@ export const Oxygen = ({ current, target, start, milestones }: Props) => {
 		<Container>
 			{range(target, start - 1, -1).map(t => (
 				<Step passed={current > t} active={current === t} key={t}>
-					{t}
+					{t >= current ? t : '\u00A0'}
 					{milestoneArray[t] && (
 						<MilestoneDisplay side="right" milestone={milestoneArray[t]} />
 					)}
@@ -62,8 +62,7 @@ const Container = styled.div`
 const Step = styled.div<{ passed: boolean; active: boolean }>`
 	text-align: center;
 	padding: 0.55rem 1rem;
-	color: #fff;
-	opacity: ${props => (props.active ? 1 : props.passed ? 0.8 : 0.5)};
+	opacity: ${props => (props.active || props.passed ? 1 : 0.5)};
 	position: relative;
 	transition: background-color 500ms, opacity 500ms;
 
