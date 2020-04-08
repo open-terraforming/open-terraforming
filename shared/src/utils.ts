@@ -14,7 +14,7 @@ export const adjacentCells = (game: GameState, x: number, y: number) => {
 			? [
 					y % 2 === 0 && x > 0 && g[x - 1][y - 1],
 					g[x][y - 1],
-					y % 2 === 1 && x < w - 1 && g[x + 1][y - 1],
+					y % 2 === 1 && x < w - 1 && g[x + 1][y - 1]
 			  ]
 			: []),
 		x > 0 && g[x - 1][y],
@@ -23,10 +23,10 @@ export const adjacentCells = (game: GameState, x: number, y: number) => {
 			? [
 					y % 2 === 0 && x > 0 && g[x - 1][y + 1],
 					g[x][y + 1],
-					y % 2 === 1 && x < w - 1 && g[x + 1][y + 1],
+					y % 2 === 1 && x < w - 1 && g[x + 1][y + 1]
 			  ]
-			: []),
-	].filter((c) => c && c.enabled) as GridCell[]
+			: [])
+	].filter(c => c && c.enabled) as GridCell[]
 }
 
 export const ucFirst = (value: string) =>
@@ -73,7 +73,14 @@ export const drawCard = (game: GameState) => {
 	}
 
 	if (game.cards.length === 0) {
-		throw new Error('There are no more cards')
+		const played = game.players.reduce(
+			(acc, p) => acc + p.gameState.cards.length + p.gameState.usedCards.length,
+			0
+		)
+
+		throw new Error(
+			`There are no more cards. Players have ${played} in their hands`
+		)
 	}
 
 	return game.cards.pop() as string

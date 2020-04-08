@@ -14,12 +14,7 @@ export const CardModal = ({ card, onClose, title }: Props) => {
 	const info = CardsLookupApi.get(card)
 
 	return (
-		<Modal
-			open={true}
-			header={title}
-			onClose={onClose}
-			footer={<Button onClick={onClose}>Close</Button>}
-		>
+		<Modal open={true} header={title} onClose={onClose}>
 			<CardView card={info} />
 		</Modal>
 	)

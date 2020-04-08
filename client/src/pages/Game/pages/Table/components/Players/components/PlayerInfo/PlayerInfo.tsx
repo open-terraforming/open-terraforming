@@ -33,7 +33,6 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 			open={true}
 			onClose={onClose}
 			header={`${player.name}`}
-			footer={<Button onClick={onClose}>Close</Button>}
 			contentStyle={{ width: '80%' }}
 		>
 			<Info>

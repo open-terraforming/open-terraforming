@@ -63,7 +63,7 @@ export class Bot extends Player {
 					console.error(e)
 					this.pass()
 				}
-			}, 2000 + Math.random() * 5000)
+			}, 100) // 2000 + Math.random() * 5000
 		}
 
 		if (broadcast) {
@@ -81,21 +81,37 @@ export class Bot extends Player {
 				switch (a.type) {
 					case CardEffectTarget.Card: {
 						const card = shuffle(
-							this.gameState.usedCards
-								.filter(
-									(card, cardIndex) =>
-										!a.cardConditions.find(
-											c =>
-												!c.evaluate({
-													card,
-													cardIndex,
-													game: this.game.state,
-													player: this.gameState,
-													playerId: this.id
-												})
+							a.fromHand
+								? this.gameState.cards
+										.filter(
+											(card, cardIndex) =>
+												!a.cardConditions.find(
+													c =>
+														!c.evaluate({
+															card: emptyCardState(card),
+															cardIndex,
+															game: this.game.state,
+															player: this.gameState,
+															playerId: this.id
+														})
+												)
 										)
-								)
-								.map(c => this.gameState.usedCards.indexOf(c))
+										.map(c => this.gameState.cards.indexOf(c))
+								: this.gameState.usedCards
+										.filter(
+											(card, cardIndex) =>
+												!a.cardConditions.find(
+													c =>
+														!c.evaluate({
+															card,
+															cardIndex,
+															game: this.game.state,
+															player: this.gameState,
+															playerId: this.id
+														})
+												)
+										)
+										.map(c => this.gameState.usedCards.indexOf(c))
 						)[0]
 
 						return card as number
@@ -229,10 +245,19 @@ export class Bot extends Player {
 			}
 
 			case PlayerStateValue.PickingCards: {
-				const picked = this.gameState.cardsPick
-					.map((_c, i) => i)
-					.filter(() => Math.random() > 0.5)
-					.slice(0, Math.max(0, Math.floor(this.gameState.money / CARD_PRICE)))
+				const picked = this.gameState.cardsPickFree
+					? shuffle(this.gameState.cardsPick.map((_c, i) => i)).slice(
+							0,
+							this.gameState.cardsPickLimit || this.gameState.cardsPick.length
+					  )
+					: shuffle(
+							this.gameState.cardsPick
+								.map((_c, i) => i)
+								.filter(() => Math.random() > 0.5)
+					  ).slice(
+							0,
+							Math.max(0, Math.floor(this.gameState.money / CARD_PRICE))
+					  )
 
 				this.pickCards(picked)
 				break

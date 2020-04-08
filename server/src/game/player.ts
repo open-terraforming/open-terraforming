@@ -1,4 +1,3 @@
-import { range } from '@/utils/collections'
 import {
 	Card,
 	CardCallbackContext,
@@ -9,7 +8,11 @@ import {
 	CardsLookupApi,
 	CardType
 } from '@shared/cards'
-import { adjustedCardPrice, cellByCoords } from '@shared/cards/utils'
+import {
+	adjustedCardPrice,
+	cellByCoords,
+	updatePlayerResource
+} from '@shared/cards/utils'
 import { CompetitionType } from '@shared/competitions'
 import {
 	CARD_PRICE,
@@ -28,15 +31,19 @@ import {
 	PlayerState,
 	PlayerStateValue,
 	StandardProjectType,
-	UsedCardState
+	UsedCardState,
+	GridCellType
 } from '@shared/game'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, PlacementConditionsLookup } from '@shared/placements'
 import { Projects } from '@shared/projects'
+import { initialPlayerState } from '@shared/states'
 import { adjacentCells, allCells, drawCards } from '@shared/utils'
 import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
+import { Logger } from '@/utils/log'
+import { f } from '@/utils/string'
 
 export interface CardPlayedEvent {
 	player: Player
@@ -51,46 +58,9 @@ export interface TilePlacedEvent {
 export class Player {
 	static idCounter = 1
 
-	state = {
-		connected: false,
-		id: Player.idCounter++,
-		bot: false,
-		gameState: {
-			actionsPlayed: 0,
-			energy: 0,
-			energyProduction: 1,
-			heat: 0,
-			heatProduction: 1,
-			money: 0,
-			moneyProduction: 1,
-			ore: 0,
-			oreProduction: 1,
-			orePrice: 2,
-			titan: 0,
-			titanProduction: 1,
-			titanPrice: 3,
-			plants: 0,
-			plantsProduction: 1,
-			passed: false,
-			state: PlayerStateValue.Connecting,
-			terraformRating: 20,
-			cards: [],
-			usedCards: [],
-			cardsPick: [],
-			corporation: '',
-			spacePriceChange: 0,
-			cardPriceChange: 0,
-			cardsPickFree: false,
-			cardsPickLimit: 0,
-			cardsToPlay: [],
-			earthPriceChange: 0,
-			placingTile: []
-		},
-		name: '<unknown>',
-		color: '#000',
-		session: uuidv4()
-	} as PlayerState
+	logger = new Logger('Player')
 
+	state = initialPlayerState(Player.idCounter++, uuidv4())
 	admin = false
 
 	onStateChanged = new MyEvent<Readonly<PlayerState>>()
@@ -188,6 +158,8 @@ export class Player {
 			throw new Error(`Unknown corporation ${code}`)
 		}
 
+		this.logger.log(f('Picked corporation {0}', code))
+
 		this.gameState.corporation = code
 
 		this.gameState.money = corp.startingMoney
@@ -239,6 +211,13 @@ export class Player {
 
 			this.gameState.money -= cards.length * CARD_PRICE
 		}
+
+		this.logger.log(
+			f(
+				'Picked cards: {0}',
+				cards.map(c => this.gameState.cardsPick[c]).join(', ')
+			)
+		)
 
 		this.gameState.cards = [
 			...this.gameState.cards,
@@ -317,7 +296,7 @@ export class Player {
 				throw new Error("You don't have that much titan")
 			}
 
-			useOre = Math.min(useTitan, Math.ceil(cost / this.gameState.titanPrice))
+			useTitan = Math.min(useTitan, Math.ceil(cost / this.gameState.titanPrice))
 			cost -= useTitan * this.gameState.titanPrice
 		}
 
@@ -346,9 +325,11 @@ export class Player {
 
 		this.checkCardConditions(card, ctx, playArguments)
 
-		this.gameState.money -= Math.max(0, cost)
-		this.gameState.titan -= useTitan
-		this.gameState.ore -= useOre
+		this.logger.log(`Bought ${card.code} with`, playArguments)
+
+		updatePlayerResource(this.gameState, 'money', -Math.max(0, cost))
+		updatePlayerResource(this.gameState, 'titan', -useTitan)
+		updatePlayerResource(this.gameState, 'ore', -useOre)
 
 		card.playEffects.forEach((e, i) => {
 			// Make sure arguments exist
@@ -408,15 +389,20 @@ export class Player {
 		if (errorConditions.length > 0) {
 			throw new Error(
 				`Card conditions not met! ${errorConditions
-					.map(c => c.description)
-					.filter(c => !!c)
+					.map((c, i) => c.description || i.toString())
 					.join('. ')}`
 			)
 		}
 	}
 
 	giveCards(count: number) {
-		this.gameState.cardsPick = drawCards(this.game.state, count)
+		this.gameState.cardsPick = drawCards(
+			this.game.state,
+			Math.min(
+				this.game.state.cards.length + this.game.state.discarded.length,
+				count
+			)
+		)
 	}
 
 	placeTile(x: number, y: number) {
@@ -475,14 +461,23 @@ export class Player {
 			)
 		}
 
+		this.logger.log(
+			f(
+				'Placed {0} at {1},{2}',
+				GridCellContent[pendingTile.type],
+				cell.x,
+				cell.y
+			)
+		)
+
 		cell.content = pendingTile.type
 		cell.other = pendingTile.other
 		cell.ownerCard = pendingTile.ownerCard
 		cell.ownerId = this.state.id
 
-		this.gameState.ore += cell.ore
-		this.gameState.titan += cell.titan
-		this.gameState.plants += cell.plants
+		updatePlayerResource(this.gameState, 'ore', cell.ore)
+		updatePlayerResource(this.gameState, 'titan', cell.titan)
+		updatePlayerResource(this.gameState, 'plants', cell.plants)
 
 		if (cell.cards > 0) {
 			this.gameState.cards.push(...drawCards(this.game.state, cell.cards))
@@ -556,8 +551,10 @@ export class Player {
 
 	pass(force = false) {
 		if (!this.isPlaying) {
-			return
+			throw new Error("You're not playing")
 		}
+
+		this.logger.log('Passed forced:', force)
 
 		// Force pass if everybody else passed
 		if (
@@ -577,6 +574,7 @@ export class Player {
 	}
 
 	updated() {
+		this.logger.category = this.state.name
 		this.onStateChanged.emit(this.state)
 	}
 
@@ -585,7 +583,7 @@ export class Player {
 
 		// Perform production
 		state.heat += state.energy + state.heatProduction
-		state.energy = state.energyProduction
+		state.energy += state.energyProduction
 		state.ore += state.oreProduction
 		state.titan += state.titanProduction
 		state.plants += state.plantsProduction
@@ -622,7 +620,7 @@ export class Player {
 		}
 
 		if (cardState.played) {
-			throw new Error('Card was already played this generation')
+			throw new Error(`${cardCode} was already played this generation`)
 		}
 
 		const card = CardsLookupApi.get(cardCode)
@@ -631,8 +629,11 @@ export class Player {
 			throw new Error(`Unknown card ${cardCode}`)
 		}
 
-		if (card.type !== CardType.Action) {
-			throw new Error("This card isn't playable")
+		if (
+			this.gameState.cardsToPlay.length === 0 &&
+			card.type !== CardType.Action
+		) {
+			throw new Error(`${card.title} isn't playable`)
 		}
 
 		const ctx = {
@@ -644,6 +645,8 @@ export class Player {
 		}
 
 		this.checkCardConditions(card, ctx, playArguments, true)
+
+		this.logger.log(`Played ${card.code} with`, playArguments)
 
 		this.runCardEffects(card.actionEffects, ctx, playArguments)
 
@@ -761,6 +764,10 @@ export class Player {
 
 		project.execute(ctx, cards)
 
+		this.logger.log(
+			f('Bought standard project {0}', StandardProjectType[projectType])
+		)
+
 		if (this.gameState.placingTile.length === 0) {
 			this.actionPlayed()
 		}
@@ -791,7 +798,9 @@ export class Player {
 			throw new Error("You haven't reached this milestone")
 		}
 
-		this.gameState.money -= MILESTONE_PRICE
+		this.logger.log(f('Bought milestone {0}', MilestoneType[type]))
+
+		updatePlayerResource(this.gameState, 'money', -MILESTONE_PRICE)
 		this.game.state.milestones.push({
 			playerId: this.state.id,
 			type
@@ -822,7 +831,10 @@ export class Player {
 			throw new Error('This competition is already sponsored')
 		}
 
-		this.gameState.money -= cost
+		this.logger.log(f('Sponsored {0} competition', CompetitionType[type]))
+
+		updatePlayerResource(this.gameState, 'money', -cost)
+
 		this.game.state.competitions.push({
 			playerId: this.state.id,
 			type
@@ -837,6 +849,8 @@ export class Player {
 		if (this.game.config.adminPassword !== password) {
 			throw new Error('Invalid admin password')
 		}
+
+		this.logger.log('Logged in as admin')
 
 		this.admin = true
 	}

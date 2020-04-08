@@ -67,7 +67,6 @@ export const PlayedCards = ({
 			contentStyle={{ width: '90%' }}
 			onClose={onClose}
 			header={'Cards on table'}
-			footer={<Button onClick={onClose}>Close</Button>}
 		>
 			<CardDisplay
 				cards={cards || []}

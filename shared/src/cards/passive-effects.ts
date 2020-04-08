@@ -4,7 +4,7 @@ import {
 	CardCategory,
 	CardPassiveEffect,
 	CardResource,
-	Resource,
+	Resource
 } from './types'
 import { resourceProduction } from './utils'
 import { CardsLookupApi } from './lookup'
@@ -24,7 +24,7 @@ export const resourcePerPlacedTile = (
 			if (cell.content === content) {
 				player[res] += amount
 			}
-		},
+		}
 	})
 
 export const productionPerPlacedTile = (
@@ -38,7 +38,7 @@ export const productionPerPlacedTile = (
 			if (cell.content === content) {
 				player[resourceProduction[res]] += amount
 			}
-		},
+		}
 	})
 
 export const resourcePerCardPlayed = (
@@ -48,16 +48,16 @@ export const resourcePerCardPlayed = (
 ) =>
 	passiveEffect({
 		description: `When you play a ${categories
-			.map((c) => CardCategory[c])
+			.map(c => CardCategory[c])
 			.join(' ')} card, you gain ${withUnits(res, amount)}`,
 		onCardPlayed: ({ player, playerId }, card, _cardIndex, playedBy) => {
 			if (
 				playedBy.id === playerId &&
-				categories.every((c) => card.categories.includes(c))
+				categories.every(c => card.categories.includes(c))
 			) {
 				player[res] += amount
 			}
-		},
+		}
 	})
 
 export const cardResourcePerCardPlayed = (
@@ -67,7 +67,7 @@ export const cardResourcePerCardPlayed = (
 ) =>
 	passiveEffect({
 		description: `When you play a ${categories
-			.map((c) => CardCategory[c])
+			.map(c => CardCategory[c])
 			.join(' or ')} card, place ${amount} ${res} on this card`,
 		onCardPlayed: (
 			{ playerId, card: cardState },
@@ -77,11 +77,11 @@ export const cardResourcePerCardPlayed = (
 		) => {
 			if (
 				playedBy.id === playerId &&
-				categories.find((c) => card.categories.includes(c))
+				categories.find(c => card.categories.includes(c))
 			) {
 				cardState[res] += amount
 			}
-		},
+		}
 	})
 
 export const cardResourcePerTilePlaced = (
@@ -95,7 +95,7 @@ export const cardResourcePerTilePlaced = (
 			if (playedBy.id === playerId && cell.content === tile) {
 				card[res] += amount
 			}
-		},
+		}
 	})
 
 export const productionChangeAfterPlace = (
@@ -114,7 +114,7 @@ export const productionChangeAfterPlace = (
 				player[resourceProduction[res]] += amount
 				card.played = true
 			}
-		},
+		}
 	})
 
 export const cardExchangeEffect = (tag: CardCategory) =>
@@ -132,13 +132,13 @@ export const cardExchangeEffect = (tag: CardCategory) =>
 			) {
 				player.cardsToPlay.push(cardIndex)
 			}
-		},
+		}
 	})
 
 export const playWhenCard = (tags: CardCategory[]) =>
 	passiveEffect({
 		description: `Action triggered when you play ${tags
-			.map((t) => CardCategory[t])
+			.map(t => CardCategory[t])
 			.join(' or ')} card`,
 		onCardPlayed: (
 			{ playerId, player, card: cardState, cardIndex },
@@ -148,10 +148,10 @@ export const playWhenCard = (tags: CardCategory[]) =>
 		) => {
 			if (
 				playerId === playedBy.id &&
-				tags.find((t) => playedCard.categories.includes(t))
+				tags.find(t => playedCard.categories.includes(t))
 			) {
 				cardState.triggeredByCard = playedCardIndex
 				player.cardsToPlay.push(cardIndex)
 			}
-		},
+		}
 	})

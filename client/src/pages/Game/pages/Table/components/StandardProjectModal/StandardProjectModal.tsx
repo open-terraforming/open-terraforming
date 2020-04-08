@@ -62,7 +62,6 @@ export const StandardProjectModal = ({ onClose, playing }: Props) => {
 				open={true}
 				header={'Standard projects'}
 				onClose={onClose}
-				footer={<Button onClick={onClose}>Close</Button>}
 			>
 				{projects.map((p, i) => (
 					<Project key={i}>

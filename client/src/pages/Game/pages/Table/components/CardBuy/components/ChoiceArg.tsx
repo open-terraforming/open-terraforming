@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { CardEffectArgument, CardEffectArgumentType } from '@shared/cards'
 import styled from 'styled-components'
 import { ArgContainer } from './ArgContainer'
@@ -22,26 +22,18 @@ export const ChoiceArg = ({
 	cardIndex,
 	cardState
 }: Props) => {
-	const [selected, setSelected] = useState(0 as number)
-	const [args, setArgs] = useState([] as CardEffectArgumentType[][])
-
 	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
 
-	useEffect(() => {
-		if (selected !== undefined) {
-			onChange([selected, args[selected] || []])
-		}
-	}, [selected, args])
-
-	return (
-		<StyledContainer>
-			{arg.effects
-				?.filter(
-					e =>
+	const choices = useMemo(
+		() =>
+			(arg.effects || [])
+				.map((effect, index) => ({ effect, index }))
+				.filter(
+					({ effect }) =>
 						player &&
 						game &&
-						e.conditions.every(c =>
+						effect.conditions.every(c =>
 							c.evaluate({
 								card: cardState || emptyCardState(card),
 								cardIndex: cardIndex === undefined ? -1 : cardIndex,
@@ -50,34 +42,53 @@ export const ChoiceArg = ({
 								playerId: player.id
 							})
 						)
-				)
-				.map((e, i) => (
-					<Choice
-						key={i}
-						onClick={() => {
-							setSelected(i)
-						}}
-					>
-						<input type="radio" checked={selected === i} readOnly />
-						<div>
-							{e.args.length > 0 ? (
-								<ArgsPicker
-									card={card}
-									cardState={cardState}
-									cardIndex={cardIndex}
-									onChange={v => {
+				),
+		[arg, game, player]
+	)
+
+	const [selected, setSelected] = useState((choices[0]?.index || 0) as number)
+	const [args, setArgs] = useState([] as CardEffectArgumentType[][])
+
+	useEffect(() => {
+		console.log('selected', selected, 'args', args)
+
+		if (selected !== undefined) {
+			onChange([selected, args[selected] || []])
+		}
+	}, [selected, args])
+
+	return (
+		<StyledContainer>
+			{choices.map(({ effect: e, index: i }) => (
+				<Choice
+					key={i}
+					onClick={() => {
+						setSelected(i)
+					}}
+				>
+					<input type="radio" checked={selected === i} readOnly />
+					<div>
+						{e.args.length > 0 ? (
+							<ArgsPicker
+								card={card}
+								cardState={cardState}
+								cardIndex={cardIndex}
+								onChange={v => {
+									setArgs(args => {
 										const updated = [...args]
 										updated[i] = v
-										setArgs(updated)
-									}}
-									effect={e}
-								/>
-							) : (
-								e.description
-							)}
-						</div>
-					</Choice>
-				))}
+
+										return updated
+									})
+								}}
+								effect={e}
+							/>
+						) : (
+							e.description
+						)}
+					</div>
+				</Choice>
+			))}
 		</StyledContainer>
 	)
 }

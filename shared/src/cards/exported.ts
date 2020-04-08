@@ -7,7 +7,7 @@ import {
 	productionCondition,
 	gameProgressConditionMin,
 	cardCountCondition,
-	ownedCellTypeCondition,
+	ownedCellTypeCondition
 } from './conditions'
 import {
 	playerProductionChange,
@@ -47,14 +47,14 @@ import {
 	addResourceToCard,
 	exchangeResources,
 	terraformRatingForTags,
-	placeTile,
+	placeTile
 } from './effects'
 import {
 	minCardResourceToVP,
 	vpsForAdjacentTiles,
 	vpsForCards,
 	vpsForCardResources,
-	vpsForTiles,
+	vpsForTiles
 } from './vps'
 import {
 	resourcePerPlacedTile,
@@ -64,7 +64,7 @@ import {
 	playWhenCard,
 	cardResourcePerCardPlayed,
 	cardResourcePerTilePlaced,
-	productionPerPlacedTile,
+	productionPerPlacedTile
 } from './passive-effects'
 
 export const BuiltCards: Card[] = [
@@ -76,7 +76,7 @@ export const BuiltCards: Card[] = [
 		cost: 8,
 		categories: [CardCategory.Building, CardCategory.Jupiter],
 		victoryPoints: 2,
-		conditions: [gameProgressConditionMax('oxygen', 5)],
+		conditions: [gameProgressConditionMax('oxygen', 5)]
 	}),
 	card({
 		code: 'asteroid_mining_consortium',
@@ -89,8 +89,8 @@ export const BuiltCards: Card[] = [
 		conditions: [productionCondition('titan', 1)],
 		playEffects: [
 			playerProductionChange('titan', -1),
-			productionChange('titan', 1),
-		],
+			productionChange('titan', 1)
+		]
 	}),
 	card({
 		code: 'deep_well_heating',
@@ -101,8 +101,8 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Building, CardCategory.Power],
 		playEffects: [
 			productionChange('energy', +1),
-			gameProcessChange('temperature', 1),
-		],
+			gameProcessChange('temperature', 1)
+		]
 	}),
 	card({
 		code: 'cloud_seeding',
@@ -115,8 +115,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('money', -1),
 			playerProductionChange('heat', -1),
-			productionChange('plants', +2),
-		],
+			productionChange('plants', +2)
+		]
 	}),
 	card({
 		code: 'search_for_life',
@@ -127,9 +127,9 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Science],
 		conditions: [gameProgressConditionMax('oxygen', 6)],
 		actionEffects: [
-			convertTopCardToCardResource(CardCategory.Microbe, 'science', 1),
+			convertTopCardToCardResource(CardCategory.Microbe, 'science', 1)
 		],
-		victoryPointsCallback: minCardResourceToVP('science', 1, 3),
+		victoryPointsCallback: minCardResourceToVP('science', 1, 3)
 	}),
 	card({
 		code: 'inventors_guild',
@@ -138,7 +138,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 9,
 		categories: [CardCategory.Science],
-		actionEffects: [pickTopCards(1)],
+		actionEffects: [pickTopCards(1)]
 	}),
 	card({
 		code: 'martian_rails',
@@ -147,7 +147,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 13,
 		categories: [CardCategory.Building],
-		actionEffects: [resourceForCities('energy', 1, 'money', 1)],
+		actionEffects: [resourceForCities('energy', 1, 'money', 1)]
 	}),
 	card({
 		code: 'capital',
@@ -160,9 +160,9 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			placeTile({ type: GridCellContent.Other, other: GridCellOther.Capital }),
 			productionChange('energy', -2),
-			productionChange('money', 5),
+			productionChange('money', 5)
 		],
-		victoryPointsCallback: vpsForAdjacentTiles(GridCellContent.Ocean, 1),
+		victoryPointsCallback: vpsForAdjacentTiles(GridCellContent.Ocean, 1)
 	}),
 	card({
 		code: 'asteroid',
@@ -174,8 +174,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			gameProcessChange('temperature', 1),
 			resourceChange('titan', 2),
-			playerResourceChange('plants', -3),
-		],
+			playerResourceChange('plants', -3)
+		]
 	}),
 	card({
 		code: 'comet',
@@ -187,8 +187,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			placeTile({ type: GridCellContent.Ocean }),
 			gameProcessChange('temperature', 1),
-			playerResourceChange('plants', -3),
-		],
+			playerResourceChange('plants', -3)
+		]
 	}),
 	card({
 		code: 'big_asteroid',
@@ -200,8 +200,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			gameProcessChange('temperature', 2),
 			resourceChange('titan', 4),
-			playerResourceChange('plants', -4),
-		],
+			playerResourceChange('plants', -4)
+		]
 	}),
 	card({
 		code: 'water_import_from_europa',
@@ -211,7 +211,7 @@ export const BuiltCards: Card[] = [
 		cost: 25,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		actionEffects: [moneyOrResForOcean('titan', 12)],
-		victoryPointsCallback: vpsForCards(CardCategory.Jupiter, 1),
+		victoryPointsCallback: vpsForCards(CardCategory.Jupiter, 1)
 	}),
 	card({
 		code: 'space_elevator',
@@ -222,7 +222,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Space, CardCategory.Building],
 		victoryPoints: 2,
 		playEffects: [productionChange('titan', 1)],
-		actionEffects: [convertResource('ore', 1, 'money', 5)],
+		actionEffects: [convertResource('ore', 1, 'money', 5)]
 	}),
 	card({
 		code: 'development_center',
@@ -231,7 +231,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.Science],
-		actionEffects: [cardsForResource('energy', 1, 1)],
+		actionEffects: [cardsForResource('energy', 1, 1)]
 	}),
 	card({
 		code: 'equatorial_magnetizer',
@@ -240,7 +240,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 11,
 		categories: [CardCategory.Building],
-		actionEffects: [productionChange('energy', -1), terraformRatingChange(1)],
+		actionEffects: [productionChange('energy', -1), terraformRatingChange(1)]
 	}),
 	card({
 		code: 'domed_crater',
@@ -255,8 +255,8 @@ export const BuiltCards: Card[] = [
 			productionChange('energy', -1),
 			productionChange('money', 3),
 			resourceChange('plants', 3),
-			placeTile({ type: GridCellContent.City }),
-		],
+			placeTile({ type: GridCellContent.City })
+		]
 	}),
 	card({
 		code: 'noctis_city',
@@ -271,9 +271,9 @@ export const BuiltCards: Card[] = [
 			placeTile({
 				type: GridCellContent.City,
 				special: [GridCellSpecial.NoctisCity],
-				conditions: [PlacementCode.NoctisCity],
-			}),
-		],
+				conditions: [PlacementCode.NoctisCity]
+			})
+		]
 	}),
 	card({
 		code: 'methane_from_titan',
@@ -284,7 +284,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 2,
 		conditions: [gameProgressConditionMin('oxygen', 2)],
-		playEffects: [productionChange('heat', 2), productionChange('plants', 2)],
+		playEffects: [productionChange('heat', 2), productionChange('plants', 2)]
 	}),
 	card({
 		code: 'imported_hydrogen',
@@ -297,10 +297,10 @@ export const BuiltCards: Card[] = [
 			effectChoice([
 				resourceChange('plants', 3),
 				otherCardResourceChange('microbes', 1),
-				otherCardResourceChange('animals', 1),
+				otherCardResourceChange('animals', 1)
 			]),
-			placeTile({ type: GridCellContent.Ocean }),
-		],
+			placeTile({ type: GridCellContent.Ocean })
+		]
 	}),
 	card({
 		code: 'research_outpost',
@@ -311,15 +311,15 @@ export const BuiltCards: Card[] = [
 		categories: [
 			CardCategory.Building,
 			CardCategory.City,
-			CardCategory.Science,
+			CardCategory.Science
 		],
 		playEffects: [
 			cardPriceChange(-1),
 			placeTile({
 				type: GridCellContent.City,
-				conditions: [PlacementCode.NoOceans, PlacementCode.Isolated],
-			}),
-		],
+				conditions: [PlacementCode.NoOceans, PlacementCode.Isolated]
+			})
+		]
 	}),
 	card({
 		code: 'phobos_space_haven',
@@ -333,9 +333,9 @@ export const BuiltCards: Card[] = [
 			productionChange('titan', 1),
 			placeTile({
 				type: GridCellContent.City,
-				special: [GridCellSpecial.PhobosSpaceHaven],
-			}),
-		],
+				special: [GridCellSpecial.PhobosSpaceHaven]
+			})
+		]
 	}),
 	card({
 		code: 'black_polar_dust',
@@ -347,8 +347,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('money', -2),
 			productionChange('heat', 3),
-			placeTile({ type: GridCellContent.Ocean }),
-		],
+			placeTile({ type: GridCellContent.Ocean })
+		]
 	}),
 	card({
 		code: 'arctic_algae',
@@ -358,7 +358,7 @@ export const BuiltCards: Card[] = [
 		cost: 12,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMax('temperature', -12 / 2)],
-		passiveEffects: [resourcePerPlacedTile(GridCellContent.Ocean, 'plants', 2)],
+		passiveEffects: [resourcePerPlacedTile(GridCellContent.Ocean, 'plants', 2)]
 	}),
 	card({
 		code: 'predators',
@@ -371,9 +371,9 @@ export const BuiltCards: Card[] = [
 		conditions: [gameProgressConditionMin('oxygen', 11)],
 		actionEffects: [
 			otherCardResourceChange('animals', -1),
-			cardResourceChange('animals', 1),
+			cardResourceChange('animals', 1)
 		],
-		victoryPointsCallback: vpsForCardResources('animals', 1),
+		victoryPointsCallback: vpsForCardResources('animals', 1)
 	}),
 	card({
 		code: 'space_station',
@@ -383,7 +383,7 @@ export const BuiltCards: Card[] = [
 		cost: 10,
 		categories: [CardCategory.Space],
 		playEffects: [spaceCardPriceChange(-2)],
-		victoryPoints: 1,
+		victoryPoints: 1
 	}),
 	card({
 		code: 'eos_chasma_national_park',
@@ -397,8 +397,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			otherCardResourceChange('animals', 1),
 			resourceChange('plants', 3),
-			productionChange('money', 2),
-		],
+			productionChange('money', 2)
+		]
 	}),
 	card({
 		code: 'interstellar_colony_ship',
@@ -408,7 +408,7 @@ export const BuiltCards: Card[] = [
 		cost: 24,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
 		victoryPoints: 4,
-		conditions: [cardCountCondition(CardCategory.Science, 5)],
+		conditions: [cardCountCondition(CardCategory.Science, 5)]
 	}),
 	card({
 		code: 'security_fleet',
@@ -420,9 +420,9 @@ export const BuiltCards: Card[] = [
 		resource: 'fighters',
 		actionEffects: [
 			resourceChange('titan', -1),
-			cardResourceChange('fighters', 1),
+			cardResourceChange('fighters', 1)
 		],
-		victoryPointsCallback: vpsForCardResources('fighters', 1),
+		victoryPointsCallback: vpsForCardResources('fighters', 1)
 	}),
 	card({
 		code: 'cupola_city',
@@ -435,8 +435,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('energy', -1),
 			productionChange('money', 3),
-			placeTile({ type: GridCellContent.City }),
-		],
+			placeTile({ type: GridCellContent.City })
+		]
 	}),
 	card({
 		code: 'lunar_beam',
@@ -448,8 +448,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('money', -2),
 			productionChange('heat', 2),
-			productionChange('energy', 2),
-		],
+			productionChange('energy', 2)
+		]
 	}),
 	card({
 		code: 'optimal_aerobraking',
@@ -464,12 +464,8 @@ export const BuiltCards: Card[] = [
 				'money',
 				3
 			),
-			resourcePerCardPlayed(
-				[CardCategory.Space, CardCategory.Event],
-				'heat',
-				3
-			),
-		],
+			resourcePerCardPlayed([CardCategory.Space, CardCategory.Event], 'heat', 3)
+		]
 	}),
 	card({
 		code: 'underground_city',
@@ -481,8 +477,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('energy', -2),
 			productionChange('money', 2),
-			placeTile({ type: GridCellContent.City }),
-		],
+			placeTile({ type: GridCellContent.City })
+		]
 	}),
 	card({
 		code: 'regolith_eaters',
@@ -497,10 +493,10 @@ export const BuiltCards: Card[] = [
 				cardResourceChange('microbes', 1),
 				joinedEffects([
 					cardResourceChange('microbes', -2),
-					gameProcessChange('oxygen', 1),
-				]),
-			]),
-		],
+					gameProcessChange('oxygen', 1)
+				])
+			])
+		]
 	}),
 	card({
 		code: 'ghg_producing_bacteria',
@@ -516,10 +512,10 @@ export const BuiltCards: Card[] = [
 				cardResourceChange('microbes', 1),
 				joinedEffects([
 					cardResourceChange('microbes', -2),
-					gameProcessChange('temperature', 1),
-				]),
-			]),
-		],
+					gameProcessChange('temperature', 1)
+				])
+			])
+		]
 	}),
 	card({
 		code: 'ants',
@@ -532,9 +528,9 @@ export const BuiltCards: Card[] = [
 		conditions: [gameProgressConditionMin('oxygen', 4)],
 		actionEffects: [
 			otherCardResourceChange('microbes', -1),
-			cardResourceChange('microbes', 1),
+			cardResourceChange('microbes', 1)
 		],
-		victoryPointsCallback: vpsForCardResources('microbes', 1 / 2),
+		victoryPointsCallback: vpsForCardResources('microbes', 1 / 2)
 	}),
 	card({
 		code: 'release_of_inert_gases',
@@ -543,7 +539,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 14,
 		categories: [CardCategory.Event],
-		playEffects: [terraformRatingChange(2)],
+		playEffects: [terraformRatingChange(2)]
 	}),
 	card({
 		code: 'nitrogen-rich_asteroid',
@@ -557,9 +553,9 @@ export const BuiltCards: Card[] = [
 			gameProcessChange('temperature', 1),
 			effectChoice([
 				resourceChangeIfTags('plants', 4, CardCategory.Plant, 3),
-				resourceChange('plants', 3),
-			]),
-		],
+				resourceChange('plants', 3)
+			])
+		]
 	}),
 	card({
 		code: 'rover_construction',
@@ -569,7 +565,7 @@ export const BuiltCards: Card[] = [
 		cost: 8,
 		categories: [CardCategory.Building],
 		victoryPoints: 1,
-		passiveEffects: [resourcePerPlacedTile(GridCellContent.City, 'money', 2)],
+		passiveEffects: [resourcePerPlacedTile(GridCellContent.City, 'money', 2)]
 	}),
 	card({
 		code: 'deimos_down',
@@ -581,8 +577,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			gameProcessChange('temperature', 3),
 			resourceChange('ore', 4),
-			playerResourceChange('plants', -8),
-		],
+			playerResourceChange('plants', -8)
+		]
 	}),
 	card({
 		code: 'asteroid_mining',
@@ -592,7 +588,7 @@ export const BuiltCards: Card[] = [
 		cost: 30,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 2,
-		playEffects: [productionChange('titan', 2)],
+		playEffects: [productionChange('titan', 2)]
 	}),
 	card({
 		code: 'food_factory',
@@ -602,7 +598,7 @@ export const BuiltCards: Card[] = [
 		cost: 12,
 		categories: [CardCategory.Building],
 		victoryPoints: 1,
-		playEffects: [productionChange('plants', -1), productionChange('money', 4)],
+		playEffects: [productionChange('plants', -1), productionChange('money', 4)]
 	}),
 	card({
 		code: 'archaebacteria',
@@ -612,7 +608,7 @@ export const BuiltCards: Card[] = [
 		cost: 6,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMax('temperature', -18 / 2)],
-		playEffects: [productionChange('plants', 1)],
+		playEffects: [productionChange('plants', 1)]
 	}),
 	card({
 		code: 'carbonate_processing',
@@ -621,7 +617,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 6,
 		categories: [CardCategory.Building],
-		playEffects: [productionChange('energy', -1), productionChange('heat', 3)],
+		playEffects: [productionChange('energy', -1), productionChange('heat', 3)]
 	}),
 	card({
 		code: 'natural_preserve',
@@ -637,9 +633,9 @@ export const BuiltCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.Mars,
-				conditions: [PlacementCode.Isolated],
-			}),
-		],
+				conditions: [PlacementCode.Isolated]
+			})
+		]
 	}),
 	card({
 		code: 'nuclear_power',
@@ -648,7 +644,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 10,
 		categories: [CardCategory.Building, CardCategory.Power],
-		playEffects: [productionChange('money', -2), productionChange('energy', 3)],
+		playEffects: [productionChange('money', -2), productionChange('energy', 3)]
 	}),
 	card({
 		code: 'lightning_harvest',
@@ -659,7 +655,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Power],
 		victoryPoints: 1,
 		conditions: [cardCountCondition(CardCategory.Science, 3)],
-		playEffects: [productionChange('energy', 1), productionChange('money', 1)],
+		playEffects: [productionChange('energy', 1), productionChange('money', 1)]
 	}),
 	card({
 		code: 'algae',
@@ -669,7 +665,7 @@ export const BuiltCards: Card[] = [
 		cost: 10,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('oceans', 5)],
-		playEffects: [resourceChange('plants', 1), productionChange('plants', 2)],
+		playEffects: [resourceChange('plants', 1), productionChange('plants', 2)]
 	}),
 	card({
 		code: 'adapted_lichen',
@@ -678,7 +674,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 9,
 		categories: [CardCategory.Plant],
-		playEffects: [productionChange('plants', 1)],
+		playEffects: [productionChange('plants', 1)]
 	}),
 	card({
 		code: 'tardigrades',
@@ -689,7 +685,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Microbe],
 		resource: 'microbes',
 		actionEffects: [cardResourceChange('microbes', 1)],
-		victoryPointsCallback: vpsForCardResources('microbes', 1 / 4),
+		victoryPointsCallback: vpsForCardResources('microbes', 1 / 4)
 	}),
 	card({
 		code: 'virus',
@@ -701,9 +697,9 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			effectChoice([
 				playerResourceChange('plants', -5),
-				playerCardResourceChange('animals', -2),
-			]),
-		],
+				playerCardResourceChange('animals', -2)
+			])
+		]
 	}),
 	card({
 		code: 'miranda_resort',
@@ -713,7 +709,7 @@ export const BuiltCards: Card[] = [
 		cost: 12,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 1,
-		playEffects: [productionChangeForTags('money', 1, CardCategory.Earth)],
+		playEffects: [productionChangeForTags('money', 1, CardCategory.Earth)]
 	}),
 	card({
 		code: 'fish',
@@ -726,7 +722,7 @@ export const BuiltCards: Card[] = [
 		conditions: [gameProgressConditionMin('temperature', 2 / 2)],
 		playEffects: [playerProductionChange('plants', -1)],
 		actionEffects: [cardResourceChange('animals', 1)],
-		victoryPointsCallback: vpsForCardResources('animals', 1),
+		victoryPointsCallback: vpsForCardResources('animals', 1)
 	}),
 	card({
 		code: 'lake_marineris',
@@ -739,8 +735,8 @@ export const BuiltCards: Card[] = [
 		conditions: [gameProgressConditionMin('temperature', 0 / 2)],
 		playEffects: [
 			placeTile({ type: GridCellContent.Ocean }),
-			placeTile({ type: GridCellContent.Ocean }),
-		],
+			placeTile({ type: GridCellContent.Ocean })
+		]
 	}),
 	card({
 		code: 'small_animals',
@@ -753,7 +749,7 @@ export const BuiltCards: Card[] = [
 		conditions: [gameProgressConditionMin('oxygen', 6)],
 		playEffects: [playerProductionChange('plants', -1)],
 		actionEffects: [cardResourceChange('animals', 1)],
-		victoryPointsCallback: vpsForCardResources('animals', 1 / 2),
+		victoryPointsCallback: vpsForCardResources('animals', 1 / 2)
 	}),
 	card({
 		code: 'kelp_farming',
@@ -767,8 +763,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('money', 2),
 			productionChange('plants', 3),
-			resourceChange('plants', 2),
-		],
+			resourceChange('plants', 2)
+		]
 	}),
 	card({
 		code: 'mine',
@@ -777,7 +773,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 4,
 		categories: [CardCategory.Building],
-		playEffects: [productionChange('ore', 1)],
+		playEffects: [productionChange('ore', 1)]
 	}),
 	card({
 		code: 'vesta_shipyard',
@@ -787,7 +783,7 @@ export const BuiltCards: Card[] = [
 		cost: 15,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 1,
-		playEffects: [productionChange('titan', 1)],
+		playEffects: [productionChange('titan', 1)]
 	}),
 	card({
 		code: 'beam_from_a_thorium_asteroid',
@@ -798,7 +794,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Power, CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 1,
 		conditions: [cardCountCondition(CardCategory.Jupiter, 1)],
-		playEffects: [productionChange('heat', 3), productionChange('energy', 3)],
+		playEffects: [productionChange('heat', 3), productionChange('energy', 3)]
 	}),
 	card({
 		code: 'mangrove',
@@ -812,9 +808,9 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Forest,
-				conditions: [PlacementCode.OceanOnly],
-			}),
-		],
+				conditions: [PlacementCode.OceanOnly]
+			})
+		]
 	}),
 	card({
 		code: 'trees',
@@ -825,7 +821,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Plant],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMin('temperature', -4 / 2)],
-		playEffects: [productionChange('plants', 3), resourceChange('plants', 1)],
+		playEffects: [productionChange('plants', 3), resourceChange('plants', 1)]
 	}),
 	card({
 		code: 'great_escarpment_consortium',
@@ -834,10 +830,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 6,
 		categories: [],
-		playEffects: [
-			playerProductionChange('ore', -1),
-			productionChange('ore', 1),
-		],
+		playEffects: [playerProductionChange('ore', -1), productionChange('ore', 1)]
 	}),
 	card({
 		code: 'mineral_deposit',
@@ -846,7 +839,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 5,
 		categories: [CardCategory.Event],
-		playEffects: [resourceChange('ore', 5)],
+		playEffects: [resourceChange('ore', 5)]
 	}),
 	card({
 		code: 'mining_expedition',
@@ -858,8 +851,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			gameProcessChange('oxygen', 1),
 			resourceChange('ore', 2),
-			playerResourceChange('plants', -2, false),
-		],
+			playerResourceChange('plants', -2, false)
+		]
 	}),
 	card({
 		code: 'mining_area',
@@ -872,10 +865,10 @@ export const BuiltCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.Mine,
-				conditions: [...OtherPlacement, PlacementCode.TitanOreBonus],
-			}),
+				conditions: [...OtherPlacement, PlacementCode.TitanOreBonus]
+			})
 		],
-		passiveEffects: [productionChangeAfterPlace(1, GridCellOther.Mine)],
+		passiveEffects: [productionChangeAfterPlace(1, GridCellOther.Mine)]
 	}),
 	card({
 		code: 'building_industries',
@@ -884,7 +877,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 6,
 		categories: [CardCategory.Building],
-		playEffects: [productionChange('energy', -1), productionChange('ore', 2)],
+		playEffects: [productionChange('energy', -1), productionChange('ore', 2)]
 	}),
 	/*
 	card({
@@ -908,10 +901,10 @@ export const BuiltCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.Mine,
-				conditions: [PlacementCode.NoOceans, PlacementCode.TitanOreBonus],
-			}),
+				conditions: [PlacementCode.NoOceans, PlacementCode.TitanOreBonus]
+			})
 		],
-		passiveEffects: [productionChangeAfterPlace(1, GridCellOther.Mine)],
+		passiveEffects: [productionChangeAfterPlace(1, GridCellOther.Mine)]
 	}),
 	card({
 		code: 'sponsors',
@@ -920,7 +913,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 6,
 		categories: [CardCategory.Earth],
-		playEffects: [productionChange('money', 2)],
+		playEffects: [productionChange('money', 2)]
 	}),
 	card({
 		code: 'electro_catapult',
@@ -935,9 +928,9 @@ export const BuiltCards: Card[] = [
 		actionEffects: [
 			effectChoice([
 				convertResource('plants', 1, 'money', 7),
-				convertResource('ore', 1, 'money', 7),
-			]),
-		],
+				convertResource('ore', 1, 'money', 7)
+			])
+		]
 	}),
 	card({
 		code: 'earth_catapult',
@@ -947,7 +940,7 @@ export const BuiltCards: Card[] = [
 		cost: 23,
 		categories: [CardCategory.Earth],
 		victoryPoints: 2,
-		playEffects: [cardPriceChange(-2)],
+		playEffects: [cardPriceChange(-2)]
 	}),
 	card({
 		code: 'advanced_alloys',
@@ -956,7 +949,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 9,
 		categories: [CardCategory.Science],
-		playEffects: [orePriceChange(1), titanPriceChange(1)],
+		playEffects: [orePriceChange(1), titanPriceChange(1)]
 	}),
 	card({
 		code: 'birds',
@@ -969,7 +962,7 @@ export const BuiltCards: Card[] = [
 		conditions: [gameProgressConditionMin('oxygen', 13)],
 		playEffects: [playerProductionChange('plants', 2)],
 		actionEffects: [cardResourceChange('animals', 1)],
-		victoryPointsCallback: vpsForCardResources('animals', 1),
+		victoryPointsCallback: vpsForCardResources('animals', 1)
 	}),
 	card({
 		code: 'mars_university',
@@ -980,7 +973,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Building, CardCategory.Science],
 		victoryPoints: 1,
 		actionEffects: [effectChoice([doNothing(), cardExchange()])],
-		passiveEffects: [cardExchangeEffect(CardCategory.Science)],
+		passiveEffects: [cardExchangeEffect(CardCategory.Science)]
 	}),
 	card({
 		code: 'viral_enhancers',
@@ -990,15 +983,15 @@ export const BuiltCards: Card[] = [
 		cost: 9,
 		categories: [CardCategory.Microbe, CardCategory.Science],
 		actionEffects: [
-			effectChoice([resourceChange('plants', 1), triggerCardResourceChange(1)]),
+			effectChoice([resourceChange('plants', 1), triggerCardResourceChange(1)])
 		],
 		passiveEffects: [
 			playWhenCard([
 				CardCategory.Plant,
 				CardCategory.Microbe,
-				CardCategory.Animal,
-			]),
-		],
+				CardCategory.Animal
+			])
+		]
 	}),
 	card({
 		code: 'towing_a_comet',
@@ -1010,8 +1003,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			resourceChange('plants', 2),
 			gameProcessChange('oxygen', 1),
-			placeTile({ type: GridCellContent.Ocean }),
-		],
+			placeTile({ type: GridCellContent.Ocean })
+		]
 	}),
 	card({
 		code: 'space_mirrors',
@@ -1020,7 +1013,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 3,
 		categories: [CardCategory.Space, CardCategory.Power],
-		actionEffects: [resourceChange('money', -7), productionChange('energy', 1)],
+		actionEffects: [resourceChange('money', -7), productionChange('energy', 1)]
 	}),
 	card({
 		code: 'solar_wind_power',
@@ -1029,7 +1022,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 11,
 		categories: [CardCategory.Power, CardCategory.Space, CardCategory.Science],
-		playEffects: [productionChange('energy', 1), resourceChange('titan', 2)],
+		playEffects: [productionChange('energy', 1), resourceChange('titan', 2)]
 	}),
 	card({
 		code: 'ice_asteroid',
@@ -1040,8 +1033,8 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
 			placeTile({ type: GridCellContent.Ocean }),
-			placeTile({ type: GridCellContent.Ocean }),
-		],
+			placeTile({ type: GridCellContent.Ocean })
+		]
 	}),
 	card({
 		code: 'quantum_extractor',
@@ -1051,7 +1044,7 @@ export const BuiltCards: Card[] = [
 		cost: 13,
 		categories: [CardCategory.Power, CardCategory.Science],
 		conditions: [cardCountCondition(CardCategory.Science, 4)],
-		playEffects: [productionChange('energy', 4), spaceCardPriceChange(-2)],
+		playEffects: [productionChange('energy', 4), spaceCardPriceChange(-2)]
 	}),
 	card({
 		code: 'giant_ice_asteroid',
@@ -1064,8 +1057,8 @@ export const BuiltCards: Card[] = [
 			gameProcessChange('temperature', 2),
 			placeTile({ type: GridCellContent.Ocean }),
 			placeTile({ type: GridCellContent.Ocean }),
-			playerResourceChange('plants', -6),
-		],
+			playerResourceChange('plants', -6)
+		]
 	}),
 	card({
 		code: 'ganymede_colony',
@@ -1077,10 +1070,10 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			placeTile({
 				type: GridCellContent.City,
-				special: [GridCellSpecial.GanymedeColony],
-			}),
+				special: [GridCellSpecial.GanymedeColony]
+			})
 		],
-		victoryPointsCallback: vpsForCards(CardCategory.Jupiter, 1),
+		victoryPointsCallback: vpsForCards(CardCategory.Jupiter, 1)
 	}),
 	card({
 		code: 'callisto_penal_mines',
@@ -1090,7 +1083,7 @@ export const BuiltCards: Card[] = [
 		cost: 24,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		playEffects: [productionChange('money', 3)],
-		victoryPoints: 2,
+		victoryPoints: 2
 	}),
 	card({
 		code: 'giant_space_mirror',
@@ -1099,7 +1092,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 17,
 		categories: [CardCategory.Space, CardCategory.Power],
-		playEffects: [productionChange('energy', 3)],
+		playEffects: [productionChange('energy', 3)]
 	}),
 	card({
 		code: 'trans-neptune_probe',
@@ -1108,7 +1101,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 6,
 		categories: [CardCategory.Space, CardCategory.Science],
-		victoryPoints: 1,
+		victoryPoints: 1
 	}),
 	card({
 		code: 'commercial_district',
@@ -1122,10 +1115,10 @@ export const BuiltCards: Card[] = [
 			productionChange('money', 4),
 			placeTile({
 				type: GridCellContent.Other,
-				other: GridCellOther.CommercialDistrict,
-			}),
+				other: GridCellOther.CommercialDistrict
+			})
 		],
-		victoryPointsCallback: vpsForAdjacentTiles(GridCellContent.City, 1),
+		victoryPointsCallback: vpsForAdjacentTiles(GridCellContent.City, 1)
 	}),
 	card({
 		code: 'robotic_workforce',
@@ -1134,7 +1127,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 9,
 		categories: [CardCategory.Science],
-		playEffects: [duplicateProduction(CardCategory.Building)],
+		playEffects: [duplicateProduction(CardCategory.Building)]
 	}),
 	card({
 		code: 'grass',
@@ -1144,7 +1137,7 @@ export const BuiltCards: Card[] = [
 		cost: 11,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('temperature', -16 / 2)],
-		playEffects: [productionChange('plants', 1), resourceChange('plants', 3)],
+		playEffects: [productionChange('plants', 1), resourceChange('plants', 3)]
 	}),
 	card({
 		code: 'heather',
@@ -1154,7 +1147,7 @@ export const BuiltCards: Card[] = [
 		cost: 6,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('temperature', -14 / 2)],
-		playEffects: [productionChange('plants', 1), resourceChange('plants', 1)],
+		playEffects: [productionChange('plants', 1), resourceChange('plants', 1)]
 	}),
 	card({
 		code: 'peroxide_power',
@@ -1163,7 +1156,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 7,
 		categories: [CardCategory.Building, CardCategory.Power],
-		playEffects: [productionChange('money', -1), productionChange('energy', 2)],
+		playEffects: [productionChange('money', -1), productionChange('energy', 2)]
 	}),
 	// TODO: Counts as playing 2 science cards?
 	card({
@@ -1174,7 +1167,7 @@ export const BuiltCards: Card[] = [
 		cost: 11,
 		categories: [CardCategory.Science, CardCategory.Science],
 		victoryPoints: 1,
-		playEffects: [pickTopCards(2)],
+		playEffects: [pickTopCards(2)]
 	}),
 	card({
 		code: 'gene_repair',
@@ -1185,7 +1178,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Science],
 		victoryPoints: 2,
 		conditions: [cardCountCondition(CardCategory.Science, 3)],
-		playEffects: [productionChange('money', 2)],
+		playEffects: [productionChange('money', 2)]
 	}),
 	card({
 		code: 'io_mining_industries_',
@@ -1195,7 +1188,7 @@ export const BuiltCards: Card[] = [
 		cost: 41,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		playEffects: [productionChange('titan', 2), productionChange('money', 2)],
-		victoryPointsCallback: vpsForCards(CardCategory.Jupiter, 1),
+		victoryPointsCallback: vpsForCards(CardCategory.Jupiter, 1)
 	}),
 	card({
 		code: 'bushes',
@@ -1205,7 +1198,7 @@ export const BuiltCards: Card[] = [
 		cost: 10,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('temperature', -10 / 2)],
-		playEffects: [productionChange('plants', 2), resourceChange('plants', 2)],
+		playEffects: [productionChange('plants', 2), resourceChange('plants', 2)]
 	}),
 	card({
 		code: 'mass_converter',
@@ -1215,7 +1208,7 @@ export const BuiltCards: Card[] = [
 		cost: 8,
 		categories: [CardCategory.Power, CardCategory.Science],
 		conditions: [cardCountCondition(CardCategory.Science, 5)],
-		playEffects: [spaceCardPriceChange(-2), productionChange('energy', 6)],
+		playEffects: [spaceCardPriceChange(-2), productionChange('energy', 6)]
 	}),
 	card({
 		code: 'physics_complex',
@@ -1227,9 +1220,9 @@ export const BuiltCards: Card[] = [
 		resource: 'science',
 		actionEffects: [
 			resourceChange('energy', -6),
-			cardResourceChange('science', 1),
+			cardResourceChange('science', 1)
 		],
-		victoryPointsCallback: vpsForCardResources('science', 2),
+		victoryPointsCallback: vpsForCardResources('science', 2)
 	}),
 	card({
 		code: 'greenhouses',
@@ -1238,7 +1231,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 6,
 		categories: [CardCategory.Building, CardCategory.Plant],
-		playEffects: [resourcesForTiles(GridCellContent.City, 'plants', 1)],
+		playEffects: [resourcesForTiles(GridCellContent.City, 'plants', 1)]
 	}),
 	card({
 		code: 'nuclear_zone',
@@ -1251,10 +1244,10 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Other,
-				other: GridCellOther.NuclearZone,
+				other: GridCellOther.NuclearZone
 			}),
-			gameProcessChange('temperature', 2),
-		],
+			gameProcessChange('temperature', 2)
+		]
 	}),
 	card({
 		code: 'tropical_resort',
@@ -1264,7 +1257,7 @@ export const BuiltCards: Card[] = [
 		cost: 13,
 		categories: [CardCategory.Building],
 		victoryPoints: 2,
-		playEffects: [productionChange('heat', -2), productionChange('money', 3)],
+		playEffects: [productionChange('heat', -2), productionChange('money', 3)]
 	}),
 	card({
 		code: 'toll_station',
@@ -1273,7 +1266,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 12,
 		categories: [CardCategory.Space],
-		playEffects: [productionForPlayersTags(CardCategory.Space, 'money', 1)],
+		playEffects: [productionForPlayersTags(CardCategory.Space, 'money', 1)]
 	}),
 	card({
 		code: 'fueled_generators',
@@ -1282,7 +1275,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 1,
 		categories: [CardCategory.Building, CardCategory.Power],
-		playEffects: [productionChange('money', -1), productionChange('energy', 1)],
+		playEffects: [productionChange('money', -1), productionChange('energy', 1)]
 	}),
 	card({
 		code: 'ironworks',
@@ -1294,8 +1287,8 @@ export const BuiltCards: Card[] = [
 		actionEffects: [
 			resourceChange('energy', -4),
 			resourceChange('ore', 1),
-			gameProcessChange('oxygen', 1),
-		],
+			gameProcessChange('oxygen', 1)
+		]
 	}),
 	card({
 		code: 'power_grid',
@@ -1304,7 +1297,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 18,
 		categories: [CardCategory.Power],
-		playEffects: [productionForTags(CardCategory.Power, 'energy', 1)],
+		playEffects: [productionForTags(CardCategory.Power, 'energy', 1)]
 	}),
 	card({
 		code: 'steelworks',
@@ -1316,8 +1309,8 @@ export const BuiltCards: Card[] = [
 		actionEffects: [
 			resourceChange('energy', -4),
 			resourceChange('ore', 2),
-			gameProcessChange('oxygen', 1),
-		],
+			gameProcessChange('oxygen', 1)
+		]
 	}),
 	card({
 		code: 'ore_processor',
@@ -1329,8 +1322,8 @@ export const BuiltCards: Card[] = [
 		actionEffects: [
 			resourceChange('energy', -4),
 			resourceChange('titan', 1),
-			gameProcessChange('oxygen', 1),
-		],
+			gameProcessChange('oxygen', 1)
+		]
 	}),
 	card({
 		code: 'earth_office',
@@ -1339,7 +1332,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 1,
 		categories: [CardCategory.Earth],
-		playEffects: [earthCardPriceChange(-3)],
+		playEffects: [earthCardPriceChange(-3)]
 	}),
 	card({
 		code: 'acquired_company',
@@ -1348,7 +1341,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 10,
 		categories: [CardCategory.Earth],
-		playEffects: [productionChange('money', 3)],
+		playEffects: [productionChange('money', 3)]
 	}),
 	card({
 		code: 'media_archives',
@@ -1357,7 +1350,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 8,
 		categories: [CardCategory.Earth],
-		playEffects: [resourcesForPlayersTags(CardCategory.Event, 'money', 1)],
+		playEffects: [resourcesForPlayersTags(CardCategory.Event, 'money', 1)]
 	}),
 	card({
 		code: 'open_city',
@@ -1372,8 +1365,8 @@ export const BuiltCards: Card[] = [
 			resourceChange('plants', 2),
 			productionChange('energy', -1),
 			productionChange('money', 4),
-			placeTile({ type: GridCellContent.City }),
-		],
+			placeTile({ type: GridCellContent.City })
+		]
 	}),
 	card({
 		code: 'media_group',
@@ -1382,7 +1375,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 6,
 		categories: [CardCategory.Earth],
-		passiveEffects: [resourcePerCardPlayed([CardCategory.Event], 'money', 3)],
+		passiveEffects: [resourcePerCardPlayed([CardCategory.Event], 'money', 3)]
 	}),
 	card({
 		code: 'business_network',
@@ -1392,7 +1385,7 @@ export const BuiltCards: Card[] = [
 		cost: 4,
 		categories: [CardCategory.Earth],
 		playEffects: [productionChange('money', -1)],
-		actionEffects: [pickTopCards(1)],
+		actionEffects: [pickTopCards(1)]
 	}),
 	card({
 		code: 'business_contacts',
@@ -1402,7 +1395,7 @@ export const BuiltCards: Card[] = [
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Earth],
 		conditions: [gameProgressConditionMin('temperature', 4 / 2)],
-		playEffects: [pickTopCards(4, 2, true)],
+		playEffects: [pickTopCards(4, 2, true)]
 	}),
 	card({
 		code: 'bribed_committee',
@@ -1412,7 +1405,7 @@ export const BuiltCards: Card[] = [
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Earth],
 		victoryPoints: -2,
-		playEffects: [terraformRatingChange(2)],
+		playEffects: [terraformRatingChange(2)]
 	}),
 	card({
 		code: 'solar_power',
@@ -1422,7 +1415,7 @@ export const BuiltCards: Card[] = [
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: 1,
-		playEffects: [productionChange('energy', 1)],
+		playEffects: [productionChange('energy', 1)]
 	}),
 	card({
 		code: 'breathing_filters',
@@ -1432,7 +1425,7 @@ export const BuiltCards: Card[] = [
 		cost: 11,
 		categories: [CardCategory.Science],
 		victoryPoints: 2,
-		conditions: [gameProgressConditionMin('oxygen', 7)],
+		conditions: [gameProgressConditionMin('oxygen', 7)]
 	}),
 	card({
 		code: 'artificial_photosynthesis',
@@ -1444,9 +1437,9 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			effectChoice([
 				productionChange('plants', 1),
-				productionChange('energy', 2),
-			]),
-		],
+				productionChange('energy', 2)
+			])
+		]
 	}),
 	card({
 		code: 'artificial_lake',
@@ -1460,9 +1453,9 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Ocean,
-				conditions: [PlacementCode.NoOceans],
-			}),
-		],
+				conditions: [PlacementCode.NoOceans]
+			})
+		]
 	}),
 	card({
 		code: 'geothermal_power',
@@ -1471,7 +1464,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.Power],
-		playEffects: [productionChange('energy', 2)],
+		playEffects: [productionChange('energy', 2)]
 	}),
 	card({
 		code: 'farming',
@@ -1485,8 +1478,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('money', 2),
 			productionChange('plants', 2),
-			resourceChange('plants', 2),
-		],
+			resourceChange('plants', 2)
+		]
 	}),
 	card({
 		code: 'dust_seals',
@@ -1496,7 +1489,7 @@ export const BuiltCards: Card[] = [
 		cost: 2,
 		categories: [],
 		victoryPoints: 1,
-		conditions: [gameProgressConditionMax('oceans', 3)],
+		conditions: [gameProgressConditionMax('oceans', 3)]
 	}),
 	card({
 		code: 'urbanized_area',
@@ -1510,9 +1503,9 @@ export const BuiltCards: Card[] = [
 			productionChange('money', 2),
 			placeTile({
 				type: GridCellContent.City,
-				conditions: [...CityPlacement, PlacementCode.TwoCities],
-			}),
-		],
+				conditions: [...CityPlacement, PlacementCode.TwoCities]
+			})
+		]
 	}),
 	card({
 		code: 'sabotage',
@@ -1525,9 +1518,9 @@ export const BuiltCards: Card[] = [
 			effectChoice([
 				playerResourceChange('titan', -3),
 				playerResourceChange('ore', -4),
-				playerResourceChange('money', -7),
-			]),
-		],
+				playerResourceChange('money', -7)
+			])
+		]
 	}),
 	card({
 		code: 'moss',
@@ -1537,7 +1530,7 @@ export const BuiltCards: Card[] = [
 		cost: 4,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('oceans', 3)],
-		playEffects: [resourceChange('plants', -1), productionChange('plants', 1)],
+		playEffects: [resourceChange('plants', -1), productionChange('plants', 1)]
 	}),
 	card({
 		code: 'industrial_center',
@@ -1550,10 +1543,10 @@ export const BuiltCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.IndustrialCenter,
-				conditions: [...OtherPlacement, PlacementCode.OneCity],
-			}),
+				conditions: [...OtherPlacement, PlacementCode.OneCity]
+			})
 		],
-		actionEffects: [resourceChange('money', -7), productionChange('ore', 1)],
+		actionEffects: [resourceChange('money', -7), productionChange('ore', 1)]
 	}),
 	card({
 		code: 'hired_raiders',
@@ -1566,14 +1559,14 @@ export const BuiltCards: Card[] = [
 			effectChoice([
 				joinedEffects([
 					playerResourceChange('ore', -2, false),
-					resourceChange('ore', 2),
+					resourceChange('ore', 2)
 				]),
 				joinedEffects([
 					playerResourceChange('money', -3, false),
-					resourceChange('money', 3),
-				]),
-			]),
-		],
+					resourceChange('money', 3)
+				])
+			])
+		]
 	}),
 	card({
 		code: 'hackers',
@@ -1586,8 +1579,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('energy', -1),
 			playerProductionChange('money', -2),
-			productionChange('money', 2),
-		],
+			productionChange('money', 2)
+		]
 	}),
 	card({
 		code: 'ghg_factories',
@@ -1596,7 +1589,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 11,
 		categories: [CardCategory.Building],
-		playEffects: [productionChange('energy', -1), productionChange('heat', 4)],
+		playEffects: [productionChange('energy', -1), productionChange('heat', 4)]
 	}),
 	card({
 		code: 'subterranean_reservoir',
@@ -1605,7 +1598,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 11,
 		categories: [CardCategory.Event],
-		playEffects: [placeTile({ type: GridCellContent.Ocean })],
+		playEffects: [placeTile({ type: GridCellContent.Ocean })]
 	}),
 	card({
 		code: 'ecological_zone',
@@ -1620,17 +1613,17 @@ export const BuiltCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.EcologicalZone,
-				conditions: [...OtherPlacement, PlacementCode.OneForest],
-			}),
+				conditions: [...OtherPlacement, PlacementCode.OneForest]
+			})
 		],
 		passiveEffects: [
 			cardResourcePerCardPlayed(
 				[CardCategory.Microbe, CardCategory.Animal],
 				'animals',
 				1
-			),
+			)
 		],
-		victoryPointsCallback: vpsForCardResources('animals', 1 / 2),
+		victoryPointsCallback: vpsForCardResources('animals', 1 / 2)
 	}),
 	card({
 		code: 'zeppelins',
@@ -1641,7 +1634,7 @@ export const BuiltCards: Card[] = [
 		categories: [],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMin('oxygen', 5)],
-		playEffects: [productionForTiles(GridCellContent.City, 'money', 1)],
+		playEffects: [productionForTiles(GridCellContent.City, 'money', 1)]
 	}),
 	card({
 		code: 'worms',
@@ -1651,7 +1644,7 @@ export const BuiltCards: Card[] = [
 		cost: 8,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMin('oxygen', 4)],
-		playEffects: [productionForTags(CardCategory.Microbe, 'plants', 1)],
+		playEffects: [productionForTags(CardCategory.Microbe, 'plants', 1)]
 	}),
 	card({
 		code: 'decomposers',
@@ -1667,9 +1660,9 @@ export const BuiltCards: Card[] = [
 				[CardCategory.Microbe, CardCategory.Animal, CardCategory.Plant],
 				'microbes',
 				1
-			),
+			)
 		],
-		victoryPointsCallback: vpsForCardResources('microbes', 1 / 3),
+		victoryPointsCallback: vpsForCardResources('microbes', 1 / 3)
 	}),
 	card({
 		code: 'fusion_power',
@@ -1680,10 +1673,10 @@ export const BuiltCards: Card[] = [
 		categories: [
 			CardCategory.Building,
 			CardCategory.Power,
-			CardCategory.Science,
+			CardCategory.Science
 		],
 		conditions: [cardCountCondition(CardCategory.Power, 2)],
-		playEffects: [productionChange('energy', 3)],
+		playEffects: [productionChange('energy', 3)]
 	}),
 	card({
 		code: 'symbiotic_fungus',
@@ -1693,7 +1686,7 @@ export const BuiltCards: Card[] = [
 		cost: 4,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMin('temperature', -14 / 2)],
-		actionEffects: [otherCardResourceChange('microbes', 1)],
+		actionEffects: [otherCardResourceChange('microbes', 1)]
 	}),
 	card({
 		code: 'extreme-cold_fungus',
@@ -1706,9 +1699,9 @@ export const BuiltCards: Card[] = [
 		actionEffects: [
 			effectChoice([
 				resourceChange('plants', 1),
-				otherCardResourceChange('microbes', 2),
-			]),
-		],
+				otherCardResourceChange('microbes', 2)
+			])
+		]
 	}),
 	card({
 		code: 'advanced_ecosystems',
@@ -1721,8 +1714,8 @@ export const BuiltCards: Card[] = [
 		conditions: [
 			cardCountCondition(CardCategory.Plant, 1),
 			cardCountCondition(CardCategory.Microbe, 1),
-			cardCountCondition(CardCategory.Animal, 1),
-		],
+			cardCountCondition(CardCategory.Animal, 1)
+		]
 	}),
 	card({
 		code: 'great_dam',
@@ -1733,7 +1726,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMin('oceans', 4)],
-		playEffects: [productionChange('energy', 2)],
+		playEffects: [productionChange('energy', 2)]
 	}),
 	card({
 		code: 'cartel',
@@ -1744,8 +1737,8 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Earth],
 		playEffects: [
 			productionChange('money', 1),
-			productionForTags(CardCategory.Event, 'money', 1),
-		],
+			productionForTags(CardCategory.Event, 'money', 1)
+		]
 	}),
 	card({
 		code: 'strip_mine',
@@ -1757,8 +1750,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('energy', -2),
 			productionChange('ore', 2),
-			productionChange('titan', 1),
-		],
+			productionChange('titan', 1)
+		]
 	}),
 	card({
 		code: 'wave_power',
@@ -1769,7 +1762,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Power],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMin('oceans', 3)],
-		playEffects: [productionChange('energy', 1)],
+		playEffects: [productionChange('energy', 1)]
 	}),
 	card({
 		code: 'lava_flows',
@@ -1787,10 +1780,10 @@ export const BuiltCards: Card[] = [
 					GridCellSpecial.TharsisTholus,
 					GridCellSpecial.AscraeusMons,
 					GridCellSpecial.PavonisMons,
-					GridCellSpecial.ArsiaMons,
-				],
-			}),
-		],
+					GridCellSpecial.ArsiaMons
+				]
+			})
+		]
 	}),
 	card({
 		code: 'power_plant',
@@ -1799,7 +1792,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 4,
 		categories: [CardCategory.Building, CardCategory.Power],
-		playEffects: [productionChange('energy', 1)],
+		playEffects: [productionChange('energy', 1)]
 	}),
 	card({
 		code: 'mohole_area',
@@ -1813,9 +1806,9 @@ export const BuiltCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.Mohole,
-				conditions: [PlacementCode.OceanOnly],
-			}),
-		],
+				conditions: [PlacementCode.OceanOnly]
+			})
+		]
 	}),
 	card({
 		code: 'large_convoy',
@@ -1830,9 +1823,9 @@ export const BuiltCards: Card[] = [
 			getTopCards(2),
 			effectChoice([
 				resourceChange('plants', 5),
-				otherCardResourceChange('animals', 4),
-			]),
-		],
+				otherCardResourceChange('animals', 4)
+			])
+		]
 	}),
 	card({
 		code: 'titanium_mine',
@@ -1841,7 +1834,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 7,
 		categories: [CardCategory.Building],
-		playEffects: [productionChange('titan', 1)],
+		playEffects: [productionChange('titan', 1)]
 	}),
 	card({
 		code: 'tectonic_stress_power',
@@ -1852,7 +1845,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: 1,
 		conditions: [cardCountCondition(CardCategory.Science, 2)],
-		playEffects: [productionChange('energy', 3)],
+		playEffects: [productionChange('energy', 3)]
 	}),
 	card({
 		code: 'nitrophilic_moss',
@@ -1862,7 +1855,7 @@ export const BuiltCards: Card[] = [
 		cost: 8,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('oceans', 3)],
-		playEffects: [resourceChange('plants', -2), productionChange('plants', 2)],
+		playEffects: [resourceChange('plants', -2), productionChange('plants', 2)]
 	}),
 	card({
 		code: 'herbivores',
@@ -1875,11 +1868,11 @@ export const BuiltCards: Card[] = [
 		conditions: [gameProgressConditionMin('oxygen', 8)],
 		playEffects: [
 			cardResourceChange('animals', 1),
-			playerProductionChange('plants', -1),
+			playerProductionChange('plants', -1)
 		],
 		passiveEffects: [
-			cardResourcePerTilePlaced(GridCellContent.Forest, 'animals', 1),
-		],
+			cardResourcePerTilePlaced(GridCellContent.Forest, 'animals', 1)
+		]
 	}),
 	card({
 		code: 'insects',
@@ -1889,16 +1882,16 @@ export const BuiltCards: Card[] = [
 		cost: 9,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMin('oxygen', 6)],
-		playEffects: [productionForTags(CardCategory.Plant, 'plants', 1)],
+		playEffects: [productionForTags(CardCategory.Plant, 'plants', 1)]
 	}),
 	card({
-		code: "ceo's_favorite_project",
+		code: 'ceos_favorite_project',
 		title: "CEO's Favorite Project",
 		type: CardType.Event,
 		description: '',
 		cost: 1,
 		categories: [CardCategory.Event],
-		playEffects: [addResourceToCard()],
+		playEffects: [addResourceToCard()]
 	}),
 	card({
 		code: 'anti-gravity_technology',
@@ -1909,7 +1902,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Science],
 		victoryPoints: 3,
 		conditions: [cardCountCondition(CardCategory.Science, 7)],
-		playEffects: [cardPriceChange(-2)],
+		playEffects: [cardPriceChange(-2)]
 	}),
 	card({
 		code: 'investment_loan',
@@ -1918,7 +1911,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 3,
 		categories: [CardCategory.Event, CardCategory.Earth],
-		playEffects: [productionChange('money', -1), resourceChange('money', 10)],
+		playEffects: [productionChange('money', -1), resourceChange('money', 10)]
 	}),
 	card({
 		code: 'insulation',
@@ -1927,7 +1920,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 2,
 		categories: [],
-		playEffects: [exchangeResources('heat', 'money')],
+		playEffects: [exchangeResources('heat', 'money')]
 	}),
 	/*
 	TODO:
@@ -1949,7 +1942,7 @@ export const BuiltCards: Card[] = [
 		cost: 3,
 		categories: [],
 		conditions: [gameProgressConditionMin('temperature', 0 / 2)],
-		actionEffects: [resourceChange('heat', -8), terraformRatingChange(1)],
+		actionEffects: [resourceChange('heat', -8), terraformRatingChange(1)]
 	}),
 	card({
 		code: 'designed_microorganisms',
@@ -1959,7 +1952,7 @@ export const BuiltCards: Card[] = [
 		cost: 16,
 		categories: [CardCategory.Microbe, CardCategory.Science],
 		conditions: [gameProgressConditionMax('temperature', -14 / 2)],
-		playEffects: [productionChange('plants', 2)],
+		playEffects: [productionChange('plants', 2)]
 	}),
 	/*
 	TODO:
@@ -1986,10 +1979,10 @@ export const BuiltCards: Card[] = [
 				cardResourceChange('microbes', 1),
 				joinedEffects([
 					cardResourceChange('microbes', -3),
-					terraformRatingChange(1),
-				]),
-			]),
-		],
+					terraformRatingChange(1)
+				])
+			])
+		]
 	}),
 	card({
 		code: 'industrial_microbes',
@@ -1998,7 +1991,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 12,
 		categories: [CardCategory.Building, CardCategory.Microbe],
-		playEffects: [productionChange('energy', 1), productionChange('ore', 1)],
+		playEffects: [productionChange('energy', 1), productionChange('ore', 1)]
 	}),
 	card({
 		code: 'lichen',
@@ -2008,7 +2001,7 @@ export const BuiltCards: Card[] = [
 		cost: 7,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('temperature', -24 / 2)],
-		playEffects: [productionChange('plants', 1)],
+		playEffects: [productionChange('plants', 1)]
 	}),
 	card({
 		code: 'power_supply_consortium',
@@ -2019,8 +2012,8 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Power],
 		playEffects: [
 			playerProductionChange('energy', -1),
-			productionChange('energy', 1),
-		],
+			productionChange('energy', 1)
+		]
 	}),
 	card({
 		code: 'convoy_from_europa',
@@ -2029,7 +2022,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 15,
 		categories: [CardCategory.Event, CardCategory.Space],
-		playEffects: [placeTile({ type: GridCellContent.Other }), getTopCards(1)],
+		playEffects: [placeTile({ type: GridCellContent.Other }), getTopCards(1)]
 	}),
 	card({
 		code: 'imported_ghg',
@@ -2038,7 +2031,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
-		playEffects: [productionChange('heat', 1), resourceChange('heat', 3)],
+		playEffects: [productionChange('heat', 1), resourceChange('heat', 3)]
 	}),
 	card({
 		code: 'imported_nitrogen',
@@ -2051,8 +2044,8 @@ export const BuiltCards: Card[] = [
 			terraformRatingChange(1),
 			resourceChange('plants', 4),
 			otherCardResourceChange('microbes', 3),
-			otherCardResourceChange('animals', 2),
-		],
+			otherCardResourceChange('animals', 2)
+		]
 	}),
 	card({
 		code: 'micro-mills',
@@ -2061,7 +2054,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 3,
 		categories: [],
-		playEffects: [productionChange('heat', 1)],
+		playEffects: [productionChange('heat', 1)]
 	}),
 	card({
 		code: 'magnetic_field_generators',
@@ -2073,8 +2066,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('energy', -4),
 			productionChange('plants', 2),
-			terraformRatingChange(3),
-		],
+			terraformRatingChange(3)
+		]
 	}),
 	card({
 		code: 'shuttles',
@@ -2088,8 +2081,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			spaceCardPriceChange(-2),
 			productionChange('energy', -1),
-			productionChange('money', 2),
-		],
+			productionChange('money', 2)
+		]
 	}),
 	card({
 		code: 'import_of_advanced_ghg',
@@ -2098,7 +2091,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 9,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
-		playEffects: [productionChange('heat', 2)],
+		playEffects: [productionChange('heat', 2)]
 	}),
 	card({
 		code: 'windmills',
@@ -2109,7 +2102,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMin('oxygen', 7)],
-		playEffects: [productionChange('energy', 1)],
+		playEffects: [productionChange('energy', 1)]
 	}),
 	card({
 		code: 'tundra_farming',
@@ -2123,8 +2116,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('plants', 1),
 			productionChange('money', 2),
-			resourceChange('plants', 1),
-		],
+			resourceChange('plants', 1)
+		]
 	}),
 	card({
 		code: 'aerobraked_ammonia_asteroid',
@@ -2136,8 +2129,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('heat', 3),
 			productionChange('plants', 1),
-			otherCardResourceChange('microbes', 2),
-		],
+			otherCardResourceChange('microbes', 2)
+		]
 	}),
 	card({
 		code: 'magnetic_field_dome',
@@ -2149,8 +2142,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('energy', -2),
 			productionChange('plants', 1),
-			terraformRatingChange(1),
-		],
+			terraformRatingChange(1)
+		]
 	}),
 	/*
 	TODO:
@@ -2182,9 +2175,9 @@ export const BuiltCards: Card[] = [
 			productionChange('money', 2),
 			placeTile({
 				type: GridCellContent.Forest,
-				conditions: [PlacementCode.OceanOnly],
-			}),
-		],
+				conditions: [PlacementCode.OceanOnly]
+			})
+		]
 	}),
 	card({
 		code: 'satellites',
@@ -2193,7 +2186,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 10,
 		categories: [CardCategory.Space],
-		playEffects: [productionForTags(CardCategory.Space, 'money', 1)],
+		playEffects: [productionForTags(CardCategory.Space, 'money', 1)]
 	}),
 	card({
 		code: 'noctis_farming',
@@ -2204,7 +2197,7 @@ export const BuiltCards: Card[] = [
 		categories: [CardCategory.Plant, CardCategory.Building],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMin('temperature', -20 / 2)],
-		playEffects: [productionChange('money', 1), resourceChange('plants', 2)],
+		playEffects: [productionChange('money', 1), resourceChange('plants', 2)]
 	}),
 	card({
 		code: 'water_splitting_plant',
@@ -2216,8 +2209,8 @@ export const BuiltCards: Card[] = [
 		conditions: [gameProgressConditionMin('oceans', 2)],
 		actionEffects: [
 			resourceChange('energy', -3),
-			gameProcessChange('oxygen', 1),
-		],
+			gameProcessChange('oxygen', 1)
+		]
 	}),
 	card({
 		code: 'heat_trappers',
@@ -2229,8 +2222,8 @@ export const BuiltCards: Card[] = [
 		victoryPoints: -1,
 		playEffects: [
 			playerProductionChange('heat', -2),
-			productionChange('energy', 1),
-		],
+			productionChange('energy', 1)
+		]
 	}),
 	card({
 		code: 'soil_factory',
@@ -2240,10 +2233,7 @@ export const BuiltCards: Card[] = [
 		cost: 9,
 		categories: [CardCategory.Building],
 		victoryPoints: 1,
-		playEffects: [
-			productionChange('energy', -1),
-			productionChange('plants', 1),
-		],
+		playEffects: [productionChange('energy', -1), productionChange('plants', 1)]
 	}),
 	card({
 		code: 'fuel_factory',
@@ -2255,8 +2245,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('energy', -1),
 			productionChange('titan', 1),
-			productionChange('money', 1),
-		],
+			productionChange('money', 1)
+		]
 	}),
 	card({
 		code: 'ice_cap_melting',
@@ -2266,7 +2256,7 @@ export const BuiltCards: Card[] = [
 		cost: 5,
 		categories: [CardCategory.Event],
 		conditions: [gameProgressConditionMin('temperature', 2 / 2)],
-		playEffects: [placeTile({ type: GridCellContent.Ocean })],
+		playEffects: [placeTile({ type: GridCellContent.Ocean })]
 	}),
 	card({
 		code: 'corporate_stronghold',
@@ -2279,8 +2269,8 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('energy', -1),
 			productionChange('money', 3),
-			placeTile({ type: GridCellContent.City }),
-		],
+			placeTile({ type: GridCellContent.City })
+		]
 	}),
 	card({
 		code: 'biomass_combustors',
@@ -2293,8 +2283,8 @@ export const BuiltCards: Card[] = [
 		conditions: [gameProgressConditionMin('oxygen', 6)],
 		playEffects: [
 			playerProductionChange('plants', -1),
-			productionChange('energy', 2),
-		],
+			productionChange('energy', 2)
+		]
 	}),
 	card({
 		code: 'livestock',
@@ -2306,7 +2296,7 @@ export const BuiltCards: Card[] = [
 		conditions: [gameProgressConditionMin('oxygen', 9)],
 		playEffects: [productionChange('plants', -1), productionChange('money', 2)],
 		actionEffects: [cardResourceChange('animals', 1)],
-		victoryPointsCallback: vpsForCardResources('animals', 1),
+		victoryPointsCallback: vpsForCardResources('animals', 1)
 	}),
 	card({
 		code: 'olympus_conference',
@@ -2317,16 +2307,16 @@ export const BuiltCards: Card[] = [
 		categories: [
 			CardCategory.Building,
 			CardCategory.Earth,
-			CardCategory.Science,
+			CardCategory.Science
 		],
 		victoryPoints: 1,
 		actionEffects: [
 			effectChoice([
 				cardResourceChange('science', 1),
-				joinedEffects([cardResourceChange('science', -1), getTopCards(1)]),
-			]),
+				joinedEffects([cardResourceChange('science', -1), getTopCards(1)])
+			])
 		],
-		passiveEffects: [playWhenCard([CardCategory.Science])],
+		passiveEffects: [playWhenCard([CardCategory.Science])]
 	}),
 	card({
 		code: 'rad-suits',
@@ -2337,7 +2327,7 @@ export const BuiltCards: Card[] = [
 		categories: [],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMin('temperature', 2 / 2)],
-		playEffects: [productionChange('money', 1)],
+		playEffects: [productionChange('money', 1)]
 	}),
 	card({
 		code: 'aquifer_pumping',
@@ -2346,7 +2336,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 18,
 		categories: [CardCategory.Building],
-		actionEffects: [moneyOrResForOcean('ore', 8)],
+		actionEffects: [moneyOrResForOcean('ore', 8)]
 	}),
 	/*
 	TODO:
@@ -2367,7 +2357,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 15,
 		categories: [CardCategory.Power],
-		playEffects: [productionForTiles(GridCellContent.City, 'energy', 1)],
+		playEffects: [productionForTiles(GridCellContent.City, 'energy', 1)]
 	}),
 	card({
 		code: 'local_heat_trapping',
@@ -2380,9 +2370,9 @@ export const BuiltCards: Card[] = [
 			productionChange('heat', -5),
 			effectChoice([
 				resourceChange('plants', 4),
-				otherCardResourceChange('animals', 2),
-			]),
-		],
+				otherCardResourceChange('animals', 2)
+			])
+		]
 	}),
 	card({
 		code: 'permafrost_extraction',
@@ -2392,7 +2382,7 @@ export const BuiltCards: Card[] = [
 		cost: 8,
 		categories: [CardCategory.Event],
 		conditions: [gameProgressConditionMin('temperature', -8 / 2)],
-		playEffects: [placeTile({ type: GridCellContent.Ocean })],
+		playEffects: [placeTile({ type: GridCellContent.Ocean })]
 	}),
 	card({
 		code: 'invention_contest',
@@ -2402,7 +2392,7 @@ export const BuiltCards: Card[] = [
 		cost: 2,
 		categories: [CardCategory.Event, CardCategory.Science],
 		conditions: [gameProgressConditionMin('temperature', 3 / 2)],
-		playEffects: [pickTopCards(3, 1, true)],
+		playEffects: [pickTopCards(3, 1, true)]
 	}),
 	card({
 		code: 'plantation',
@@ -2412,7 +2402,7 @@ export const BuiltCards: Card[] = [
 		cost: 15,
 		categories: [CardCategory.Plant],
 		conditions: [cardCountCondition(CardCategory.Science, 2)],
-		playEffects: [placeTile({ type: GridCellContent.Forest })],
+		playEffects: [placeTile({ type: GridCellContent.Forest })]
 	}),
 	card({
 		code: 'power_infrastructure',
@@ -2421,7 +2411,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 4,
 		categories: [CardCategory.Building, CardCategory.Power],
-		actionEffects: [exchangeResources('energy', 'money')],
+		actionEffects: [exchangeResources('energy', 'money')]
 	}),
 	/*
 	card({
@@ -2442,7 +2432,7 @@ export const BuiltCards: Card[] = [
 		cost: 9,
 		categories: [CardCategory.Space, CardCategory.Science],
 		victoryPoints: 1,
-		playEffects: [getTopCards(1)],
+		playEffects: [getTopCards(1)]
 	}),
 	card({
 		code: 'terraforming_ganymede',
@@ -2454,8 +2444,8 @@ export const BuiltCards: Card[] = [
 		victoryPoints: 2,
 		playEffects: [
 			terraformRatingChange(1),
-			terraformRatingForTags(CardCategory.Jupiter, 1),
-		],
+			terraformRatingForTags(CardCategory.Jupiter, 1)
+		]
 	}),
 	card({
 		code: 'immigration_shuttles',
@@ -2465,7 +2455,7 @@ export const BuiltCards: Card[] = [
 		cost: 31,
 		categories: [CardCategory.Space, CardCategory.Earth],
 		playEffects: [productionChange('money', 5)],
-		victoryPointsCallback: vpsForTiles(GridCellContent.City, 1 / 3),
+		victoryPointsCallback: vpsForTiles(GridCellContent.City, 1 / 3)
 	}),
 	card({
 		code: 'restricted_area',
@@ -2477,10 +2467,10 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Other,
-				other: GridCellOther.Restricted,
-			}),
+				other: GridCellOther.Restricted
+			})
 		],
-		actionEffects: [resourceChange('money', -2), getTopCards(1)],
+		actionEffects: [resourceChange('money', -2), getTopCards(1)]
 	}),
 	card({
 		code: 'immigrant_city',
@@ -2492,9 +2482,9 @@ export const BuiltCards: Card[] = [
 		playEffects: [
 			productionChange('energy', -1),
 			productionChange('money', -2),
-			placeTile({ type: GridCellContent.City }),
+			placeTile({ type: GridCellContent.City })
 		],
-		passiveEffects: [productionPerPlacedTile(GridCellContent.City, 'money', 1)],
+		passiveEffects: [productionPerPlacedTile(GridCellContent.City, 'money', 1)]
 	}),
 	card({
 		code: 'energy_tapping',
@@ -2506,8 +2496,8 @@ export const BuiltCards: Card[] = [
 		victoryPoints: -1,
 		playEffects: [
 			playerProductionChange('energy', -1),
-			productionChange('energy', 1),
-		],
+			productionChange('energy', 1)
+		]
 	}),
 	card({
 		code: 'underground_detonations',
@@ -2516,7 +2506,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 6,
 		categories: [CardCategory.Building],
-		actionEffects: [resourceChange('money', -10), productionChange('heat', 2)],
+		actionEffects: [resourceChange('money', -10), productionChange('heat', 2)]
 	}),
 	card({
 		code: 'soletta',
@@ -2525,7 +2515,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 35,
 		categories: [CardCategory.Space],
-		playEffects: [productionChange('heat', 7)],
+		playEffects: [productionChange('heat', 7)]
 	}),
 	card({
 		code: 'technology_demonstration',
@@ -2534,7 +2524,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 5,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Science],
-		playEffects: [getTopCards(2)],
+		playEffects: [getTopCards(2)]
 	}),
 	card({
 		code: 'rad_chem_factory',
@@ -2543,7 +2533,7 @@ export const BuiltCards: Card[] = [
 		description: '',
 		cost: 8,
 		categories: [CardCategory.Building],
-		playEffects: [productionChange('energy', -1), terraformRatingChange(2)],
+		playEffects: [productionChange('energy', -1), terraformRatingChange(2)]
 	}),
 	/*
 	TODO:
@@ -2564,7 +2554,7 @@ export const BuiltCards: Card[] = [
 		cost: 13,
 		categories: [CardCategory.Building, CardCategory.Science],
 		victoryPoints: 1,
-		playEffects: [productionForTags(CardCategory.Building, 'money', 1 / 2)],
+		playEffects: [productionForTags(CardCategory.Building, 'money', 1 / 2)]
 	}),
 	card({
 		code: 'ai_central',
@@ -2576,6 +2566,6 @@ export const BuiltCards: Card[] = [
 		victoryPoints: 1,
 		conditions: [cardCountCondition(CardCategory.Science, 3)],
 		playEffects: [productionChange('energy', -1)],
-		actionEffects: [getTopCards(2)],
-	}),
+		actionEffects: [getTopCards(2)]
+	})
 ]

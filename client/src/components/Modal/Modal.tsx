@@ -1,24 +1,31 @@
-import React, { useCallback, useMemo, CSSProperties } from 'react'
-import { Header, Footer, Body } from './styles'
-import { Portal } from '../Portal/Portal'
-import styled, { keyframes } from 'styled-components'
+import { colors } from '@/styles'
 import { useWindowEvent } from '@/utils/hooks'
-import { rgba, darken, lighten } from 'polished'
-import { mainColors, colors } from '@/styles'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useCallback, useState } from 'react'
+import styled, { css, keyframes, Keyframes } from 'styled-components'
+import { Portal } from '../Portal/Portal'
+import { Body, Footer, Header } from './styles'
+
+type RenderCallback = (
+	close: () => void,
+	animate: (animation?: Keyframes) => void
+) => React.ReactNode
 
 export interface ModalProps {
-	children: React.ReactNode | ((close: () => void) => React.ReactNode)
+	children: React.ReactNode | RenderCallback
 	contentStyle?: React.CSSProperties
 	headerStyle?: React.CSSProperties
 	bodyStyle?: React.CSSProperties
 	footerStyle?: React.CSSProperties
-	header?: React.ReactNode | ((close: () => void) => React.ReactNode)
-	footer?: React.ReactNode | ((close: () => void) => React.ReactNode)
+	header?: React.ReactNode | RenderCallback
+	footer?: React.ReactNode | RenderCallback
 	open?: boolean
 	onClose?: () => void
 	disablePortal?: boolean
 	allowClose?: boolean
 	stretchFooterButtons?: boolean
+	hideClose?: boolean
 }
 
 export const Modal = ({
@@ -33,12 +40,32 @@ export const Modal = ({
 	footerStyle,
 	bodyStyle,
 	stretchFooterButtons = true,
-	allowClose: allowClose = true
+	allowClose = true,
+	hideClose = false
 }: ModalProps) => {
+	const [isClosing, setIsClosing] = useState(false)
+
+	const [closingAnimation, setClosingAnimation] = useState(
+		undefined as Keyframes | undefined
+	)
+
 	const stopEvent = useCallback((e: React.MouseEvent) => {
 		e.stopPropagation()
 		e.nativeEvent.stopImmediatePropagation()
 	}, [])
+
+	const handleTameClose = () => handleClose()
+
+	const handleClose = (animation?: Keyframes) => {
+		if (!isClosing) {
+			setClosingAnimation(animation)
+			setIsClosing(true)
+
+			setTimeout(() => {
+				onClose && onClose()
+			}, 150)
+		}
+	}
 
 	useWindowEvent('keyup', (e: KeyboardEvent) => {
 		if (allowClose && open && onClose && e.key === 'Escape') {
@@ -49,19 +76,31 @@ export const Modal = ({
 	const popup = (
 		<>
 			{open && (
-				<PopupBackground onClick={allowClose ? onClose : undefined}>
-					<Popup style={contentStyle}>
+				<PopupBackground
+					onClick={allowClose ? handleTameClose : undefined}
+					closing={isClosing}
+				>
+					<Popup
+						style={contentStyle}
+						closing={isClosing}
+						closeAnimation={closingAnimation}
+					>
 						<Dialog role="dialog" onClick={stopEvent}>
 							{header && (
 								<Header style={headerStyle}>
 									{typeof header === 'function'
-										? header(onClose || (() => null))
+										? header(handleTameClose, handleClose)
 										: header}
+									{!hideClose && allowClose && (
+										<Close onClick={handleTameClose}>
+											<FontAwesomeIcon icon={faTimes} />
+										</Close>
+									)}
 								</Header>
 							)}
 							<Body style={bodyStyle}>
 								{typeof children === 'function'
-									? children(onClose || (() => null))
+									? children(handleTameClose, handleClose)
 									: children}
 							</Body>
 							{footer && (
@@ -70,7 +109,7 @@ export const Modal = ({
 									stretchFooterButtons={stretchFooterButtons}
 								>
 									{typeof footer === 'function'
-										? footer(onClose || (() => null))
+										? footer(handleTameClose, handleClose)
 										: footer}
 								</Footer>
 							)}
@@ -88,7 +127,22 @@ export const Modal = ({
 	}
 }
 
-const PopupBackground = styled.div`
+const bgIn = keyframes`
+	0% { opacity: 0 }
+	100% { opacity: 1; }
+`
+
+const bgOut = keyframes`
+	0% { opacity: 1 }
+	100% { opacity: 0; }
+`
+
+const Close = styled.div`
+	float: right;
+	cursor: pointer;
+`
+
+const PopupBackground = styled.div<{ closing?: boolean }>`
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -98,6 +152,20 @@ const PopupBackground = styled.div`
 	display: flex;
 	z-index: 999;
 	color: #fff;
+
+	${props =>
+		props.closing
+			? css`
+					animation-name: ${bgOut};
+					animation-duration: 150ms;
+					animation-timing-function: ease-in;
+					animation-fill-mode: forwards;
+			  `
+			: css`
+					animation-name: ${bgIn};
+					animation-duration: 150ms;
+					animation-timing-function: ease-out;
+			  `}
 `
 
 const popIn = keyframes`
@@ -106,7 +174,12 @@ const popIn = keyframes`
 	100% { transform: scale(1, 1); }
 `
 
-const Popup = styled.div`
+const popOut = keyframes`
+	0% { transform: scaleY(1); opacity: 1 }
+	100% { transform: scaleY(0); opacity: 0; }
+`
+
+const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	position: relative;
 	background: ${colors.background};
 	min-width: 200px;
@@ -120,9 +193,19 @@ const Popup = styled.div`
 	display: flex;
 	flex-direction: column;
 
-	animation-name: ${popIn};
-	animation-duration: 150ms;
-	animation-timing-function: ease-out;
+	${props =>
+		props.closing
+			? css`
+					animation-name: ${props.closeAnimation || popOut};
+					animation-duration: 150ms;
+					animation-timing-function: ease-out;
+					animation-fill-mode: forwards;
+			  `
+			: css`
+					animation-name: ${popIn};
+					animation-duration: 150ms;
+					animation-timing-function: ease-out;
+			  `}
 `
 
 const Dialog = styled.div`

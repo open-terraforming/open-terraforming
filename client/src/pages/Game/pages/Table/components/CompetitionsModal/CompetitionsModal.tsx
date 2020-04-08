@@ -49,7 +49,6 @@ export const CompetitionsModal = ({ onClose, playing }: Props) => {
 			open={true}
 			header="Competitions"
 			onClose={onClose}
-			footer={<Button onClick={onClose}>Close</Button>}
 			contentStyle={{ width: '500px' }}
 		>
 			<Info>

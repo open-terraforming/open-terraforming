@@ -8,7 +8,7 @@ export interface SearchResult {
 }
 
 export interface SearchOptions {
-	page?: number
+	start?: number
 	num?: number
 	excludeTerms?: string
 	imgType?: 'clipart' | 'face' | 'lineart' | 'stock' | 'photo' | 'animated'

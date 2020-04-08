@@ -25,3 +25,5 @@ TODO
  * better EFFECTS text
  * action played when there's card to be played
  * starting player is wrong (off by 1)
+ * HIRED RAIDERS issue - it can cause player to go negative somehow
+ * HAND/TABLE CARDS - remember filters? Reopen after playing card

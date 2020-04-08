@@ -109,7 +109,7 @@ export const CardView = ({
 					style={{
 						backgroundImage: `url('${
 							process.env.APP_API_URL ? `http://${process.env.APP_API_URL}` : ''
-						}/card/${card.code}')`
+						}/card/${card.code.replace(/'/g, "\\'")}')`
 					}}
 				/>
 				<Description>
@@ -118,7 +118,9 @@ export const CardView = ({
 					)}
 					{card.actionEffects.length > 0 && (
 						<Action>
-							<ActionTitle>Action</ActionTitle>
+							<ActionTitle>
+								{card.type === CardType.Action ? 'Action' : 'Effect'}
+							</ActionTitle>
 							{card.actionEffects.map((e, i) => (
 								<PlayEffect key={i} effect={e} ctx={condContext} />
 							))}

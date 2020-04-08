@@ -1,47 +1,37 @@
-import { deepExtend, range, shuffle } from '@/utils/collections'
+import { deepExtend, range } from '@/utils/collections'
 import { nextColor } from '@/utils/colors'
+import { randomPassword } from '@/utils/password'
 import { CardsLookupApi } from '@shared/cards'
-import { Competitions } from '@shared/competitions'
+import { Competitions, CompetitionType } from '@shared/competitions'
 import { COMPETITIONS_REWARDS } from '@shared/constants'
 import { Corporations } from '@shared/corporations'
 import {
 	GameState,
 	GameStateValue,
 	PlayerState,
-	PlayerStateValue
+	PlayerStateValue,
+	ProgressMilestoneType
 } from '@shared/game'
 import { UpdateDeepPartial } from '@shared/index'
-import { defaultMap } from '@shared/map'
+import { ProgressMilestones } from '@shared/progress-milestones'
+import { initialGameState } from '@shared/states'
 import { drawCard } from '@shared/utils'
 import { MyEvent } from 'src/utils/events'
 import { Bot } from './bot'
-import { Player, CardPlayedEvent, TilePlacedEvent } from './player'
-import { randomPassword } from '@/utils/password'
-import { ProgressMilestones } from '@shared/progress-milestones'
+import { CardPlayedEvent, Player, TilePlacedEvent } from './player'
+import { Logger } from '@/utils/log'
+import { f } from '@/utils/string'
 
 export interface GameConfig {
 	bots: number
 	adminPassword: string
 }
 export class Game {
+	logger = new Logger('Game')
+
 	config: GameConfig
 
-	state = {
-		state: GameStateValue.WaitingForPlayers,
-		generation: 1,
-		currentPlayer: 0,
-		startingPlayer: 0,
-		players: [],
-		oceans: 0,
-		oxygen: 0,
-		temperature: 0,
-		map: defaultMap(),
-		competitions: [],
-		milestones: [],
-		cards: shuffle(Object.keys(CardsLookupApi.data())),
-		discarded: [],
-		started: new Date().toISOString()
-	} as GameState
+	state = initialGameState()
 
 	players: Player[] = []
 
@@ -77,6 +67,8 @@ export class Game {
 		// Dispatch passive events on player events
 		player.onCardPlayed.on(this.handleCardPlayed)
 		player.onTilePlaced.on(this.handleTilePlaced)
+
+		this.logger.log(`Player ${player.name} (${player.id}) added to the game`)
 
 		this.updated()
 	}
@@ -137,6 +129,11 @@ export class Game {
 	remove(player: Player) {
 		this.players = this.players.filter(p => p !== player)
 		this.state.players = this.state.players.filter(p => p !== player.state)
+
+		this.logger.log(
+			`Player ${player.name} (${player.id}) removed from the game`
+		)
+
 		player.onStateChanged.off(this.updated)
 		this.onStateUpdated.emit(this.state)
 	}
@@ -150,6 +147,11 @@ export class Game {
 	}
 
 	startGame() {
+		this.logger.log(`Game starting`)
+
+		this.state.state = GameStateValue.PickingCorporations
+
+		this.state.started = new Date().toISOString()
 		this.state.oxygen = this.state.map.initialOxygen
 		this.state.oceans = this.state.map.initialOceans
 		this.state.temperature = this.state.map.initialTemperature
@@ -168,7 +170,6 @@ export class Game {
 			p.state.color = nextColor()
 			p.gameState.state = PlayerStateValue.PickingCorporation
 		})
-		this.state.state = GameStateValue.PickingCorporations
 	}
 
 	checkState() {
@@ -177,12 +178,19 @@ export class Game {
 			this.players.forEach(p => {
 				if (!p.state.connected) {
 					if (p.gameState.state === PlayerStateValue.PickingCorporation) {
+						this.logger.log(
+							`${p.name} is disconnected, picking first corporation`
+						)
 						p.pickCorporation(Corporations[0].code)
 					}
 					if (p.gameState.state === PlayerStateValue.PickingCards) {
+						this.logger.log(
+							`${p.name} is disconnected, cancelling card picking`
+						)
 						p.pickCards([])
 					}
 					if (p.gameState.state === PlayerStateValue.Playing) {
+						this.logger.log(`${p.name} is disconnected, passing`)
 						p.pass(true)
 					}
 				}
@@ -199,15 +207,24 @@ export class Game {
 			case GameStateValue.PickingCorporations:
 			case GameStateValue.PickingCards:
 				if (this.all(PlayerStateValue.WaitingForTurn)) {
+					this.logger.log(`All players ready, starting the round`)
+
 					this.state.currentPlayer = this.state.startingPlayer - 1
 					this.nextPlayer()
 					this.state.state = GameStateValue.GenerationInProgress
+					this.updated()
 				}
 				break
 
 			case GameStateValue.GenerationInProgress:
 				this.state.map.oxygenMilestones.forEach(m => {
 					if (!m.used && m.value <= this.state.oxygen) {
+						this.logger.log(
+							`Oxygen milestone ${ProgressMilestoneType[m.type]} (at ${
+								m.value
+							}) reached`
+						)
+
 						m.used = true
 						ProgressMilestones[m.type].effects.forEach(e =>
 							e(this.state, this.currentPlayer)
@@ -217,6 +234,12 @@ export class Game {
 
 				this.state.map.temperatureMilestones.forEach(m => {
 					if (!m.used && m.value <= this.state.temperature) {
+						this.logger.log(
+							`Temperature milestone ${ProgressMilestoneType[m.type]} (at ${
+								m.value
+							}) reached`
+						)
+
 						m.used = true
 						ProgressMilestones[m.type].effects.forEach(e =>
 							e(this.state, this.currentPlayer)
@@ -227,6 +250,7 @@ export class Game {
 				if (!this.currentPlayer.connected) {
 					this.currentPlayer.gameState.state = PlayerStateValue.Passed
 					this.nextPlayer()
+					this.updated()
 				}
 
 				break
@@ -234,6 +258,8 @@ export class Game {
 	}
 
 	finishGame() {
+		this.logger.log(`Game finished`)
+
 		this.state.state = GameStateValue.Ended
 
 		this.state.competitions.forEach(({ type }) => {
@@ -255,6 +281,14 @@ export class Game {
 				.slice(0, 2)
 				.forEach(([, players], index) => {
 					players.forEach(p => {
+						this.logger.log(
+							f(
+								`Player {0} is {1}. at {3} competition`,
+								p.name,
+								index + 1,
+								CompetitionType[type]
+							)
+						)
 						p.gameState.terraformRating += COMPETITIONS_REWARDS[index]
 					})
 				})
@@ -272,10 +306,9 @@ export class Game {
 			do {
 				this.state.currentPlayer =
 					(this.state.currentPlayer + 1) % this.players.length
-			} while (
-				this.currentPlayer.gameState.state === PlayerStateValue.Passed ||
-				!this.currentPlayer.connected
-			)
+			} while (this.currentPlayer.gameState.state === PlayerStateValue.Passed)
+
+			this.logger.log(f(`Next player: {0}`, this.currentPlayer.name))
 
 			this.currentPlayer.gameState.state = PlayerStateValue.Playing
 			this.currentPlayer.gameState.actionsPlayed = 0
@@ -299,16 +332,13 @@ export class Game {
 			this.state.state = GameStateValue.PickingCards
 
 			this.state.generation++
+
+			this.state.startingPlayer =
+				(this.state.startingPlayer + 1) % this.players.length
+
+			this.logger.log(`New generation ${this.state.generation}`)
 		}
-
-		this.state.startingPlayer =
-			(this.state.startingPlayer + 1) % this.players.length
-
 		this.updated()
-	}
-
-	nextCard() {
-		return drawCard(this.state)
 	}
 
 	adminChange(data: UpdateDeepPartial<GameState>) {

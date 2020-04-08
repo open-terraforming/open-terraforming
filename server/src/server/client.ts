@@ -48,7 +48,7 @@ export class Client {
 				this.game.remove(player)
 			} else {
 				player.state.connected = !!this.server.clients.find(
-					p => p.player?.id === player.id
+					p => p !== this && p.player?.id === player.id
 				)
 				this.game.checkState()
 			}

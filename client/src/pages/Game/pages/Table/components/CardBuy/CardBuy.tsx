@@ -1,35 +1,35 @@
-import React, { useState, useMemo } from 'react'
+import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
-import { CardView } from '../CardView/CardView'
+import { useApi } from '@/context/ApiContext'
+import { useAppStore } from '@/utils/hooks'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import {
 	CardCategory,
 	CardEffectArgumentType,
 	CardsLookupApi
 } from '@shared/cards'
-import { useAppStore } from '@/utils/hooks'
-import { Input } from '@/components/Input/Input'
-import { Button } from '@/components'
+import { adjustedCardPrice } from '@shared/cards/utils'
 import {
 	buyCard,
 	playCard,
 	PlayerGameState,
 	PlayerStateValue
 } from '@shared/index'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
-import { ArgsPicker } from './components/ArgsPicker'
-import styled from 'styled-components'
-import { useApi } from '@/context/ApiContext'
-import { ResourceInput } from './components/ResourceInput'
-import { adjustedCardPrice } from '@shared/cards/utils'
+import React, { useMemo, useState } from 'react'
+import styled, { Keyframes, keyframes } from 'styled-components'
+import { CardView } from '../CardView/CardView'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
+import { ArgsPicker } from './components/ArgsPicker'
+import { ResourceInput } from './components/ResourceInput'
 
 type Props = {
 	index: number
 	onClose: () => void
 	buying: boolean
+	forced?: boolean
 }
 
-export const CardBuy = ({ index, onClose, buying }: Props) => {
+export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 	const api = useApi()
 	const state = useAppStore(state => state.game.player?.gameState)
 
@@ -38,7 +38,7 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 		[buying, index]
 	)
 
-	const card = CardsLookupApi.get(
+	const card = CardsLookupApi.getOptional(
 		buying
 			? (state?.cards[index] as string)
 			: (state?.usedCards[index].code as string)
@@ -54,22 +54,24 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 	const isPlaying = state?.state === PlayerStateValue.Playing
 
 	const canUseOre =
-		(state?.ore || 0) > 0 && card.categories.includes(CardCategory.Building)
+		(state?.ore || 0) > 0 && card?.categories.includes(CardCategory.Building)
 
 	const canUseTitan =
-		(state?.titan || 0) > 0 && card.categories.includes(CardCategory.Space)
+		(state?.titan || 0) > 0 && card?.categories.includes(CardCategory.Space)
 
-	const price = Math.max(
-		0,
-		adjustedCardPrice(card, state as PlayerGameState) -
-			(canUseOre ? ore : 0) * (state?.orePrice || 2) -
-			(canUseTitan ? titan : 0) * (state?.titanPrice || 3)
-	)
+	const price = card
+		? Math.max(
+				0,
+				adjustedCardPrice(card, state as PlayerGameState) -
+					(canUseOre ? ore : 0) * (state?.orePrice || 2) -
+					(canUseTitan ? titan : 0) * (state?.titanPrice || 3)
+		  )
+		: 0
 
 	const canAfford = !buying || (state?.money || 0) >= price
 
-	const handleUse = () => {
-		if (!canAfford) {
+	const handleUse = (close: (animation?: Keyframes) => void) => {
+		if (!canAfford || !card) {
 			return
 		}
 
@@ -89,33 +91,38 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 				  )
 		)
 
-		onClose()
+		close(cardBought)
 	}
 
-	return state ? (
+	return state && card ? (
 		<Modal
 			open={true}
 			onClose={onClose}
-			footer={
+			allowClose={!forced}
+			footer={(_close, animate) => (
 				<>
 					<Button
 						disabled={!canAfford || !isPlaying}
-						onClick={canAfford ? handleUse : undefined}
+						onClick={canAfford ? () => handleUse(animate) : undefined}
 					>
 						{buying ? (
 							<>
 								Use card for {price}
 								<ResourceIcon res="money" />
 							</>
+						) : forced ? (
+							'Confirm'
 						) : (
 							'Use card'
 						)}
 					</Button>
-					<Button schema="transparent" icon={faTimes} onClick={onClose}>
-						Cancel
-					</Button>
+					{!forced && (
+						<Button schema="transparent" icon={faTimes} onClick={onClose}>
+							Cancel
+						</Button>
+					)}
 				</>
-			}
+			)}
 		>
 			<CardContainer>
 				<CardView card={card} state={cardState} cardIndex={index} />
@@ -191,6 +198,11 @@ export const CardBuy = ({ index, onClose, buying }: Props) => {
 		<></>
 	)
 }
+
+const cardBought = keyframes`
+	0% { transform: scale(1, 1); opacity: 1 }
+	100% { transform: scale(3, 3); opacity: 0; }
+`
 
 const UseContainer = styled.div`
 	display: flex;

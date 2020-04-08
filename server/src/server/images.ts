@@ -6,7 +6,7 @@ import { join } from 'path'
 import config from '../../config'
 import ImageSearch from '@/lib/image-google-search'
 
-const cachePath = join(__dirname, '..', '..', '.cache')
+export const cachePath = join(__dirname, '..', '..', '.cache')
 
 export const cardsImagesMiddleware = () => {
 	const router = Router()

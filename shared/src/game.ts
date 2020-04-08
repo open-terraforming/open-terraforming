@@ -14,7 +14,7 @@ export enum GameStateValue {
 	/**  Generation is in progress */
 	GenerationInProgress,
 	/**  Game ended */
-	Ended,
+	Ended
 }
 
 export enum PlayerStateValue {
@@ -33,7 +33,7 @@ export enum PlayerStateValue {
 	/**  Passed his round */
 	Passed,
 	/**  Waiting for his turn */
-	WaitingForTurn,
+	WaitingForTurn
 }
 
 export interface GameState {
@@ -97,7 +97,7 @@ export enum GridCellType {
 	General,
 	NoctisCity,
 	GanymedeColony,
-	PhobosSpaceHaven,
+	PhobosSpaceHaven
 }
 
 export enum GridCellSpecial {
@@ -107,14 +107,14 @@ export enum GridCellSpecial {
 	PavonisMons,
 	ArsiaMons,
 	GanymedeColony,
-	PhobosSpaceHaven,
+	PhobosSpaceHaven
 }
 
 export enum GridCellContent {
 	City = 1,
 	Forest,
 	Ocean,
-	Other,
+	Other
 }
 
 export enum GridCellOther {
@@ -127,7 +127,7 @@ export enum GridCellOther {
 	EcologicalZone,
 	Volcano,
 	Mohole,
-	Restricted,
+	Restricted
 }
 
 export interface GridCell {
@@ -242,13 +242,13 @@ export enum StandardProjectType {
 	Greenery,
 	City,
 	GreeneryForPlants,
-	TemperatureForHeat,
+	TemperatureForHeat
 }
 
 export enum ProgressMilestoneType {
 	Ocean = 1,
 	Heat,
-	Temperature,
+	Temperature
 }
 
 export interface ProgressMilestoneItem {

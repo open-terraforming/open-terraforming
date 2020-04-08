@@ -68,7 +68,6 @@ export const Hand = ({
 			contentStyle={{ width: '90%' }}
 			onClose={onClose}
 			header={'Cards in your hand'}
-			footer={<Button onClick={onClose}>Close</Button>}
 		>
 			<CardDisplay
 				buying

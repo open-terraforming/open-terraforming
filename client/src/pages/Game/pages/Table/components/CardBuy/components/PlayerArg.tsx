@@ -36,12 +36,12 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 	const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const value = parseInt(e.target.value, 10)
 		setValue(value)
-		onChange(value)
 	}
 
 	useEffect(() => {
+		console.log('Change', value)
 		onChange(value)
-	}, [])
+	}, [value])
 
 	return (
 		<ArgContainer>
