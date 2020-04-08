@@ -1,4 +1,3 @@
-import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
 import { setTableState } from '@/store/modules/table'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
@@ -18,9 +17,7 @@ export const PlayedCards = ({
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
 
-	const cards = useAppStore(
-		state => state.game.player?.usedCards
-	)?.map(
+	const cards = useAppStore(state => state.game.player?.usedCards)?.map(
 		(c, i) =>
 			({
 				card: CardsLookupApi.get(c.code),
@@ -30,6 +27,10 @@ export const PlayedCards = ({
 	)
 
 	const handleSelect = (cards: Required<CardInfo>[]) => {
+		if (!playing) {
+			return
+		}
+
 		const newlySelected = cards[cards.length - 1]
 
 		if (newlySelected) {

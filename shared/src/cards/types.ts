@@ -3,7 +3,7 @@ import {
 	GameState,
 	UsedCardState,
 	GridCell,
-	PlayerState,
+	PlayerState
 } from '../game'
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &
@@ -54,14 +54,14 @@ export enum CardCategory {
 	Power,
 	Earth,
 	City,
-	Event,
+	Event
 }
 
 export enum CardType {
 	Event = 1,
 	Action,
 	Effect,
-	Building,
+	Building
 }
 
 export interface CardVictoryPointsCallback {
@@ -108,7 +108,7 @@ export type CellCondition = {
 export enum CardEffectType {
 	Production = 1,
 	Resource,
-	Other,
+	Other
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -136,7 +136,7 @@ export enum CardEffectTarget {
 	// Type - [choice: number, choiceParams: any[]]
 	EffectChoice,
 	// Type - [x: number, y: number]
-	Cell,
+	Cell
 }
 
 export interface CardEffectArgument {

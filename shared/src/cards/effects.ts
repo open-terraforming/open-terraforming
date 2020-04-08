@@ -1094,6 +1094,7 @@ export const exchangeResources = (srcRes: Resource, dstRes: Resource) =>
 			dstRes,
 			'X'
 		)}`,
+		conditions: [resourceCondition(srcRes, 1)],
 		perform: ({ player }, amount: number) => {
 			if (player[srcRes] < amount) {
 				throw new Error(`You don't have ${amount} of ${srcRes}`)

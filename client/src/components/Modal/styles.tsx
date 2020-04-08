@@ -1,13 +1,17 @@
 import styled, { css } from 'styled-components'
 
 export const Header = styled.div`
-	padding: 15px;
+	padding: 1rem 1.2rem;
 	text-align: left;
 	font-size: 125%;
+	display: flex;
 `
 
-export const Body = styled.div`
-	padding: 15px 20px;
+export const Body = styled.div<{ hasHeader?: boolean; hasFooter?: boolean }>`
+	${props => css`
+		padding: ${props.hasHeader ? '0' : '1rem'} 1.2rem
+			${props.hasFooter ? '0' : '1rem'} 1.2rem;
+	`}
 	overflow: auto;
 	flex: 1;
 	min-height: 0;

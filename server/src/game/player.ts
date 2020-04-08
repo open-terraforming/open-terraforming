@@ -8,12 +8,15 @@ import {
 	CardEffect,
 	CardEffectArgumentType,
 	CardsLookupApi,
-	CardType
+	CardType,
+	CardEffectTarget
 } from '@shared/cards'
 import {
 	adjustedCardPrice,
 	cellByCoords,
-	updatePlayerResource
+	updatePlayerResource,
+	emptyCardState,
+	gamePlayer
 } from '@shared/cards/utils'
 import { CompetitionType } from '@shared/competitions'
 import {
@@ -387,6 +390,93 @@ export class Player {
 					.join('. ')}`
 			)
 		}
+
+		if (action) {
+			card.actionEffects.forEach((e, i) => {
+				if (!playArguments[i]) {
+					playArguments[i] = []
+				}
+
+				// TODO: More checks
+				e.args.forEach((a, ai) => {
+					const value = playArguments[i][ai]
+
+					if (value === undefined) {
+						throw new Error(
+							`${card.code}: No value specified for effect ${i} argument ${ai}`
+						)
+					}
+
+					// Check if card is valid
+					if (a.type === CardEffectTarget.Card) {
+						const card = a.fromHand
+							? emptyCardState(this.state.cards[value as number])
+							: this.state.usedCards[value as number]
+
+						const errors = a.cardConditions.filter(
+							c =>
+								!c.evaluate({
+									card,
+									cardIndex: value as number,
+									player: this.state,
+									game: this.game.state,
+									playerId: this.state.id
+								})
+						)
+
+						if (errors.length > 0) {
+							throw new Error(
+								f(
+									`{0}: Card selected for effect {1} argument {2} doesn't meet the conditions: {3}`,
+									card.code,
+									i,
+									ai,
+									errors.map((e, i) => e.description || i.toString()).join(', ')
+								)
+							)
+						}
+					}
+
+					// Check if player is valid
+					if (a.type === CardEffectTarget.Player) {
+						if (value === -1 && !a.optional) {
+							throw new Error(
+								f(
+									`{0}: Effect {1} argument {2}: player is required`,
+									card.code,
+									i,
+									ai
+								)
+							)
+						}
+
+						const player = gamePlayer(this.game.state, value as number)
+
+						const errors = a.playerConditions.filter(
+							c =>
+								!c.evaluate({
+									game: this.game.state,
+									player
+								})
+						)
+
+						if (errors.length > 0) {
+							throw new Error(
+								f(
+									`{0}: Player selected for effect {1} argument {2} doesn't meet the conditions: {3}`,
+									card.code,
+									i,
+									ai,
+									errors.map((e, i) => e.description || i.toString()).join(', ')
+								)
+							)
+						}
+					}
+				})
+
+				e.perform(ctx, ...(playArguments[i] || []))
+			})
+		}
 	}
 
 	giveCards(count: number) {
@@ -520,13 +610,6 @@ export class Player {
 		playArguments: CardEffectArgumentType[][]
 	) {
 		effects.forEach((e, i) => {
-			// Run dynamic arguments
-			e.args.forEach((a, ai) => {
-				if (!playArguments[i]) {
-					playArguments[i] = []
-				}
-			})
-
 			e.perform(ctx, ...(playArguments[i] || []))
 		})
 

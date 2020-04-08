@@ -5,10 +5,11 @@ import {
 	faExclamationTriangle,
 	faInfoCircle,
 	faExclamationCircle,
-	faCheck,
+	faCheck
 } from '@fortawesome/free-solid-svg-icons'
 import Button from '../Button/Button'
 import styled, { css } from 'styled-components'
+import { colors } from '@/styles'
 
 type MessageModalType = 'info' | 'warn' | 'error'
 
@@ -16,7 +17,7 @@ const typeToIcon = {
 	info: faInfoCircle,
 	warn: faExclamationTriangle,
 	error: faExclamationCircle,
-	success: faCheck,
+	success: faCheck
 } as const
 
 export const MessageModal = ({
@@ -24,7 +25,7 @@ export const MessageModal = ({
 	type,
 	message,
 	opened,
-	onClose,
+	onClose
 }: {
 	title: string
 	type: MessageModalType
@@ -38,12 +39,16 @@ export const MessageModal = ({
 	return (
 		<Modal
 			header={
-				<Header type={type}>
+				<Header>
 					<FontAwesomeIcon icon={typeToIcon[type]} />
 					<span>{title}</span>
 				</Header>
 			}
-			headerStyle={{ padding: 0, border: '0' }}
+			bodyStyle={{ paddingTop: '1rem' }}
+			headerStyle={{
+				background: colors.message[type].background,
+				color: colors.message[type].color
+			}}
 			footer={
 				<Button onClick={onClose ?? handleClose} schema="primary">
 					OK
@@ -58,16 +63,11 @@ export const MessageModal = ({
 	)
 }
 
-const Header = styled.div<{ type: MessageModalType }>`
+const Header = styled.div`
 	font-size: 14px;
 	text-align: left;
 	display: flex;
 	align-items: center;
-	padding: 20px;
-	${(props) => css`
-		background: ${props.theme.colors.message[props.type].background};
-		color: ${props.theme.colors.message[props.type].color};
-	`}
 
 	> span {
 		margin-left: 10px;

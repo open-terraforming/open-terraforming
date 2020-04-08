@@ -1,26 +1,20 @@
 TODO:
  - server - only send data, that should be visible to the player
  - shared - effects icons
- - server - check if Effects card can actually be played
 
 NICE TODO:
  - wait for people to reconnect
  - server - save & load state
 
-
 TODO
  * Media Group - will you only receive selected cards?
+
  * Animation when tile is placed
  * Spectator mode
  * poke button
- * show current progress when picking cards (smaller picking dialog?)
- * effects arguments -> check if selected player/card is acceptable by arguments
- * exchange X for Y -> condition that player have more than 0 of X
- * card played - ignore evaluation, player color, join into one modal per player
- * card list - min-height
- * check CARTEL
- * better EFFECTS text
- * action played when there's card to be played
- * HIRED RAIDERS issue - it can cause player to go negative somehow
- * HAND/TABLE CARDS - remember filters? Reopen after playing card
- * Mining Rights - 2* the expected production, why?
+ * card played - player color, join into one modal per player
+ * HAND/TABLE CARDS - remember filters, Reopen after playing card
+ * fix action being played when there's card to be played
+ * fix the game progress milestones display
+ * filter event log by player or text search
+ * better other player resource display

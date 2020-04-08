@@ -1,10 +1,7 @@
+import mars from '@/assets/mars-icon.png'
+import { colors } from '@/styles'
 import { useAppStore } from '@/utils/hooks'
-import {
-	Card,
-	CardCallbackContext,
-	CardCategory,
-	CardType
-} from '@shared/cards'
+import { Card, CardCallbackContext, CardType } from '@shared/cards'
 import {
 	isCardActionable,
 	isCardPlayable,
@@ -17,14 +14,13 @@ import { Condition } from './components/Condition'
 import { PlayEffect } from './components/PlayEffect'
 import { Resource } from './components/Resource'
 import { Tag } from './components/Tag'
-import mars from '@/assets/mars-icon.png'
-import { colors } from '@/styles'
 
 export const CardView = ({
 	card,
 	selected = false,
 	buying = false,
 	evaluate = true,
+	hover = true,
 	state,
 	cardIndex,
 	onClick
@@ -36,6 +32,7 @@ export const CardView = ({
 	onClick?: () => void
 	buying?: boolean
 	evaluate?: boolean
+	hover?: boolean
 }) => {
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
@@ -87,6 +84,7 @@ export const CardView = ({
 			type={card.type}
 			selected={selected}
 			onClick={onClick}
+			hover={hover}
 			playable={!evaluate || (playable && affordable)}
 			played={!!(state && state.played)}
 			className={
@@ -154,11 +152,11 @@ const Container = styled.div<{
 	selected: boolean
 	playable: boolean
 	played: boolean
+	hover: boolean
 	type: CardType
 }>`
 	border: 0.2rem solid ${props => typeToColor[props.type]};
 	background: ${colors.background};
-	color: #eee;
 	width: 200px;
 	flex-shrink: 0;
 	min-width: 0;
@@ -174,7 +172,8 @@ const Container = styled.div<{
 			? css`
 					opacity: 0.6;
 			  `
-			: css`
+			: props.hover &&
+			  css`
 					cursor: pointer;
 					transition: transform 0.1s;
 
@@ -220,7 +219,6 @@ const ActionTitle = styled.div`
 	border: 0.1rem solid ${colors.border};
 	text-align: center;
 	padding: 0.1rem 0;
-	color: #ccc;
 	margin-bottom: 0.2rem;
 `
 
@@ -276,7 +274,7 @@ const Categories = styled.div`
 const Title = styled.div`
 	padding: 0.5rem 0.5rem;
 	text-align: center;
-	color: #fff;
+	color: #f0f0f0;
 	text-transform: uppercase;
 	font-size: 100%;
 `

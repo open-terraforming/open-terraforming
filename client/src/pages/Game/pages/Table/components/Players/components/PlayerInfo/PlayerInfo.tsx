@@ -4,11 +4,34 @@ import { useAppStore } from '@/utils/hooks'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { CardDisplay } from '../../../CardDisplay/CardDisplay'
+import { ResourceIcon } from '../../../ResourceIcon/ResourceIcon'
+import { colors } from '@/styles'
+import { Resource } from '@shared/cards'
 
 type Props = {
 	playerId: number
 	onClose: () => void
 }
+
+const ResItem = ({
+	res,
+	value,
+	production
+}: {
+	res: Resource
+	value: number
+	production: number
+}) => (
+	<InfoItem>
+		<Value>
+			{value} <ResourceIcon res={res} />
+		</Value>
+		<Production>
+			{production > 0 && '+'}
+			{production}
+		</Production>
+	</InfoItem>
+)
 
 export const PlayerInfo = ({ playerId, onClose }: Props) => {
 	const player = useAppStore(state =>
@@ -34,30 +57,36 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 			contentStyle={{ width: '80%' }}
 		>
 			<Info>
+				<ResItem
+					res="money"
+					value={state.money}
+					production={state.moneyProduction}
+				/>
+				<ResItem res="ore" value={state.ore} production={state.oreProduction} />
+				<ResItem
+					res="titan"
+					value={state.titan}
+					production={state.titanProduction}
+				/>
+				<ResItem
+					res="plants"
+					value={state.plants}
+					production={state.plantsProduction}
+				/>
 				<InfoItem>
-					{state.money}/{state.moneyProduction} $
+					<Value>Cards in hand</Value>
+					<Production>{state.cards.length}</Production>
 				</InfoItem>
 				<InfoItem>
-					Ore: {state.ore} / {state.oreProduction}{' '}
+					<Value>On table</Value>
+					<Production>{state.usedCards.length}</Production>
 				</InfoItem>
-				<InfoItem>
-					Titan: {state.titan} / {state.titanProduction}
-				</InfoItem>
-				<InfoItem>
-					Plants: {state.plants} / {state.plantsProduction}
-				</InfoItem>
-				<InfoItem>
-					Energy: {state.energy} / {state.energyProduction}
-				</InfoItem>
-				<InfoItem>
-					Heat: {state.heat} / {state.heatProduction}
-				</InfoItem>
-				<InfoItem>Cards in hand: {state.cards.length}</InfoItem>
-				<InfoItem>Cards on table: {state.usedCards.length}</InfoItem>
 			</Info>
 
 			<CardDisplay
 				cards={cards}
+				evaluate={false}
+				hover={false}
 				onSelect={() => {
 					void 0
 				}}
@@ -69,10 +98,24 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 
 const Info = styled.div`
 	display: flex;
-	padding: 0.2rem 0.5rem;
 	flex-wrap: wrap;
+	margin-bottom: 1rem;
+	justify-content: center;
 `
 
 const InfoItem = styled.div`
-	margin: 0.25rem 1rem 0.25rem 0;
+	display: flex;
+	margin: 0 0.25rem;
+	background-color: ${colors.background};
+	border: 1px solid ${colors.border};
+`
+
+const Value = styled.div`
+	padding: 0.5rem;
+	width: 100%;
+`
+
+const Production = styled.div`
+	background-color: ${colors.border};
+	padding: 0.5rem;
 `

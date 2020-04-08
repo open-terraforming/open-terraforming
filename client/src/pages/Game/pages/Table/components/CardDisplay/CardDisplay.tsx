@@ -19,6 +19,8 @@ export const CardDisplay = <T extends CardInfo>({
 	cards,
 	filters = true,
 	buying = false,
+	evaluate = true,
+	hover = true,
 	defaultType
 }: {
 	onSelect: (cards: T[]) => void
@@ -27,6 +29,8 @@ export const CardDisplay = <T extends CardInfo>({
 	defaultType?: CardType
 	filters?: boolean
 	buying?: boolean
+	evaluate?: boolean
+	hover?: boolean
 }) => {
 	const [type, setType] = useState(defaultType)
 	const [playable, setPlayable] = useState(false)
@@ -130,14 +134,16 @@ export const CardDisplay = <T extends CardInfo>({
 						))}
 					</Types>
 
-					<label>
-						<input
-							type="checkbox"
-							checked={playable}
-							onChange={e => setPlayable(e.target.checked)}
-						/>
-						Only playable
-					</label>
+					{evaluate && (
+						<label>
+							<input
+								type="checkbox"
+								checked={playable}
+								onChange={e => setPlayable(e.target.checked)}
+							/>
+							Only playable
+						</label>
+					)}
 
 					<Categories>
 						{categories.map(([cat, count]) => (
@@ -167,6 +173,8 @@ export const CardDisplay = <T extends CardInfo>({
 					c =>
 						c && (
 							<CardView
+								hover={hover}
+								evaluate={evaluate}
 								buying={buying}
 								card={c.card}
 								selected={selected.map(s => s.index).includes(c.index)}
@@ -194,6 +202,7 @@ const CardsContainer = styled.div<{ playableOnly: boolean }>`
 	justify-content: flex-start;
 	min-width: 0;
 	padding: 1rem 0;
+	min-height: 322px;
 
 	${props =>
 		props.playableOnly &&

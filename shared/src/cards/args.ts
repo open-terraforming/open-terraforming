@@ -4,7 +4,7 @@ import {
 	CardEffectArgument,
 	CardEffect,
 	CardEffectTarget,
-	CellCondition,
+	CellCondition
 } from './types'
 
 export const effectArg = (
@@ -18,13 +18,13 @@ export const effectArg = (
 		cardConditions: [],
 		cellConditions: [],
 		optional: true,
-		...c,
+		...c
 	} as CardEffectArgument)
 
 export const effectChoiceArg = (effects: CardEffect[]) =>
 	effectArg({
 		type: CardEffectTarget.EffectChoice,
-		effects,
+		effects
 	})
 
 export const cardArg = (
@@ -36,7 +36,7 @@ export const cardArg = (
 		type: CardEffectTarget.Card,
 		cardConditions: conditions,
 		descriptionPrefix,
-		descriptionPostfix,
+		descriptionPostfix
 	})
 
 export const cellArg = (
@@ -48,12 +48,12 @@ export const cellArg = (
 		type: CardEffectTarget.Cell,
 		descriptionPrefix,
 		descriptionPostfix,
-		cellConditions: conditions,
+		cellConditions: conditions
 	})
 
 export const playerCardArg = (conditions: CardCondition[] = [], amount = 0) =>
 	effectArg({
 		type: CardEffectTarget.PlayerCardResource,
 		cardConditions: conditions,
-		amount,
+		amount
 	})

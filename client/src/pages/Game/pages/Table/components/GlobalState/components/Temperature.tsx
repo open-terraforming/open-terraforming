@@ -6,7 +6,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { DiffAnim } from './DiffAnim'
 import { MilestoneDisplay } from './MilestoneDisplay'
-import { colors } from '@/styles'
+import { colors, mainColors } from '@/styles'
+import { darken } from 'polished'
 
 type Props = {
 	start: number
@@ -62,15 +63,17 @@ const Container = styled.div`
 const Step = styled.div<{ passed: boolean; active: boolean }>`
 	text-align: center;
 	padding: 0.3rem 1rem;
-	opacity: ${props => (props.active || props.passed ? 1 : 0.5)};
 	position: relative;
-	transition: background-color 500ms, opacity 500ms;
+	transition: background-color 500ms, opacity 500ms, color 500ms;
 
 	${props =>
-		(props.passed || props.active) &&
-		css`
-			background: ${colors.border};
-		`}
+		props.passed || props.active
+			? css`
+					background-color: ${colors.border};
+			  `
+			: css`
+					color: ${darken(0.3, mainColors.text)};
+			  `}
 `
 
 const Icon = styled.div`

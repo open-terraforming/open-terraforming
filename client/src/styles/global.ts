@@ -20,7 +20,7 @@ html, body, #application {
 body {
 	font-family: Oswald, Arial, Helvetica, sans-serif;
 	font-size: 14px;
-	color: #4267B2;
+	color: ${mainColors.text};
 }
 
 
@@ -60,6 +60,12 @@ button, a {
 
 .mr-2 {
 	margin-right: 0.5rem;
+}
+
+#app-modals {
+	> div:not(:first-child) {
+		background-color: transparent !important;
+	}
 }
 
 `

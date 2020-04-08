@@ -6,6 +6,8 @@ import React, { useCallback, useState } from 'react'
 import styled, { css, keyframes, Keyframes } from 'styled-components'
 import { Portal } from '../Portal/Portal'
 import { Body, Footer, Header } from './styles'
+import { darken } from 'polished'
+import ReactDOM from 'react-dom'
 
 type RenderCallback = (
 	close: () => void,
@@ -27,6 +29,8 @@ export interface ModalProps {
 	stretchFooterButtons?: boolean
 	hideClose?: boolean
 }
+
+let modalPortal: HTMLDivElement | null = null
 
 export const Modal = ({
 	children,
@@ -98,7 +102,7 @@ export const Modal = ({
 									)}
 								</Header>
 							)}
-							<Body style={bodyStyle}>
+							<Body style={bodyStyle} hasHeader={!!header} hasFooter={!!footer}>
 								{typeof children === 'function'
 									? children(handleTameClose, handleClose)
 									: children}
@@ -123,7 +127,13 @@ export const Modal = ({
 	if (disablePortal) {
 		return popup
 	} else {
-		return <Portal>{popup}</Portal>
+		if (!modalPortal) {
+			modalPortal = document.createElement('div')
+			modalPortal.id = 'app-modals'
+			document.body.appendChild(modalPortal)
+		}
+
+		return ReactDOM.createPortal(popup, modalPortal)
 	}
 }
 
@@ -138,7 +148,7 @@ const bgOut = keyframes`
 `
 
 const Close = styled.div`
-	float: right;
+	margin-left: auto;
 	cursor: pointer;
 `
 
@@ -151,7 +161,6 @@ const PopupBackground = styled.div<{ closing?: boolean }>`
 	background: rgba(0, 0, 0, 0.5);
 	display: flex;
 	z-index: 999;
-	color: #fff;
 
 	${props =>
 		props.closing
@@ -179,10 +188,15 @@ const popOut = keyframes`
 	100% { transform: scaleY(0); opacity: 0; }
 `
 
+const BackgroundAnimation = keyframes`
+	0% { background-position: 0 0; }
+	100% { background-position: 80px 40px; }
+`
+
 const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	position: relative;
-	background: ${colors.background};
 	min-width: 200px;
+	max-width: 90%;
 	margin: auto;
 	border: 2px solid ${colors.border};
 	padding: 0px;
@@ -214,4 +228,21 @@ const Dialog = styled.div`
 	flex-direction: column;
 	min-height: 0;
 	max-height: 100%;
+
+	background-color: ${colors.background};
+	background: linear-gradient(
+		45deg,
+		${darken(0.01, colors.background)} 25%,
+		${colors.background} 25%,
+		${colors.background} 50%,
+		${darken(0.01, colors.background)} 50%,
+		${darken(0.01, colors.background)} 75%,
+		${colors.background} 75%,
+		${colors.background}
+	);
+	background-size: 40px 40px;
+	animation-name: ${BackgroundAnimation};
+	animation-duration: 1000ms;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
 `

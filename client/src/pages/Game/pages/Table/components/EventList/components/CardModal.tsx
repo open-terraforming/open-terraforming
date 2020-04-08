@@ -2,7 +2,6 @@ import React from 'react'
 import { CardsLookupApi } from '@shared/cards'
 import { Modal } from '@/components/Modal/Modal'
 import { CardView } from '../../CardView/CardView'
-import { Button } from '@/components'
 
 type Props = {
 	title?: string
@@ -15,7 +14,7 @@ export const CardModal = ({ card, onClose, title }: Props) => {
 
 	return (
 		<Modal open={true} header={title} onClose={onClose}>
-			<CardView card={info} />
+			<CardView card={info} evaluate={false} hover={false} />
 		</Modal>
 	)
 }
