@@ -40,7 +40,6 @@ export const PlayedCards = ({
 				card &&
 				player &&
 				game &&
-				card.type === CardType.Action &&
 				isCardActionable(card, {
 					card: newlySelected.state,
 					cardIndex: newlySelected.index,

@@ -170,8 +170,6 @@ export const playerResourceChange = (
 						-change
 				  )} from any player`,
 		perform: ({ game }, arg: number | [number, number] = [-1, 0]) => {
-			console.log('Perform player resource change', arg)
-
 			const [playerId, amount] = Array.isArray(arg) ? arg : [arg, 0]
 
 			if (playerId === null || playerId < 0) {

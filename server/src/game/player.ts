@@ -40,7 +40,7 @@ import {
 } from '@shared/game'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, PlacementConditionsLookup } from '@shared/placements'
-import { Projects } from '@shared/projects'
+import { Projects, StandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
 import { adjacentCells, allCells, drawCards } from '@shared/utils'
 import { MyEvent } from 'src/utils/events'
@@ -57,6 +57,11 @@ export interface TilePlacedEvent {
 	cell: GridCell
 }
 
+export interface ProjectBought {
+	project: StandardProject
+	player: Player
+}
+
 export class Player {
 	static idCounter = 1
 
@@ -68,6 +73,7 @@ export class Player {
 	onStateChanged = new MyEvent<Readonly<PlayerState>>()
 	onCardPlayed = new MyEvent<Readonly<CardPlayedEvent>>()
 	onTilePlaced = new MyEvent<Readonly<TilePlacedEvent>>()
+	onProjectBought = new MyEvent<Readonly<ProjectBought>>()
 
 	game: Game
 
@@ -155,6 +161,10 @@ export class Player {
 			throw new Error('You are not picking corporations right now')
 		}
 
+		if (!this.state.cardsPick.includes(code)) {
+			throw new Error(`This corporation wasn't in your options`)
+		}
+
 		const corp = Corporations.find(c => c.code === code)
 		if (!corp) {
 			throw new Error(`Unknown corporation ${code}`)
@@ -162,23 +172,27 @@ export class Player {
 
 		this.logger.log(f('Picked corporation {0}', code))
 
+		this.state.cardsPick = []
 		this.state.corporation = code
 
-		this.state.money = corp.startingMoney
-		this.state.ore = corp.startingOre
-		this.state.plants = corp.startingPlants
-		this.state.titan = corp.startingTitan
-		this.state.heat = corp.startingHeat
-		this.state.energy = corp.startingEnergy
+		const card = emptyCardState(corp.code)
+		this.state.usedCards.push(card)
 
-		if (corp.startingCards > 0) {
-			this.state.cards.push(...drawCards(this.game.state, corp.startingCards))
-		}
+		this.runCardEffects(
+			corp.playEffects,
+			{
+				card,
+				cardIndex: 0,
+				game: this.game.state,
+				player: this.state,
+				playerId: this.state.id
+			},
+			[]
+		)
 
-		if (corp.pickingCards) {
-			this.giveCards(10)
-			this.state.state = PlayerStateValue.PickingCards
-		} else {
+		if (
+			(this.state.state as PlayerStateValue) !== PlayerStateValue.PickingCards
+		) {
 			this.state.state = PlayerStateValue.WaitingForTurn
 		}
 
@@ -328,22 +342,7 @@ export class Player {
 		updatePlayerResource(this.state, 'titan', -useTitan)
 		updatePlayerResource(this.state, 'ore', -useOre)
 
-		card.playEffects.forEach((e, i) => {
-			// Make sure arguments exist
-			if (!playArguments[i]) {
-				playArguments[i] = []
-			}
-
-			e.args.forEach((_a, ai) => {
-				if (playArguments[i][ai] === undefined) {
-					throw new Error(
-						`Argument #${ai} of playEffect ${i} (${e.description}) is missing`
-					)
-				}
-			})
-
-			e.perform(ctx, ...(playArguments[i] || []))
-		})
+		this.runCardEffects(card.playEffects, ctx, playArguments)
 
 		this.state.usedCards.push(cardState)
 		this.state.cards.splice(index, 1)
@@ -473,8 +472,6 @@ export class Player {
 						}
 					}
 				})
-
-				e.perform(ctx, ...(playArguments[i] || []))
 			})
 		}
 	}
@@ -675,16 +672,15 @@ export class Player {
 		index: number,
 		playArguments: CardEffectArgumentType[][]
 	) {
-		if (
-			this.state.cardsToPlay.length > 0 &&
-			this.state.cardsToPlay[0] !== index
-		) {
+		const forced = this.state.cardsToPlay[0]
+
+		if (forced !== undefined && forced !== index) {
 			throw new Error(
 				'You have to resolve pending events before playing other cards'
 			)
 		}
 
-		if (this.state.cardsToPlay.length === 0 && !this.isPlaying) {
+		if (forced === undefined && !this.isPlaying) {
 			throw new Error("You're not playing")
 		}
 
@@ -706,7 +702,11 @@ export class Player {
 			throw new Error(`Unknown card ${cardCode}`)
 		}
 
-		if (this.state.cardsToPlay.length === 0 && card.type !== CardType.Action) {
+		if (
+			forced === undefined &&
+			card.type !== CardType.Action &&
+			card.type !== CardType.Corporation
+		) {
 			throw new Error(`${card.title} isn't playable`)
 		}
 
@@ -727,7 +727,9 @@ export class Player {
 		if (this.state.cardsToPlay.length > 0) {
 			this.state.cardsToPlay.shift()
 		} else {
-			cardState.played = true
+			if (card.type !== CardType.Corporation) {
+				cardState.played = true
+			}
 
 			if (
 				this.state.placingTile.length === 0 &&
@@ -810,11 +812,17 @@ export class Player {
 			throw new Error(`You cannot execute ${StandardProjectType[projectType]}`)
 		}
 
+		updatePlayerResource(this.state, project.resource, -project.cost(ctx))
 		project.execute(ctx, cards)
 
 		this.logger.log(
 			f('Bought standard project {0}', StandardProjectType[projectType])
 		)
+
+		this.onProjectBought.emit({
+			player: this,
+			project
+		})
 
 		if (this.state.placingTile.length === 0) {
 			this.actionPlayed()

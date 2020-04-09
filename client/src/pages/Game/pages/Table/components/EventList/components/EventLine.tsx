@@ -83,7 +83,7 @@ export const EventLine = ({ event, players, animated, onDone }: Props) => {
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} />
-						{` picked ${CorporationsLookup[event.corporation]?.name}`}
+						{` picked ${CorporationsLookup[event.corporation]?.title}`}
 					</>
 				)
 			case EventType.ResourceChanged:

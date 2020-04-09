@@ -200,6 +200,7 @@ const CardsContainer = styled.div<{ playableOnly: boolean }>`
 	overflow-x: scroll;
 	overflow-y: visible;
 	justify-content: flex-start;
+	align-items: center;
 	min-width: 0;
 	padding: 1rem 0;
 	min-height: 322px;

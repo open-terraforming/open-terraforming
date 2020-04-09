@@ -3,28 +3,30 @@ import {
 	earthCardPriceChange,
 	effect,
 	exchangeResources,
+	getTopCards,
+	pickTopCards,
 	placeTile,
 	productionChange,
 	resourceChange,
-	titanPriceChange,
-	getTopCards,
-	pickTopCards
+	titanPriceChange
 } from './cards/effects'
 import { passiveEffect } from './cards/passive-effects'
-import { Card, CardCategory, CardType, WithOptional } from './cards/types'
+import { Card, CardCategory, CardType } from './cards/types'
 import {
 	card,
 	updatePlayerProduction,
 	updatePlayerResource
 } from './cards/utils'
-import { GridCellContent, StandardProjectType } from './game'
-import { Projects } from './projects'
+import { GridCellContent } from './game'
 import { withUnits } from './units'
 import { f } from './utils'
 
 const corp = (c: Card, pickingCards = true): Card => {
 	if (pickingCards) {
-		c.playEffects = [pickTopCards(10), ...c.playEffects]
+		c.playEffects = [
+			effect({ ...pickTopCards(10), description: '' }),
+			...c.playEffects
+		]
 	}
 	return c
 }
@@ -65,8 +67,11 @@ export const Corporations = [
 							updatePlayerResource(player, 'money', 4)
 						}
 					},
-					onStandardProject: ({ player }, project, playedBy) => {
-						if (playedBy.id === player.id && project.cost >= 20) {
+					onStandardProject: ({ player, game }, project, playedBy) => {
+						if (
+							playedBy.id === player.id &&
+							project.cost({ player, game }) >= 20
+						) {
 							updatePlayerResource(player, 'money', 4)
 						}
 					}
@@ -76,9 +81,9 @@ export const Corporations = [
 	),
 	corp(
 		card({
-			title: 'ecoline',
-			categories: [CardCategory.Plant],
 			code: 'ecoline',
+			categories: [CardCategory.Plant],
+			title: 'ecoline',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [
@@ -94,9 +99,9 @@ export const Corporations = [
 	),
 	corp(
 		card({
-			title: 'helion',
+			code: 'helion',
 			categories: [CardCategory.Space],
-			code: 'Helion',
+			title: 'Helion',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 42), productionChange('heat', 3)],
@@ -105,9 +110,9 @@ export const Corporations = [
 	),
 	corp(
 		card({
-			title: 'mining_guild',
+			code: 'mining_guild',
 			categories: [CardCategory.Building, CardCategory.Building],
-			code: 'Mining Guild',
+			title: 'Mining Guild',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [
@@ -130,16 +135,16 @@ export const Corporations = [
 	),
 	corp(
 		card({
-			title: 'interplanetary_cinematics',
+			code: 'interplanetary_cinematics',
 			categories: [CardCategory.Building],
-			code: 'Interplanetary Cinematics',
+			title: 'Interplanetary Cinematics',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 30), resourceChange('ore', 20)],
 			passiveEffects: [
 				passiveEffect({
 					description: f(
-						'When you place an Event card, you receive {0}',
+						'When you play an Event card, you receive {0}',
 						withUnits('money', 2)
 					),
 					onCardPlayed: (
@@ -161,9 +166,9 @@ export const Corporations = [
 	),
 	corp(
 		card({
-			title: 'phobolog',
+			code: 'phobolog',
 			categories: [CardCategory.Science],
-			code: 'Phobolog',
+			title: 'Phobolog',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [
@@ -175,9 +180,9 @@ export const Corporations = [
 	),
 	corp(
 		card({
-			title: 'tharsis_republic',
+			code: 'tharsis_republic',
 			categories: [CardCategory.Building],
-			code: 'Tharsis Republic',
+			title: 'Tharsis Republic',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [
@@ -204,9 +209,9 @@ export const Corporations = [
 	),
 	corp(
 		card({
-			title: 'thorgate',
+			code: 'thorgate',
 			categories: [CardCategory.Power],
-			code: 'Thorgate',
+			title: 'Thorgate',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [
@@ -219,8 +224,7 @@ export const Corporations = [
 					),
 					perform: ({ player }) => {
 						player.powerPriceChange = -3
-						player.powerProjectCost =
-							Projects[StandardProjectType.PowerPlant].cost - 3
+						player.powerProjectCost = 11 - 3
 					}
 				})
 			]
@@ -228,9 +232,9 @@ export const Corporations = [
 	),
 	corp(
 		card({
-			title: 'united_nations_mars_initiative',
+			code: 'united_nations_mars_initiative',
 			categories: [CardCategory.Earth],
-			code: 'United Nations Mars Initiative',
+			title: 'United Nations Mars Initiative',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 40)],
@@ -242,7 +246,8 @@ export const Corporations = [
 					conditions: [
 						condition({
 							description: 'TR has to be increased',
-							evaluate: ({ player, card }) => card.data < player.terraformRating
+							evaluate: ({ player, card }) =>
+								card.data === undefined || card.data < player.terraformRating
 						})
 					],
 					perform: ({ player, card }) => {
@@ -263,9 +268,9 @@ export const Corporations = [
 	),
 	corp(
 		card({
-			title: 'teractor',
+			code: 'teractor',
 			categories: [CardCategory.Earth],
-			code: 'Teractor',
+			title: 'Teractor',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 60), earthCardPriceChange(-3)]
@@ -273,9 +278,9 @@ export const Corporations = [
 	),
 	corp(
 		card({
-			title: 'saturn_systems',
+			code: 'saturn_systems',
 			categories: [CardCategory.Earth],
-			code: 'Saturn Systems',
+			title: 'Saturn Systems',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [

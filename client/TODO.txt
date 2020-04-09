@@ -13,9 +13,7 @@ TODO
  * filter event log by player or text search
  * redesign right part of the bottom panel
  * game list
- * passive effects -> maybe the active effect could be part of the definition?
+ * passive effects
+   -> maybe the active effect could be part of the definition?
  * corporations
-    -> corporation cards shouldn't count towards card count, but count towards other stuff
-    -> corporation cards shouldn't change `played` attribute when played
- * onStandardProject
- * onGenerationEnd
+   -> corporation cards shouldn't count towards card count, but count towards other stuff

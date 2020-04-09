@@ -93,8 +93,9 @@ export const isCardPlayable = (card: Card, ctx: CardCallbackContext) =>
 	!card.playEffects.find(e => e.conditions.find(c => !c.evaluate(ctx)))
 
 export const isCardActionable = (card: Card, ctx: CardCallbackContext) =>
-	card.type === CardType.Action &&
+	(card.type === CardType.Action || card.type === CardType.Corporation) &&
 	!ctx.card.played &&
+	card.actionEffects.length > 0 &&
 	!card.actionEffects.find(e => e.conditions.find(c => !c.evaluate(ctx)))
 
 export const emptyCardState = (cardCode: string) => ({
@@ -116,10 +117,20 @@ export const minimalCardPrice = (card: Card, player: PlayerGameState) =>
 		: 0)
 
 export const adjustedCardPrice = (card: Card, player: PlayerGameState) =>
-	card.cost +
-	(card.categories.includes(CardCategory.Space) ? player.spacePriceChange : 0) +
-	(card.categories.includes(CardCategory.Earth) ? player.earthPriceChange : 0) +
-	player.cardPriceChange
+	Math.max(
+		0,
+		card.cost +
+			(card.categories.includes(CardCategory.Space)
+				? player.spacePriceChange
+				: 0) +
+			(card.categories.includes(CardCategory.Earth)
+				? player.earthPriceChange
+				: 0) +
+			(card.categories.includes(CardCategory.Power)
+				? player.powerPriceChange
+				: 0) +
+			player.cardPriceChange
+	)
 
 export const updatePlayerResource = (
 	player: PlayerGameState,

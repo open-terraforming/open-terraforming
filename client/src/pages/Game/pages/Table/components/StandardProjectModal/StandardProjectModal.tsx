@@ -73,7 +73,7 @@ export const StandardProjectModal = ({ onClose, playing }: Props) => {
 								? 'Sell cards'
 								: `Buy ${p.description}`}
 						</Button>
-						<ProjectDescription project={p} />
+						<ProjectDescription project={p} cost={p.cost(ctx)} />
 					</Project>
 				))}
 			</Modal>

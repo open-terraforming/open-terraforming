@@ -236,7 +236,7 @@ export class Bot extends Player {
 			}
 
 			case PlayerStateValue.PickingCorporation: {
-				this.pickCorporation(Corporations[0].code)
+				this.pickCorporation(shuffle(this.state.cardsPick.slice(0))[0])
 				break
 			}
 
@@ -297,14 +297,16 @@ export class Bot extends Player {
 
 					if (!playable) {
 						const usable = shuffle(
-							this.state.usedCards.filter((c, i) =>
-								isCardActionable(CardsLookupApi.get(c.code), {
-									card: c,
-									cardIndex: i,
-									game: this.game.state,
-									player: this.state,
-									playerId: this.state.id
-								})
+							this.state.usedCards.filter(
+								(c, i) =>
+									CardsLookupApi.get(c.code).actionEffects.length > 0 &&
+									isCardActionable(CardsLookupApi.get(c.code), {
+										card: c,
+										cardIndex: i,
+										game: this.game.state,
+										player: this.state,
+										playerId: this.state.id
+									})
 							)
 						)[0]
 

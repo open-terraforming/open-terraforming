@@ -91,18 +91,20 @@ export const CardView = ({
 				!evaluate || (playable && affordable) ? 'playable' : 'unplayable'
 			}
 		>
-			<Inner type={card.type}>
-				<Head>
+			<Head>
+				{card.type !== CardType.Corporation && (
 					<Cost affordable={affordable}>
 						<div>{card.cost}</div>
 					</Cost>
-					<Categories>
-						{card.categories.map((c, i) => (
-							<Tag key={i} tag={c} />
-						))}
-					</Categories>
-				</Head>
-				<Title>{card.title}</Title>
+				)}
+				<Categories>
+					{card.categories.map((c, i) => (
+						<Tag key={i} tag={c} />
+					))}
+				</Categories>
+			</Head>
+			<Title>{card.title}</Title>
+			{card.type !== CardType.Corporation && (
 				<Image
 					style={{
 						backgroundImage: `url('${
@@ -110,33 +112,33 @@ export const CardView = ({
 						}/card/${card.code.replace(/'/g, "\\'")}')`
 					}}
 				/>
-				<Description>
-					{state && state.played && (
-						<Played>Card already played this generation</Played>
-					)}
-					{card.actionEffects.length > 0 && (
-						<Action>
-							<ActionTitle>
-								{card.type === CardType.Action ? 'Action' : 'Effect'}
-							</ActionTitle>
-							{card.actionEffects.map((e, i) => (
-								<PlayEffect key={i} effect={e} ctx={condContext} />
-							))}
-						</Action>
-					)}
-					{card.conditions.map((c, i) => (
-						<Condition key={i} cond={c} ctx={condContext} />
-					))}
-					{card.playEffects.map((e, i) => (
-						<PlayEffect key={i} effect={e} ctx={condContext} />
-					))}
-					{description.map((d, i) => (
-						<div key={i}>{d}</div>
-					))}
-					{state && <Resource card={card} state={state} />}
-					{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
-				</Description>
-			</Inner>
+			)}
+			<Description>
+				{state && state.played && (
+					<Played>Card already played this generation</Played>
+				)}
+				{card.actionEffects.length > 0 && (
+					<Action>
+						<ActionTitle>
+							{card.type === CardType.Action ? 'Action' : 'Effect'}
+						</ActionTitle>
+						{card.actionEffects.map((e, i) => (
+							<PlayEffect key={i} effect={e} ctx={condContext} />
+						))}
+					</Action>
+				)}
+				{card.conditions.map((c, i) => (
+					<Condition key={i} cond={c} ctx={condContext} />
+				))}
+				{card.playEffects.map((e, i) => (
+					<PlayEffect key={i} effect={e} ctx={condContext} />
+				))}
+				{description.map((d, i) => (
+					<div key={i}>{d}</div>
+				))}
+				{state && <Resource card={card} state={state} />}
+				{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
+			</Description>
 		</Container>
 	)
 }
@@ -145,56 +147,9 @@ const typeToColor = {
 	[CardType.Action]: '#0F87E2',
 	[CardType.Building]: '#56BA1B',
 	[CardType.Effect]: '#0F87E2 ',
-	[CardType.Event]: '#FF6868'
+	[CardType.Event]: '#FF6868',
+	[CardType.Corporation]: '#BAC404'
 } as const
-
-const Container = styled.div<{
-	selected: boolean
-	playable: boolean
-	played: boolean
-	hover: boolean
-	type: CardType
-}>`
-	border: 0.2rem solid ${props => typeToColor[props.type]};
-	background: ${colors.background};
-	width: 200px;
-	flex-shrink: 0;
-	min-width: 0;
-	min-height: 300px;
-	max-height: 300px;
-	overflow: visible;
-	margin: 0 0.5rem;
-	display: flex;
-	position: relative;
-
-	${props =>
-		!props.playable
-			? css`
-					opacity: 0.6;
-			  `
-			: props.hover &&
-			  css`
-					cursor: pointer;
-					transition: transform 0.1s;
-
-					&:hover {
-						/*box-shadow: 0px 0px 3px 3px ${colors.border};*/
-						transform: scale(1.07);
-					}
-			  `}
-
-	${props =>
-		props.selected &&
-		css`
-			box-shadow: 0px 0px 5px 5px #ffffaa;
-		`}
-
-	${props =>
-		props.played &&
-		css`
-			transform: rotate(1deg);
-		`}
-`
 
 const Head = styled.div`
 	display: flex;
@@ -279,18 +234,6 @@ const Title = styled.div`
 	font-size: 100%;
 `
 
-const Inner = styled.div<{ type: CardType }>`
-	display: flex;
-	flex-direction: column;
-	overflow: visible;
-	min-height: 0;
-	width: 100%;
-
-	${Title} {
-		background: ${props => typeToColor[props.type]};
-	}
-`
-
 const Description = styled.div`
 	padding: 1rem 0.5rem 0.5rem 0.5rem;
 	overflow: auto;
@@ -335,4 +278,82 @@ const Image = styled.div`
 	background-size: 100% auto;
 	background-repeat: no-repeat;
 	opacity: 0.5;
+`
+
+type ContainerCtx = {
+	selected: boolean
+	playable: boolean
+	played: boolean
+	hover: boolean
+	type: CardType
+}
+
+const Container = styled.div<ContainerCtx>`
+	border: 0.2rem solid ${props => typeToColor[props.type]};
+	background: ${colors.background};
+	width: ${props => (props.type === CardType.Corporation ? '400px' : '200px')};
+	flex-shrink: 0;
+	min-width: 0;
+	height: 300px;
+	max-height: 300px;
+	overflow: visible;
+	margin: 0 0.5rem;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+	overflow: visible;
+
+	${Title} {
+		background: ${props => typeToColor[props.type]};
+	}
+
+
+	${props =>
+		props.type === CardType.Corporation &&
+		css`
+			width: 300px;
+			height: 200px;
+			max-height: 200px;
+			display: block;
+
+			${Title} {
+				float: left;
+			}
+
+			${Head} {
+				float: right;
+			}
+
+			${Description} {
+				clear: both;
+			}
+		`}
+
+	${props =>
+		!props.playable
+			? css`
+					opacity: 0.6;
+			  `
+			: props.hover &&
+			  css`
+					cursor: pointer;
+					transition: transform 0.1s;
+
+					&:hover {
+						/*box-shadow: 0px 0px 3px 3px ${colors.border};*/
+						transform: scale(1.07);
+					}
+			  `}
+
+	${props =>
+		props.selected &&
+		css`
+			box-shadow: 0px 0px 5px 5px #ffffaa;
+		`}
+
+	${props =>
+		props.played &&
+		css`
+			transform: rotate(1deg);
+		`}
 `

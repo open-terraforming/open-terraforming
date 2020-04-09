@@ -9,9 +9,10 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
 	project: StandardProject
+	cost: number
 }
 
-const typeToContent = (project: StandardProject) => {
+const typeToContent = (project: StandardProject, cost: number) => {
 	switch (project.type) {
 		case StandardProjectType.SellPatents:
 			return (
@@ -20,14 +21,14 @@ const typeToContent = (project: StandardProject) => {
 					<Card />
 					<FontAwesomeIcon icon={faArrowRight} />
 					<span>X</span>
-					<ResourceIcon res="money" size="lg" />
+					<ResourceIcon res={project.resource} size="lg" />
 				</>
 			)
 		case StandardProjectType.PowerPlant:
 			return (
 				<>
-					<span>{project.cost}</span>
-					<ResourceIcon res="money" size="lg" />
+					<span>{cost}</span>
+					<ResourceIcon res={project.resource} size="lg" />
 					<FontAwesomeIcon icon={faArrowRight} />
 					<span>+ 1 energy production</span>
 				</>
@@ -35,8 +36,8 @@ const typeToContent = (project: StandardProject) => {
 		case StandardProjectType.Asteroid:
 			return (
 				<>
-					<span>{project.cost}</span>
-					<ResourceIcon res="money" size="lg" />
+					<span>{cost}</span>
+					<ResourceIcon res={project.resource} size="lg" />
 					<FontAwesomeIcon icon={faArrowRight} />
 					<span>+ 1 temperature</span>
 				</>
@@ -44,8 +45,8 @@ const typeToContent = (project: StandardProject) => {
 		case StandardProjectType.Aquifer:
 			return (
 				<>
-					<span>{project.cost}</span>
-					<ResourceIcon res="money" size="lg" />
+					<span>{cost}</span>
+					<ResourceIcon res={project.resource} size="lg" />
 					<FontAwesomeIcon icon={faArrowRight} />
 					<span>place an Ocean</span>
 				</>
@@ -53,8 +54,8 @@ const typeToContent = (project: StandardProject) => {
 		case StandardProjectType.Greenery:
 			return (
 				<>
-					<span>{project.cost}</span>
-					<ResourceIcon res="money" size="lg" />
+					<span>{cost}</span>
+					<ResourceIcon res={project.resource} size="lg" />
 					<FontAwesomeIcon icon={faArrowRight} />
 					<span>place a Forest</span>
 				</>
@@ -62,8 +63,8 @@ const typeToContent = (project: StandardProject) => {
 		case StandardProjectType.City:
 			return (
 				<>
-					<span>{project.cost}</span>
-					<ResourceIcon res="money" size="lg" />
+					<span>{cost}</span>
+					<ResourceIcon res={project.resource} size="lg" />
 					<FontAwesomeIcon icon={faArrowRight} />
 					<div>
 						<div>place a City</div>
@@ -76,8 +77,8 @@ const typeToContent = (project: StandardProject) => {
 	}
 }
 
-export const ProjectDescription = ({ project }: Props) => {
-	return <E>{typeToContent(project)}</E>
+export const ProjectDescription = ({ project, cost }: Props) => {
+	return <E>{typeToContent(project, cost)}</E>
 }
 
 const E = styled.div`

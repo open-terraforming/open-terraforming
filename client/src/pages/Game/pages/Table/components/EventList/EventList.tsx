@@ -64,6 +64,23 @@ export const EventList = ({}: Props) => {
 			const diff = objDiff(lastGame, game) as GameState
 			const newEvents = [] as GameEvent[]
 
+			const tiles = diff.map?.grid
+
+			if (tiles) {
+				Object.entries(tiles).forEach(([, row]) => {
+					Object.entries(row).forEach(([, cellChange]) => {
+						if (cellChange.content) {
+							newEvents.push({
+								type: EventType.TilePlaced,
+								playerId: cellChange.ownerId as number,
+								tile: cellChange.content,
+								other: cellChange.other
+							})
+						}
+					})
+				})
+			}
+
 			if (diff.players) {
 				Object.entries(diff.players).forEach(([playerIndex, changes]) => {
 					const player = lastGame.players[parseInt(playerIndex)]
@@ -80,15 +97,19 @@ export const EventList = ({}: Props) => {
 						if (gameChanges.usedCards) {
 							Object.entries(gameChanges.usedCards).forEach(
 								([cardIndex, cardChanges]) => {
-									const oldCard =
-										player.usedCards[parseInt(cardIndex)]
+									const oldCard = player.usedCards[parseInt(cardIndex)]
 
 									if (!oldCard) {
-										newEvents.push({
-											type: EventType.CardPlayed,
-											playerId: player.id,
-											card: cardChanges.code
-										})
+										if (
+											CardsLookupApi.get(cardChanges.code).type !==
+											CardType.Corporation
+										) {
+											newEvents.push({
+												type: EventType.CardPlayed,
+												playerId: player.id,
+												card: cardChanges.code
+											})
+										}
 									} else {
 										const card = CardsLookupApi.get(oldCard.code)
 
@@ -124,8 +145,7 @@ export const EventList = ({}: Props) => {
 							newEvents.push({
 								type: EventType.RatingChanged,
 								playerId: player.id,
-								amount:
-									gameChanges.terraformRating - player.terraformRating
+								amount: gameChanges.terraformRating - player.terraformRating
 							})
 						}
 
@@ -185,23 +205,6 @@ export const EventList = ({}: Props) => {
 					})
 				}
 			})
-
-			const tiles = diff.map?.grid
-
-			if (tiles) {
-				Object.entries(tiles).forEach(([, row]) => {
-					Object.entries(row).forEach(([, cellChange]) => {
-						if (cellChange.content) {
-							newEvents.push({
-								type: EventType.TilePlaced,
-								playerId: cellChange.ownerId as number,
-								tile: cellChange.content,
-								other: cellChange.other
-							})
-						}
-					})
-				})
-			}
 
 			if (diff.competitions) {
 				Object.values(diff.competitions).forEach(c => {

@@ -1,4 +1,4 @@
-import { deepExtend, range } from '@/utils/collections'
+import { deepExtend, range, shuffle } from '@/utils/collections'
 import { nextColor } from '@/utils/colors'
 import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
@@ -19,7 +19,12 @@ import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
 import { MyEvent } from 'src/utils/events'
 import { Bot } from './bot'
-import { CardPlayedEvent, Player, TilePlacedEvent } from './player'
+import {
+	CardPlayedEvent,
+	Player,
+	TilePlacedEvent,
+	ProjectBought
+} from './player'
 
 export interface GameConfig {
 	bots: number
@@ -66,10 +71,55 @@ export class Game {
 		// Dispatch passive events on player events
 		player.onCardPlayed.on(this.handleCardPlayed)
 		player.onTilePlaced.on(this.handleTilePlaced)
+		player.onProjectBought.on(this.handleProjectBought)
 
 		this.logger.log(`Player ${player.name} (${player.id}) added to the game`)
 
 		this.updated()
+	}
+
+	handleGenerationEnd = () => {
+		this.state.players.forEach(player => {
+			player.usedCards
+				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c], cardIndex) => {
+					c.passiveEffects.forEach(
+						e =>
+							e.onGenerationEnd &&
+							e.onGenerationEnd({
+								card: s,
+								cardIndex,
+								game: this.state,
+								player: player,
+								playerId: player.id
+							})
+					)
+				})
+		})
+	}
+
+	handleProjectBought = ({ player: playedBy, project }: ProjectBought) => {
+		this.state.players.forEach(player => {
+			player.usedCards
+				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c], cardIndex) => {
+					c.passiveEffects.forEach(
+						e =>
+							e.onStandardProject &&
+							e.onStandardProject(
+								{
+									card: s,
+									cardIndex,
+									game: this.state,
+									player: player,
+									playerId: player.id
+								},
+								project,
+								playedBy.state
+							)
+					)
+				})
+		})
 	}
 
 	handleCardPlayed = ({
@@ -165,8 +215,19 @@ export class Game {
 			Math.random() * (this.players.length - 1)
 		)
 
+		const corporations = shuffle(
+			Corporations.slice().filter(c => c.code !== 'starting_corporation')
+		)
+
 		this.state.players.forEach(p => {
 			p.color = nextColor()
+			/*
+			p.cardsPick = [
+				'starting_corporation',
+				...corporations.splice(0, 3).map(c => c.code)
+			]
+			*/
+			p.cardsPick = corporations.map(c => c.code)
 			p.state = PlayerStateValue.PickingCorporation
 		})
 	}
@@ -315,6 +376,12 @@ export class Game {
 	}
 
 	endGeneration() {
+		this.handleGenerationEnd()
+
+		this.players.forEach(p => {
+			p.endGeneration()
+		})
+
 		if (
 			this.state.oceans >= this.state.map.oceans &&
 			this.state.oxygen >= this.state.map.oxygen &&
@@ -323,7 +390,6 @@ export class Game {
 			this.finishGame()
 		} else {
 			this.players.forEach(p => {
-				p.endGeneration()
 				p.state.state = PlayerStateValue.PickingCards
 				p.giveCards(4)
 			})
