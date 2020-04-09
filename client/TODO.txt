@@ -15,5 +15,4 @@ TODO
  * game list
  * passive effects
    -> maybe the active effect could be part of the definition?
- * corporations
-   -> corporation cards shouldn't count towards card count, but count towards other stuff
+

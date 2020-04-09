@@ -1,13 +1,13 @@
 import { GameState, PlayerState, GridCellContent } from './game'
 import { allCells, keyMap } from './utils'
-import { CardsLookupApi, CardCategory } from './cards'
+import { CardsLookupApi, CardCategory, CardType } from './cards'
 
 export enum MilestoneType {
 	Terraformer = 1,
 	Mayor,
 	Gardener,
 	Builder,
-	Planner,
+	Planner
 }
 
 export interface Milestone {
@@ -26,7 +26,7 @@ const MilestonesList = [
 		title: 'Terraformer',
 		description: 'Terraforming rating',
 		limit: 35,
-		getValue: (_game, player) => player.terraformRating,
+		getValue: (_game, player) => player.terraformRating
 	}),
 	milestone({
 		type: MilestoneType.Mayor,
@@ -35,8 +35,8 @@ const MilestonesList = [
 		limit: 3,
 		getValue: (game, player) =>
 			allCells(game).filter(
-				(c) => c.content === GridCellContent.City && c.ownerId === player.id
-			).length,
+				c => c.content === GridCellContent.City && c.ownerId === player.id
+			).length
 	}),
 	milestone({
 		type: MilestoneType.Gardener,
@@ -45,8 +45,8 @@ const MilestonesList = [
 		limit: 3,
 		getValue: (game, player) =>
 			allCells(game).filter(
-				(c) => c.content === GridCellContent.Forest && c.ownerId === player.id
-			).length,
+				c => c.content === GridCellContent.Forest && c.ownerId === player.id
+			).length
 	}),
 	milestone({
 		type: MilestoneType.Builder,
@@ -55,16 +55,19 @@ const MilestonesList = [
 		limit: 9,
 		getValue: (_game, player) =>
 			player.usedCards
-				.map((c) => CardsLookupApi.get(c.code))
-				.filter((c) => c.categories.includes(CardCategory.Building)).length,
+				.map(c => CardsLookupApi.get(c.code))
+				.filter(c => c.categories.includes(CardCategory.Building)).length
 	}),
 	milestone({
 		type: MilestoneType.Planner,
 		title: 'Planner',
 		description: 'Cards in your hand',
 		limit: 16,
-		getValue: (_game, player) => player.cards.length,
-	}),
+		getValue: (_game, player) =>
+			player.cards.filter(
+				c => CardsLookupApi.get(c).type !== CardType.Corporation
+			).length
+	})
 ]
 
 export const Milestones = keyMap(MilestonesList, 'type')
