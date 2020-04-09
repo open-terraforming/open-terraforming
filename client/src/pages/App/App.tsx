@@ -9,11 +9,11 @@ import { Game } from '../Game/Game'
 import { setClientState } from '@/store/modules/client'
 import background from '@/assets/stars.jpg'
 import { mainColors } from '@/styles'
+import { ApiState } from '@/store/modules/api'
 
 export const App = () => {
 	const dispatch = useAppDispatch()
-	const initialized = useAppStore(state => state.client.initialized)
-	const connected = useAppStore(state => state.api.connected)
+	const apiState = useAppStore(state => state.api.state)
 
 	useEffect(() => {
 		if (localStorage['session']) {
@@ -28,8 +28,8 @@ export const App = () => {
 	return (
 		<AppContainer>
 			<GlobalStyle />
-			{(!initialized || !connected) && <Connect />}
-			{initialized && connected && <Game />}
+			{apiState !== ApiState.Joined && <Connect />}
+			{apiState === ApiState.Joined && <Game />}
 
 			<ApiErrorMessage />
 		</AppContainer>

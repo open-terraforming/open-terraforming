@@ -1,10 +1,15 @@
 type State = Readonly<typeof initialState>
 
+export enum ApiState {
+	Connecting = 1,
+	Connected,
+	Joined,
+	Error
+}
+
 const initialState = {
 	error: null as string | null,
-	connected: false,
-	reconnecting: false,
-	failed: false
+	state: ApiState.Connecting
 }
 
 export default (state = initialState, action: Actions): State => {

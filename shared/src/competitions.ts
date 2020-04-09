@@ -7,7 +7,7 @@ export enum CompetitionType {
 	Banker,
 	Scientist,
 	Thermalist,
-	Miner,
+	Miner
 }
 
 export interface Competition {
@@ -25,13 +25,13 @@ const CompetitionsList = [
 		title: 'Landlord',
 		description: 'Most owned tiles on the map',
 		getScore: (game, player) =>
-			allCells(game).filter((c) => c.ownerId === player.id).length,
+			allCells(game).filter(c => c.ownerId === player.id).length
 	}),
 	competition({
 		type: CompetitionType.Banker,
 		title: 'Banker',
 		description: 'Biggest money income (without TR)',
-		getScore: (_game, player) => player.moneyProduction,
+		getScore: (_game, player) => player.moneyProduction
 	}),
 	competition({
 		type: CompetitionType.Scientist,
@@ -39,28 +39,28 @@ const CompetitionsList = [
 		description: "Most science cards on the table (Events don't count)",
 		getScore: (_game, player) =>
 			player.usedCards
-				.map((c) => CardsLookupApi.get(c.code))
+				.map(c => CardsLookupApi.get(c.code))
 				.reduce(
 					(acc, c) =>
 						acc +
 						((c.type !== CardType.Event &&
-							c.categories.filter((c) => c === CardCategory.Science).length) ||
+							c.categories.filter(c => c === CardCategory.Science).length) ||
 							0),
 					0
-				),
+				)
 	}),
 	competition({
 		type: CompetitionType.Thermalist,
 		title: 'Thermalist',
 		description: 'Most accumulated heat',
-		getScore: (_game, player) => player.heat,
+		getScore: (_game, player) => player.heat
 	}),
 	competition({
 		type: CompetitionType.Miner,
 		title: 'Miner',
 		description: 'Most accumulated ore and titan combined',
-		getScore: (_game, player) => player.ore + player.titan,
-	}),
+		getScore: (_game, player) => player.ore + player.titan
+	})
 ]
 
 export const Competitions = keyMap(CompetitionsList, 'type')

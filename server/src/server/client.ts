@@ -3,12 +3,14 @@ import { MyEvent } from '@/utils/events'
 import {
 	GameMessage,
 	GameStateValue,
-	HandshakeError,
-	handshakeResponse,
 	MessageType,
 	PlayerStateValue,
 	serverMessage,
-	VERSION
+	VERSION,
+	joinResponse,
+	JoinError,
+	handshakeResponse,
+	HandshakeError
 } from '@shared/index'
 import WebSocket from 'ws'
 import { Server } from './server'
@@ -82,7 +84,17 @@ export class Client {
 			if (this.player === undefined) {
 				switch (message.type) {
 					case MessageType.HandshakeRequest: {
-						const { name, version, session } = message.data
+						const { version } = message.data
+
+						if (version !== VERSION) {
+							return handshakeResponse(HandshakeError.InvalidVersion)
+						}
+
+						return handshakeResponse(undefined, this.game.state.state)
+					}
+
+					case MessageType.JoinRequest: {
+						const { name, session } = message.data
 
 						if (session) {
 							const p = this.game.players.find(p => p.state.session === session)
@@ -93,26 +105,22 @@ export class Client {
 								this.player.state.connected = true
 								this.player.updated()
 
-								return handshakeResponse(
+								return joinResponse(
 									undefined,
 									this.player.state.session,
 									this.player.state.id
 								)
 							} else {
-								return handshakeResponse(HandshakeError.InvalidSession)
+								return joinResponse(JoinError.InvalidSession)
 							}
 						}
 
 						if (this.game.inProgress) {
-							return handshakeResponse(HandshakeError.GameInProgress)
+							return joinResponse(JoinError.GameInProgress)
 						}
 
 						if (!name || name.trim().length < 3 || name.length > 10) {
-							return handshakeResponse(HandshakeError.InvalidName)
-						}
-
-						if (version !== VERSION) {
-							return handshakeResponse(HandshakeError.InvalidVersion)
+							return joinResponse(JoinError.InvalidName)
 						}
 
 						this.state = ClientState.Connected
@@ -121,7 +129,7 @@ export class Client {
 						this.player.state.connected = true
 						this.game.add(this.player)
 
-						return handshakeResponse(
+						return joinResponse(
 							undefined,
 							this.player.state.session,
 							this.player.state.id

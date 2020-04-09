@@ -1,10 +1,12 @@
+import { GameStateValue } from '@shared/game'
+
 type State = Readonly<typeof initialState>
 
 const initialState = {
-	initialized: false,
 	name: '',
 	session: undefined as string | undefined,
-	id: undefined as number | undefined
+	id: undefined as number | undefined,
+	gameState: undefined as GameStateValue | undefined
 }
 
 export default (state = initialState, action: Actions): State => {

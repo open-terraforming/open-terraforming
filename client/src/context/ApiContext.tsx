@@ -1,16 +1,18 @@
-import React, { useMemo, useState, useContext } from 'react'
 import { Client } from '@/api/api'
-import { setApiError, setApiState } from '@/store/modules/api'
-import {
-	MessageType,
-	handshakeRequest,
-	VERSION,
-	HandshakeError
-} from '@shared/index'
+import { ApiState, setApiError, setApiState } from '@/store/modules/api'
 import { setClientState } from '@/store/modules/client'
-import { useDispatch } from 'react-redux'
-import { setGameState, setGamePlayer } from '@/store/modules/game'
+import { setGamePlayer, setGameState } from '@/store/modules/game'
 import { useAppStore } from '@/utils/hooks'
+import {
+	GameStateValue,
+	handshakeRequest,
+	JoinError,
+	joinRequest,
+	MessageType,
+	VERSION
+} from '@shared/index'
+import React, { useContext, useMemo, useState } from 'react'
+import { useDispatch } from 'react-redux'
 
 export const ApiContext = React.createContext<Client | null>(null)
 
@@ -21,7 +23,6 @@ export const ApiContextProvider = ({
 }) => {
 	const dispatch = useDispatch()
 	const session = useAppStore(state => state.client.session)
-	const name = useAppStore(state => state.client.name)
 	const [reconnectCount, setReconnectCount] = useState(0)
 
 	const client = useMemo(() => {
@@ -33,26 +34,14 @@ export const ApiContextProvider = ({
 	}, [])
 
 	client.onOpen = () => {
-		dispatch(
-			setApiState({
-				connected: true,
-				reconnecting: false,
-				failed: false
-			})
-		)
-
-		if (session) {
-			client.send(handshakeRequest(VERSION, name, session))
-		}
+		client.send(handshakeRequest(VERSION))
 	}
 
 	client.onClose = () => {
 		if (reconnectCount < 5) {
 			dispatch(
 				setApiState({
-					reconnecting: true,
-					connected: false,
-					failed: false
+					state: ApiState.Connecting
 				})
 			)
 
@@ -64,9 +53,7 @@ export const ApiContextProvider = ({
 		} else {
 			dispatch(
 				setApiState({
-					reconnecting: false,
-					connected: false,
-					failed: true
+					state: ApiState.Error
 				})
 			)
 		}
@@ -75,25 +62,59 @@ export const ApiContextProvider = ({
 	client.onMessage = m => {
 		switch (m.type) {
 			case MessageType.HandshakeResponse: {
-				const { error, session, id } = m.data
+				const { error, state } = m.data
 
-				if (error === HandshakeError.InvalidSession) {
-					localStorage.removeItem('session')
-					dispatch(setClientState({ session: undefined }))
-
+				if (error) {
 					dispatch(
 						setApiState({
-							reconnecting: false
+							state: ApiState.Error,
+							error
+						})
+					)
+				} else {
+					dispatch(
+						setApiState({
+							state: ApiState.Connected,
+							error: undefined
+						})
+					)
+
+					dispatch(
+						setClientState({
+							gameState: state
+						})
+					)
+
+					if (state !== GameStateValue.WaitingForPlayers && session) {
+						client.send(joinRequest(undefined, session))
+					}
+				}
+
+				break
+			}
+
+			case MessageType.JoinResponse: {
+				const { error, session, id } = m.data
+
+				if (error === JoinError.InvalidSession) {
+					dispatch(
+						setApiState({
+							error
+						})
+					)
+
+					dispatch(
+						setClientState({
+							session: undefined
 						})
 					)
 				}
 
 				if (error) {
-					dispatch(setApiError(error.toString()))
-
 					dispatch(
-						setClientState({
-							initialized: false
+						setApiState({
+							state: ApiState.Connected,
+							error
 						})
 					)
 				} else {
@@ -102,9 +123,15 @@ export const ApiContextProvider = ({
 
 					dispatch(
 						setClientState({
-							initialized: true,
 							id,
 							session
+						})
+					)
+
+					dispatch(
+						setApiState({
+							state: ApiState.Joined,
+							error: undefined
 						})
 					)
 				}
