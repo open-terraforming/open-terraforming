@@ -12,6 +12,7 @@ import {
 } from '@shared/index'
 import WebSocket from 'ws'
 import { Server } from './server'
+import { Logger } from '@/utils/log'
 
 enum ClientState {
 	Initializing,
@@ -19,6 +20,10 @@ enum ClientState {
 }
 
 export class Client {
+	get logger() {
+		return new Logger(this.player ? `Client(${this.player.name})` : 'Client')
+	}
+
 	server: Server
 	socket: WebSocket
 	state: ClientState
@@ -68,7 +73,7 @@ export class Client {
 
 		const result = this.handleMessage(parsed)
 		if (result) {
-			this.socket.send(JSON.stringify(result))
+			this.send(result)
 		}
 	}
 
@@ -82,7 +87,7 @@ export class Client {
 						if (session) {
 							const p = this.game.players.find(p => p.state.session === session)
 							if (p) {
-								console.log('Session matched, joining as existing player')
+								this.logger.log('Session matched, joining as existing player')
 
 								this.player = p
 								this.player.state.connected = true

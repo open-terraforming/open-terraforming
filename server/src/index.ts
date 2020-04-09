@@ -7,8 +7,13 @@ import yargs from 'yargs'
 import { cardsImagesMiddleware } from './server/images'
 import bodyParser from 'body-parser'
 import picker from './server/picker'
+import { promises as fs } from 'fs'
+import { cachePath } from './config'
+import { Logger } from './utils/log'
 
 async function main() {
+	const logger = new Logger('Main')
+
 	const app = express()
 	const wsServer = new WebSocket.Server({ noServer: true })
 
@@ -19,7 +24,24 @@ async function main() {
 			type: 'number',
 			alias: 'p',
 			default: 8090
+		})
+		.option('load', {
+			type: 'string',
+			description: 'Load game saved state from file',
+			alias: 'l'
+		})
+		.options('bots', {
+			type: 'number',
+			description: 'Number of bots',
+			alias: 'b',
+			default: 0
 		}).argv
+
+	try {
+		fs.mkdir(cachePath, { recursive: true })
+	} catch (e) {
+		logger.error('Failed to create cache path', e)
+	}
 
 	const server = createServer(app)
 	server.on('upgrade', (request, socket, head) => {
@@ -28,7 +50,15 @@ async function main() {
 		})
 	})
 
-	const gameServer = new Server(wsServer, 0)
+	const gameServer = new Server(wsServer, argv.bots)
+	if (argv.load) {
+		try {
+			gameServer.load(JSON.parse((await fs.readFile(argv.load)).toString()))
+			logger.log(`Loaded game state from ${argv.load}`)
+		} catch (e) {
+			throw new Error('Failed to load game state from file')
+		}
+	}
 
 	app.use(express.static(join(__dirname, '..', 'static')))
 	app.use(bodyParser.urlencoded({ extended: true }))
@@ -38,8 +68,10 @@ async function main() {
 	app.use(picker())
 
 	server.listen(argv.port, () => {
-		console.log('Listening on', argv.port)
+		logger.log('Listening on', argv.port)
 	})
 }
 
-main()
+main().catch(e => {
+	console.error('Fatal error:', e)
+})

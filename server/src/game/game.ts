@@ -53,6 +53,21 @@ export class Game {
 		return this.state.state !== GameStateValue.WaitingForPlayers
 	}
 
+	load = (state: GameState) => {
+		this.state = state
+		this.players = []
+		state.players.forEach(p => {
+			const player = new Player(this)
+			player.state = p
+
+			this.logger.log(
+				f('Player {0} session: {1}', player.name, player.state.session)
+			)
+
+			this.add(player)
+		})
+	}
+
 	updated = () => {
 		this.checkState()
 		this.onStateUpdated.emit(this.state)
@@ -64,7 +79,11 @@ export class Game {
 		}
 
 		this.players.push(player)
-		this.state.players.push(player.state)
+
+		// Only add to state if not already present (eg - joining to saved game)
+		if (!this.state.players.find(p => p.id === player.state.id)) {
+			this.state.players.push(player.state)
+		}
 
 		player.onStateChanged.on(this.updated)
 
@@ -206,7 +225,7 @@ export class Game {
 		this.state.temperature = this.state.map.initialTemperature
 
 		if (this.players.length < this.config.bots) {
-			range(0, this.config.bots - this.players.length).forEach(() => {
+			range(0, this.config.bots).forEach(() => {
 				this.add(new Bot(this))
 			})
 		}
