@@ -75,6 +75,7 @@ export const card = (
 		| 'passiveEffects'
 		| 'actionEffects'
 		| 'victoryPoints'
+		| 'description'
 	>
 ) =>
 	({
@@ -83,6 +84,7 @@ export const card = (
 		passiveEffects: [],
 		playEffects: [],
 		actionEffects: [],
+		description: '',
 		...c
 	} as Card)
 

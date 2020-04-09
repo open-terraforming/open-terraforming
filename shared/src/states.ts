@@ -1,7 +1,7 @@
 import { GameState, GameStateValue, PlayerState, PlayerStateValue } from '.'
 import { defaultMap } from './map'
 import { shuffle } from './utils'
-import { CardsLookupApi } from './cards'
+import { CardsLookupApi, CardType } from './cards'
 
 export const initialGameState = (): GameState => ({
 	state: GameStateValue.WaitingForPlayers,
@@ -15,7 +15,11 @@ export const initialGameState = (): GameState => ({
 	map: defaultMap(),
 	competitions: [],
 	milestones: [],
-	cards: shuffle(Object.keys(CardsLookupApi.data())),
+	cards: shuffle(
+		Object.values(CardsLookupApi.data())
+			.filter(c => c.type !== CardType.Corporation)
+			.map(c => c.code)
+	),
 	discarded: [],
 	started: new Date().toISOString()
 })
@@ -54,6 +58,10 @@ export const initialPlayerState = (
 	cardsPickLimit: 0,
 	cardsToPlay: [],
 	earthPriceChange: 0,
+	greeneryCost: 8,
+	powerPriceChange: 0,
+	powerProjectCost: 11,
+	temperatureCost: 8,
 	placingTile: [],
 	name: '<unknown>',
 	color: '#000',

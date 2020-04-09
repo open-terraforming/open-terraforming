@@ -186,6 +186,8 @@ export interface PlayerState {
 	spacePriceChange: number
 	/** Earth card price change */
 	earthPriceChange: number
+	/** Power card price change */
+	powerPriceChange: number
 
 	/** Player TR */
 	terraformRating: number
@@ -209,6 +211,13 @@ export interface PlayerState {
 
 	/** List of cards that are to be played - index in usedCards */
 	cardsToPlay: number[]
+
+	/** Cost of greenery in plants */
+	greeneryCost: number
+	/** Cost of temperature increase in heat */
+	temperatureCost: number
+	/** Cost of standard power project in money */
+	powerProjectCost: number
 }
 
 export type PlayerGameState = PlayerState
@@ -230,6 +239,10 @@ export interface UsedCardState {
 
 	/** Index of card that triggered last passive effect */
 	triggeredByCard?: number
+
+	/** Extra data used by card effects to save something */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	data?: any
 }
 
 export enum StandardProjectType {

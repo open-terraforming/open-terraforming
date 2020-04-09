@@ -5,6 +5,7 @@ import {
 	GridCell,
 	PlayerState
 } from '../game'
+import { StandardProject } from '../projects'
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &
 	Partial<Pick<T, K>>
@@ -61,7 +62,8 @@ export enum CardType {
 	Event = 1,
 	Action,
 	Effect,
-	Building
+	Building,
+	Corporation
 }
 
 export interface CardVictoryPointsCallback {
@@ -111,8 +113,8 @@ export enum CardEffectType {
 	Other
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface CardEffect<
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	T extends Array<CardEffectArgumentType | undefined> = any
 > {
 	args: CardEffectArgument[]
@@ -158,7 +160,6 @@ export interface CardEffectArgument {
 
 export interface CardPassiveEffect {
 	description: string
-	choice?: CardPassiveEffect[]
 	onTilePlaced?: (
 		ctx: CardCallbackContext,
 		cell: GridCell,
@@ -170,4 +171,10 @@ export interface CardPassiveEffect {
 		playedCardIndex: number,
 		playedBy: PlayerState
 	) => void
+	onStandardProject?: (
+		ctx: CardCallbackContext,
+		project: StandardProject,
+		playedBy: PlayerState
+	) => void
+	onGenerationEnd?: (ctx: CardCallbackContext) => void
 }
