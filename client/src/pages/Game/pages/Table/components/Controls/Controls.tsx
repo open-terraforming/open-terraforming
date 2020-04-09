@@ -153,7 +153,7 @@ export const Controls = () => {
 					disabled={state.usedCards.length === 0 || !!placingTile}
 					onClick={() => setCardsOpened(true)}
 				>
-					{state.usedCards.length} cards played
+					{state.usedCards.length} cards on table
 				</Button>
 			</CardButtons>
 			{/*<div>{corporation?.name}</div>*/}
