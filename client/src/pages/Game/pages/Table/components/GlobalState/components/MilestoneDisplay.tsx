@@ -36,7 +36,7 @@ export const MilestoneDisplay = ({ milestone, side }: Props) => {
 		}
 	}, [milestone.type])
 
-	return <E side={side}>{icon}</E>
+	return milestone.used ? <></> : <E side={side}>{icon}</E>
 }
 
 const E = styled.div<{ side: Side }>`
@@ -47,6 +47,8 @@ const E = styled.div<{ side: Side }>`
 	height: 100%;
 	display: flex;
 	align-items: center;
+	z-index: 1;
+	margin-left: -2px;
 
 	> * {
 		padding: 0.5rem;

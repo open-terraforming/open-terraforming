@@ -729,14 +729,6 @@ export class Player {
 		} else {
 			cardState.played = true
 
-			/*
-			this.onCardPlayed.emit({
-				card,
-				cardIndex: ctx.cardIndex,
-				player: this
-			})
-			*/
-
 			if (
 				this.state.placingTile.length === 0 &&
 				this.state.state !== PlayerStateValue.PickingCards

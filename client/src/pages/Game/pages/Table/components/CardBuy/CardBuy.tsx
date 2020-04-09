@@ -55,8 +55,6 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 			? Math.min(state.ore, Math.ceil(card.cost / state.orePrice))
 			: 0
 
-	console.log('max ore', maxOre)
-
 	const maxTitan =
 		canUseTitan && state && card
 			? Math.min(state.titan || 0, Math.ceil(card.cost / state.titanPrice))

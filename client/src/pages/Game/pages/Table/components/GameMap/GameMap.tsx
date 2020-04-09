@@ -22,9 +22,7 @@ export const GameMap = ({}: Props) => {
 	const api = useApi()
 	const map = useAppStore(state => state.game.state?.map)
 
-	const placingList = useAppStore(
-		state => state.game.player?.placingTile
-	)
+	const placingList = useAppStore(state => state.game.player?.placingTile)
 
 	const placing =
 		placingList && placingList.length > 0 ? placingList[0] : undefined
@@ -61,7 +59,7 @@ export const GameMap = ({}: Props) => {
 					))
 			)}
 
-			<svg viewBox={`0 0 ${width} ${height}`}>
+			<svg viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
 				<defs>
 					<radialGradient id="Ocean" cx="0.5" cy="0.5" r="0.5">
 						<stop offset="0%" stopColor="rgba(0,0,0,0)" />

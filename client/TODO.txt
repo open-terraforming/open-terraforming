@@ -8,13 +8,14 @@ NICE TODO:
 
 TODO
  * Media Group - will you only receive selected cards?
-
- * Animation when tile is placed
  * Spectator mode
  * poke button
- * card played - player color, join into one modal per player
- * HAND/TABLE CARDS - remember filters, Reopen after playing card
- * fix action being played when there's card to be played
- * fix the game progress milestones display
  * filter event log by player or text search
- * better other player resource display
+ * redesign right part of the bottom panel
+ * game list
+ * passive effects -> maybe the active effect could be part of the definition?
+ * corporations
+    -> corporation cards shouldn't count towards card count, but count towards other stuff
+    -> corporation cards shouldn't change `played` attribute when played
+ * onStandardProject
+ * onGenerationEnd

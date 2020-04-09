@@ -188,11 +188,6 @@ const popOut = keyframes`
 	100% { transform: scaleY(0); opacity: 0; }
 `
 
-const BackgroundAnimation = keyframes`
-	0% { background-position: 0 0; }
-	100% { background-position: 80px 40px; }
-`
-
 const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	position: relative;
 	min-width: 200px;
@@ -201,6 +196,19 @@ const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	border: 2px solid ${colors.border};
 	padding: 0px;
 	border-radius: 0px;
+
+	background-color: ${colors.background};
+	background: linear-gradient(
+		45deg,
+		${darken(0.01, colors.background)} 25%,
+		${colors.background} 25%,
+		${colors.background} 50%,
+		${darken(0.01, colors.background)} 50%,
+		${darken(0.01, colors.background)} 75%,
+		${colors.background} 75%,
+		${colors.background}
+	);
+	background-size: 40px 40px;
 
 	max-height: 80%;
 	overflow: auto;
@@ -228,21 +236,4 @@ const Dialog = styled.div`
 	flex-direction: column;
 	min-height: 0;
 	max-height: 100%;
-
-	background-color: ${colors.background};
-	background: linear-gradient(
-		45deg,
-		${darken(0.01, colors.background)} 25%,
-		${colors.background} 25%,
-		${colors.background} 50%,
-		${darken(0.01, colors.background)} 50%,
-		${darken(0.01, colors.background)} 75%,
-		${colors.background} 75%,
-		${colors.background}
-	);
-	background-size: 40px 40px;
-	animation-name: ${BackgroundAnimation};
-	animation-duration: 1000ms;
-	animation-iteration-count: infinite;
-	animation-timing-function: linear;
 `

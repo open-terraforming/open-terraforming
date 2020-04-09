@@ -1,5 +1,5 @@
-import React from 'react'
-import styled, { css } from 'styled-components'
+import React, { useState, useEffect } from 'react'
+import styled, { css, keyframes } from 'styled-components'
 import { GridCellType, GridCellContent, GridCell } from '@shared/index'
 import { PlacementState, canPlace } from '@shared/placements'
 import { useAppStore } from '@/utils/hooks'
@@ -20,6 +20,23 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 
 	const player = useAppStore(state => state.game.player)
 	const playerId = useAppStore(state => state.game.playerId)
+
+	const [lastContent, setLastContent] = useState(
+		undefined as GridCellContent | undefined
+	)
+
+	const [diffAnim, setDiffAnim] = useState(false)
+
+	useEffect(() => {
+		if (cell.content !== lastContent) {
+			setDiffAnim(true)
+			setLastContent(cell.content)
+
+			setTimeout(() => {
+				setDiffAnim(false)
+			}, 1500)
+		}
+	}, [cell.content])
 
 	const active =
 		!!placing &&
@@ -44,6 +61,14 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 				strokeWidth="0.5"
 				points="-9,5 -9,-5 0,-10 9,-5 9,5 0,10"
 			/>
+			{diffAnim && (
+				<DiffAnim
+					stroke={'rgba(255,255,255,0.3)'}
+					fill="transparent"
+					strokeWidth="2"
+					points="-9,5 -9,-5 0,-10 9,-5 9,5 0,10"
+				/>
+			)}
 			{owner && cell.content !== GridCellContent.Ocean && (
 				<polygon
 					stroke={owner.color}
@@ -71,12 +96,27 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 	)
 }
 
+const animation = keyframes`
+	0% { transform: scale(6); }
+	30% { transform: scale(1); stroke: #fff; }
+	100% { stroke: rgba(255, 255, 255, 0); }
+`
+
+const DiffAnim = styled.polygon`
+	animation-name: ${animation};
+	animation-duration: 1500ms;
+	animation-fill-mode: forwards;
+	position: relative;
+	z-index: 1;
+`
+
 const StyledHex = styled.g<{
 	gridType: GridCellType
 	gridContent?: GridCellContent
 	gridActive?: boolean
 }>`
-	polygon {
+	polygon:first-child {
+
 		${props =>
 			props.gridType === GridCellType.Ocean &&
 			!props.gridContent &&
@@ -92,19 +132,19 @@ const StyledHex = styled.g<{
 		${props =>
 			props.gridContent === GridCellContent.City &&
 			css`
-				fill: rgba(128, 128, 128, 0.3);
+				fill: rgba(128, 128, 128, 0.5);
 			`}
 
 		${props =>
 			props.gridContent === GridCellContent.Forest &&
 			css`
-				fill: rgba(19, 155, 47, 0.3);
+				fill: rgba(19, 155, 47, 0.5);
 			`}
 
 		${props =>
 			props.gridContent === GridCellContent.Other &&
 			css`
-				fill: rgba(128, 64, 0, 0.4);
+				fill: rgba(128, 64, 0, 0.5);
 			`}
 
 		${props =>

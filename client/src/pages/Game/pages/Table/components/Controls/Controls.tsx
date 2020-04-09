@@ -214,11 +214,6 @@ export const Controls = () => {
 	)
 }
 
-const BackgroundAnimation = keyframes`
-	0% { background-position: 0 0; }
-	100% { background-position: 80px 40px; }
-`
-
 const Container = styled.div<{ faded: boolean }>`
 	position: relative;
 	display: flex;
@@ -236,10 +231,6 @@ const Container = styled.div<{ faded: boolean }>`
 		${colors.background}
 	);
 	background-size: 40px 40px;
-	animation-name: ${BackgroundAnimation};
-	animation-duration: 1000ms;
-	animation-iteration-count: infinite;
-	animation-timing-function: linear;
 
 	${props =>
 		props.faded &&

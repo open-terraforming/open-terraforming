@@ -73,6 +73,16 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 					value={state.plants}
 					production={state.plantsProduction}
 				/>
+				<ResItem
+					res="energy"
+					value={state.energy}
+					production={state.energyProduction}
+				/>
+				<ResItem
+					res="heat"
+					value={state.heat}
+					production={state.heatProduction}
+				/>
 				<InfoItem>
 					<Value>Cards in hand</Value>
 					<Production>{state.cards.length}</Production>
