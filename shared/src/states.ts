@@ -63,6 +63,7 @@ export const initialPlayerState = (
 	powerProjectCost: 11,
 	temperatureCost: 8,
 	placingTile: [],
+	progressConditionBonus: 0,
 	name: '<unknown>',
 	color: '#000',
 	session

@@ -41,7 +41,6 @@ export const CardView = ({
 	const description = useMemo(() => {
 		return [
 			card.description,
-			...card.passiveEffects.map(e => e.description).filter(e => !!e),
 			...(card.victoryPointsCallback
 				? [card.victoryPointsCallback.description]
 				: [])
@@ -117,7 +116,7 @@ export const CardView = ({
 				{state && state.played && (
 					<Played>Card already played this generation</Played>
 				)}
-				{card.actionEffects.length > 0 && (
+				{(card.actionEffects.length > 0 || card.passiveEffects.length > 0) && (
 					<Action>
 						<ActionTitle>
 							{card.type === CardType.Action ? 'Action' : 'Effect'}
@@ -125,6 +124,12 @@ export const CardView = ({
 						{card.actionEffects.map((e, i) => (
 							<PlayEffect key={i} effect={e} ctx={condContext} />
 						))}
+						{card.passiveEffects
+							.map(e => e.description)
+							.filter(e => !!e)
+							.map((e, i) => (
+								<div key={i}>{e}</div>
+							))}
 					</Action>
 				)}
 				{card.conditions.map((c, i) => (

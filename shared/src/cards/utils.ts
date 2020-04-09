@@ -5,7 +5,9 @@ import {
 	CardCategory,
 	CardType,
 	WithOptional,
-	Resource
+	Resource,
+	CardEffect,
+	CardPassiveEffect
 } from './types'
 import { withUnits } from '../units'
 
@@ -161,4 +163,9 @@ export const updatePlayerProduction = (
 	}
 
 	player[prod] += amount
+}
+
+export const noDesc = <T extends { description?: string }>(e: T) => {
+	delete e.description
+	return e
 }

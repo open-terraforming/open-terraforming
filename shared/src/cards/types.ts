@@ -81,6 +81,8 @@ export interface Card {
 	victoryPoints: number
 
 	resource?: CardResource
+	resourceProtected?: boolean
+
 	conditions: CardCondition[]
 	playEffects: CardEffect[]
 	actionEffects: CardEffect[]

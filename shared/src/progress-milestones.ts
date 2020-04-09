@@ -2,7 +2,7 @@ import {
 	GridCellContent,
 	GameState,
 	PlayerState,
-	ProgressMilestoneType,
+	ProgressMilestoneType
 } from './game'
 import { keyMap } from './utils'
 
@@ -16,7 +16,7 @@ const milestone = (m: ProgressMilestone): ProgressMilestone => m
 const ProgressMilestonesList = [
 	milestone({
 		type: ProgressMilestoneType.Heat,
-		effects: [(_game, player) => (player.heatProduction += 1)],
+		effects: [(_game, player) => (player.heatProduction += 1)]
 	}),
 	milestone({
 		type: ProgressMilestoneType.Temperature,
@@ -26,8 +26,8 @@ const ProgressMilestonesList = [
 					player.terraformRating++
 					game.temperature++
 				}
-			},
-		],
+			}
+		]
 	}),
 	milestone({
 		type: ProgressMilestoneType.Ocean,
@@ -35,12 +35,12 @@ const ProgressMilestonesList = [
 			(game, player) => {
 				if (game.oceans < game.map.oceans) {
 					player.placingTile.push({
-						type: GridCellContent.Ocean,
+						type: GridCellContent.Ocean
 					})
 				}
-			},
-		],
-	}),
+			}
+		]
+	})
 ]
 
 export const ProgressMilestones = keyMap(ProgressMilestonesList, 'type')

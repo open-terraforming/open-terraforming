@@ -1,4 +1,4 @@
-import { GridCellContent, GridCellOther } from '../game'
+import { GridCellContent, GridCellOther, StandardProjectType } from '../game'
 import { withUnits } from '../units'
 import {
 	CardCategory,
@@ -6,8 +6,9 @@ import {
 	CardResource,
 	Resource
 } from './types'
-import { resourceProduction } from './utils'
+import { resourceProduction, updatePlayerResource } from './utils'
 import { CardsLookupApi } from './lookup'
+import { f } from '../utils'
 
 export const passiveEffect = (e: CardPassiveEffect) => e
 
@@ -119,7 +120,7 @@ export const productionChangeAfterPlace = (
 
 export const cardExchangeEffect = (tag: CardCategory) =>
 	passiveEffect({
-		description: `Effect: Action is triggered when you play a ${CardCategory[tag]} card`,
+		description: `Action is triggered when you play a ${CardCategory[tag]} card`,
 		onCardPlayed: (
 			{ player, playerId, cardIndex },
 			playedCard,
@@ -152,6 +153,78 @@ export const playWhenCard = (tags: CardCategory[]) =>
 			) {
 				cardState.triggeredByCard = playedCardIndex
 				player.cardsToPlay.push(cardIndex)
+			}
+		}
+	})
+
+export const resourceForStandardProject = (res: Resource, amount: number) => {
+	const ignoredProjects = [
+		StandardProjectType.SellPatents,
+		StandardProjectType.GreeneryForPlants,
+		StandardProjectType.TemperatureForHeat
+	]
+
+	return passiveEffect({
+		description: f(
+			`Receive {0} when playing any Standard project (except selling patents)`,
+			withUnits(res, amount)
+		),
+		onStandardProject: ({ player }, project, playedBy) => {
+			if (
+				playedBy.id === player.id &&
+				!ignoredProjects.includes(project.type)
+			) {
+				updatePlayerResource(player, res, amount)
+			}
+		}
+	})
+}
+
+export const resetProgressBonus = (amount: number) =>
+	passiveEffect({
+		description: f(
+			`The next card you play this generation is +{0} or -{1} steps in global requirements, your choice.`,
+			amount,
+			amount
+		),
+		onCardPlayed: ({ player, card }, playedCard, _cardIndex, playedBy) => {
+			if (
+				playedBy.id === player.id &&
+				card.code !== playedCard.code &&
+				card.data === undefined
+			) {
+				player.progressConditionBonus -= amount
+				card.data = true
+			}
+		},
+		onGenerationEnd: ({ player, card }) => {
+			if (card.data === undefined) {
+				player.progressConditionBonus -= amount
+				card.data = true
+			}
+		}
+	})
+
+export const resetCardPriceChange = (amount: number) =>
+	passiveEffect({
+		description: f(
+			`The next card you play this generation costs {0} MC less.`,
+			-amount
+		),
+		onCardPlayed: ({ player, card }, playedCard, _cardIndex, playedBy) => {
+			if (
+				playedBy.id === player.id &&
+				card.code !== playedCard.code &&
+				card.data === undefined
+			) {
+				player.cardPriceChange -= amount
+				card.data = true
+			}
+		},
+		onGenerationEnd: ({ player, card }) => {
+			if (card.data === undefined) {
+				player.cardPriceChange -= amount
+				card.data = true
 			}
 		}
 	})

@@ -218,6 +218,9 @@ export interface PlayerState {
 	temperatureCost: number
 	/** Cost of standard power project in money */
 	powerProjectCost: number
+
+	/** Bonus for game progress changes */
+	progressConditionBonus: number
 }
 
 export type PlayerGameState = PlayerState

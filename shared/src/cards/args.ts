@@ -6,6 +6,7 @@ import {
 	CardEffectTarget,
 	CellCondition
 } from './types'
+import { unprotectedCard } from './conditions'
 
 export const effectArg = (
 	c: WithOptional<
@@ -54,6 +55,6 @@ export const cellArg = (
 export const playerCardArg = (conditions: CardCondition[] = [], amount = 0) =>
 	effectArg({
 		type: CardEffectTarget.PlayerCardResource,
-		cardConditions: conditions,
+		cardConditions: [...conditions, unprotectedCard()],
 		amount
 	})

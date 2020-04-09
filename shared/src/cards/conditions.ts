@@ -4,7 +4,8 @@ import {
 	CardResource,
 	CardCategory,
 	GameProgress,
-	Resource
+	Resource,
+	CardCallbackContext
 } from './types'
 import { progressResToStr, withUnits } from '../units'
 import { GridCellContent } from '../game'
@@ -46,7 +47,8 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 
 export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 	condition({
-		evaluate: ({ game }) => game[res] >= value,
+		evaluate: ({ game, player }) =>
+			game[res] >= value - player.progressConditionBonus,
 		description: `${progressResToStr(res)} has to be at least ${withUnits(
 			res,
 			value
@@ -55,7 +57,8 @@ export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 
 export const gameProgressConditionMax = (res: GameProgress, value: number) =>
 	condition({
-		evaluate: ({ game }) => game[res] <= value,
+		evaluate: ({ game, player }) =>
+			game[res] <= value + player.progressConditionBonus,
 		description: `${progressResToStr(res)} has to be at most ${withUnits(
 			res,
 			value
@@ -88,3 +91,9 @@ export const productionCondition = (res: Resource, value: number) => {
 		description: `Your ${res} production has to be at least ${value}`
 	})
 }
+
+export const unprotectedCard = () =>
+	condition({
+		evaluate: ({ card }) =>
+			CardsLookupApi.get(card.code).resourceProtected === undefined
+	})

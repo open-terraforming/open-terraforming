@@ -1,4 +1,4 @@
-import { card } from './utils'
+import { card, noDesc } from './utils'
 import { CardType, CardCategory, Card } from './types'
 import { GridCellContent, GridCellOther, GridCellSpecial } from '../game'
 import { PlacementCode, OtherPlacement, CityPlacement } from '../placements'
@@ -47,7 +47,9 @@ import {
 	addResourceToCard,
 	exchangeResources,
 	terraformRatingForTags,
-	placeTile
+	placeTile,
+	effect,
+	changeProgressConditionBonus
 } from './effects'
 import {
 	minCardResourceToVP,
@@ -64,7 +66,10 @@ import {
 	playWhenCard,
 	cardResourcePerCardPlayed,
 	cardResourcePerTilePlaced,
-	productionPerPlacedTile
+	productionPerPlacedTile,
+	resourceForStandardProject,
+	resetProgressBonus,
+	resetCardPriceChange
 } from './passive-effects'
 
 export const BuiltCards: Card[] = [
@@ -72,7 +77,6 @@ export const BuiltCards: Card[] = [
 		code: 'colonizer_training_camp',
 		title: 'COLONIZER TRAINING CAMP',
 		type: CardType.Building,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Building, CardCategory.Jupiter],
 		victoryPoints: 2,
@@ -82,7 +86,6 @@ export const BuiltCards: Card[] = [
 		code: 'asteroid_mining_consortium',
 		title: 'ASTEROID MINING CONSORTIUM',
 		type: CardType.Building,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Jupiter],
 		victoryPoints: 1,
@@ -96,7 +99,6 @@ export const BuiltCards: Card[] = [
 		code: 'deep_well_heating',
 		title: 'DEEP WELL HEATING',
 		type: CardType.Building,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Building, CardCategory.Power],
 		playEffects: [
@@ -108,7 +110,6 @@ export const BuiltCards: Card[] = [
 		code: 'cloud_seeding',
 		title: 'CLOUD SEEDING',
 		type: CardType.Building,
-		description: '',
 		cost: 11,
 		categories: [],
 		conditions: [gameProgressConditionMin('oceans', 3)],
@@ -122,7 +123,6 @@ export const BuiltCards: Card[] = [
 		code: 'search_for_life',
 		title: 'SEARCH FOR LIFE',
 		type: CardType.Action,
-		description: '',
 		cost: 3,
 		categories: [CardCategory.Science],
 		conditions: [gameProgressConditionMax('oxygen', 6)],
@@ -135,7 +135,6 @@ export const BuiltCards: Card[] = [
 		code: 'inventors_guild',
 		title: "INVENTORS' GUILD",
 		type: CardType.Action,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Science],
 		actionEffects: [pickTopCards(1)]
@@ -144,7 +143,6 @@ export const BuiltCards: Card[] = [
 		code: 'martian_rails',
 		title: 'MARTIAN RAILS',
 		type: CardType.Action,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Building],
 		actionEffects: [resourceForCities('energy', 1, 'money', 1)]
@@ -153,7 +151,6 @@ export const BuiltCards: Card[] = [
 		code: 'capital',
 		title: 'CAPITAL',
 		type: CardType.Building,
-		description: '',
 		cost: 26,
 		categories: [CardCategory.Building, CardCategory.City],
 		conditions: [gameProgressConditionMin('oceans', 4)],
@@ -168,7 +165,6 @@ export const BuiltCards: Card[] = [
 		code: 'asteroid',
 		title: 'ASTEROID',
 		type: CardType.Event,
-		description: '',
 		cost: 14,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
@@ -181,7 +177,6 @@ export const BuiltCards: Card[] = [
 		code: 'comet',
 		title: 'COMET',
 		type: CardType.Event,
-		description: '',
 		cost: 21,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
@@ -194,7 +189,6 @@ export const BuiltCards: Card[] = [
 		code: 'big_asteroid',
 		title: 'BIG ASTEROID',
 		type: CardType.Event,
-		description: '',
 		cost: 27,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
@@ -207,7 +201,6 @@ export const BuiltCards: Card[] = [
 		code: 'water_import_from_europa',
 		title: 'WATER IMPORT FROM EUROPA',
 		type: CardType.Action,
-		description: '',
 		cost: 25,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		actionEffects: [moneyOrResForOcean('titan', 12)],
@@ -217,7 +210,6 @@ export const BuiltCards: Card[] = [
 		code: 'space_elevator',
 		title: 'SPACE ELEVATOR',
 		type: CardType.Action,
-		description: '',
 		cost: 27,
 		categories: [CardCategory.Space, CardCategory.Building],
 		victoryPoints: 2,
@@ -228,7 +220,6 @@ export const BuiltCards: Card[] = [
 		code: 'development_center',
 		title: 'DEVELOPMENT CENTER',
 		type: CardType.Action,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.Science],
 		actionEffects: [cardsForResource('energy', 1, 1)]
@@ -237,7 +228,6 @@ export const BuiltCards: Card[] = [
 		code: 'equatorial_magnetizer',
 		title: 'EQUATORIAL MAGNETIZER',
 		type: CardType.Action,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Building],
 		actionEffects: [productionChange('energy', -1), terraformRatingChange(1)]
@@ -246,7 +236,6 @@ export const BuiltCards: Card[] = [
 		code: 'domed_crater',
 		title: 'DOMED CRATER',
 		type: CardType.Building,
-		description: '',
 		cost: 24,
 		categories: [CardCategory.Building, CardCategory.City],
 		victoryPoints: 1,
@@ -262,7 +251,6 @@ export const BuiltCards: Card[] = [
 		code: 'noctis_city',
 		title: 'NOCTIS CITY',
 		type: CardType.Building,
-		description: '',
 		cost: 18,
 		categories: [CardCategory.Building, CardCategory.City],
 		playEffects: [
@@ -279,7 +267,6 @@ export const BuiltCards: Card[] = [
 		code: 'methane_from_titan',
 		title: 'METHANE FROM TITAN',
 		type: CardType.Building,
-		description: '',
 		cost: 28,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 2,
@@ -290,7 +277,6 @@ export const BuiltCards: Card[] = [
 		code: 'imported_hydrogen',
 		title: 'IMPORTED HYDROGEN',
 		type: CardType.Event,
-		description: '',
 		cost: 16,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
 		playEffects: [
@@ -306,7 +292,6 @@ export const BuiltCards: Card[] = [
 		code: 'research_outpost',
 		title: 'RESEARCH OUTPOST',
 		type: CardType.Effect,
-		description: '',
 		cost: 18,
 		categories: [
 			CardCategory.Building,
@@ -325,7 +310,6 @@ export const BuiltCards: Card[] = [
 		code: 'phobos_space_haven',
 		title: 'PHOBOS SPACE HAVEN',
 		type: CardType.Building,
-		description: '',
 		cost: 25,
 		categories: [CardCategory.Space, CardCategory.City],
 		victoryPoints: 3,
@@ -341,7 +325,6 @@ export const BuiltCards: Card[] = [
 		code: 'black_polar_dust',
 		title: 'BLACK POLAR DUST',
 		type: CardType.Building,
-		description: '',
 		cost: 15,
 		categories: [],
 		playEffects: [
@@ -354,7 +337,6 @@ export const BuiltCards: Card[] = [
 		code: 'arctic_algae',
 		title: 'ARCTIC ALGAE',
 		type: CardType.Effect,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMax('temperature', -12 / 2)],
@@ -364,7 +346,6 @@ export const BuiltCards: Card[] = [
 		code: 'predators',
 		title: 'PREDATORS',
 		type: CardType.Action,
-		description: '',
 		cost: 14,
 		categories: [CardCategory.Animal],
 		resource: 'animals',
@@ -379,7 +360,6 @@ export const BuiltCards: Card[] = [
 		code: 'space_station',
 		title: 'Space Station',
 		type: CardType.Effect,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Space],
 		playEffects: [spaceCardPriceChange(-2)],
@@ -389,7 +369,6 @@ export const BuiltCards: Card[] = [
 		code: 'eos_chasma_national_park',
 		title: 'Eos Chasma National Park',
 		type: CardType.Building,
-		description: '',
 		cost: 16,
 		categories: [CardCategory.Building, CardCategory.Plant],
 		victoryPoints: 1,
@@ -404,7 +383,6 @@ export const BuiltCards: Card[] = [
 		code: 'interstellar_colony_ship',
 		title: 'Interstellar Colony Ship',
 		type: CardType.Event,
-		description: '',
 		cost: 24,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
 		victoryPoints: 4,
@@ -414,7 +392,6 @@ export const BuiltCards: Card[] = [
 		code: 'security_fleet',
 		title: 'Security Fleet',
 		type: CardType.Action,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Space],
 		resource: 'fighters',
@@ -428,7 +405,6 @@ export const BuiltCards: Card[] = [
 		code: 'cupola_city',
 		title: 'Cupola City',
 		type: CardType.Building,
-		description: '',
 		cost: 16,
 		categories: [CardCategory.Building, CardCategory.City],
 		conditions: [gameProgressConditionMax('oxygen', 9)],
@@ -442,7 +418,6 @@ export const BuiltCards: Card[] = [
 		code: 'lunar_beam',
 		title: 'Lunar Beam',
 		type: CardType.Building,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Power, CardCategory.Earth],
 		playEffects: [
@@ -455,7 +430,6 @@ export const BuiltCards: Card[] = [
 		code: 'optimal_aerobraking',
 		title: 'Optimal Aerobraking',
 		type: CardType.Effect,
-		description: '',
 		cost: 7,
 		categories: [CardCategory.Space],
 		passiveEffects: [
@@ -471,7 +445,6 @@ export const BuiltCards: Card[] = [
 		code: 'underground_city',
 		title: 'Underground city',
 		type: CardType.Building,
-		description: '',
 		cost: 18,
 		categories: [CardCategory.Building, CardCategory.City],
 		playEffects: [
@@ -484,7 +457,6 @@ export const BuiltCards: Card[] = [
 		code: 'regolith_eaters',
 		title: 'Regolith Eaters',
 		type: CardType.Action,
-		description: '',
 		cost: 13,
 		resource: 'microbes',
 		categories: [CardCategory.Microbe, CardCategory.Science],
@@ -502,7 +474,6 @@ export const BuiltCards: Card[] = [
 		code: 'ghg_producing_bacteria',
 		title: 'GHG Producing Bacteria',
 		type: CardType.Action,
-		description: '',
 		cost: 8,
 		resource: 'microbes',
 		categories: [CardCategory.Microbe, CardCategory.Science],
@@ -521,7 +492,6 @@ export const BuiltCards: Card[] = [
 		code: 'ants',
 		title: 'Ants',
 		type: CardType.Action,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Microbe],
 		resource: 'microbes',
@@ -536,7 +506,6 @@ export const BuiltCards: Card[] = [
 		code: 'release_of_inert_gases',
 		title: 'Release of Inert Gases',
 		type: CardType.Event,
-		description: '',
 		cost: 14,
 		categories: [CardCategory.Event],
 		playEffects: [terraformRatingChange(2)]
@@ -545,7 +514,6 @@ export const BuiltCards: Card[] = [
 		code: 'nitrogen-rich_asteroid',
 		title: 'Nitrogen-Rich Asteroid',
 		type: CardType.Event,
-		description: '',
 		cost: 31,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
@@ -561,7 +529,6 @@ export const BuiltCards: Card[] = [
 		code: 'rover_construction',
 		title: 'Rover Construction',
 		type: CardType.Effect,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Building],
 		victoryPoints: 1,
@@ -571,7 +538,6 @@ export const BuiltCards: Card[] = [
 		code: 'deimos_down',
 		title: 'Deimos Down',
 		type: CardType.Event,
-		description: '',
 		cost: 31,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
@@ -584,7 +550,6 @@ export const BuiltCards: Card[] = [
 		code: 'asteroid_mining',
 		title: 'Asteroid Mining',
 		type: CardType.Building,
-		description: '',
 		cost: 30,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 2,
@@ -594,7 +559,6 @@ export const BuiltCards: Card[] = [
 		code: 'food_factory',
 		title: 'Food Factory',
 		type: CardType.Building,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Building],
 		victoryPoints: 1,
@@ -604,7 +568,6 @@ export const BuiltCards: Card[] = [
 		code: 'archaebacteria',
 		title: 'Archaebacteria',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMax('temperature', -18 / 2)],
@@ -614,7 +577,6 @@ export const BuiltCards: Card[] = [
 		code: 'carbonate_processing',
 		title: 'Carbonate Processing',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Building],
 		playEffects: [productionChange('energy', -1), productionChange('heat', 3)]
@@ -623,7 +585,6 @@ export const BuiltCards: Card[] = [
 		code: 'natural_preserve',
 		title: 'Natural Preserve',
 		type: CardType.Building,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Building, CardCategory.Science],
 		victoryPoints: 1,
@@ -641,7 +602,6 @@ export const BuiltCards: Card[] = [
 		code: 'nuclear_power',
 		title: 'Nuclear Power',
 		type: CardType.Building,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Building, CardCategory.Power],
 		playEffects: [productionChange('money', -2), productionChange('energy', 3)]
@@ -650,7 +610,6 @@ export const BuiltCards: Card[] = [
 		code: 'lightning_harvest',
 		title: 'Lightning Harvest',
 		type: CardType.Building,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Power],
 		victoryPoints: 1,
@@ -661,7 +620,6 @@ export const BuiltCards: Card[] = [
 		code: 'algae',
 		title: 'Algae',
 		type: CardType.Building,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('oceans', 5)],
@@ -671,7 +629,6 @@ export const BuiltCards: Card[] = [
 		code: 'adapted_lichen',
 		title: 'Adapted Lichen',
 		type: CardType.Building,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Plant],
 		playEffects: [productionChange('plants', 1)]
@@ -680,7 +637,6 @@ export const BuiltCards: Card[] = [
 		code: 'tardigrades',
 		title: 'Tardigrades',
 		type: CardType.Action,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Microbe],
 		resource: 'microbes',
@@ -691,7 +647,6 @@ export const BuiltCards: Card[] = [
 		code: 'virus',
 		title: 'Virus',
 		type: CardType.Event,
-		description: '',
 		cost: 1,
 		categories: [CardCategory.Event, CardCategory.Microbe],
 		playEffects: [
@@ -705,7 +660,6 @@ export const BuiltCards: Card[] = [
 		code: 'miranda_resort',
 		title: 'Miranda Resort',
 		type: CardType.Building,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 1,
@@ -715,7 +669,6 @@ export const BuiltCards: Card[] = [
 		code: 'fish',
 		title: 'Fish',
 		type: CardType.Action,
-		description: '',
 		cost: 9,
 		resource: 'animals',
 		categories: [CardCategory.Animal],
@@ -728,7 +681,6 @@ export const BuiltCards: Card[] = [
 		code: 'lake_marineris',
 		title: 'Lake Marineris',
 		type: CardType.Building,
-		description: '',
 		cost: 18,
 		categories: [],
 		victoryPoints: 2,
@@ -742,7 +694,6 @@ export const BuiltCards: Card[] = [
 		code: 'small_animals',
 		title: 'Small Animals',
 		type: CardType.Action,
-		description: '',
 		cost: 6,
 		resource: 'animals',
 		categories: [CardCategory.Animal],
@@ -755,7 +706,6 @@ export const BuiltCards: Card[] = [
 		code: 'kelp_farming',
 		title: 'Kelp Farming',
 		type: CardType.Building,
-		description: '',
 		cost: 17,
 		categories: [CardCategory.Plant],
 		victoryPoints: 1,
@@ -770,7 +720,6 @@ export const BuiltCards: Card[] = [
 		code: 'mine',
 		title: 'Mine',
 		type: CardType.Building,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Building],
 		playEffects: [productionChange('ore', 1)]
@@ -779,7 +728,6 @@ export const BuiltCards: Card[] = [
 		code: 'vesta_shipyard',
 		title: 'Vesta Shipyard',
 		type: CardType.Building,
-		description: '',
 		cost: 15,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 1,
@@ -789,7 +737,6 @@ export const BuiltCards: Card[] = [
 		code: 'beam_from_a_thorium_asteroid',
 		title: 'Beam from a Thorium Asteroid',
 		type: CardType.Building,
-		description: '',
 		cost: 32,
 		categories: [CardCategory.Power, CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 1,
@@ -800,7 +747,6 @@ export const BuiltCards: Card[] = [
 		code: 'mangrove',
 		title: 'Mangrove',
 		type: CardType.Building,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Plant],
 		victoryPoints: 1,
@@ -816,7 +762,6 @@ export const BuiltCards: Card[] = [
 		code: 'trees',
 		title: 'Trees',
 		type: CardType.Building,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Plant],
 		victoryPoints: 1,
@@ -827,7 +772,6 @@ export const BuiltCards: Card[] = [
 		code: 'great_escarpment_consortium',
 		title: 'Great Escarpment Consortium',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [],
 		playEffects: [playerProductionChange('ore', -1), productionChange('ore', 1)]
@@ -836,7 +780,6 @@ export const BuiltCards: Card[] = [
 		code: 'mineral_deposit',
 		title: 'Mineral Deposit',
 		type: CardType.Event,
-		description: '',
 		cost: 5,
 		categories: [CardCategory.Event],
 		playEffects: [resourceChange('ore', 5)]
@@ -845,7 +788,6 @@ export const BuiltCards: Card[] = [
 		code: 'mining_expedition',
 		title: 'Mining Expedition',
 		type: CardType.Event,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Event],
 		playEffects: [
@@ -858,7 +800,6 @@ export const BuiltCards: Card[] = [
 		code: 'mining_area',
 		title: 'Mining Area',
 		type: CardType.Building,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Building],
 		playEffects: [
@@ -874,7 +815,6 @@ export const BuiltCards: Card[] = [
 		code: 'building_industries',
 		title: 'Building Industries',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Building],
 		playEffects: [productionChange('energy', -1), productionChange('ore', 2)]
@@ -884,7 +824,6 @@ export const BuiltCards: Card[] = [
 		code: 'land_claim',
 		title: 'Land Claim',
 		type: CardType.Event,
-		description: '',
 		cost: 1,
 		categories: [CardCategory.Event],
 		playEffects: [claimCell()],
@@ -894,7 +833,6 @@ export const BuiltCards: Card[] = [
 		code: 'mining_rights',
 		title: 'Mining Rights',
 		type: CardType.Building,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Building],
 		playEffects: [
@@ -910,7 +848,6 @@ export const BuiltCards: Card[] = [
 		code: 'sponsors',
 		title: 'Sponsors',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Earth],
 		playEffects: [productionChange('money', 2)]
@@ -919,7 +856,6 @@ export const BuiltCards: Card[] = [
 		code: 'electro_catapult',
 		title: 'Electro Catapult',
 		type: CardType.Action,
-		description: '',
 		cost: 17,
 		categories: [CardCategory.Building],
 		victoryPoints: 1,
@@ -936,7 +872,6 @@ export const BuiltCards: Card[] = [
 		code: 'earth_catapult',
 		title: 'Earth Catapult',
 		type: CardType.Effect,
-		description: '',
 		cost: 23,
 		categories: [CardCategory.Earth],
 		victoryPoints: 2,
@@ -946,7 +881,6 @@ export const BuiltCards: Card[] = [
 		code: 'advanced_alloys',
 		title: 'Advanced Alloys',
 		type: CardType.Effect,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Science],
 		playEffects: [orePriceChange(1), titanPriceChange(1)]
@@ -955,7 +889,6 @@ export const BuiltCards: Card[] = [
 		code: 'birds',
 		title: 'Birds',
 		type: CardType.Action,
-		description: '',
 		cost: 10,
 		resource: 'animals',
 		categories: [CardCategory.Animal],
@@ -968,7 +901,6 @@ export const BuiltCards: Card[] = [
 		code: 'mars_university',
 		title: 'Mars University',
 		type: CardType.Effect,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Building, CardCategory.Science],
 		victoryPoints: 1,
@@ -979,7 +911,6 @@ export const BuiltCards: Card[] = [
 		code: 'viral_enhancers',
 		title: 'Viral Enhancers',
 		type: CardType.Effect,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Microbe, CardCategory.Science],
 		actionEffects: [
@@ -997,7 +928,6 @@ export const BuiltCards: Card[] = [
 		code: 'towing_a_comet',
 		title: 'Towing a Comet',
 		type: CardType.Event,
-		description: '',
 		cost: 23,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
@@ -1010,7 +940,6 @@ export const BuiltCards: Card[] = [
 		code: 'space_mirrors',
 		title: 'Space Mirrors',
 		type: CardType.Action,
-		description: '',
 		cost: 3,
 		categories: [CardCategory.Space, CardCategory.Power],
 		actionEffects: [resourceChange('money', -7), productionChange('energy', 1)]
@@ -1019,7 +948,6 @@ export const BuiltCards: Card[] = [
 		code: 'solar_wind_power',
 		title: 'Solar Wind Power',
 		type: CardType.Building,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Power, CardCategory.Space, CardCategory.Science],
 		playEffects: [productionChange('energy', 1), resourceChange('titan', 2)]
@@ -1028,7 +956,6 @@ export const BuiltCards: Card[] = [
 		code: 'ice_asteroid',
 		title: 'Ice Asteroid',
 		type: CardType.Event,
-		description: '',
 		cost: 23,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
@@ -1040,7 +967,6 @@ export const BuiltCards: Card[] = [
 		code: 'quantum_extractor',
 		title: 'Quantum Extractor',
 		type: CardType.Effect,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Power, CardCategory.Science],
 		conditions: [cardCountCondition(CardCategory.Science, 4)],
@@ -1050,7 +976,6 @@ export const BuiltCards: Card[] = [
 		code: 'giant_ice_asteroid',
 		title: 'Giant Ice Asteroid',
 		type: CardType.Event,
-		description: '',
 		cost: 36,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
@@ -1064,7 +989,6 @@ export const BuiltCards: Card[] = [
 		code: 'ganymede_colony',
 		title: 'Ganymede Colony',
 		type: CardType.Building,
-		description: '',
 		cost: 20,
 		categories: [CardCategory.City, CardCategory.Space, CardCategory.Jupiter],
 		playEffects: [
@@ -1079,7 +1003,6 @@ export const BuiltCards: Card[] = [
 		code: 'callisto_penal_mines',
 		title: 'Callisto Penal Mines',
 		type: CardType.Building,
-		description: '',
 		cost: 24,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		playEffects: [productionChange('money', 3)],
@@ -1089,7 +1012,6 @@ export const BuiltCards: Card[] = [
 		code: 'giant_space_mirror',
 		title: 'Giant Space Mirror',
 		type: CardType.Building,
-		description: '',
 		cost: 17,
 		categories: [CardCategory.Space, CardCategory.Power],
 		playEffects: [productionChange('energy', 3)]
@@ -1098,7 +1020,6 @@ export const BuiltCards: Card[] = [
 		code: 'trans-neptune_probe',
 		title: 'Trans-Neptune Probe',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Space, CardCategory.Science],
 		victoryPoints: 1
@@ -1107,7 +1028,6 @@ export const BuiltCards: Card[] = [
 		code: 'commercial_district',
 		title: 'Commercial District',
 		type: CardType.Building,
-		description: '',
 		cost: 16,
 		categories: [CardCategory.Building],
 		playEffects: [
@@ -1124,7 +1044,6 @@ export const BuiltCards: Card[] = [
 		code: 'robotic_workforce',
 		title: 'Robotic Workforce',
 		type: CardType.Building,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Science],
 		playEffects: [duplicateProduction(CardCategory.Building)]
@@ -1133,7 +1052,6 @@ export const BuiltCards: Card[] = [
 		code: 'grass',
 		title: 'Grass',
 		type: CardType.Building,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('temperature', -16 / 2)],
@@ -1143,7 +1061,6 @@ export const BuiltCards: Card[] = [
 		code: 'heather',
 		title: 'Heather',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('temperature', -14 / 2)],
@@ -1153,17 +1070,14 @@ export const BuiltCards: Card[] = [
 		code: 'peroxide_power',
 		title: 'Peroxide Power',
 		type: CardType.Building,
-		description: '',
 		cost: 7,
 		categories: [CardCategory.Building, CardCategory.Power],
 		playEffects: [productionChange('money', -1), productionChange('energy', 2)]
 	}),
-	// TODO: Counts as playing 2 science cards?
 	card({
 		code: 'research',
 		title: 'Research',
 		type: CardType.Building,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Science, CardCategory.Science],
 		victoryPoints: 1,
@@ -1173,7 +1087,6 @@ export const BuiltCards: Card[] = [
 		code: 'gene_repair',
 		title: 'Gene Repair',
 		type: CardType.Building,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Science],
 		victoryPoints: 2,
@@ -1184,7 +1097,6 @@ export const BuiltCards: Card[] = [
 		code: 'io_mining_industries_',
 		title: 'IO Mining Industries ',
 		type: CardType.Building,
-		description: '',
 		cost: 41,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		playEffects: [productionChange('titan', 2), productionChange('money', 2)],
@@ -1194,7 +1106,6 @@ export const BuiltCards: Card[] = [
 		code: 'bushes',
 		title: 'Bushes',
 		type: CardType.Building,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('temperature', -10 / 2)],
@@ -1204,7 +1115,6 @@ export const BuiltCards: Card[] = [
 		code: 'mass_converter',
 		title: 'Mass Converter',
 		type: CardType.Effect,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Power, CardCategory.Science],
 		conditions: [cardCountCondition(CardCategory.Science, 5)],
@@ -1214,7 +1124,6 @@ export const BuiltCards: Card[] = [
 		code: 'physics_complex',
 		title: 'Physics Complex',
 		type: CardType.Action,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Building, CardCategory.Science],
 		resource: 'science',
@@ -1228,7 +1137,6 @@ export const BuiltCards: Card[] = [
 		code: 'greenhouses',
 		title: 'Greenhouses',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Building, CardCategory.Plant],
 		playEffects: [resourcesForTiles(GridCellContent.City, 'plants', 1)]
@@ -1237,7 +1145,6 @@ export const BuiltCards: Card[] = [
 		code: 'nuclear_zone',
 		title: 'Nuclear Zone',
 		type: CardType.Building,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Earth],
 		victoryPoints: -2,
@@ -1253,7 +1160,6 @@ export const BuiltCards: Card[] = [
 		code: 'tropical_resort',
 		title: 'Tropical Resort',
 		type: CardType.Building,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Building],
 		victoryPoints: 2,
@@ -1263,7 +1169,6 @@ export const BuiltCards: Card[] = [
 		code: 'toll_station',
 		title: 'Toll Station',
 		type: CardType.Building,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Space],
 		playEffects: [productionForPlayersTags(CardCategory.Space, 'money', 1)]
@@ -1272,7 +1177,6 @@ export const BuiltCards: Card[] = [
 		code: 'fueled_generators',
 		title: 'Fueled Generators',
 		type: CardType.Building,
-		description: '',
 		cost: 1,
 		categories: [CardCategory.Building, CardCategory.Power],
 		playEffects: [productionChange('money', -1), productionChange('energy', 1)]
@@ -1281,7 +1185,6 @@ export const BuiltCards: Card[] = [
 		code: 'ironworks',
 		title: 'Ironworks',
 		type: CardType.Action,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Building],
 		actionEffects: [
@@ -1294,7 +1197,6 @@ export const BuiltCards: Card[] = [
 		code: 'power_grid',
 		title: 'Power Grid',
 		type: CardType.Building,
-		description: '',
 		cost: 18,
 		categories: [CardCategory.Power],
 		playEffects: [productionForTags(CardCategory.Power, 'energy', 1)]
@@ -1303,7 +1205,6 @@ export const BuiltCards: Card[] = [
 		code: 'steelworks',
 		title: 'Steelworks',
 		type: CardType.Action,
-		description: '',
 		cost: 15,
 		categories: [CardCategory.Building],
 		actionEffects: [
@@ -1316,7 +1217,6 @@ export const BuiltCards: Card[] = [
 		code: 'ore_processor',
 		title: 'Ore Processor',
 		type: CardType.Action,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Building],
 		actionEffects: [
@@ -1329,7 +1229,6 @@ export const BuiltCards: Card[] = [
 		code: 'earth_office',
 		title: 'Earth Office',
 		type: CardType.Effect,
-		description: '',
 		cost: 1,
 		categories: [CardCategory.Earth],
 		playEffects: [earthCardPriceChange(-3)]
@@ -1338,7 +1237,6 @@ export const BuiltCards: Card[] = [
 		code: 'acquired_company',
 		title: 'Acquired Company',
 		type: CardType.Building,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Earth],
 		playEffects: [productionChange('money', 3)]
@@ -1347,7 +1245,6 @@ export const BuiltCards: Card[] = [
 		code: 'media_archives',
 		title: 'Media Archives',
 		type: CardType.Building,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Earth],
 		playEffects: [resourcesForPlayersTags(CardCategory.Event, 'money', 1)]
@@ -1356,7 +1253,6 @@ export const BuiltCards: Card[] = [
 		code: 'open_city',
 		title: 'Open City',
 		type: CardType.Building,
-		description: '',
 		cost: 23,
 		categories: [CardCategory.Building, CardCategory.City],
 		victoryPoints: 1,
@@ -1372,7 +1268,6 @@ export const BuiltCards: Card[] = [
 		code: 'media_group',
 		title: 'Media Group',
 		type: CardType.Effect,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Earth],
 		passiveEffects: [resourcePerCardPlayed([CardCategory.Event], 'money', 3)]
@@ -1381,7 +1276,6 @@ export const BuiltCards: Card[] = [
 		code: 'business_network',
 		title: 'Business Network',
 		type: CardType.Action,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Earth],
 		playEffects: [productionChange('money', -1)],
@@ -1391,7 +1285,6 @@ export const BuiltCards: Card[] = [
 		code: 'business_contacts',
 		title: 'Business Contacts',
 		type: CardType.Event,
-		description: '',
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Earth],
 		conditions: [gameProgressConditionMin('temperature', 4 / 2)],
@@ -1401,7 +1294,6 @@ export const BuiltCards: Card[] = [
 		code: 'bribed_committee',
 		title: 'Bribed Committee',
 		type: CardType.Event,
-		description: '',
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Earth],
 		victoryPoints: -2,
@@ -1411,7 +1303,6 @@ export const BuiltCards: Card[] = [
 		code: 'solar_power',
 		title: 'Solar Power',
 		type: CardType.Building,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: 1,
@@ -1421,7 +1312,6 @@ export const BuiltCards: Card[] = [
 		code: 'breathing_filters',
 		title: 'Breathing Filters',
 		type: CardType.Building,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Science],
 		victoryPoints: 2,
@@ -1431,7 +1321,6 @@ export const BuiltCards: Card[] = [
 		code: 'artificial_photosynthesis',
 		title: 'Artificial Photosynthesis',
 		type: CardType.Building,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Science],
 		playEffects: [
@@ -1445,7 +1334,6 @@ export const BuiltCards: Card[] = [
 		code: 'artificial_lake',
 		title: 'Artificial Lake',
 		type: CardType.Building,
-		description: '',
 		cost: 15,
 		categories: [CardCategory.Building],
 		victoryPoints: 1,
@@ -1461,7 +1349,6 @@ export const BuiltCards: Card[] = [
 		code: 'geothermal_power',
 		title: 'Geothermal Power',
 		type: CardType.Building,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.Power],
 		playEffects: [productionChange('energy', 2)]
@@ -1470,7 +1357,6 @@ export const BuiltCards: Card[] = [
 		code: 'farming',
 		title: 'Farming',
 		type: CardType.Building,
-		description: '',
 		cost: 16,
 		categories: [CardCategory.Plant],
 		victoryPoints: 2,
@@ -1485,7 +1371,6 @@ export const BuiltCards: Card[] = [
 		code: 'dust_seals',
 		title: 'Dust Seals',
 		type: CardType.Building,
-		description: '',
 		cost: 2,
 		categories: [],
 		victoryPoints: 1,
@@ -1495,7 +1380,6 @@ export const BuiltCards: Card[] = [
 		code: 'urbanized_area',
 		title: 'Urbanized Area',
 		type: CardType.Building,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Building, CardCategory.City],
 		playEffects: [
@@ -1511,7 +1395,6 @@ export const BuiltCards: Card[] = [
 		code: 'sabotage',
 		title: 'Sabotage',
 		type: CardType.Event,
-		description: '',
 		cost: 1,
 		categories: [CardCategory.Event],
 		playEffects: [
@@ -1526,7 +1409,6 @@ export const BuiltCards: Card[] = [
 		code: 'moss',
 		title: 'Moss',
 		type: CardType.Building,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('oceans', 3)],
@@ -1536,7 +1418,6 @@ export const BuiltCards: Card[] = [
 		code: 'industrial_center',
 		title: 'Industrial Center',
 		type: CardType.Action,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Building],
 		playEffects: [
@@ -1552,7 +1433,6 @@ export const BuiltCards: Card[] = [
 		code: 'hired_raiders',
 		title: 'Hired Raiders',
 		type: CardType.Event,
-		description: '',
 		cost: 1,
 		categories: [CardCategory.Event],
 		playEffects: [
@@ -1572,7 +1452,6 @@ export const BuiltCards: Card[] = [
 		code: 'hackers',
 		title: 'Hackers',
 		type: CardType.Building,
-		description: '',
 		cost: 3,
 		categories: [],
 		victoryPoints: -1,
@@ -1586,7 +1465,6 @@ export const BuiltCards: Card[] = [
 		code: 'ghg_factories',
 		title: 'GHG Factories',
 		type: CardType.Building,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Building],
 		playEffects: [productionChange('energy', -1), productionChange('heat', 4)]
@@ -1595,7 +1473,6 @@ export const BuiltCards: Card[] = [
 		code: 'subterranean_reservoir',
 		title: 'Subterranean Reservoir',
 		type: CardType.Event,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Event],
 		playEffects: [placeTile({ type: GridCellContent.Ocean })]
@@ -1604,7 +1481,6 @@ export const BuiltCards: Card[] = [
 		code: 'ecological_zone',
 		title: 'Ecological Zone',
 		type: CardType.Effect,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Plant, CardCategory.Animal],
 		conditions: [ownedCellTypeCondition(GridCellContent.Forest, 1)],
@@ -1629,7 +1505,6 @@ export const BuiltCards: Card[] = [
 		code: 'zeppelins',
 		title: 'Zeppelins',
 		type: CardType.Building,
-		description: '',
 		cost: 13,
 		categories: [],
 		victoryPoints: 1,
@@ -1640,7 +1515,6 @@ export const BuiltCards: Card[] = [
 		code: 'worms',
 		title: 'Worms',
 		type: CardType.Building,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMin('oxygen', 4)],
@@ -1650,7 +1524,6 @@ export const BuiltCards: Card[] = [
 		code: 'decomposers',
 		title: 'Decomposers',
 		type: CardType.Effect,
-		description: '',
 		cost: 5,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMin('oxygen', 3)],
@@ -1668,7 +1541,6 @@ export const BuiltCards: Card[] = [
 		code: 'fusion_power',
 		title: 'Fusion Power',
 		type: CardType.Building,
-		description: '',
 		cost: 14,
 		categories: [
 			CardCategory.Building,
@@ -1682,7 +1554,6 @@ export const BuiltCards: Card[] = [
 		code: 'symbiotic_fungus',
 		title: 'Symbiotic Fungus',
 		type: CardType.Action,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMin('temperature', -14 / 2)],
@@ -1692,7 +1563,6 @@ export const BuiltCards: Card[] = [
 		code: 'extreme-cold_fungus',
 		title: 'Extreme-Cold Fungus',
 		type: CardType.Action,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMax('temperature', -10 / 2)],
@@ -1707,7 +1577,6 @@ export const BuiltCards: Card[] = [
 		code: 'advanced_ecosystems',
 		title: 'Advanced Ecosystems',
 		type: CardType.Building,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Animal, CardCategory.Microbe, CardCategory.Plant],
 		victoryPoints: 3,
@@ -1721,7 +1590,6 @@ export const BuiltCards: Card[] = [
 		code: 'great_dam',
 		title: 'Great Dam',
 		type: CardType.Building,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: 1,
@@ -1732,7 +1600,6 @@ export const BuiltCards: Card[] = [
 		code: 'cartel',
 		title: 'Cartel',
 		type: CardType.Building,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Earth],
 		playEffects: [
@@ -1744,7 +1611,6 @@ export const BuiltCards: Card[] = [
 		code: 'strip_mine',
 		title: 'Strip Mine',
 		type: CardType.Building,
-		description: '',
 		cost: 25,
 		categories: [CardCategory.Building],
 		playEffects: [
@@ -1757,7 +1623,6 @@ export const BuiltCards: Card[] = [
 		code: 'wave_power',
 		title: 'Wave Power',
 		type: CardType.Building,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Power],
 		victoryPoints: 1,
@@ -1768,7 +1633,6 @@ export const BuiltCards: Card[] = [
 		code: 'lava_flows',
 		title: 'Lava Flows',
 		type: CardType.Event,
-		description: '',
 		cost: 18,
 		categories: [CardCategory.Event],
 		playEffects: [
@@ -1789,7 +1653,6 @@ export const BuiltCards: Card[] = [
 		code: 'power_plant',
 		title: 'Power Plant',
 		type: CardType.Building,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Building, CardCategory.Power],
 		playEffects: [productionChange('energy', 1)]
@@ -1798,7 +1661,6 @@ export const BuiltCards: Card[] = [
 		code: 'mohole_area',
 		title: 'Mohole Area',
 		type: CardType.Building,
-		description: '',
 		cost: 20,
 		categories: [CardCategory.Building],
 		playEffects: [
@@ -1814,7 +1676,6 @@ export const BuiltCards: Card[] = [
 		code: 'large_convoy',
 		title: 'Large Convoy',
 		type: CardType.Event,
-		description: '',
 		cost: 36,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
 		victoryPoints: 2,
@@ -1831,7 +1692,6 @@ export const BuiltCards: Card[] = [
 		code: 'titanium_mine',
 		title: 'Titanium Mine',
 		type: CardType.Building,
-		description: '',
 		cost: 7,
 		categories: [CardCategory.Building],
 		playEffects: [productionChange('titan', 1)]
@@ -1840,7 +1700,6 @@ export const BuiltCards: Card[] = [
 		code: 'tectonic_stress_power',
 		title: 'Tectonic Stress Power',
 		type: CardType.Building,
-		description: '',
 		cost: 18,
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: 1,
@@ -1851,7 +1710,6 @@ export const BuiltCards: Card[] = [
 		code: 'nitrophilic_moss',
 		title: 'Nitrophilic Moss',
 		type: CardType.Building,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('oceans', 3)],
@@ -1861,7 +1719,6 @@ export const BuiltCards: Card[] = [
 		code: 'herbivores',
 		title: 'Herbivores',
 		type: CardType.Effect,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Animal],
 		resource: 'animals',
@@ -1878,7 +1735,6 @@ export const BuiltCards: Card[] = [
 		code: 'insects',
 		title: 'Insects',
 		type: CardType.Building,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMin('oxygen', 6)],
@@ -1888,7 +1744,6 @@ export const BuiltCards: Card[] = [
 		code: 'ceos_favorite_project',
 		title: "CEO's Favorite Project",
 		type: CardType.Event,
-		description: '',
 		cost: 1,
 		categories: [CardCategory.Event],
 		playEffects: [addResourceToCard()]
@@ -1897,7 +1752,6 @@ export const BuiltCards: Card[] = [
 		code: 'anti-gravity_technology',
 		title: 'Anti-gravity Technology',
 		type: CardType.Effect,
-		description: '',
 		cost: 14,
 		categories: [CardCategory.Science],
 		victoryPoints: 3,
@@ -1908,7 +1762,6 @@ export const BuiltCards: Card[] = [
 		code: 'investment_loan',
 		title: 'Investment Loan',
 		type: CardType.Event,
-		description: '',
 		cost: 3,
 		categories: [CardCategory.Event, CardCategory.Earth],
 		playEffects: [productionChange('money', -1), resourceChange('money', 10)]
@@ -1917,28 +1770,23 @@ export const BuiltCards: Card[] = [
 		code: 'insulation',
 		title: 'Insulation',
 		type: CardType.Building,
-		description: '',
 		cost: 2,
 		categories: [],
 		playEffects: [exchangeResources('heat', 'money')]
 	}),
-	/*
-	TODO:
 	card({
 		code: 'adaptation_technology',
 		title: 'Adaptation Technology',
-		type: CardType.Action,
-		description: '',
+		type: CardType.Effect,
 		cost: 12,
 		categories: [CardCategory.Science],
 		victoryPoints: 1,
+		playEffects: [changeProgressConditionBonus(2)]
 	}),
-	*/
 	card({
 		code: 'caretaker_contract',
 		title: 'Caretaker Contract',
 		type: CardType.Action,
-		description: '',
 		cost: 3,
 		categories: [],
 		conditions: [gameProgressConditionMin('temperature', 0 / 2)],
@@ -1948,28 +1796,23 @@ export const BuiltCards: Card[] = [
 		code: 'designed_microorganisms',
 		title: 'Designed Microorganisms',
 		type: CardType.Building,
-		description: '',
 		cost: 16,
 		categories: [CardCategory.Microbe, CardCategory.Science],
 		conditions: [gameProgressConditionMax('temperature', -14 / 2)],
 		playEffects: [productionChange('plants', 2)]
 	}),
-	/*
-	TODO:
 	card({
 		code: 'standard_technology',
 		title: 'Standard Technology',
-		type: CardType.Action,
-		description: '',
+		type: CardType.Effect,
 		cost: 6,
 		categories: [CardCategory.Science],
+		passiveEffects: [resourceForStandardProject('money', 3)]
 	}),
-	*/
 	card({
 		code: 'nitrite_reducing_bacteria',
 		title: 'Nitrite Reducing Bacteria',
 		type: CardType.Action,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Microbe],
 		resource: 'microbes',
@@ -1988,7 +1831,6 @@ export const BuiltCards: Card[] = [
 		code: 'industrial_microbes',
 		title: 'Industrial Microbes',
 		type: CardType.Building,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Building, CardCategory.Microbe],
 		playEffects: [productionChange('energy', 1), productionChange('ore', 1)]
@@ -1997,7 +1839,6 @@ export const BuiltCards: Card[] = [
 		code: 'lichen',
 		title: 'Lichen',
 		type: CardType.Building,
-		description: '',
 		cost: 7,
 		categories: [CardCategory.Plant],
 		conditions: [gameProgressConditionMin('temperature', -24 / 2)],
@@ -2007,7 +1848,6 @@ export const BuiltCards: Card[] = [
 		code: 'power_supply_consortium',
 		title: 'Power Supply Consortium',
 		type: CardType.Building,
-		description: '',
 		cost: 5,
 		categories: [CardCategory.Power],
 		playEffects: [
@@ -2019,7 +1859,6 @@ export const BuiltCards: Card[] = [
 		code: 'convoy_from_europa',
 		title: 'Convoy From Europa',
 		type: CardType.Event,
-		description: '',
 		cost: 15,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [placeTile({ type: GridCellContent.Other }), getTopCards(1)]
@@ -2028,7 +1867,6 @@ export const BuiltCards: Card[] = [
 		code: 'imported_ghg',
 		title: 'Imported GHG',
 		type: CardType.Event,
-		description: '',
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
 		playEffects: [productionChange('heat', 1), resourceChange('heat', 3)]
@@ -2037,7 +1875,6 @@ export const BuiltCards: Card[] = [
 		code: 'imported_nitrogen',
 		title: 'Imported Nitrogen',
 		type: CardType.Event,
-		description: '',
 		cost: 23,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
 		playEffects: [
@@ -2051,7 +1888,6 @@ export const BuiltCards: Card[] = [
 		code: 'micro-mills',
 		title: 'Micro-Mills',
 		type: CardType.Building,
-		description: '',
 		cost: 3,
 		categories: [],
 		playEffects: [productionChange('heat', 1)]
@@ -2060,7 +1896,6 @@ export const BuiltCards: Card[] = [
 		code: 'magnetic_field_generators',
 		title: 'Magnetic Field Generators',
 		type: CardType.Building,
-		description: '',
 		cost: 20,
 		categories: [CardCategory.Building],
 		playEffects: [
@@ -2073,7 +1908,6 @@ export const BuiltCards: Card[] = [
 		code: 'shuttles',
 		title: 'Shuttles',
 		type: CardType.Effect,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Space],
 		victoryPoints: 1,
@@ -2088,7 +1922,6 @@ export const BuiltCards: Card[] = [
 		code: 'import_of_advanced_ghg',
 		title: 'Import of Advanced GHG',
 		type: CardType.Event,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
 		playEffects: [productionChange('heat', 2)]
@@ -2097,7 +1930,6 @@ export const BuiltCards: Card[] = [
 		code: 'windmills',
 		title: 'Windmills',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: 1,
@@ -2108,7 +1940,6 @@ export const BuiltCards: Card[] = [
 		code: 'tundra_farming',
 		title: 'Tundra Farming',
 		type: CardType.Building,
-		description: '',
 		cost: 16,
 		categories: [CardCategory.Plant],
 		victoryPoints: 2,
@@ -2123,7 +1954,6 @@ export const BuiltCards: Card[] = [
 		code: 'aerobraked_ammonia_asteroid',
 		title: 'Aerobraked Ammonia Asteroid',
 		type: CardType.Event,
-		description: '',
 		cost: 26,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
@@ -2136,7 +1966,6 @@ export const BuiltCards: Card[] = [
 		code: 'magnetic_field_dome',
 		title: 'Magnetic Field Dome',
 		type: CardType.Building,
-		description: '',
 		cost: 5,
 		categories: [CardCategory.Building],
 		playEffects: [
@@ -2145,21 +1974,26 @@ export const BuiltCards: Card[] = [
 			terraformRatingChange(1)
 		]
 	}),
-	/*
-	TODO:
 	card({
 		code: 'pets',
 		title: 'Pets',
-		type: CardType.Action,
-		description: '',
+		type: CardType.Effect,
 		cost: 10,
+		description: 'Animals cannot be removed from this card',
+		resourceProtected: true,
+		resource: 'animals',
 		categories: [CardCategory.Animal, CardCategory.Earth],
+		passiveEffects: [
+			cardResourcePerTilePlaced(GridCellContent.City, 'animals', 1)
+		],
+		victoryPointsCallback: vpsForCardResources('animals', 1 / 3)
 	}),
+	/*
+	TODO:
 	card({
 		code: 'protected_habitats',
 		title: 'Protected Habitats',
 		type: CardType.Action,
-		description: '',
 		cost: 5,
 		categories: [],
 	}),
@@ -2168,7 +2002,6 @@ export const BuiltCards: Card[] = [
 		code: 'protected_valley',
 		title: 'Protected Valley',
 		type: CardType.Building,
-		description: '',
 		cost: 23,
 		categories: [CardCategory.Building, CardCategory.Plant],
 		playEffects: [
@@ -2183,7 +2016,6 @@ export const BuiltCards: Card[] = [
 		code: 'satellites',
 		title: 'Satellites',
 		type: CardType.Building,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Space],
 		playEffects: [productionForTags(CardCategory.Space, 'money', 1)]
@@ -2192,7 +2024,6 @@ export const BuiltCards: Card[] = [
 		code: 'noctis_farming',
 		title: 'Noctis Farming',
 		type: CardType.Building,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Plant, CardCategory.Building],
 		victoryPoints: 1,
@@ -2203,7 +2034,6 @@ export const BuiltCards: Card[] = [
 		code: 'water_splitting_plant',
 		title: 'Water Splitting Plant',
 		type: CardType.Action,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Building],
 		conditions: [gameProgressConditionMin('oceans', 2)],
@@ -2216,7 +2046,6 @@ export const BuiltCards: Card[] = [
 		code: 'heat_trappers',
 		title: 'Heat Trappers',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: -1,
@@ -2229,7 +2058,6 @@ export const BuiltCards: Card[] = [
 		code: 'soil_factory',
 		title: 'Soil Factory',
 		type: CardType.Building,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Building],
 		victoryPoints: 1,
@@ -2239,7 +2067,6 @@ export const BuiltCards: Card[] = [
 		code: 'fuel_factory',
 		title: 'Fuel Factory',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Building],
 		playEffects: [
@@ -2252,7 +2079,6 @@ export const BuiltCards: Card[] = [
 		code: 'ice_cap_melting',
 		title: 'Ice Cap Melting',
 		type: CardType.Event,
-		description: '',
 		cost: 5,
 		categories: [CardCategory.Event],
 		conditions: [gameProgressConditionMin('temperature', 2 / 2)],
@@ -2262,7 +2088,6 @@ export const BuiltCards: Card[] = [
 		code: 'corporate_stronghold',
 		title: 'Corporate Stronghold',
 		type: CardType.Building,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.City],
 		victoryPoints: -2,
@@ -2276,7 +2101,6 @@ export const BuiltCards: Card[] = [
 		code: 'biomass_combustors',
 		title: 'Biomass Combustors',
 		type: CardType.Building,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: -1,
@@ -2290,7 +2114,6 @@ export const BuiltCards: Card[] = [
 		code: 'livestock',
 		title: 'Livestock',
 		type: CardType.Action,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Animal],
 		conditions: [gameProgressConditionMin('oxygen', 9)],
@@ -2302,7 +2125,6 @@ export const BuiltCards: Card[] = [
 		code: 'olympus_conference',
 		title: 'Olympus Conference',
 		type: CardType.Effect,
-		description: '',
 		cost: 10,
 		categories: [
 			CardCategory.Building,
@@ -2322,7 +2144,6 @@ export const BuiltCards: Card[] = [
 		code: 'rad-suits',
 		title: 'Rad-Suits',
 		type: CardType.Building,
-		description: '',
 		cost: 6,
 		categories: [],
 		victoryPoints: 1,
@@ -2333,7 +2154,6 @@ export const BuiltCards: Card[] = [
 		code: 'aquifer_pumping',
 		title: 'Aquifer Pumping',
 		type: CardType.Action,
-		description: '',
 		cost: 18,
 		categories: [CardCategory.Building],
 		actionEffects: [moneyOrResForOcean('ore', 8)]
@@ -2344,7 +2164,6 @@ export const BuiltCards: Card[] = [
 		code: 'flooding',
 		title: 'Flooding',
 		type: CardType.Event,
-		description: '',
 		cost: 7,
 		categories: [CardCategory.Event],
 		victoryPoints: -1,
@@ -2354,7 +2173,6 @@ export const BuiltCards: Card[] = [
 		code: 'energy_saving',
 		title: 'Energy Saving',
 		type: CardType.Building,
-		description: '',
 		cost: 15,
 		categories: [CardCategory.Power],
 		playEffects: [productionForTiles(GridCellContent.City, 'energy', 1)]
@@ -2363,7 +2181,6 @@ export const BuiltCards: Card[] = [
 		code: 'local_heat_trapping',
 		title: 'Local Heat Trapping',
 		type: CardType.Event,
-		description: '',
 		cost: 1,
 		categories: [CardCategory.Event],
 		playEffects: [
@@ -2378,7 +2195,6 @@ export const BuiltCards: Card[] = [
 		code: 'permafrost_extraction',
 		title: 'Permafrost Extraction',
 		type: CardType.Event,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Event],
 		conditions: [gameProgressConditionMin('temperature', -8 / 2)],
@@ -2388,7 +2204,6 @@ export const BuiltCards: Card[] = [
 		code: 'invention_contest',
 		title: 'Invention Contest',
 		type: CardType.Event,
-		description: '',
 		cost: 2,
 		categories: [CardCategory.Event, CardCategory.Science],
 		conditions: [gameProgressConditionMin('temperature', 3 / 2)],
@@ -2398,7 +2213,6 @@ export const BuiltCards: Card[] = [
 		code: 'plantation',
 		title: 'Plantation',
 		type: CardType.Building,
-		description: '',
 		cost: 15,
 		categories: [CardCategory.Plant],
 		conditions: [cardCountCondition(CardCategory.Science, 2)],
@@ -2408,27 +2222,24 @@ export const BuiltCards: Card[] = [
 		code: 'power_infrastructure',
 		title: 'Power Infrastructure',
 		type: CardType.Action,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Building, CardCategory.Power],
 		actionEffects: [exchangeResources('energy', 'money')]
 	}),
-	/*
 	card({
 		code: 'indentured_workers',
 		title: 'Indentured Workers',
 		type: CardType.Event,
-		description: '',
 		cost: 0,
 		categories: [CardCategory.Event],
 		victoryPoints: -1,
+		playEffects: [noDesc(cardPriceChange(-8))],
+		passiveEffects: [resetCardPriceChange(-8)]
 	}),
-	*/
 	card({
 		code: 'lagrange_observatory',
 		title: 'Lagrange Observatory',
 		type: CardType.Building,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Space, CardCategory.Science],
 		victoryPoints: 1,
@@ -2438,7 +2249,6 @@ export const BuiltCards: Card[] = [
 		code: 'terraforming_ganymede',
 		title: 'Terraforming Ganymede',
 		type: CardType.Building,
-		description: '',
 		cost: 33,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 2,
@@ -2451,7 +2261,6 @@ export const BuiltCards: Card[] = [
 		code: 'immigration_shuttles',
 		title: 'Immigration Shuttles',
 		type: CardType.Building,
-		description: '',
 		cost: 31,
 		categories: [CardCategory.Space, CardCategory.Earth],
 		playEffects: [productionChange('money', 5)],
@@ -2461,7 +2270,6 @@ export const BuiltCards: Card[] = [
 		code: 'restricted_area',
 		title: 'Restricted Area',
 		type: CardType.Action,
-		description: '',
 		cost: 11,
 		categories: [CardCategory.Science],
 		playEffects: [
@@ -2476,7 +2284,6 @@ export const BuiltCards: Card[] = [
 		code: 'immigrant_city',
 		title: 'Immigrant City',
 		type: CardType.Effect,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Building, CardCategory.City],
 		playEffects: [
@@ -2490,7 +2297,6 @@ export const BuiltCards: Card[] = [
 		code: 'energy_tapping',
 		title: 'Energy Tapping',
 		type: CardType.Building,
-		description: '',
 		cost: 3,
 		categories: [CardCategory.Power],
 		victoryPoints: -1,
@@ -2503,7 +2309,6 @@ export const BuiltCards: Card[] = [
 		code: 'underground_detonations',
 		title: 'Underground Detonations',
 		type: CardType.Action,
-		description: '',
 		cost: 6,
 		categories: [CardCategory.Building],
 		actionEffects: [resourceChange('money', -10), productionChange('heat', 2)]
@@ -2512,7 +2317,6 @@ export const BuiltCards: Card[] = [
 		code: 'soletta',
 		title: 'Soletta',
 		type: CardType.Building,
-		description: '',
 		cost: 35,
 		categories: [CardCategory.Space],
 		playEffects: [productionChange('heat', 7)]
@@ -2521,7 +2325,6 @@ export const BuiltCards: Card[] = [
 		code: 'technology_demonstration',
 		title: 'Technology Demonstration',
 		type: CardType.Event,
-		description: '',
 		cost: 5,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Science],
 		playEffects: [getTopCards(2)]
@@ -2530,27 +2333,23 @@ export const BuiltCards: Card[] = [
 		code: 'rad_chem_factory',
 		title: 'Rad-Chem Factory',
 		type: CardType.Building,
-		description: '',
 		cost: 8,
 		categories: [CardCategory.Building],
 		playEffects: [productionChange('energy', -1), terraformRatingChange(2)]
 	}),
-	/*
-	TODO:
 	card({
 		code: 'special_design',
 		title: 'Special Design',
 		type: CardType.Event,
-		description: '',
 		cost: 4,
 		categories: [CardCategory.Event, CardCategory.Science],
+		playEffects: [changeProgressConditionBonus(2)],
+		passiveEffects: [resetProgressBonus(2)]
 	}),
-	*/
 	card({
 		code: 'medical_lab',
 		title: 'Medical Lab',
 		type: CardType.Building,
-		description: '',
 		cost: 13,
 		categories: [CardCategory.Building, CardCategory.Science],
 		victoryPoints: 1,
@@ -2560,7 +2359,6 @@ export const BuiltCards: Card[] = [
 		code: 'ai_central',
 		title: 'AI Central',
 		type: CardType.Action,
-		description: '',
 		cost: 21,
 		categories: [CardCategory.Building, CardCategory.Science],
 		victoryPoints: 1,

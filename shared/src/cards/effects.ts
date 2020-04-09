@@ -12,7 +12,7 @@ import {
 	PlacementConditionsLookup
 } from '../placements'
 import { withUnits } from '../units'
-import { allCells, drawCard, drawCards, flatten } from '../utils'
+import { allCells, drawCard, drawCards, flatten, f } from '../utils'
 import {
 	cardArg,
 	cellArg,
@@ -462,7 +462,7 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 			{
 				...playerCardArg(
 					amount < 0 ? [cardResourceCondition(res, -amount)] : [],
-					-amount
+					Math.abs(amount)
 				),
 				descriptionPrefix:
 					amount > 0
@@ -1100,4 +1100,14 @@ export const exchangeResources = (srcRes: Resource, dstRes: Resource) =>
 			updatePlayerResource(player, srcRes, -amount)
 			updatePlayerResource(player, dstRes, amount)
 		}
+	})
+
+export const changeProgressConditionBonus = (change: number) =>
+	effect({
+		description: f(
+			'Effect: Your global requirements are +{0} or -{1} steps, your choice in each case',
+			change,
+			change
+		),
+		perform: ({ player }) => (player.progressConditionBonus += change)
 	})

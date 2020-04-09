@@ -28,7 +28,7 @@ async function main() {
 		})
 	})
 
-	const gameServer = new Server(wsServer, 3)
+	const gameServer = new Server(wsServer, 0)
 
 	app.use(express.static(join(__dirname, '..', 'static')))
 	app.use(bodyParser.urlencoded({ extended: true }))
