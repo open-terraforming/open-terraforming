@@ -119,6 +119,7 @@ export class Bot extends Player {
 						const player = shuffle(
 							this.game.state.players.filter(
 								player =>
+									player.id !== this.id &&
 									!a.playerConditions.find(
 										c =>
 											!c.evaluate({
@@ -135,6 +136,7 @@ export class Bot extends Player {
 						const player = shuffle(
 							this.game.state.players.filter(
 								player =>
+									player.id !== this.id &&
 									!a.playerConditions.find(
 										c =>
 											!c.evaluate({
@@ -157,6 +159,7 @@ export class Bot extends Player {
 					case CardEffectTarget.PlayerCardResource: {
 						const player = shuffle(
 							this.game.state.players
+								.filter(player => player.id !== this.id)
 								.map(player => ({
 									player,
 									cards: shuffle(

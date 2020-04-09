@@ -386,7 +386,6 @@ export const joinedEffects = (effects: CardEffect[]) =>
 		description: effects.map(e => e.description || '').join(' and '),
 		conditions: flatten(effects.map(e => e.conditions)),
 		perform: (ctx, ...args) => {
-			console.log('playing raider effects with', args)
 			effects.forEach(e => {
 				e.perform(
 					ctx,

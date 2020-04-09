@@ -1,7 +1,6 @@
-import React, { useMemo, useState, useEffect } from 'react'
-import { CardEffectArgument } from '@shared/cards'
 import { useAppStore } from '@/utils/hooks'
-import { UsedCardState } from '@shared/index'
+import { CardEffectArgument } from '@shared/cards'
+import React, { useEffect, useMemo, useState } from 'react'
 import { ArgContainer } from './ArgContainer'
 
 type Props = {
@@ -39,7 +38,6 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 	}
 
 	useEffect(() => {
-		console.log('Change', value)
 		onChange(value)
 	}, [value])
 

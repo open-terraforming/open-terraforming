@@ -34,8 +34,6 @@ export const ArgsPicker = ({
 					cardIndex={cardIndex}
 					cardState={cardState}
 					onChange={v => {
-						console.log('Picker arg', i, 'value', v)
-
 						setValues(values => {
 							const updated = [...values]
 							updated[i] = v

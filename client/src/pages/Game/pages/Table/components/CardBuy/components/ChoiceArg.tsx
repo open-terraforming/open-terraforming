@@ -50,8 +50,6 @@ export const ChoiceArg = ({
 	const [args, setArgs] = useState([] as CardEffectArgumentType[][])
 
 	useEffect(() => {
-		console.log('selected', selected, 'args', args)
-
 		if (selected !== undefined) {
 			onChange([selected, args[selected] || []])
 		}
