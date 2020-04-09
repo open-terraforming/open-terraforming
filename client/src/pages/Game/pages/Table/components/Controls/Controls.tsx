@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from 'react'
-import styled, { css, keyframes } from 'styled-components'
-import { useAppStore, useAppDispatch } from '@/utils/hooks'
-import { Resources } from './components/Resources'
 import { Button } from '@/components'
-import { Corporations } from '@shared/corporations'
+import { useApi } from '@/context/ApiContext'
+import { setTableState } from '@/store/modules/table'
+import { colors } from '@/styles'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import {
-	playerPass,
-	PlayerStateValue,
-	buyStandardProject,
-	StandardProjectType,
-	GridCellContent,
-	GridCellOther
-} from '@shared/index'
-import {
-	faArrowRight,
 	faAngleUp,
+	faArrowRight,
 	faThermometerHalf,
 	faTree
 } from '@fortawesome/free-solid-svg-icons'
-import { Hand } from '../Hand/Hand'
-import { PlayedCards } from '../PlayedCards/PlayedCards'
-import { setTableState } from '@/store/modules/table'
-import { CardBuy } from '../CardBuy/CardBuy'
-import { useApi } from '@/context/ApiContext'
-import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
+import { Corporations } from '@shared/corporations'
+import {
+	buyStandardProject,
+	GridCellContent,
+	GridCellOther,
+	playerPass,
+	PlayerStateValue,
+	StandardProjectType
+} from '@shared/index'
+import { darken, rgba } from 'polished'
+import React, { useState } from 'react'
+import styled, { css } from 'styled-components'
+import { CardBuy } from '../CardBuy/CardBuy'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
+import { Hand } from '../Hand/Hand'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
-import { colors } from '@/styles'
-import { rgba, lighten, darken } from 'polished'
+import { PlayedCards } from '../PlayedCards/PlayedCards'
+import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
+import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
+import { Resources } from './components/Resources'
 
 export const Controls = () => {
 	const api = useApi()
@@ -63,7 +63,7 @@ export const Controls = () => {
 	}
 
 	const buyForest = () => {
-		if (player && player.plants >= 8) {
+		if (player && player.plants >= player.greeneryCost) {
 			api.send(buyStandardProject(StandardProjectType.GreeneryForPlants))
 		}
 	}
@@ -182,10 +182,12 @@ export const Controls = () => {
 						<ResourceIcon res="heat" />
 					</Button>
 					<Button
-						disabled={!isPlaying || (player?.plants || 0) < 8}
+						disabled={
+							!isPlaying || (player?.plants || 0) < (player?.greeneryCost || 0)
+						}
 						onClick={buyForest}
 					>
-						Build <FontAwesomeIcon icon={faTree} /> for 8{' '}
+						Build <FontAwesomeIcon icon={faTree} /> for {player?.greeneryCost}{' '}
 						<ResourceIcon res="plants" />
 					</Button>
 				</CardButtons>
