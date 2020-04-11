@@ -29,7 +29,9 @@ import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { PlayedCards } from '../PlayedCards/PlayedCards'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
-import { Resources } from './components/Resources'
+import { Resources } from './components/Resources/Resources'
+import { HandButton } from './components/HandButton/HandButton'
+import { PlayedButton } from './components/PlayedButton/PlayedButton'
 
 export const Controls = () => {
 	const api = useApi()
@@ -41,8 +43,6 @@ export const Controls = () => {
 	const playingCardIndex = useAppStore(state => state.table.playingCardIndex)
 	const state = player
 	const corporation = Corporations.find(c => c.code === state?.corporation)
-	const [handOpened, setHandOpened] = useState(false)
-	const [cardsOpened, setCardsOpened] = useState(false)
 	const [projectsOpened, setProjectsOpened] = useState(false)
 	const [competitionsOpened, setCompetitionsOpened] = useState(false)
 	const [milestonesOpened, setMilestonesOpened] = useState(false)
@@ -70,16 +70,6 @@ export const Controls = () => {
 
 	return state ? (
 		<Container faded={!!placingTile}>
-			{handOpened && (
-				<Hand playing={isPlaying} onClose={() => setHandOpened(false)} />
-			)}
-			{cardsOpened && (
-				<PlayedCards
-					playing={isPlaying}
-					onClose={() => setCardsOpened(false)}
-				/>
-			)}
-
 			{stackedActions && stackedActions.length > 0 && (
 				<CardBuy
 					buying={false}
@@ -141,20 +131,8 @@ export const Controls = () => {
 				<Resources state={state} />
 			</Flexed>
 			<CardButtons>
-				<Button
-					icon={faAngleUp}
-					disabled={state.cards.length === 0 || !!placingTile}
-					onClick={() => setHandOpened(true)}
-				>
-					{state.cards.length} cards in hand
-				</Button>
-				<Button
-					icon={faAngleUp}
-					disabled={state.usedCards.length === 0 || !!placingTile}
-					onClick={() => setCardsOpened(true)}
-				>
-					{state.usedCards.length} cards on table
-				</Button>
+				<HandButton playing={isPlaying} />
+				<PlayedButton playing={isPlaying} />
 			</CardButtons>
 			{/*<div>{corporation?.name}</div>*/}
 			<Flexed>

@@ -2,7 +2,7 @@ import { colors } from '@/styles'
 import { Resource as Res } from '@shared/cards'
 import React, { useEffect, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
-import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
+import { ResourceIcon } from '../../../../ResourceIcon/ResourceIcon'
 import { useAnimatedNumber } from '@/utils/hooks'
 
 export const Resource = ({

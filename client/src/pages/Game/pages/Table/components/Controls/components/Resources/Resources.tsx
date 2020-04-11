@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Resource } from './Resource'
+import { Resource } from './components/Resource'
 import { PlayerGameState } from '@shared/index'
 
 export const Resources = ({ state }: { state: PlayerGameState }) => {
