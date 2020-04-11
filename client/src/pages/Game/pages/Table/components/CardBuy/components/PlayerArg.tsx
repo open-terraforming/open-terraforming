@@ -30,7 +30,9 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 		[gameState, playerState]
 	)
 
-	const [value, setValue] = useState(arg.optional ? -1 : possiblePlayers[0].id)
+	const [value, setValue] = useState(
+		arg.optional ? -1 : possiblePlayers[0]?.id || -1
+	)
 
 	const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const value = parseInt(e.target.value, 10)

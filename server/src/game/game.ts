@@ -12,7 +12,8 @@ import {
 	GameStateValue,
 	PlayerState,
 	PlayerStateValue,
-	ProgressMilestoneType
+	ProgressMilestoneType,
+	VictoryPointsSource
 } from '@shared/game'
 import { UpdateDeepPartial } from '@shared/index'
 import { ProgressMilestones } from '@shared/progress-milestones'
@@ -341,6 +342,13 @@ export class Game {
 
 		this.state.state = GameStateValue.Ended
 
+		this.players.forEach(p => {
+			p.state.victoryPoints.push({
+				source: VictoryPointsSource.Rating,
+				amount: p.state.terraformRating
+			})
+		})
+
 		this.state.competitions.forEach(({ type }) => {
 			const competition = Competitions[type]
 			const score = this.state.players.reduce((acc, p) => {
@@ -368,7 +376,11 @@ export class Game {
 								CompetitionType[type]
 							)
 						)
-						p.terraformRating += COMPETITIONS_REWARDS[index]
+						p.victoryPoints.push({
+							source: VictoryPointsSource.Awards,
+							amount: COMPETITIONS_REWARDS[index],
+							competition: type
+						})
 					})
 				})
 		})

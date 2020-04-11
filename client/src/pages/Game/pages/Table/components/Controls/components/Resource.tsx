@@ -3,6 +3,7 @@ import { Resource as Res } from '@shared/cards'
 import React, { useEffect, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
+import { useAnimatedNumber } from '@/utils/hooks'
 
 export const Resource = ({
 	name,
@@ -19,6 +20,8 @@ export const Resource = ({
 	const [lastProduction, setLastProduction] = useState(production)
 	const [valueDiff, setValueDiff] = useState(0)
 	const [productionDiff, setProductionDiff] = useState(0)
+	const valueDisplay = useAnimatedNumber(value, 500)
+	const productionDisplay = useAnimatedNumber(production, 500)
 
 	useEffect(() => {
 		const diff = value - lastValue
@@ -47,10 +50,10 @@ export const Resource = ({
 	return (
 		<Container diffAnim={productionDiff !== 0 || valueDiff !== 0}>
 			<Value title={name}>
-				{value} <ResourceIcon res={res} />
+				{valueDisplay} <ResourceIcon res={res} />
 			</Value>
 			<Production negative={production < 0}>
-				{production >= 0 ? `+${production}` : production}
+				{production >= 0 ? `+${productionDisplay}` : productionDisplay}
 			</Production>
 			{valueDiff !== 0 && (
 				<DiffAnim positive={valueDiff > 0}>

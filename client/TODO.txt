@@ -4,7 +4,6 @@ TODO:
 
 NICE TODO:
  - wait for people to reconnect
- - server - save & load state
 
 TODO
  * Media Group - will you only receive selected cards?
@@ -16,6 +15,5 @@ TODO
  * passive effects
    -> maybe the active effect could be part of the definition?
  * production phase display
- * better end game display
-
+   -> animations for resource changes of other players
 

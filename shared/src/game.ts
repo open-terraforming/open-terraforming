@@ -1,5 +1,5 @@
 import { PlacementState } from './placements'
-import { MilestoneType } from './milestones'
+import { MilestoneType, Milestones } from './milestones'
 import { CompetitionType } from './competitions'
 
 export enum GameStateValue {
@@ -221,6 +221,24 @@ export interface PlayerState {
 
 	/** Bonus for game progress changes */
 	progressConditionBonus: number
+
+	victoryPoints: VictoryPoints[]
+}
+
+export enum VictoryPointsSource {
+	Rating = 1,
+	Cards,
+	Milestones,
+	Awards,
+	Forests,
+	Cities
+}
+
+export type VictoryPoints = {
+	source: VictoryPointsSource
+	amount: number
+	competition?: CompetitionType
+	milestone?: MilestoneType
 }
 
 export type PlayerGameState = PlayerState

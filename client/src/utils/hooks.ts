@@ -228,3 +228,31 @@ export const useInterval = (callback: () => void, delay: number) => {
 		}
 	}, [delay])
 }
+
+export const useAnimatedNumber = (value: number, delay = 100) => {
+	const [lastValue, setLastValue] = useState(value)
+	const lastTime = useRef<number>()
+	const [display, setDisplay] = useState(value)
+
+	const update = () => {
+		const diff = lastTime.current
+			? new Date().getTime() - lastTime.current
+			: delay
+
+		if (diff < delay) {
+			setDisplay(Math.round(lastValue + ((value - lastValue) * diff) / delay))
+
+			window.requestAnimationFrame(update)
+		} else {
+			setDisplay(value)
+			setLastValue(value)
+		}
+	}
+
+	useEffect(() => {
+		lastTime.current = new Date().getTime()
+		update()
+	}, [value])
+
+	return display
+}

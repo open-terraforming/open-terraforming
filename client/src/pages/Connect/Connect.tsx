@@ -51,7 +51,7 @@ export const Connect = () => {
 				)
 			}
 		}
-	}, [apiState])
+	}, [apiState, gameState])
 
 	return (
 		<>

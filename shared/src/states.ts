@@ -66,5 +66,6 @@ export const initialPlayerState = (
 	progressConditionBonus: 0,
 	name: '<unknown>',
 	color: '#000',
-	session
+	session,
+	victoryPoints: []
 })

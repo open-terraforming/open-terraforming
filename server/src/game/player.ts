@@ -36,7 +36,8 @@ import {
 	PlayerState,
 	PlayerStateValue,
 	StandardProjectType,
-	UsedCardState
+	UsedCardState,
+	VictoryPointsSource
 } from '@shared/game'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, PlacementConditionsLookup } from '@shared/placements'
@@ -769,32 +770,53 @@ export class Player {
 			return acc
 		}, 0)
 
-		const tileVps = allCells(this.game.state).reduce((acc, cell) => {
-			if (cell.ownerId === this.id) {
-				switch (cell.content) {
-					case GridCellContent.Forest: {
-						return acc + 1
-					}
-					case GridCellContent.City: {
-						return (
-							acc +
-							adjacentCells(this.game.state, cell.x, cell.y).filter(
-								c => c.content === GridCellContent.Forest
-							).length
-						)
+		const tileVps = allCells(this.game.state).reduce(
+			(acc, cell) => {
+				if (cell.ownerId === this.id) {
+					switch (cell.content) {
+						case GridCellContent.Forest: {
+							acc.forests += 1
+							break
+						}
+						case GridCellContent.City: {
+							acc.cities += adjacentCells(
+								this.game.state,
+								cell.x,
+								cell.y
+							).filter(c => c.content === GridCellContent.Forest).length
+							break
+						}
 					}
 				}
-			}
-			return acc
-		}, 0)
+				return acc
+			},
+			{ forests: 0, cities: 0 }
+		)
 
-		const milestonesVps =
-			this.game.state.milestones.filter(m => m.playerId === this.state.id)
-				.length * MILESTONE_REWARD
+		this.game.state.milestones
+			.filter(m => m.playerId === this.state.id)
+			.forEach(m => {
+				this.state.victoryPoints.push({
+					source: VictoryPointsSource.Milestones,
+					amount: MILESTONE_REWARD,
+					milestone: m.type
+				})
+			})
 
-		this.state.terraformRating += cardVps
-		this.state.terraformRating += tileVps
-		this.state.terraformRating += milestonesVps
+		this.state.victoryPoints.push({
+			source: VictoryPointsSource.Cards,
+			amount: cardVps
+		})
+
+		this.state.victoryPoints.push({
+			source: VictoryPointsSource.Forests,
+			amount: tileVps.forests
+		})
+
+		this.state.victoryPoints.push({
+			source: VictoryPointsSource.Cities,
+			amount: tileVps.cities
+		})
 	}
 
 	buyStandardProject(projectType: StandardProjectType, cards: number[]) {
