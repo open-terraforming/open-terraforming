@@ -1,11 +1,13 @@
 import { GameState, PlayerState } from '@shared/index'
+import { keyMap } from '@shared/utils'
 
 type State = Readonly<typeof initialState>
 
 const initialState = {
 	playerId: undefined as number | undefined,
 	state: undefined as GameState | undefined,
-	player: undefined as PlayerState | undefined
+	player: undefined as PlayerState | undefined,
+	playerMap: {} as Record<number, PlayerState>
 }
 
 export default (state = initialState, action: Action): State => {
@@ -16,7 +18,8 @@ export default (state = initialState, action: Action): State => {
 			return {
 				...state,
 				state: action.state,
-				player
+				player,
+				playerMap: keyMap(action.state.players, 'id')
 			}
 		}
 

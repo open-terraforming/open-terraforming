@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
-import styled from 'styled-components'
 import { useAppStore } from '@/utils/hooks'
+import React from 'react'
 import { CenteredText } from './CenteredText'
 
 type Props = {
@@ -10,8 +9,7 @@ type Props = {
 
 export const PlayingChanged = ({ onDone, playing }: Props) => {
 	const playerId = useAppStore(state => state.game.playerId)
-	const game = useAppStore(state => state.game.state)
-	const playingPlayer = game?.players[playing]
+	const playingPlayer = useAppStore(state => state.game.state?.players[playing])
 	const yourTurn = playingPlayer?.id === playerId
 
 	return playingPlayer ? (

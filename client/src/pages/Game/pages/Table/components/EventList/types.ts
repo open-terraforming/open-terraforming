@@ -15,7 +15,9 @@ export enum EventType {
 	CorporationPicked,
 	RatingChanged,
 	CompetitionSponsored,
-	MilestoneBought
+	MilestoneBought,
+	PlayingChanged,
+	NewGeneration
 }
 
 export type CardPlayed = {
@@ -97,6 +99,15 @@ type MilestoneBought = {
 	playerId: number
 }
 
+type PlayingChanged = {
+	type: typeof EventType.PlayingChanged
+	playing: number
+}
+
+type NewGeneration = {
+	type: typeof EventType.NewGeneration
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -110,3 +121,7 @@ export type GameEvent =
 	| RatingChanged
 	| MilestoneBought
 	| CompetitionSponsored
+	| PlayingChanged
+	| NewGeneration
+
+export type PopEvent = PlayingChanged | NewGeneration

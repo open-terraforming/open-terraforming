@@ -10,10 +10,10 @@ import { lighten } from 'polished'
 import { CardModal } from './CardModal'
 import { Competitions } from '@shared/competitions'
 import { Milestones } from '@shared/milestones'
+import { useAppStore } from '@/utils/hooks'
 
 type Props = {
 	event: GameEvent
-	players: Record<number, PlayerState>
 	animated: boolean
 	onDone?: () => void
 }
@@ -37,7 +37,8 @@ const CardSpan = React.memo(({ card }: { card: string }) => {
 	)
 })
 
-export const EventLine = ({ event, players, animated, onDone }: Props) => {
+export const EventLine = ({ event, animated, onDone }: Props) => {
+	const players = useAppStore(state => state.game.playerMap)
 	const doneRef = useRef(onDone)
 	doneRef.current = onDone
 

@@ -5,7 +5,6 @@ import styled from 'styled-components'
 import { CardPicker } from './components/CardPicker/CardPicker'
 import { Controls } from './components/Controls/Controls'
 import { CorporationPicker } from './components/CorporationPicker/CorporationPicker'
-import { Events } from './components/Events/Events'
 import { GameMap } from './components/GameMap/GameMap'
 import { GlobalState } from './components/GlobalState/GlobalState'
 import { Players } from './components/Players/Players'
@@ -35,7 +34,6 @@ export const Table = () => {
 				<GlobalState />
 			</GameContainer>
 			<Controls />
-			<Events />
 		</TableContainer>
 	)
 }

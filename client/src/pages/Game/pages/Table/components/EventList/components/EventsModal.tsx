@@ -1,16 +1,14 @@
-import React from 'react'
 import { Modal } from '@/components/Modal/Modal'
+import React from 'react'
 import { GameEvent } from '../types'
 import { EventLine } from './EventLine'
-import { PlayerState } from '@shared/index'
 
 type Props = {
 	events: GameEvent[]
-	players: Record<number, PlayerState>
 	onClose: () => void
 }
 
-export const EventsModal = ({ onClose, events, players }: Props) => {
+export const EventsModal = ({ onClose, events }: Props) => {
 	return (
 		<Modal
 			open={true}
@@ -19,7 +17,7 @@ export const EventsModal = ({ onClose, events, players }: Props) => {
 			header="Events"
 		>
 			{[...events].reverse().map((e, i) => (
-				<EventLine key={i} event={e} players={players} animated={false} />
+				<EventLine key={i} event={e} animated={false} />
 			))}
 		</Modal>
 	)
