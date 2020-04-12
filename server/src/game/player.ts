@@ -123,36 +123,12 @@ export class Player {
 		this.game = game
 	}
 
-	setState(state: PlayerStateValue) {
-		switch (state) {
-			case PlayerStateValue.Ready: {
-				if (this.game.state.state === GameStateValue.WaitingForPlayers) {
-					this.state.state = state
-				} else {
-					throw new Error(
-						`Player cannot switch to Ready when game is at ${
-							GameStateValue[this.game.state.state]
-						}`
-					)
-				}
-
-				break
-			}
-
-			case PlayerStateValue.Waiting: {
-				if (this.game.state.state === GameStateValue.WaitingForPlayers) {
-					this.state.state = state
-				} else {
-					throw new Error(
-						`Player cannot switch to Waiting when game is at ${
-							GameStateValue[this.game.state.state]
-						}`
-					)
-				}
-
-				break
-			}
+	toggleReady(ready: boolean) {
+		if (this.game.state.state !== GameStateValue.WaitingForPlayers) {
+			throw new Error("You can't change your state when playing")
 		}
+
+		this.state.state = ready ? PlayerStateValue.Ready : PlayerStateValue.Waiting
 
 		this.updated()
 	}

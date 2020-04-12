@@ -14,7 +14,6 @@ import {
 	minimalCardPrice
 } from '@shared/cards/utils'
 import { CARD_PRICE } from '@shared/constants'
-import { Corporations } from '@shared/corporations'
 import { PlayerStateValue, UsedCardState } from '@shared/game'
 import { canPlace } from '@shared/placements'
 import { allCells } from '@shared/utils'
@@ -234,7 +233,7 @@ export class Bot extends Player {
 	doSomething() {
 		switch (this.state.state) {
 			case PlayerStateValue.Waiting: {
-				this.setState(PlayerStateValue.Ready)
+				this.toggleReady(true)
 				break
 			}
 

@@ -1,20 +1,19 @@
 import { Player } from '@/game/player'
 import { MyEvent } from '@/utils/events'
+import { Logger } from '@/utils/log'
 import {
 	GameMessage,
 	GameStateValue,
-	MessageType,
-	PlayerStateValue,
-	serverMessage,
-	VERSION,
-	joinResponse,
-	JoinError,
+	HandshakeError,
 	handshakeResponse,
-	HandshakeError
+	JoinError,
+	joinResponse,
+	MessageType,
+	serverMessage,
+	VERSION
 } from '@shared/index'
 import WebSocket from 'ws'
 import { Server } from './server'
-import { Logger } from '@/utils/log'
 
 enum ClientState {
 	Initializing,
@@ -142,11 +141,7 @@ export class Client {
 			} else {
 				switch (message.type) {
 					case MessageType.PlayerReady: {
-						return this.player.setState(
-							message.data.ready
-								? PlayerStateValue.Ready
-								: PlayerStateValue.Waiting
-						)
+						return this.player.toggleReady(message.data.ready)
 					}
 
 					case MessageType.PickCorporation: {

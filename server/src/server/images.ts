@@ -31,16 +31,23 @@ export const cardsImagesMiddleware = () => {
 					}
 				)
 				while (data.length > 0) {
-					const image = await got(data.shift() as string, {
-						responseType: 'buffer'
-					})
+					try {
+						const image = await got(data.shift() as string, {
+							responseType: 'buffer'
+						})
 
-					if (image.body && image.headers['content-type']?.includes('image')) {
-						res
-							.contentType(image.headers['content-type'] || 'image/jpeg')
-							.send(image.body)
-						fs.writeFile(cacheFilename, image.body)
-						return
+						if (
+							image.body &&
+							image.headers['content-type']?.includes('image')
+						) {
+							res
+								.contentType(image.headers['content-type'] || 'image/jpeg')
+								.send(image.body)
+							fs.writeFile(cacheFilename, image.body)
+							return
+						}
+					} catch (e) {
+						console.log('Failed to fetch image')
 					}
 				}
 
