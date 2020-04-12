@@ -72,7 +72,8 @@ export const CardDisplay = <T extends CardInfo>({
 				[CardType.Action, 'With Action'] as const,
 				[CardType.Effect, 'Effects'] as const,
 				[CardType.Building, 'Automated'] as const,
-				[CardType.Event, 'Events'] as const
+				[CardType.Event, 'Events'] as const,
+				[CardType.Corporation, 'Corporation'] as const
 			]
 				.map(
 					([c, title]) =>

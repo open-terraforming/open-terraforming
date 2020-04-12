@@ -122,7 +122,12 @@ export const CardView = ({
 							{card.type === CardType.Action ? 'Action' : 'Effect'}
 						</ActionTitle>
 						{card.actionEffects.map((e, i) => (
-							<PlayEffect key={i} effect={e} ctx={condContext} />
+							<PlayEffect
+								key={i}
+								effect={e}
+								ctx={condContext}
+								evaluate={evaluate}
+							/>
 						))}
 						{card.passiveEffects
 							.map(e => e.description)
@@ -136,7 +141,12 @@ export const CardView = ({
 					<Condition key={i} cond={c} ctx={condContext} />
 				))}
 				{card.playEffects.map((e, i) => (
-					<PlayEffect key={i} effect={e} ctx={condContext} />
+					<PlayEffect
+						key={i}
+						effect={e}
+						ctx={condContext}
+						evaluate={evaluate}
+					/>
 				))}
 				{description.map((d, i) => (
 					<div key={i}>{d}</div>

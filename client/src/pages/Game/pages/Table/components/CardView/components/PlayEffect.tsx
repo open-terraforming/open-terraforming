@@ -5,11 +5,14 @@ import { CardCallbackContext, CardEffect } from '@shared/cards'
 type Props = {
 	effect: CardEffect
 	ctx: CardCallbackContext
+	evaluate: boolean
 }
 
-export const PlayEffect = ({ effect, ctx }: Props) => {
+export const PlayEffect = ({ effect, ctx, evaluate }: Props) => {
 	return (
-		<Container fine={effect.conditions.every(c => c.evaluate(ctx))}>
+		<Container
+			fine={!evaluate || effect.conditions.every(c => c.evaluate(ctx))}
+		>
 			{effect.description}
 		</Container>
 	)
