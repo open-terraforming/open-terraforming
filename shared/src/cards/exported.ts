@@ -87,7 +87,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 13,
 		categories: [CardCategory.Jupiter],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		conditions: [productionCondition('titan', 1)],
 		playEffects: [
@@ -137,7 +137,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 9,
 		categories: [CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		actionEffects: [pickTopCards(1)]
 	}),
 	card({
@@ -213,7 +213,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 27,
 		categories: [CardCategory.Space, CardCategory.Building],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 2,
 		playEffects: [productionChange('titan', 1)],
 		actionEffects: [convertResource('ore', 1, 'money', 5)]
@@ -224,7 +224,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		actionEffects: [cardsForResource('energy', 1, 1)]
 	}),
 	card({
@@ -301,7 +301,7 @@ export const BuiltCards: Card[] = [
 			CardCategory.City,
 			CardCategory.Science
 		],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			cardPriceChange(-1),
 			placeTile({
@@ -366,7 +366,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 10,
 		categories: [CardCategory.Space],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [spaceCardPriceChange(-2)],
 		victoryPoints: 1
 	}),
@@ -390,7 +390,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 24,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 4,
 		conditions: [cardCountCondition(CardCategory.Science, 5)]
 	}),
@@ -400,7 +400,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 12,
 		categories: [CardCategory.Space],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		resource: 'fighters',
 		actionEffects: [
 			resourceChange('titan', -1),
@@ -619,7 +619,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Power],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		conditions: [cardCountCondition(CardCategory.Science, 3)],
 		playEffects: [productionChange('energy', 1), productionChange('money', 1)]
@@ -647,7 +647,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 4,
 		categories: [CardCategory.Microbe],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		resource: 'microbes',
 		actionEffects: [cardResourceChange('microbes', 1)],
 		victoryPointsCallback: vpsForCardResources('microbes', 1 / 4)
@@ -658,7 +658,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 1,
 		categories: [CardCategory.Event, CardCategory.Microbe],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			effectChoice([
 				playerResourceChange('plants', -5),
@@ -672,7 +672,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		playEffects: [productionChangeForTags('money', 1, CardCategory.Earth)]
 	}),
@@ -733,7 +733,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 4,
 		categories: [CardCategory.Building],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionChange('ore', 1)]
 	}),
 	card({
@@ -742,7 +742,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 15,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		playEffects: [productionChange('titan', 1)]
 	}),
@@ -787,7 +787,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 6,
 		categories: [],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [playerProductionChange('ore', -1), productionChange('ore', 1)]
 	}),
 	card({
@@ -796,7 +796,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 5,
 		categories: [CardCategory.Event],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [resourceChange('ore', 5)]
 	}),
 	card({
@@ -817,7 +817,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 4,
 		categories: [CardCategory.Building],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Other,
@@ -833,7 +833,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Building],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionChange('energy', -1), productionChange('ore', 2)]
 	}),
 	/*
@@ -867,7 +867,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionChange('money', 2)]
 	}),
 	card({
@@ -876,7 +876,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 17,
 		categories: [CardCategory.Building],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMax('oxygen', 8)],
 		playEffects: [productionChange('energy', -1)],
@@ -893,7 +893,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 23,
 		categories: [CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 2,
 		playEffects: [cardPriceChange(-2)]
 	}),
@@ -903,7 +903,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 9,
 		categories: [CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [orePriceChange(1), titanPriceChange(1)]
 	}),
 	card({
@@ -924,7 +924,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 8,
 		categories: [CardCategory.Building, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		actionEffects: [effectChoice([doNothing(), cardExchange()])],
 		passiveEffects: [cardExchangeEffect(CardCategory.Science)]
@@ -935,7 +935,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 9,
 		categories: [CardCategory.Microbe, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		actionEffects: [
 			effectChoice([resourceChange('plants', 1), triggerCardResourceChange(1)])
 		],
@@ -992,7 +992,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 13,
 		categories: [CardCategory.Power, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		conditions: [cardCountCondition(CardCategory.Science, 4)],
 		playEffects: [productionChange('energy', 4), spaceCardPriceChange(-2)]
 	}),
@@ -1029,7 +1029,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 24,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionChange('money', 3)],
 		victoryPoints: 2
 	}),
@@ -1047,7 +1047,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Space, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1
 	}),
 	card({
@@ -1056,7 +1056,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 16,
 		categories: [CardCategory.Building],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			productionChange('energy', -1),
 			productionChange('money', 4),
@@ -1073,7 +1073,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 9,
 		categories: [CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [duplicateProduction(CardCategory.Building)]
 	}),
 	card({
@@ -1117,7 +1117,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 2,
 		conditions: [cardCountCondition(CardCategory.Science, 3)],
 		playEffects: [productionChange('money', 2)]
@@ -1128,7 +1128,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 41,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionChange('titan', 2), productionChange('money', 2)],
 		victoryPointsCallback: vpsForCards(CardCategory.Jupiter, 1)
 	}),
@@ -1147,7 +1147,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 8,
 		categories: [CardCategory.Power, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		conditions: [cardCountCondition(CardCategory.Science, 5)],
 		playEffects: [spaceCardPriceChange(-2), productionChange('energy', 6)]
 	}),
@@ -1157,7 +1157,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 12,
 		categories: [CardCategory.Building, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		resource: 'science',
 		actionEffects: [
 			resourceChange('energy', -6),
@@ -1194,7 +1194,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 13,
 		categories: [CardCategory.Building],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 2,
 		playEffects: [productionChange('heat', -2), productionChange('money', 3)]
 	}),
@@ -1204,7 +1204,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Space],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionForPlayersTags(CardCategory.Space, 'money', 1)]
 	}),
 	card({
@@ -1265,7 +1265,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 1,
 		categories: [CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [earthCardPriceChange(-3)]
 	}),
 	card({
@@ -1274,7 +1274,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 10,
 		categories: [CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionChange('money', 3)]
 	}),
 	card({
@@ -1283,7 +1283,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [resourcesForPlayersTags(CardCategory.Event, 'money', 1)]
 	}),
 	card({
@@ -1307,7 +1307,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 6,
 		categories: [CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		passiveEffects: [resourcePerCardPlayed([CardCategory.Event], 'money', 3)]
 	}),
 	card({
@@ -1316,7 +1316,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 4,
 		categories: [CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionChange('money', -1)],
 		actionEffects: [pickTopCards(1)]
 	}),
@@ -1326,7 +1326,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		conditions: [gameProgressConditionMin('temperature', 4 / 2)],
 		playEffects: [pickTopCards(4, 2, true)]
 	}),
@@ -1336,7 +1336,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: -2,
 		playEffects: [terraformRatingChange(2)]
 	}),
@@ -1438,7 +1438,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 1,
 		categories: [CardCategory.Event],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			effectChoice([
 				playerResourceChange('titan', -3),
@@ -1462,7 +1462,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 4,
 		categories: [CardCategory.Building],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Other,
@@ -1478,7 +1478,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 1,
 		categories: [CardCategory.Event],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			effectChoice([
 				joinedEffects([
@@ -1498,7 +1498,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 3,
 		categories: [],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: -1,
 		playEffects: [
 			productionChange('energy', -1),
@@ -1647,7 +1647,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			productionChange('money', 1),
 			productionForTags(CardCategory.Event, 'money', 1)
@@ -1740,7 +1740,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 7,
 		categories: [CardCategory.Building],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionChange('titan', 1)]
 	}),
 	card({
@@ -1793,7 +1793,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 1,
 		categories: [CardCategory.Event],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [addResourceToCard()]
 	}),
 	card({
@@ -1802,7 +1802,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 14,
 		categories: [CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 3,
 		conditions: [cardCountCondition(CardCategory.Science, 7)],
 		playEffects: [cardPriceChange(-2)]
@@ -1813,7 +1813,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 3,
 		categories: [CardCategory.Event, CardCategory.Earth],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionChange('money', -1), resourceChange('money', 10)]
 	}),
 	card({
@@ -1839,7 +1839,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 3,
 		categories: [],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		conditions: [gameProgressConditionMin('temperature', 0 / 2)],
 		actionEffects: [resourceChange('heat', -8), terraformRatingChange(1)]
 	}),
@@ -1858,7 +1858,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Effect,
 		cost: 6,
 		categories: [CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		passiveEffects: [resourceForStandardProject('money', 3)]
 	}),
 	card({
@@ -1902,7 +1902,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 5,
 		categories: [CardCategory.Power],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			playerProductionChange('energy', -1),
 			productionChange('energy', 1)
@@ -2071,7 +2071,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 10,
 		categories: [CardCategory.Space],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionForTags(CardCategory.Space, 'money', 1)]
 	}),
 	card({
@@ -2123,7 +2123,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Building],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			productionChange('energy', -1),
 			productionChange('titan', 1),
@@ -2145,7 +2145,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.City],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: -2,
 		playEffects: [
 			productionChange('energy', -1),
@@ -2187,7 +2187,7 @@ export const BuiltCards: Card[] = [
 			CardCategory.Earth,
 			CardCategory.Science
 		],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		actionEffects: [
 			effectChoice([
@@ -2203,7 +2203,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 6,
 		categories: [],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMin('temperature', 2 / 2)],
 		playEffects: [productionChange('money', 1)]
@@ -2264,7 +2264,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 2,
 		categories: [CardCategory.Event, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		conditions: [gameProgressConditionMin('temperature', 3 / 2)],
 		playEffects: [pickTopCards(3, 1, true)]
 	}),
@@ -2283,7 +2283,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 4,
 		categories: [CardCategory.Building, CardCategory.Power],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		actionEffects: [exchangeResources('energy', 'money')]
 	}),
 	card({
@@ -2292,7 +2292,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 0,
 		categories: [CardCategory.Event],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: -1,
 		playEffects: [noDesc(cardPriceChange(-8))],
 		passiveEffects: [resetCardPriceChange(-8)]
@@ -2303,7 +2303,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 9,
 		categories: [CardCategory.Space, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		playEffects: [getTopCards(1)]
 	}),
@@ -2313,7 +2313,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 33,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 2,
 		playEffects: [
 			terraformRatingChange(1),
@@ -2335,7 +2335,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 11,
 		categories: [CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Other,
@@ -2363,7 +2363,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 3,
 		categories: [CardCategory.Power],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: -1,
 		playEffects: [
 			playerProductionChange('energy', -1),
@@ -2392,7 +2392,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Event,
 		cost: 5,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		playEffects: [getTopCards(2)]
 	}),
 	card({
@@ -2418,7 +2418,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Building,
 		cost: 13,
 		categories: [CardCategory.Building, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		playEffects: [productionForTags(CardCategory.Building, 'money', 1 / 2)]
 	}),
@@ -2428,7 +2428,7 @@ export const BuiltCards: Card[] = [
 		type: CardType.Action,
 		cost: 21,
 		categories: [CardCategory.Building, CardCategory.Science],
-		special: [CardSpecial.AgeOfCorporations],
+		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
 		conditions: [cardCountCondition(CardCategory.Science, 3)],
 		playEffects: [productionChange('energy', -1)],

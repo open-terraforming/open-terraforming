@@ -1,6 +1,6 @@
-import { GameMode } from './types'
+import { GameMode, GameModeType } from './types'
 import { GameState, PlayerStateValue } from '../game'
-import { Card } from '../cards'
+import { Card, CardSpecial } from '../cards'
 import { shuffle, range } from '../utils'
 import { Corporations } from '../corporations'
 
@@ -11,7 +11,9 @@ export const prepareCorporations = (game: GameState, amount = 2) => {
 	const nextCorp = () => {
 		if (corporations.length === 0) {
 			corporations = shuffle(
-				Corporations.slice().filter(c => c.code !== 'starting_corporation')
+				Corporations.slice().filter(
+					c => !c.special.includes(CardSpecial.StartingCorporation)
+				)
 			)
 		}
 
@@ -23,3 +25,8 @@ export const prepareCorporations = (game: GameState, amount = 2) => {
 		p.state = PlayerStateValue.PickingCorporation
 	})
 }
+
+export const strToMode = {
+	standard: GameModeType.Standard,
+	beginner: GameModeType.Beginner
+} as const

@@ -3,8 +3,9 @@ import { gameMode, prepareCorporations } from '../utils'
 
 export const StandardMode = gameMode({
 	type: GameModeType.Standard,
-	description: 'Standard rules',
-	name: 'Standard game',
+	description:
+		'Everybody starts with 0 production of everything, extended set of cards is available.',
+	name: 'Standard rules',
 	onGameStart: game => {
 		prepareCorporations(game)
 	}

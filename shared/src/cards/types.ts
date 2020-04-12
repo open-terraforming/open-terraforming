@@ -67,7 +67,7 @@ export enum CardType {
 }
 
 export enum CardSpecial {
-	AgeOfCorporations = 1,
+	CorporationsEra = 1,
 	StartingCorporation
 }
 

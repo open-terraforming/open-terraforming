@@ -1,31 +1,25 @@
-import express from 'express'
-import { join } from 'path'
-import WebSocket from 'ws'
-import { createServer } from 'http'
-import { Server } from './server/server'
-import yargs from 'yargs'
-import { cardsImagesMiddleware } from './server/images'
-import bodyParser from 'body-parser'
-import picker from './server/picker'
+import { strToMode } from '@shared/modes/utils'
 import { promises as fs } from 'fs'
+import yargs from 'yargs'
 import { cachePath } from './config'
+import { multiApp } from './modes/multi'
+import { singleApp } from './modes/single'
+import picker from './server/picker'
+import { ServerOptions } from './server/types'
 import { Logger } from './utils/log'
-import { GameModeType } from '@shared/modes/types'
-
-const modeToMode = {
-	standard: GameModeType.Standard,
-	beginner: GameModeType.Beginner
-} as const
 
 async function main() {
 	const logger = new Logger('Main')
 
-	const app = express()
-	const wsServer = new WebSocket.Server({ noServer: true })
-
 	const argv = yargs
 		.scriptName('card-game-server')
 		.command('', 'Starts the server')
+		.option('single', {
+			type: 'boolean',
+			alias: 's',
+			default: false,
+			description: 'Start server in single-game mode'
+		})
 		.option('port', {
 			type: 'number',
 			alias: 'p',
@@ -33,7 +27,7 @@ async function main() {
 		})
 		.option('mode', {
 			type: 'string',
-			enum: Object.keys(modeToMode),
+			enum: Object.keys(strToMode),
 			alias: 'm',
 			default: 'standard'
 		})
@@ -42,11 +36,16 @@ async function main() {
 			description: 'Load game saved state from file',
 			alias: 'l'
 		})
-		.options('bots', {
+		.option('bots', {
 			type: 'number',
 			description: 'Number of bots',
 			alias: 'b',
 			default: 0
+		})
+		.option('slots', {
+			type: 'number',
+			description: 'Number of server slots',
+			default: 20
 		}).argv
 
 	try {
@@ -55,41 +54,36 @@ async function main() {
 		logger.error('Failed to create cache path', e)
 	}
 
-	const server = createServer(app)
-	server.on('upgrade', (request, socket, head) => {
-		wsServer.handleUpgrade(request, socket, head, ws => {
-			wsServer.emit('connection', ws, request)
-		})
-	})
-
-	const mode = modeToMode[argv.mode as keyof typeof modeToMode]
+	const mode = strToMode[argv.mode as keyof typeof strToMode]
 	if (!mode) {
 		throw new Error(`Unknown mode ${argv.mode}`)
 	}
 
-	const gameServer = new Server(wsServer, {
-		bots: argv.bots,
-		mode
-	})
-	if (argv.load) {
-		try {
-			gameServer.load(JSON.parse((await fs.readFile(argv.load)).toString()))
-			logger.log(`Loaded game state from ${argv.load}`)
-		} catch (e) {
-			throw new Error('Failed to load game state from file')
-		}
+	const serverConfig: ServerOptions = {
+		maxServers: argv.single ? 1 : argv.slots,
+		port: argv.port,
+		singleGame: argv.single
 	}
 
-	app.use(express.static(join(__dirname, '..', 'static')))
-	app.use(bodyParser.urlencoded({ extended: true }))
-	app.use(bodyParser.json())
-	app.use(bodyParser.raw())
-	app.use(cardsImagesMiddleware())
-	app.use(picker())
+	if (argv.single) {
+		const { app, game } = singleApp(serverConfig, {
+			bots: argv.bots,
+			mode: mode
+		})
 
-	server.listen(argv.port, () => {
-		logger.log('Listening on', argv.port)
-	})
+		if (argv.load) {
+			try {
+				game.load(JSON.parse((await fs.readFile(argv.load)).toString()))
+				logger.log(`Loaded game state from ${argv.load}`)
+			} catch (e) {
+				throw new Error('Failed to load game state from file')
+			}
+		}
+
+		app.use(picker())
+	} else {
+		multiApp(serverConfig)
+	}
 }
 
 main().catch(e => {

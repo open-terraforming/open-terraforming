@@ -1,7 +1,7 @@
-import { PlacementState } from './placements'
-import { MilestoneType, Milestones } from './milestones'
 import { CompetitionType } from './competitions'
+import { MilestoneType } from './milestones'
 import { GameModeType } from './modes/types'
+import { PlacementState } from './placements'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
@@ -38,6 +38,10 @@ export enum PlayerStateValue {
 }
 
 export interface GameState {
+	id: string
+
+	name: string
+
 	state: GameStateValue
 
 	mode: GameModeType
@@ -64,6 +68,8 @@ export interface GameState {
 
 	/** ISO Date of game start */
 	started: string
+
+	maxPlayers: number
 }
 
 export interface MilestoneState {

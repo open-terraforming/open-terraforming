@@ -28,18 +28,21 @@ import {
 	ProjectBought,
 	TilePlacedEvent
 } from './player'
+import { GameInfo } from '@shared/extra'
+import { v4 as uuidv4 } from 'uuid'
 
 export interface GameConfig {
 	bots: number
 	adminPassword: string
 	mode: GameModeType
+	name: string
 }
 export class Game {
 	logger = new Logger('Game')
 
 	config: GameConfig
 
-	state = initialGameState()
+	state = initialGameState(uuidv4())
 
 	players: Player[] = []
 
@@ -50,9 +53,11 @@ export class Game {
 			bots: 0,
 			adminPassword: randomPassword(10),
 			mode: GameModeType.Standard,
+			name: 'Standard game',
 			...config
 		}
 
+		this.state.name = this.config.name
 		this.state.mode = this.config.mode
 	}
 
@@ -451,5 +456,16 @@ export class Game {
 	adminChange(data: UpdateDeepPartial<GameState>) {
 		deepExtend(this.state, data)
 		this.updated()
+	}
+
+	info(): GameInfo {
+		return {
+			id: this.state.id,
+			mode: this.state.mode,
+			state: this.state.state,
+			name: this.state.name,
+			players: this.players.length,
+			maxPlayers: this.state.maxPlayers
+		}
 	}
 }

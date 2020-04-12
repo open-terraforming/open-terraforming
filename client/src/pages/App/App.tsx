@@ -10,6 +10,7 @@ import { setClientState } from '@/store/modules/client'
 import background from '@/assets/stars.jpg'
 import { mainColors } from '@/styles'
 import { ApiState } from '@/store/modules/api'
+import { Main } from '../Main/Main'
 
 export const App = () => {
 	const dispatch = useAppDispatch()
@@ -28,7 +29,10 @@ export const App = () => {
 	return (
 		<AppContainer>
 			<GlobalStyle />
-			{apiState !== ApiState.Joined && <Connect />}
+			{apiState === ApiState.Ready && <Main />}
+			{apiState !== ApiState.Ready && apiState !== ApiState.Joined && (
+				<Connect />
+			)}
 			{apiState === ApiState.Joined && <Game />}
 
 			<ApiErrorMessage />

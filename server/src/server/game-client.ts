@@ -13,7 +13,7 @@ import {
 	VERSION
 } from '@shared/index'
 import WebSocket from 'ws'
-import { Server } from './server'
+import { GameServer } from './game-server'
 
 enum ClientState {
 	Initializing,
@@ -22,10 +22,12 @@ enum ClientState {
 
 export class Client {
 	get logger() {
-		return new Logger(this.player ? `Client(${this.player.name})` : 'Client')
+		return new Logger(
+			this.player ? `GameClient(${this.player.name})` : 'GameClient'
+		)
 	}
 
-	server: Server
+	server: GameServer
 	socket: WebSocket
 	state: ClientState
 
@@ -37,7 +39,7 @@ export class Client {
 		return this.server.game
 	}
 
-	constructor(server: Server, socket: WebSocket) {
+	constructor(server: GameServer, socket: WebSocket) {
 		this.server = server
 		this.state = ClientState.Initializing
 

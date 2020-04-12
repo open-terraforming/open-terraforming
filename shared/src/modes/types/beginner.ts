@@ -7,7 +7,7 @@ export const BeginnerMode = gameMode({
 	type: GameModeType.Beginner,
 	name: 'Beginner mode',
 	description:
-		'Only starting corporation is available, everybody starts with 1 production of every resource.',
+		'Starting corporation is available, everybody starts with 1 production of every resource and the cards selection is limited.',
 	onGameStart: game => {
 		const startingCorp = Corporations.find(c =>
 			c.special.includes(CardSpecial.StartingCorporation)
@@ -29,5 +29,5 @@ export const BeginnerMode = gameMode({
 		})
 	},
 	filterCards: cards =>
-		cards.filter(c => !c.special.includes(CardSpecial.AgeOfCorporations))
+		cards.filter(c => !c.special.includes(CardSpecial.CorporationsEra))
 })

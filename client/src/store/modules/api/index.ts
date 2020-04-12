@@ -1,7 +1,8 @@
 type State = Readonly<typeof initialState>
 
 export enum ApiState {
-	Connecting = 1,
+	Ready = 1,
+	Connecting,
 	Connected,
 	Joined,
 	Error
@@ -9,7 +10,8 @@ export enum ApiState {
 
 const initialState = {
 	error: null as string | null,
-	state: ApiState.Connecting
+	gameId: null as string | null,
+	state: ApiState.Ready
 }
 
 export default (state = initialState, action: Actions): State => {

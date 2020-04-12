@@ -275,7 +275,7 @@ export const Corporations = [
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 60), earthCardPriceChange(-3)],
-			special: [CardSpecial.AgeOfCorporations]
+			special: [CardSpecial.CorporationsEra]
 		})
 	),
 	corp(
@@ -303,7 +303,7 @@ export const Corporations = [
 					}
 				})
 			],
-			special: [CardSpecial.AgeOfCorporations]
+			special: [CardSpecial.CorporationsEra]
 		})
 	)
 ]

@@ -11,7 +11,7 @@ import {
 	MessageType,
 	VERSION
 } from '@shared/index'
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useContext, useMemo, useState, useRef, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 export const ApiContext = React.createContext<Client | null>(null)
@@ -23,135 +23,152 @@ export const ApiContextProvider = ({
 }) => {
 	const dispatch = useDispatch()
 	const session = useAppStore(state => state.client.session)
+	const state = useAppStore(state => state.api.state)
+	const gameId = useAppStore(state => state.api.gameId)
 	const [reconnectCount, setReconnectCount] = useState(0)
+	const [client, setClient] = useState(null as Client | null)
 
-	const client = useMemo(() => {
-		const client = new Client(
-			'ws://' + (process.env.APP_API_URL || window.location.host)
-		)
+	useEffect(() => {
+		if (state === ApiState.Connecting) {
+			if (client) {
+				client.disconnect()
+			}
 
-		return client
-	}, [])
-
-	client.onOpen = () => {
-		client.send(handshakeRequest(VERSION))
-	}
-
-	client.onClose = () => {
-		if (reconnectCount < 5) {
-			dispatch(
-				setApiState({
-					state: ApiState.Connecting
-				})
-			)
-
-			setReconnectCount(reconnectCount + 1)
-
-			setTimeout(() => {
-				client.reconnect()
-			}, 100 + reconnectCount * 300)
-		} else {
-			dispatch(
-				setApiState({
-					state: ApiState.Error
-				})
+			setClient(
+				new Client(
+					'ws://' +
+						(process.env.APP_API_URL || window.location.host) +
+						(gameId ? '/game/' + gameId + '/socket' : '')
+				)
 			)
 		}
-	}
+	}, [state, gameId])
 
-	client.onMessage = m => {
-		switch (m.type) {
-			case MessageType.HandshakeResponse: {
-				const { error, state } = m.data
+	if (client) {
+		client.onOpen = () => {
+			client.send(handshakeRequest(VERSION))
+		}
 
-				if (error) {
-					dispatch(
-						setApiState({
-							state: ApiState.Error,
-							error
-						})
-					)
-				} else {
-					dispatch(
-						setApiState({
-							state: ApiState.Connected,
-							error: undefined
-						})
-					)
+		client.onClose = () => {
+			if (reconnectCount < 5) {
+				dispatch(
+					setApiState({
+						state: ApiState.Connecting
+					})
+				)
 
-					dispatch(
-						setClientState({
-							gameState: state
-						})
-					)
+				setReconnectCount(reconnectCount + 1)
 
-					if (state !== GameStateValue.WaitingForPlayers && session) {
-						client.send(joinRequest(undefined, session))
+				setTimeout(() => {
+					client.reconnect()
+				}, 100 + reconnectCount * 300)
+			} else {
+				dispatch(
+					setApiState({
+						state: ApiState.Error
+					})
+				)
+			}
+		}
+
+		client.onMessage = m => {
+			switch (m.type) {
+				case MessageType.HandshakeResponse: {
+					const { error, state } = m.data
+
+					if (error) {
+						dispatch(
+							setApiState({
+								state: ApiState.Error,
+								error
+							})
+						)
+					} else {
+						dispatch(
+							setApiState({
+								state: ApiState.Connected,
+								error: undefined
+							})
+						)
+
+						dispatch(
+							setClientState({
+								gameState: state
+							})
+						)
+
+						if (state !== GameStateValue.WaitingForPlayers && session) {
+							client.send(joinRequest(undefined, session))
+						}
 					}
+
+					break
 				}
 
-				break
-			}
+				case MessageType.JoinResponse: {
+					const { error, session, id } = m.data
 
-			case MessageType.JoinResponse: {
-				const { error, session, id } = m.data
+					if (error === JoinError.InvalidSession) {
+						dispatch(
+							setApiState({
+								error
+							})
+						)
 
-				if (error === JoinError.InvalidSession) {
-					dispatch(
-						setApiState({
-							error
-						})
-					)
+						dispatch(
+							setClientState({
+								session: undefined
+							})
+						)
+					}
 
-					dispatch(
-						setClientState({
-							session: undefined
-						})
-					)
+					if (error) {
+						dispatch(
+							setApiState({
+								state: ApiState.Connected,
+								error
+							})
+						)
+					} else {
+						localStorage['session'] = session
+						dispatch(setGamePlayer(id as number))
+
+						dispatch(
+							setClientState({
+								id,
+								session
+							})
+						)
+
+						dispatch(
+							setApiState({
+								state: ApiState.Joined,
+								error: undefined
+							})
+						)
+					}
+
+					break
 				}
 
-				if (error) {
-					dispatch(
-						setApiState({
-							state: ApiState.Connected,
-							error
-						})
-					)
-				} else {
-					localStorage['session'] = session
-					dispatch(setGamePlayer(id as number))
-
-					dispatch(
-						setClientState({
-							id,
-							session
-						})
-					)
-
-					dispatch(
-						setApiState({
-							state: ApiState.Joined,
-							error: undefined
-						})
-					)
+				case MessageType.ServerMessage: {
+					dispatch(setApiError(m.data.message))
+					break
 				}
 
-				break
-			}
-
-			case MessageType.ServerMessage: {
-				dispatch(setApiError(m.data.message))
-				break
-			}
-
-			case MessageType.GameStateUpdate: {
-				dispatch(setGameState(m.data))
-				break
+				case MessageType.GameStateUpdate: {
+					dispatch(setGameState(m.data))
+					break
+				}
 			}
 		}
 	}
 
-	return <ApiContext.Provider value={client}>{children}</ApiContext.Provider>
+	return (
+		<ApiContext.Provider value={client as Client}>
+			{children}
+		</ApiContext.Provider>
+	)
 }
 
 export const useApi = () => {
