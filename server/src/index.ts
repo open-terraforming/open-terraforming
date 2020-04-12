@@ -10,6 +10,12 @@ import picker from './server/picker'
 import { promises as fs } from 'fs'
 import { cachePath } from './config'
 import { Logger } from './utils/log'
+import { GameModeType } from '@shared/modes/types'
+
+const modeToMode = {
+	standard: GameModeType.Standard,
+	beginner: GameModeType.Beginner
+} as const
 
 async function main() {
 	const logger = new Logger('Main')
@@ -24,6 +30,12 @@ async function main() {
 			type: 'number',
 			alias: 'p',
 			default: 8090
+		})
+		.option('mode', {
+			type: 'string',
+			enum: Object.keys(modeToMode),
+			alias: 'm',
+			default: 'standard'
 		})
 		.option('load', {
 			type: 'string',
@@ -50,7 +62,15 @@ async function main() {
 		})
 	})
 
-	const gameServer = new Server(wsServer, argv.bots)
+	const mode = modeToMode[argv.mode as keyof typeof modeToMode]
+	if (!mode) {
+		throw new Error(`Unknown mode ${argv.mode}`)
+	}
+
+	const gameServer = new Server(wsServer, {
+		bots: argv.bots,
+		mode
+	})
 	if (argv.load) {
 		try {
 			gameServer.load(JSON.parse((await fs.readFile(argv.load)).toString()))

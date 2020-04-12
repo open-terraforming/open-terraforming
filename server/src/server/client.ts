@@ -179,7 +179,7 @@ export class Client {
 					}
 
 					case MessageType.AdminChange: {
-						if (this.player.admin) {
+						if (this.player.state.admin) {
 							return this.game.adminChange(message.data)
 						} else {
 							throw new Error("You aren't admin")

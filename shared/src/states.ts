@@ -2,10 +2,12 @@ import { GameState, GameStateValue, PlayerState, PlayerStateValue } from '.'
 import { defaultMap } from './map'
 import { shuffle } from './utils'
 import { CardsLookupApi, CardType } from './cards'
+import { GameModeType } from './modes/types'
 
 export const initialGameState = (): GameState => ({
 	state: GameStateValue.WaitingForPlayers,
 	generation: 1,
+	mode: GameModeType.Standard,
 	currentPlayer: 0,
 	startingPlayer: 0,
 	players: [],
@@ -15,11 +17,7 @@ export const initialGameState = (): GameState => ({
 	map: defaultMap(),
 	competitions: [],
 	milestones: [],
-	cards: shuffle(
-		Object.values(CardsLookupApi.data())
-			.filter(c => c.type !== CardType.Corporation)
-			.map(c => c.code)
-	),
+	cards: [],
 	discarded: [],
 	started: new Date().toISOString()
 })
@@ -31,6 +29,7 @@ export const initialPlayerState = (
 	connected: false,
 	id,
 	bot: false,
+	admin: false,
 	actionsPlayed: 0,
 	energy: 0,
 	energyProduction: 1,

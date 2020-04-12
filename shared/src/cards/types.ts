@@ -66,6 +66,11 @@ export enum CardType {
 	Corporation
 }
 
+export enum CardSpecial {
+	AgeOfCorporations = 1,
+	StartingCorporation
+}
+
 export interface CardVictoryPointsCallback {
 	description: string
 	compute: (ctx: CardCallbackContext) => number
@@ -79,6 +84,7 @@ export interface Card {
 	categories: CardCategory[]
 	cost: number
 	victoryPoints: number
+	special: CardSpecial[]
 
 	resource?: CardResource
 	resourceProtected?: boolean
@@ -91,8 +97,8 @@ export interface Card {
 	victoryPointsCallback?: CardVictoryPointsCallback
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CardCondition<
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	T extends (CardEffectArgumentType | undefined)[] = any
 > = {
 	description?: string

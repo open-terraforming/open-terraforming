@@ -1,15 +1,13 @@
 import { GameState, GridCell, GridCellContent, PlayerGameState } from '../game'
+import { withUnits } from '../units'
 import {
 	Card,
 	CardCallbackContext,
 	CardCategory,
 	CardType,
-	WithOptional,
 	Resource,
-	CardEffect,
-	CardPassiveEffect
+	WithOptional
 } from './types'
-import { withUnits } from '../units'
 
 export const resourceProduction = {
 	money: 'moneyProduction',
@@ -78,6 +76,7 @@ export const card = (
 		| 'actionEffects'
 		| 'victoryPoints'
 		| 'description'
+		| 'special'
 	>
 ) =>
 	({
@@ -86,6 +85,7 @@ export const card = (
 		passiveEffects: [],
 		playEffects: [],
 		actionEffects: [],
+		special: [],
 		description: '',
 		...c
 	} as Card)

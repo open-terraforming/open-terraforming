@@ -1,4 +1,4 @@
-import { Game } from '@/game/game'
+import { Game, GameConfig } from '@/game/game'
 import { GameState, gameStateUpdate } from '@shared/index'
 import WebSocket from 'ws'
 import { Client } from './client'
@@ -16,8 +16,8 @@ export class Server {
 
 	clients: Client[] = []
 
-	constructor(socket: WebSocket.Server, bots = 0) {
-		this.game = new Game({ bots })
+	constructor(socket: WebSocket.Server, config?: Partial<GameConfig>) {
+		this.game = new Game(config)
 		this.game.onStateUpdated.on(this.handleGameUpdate)
 
 		this.logger.log('Admin password', this.game.config.adminPassword)

@@ -3,7 +3,7 @@ import { nextColor } from '@/utils/colors'
 import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
 import { f } from '@/utils/string'
-import { CardsLookupApi } from '@shared/cards'
+import { CardsLookupApi, CardType } from '@shared/cards'
 import { Competitions, CompetitionType } from '@shared/competitions'
 import { COMPETITIONS_REWARDS } from '@shared/constants'
 import { Corporations } from '@shared/corporations'
@@ -16,6 +16,8 @@ import {
 	VictoryPointsSource
 } from '@shared/game'
 import { UpdateDeepPartial } from '@shared/index'
+import { GameModes } from '@shared/modes'
+import { GameModeType } from '@shared/modes/types'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
 import { MyEvent } from 'src/utils/events'
@@ -23,13 +25,14 @@ import { Bot } from './bot'
 import {
 	CardPlayedEvent,
 	Player,
-	TilePlacedEvent,
-	ProjectBought
+	ProjectBought,
+	TilePlacedEvent
 } from './player'
 
 export interface GameConfig {
 	bots: number
 	adminPassword: string
+	mode: GameModeType
 }
 export class Game {
 	logger = new Logger('Game')
@@ -46,8 +49,11 @@ export class Game {
 		this.config = {
 			bots: 0,
 			adminPassword: randomPassword(10),
+			mode: GameModeType.Standard,
 			...config
 		}
+
+		this.state.mode = this.config.mode
 	}
 
 	get inProgress() {
@@ -215,6 +221,10 @@ export class Game {
 		return this.state.players[this.state.currentPlayer]
 	}
 
+	get mode() {
+		return GameModes[this.state.mode]
+	}
+
 	startGame() {
 		this.logger.log(`Game starting`)
 
@@ -235,21 +245,22 @@ export class Game {
 			Math.random() * (this.players.length - 1)
 		)
 
-		const corporations = shuffle(
-			Corporations.slice().filter(c => c.code !== 'starting_corporation')
-		)
-
 		this.state.players.forEach(p => {
 			p.color = nextColor()
-			/*
-			p.cardsPick = [
-				'starting_corporation',
-				...corporations.splice(0, 3).map(c => c.code)
-			]
-			*/
-			p.cardsPick = corporations.map(c => c.code)
-			p.state = PlayerStateValue.PickingCorporation
 		})
+
+		let cards = Object.values(CardsLookupApi.data()).filter(
+			c => c.type !== CardType.Corporation
+		)
+		if (this.mode.filterCards) {
+			cards = this.mode.filterCards(cards)
+		}
+
+		this.state.cards = shuffle(cards.map(c => c.code))
+
+		if (this.mode.onGameStart) {
+			this.mode.onGameStart(this.state)
+		}
 	}
 
 	checkState() {

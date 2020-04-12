@@ -1,19 +1,28 @@
 TODO:
- - server - only send data, that should be visible to the player
- - shared - effects icons
-
-NICE TODO:
- - wait for people to reconnect
-
-TODO
- * Media Group - will you only receive selected cards?
+ * Multi-game support
+   -> game creation dialog
+   -> game personalization
+     -> game modes
+     -> game dlc
+   -> color picker
+   -> list of games
+ * only send data, that should be visible to the player
+ * only send changed data
  * Spectator mode
  * poke button
  * filter event log by player or text search
  * redesign right part of the bottom panel
- * game list
  * passive effects
    -> maybe the active effect could be part of the definition?
  * production phase display
    -> animations for resource changes of other players
 
+CHECK CARDS:
+ * pets
+ * media group - will you only receive selected cards?
+
+NICE TODO:
+ * wait for players to reconnect
+ * add effects icons to cards
+ * 3D mars
+ * admin panel

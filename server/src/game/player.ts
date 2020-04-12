@@ -69,7 +69,6 @@ export class Player {
 	logger = new Logger('Player')
 
 	state = initialPlayerState(Player.idCounter++, uuidv4())
-	admin = false
 
 	onStateChanged = new MyEvent<Readonly<PlayerState>>()
 	onCardPlayed = new MyEvent<Readonly<CardPlayedEvent>>()
@@ -906,6 +905,6 @@ export class Player {
 
 		this.logger.log('Logged in as admin')
 
-		this.admin = true
+		this.state.admin = true
 	}
 }

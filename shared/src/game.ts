@@ -1,6 +1,7 @@
 import { PlacementState } from './placements'
 import { MilestoneType, Milestones } from './milestones'
 import { CompetitionType } from './competitions'
+import { GameModeType } from './modes/types'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
@@ -38,6 +39,8 @@ export enum PlayerStateValue {
 
 export interface GameState {
 	state: GameStateValue
+
+	mode: GameModeType
 
 	generation: number
 	oxygen: number
@@ -158,6 +161,7 @@ export interface PlayerState {
 	session: string
 	connected: boolean
 	bot: boolean
+	admin: boolean
 
 	state: PlayerStateValue
 

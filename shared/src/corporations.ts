@@ -11,7 +11,7 @@ import {
 	titanPriceChange
 } from './cards/effects'
 import { passiveEffect } from './cards/passive-effects'
-import { Card, CardCategory, CardType } from './cards/types'
+import { Card, CardCategory, CardType, CardSpecial } from './cards/types'
 import {
 	card,
 	updatePlayerProduction,
@@ -39,7 +39,8 @@ export const Corporations = [
 			code: 'starting_corporation',
 			cost: 0,
 			type: CardType.Corporation,
-			playEffects: [resourceChange('money', 45), getTopCards(10)]
+			playEffects: [resourceChange('money', 45), getTopCards(10)],
+			special: [CardSpecial.StartingCorporation]
 		})
 	),
 	corp(
@@ -273,7 +274,8 @@ export const Corporations = [
 			title: 'Teractor',
 			cost: 0,
 			type: CardType.Corporation,
-			playEffects: [resourceChange('money', 60), earthCardPriceChange(-3)]
+			playEffects: [resourceChange('money', 60), earthCardPriceChange(-3)],
+			special: [CardSpecial.AgeOfCorporations]
 		})
 	),
 	corp(
@@ -300,7 +302,8 @@ export const Corporations = [
 						}
 					}
 				})
-			]
+			],
+			special: [CardSpecial.AgeOfCorporations]
 		})
 	)
 ]
