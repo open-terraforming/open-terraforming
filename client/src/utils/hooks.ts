@@ -269,3 +269,30 @@ export const useAnimatedNumber = (value: number, delay = 100) => {
 
 	return display
 }
+
+/**
+ * setInterval cleared up before unmount
+ * @param callback
+ * @param delay
+ */
+export const useAnimationFrame = (callback: () => void) => {
+	const savedCallback = useRef<() => void>()
+
+	// Remember the latest callback.
+	useEffect(() => {
+		savedCallback.current = callback
+	}, [callback])
+
+	// Set up the interval.
+	useEffect(() => {
+		const tick = () => {
+			if (savedCallback.current) {
+				savedCallback.current()
+			}
+
+			window.requestAnimationFrame(tick)
+		}
+
+		tick()
+	}, [])
+}

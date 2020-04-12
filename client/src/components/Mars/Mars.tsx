@@ -2,11 +2,22 @@ import background from '@/assets/mars-background.jpg'
 import React from 'react'
 import styled from 'styled-components'
 
-export const Mars = () => (
-	<Background>
-		<img src={background} />
-	</Background>
-)
+/*
+const ThreeMars = React.lazy(() => import('./components/ThreeMars'))
+*/
+
+export const Mars = () => {
+	return (
+		<Background>
+			{/*
+			<React.Suspense fallback={<img src={background} />}>
+				<ThreeMars />
+			</React.Suspense>
+			*/}
+			<img src={background} />
+		</Background>
+	)
+}
 
 const Background = styled.div`
 	position: absolute;
