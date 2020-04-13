@@ -1,11 +1,10 @@
 TODO:
  * Multi-game support
-   -> game creation dialog
-   -> game personalization
-     -> game modes
-     -> game dlc
-   -> color picker
-   -> list of games
+   -> add possibility to return to main menu in Connect
+   -> save sessions for specific servers
+   -> make sessions human-friendly (use HashIds?)
+   -> save suspended games to disk, load on demand
+ * Card draw effect
  * only send data, that should be visible to the player
  * only send changed data
  * Spectator mode
@@ -22,6 +21,8 @@ CHECK CARDS:
  * media group - will you only receive selected cards?
 
 NICE TODO:
+ * player color picker
+ * player emoticons
  * wait for players to reconnect
  * add effects icons to cards
  * 3D mars
