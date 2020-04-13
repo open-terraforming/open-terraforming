@@ -38,7 +38,6 @@ export const Message = ({ type = 'info', message, header }: Props) => {
 }
 
 const MessageContainer = styled.div`
-	box-shadow: 1px 1px 3px 0px #aaa;
 	margin: 5px 0px 15px 0px;
 
 	ul li {

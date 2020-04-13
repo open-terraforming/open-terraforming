@@ -81,11 +81,11 @@ export default {
 		transparent: {
 			background: 'none',
 			borderColor: 'transparent',
-			color: '#fff',
+			color: MainColor.text,
 			hover: {
 				background: 'none',
 				borderColor: 'transparent',
-				color: '#ccc'
+				color: darken(0.2, MainColor.text)
 			}
 		}
 	},

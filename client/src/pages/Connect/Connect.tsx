@@ -9,6 +9,11 @@ import { useDispatch } from 'react-redux'
 import { JoinGame } from './components/JoinGame'
 import { GameStateValue } from '@shared/game'
 import { JoinGameBySession } from './components/JoinGameBySession'
+import { faArrowLeft, faSync, faRedo } from '@fortawesome/free-solid-svg-icons'
+import { Flex } from '@/components/Flex/Flex'
+import styled from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { BackButton } from './components/BackButton'
 
 export const Connect = () => {
 	const api = useApi()
@@ -31,14 +36,26 @@ export const Connect = () => {
 	const content = useMemo(() => {
 		switch (apiState) {
 			case ApiState.Connecting: {
-				return 'Connecting...'
+				return (
+					<>
+						<Message>
+							<FontAwesomeIcon icon={faSync} spin /> Connecting...
+						</Message>
+						<BackButton />
+					</>
+				)
 			}
 
 			case ApiState.Error: {
 				return (
 					<>
-						<div>Connection failed</div>
-						<Button onClick={handleReconnect}>Reconnect</Button>
+						<Message>Connection failed</Message>
+						<Flex justify="space-between">
+							<BackButton />
+							<Button onClick={handleReconnect} icon={faRedo}>
+								Retry
+							</Button>
+						</Flex>
 					</>
 				)
 			}
@@ -62,3 +79,8 @@ export const Connect = () => {
 		</>
 	)
 }
+
+const Message = styled.div`
+	margin: 1rem 0 2rem 0;
+	min-width: 15rem;
+`

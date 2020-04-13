@@ -1,5 +1,6 @@
 TODO:
  * Multi-game support
+   -> handle errors on main screen
    -> add possibility to return to main menu in Connect
    -> save sessions for specific servers
    -> make sessions human-friendly (use HashIds?)

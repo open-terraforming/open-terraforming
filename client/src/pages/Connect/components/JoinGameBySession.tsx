@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Input } from '@/components/Input/Input'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { joinRequest } from '@shared/actions'
 import { useApi } from '@/context/ApiContext'
 import styled from 'styled-components'
 import { Button } from '@/components'
 import { useAppStore } from '@/utils/hooks'
+import { Flex } from '@/components/Flex/Flex'
+import { BackButton } from './BackButton'
 
 type Props = {}
 
@@ -36,14 +38,17 @@ export const JoinGameBySession = ({}: Props) => {
 				minLength={1}
 			/>
 
-			<ConnectButton
-				disabled={session.length < 1 || joining}
-				onClick={handleConnect}
-				isLoading={joining}
-				icon={faArrowRight}
-			>
-				Connect
-			</ConnectButton>
+			<Flex justify="space-between">
+				<BackButton />
+				<ConnectButton
+					disabled={session.length < 1 || joining}
+					onClick={handleConnect}
+					isLoading={joining}
+					icon={faArrowRight}
+				>
+					Connect
+				</ConnectButton>
+			</Flex>
 		</>
 	)
 }

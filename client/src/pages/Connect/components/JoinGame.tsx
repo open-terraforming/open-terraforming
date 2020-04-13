@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Input } from '@/components/Input/Input'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { joinRequest } from '@shared/actions'
 import { useApi } from '@/context/ApiContext'
 import styled from 'styled-components'
 import { Button } from '@/components'
 import { useAppStore } from '@/utils/hooks'
+import { Flex } from '@/components/Flex/Flex'
+import { BackButton } from './BackButton'
 
 type Props = {}
 
@@ -38,14 +40,18 @@ export const JoinGame = ({}: Props) => {
 				maxLength={10}
 			/>
 
-			<ConnectButton
-				disabled={name.length < 3 || name.length > 10 || joining}
-				onClick={handleConnect}
-				isLoading={joining}
-				icon={faArrowRight}
-			>
-				Connect
-			</ConnectButton>
+			<Flex justify="space-between">
+				<BackButton />
+
+				<ConnectButton
+					disabled={name.length < 3 || name.length > 10 || joining}
+					onClick={handleConnect}
+					isLoading={joining}
+					icon={faArrowRight}
+				>
+					Connect
+				</ConnectButton>
+			</Flex>
 		</>
 	)
 }

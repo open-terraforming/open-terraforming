@@ -17,6 +17,14 @@ const initialState = {
 export default (state = initialState, action: Actions): State => {
 	switch (action.type) {
 		case API_SET_STATE: {
+			if ('gameId' in action.state) {
+				window.history.pushState(
+					null,
+					'',
+					action.state.gameId === null ? '' : '#' + action.state.gameId
+				)
+			}
+
 			return {
 				...state,
 				...action.state

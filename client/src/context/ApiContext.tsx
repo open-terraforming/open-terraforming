@@ -29,13 +29,21 @@ export const ApiContextProvider = ({
 	const [client, setClient] = useState(null as Client | null)
 
 	useEffect(() => {
+		if (state === ApiState.Ready) {
+			if (client) {
+				client.onClose = undefined
+				client.onOpen = undefined
+				client.disconnect()
+
+				setClient(null)
+			}
+		}
+
 		if (state === ApiState.Connecting) {
 			if (client) {
+				client.onClose = undefined
+				client.onOpen = undefined
 				client.disconnect()
-			}
-
-			if (gameId) {
-				window.history.pushState(null, '', '#' + gameId)
 			}
 
 			setClient(
