@@ -6,15 +6,17 @@ import { PlacementState } from './placements'
 export enum GameStateValue {
 	/** Waiting for all players to connect */
 	WaitingForPlayers = 1,
-	/**  Players are picking companies */
+	/** Players are picking companies */
 	PickingCorporations,
 	/** Players are picking cards */
 	PickingCards,
-	/**  Players are picking their cards */
+	/** Players are picking their cards */
 	GenerationStart,
-	/**  Generation is in progress */
+	/** Generation is in progress */
 	GenerationInProgress,
-	/**  Game ended */
+	/** Players are placing finishing greeneries */
+	EndingTiles,
+	/** Game ended */
 	Ended
 }
 
@@ -33,6 +35,8 @@ export enum PlayerStateValue {
 	Playing,
 	/**  Passed his round */
 	Passed,
+	/** Placing finishing greeneries */
+	EndingTiles,
 	/**  Waiting for his turn */
 	WaitingForTurn
 }

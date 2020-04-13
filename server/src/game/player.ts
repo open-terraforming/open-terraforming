@@ -463,7 +463,7 @@ export class Player {
 	}
 
 	placeTile(x: number, y: number) {
-		if (!this.isPlaying) {
+		if (!this.isPlaying && this.state.state !== PlayerStateValue.EndingTiles) {
 			throw new Error('Player is not playing now')
 		}
 
@@ -570,8 +570,11 @@ export class Player {
 		this.checkTilePlacement()
 
 		if (this.state.placingTile.length === 0) {
-			this.state.state = PlayerStateValue.Playing
-			this.actionPlayed()
+			if (this.state.state === PlayerStateValue.EndingTiles) {
+				this.pass(true)
+			} else {
+				this.actionPlayed()
+			}
 		}
 
 		this.updated()
@@ -600,7 +603,7 @@ export class Player {
 	}
 
 	pass(force = false) {
-		if (!this.isPlaying) {
+		if (!this.isPlaying && this.state.state !== PlayerStateValue.EndingTiles) {
 			throw new Error("You're not playing")
 		}
 

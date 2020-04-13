@@ -18,6 +18,7 @@ import styled, { css } from 'styled-components'
 const stateToStr = {
 	[PlayerStateValue.Passed]: 'Passed',
 	[PlayerStateValue.Playing]: 'Playing',
+	[PlayerStateValue.EndingTiles]: 'Placing greeneries',
 	[PlayerStateValue.WaitingForTurn]: 'Waiting',
 	[PlayerStateValue.PickingCards]: 'Picking cards',
 	[PlayerStateValue.PickingCorporation]: 'Picking corporation',
@@ -29,6 +30,7 @@ const stateToStr = {
 const stateToIcon = {
 	[PlayerStateValue.Passed]: faCheck,
 	[PlayerStateValue.Playing]: faArrowRight,
+	[PlayerStateValue.EndingTiles]: faArrowRight,
 	[PlayerStateValue.WaitingForTurn]: faHourglassHalf,
 	[PlayerStateValue.PickingCards]: faUserClock,
 	[PlayerStateValue.PickingCorporation]: faUserClock,

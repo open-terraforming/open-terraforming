@@ -13,7 +13,8 @@ import {
 	PlayerState,
 	PlayerStateValue,
 	ProgressMilestoneType,
-	VictoryPointsSource
+	VictoryPointsSource,
+	GridCellContent
 } from '@shared/game'
 import { UpdateDeepPartial } from '@shared/index'
 import { GameModes } from '@shared/modes'
@@ -411,7 +412,11 @@ export class Game {
 
 	nextPlayer() {
 		if (this.all(PlayerStateValue.Passed)) {
-			this.endGeneration()
+			if (this.state.state === GameStateValue.EndingTiles) {
+				this.finishGame()
+			} else {
+				this.endGeneration()
+			}
 		} else {
 			do {
 				this.state.currentPlayer =
@@ -420,7 +425,10 @@ export class Game {
 
 			this.logger.log(f(`Next player: {0}`, this.currentPlayer.name))
 
-			this.currentPlayer.state = PlayerStateValue.Playing
+			this.currentPlayer.state =
+				this.state.state === GameStateValue.EndingTiles
+					? PlayerStateValue.EndingTiles
+					: PlayerStateValue.Playing
 			this.currentPlayer.actionsPlayed = 0
 		}
 	}
@@ -437,7 +445,18 @@ export class Game {
 			this.state.oxygen >= this.state.map.oxygen &&
 			this.state.temperature >= this.state.map.temperature
 		) {
-			this.finishGame()
+			this.state.state = GameStateValue.EndingTiles
+			this.players.forEach(p => {
+				p.state.state = PlayerStateValue.WaitingForTurn
+				p.state.placingTile = []
+				range(0, Math.floor(p.state.plants / p.state.greeneryCost)).forEach(
+					() => {
+						p.state.placingTile.push({ type: GridCellContent.Forest })
+						p.state.plants -= p.state.greeneryCost
+					}
+				)
+			})
+			this.nextPlayer()
 		} else {
 			this.players.forEach(p => {
 				p.state.state = PlayerStateValue.PickingCards
