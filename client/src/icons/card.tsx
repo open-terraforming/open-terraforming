@@ -17,9 +17,9 @@ export const cardIcon = {
 export const Card = styled.div`
 	display: inline-block;
 	background-color: #000;
-	border-radius: 0.25rem;
-	width: 1rem;
-	height: 1.4rem;
+	border-radius: 0.15em;
+	width: 1em;
+	height: 1.4em;
 	margin: 0 0.1rem;
 
 	background-image: url('${mars}');

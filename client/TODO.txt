@@ -1,7 +1,6 @@
 TODO:
  * Multi-game support
    -> save suspended games to disk, load on demand
- * Card draw effect
  * only send data, that should be visible to the player
  * only send changed data
  * Spectator mode
@@ -25,3 +24,5 @@ NICE TODO:
  * 3D mars
  * admin panel
  * refactor game state switching
+  -> the logic is somewhat divided between game and player objects
+  -> it's clear spaghetti code, hard to see all the dependencies and logic behind it
