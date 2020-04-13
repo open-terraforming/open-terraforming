@@ -11,7 +11,9 @@ export const getGames = (): Promise<GameInfo[]> =>
 
 export const createGame = (
 	name: string,
-	mode: GameModeType
+	mode: GameModeType,
+	bots: number,
+	isPublic: boolean
 ): Promise<GameInfo> =>
 	fetch(basePath + '/games', {
 		method: 'POST',
@@ -20,6 +22,8 @@ export const createGame = (
 		},
 		body: JSON.stringify({
 			name,
-			mode
+			mode,
+			bots,
+			public: isPublic
 		})
 	}).then(res => res.json())

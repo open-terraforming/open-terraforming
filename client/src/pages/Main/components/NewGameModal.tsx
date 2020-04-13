@@ -4,12 +4,14 @@ import { Input } from '@/components/Input/Input'
 import { Modal } from '@/components/Modal/Modal'
 import { ApiState, setApiState } from '@/store/modules/api'
 import { useAppDispatch } from '@/utils/hooks'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faTimes, faRobot } from '@fortawesome/free-solid-svg-icons'
 import { GameModes } from '@shared/modes'
 import { GameModeType } from '@shared/modes/types'
 import React, { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { colors } from '@/styles'
+import { NumberInput } from '@/components/NumberInput/NumberInput'
+import { Flex } from '@/components/Flex/Flex'
 
 type Props = {
 	onClose: () => void
@@ -19,8 +21,9 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const dispatch = useAppDispatch()
 	const [error, setError] = useState(null as string | null)
 	const [name, setName] = useState('')
-
 	const [mode, setMode] = useState(GameModeType.Standard)
+	const [isPublic, setPublic] = useState(true)
+	const [bots, setBots] = useState(0)
 
 	const [loading, setLoading] = useState(false)
 
@@ -44,7 +47,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 		setLoading(true)
 
 		try {
-			const res = await createGame(name, mode)
+			const res = await createGame(name, mode, bots, isPublic)
 
 			if (res.id) {
 				dispatch(
@@ -96,12 +99,34 @@ export const NewGameModal = ({ onClose }: Props) => {
 					</>
 				)}
 			>
-				<Input
-					placeholder="Game name..."
-					value={name}
-					onChange={v => setName(v)}
-					autoFocus
-				/>
+				<Flex>
+					<Field>
+						<label>Game name</label>
+						<Input value={name} onChange={v => setName(v)} autoFocus />
+					</Field>
+
+					<Field>
+						<label>Bots</label>
+						<NumberInput
+							min={0}
+							max={4}
+							value={bots}
+							onChange={v => setBots(v)}
+							icon={faRobot}
+						/>
+					</Field>
+				</Flex>
+
+				<Field>
+					<label>
+						<input
+							type="checkbox"
+							checked={isPublic}
+							onChange={e => setPublic(e.target.checked)}
+						/>{' '}
+						Allow players to join using server browser
+					</label>
+				</Field>
 
 				{Object.values(GameModes).map(item => (
 					<ModeCont
@@ -135,6 +160,7 @@ const ModeCont = styled.div<{ selected: boolean }>`
 	margin: 0.5rem 0;
 	padding: 0.5rem;
 	max-width: 30rem;
+	transition: background-color 0.2s;
 
 	${props =>
 		props.selected &&
@@ -150,6 +176,15 @@ const ModeHead = styled.div`
 
 	> div {
 		margin-left: 0.3rem;
+	}
+`
+
+const Field = styled.div`
+	padding: 0.5rem;
+	margin: 0.5rem 0;
+
+	label {
+		margin-bottom: 0.5rem;
 	}
 `
 

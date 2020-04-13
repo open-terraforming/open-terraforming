@@ -11,7 +11,7 @@ import {
 	MessageType,
 	VERSION
 } from '@shared/index'
-import React, { useContext, useMemo, useState, useRef, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 export const ApiContext = React.createContext<Client | null>(null)
@@ -32,6 +32,10 @@ export const ApiContextProvider = ({
 		if (state === ApiState.Connecting) {
 			if (client) {
 				client.disconnect()
+			}
+
+			if (gameId) {
+				window.history.pushState(null, '', '#' + gameId)
 			}
 
 			setClient(
@@ -109,11 +113,7 @@ export const ApiContextProvider = ({
 					const { error, session, id } = m.data
 
 					if (error === JoinError.InvalidSession) {
-						dispatch(
-							setApiState({
-								error
-							})
-						)
+						localStorage['session'] = undefined
 
 						dispatch(
 							setClientState({

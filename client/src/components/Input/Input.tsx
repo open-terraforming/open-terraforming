@@ -7,6 +7,7 @@ type Props = {
 	onChange: (v: string) => void
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'>
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Input = ({
 	value,
 	type = 'text',

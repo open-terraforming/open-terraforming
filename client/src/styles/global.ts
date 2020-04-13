@@ -50,6 +50,10 @@ select {
 	color: #eee;
 }
 
+input[type=checkbox] {
+	display: inline-block;
+}
+
 select option {
 	color: #000;
 }

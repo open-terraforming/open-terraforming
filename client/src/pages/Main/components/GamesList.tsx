@@ -8,9 +8,11 @@ import styled from 'styled-components'
 import { faArrowRight, faSync } from '@fortawesome/free-solid-svg-icons'
 import { NewGameModal } from './NewGameModal'
 
-type Props = {}
+type Props = {
+	allowCreate: boolean
+}
 
-export const GamesList = ({}: Props) => {
+export const GamesList = ({ allowCreate }: Props) => {
 	const dispatch = useAppDispatch()
 	const [loading, setLoading] = useState(false)
 	const [games, setGames] = useState([] as GameInfo[])
@@ -50,7 +52,17 @@ export const GamesList = ({}: Props) => {
 				<DialogWrapper
 					dialog={(opened, close) => opened && <NewGameModal onClose={close} />}
 				>
-					{open => <Button onClick={open}>Create new game</Button>}
+					{open => (
+						<Button
+							onClick={open}
+							disabled={!allowCreate}
+							tooltip={
+								!allowCreate ? 'Game count limit reached, sorry' : undefined
+							}
+						>
+							Create new game
+						</Button>
+					)}
 				</DialogWrapper>
 
 				<Button icon={faSync} isLoading={loading} onClick={refresh}>

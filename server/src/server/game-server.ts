@@ -13,7 +13,7 @@ export class GameServer {
 	logger = new Logger('GameServer')
 
 	/** in ms */
-	closeEmptyAfter = 5 * 1000
+	closeEmptyAfter = 5 * 60 * 1000
 
 	/** in ms */
 	closeEndedAfter = 20 * 60 * 1000

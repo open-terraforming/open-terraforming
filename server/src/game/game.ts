@@ -61,6 +61,10 @@ export class Game {
 
 		this.state.name = this.config.name
 		this.state.mode = this.config.mode
+
+		range(0, this.config.bots).forEach(() => {
+			this.add(new Bot(this))
+		})
 	}
 
 	get inProgress() {
@@ -242,12 +246,6 @@ export class Game {
 		this.state.oceans = this.state.map.initialOceans
 		this.state.temperature = this.state.map.initialTemperature
 
-		if (this.players.length < this.config.bots) {
-			range(0, this.config.bots).forEach(() => {
-				this.add(new Bot(this))
-			})
-		}
-
 		this.state.startingPlayer = Math.round(
 			Math.random() * (this.players.length - 1)
 		)
@@ -297,7 +295,10 @@ export class Game {
 
 		switch (this.state.state) {
 			case GameStateValue.WaitingForPlayers:
-				if (this.players.length > 0 && this.all(PlayerStateValue.Ready)) {
+				if (
+					this.players.filter(p => !p.state.bot).length > 0 &&
+					this.all(PlayerStateValue.Ready)
+				) {
 					this.startGame()
 				}
 				break
