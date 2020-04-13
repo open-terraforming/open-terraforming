@@ -2,6 +2,7 @@ import { useAppStore } from '@/utils/hooks'
 import { CardEffectArgument } from '@shared/cards'
 import React, { useEffect, useMemo, useState } from 'react'
 import { ArgContainer } from './ArgContainer'
+import { PlayerPicker } from './PlayerPicker'
 
 type Props = {
 	arg: CardEffectArgument
@@ -34,11 +35,6 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 		arg.optional ? -1 : possiblePlayers[0]?.id || -1
 	)
 
-	const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const value = parseInt(e.target.value, 10)
-		setValue(value)
-	}
-
 	useEffect(() => {
 		onChange(value)
 	}, [value])
@@ -46,16 +42,13 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 	return (
 		<ArgContainer>
 			<span>{arg.descriptionPrefix || 'Target player'}</span>
-			<select value={value} onChange={handleChange}>
-				{arg.optional && <option value={-1}>Nobody</option>}
-				{possiblePlayers.map(p => (
-					<option key={p.id} value={p.id}>
-						{p.name}
-						{(arg.resource || arg.production) &&
-							` (has ${p[arg.resource || arg.production || 'money']})`}
-					</option>
-				))}
-			</select>
+			<PlayerPicker
+				players={possiblePlayers}
+				optional={arg.optional}
+				playerId={value}
+				onChange={playerId => setValue(playerId)}
+				res={arg.resource || arg.production}
+			/>
 			<span>{arg.descriptionPostfix}</span>
 		</ArgContainer>
 	)

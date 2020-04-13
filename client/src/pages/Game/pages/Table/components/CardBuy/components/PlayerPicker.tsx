@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { PlayerState } from '@shared/index'
 import { Modal } from '@/components/Modal/Modal'
-import { Resource } from '@shared/cards'
+import { Resource, Production } from '@shared/cards'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import styled from 'styled-components'
 import { colors, mainColors } from '@/styles'
@@ -14,7 +14,7 @@ type Props = {
 	playerId: number
 	onChange: (playerId: number) => void
 	optional: boolean
-	res?: Resource
+	res?: Resource | Production
 }
 
 const resources: Resource[] = [
@@ -71,45 +71,51 @@ export const PlayerPicker = ({
 					? selected.name + (res ? ` (has ${selected[res]})` : '')
 					: 'Nobody'}
 			</Button>
-			<Modal
-				open={selecting}
-				allowClose
-				onClose={() => setSelecting(false)}
-				header="Pick a player"
-			>
-				{optional && (
-					<Player
-						onClick={() => {
-							onChange(-1)
-							setSelecting(false)
-						}}
-					>
-						Nobody
-					</Player>
-				)}
-				{players.map(p => (
-					<Player
-						key={p.id}
-						onClick={() => {
-							onChange(p.id)
-							setSelecting(false)
-						}}
-					>
-						{p.name}
-						<Info>
-							{resources.map(r => (
-								<ResItem
-									key={r}
-									res={r}
-									value={p[r]}
-									production={p[resourceProduction[r]]}
-									highlight={res === r}
-								/>
+			{selecting && (
+				<Modal
+					open={true}
+					allowClose
+					onClose={() => setSelecting(false)}
+					header="Pick a player"
+				>
+					{close => (
+						<>
+							{optional && (
+								<Player
+									onClick={() => {
+										onChange(-1)
+										close()
+									}}
+								>
+									Nobody
+								</Player>
+							)}
+							{players.map(p => (
+								<Player
+									key={p.id}
+									onClick={() => {
+										onChange(p.id)
+										close()
+									}}
+								>
+									{p.name}
+									<Info>
+										{resources.map(r => (
+											<ResItem
+												key={r}
+												res={r}
+												value={p[r]}
+												production={p[resourceProduction[r]]}
+												highlight={res === r || resourceProduction[r] === res}
+											/>
+										))}
+									</Info>
+								</Player>
 							))}
-						</Info>
-					</Player>
-				))}
-			</Modal>
+						</>
+					)}
+				</Modal>
+			)}
 		</>
 	)
 }

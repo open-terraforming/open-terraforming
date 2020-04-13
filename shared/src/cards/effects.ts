@@ -204,7 +204,7 @@ export const playerProductionChange = (res: Resource, change: number) => {
 						? [productionCondition(res, -change) as PlayerCondition]
 						: [],
 				descriptionPrefix: `Decrease ${res} production of`,
-				descriptionPostfix: `by ${-change} of`,
+				descriptionPostfix: `by ${-change}`,
 				production: prod,
 				optional: false
 			})
