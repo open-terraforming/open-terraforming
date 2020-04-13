@@ -24,4 +24,4 @@ NICE TODO:
  * add effects icons to cards
  * 3D mars
  * admin panel
- * refator game state switching
+ * refactor game state switching

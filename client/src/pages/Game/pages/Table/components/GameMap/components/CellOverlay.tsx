@@ -1,10 +1,12 @@
 import { range } from '@/utils/collections'
 import { faHammer, faSeedling, faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { GridCell, GridCellSpecial } from '@shared/index'
+import { GridCell, GridCellSpecial, GridCellType } from '@shared/index'
 import React from 'react'
 import styled from 'styled-components'
 import { Card } from '@/icons/card'
+import phobos from '@/assets/phobos.png'
+import ganymede from '@/assets/ganymede.png'
 
 type Props = {
 	cell: GridCell
@@ -33,6 +35,8 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 				height: `${height * 100}%`
 			}}
 		>
+			{cell.type === GridCellType.PhobosSpaceHaven && <Phobos />}
+			{cell.type === GridCellType.GanymedeColony && <Ganymede />}
 			{cell.special !== undefined && (
 				<Special>{specialToName[cell.special]}</Special>
 			)}
@@ -75,6 +79,7 @@ const Resources = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	position: relative;
 `
 
 const Special = styled.div`
@@ -82,6 +87,8 @@ const Special = styled.div`
 	text-align: center;
 	margin-left: 0.25rem;
 	margin-right: 0.25rem;
+	position: relative;
+	text-shadow: 0px 0px 4px rgba(0, 0, 0, 1);
 `
 
 const Res = styled.div`
@@ -99,4 +106,28 @@ const PlantRes = styled(Res)`
 const OreRes = styled(Res)`
 	background: #ff8811;
 	border-color: #8a4500;
+`
+
+const Phobos = styled.div`
+	position: absolute;
+	background-image: url('${phobos}');
+	background-position: center center;
+	background-size: 100% auto;
+	background-repeat: no-repeat;
+	width: 140%;
+	height: 140%;
+	left: -20%;
+	top: -20%;
+`
+
+const Ganymede = styled.div`
+	position: absolute;
+	background-image: url('${ganymede}');
+	background-position: center center;
+	background-size: 100% auto;
+	background-repeat: no-repeat;
+	width: 150%;
+	height: 150%;
+	left: -25%;
+	top: -25%;
 `
