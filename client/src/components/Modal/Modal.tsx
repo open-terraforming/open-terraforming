@@ -6,7 +6,7 @@ import React, { useCallback, useState } from 'react'
 import styled, { css, keyframes, Keyframes } from 'styled-components'
 import { Portal } from '../Portal/Portal'
 import { Body, Footer, Header } from './styles'
-import { darken } from 'polished'
+import { darken, rgba } from 'polished'
 import ReactDOM from 'react-dom'
 
 type RenderCallback = (
@@ -188,6 +188,8 @@ const popOut = keyframes`
 	100% { transform: scaleY(0); opacity: 0; }
 `
 
+const background = rgba(colors.background, 0.95)
+
 const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	position: relative;
 	min-width: 200px;
@@ -197,16 +199,16 @@ const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	padding: 0px;
 	border-radius: 0px;
 
-	background-color: ${colors.background};
+	background-color: ${background};
 	background: linear-gradient(
 		45deg,
-		${darken(0.01, colors.background)} 25%,
-		${colors.background} 25%,
-		${colors.background} 50%,
-		${darken(0.01, colors.background)} 50%,
-		${darken(0.01, colors.background)} 75%,
-		${colors.background} 75%,
-		${colors.background}
+		${darken(0.01, background)} 25%,
+		${background} 25%,
+		${background} 50%,
+		${darken(0.01, background)} 50%,
+		${darken(0.01, background)} 75%,
+		${background} 75%,
+		${background}
 	);
 	background-size: 40px 40px;
 

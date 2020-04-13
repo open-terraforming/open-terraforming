@@ -33,12 +33,7 @@ export const Main = ({}: Props) => {
 	return (
 		<Modal open={true} allowClose={false}>
 			<Loader loaded={!loading} />
-			<DialogWrapper
-				dialog={(opened, close) => opened && <NewGameModal onClose={close} />}
-			>
-				{open => <Button onClick={open}>Create new game</Button>}
-			</DialogWrapper>
-			<GamesList />
+			{!loading && <GamesList />}
 		</Modal>
 	)
 }

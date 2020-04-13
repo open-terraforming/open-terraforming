@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { GameInfo } from '@shared/extra'
 import { getGames } from '@/api/rest'
-import { Loader, Button } from '@/components'
+import { Loader, Button, DialogWrapper } from '@/components'
 import { setApiState, ApiState } from '@/store/modules/api'
 import { useAppDispatch } from '@/utils/hooks'
 import styled from 'styled-components'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faSync } from '@fortawesome/free-solid-svg-icons'
+import { NewGameModal } from './NewGameModal'
 
 type Props = {}
 
 export const GamesList = ({}: Props) => {
 	const dispatch = useAppDispatch()
-	const [loading, setLoading] = useState(true)
+	const [loading, setLoading] = useState(false)
 	const [games, setGames] = useState([] as GameInfo[])
 
 	const handleJoin = (game: GameInfo) => {
@@ -23,19 +24,42 @@ export const GamesList = ({}: Props) => {
 		)
 	}
 
-	useEffect(() => {
-		getGames().then(games => {
-			setGames(games)
-			setLoading(false)
-		})
-	}, [])
+	const refresh = () => {
+		if (!loading) {
+			setLoading(true)
 
-	if (loading) {
-		return <Loader loaded={false} />
+			getGames()
+				.then(games => {
+					setGames(games)
+					setLoading(false)
+				})
+				.catch(e => {
+					console.error(e)
+					setLoading(false)
+				})
+		}
 	}
+
+	useEffect(() => {
+		refresh()
+	}, [])
 
 	return (
 		<Container>
+			<Head>
+				<DialogWrapper
+					dialog={(opened, close) => opened && <NewGameModal onClose={close} />}
+				>
+					{open => <Button onClick={open}>Create new game</Button>}
+				</DialogWrapper>
+
+				<Button icon={faSync} isLoading={loading} onClick={refresh}>
+					Refresh
+				</Button>
+			</Head>
+
+			<Loader loaded={!loading} absolute />
+
 			{games.map(game => (
 				<GameLine key={game.id}>
 					<GameName>{game.name}</GameName>
@@ -56,6 +80,12 @@ export const GamesList = ({}: Props) => {
 
 const Container = styled.div`
 	width: 30rem;
+`
+
+const Head = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 `
 
 const NoGames = styled.div`

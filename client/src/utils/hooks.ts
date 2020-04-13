@@ -126,14 +126,14 @@ export const useEvent = <E extends Event>(
 	const callbackRef = useRef(callback)
 	callbackRef.current = callback
 
-	// Since we use ref, .current will always be correct callback
-	const listener = useCallback(e => {
-		if (callbackRef.current) {
-			callbackRef.current(e as E)
-		}
-	}, [])
-
 	useEffect(() => {
+		// Since we use ref, .current will always be correct callback
+		const listener = (e: any) => {
+			if (callbackRef.current) {
+				callbackRef.current(e as E)
+			}
+		}
+
 		// Add our listener on mount
 		target.addEventListener(event, listener, cancelBubble)
 

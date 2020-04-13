@@ -1,5 +1,6 @@
 import React from 'react'
 import styled, { keyframes, css } from 'styled-components'
+import { CSSTransition } from 'react-transition-group'
 
 interface Props {
 	loaded: boolean
@@ -19,12 +20,18 @@ const getInnerSpinners = () => {
 
 export const Loader = ({ loaded, message, absolute }: Props) => (
 	<React.Fragment>
-		{!loaded && (
+		<CSSTransition
+			in={!loaded}
+			mountOnEnter
+			unmountOnExit
+			classNames="fade"
+			timeout={100}
+		>
 			<Container absolute={!!absolute}>
 				<Spinner>{getInnerSpinners()}</Spinner>
 				{message && <Message>{message}</Message>}
 			</Container>
-		)}
+		</CSSTransition>
 	</React.Fragment>
 )
 
@@ -37,7 +44,10 @@ const Container = styled.div<{ absolute: boolean }>`
 			left: 0px;
 			width: 100%;
 			height: 100%;
-			background: rgba(255, 255, 255, 0.8);
+			background: rgba(0, 0, 0, 0.8);
+			display: flex;
+			justify-content: center;
+			align-items: center;
 
 			z-index: 3;
 		`}
@@ -50,7 +60,6 @@ const Spinner = styled.div`
 	margin: auto;
 	width: 64px;
 	height: 64px;
-	padding: 50px;
 `
 
 const spinnerKeyframes = keyframes`

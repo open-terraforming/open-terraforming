@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components'
-
 import { GlobalStyle } from '@/styles/global'
 import { ApiErrorMessage } from './components/ApiErrorMessage'
 import { Connect } from '../Connect/Connect'
@@ -27,7 +26,7 @@ export const App = () => {
 	}, [])
 
 	return (
-		<AppContainer>
+		<AppContainer id="stars">
 			<GlobalStyle />
 			{apiState === ApiState.Ready && <Main />}
 			{apiState !== ApiState.Ready && apiState !== ApiState.Joined && (

@@ -100,6 +100,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 					placeholder="Game name..."
 					value={name}
 					onChange={v => setName(v)}
+					autoFocus
 				/>
 
 				{Object.values(GameModes).map(item => (
@@ -109,7 +110,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 						selected={item.type === mode}
 					>
 						<ModeHead>
-							<input type="radio" checked={item.type === mode} />
+							<input type="radio" checked={item.type === mode} readOnly />
 							<div>{item.name}</div>
 						</ModeHead>
 						<ModeDesc>{item.description}</ModeDesc>

@@ -12,6 +12,12 @@ import { MyEvent } from '@/utils/events'
 export class GameServer {
 	logger = new Logger('GameServer')
 
+	/** in ms */
+	closeEmptyAfter = 5 * 1000
+
+	/** in ms */
+	closeEndedAfter = 20 * 60 * 1000
+
 	game: Game
 	socket: WebSocket.Server
 
@@ -31,6 +37,10 @@ export class GameServer {
 
 		this.socket = new WebSocket.Server({ noServer: true })
 		this.socket.on('connection', this.handleConnection)
+
+		this.emptyTimeout = setTimeout(() => {
+			this.onEmpty.emit()
+		}, this.closeEmptyAfter)
 	}
 
 	get id() {
@@ -43,6 +53,14 @@ export class GameServer {
 
 	get acceptsConnections() {
 		return this.game.state.state !== GameStateValue.Ended
+	}
+
+	get listable() {
+		return (
+			!this.game.inProgress &&
+			this.game.config.public &&
+			this.game.state.players.length < this.game.state.maxPlayers
+		)
 	}
 
 	handleConnection = (s: WebSocket) => {
@@ -66,7 +84,7 @@ export class GameServer {
 		if (this.clients.length === 0 && this.emptyTimeout === undefined) {
 			this.emptyTimeout = setTimeout(() => {
 				this.onEmpty.emit()
-			}, 2 * 60 * 1000)
+			}, this.closeEmptyAfter)
 		}
 	}
 
@@ -87,7 +105,7 @@ export class GameServer {
 				this.clients.forEach(c => {
 					c.socket.close()
 				})
-			}, 20 * 60 * 1000)
+			}, this.closeEndedAfter)
 		}
 
 		try {

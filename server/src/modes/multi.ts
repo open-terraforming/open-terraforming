@@ -1,17 +1,17 @@
+import { corsMiddleware } from '@/server/cors'
 import { cardsImagesMiddleware } from '@/server/images'
 import { ServerOptions } from '@/server/types'
 import { Logger } from '@/utils/log'
-import { strToMode } from '@shared/modes/utils'
+import { ServerInfo } from '@shared/extra'
+import { GameModes } from '@shared/modes'
+import { GameModeType } from '@shared/modes/types'
 import bodyParser from 'body-parser'
 import express, { Request, Response } from 'express'
 import { body, validationResult } from 'express-validator'
 import { createServer, IncomingMessage } from 'http'
+import { Socket } from 'net'
 import { join } from 'path'
 import { GameServer } from '../server/game-server'
-import { ServerInfo } from '@shared/extra'
-import { corsMiddleware } from '@/server/cors'
-import { GameModes } from '@shared/modes'
-import { GameModeType } from '@shared/modes/types'
 
 export const multiApp = (config: ServerOptions) => {
 	const logger = new Logger('Master')
@@ -27,30 +27,35 @@ export const multiApp = (config: ServerOptions) => {
 	app.use(bodyParser.raw())
 	app.use(cardsImagesMiddleware())
 
-	server.on('upgrade', (request: IncomingMessage, socket, head) => {
-		try {
-			const gameMatch = /game\/([a-z0-9-]+)\/socket$/.exec(
-				request.url as string
-			)
-			if (!gameMatch) {
-				throw new Error(`Cannot upgrade, unknown game id ${request.url}`)
-			}
+	server.on(
+		'upgrade',
+		(request: IncomingMessage, socket: Socket, head: Buffer) => {
+			try {
+				const gameMatch = /game\/([a-z0-9-]+)\/socket$/.exec(
+					request.url as string
+				)
+				if (!gameMatch) {
+					throw new Error(`Cannot upgrade, unknown game id ${request.url}`)
+				}
 
-			const game = servers.find(
-				s => s.acceptsConnections && s.id === gameMatch[1]
-			)
-			if (!game) {
-				throw new Error(`Failed to find game ${gameMatch[1]}`)
-			}
+				const game = servers.find(
+					s => s.acceptsConnections && s.id === gameMatch[1]
+				)
+				if (!game) {
+					throw new Error(`Failed to find game ${gameMatch[1]}`)
+				}
 
-			game.socket.handleUpgrade(request, socket, head, ws => {
-				game.socket.emit('connection', ws, request)
-			})
-		} catch (e) {
-			logger.error(e)
-			return e
+				logger.log('New connection to ' + game.id)
+
+				game.socket.handleUpgrade(request, socket, head, ws => {
+					game.socket.emit('connection', ws, request)
+				})
+			} catch (e) {
+				logger.error(e)
+				socket.end()
+			}
 		}
-	})
+	)
 
 	app.get('/info', (_req, res) => {
 		res.json({
@@ -61,7 +66,7 @@ export const multiApp = (config: ServerOptions) => {
 	})
 
 	app.get('/games', (_req, res) => {
-		res.json(servers.map(s => s.info()))
+		res.json(servers.filter(s => s.listable).map(s => s.info()))
 	})
 
 	app.post(
@@ -75,6 +80,9 @@ export const multiApp = (config: ServerOptions) => {
 				.isInt(),
 			body('bots')
 				.isInt({ min: 0, max: 4 })
+				.optional(true),
+			body('public')
+				.isBoolean()
 				.optional(true)
 		],
 		(req: Request, res: Response) => {
@@ -90,6 +98,7 @@ export const multiApp = (config: ServerOptions) => {
 			const name = req.body.name
 			const mode = GameModes[req.body.mode as GameModeType]
 			const bots = req.body.bots
+			const isPublic = !!req.body.public
 
 			if (!mode) {
 				throw new Error(`Unknown game mode ${req.body.mode}`)
@@ -98,7 +107,8 @@ export const multiApp = (config: ServerOptions) => {
 			const gameServer = new GameServer({
 				name,
 				mode: mode.type,
-				bots
+				bots,
+				public: isPublic
 			})
 
 			gameServer.onEnded.on(() => {

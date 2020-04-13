@@ -1,12 +1,12 @@
-import React from 'react'
-import { useAppStore } from '@/utils/hooks'
-import styled, { css } from 'styled-components'
-import { GridCellType, GridCellContent, GridCell } from '@shared/game'
-import { Cell } from './components/Cell'
-import { useApi } from '@/context/ApiContext'
-import { placeTile } from '@shared/actions'
-import { CellOverlay } from './components/CellOverlay'
 import background from '@/assets/mars-background.jpg'
+import { useApi } from '@/context/ApiContext'
+import { useAppStore, useWindowEvent } from '@/utils/hooks'
+import { placeTile } from '@shared/actions'
+import { GridCell } from '@shared/game'
+import React, { useRef } from 'react'
+import styled from 'styled-components'
+import { Cell } from './components/Cell'
+import { CellOverlay } from './components/CellOverlay'
 
 type Props = {}
 
@@ -21,6 +21,39 @@ const cellPos = (x: number, y: number) => {
 export const GameMap = ({}: Props) => {
 	const api = useApi()
 	const map = useAppStore(state => state.game.state?.map)
+	const containerRef = useRef<HTMLDivElement>(null)
+
+	useWindowEvent('mousemove', (e: MouseEvent) => {
+		if (containerRef.current) {
+			const windowRatio = window.innerHeight / window.innerWidth
+
+			const ratio = [
+				e.clientX / window.innerWidth - 0.5,
+				e.clientY / window.innerHeight - 0.5
+			]
+
+			const planetOffset = 80
+			const backgroundOffset = 30
+
+			const offset = [
+				-ratio[0] * planetOffset,
+				-ratio[1] * planetOffset * windowRatio
+			]
+
+			const bgOffset = [
+				-ratio[0] * backgroundOffset,
+				-ratio[1] * backgroundOffset * windowRatio
+			]
+
+			containerRef.current.style.transform = `translate(${offset[0]}px, ${offset[1]}px)`
+
+			const stars = document.getElementById('stars')
+
+			if (stars) {
+				stars.style.backgroundPosition = `${bgOffset[0]}px ${bgOffset[1]}px`
+			}
+		}
+	})
 
 	const placingList = useAppStore(state => state.game.player?.placingTile)
 
@@ -37,7 +70,7 @@ export const GameMap = ({}: Props) => {
 	const height = ((map?.height || 0) + 0.5) * 20 * 0.75
 
 	return map ? (
-		<Container>
+		<Container ref={containerRef}>
 			<Background>
 				<img src={background} />
 			</Background>
@@ -94,6 +127,7 @@ const Container = styled.div`
 	max-width: 800px;
 	margin: auto auto;
 	position: relative;
+	transition: transform 0.05s;
 
 	> svg {
 		position: relative;

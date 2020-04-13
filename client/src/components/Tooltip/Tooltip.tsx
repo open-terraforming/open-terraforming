@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Portal } from '../Portal/Portal'
 import { useWindowEvent } from '@/utils/hooks'
+import { colors } from '@/styles'
 
 export enum Position {
 	Top,
@@ -142,7 +143,7 @@ const Container = styled.div<{ disableStyle?: boolean }>`
 	${props =>
 		!props.disableStyle &&
 		css`
-			background: #000;
+			background: ${colors.background};
 			color: #ddd;
 			padding: 10px;
 
@@ -153,7 +154,7 @@ const Container = styled.div<{ disableStyle?: boolean }>`
 				left: 50%;
 				margin-left: -5px;
 				border: 5px solid transparent;
-				border-top-color: #000;
+				border-top-color: ${colors.background};
 			}
 		`}
 `

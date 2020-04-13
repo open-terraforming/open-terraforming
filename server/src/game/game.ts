@@ -36,6 +36,7 @@ export interface GameConfig {
 	adminPassword: string
 	mode: GameModeType
 	name: string
+	public: boolean
 }
 export class Game {
 	logger = new Logger('Game')
@@ -54,6 +55,7 @@ export class Game {
 			adminPassword: randomPassword(10),
 			mode: GameModeType.Standard,
 			name: 'Standard game',
+			public: false,
 			...config
 		}
 
