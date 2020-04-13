@@ -66,11 +66,13 @@ button, a {
 	margin-right: 0.5rem;
 }
 
+/*
 #app-modals {
 	> div:not(:first-child) {
 		background-color: transparent !important;
 	}
 }
+*/
 
 .fade-enter {
 	opacity: 0;

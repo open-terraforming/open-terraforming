@@ -99,6 +99,11 @@ const ChangeButton = styled.button<{ disabled: boolean }>`
 	background-color: ${colors.border};
 	color: ${mainColors.text};
 
+	&& {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
 	${props =>
 		props.disabled
 			? css`

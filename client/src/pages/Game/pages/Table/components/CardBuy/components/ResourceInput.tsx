@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { Input } from '@/components/Input/Input'
 import { Resource } from '@shared/cards'
 import styled from 'styled-components'
+import { NumberInput } from '@/components/NumberInput/NumberInput'
+import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 
 type Props = {
 	res: Resource
@@ -16,32 +18,21 @@ export const ResourceInput = ({
 	max,
 	initialValue = 0
 }: Props) => {
-	const [value, setValue] = useState(initialValue.toString() || '')
-
-	const parsedValue = useMemo(() => parseInt(value, 10), [value])
-
-	const isError = useMemo(
-		() => Number.isNaN(parsedValue) || parsedValue < 0 || parsedValue > max,
-		[parsedValue]
-	)
+	const [value, setValue] = useState(initialValue)
 
 	useEffect(() => {
-		onChange(
-			!Number.isNaN(parsedValue) ? Math.max(0, Math.min(max, parsedValue)) : 0
-		)
-	}, [parsedValue])
+		onChange(value)
+	}, [value])
 
 	return (
 		<E>
-			<Input
+			<NumberInput
 				min={0}
 				max={max}
-				type="number"
-				value={value}
-				error={isError}
 				onChange={v => setValue(v)}
+				value={value}
+				iconComponent={<ResourceIcon res={res} />}
 			/>
-			<span>{res}</span>
 		</E>
 	)
 }

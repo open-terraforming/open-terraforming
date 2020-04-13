@@ -4,6 +4,7 @@ import { ArgContainer } from './ArgContainer'
 import { useAppStore } from '@/utils/hooks'
 import { ResourceInput } from './ResourceInput'
 import { PlayerState } from '@shared/index'
+import { PlayerPicker } from './PlayerPicker'
 
 type Props = {
 	arg: CardEffectArgument
@@ -47,20 +48,16 @@ export const PlayerResourceArg = ({ arg, onChange }: Props) => {
 	return (
 		<ArgContainer>
 			<span>{arg.descriptionPrefix}</span>
-			<select
-				value={selectedPlayer ? selectedPlayer.id : -1}
-				onChange={e => {
-					const index = parseInt(e.target.value, 10)
-					setSelectedPlayer(game.players.find(p => p.id === index))
+			<PlayerPicker
+				optional={true}
+				players={players}
+				playerId={selectedPlayer ? selectedPlayer.id : -1}
+				res={arg.resource}
+				onChange={playerId => {
+					setSelectedPlayer(game.players.find(p => p.id === playerId))
 				}}
-			>
-				<option value={-1}>Nobody</option>
-				{players.map(p => (
-					<option key={p.id} value={p.id}>
-						{p.name} (has {p[arg.resource as Resource]})
-					</option>
-				))}
-			</select>
+			/>
+
 			{selectedPlayer && (
 				<ResourceInput
 					res={arg.resource as Resource}

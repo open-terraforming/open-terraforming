@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { CardEffectArgument, CardEffectArgumentType } from '@shared/cards'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { ArgContainer } from './ArgContainer'
 import { ArgsPicker } from './ArgsPicker'
 import { useAppStore } from '@/utils/hooks'
@@ -60,6 +60,7 @@ export const ChoiceArg = ({
 			{choices.map(({ effect: e, index: i }) => (
 				<Choice
 					key={i}
+					selected={i === selected}
 					onClick={() => {
 						setSelected(i)
 					}}
@@ -91,11 +92,20 @@ export const ChoiceArg = ({
 	)
 }
 
-const Choice = styled.div`
+const Choice = styled.div<{ selected?: boolean }>`
 	display: flex;
 	align-items: center;
 	margin: 0.5rem 0;
 	cursor: pointer;
+
+	opacity: 0.6;
+	transition: opacity 0.1s;
+
+	${props =>
+		props.selected &&
+		css`
+			opacity: 1;
+		`}
 `
 
 const StyledContainer = styled(ArgContainer)`
