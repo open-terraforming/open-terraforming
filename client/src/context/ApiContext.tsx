@@ -22,9 +22,10 @@ export const ApiContextProvider = ({
 	children: React.ReactNode
 }) => {
 	const dispatch = useDispatch()
-	const session = useAppStore(state => state.client.session)
+	const sessions = useAppStore(state => state.client.sessions)
 	const state = useAppStore(state => state.api.state)
 	const gameId = useAppStore(state => state.api.gameId)
+	const sessionKey = gameId || 'single'
 	const [reconnectCount, setReconnectCount] = useState(0)
 	const [client, setClient] = useState(null as Client | null)
 
@@ -109,6 +110,8 @@ export const ApiContextProvider = ({
 							})
 						)
 
+						const session = sessions[sessionKey]
+
 						if (state !== GameStateValue.WaitingForPlayers && session) {
 							client.send(joinRequest(undefined, session))
 						}
@@ -121,11 +124,12 @@ export const ApiContextProvider = ({
 					const { error, session, id } = m.data
 
 					if (error === JoinError.InvalidSession) {
-						localStorage['session'] = undefined
+						const newSessions = { ...sessions }
+						delete newSessions[sessionKey]
 
 						dispatch(
 							setClientState({
-								session: undefined
+								sessions: newSessions
 							})
 						)
 					}
@@ -138,13 +142,15 @@ export const ApiContextProvider = ({
 							})
 						)
 					} else {
-						localStorage['session'] = session
 						dispatch(setGamePlayer(id as number))
 
 						dispatch(
 							setClientState({
 								id,
-								session
+								sessions: {
+									...sessions,
+									[sessionKey]: session
+								}
 							})
 						)
 

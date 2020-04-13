@@ -47,6 +47,7 @@ import { adjacentCells, allCells, drawCards } from '@shared/utils'
 import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
+import Hashids from 'hashids/cjs'
 
 export interface CardPlayedEvent {
 	player: Player
@@ -120,6 +121,9 @@ export class Player {
 
 	constructor(game: Game) {
 		this.game = game
+		this.state.session = new Hashids(this.game.config.adminPassword, 5).encode(
+			this.state.id
+		)
 	}
 
 	toggleReady(ready: boolean) {

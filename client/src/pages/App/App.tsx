@@ -1,29 +1,17 @@
-import React, { useEffect } from 'react'
-import styled from 'styled-components'
-import { GlobalStyle } from '@/styles/global'
-import { ApiErrorMessage } from './components/ApiErrorMessage'
-import { Connect } from '../Connect/Connect'
-import { useAppStore, useAppDispatch } from '@/utils/hooks'
-import { Game } from '../Game/Game'
-import { setClientState } from '@/store/modules/client'
 import background from '@/assets/stars.jpg'
-import { mainColors } from '@/styles'
 import { ApiState } from '@/store/modules/api'
+import { mainColors } from '@/styles'
+import { GlobalStyle } from '@/styles/global'
+import { useAppStore } from '@/utils/hooks'
+import React from 'react'
+import styled from 'styled-components'
+import { Connect } from '../Connect/Connect'
+import { Game } from '../Game/Game'
 import { Main } from '../Main/Main'
+import { ApiErrorMessage } from './components/ApiErrorMessage'
 
 export const App = () => {
-	const dispatch = useAppDispatch()
 	const apiState = useAppStore(state => state.api.state)
-
-	useEffect(() => {
-		if (localStorage['session']) {
-			dispatch(
-				setClientState({
-					session: localStorage['session']
-				})
-			)
-		}
-	}, [])
 
 	return (
 		<AppContainer id="stars">

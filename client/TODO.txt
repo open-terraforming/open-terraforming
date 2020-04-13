@@ -1,9 +1,5 @@
 TODO:
  * Multi-game support
-   -> handle errors on main screen
-   -> add possibility to return to main menu in Connect
-   -> save sessions for specific servers
-   -> make sessions human-friendly (use HashIds?)
    -> save suspended games to disk, load on demand
  * Card draw effect
  * only send data, that should be visible to the player
@@ -28,3 +24,4 @@ NICE TODO:
  * add effects icons to cards
  * 3D mars
  * admin panel
+ * refator game state switching

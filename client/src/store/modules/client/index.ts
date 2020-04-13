@@ -1,10 +1,21 @@
 import { GameStateValue } from '@shared/game'
+import { NativeMap } from '@/utils/collections'
 
 type State = Readonly<typeof initialState>
 
+let sessions = {} as NativeMap<string>
+
+try {
+	if (localStorage['sessions']) {
+		sessions = JSON.parse(localStorage['sessions'])
+	}
+} catch (e) {
+	sessions = {}
+}
+
 const initialState = {
 	name: '',
-	session: undefined as string | undefined,
+	sessions,
 	id: undefined as number | undefined,
 	gameState: undefined as GameStateValue | undefined
 }
@@ -12,6 +23,10 @@ const initialState = {
 export default (state = initialState, action: Actions): State => {
 	switch (action.type) {
 		case SET_CLIENT_STATE: {
+			if (action.state.sessions) {
+				localStorage['sessions'] = JSON.stringify(action.state.sessions)
+			}
+
 			return {
 				...state,
 				...action.state
@@ -25,15 +40,10 @@ export default (state = initialState, action: Actions): State => {
 
 const SET_CLIENT_STATE = 'SET_CLIENT_STATE'
 
-interface SetClientState {
-	type: typeof SET_CLIENT_STATE
-	state: State
-}
-
 export const setClientState = (state: Partial<State>) =>
 	({
 		type: SET_CLIENT_STATE,
 		state
-	} as SetClientState)
+	} as const)
 
-type Actions = SetClientState
+type Actions = ReturnType<typeof setClientState>

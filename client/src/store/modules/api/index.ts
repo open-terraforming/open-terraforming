@@ -21,7 +21,7 @@ export default (state = initialState, action: Actions): State => {
 				window.history.pushState(
 					null,
 					'',
-					action.state.gameId === null ? '' : '#' + action.state.gameId
+					action.state.gameId === null ? '#' : '#' + action.state.gameId
 				)
 			}
 
