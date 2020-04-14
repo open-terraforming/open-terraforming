@@ -122,15 +122,10 @@ export const adjustedCardPrice = (card: Card, player: PlayerGameState) =>
 	Math.max(
 		0,
 		card.cost +
-			(card.categories.includes(CardCategory.Space)
-				? player.spacePriceChange
-				: 0) +
-			(card.categories.includes(CardCategory.Earth)
-				? player.earthPriceChange
-				: 0) +
-			(card.categories.includes(CardCategory.Power)
-				? player.powerPriceChange
-				: 0) +
+			card.categories.reduce(
+				(acc, c) => acc + (player.tagPriceChange[c] ?? 0),
+				0
+			) +
 			player.cardPriceChange
 	)
 

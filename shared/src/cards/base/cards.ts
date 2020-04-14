@@ -1,12 +1,12 @@
-import { GridCellContent, GridCellOther, GridCellSpecial } from '../game'
-import { CityPlacement, OtherPlacement, PlacementCode } from '../placements'
+import { GridCellContent, GridCellOther, GridCellSpecial } from '../../game'
+import { CityPlacement, OtherPlacement, PlacementCode } from '../../placements'
 import {
 	cardCountCondition,
 	gameProgressConditionMax,
 	gameProgressConditionMin,
 	ownedCellTypeCondition,
 	productionCondition
-} from './conditions'
+} from '../conditions'
 import {
 	addResourceToCard,
 	cardExchange,
@@ -47,7 +47,7 @@ import {
 	terraformRatingForTags,
 	titanPriceChange,
 	triggerCardResourceChange
-} from './effects'
+} from '../effects'
 import {
 	cardExchangeEffect,
 	cardResourcePerCardPlayed,
@@ -60,18 +60,18 @@ import {
 	resourceForStandardProject,
 	resourcePerCardPlayed,
 	resourcePerPlacedTile
-} from './passive-effects'
-import { Card, CardCategory, CardSpecial, CardType } from './types'
-import { card, noDesc } from './utils'
+} from '../passive-effects'
+import { Card, CardCategory, CardSpecial, CardType } from '../types'
+import { card, noDesc } from '../utils'
 import {
 	minCardResourceToVP,
 	vpsForAdjacentTiles,
 	vpsForCardResources,
 	vpsForCards,
 	vpsForTiles
-} from './vps'
+} from '../vps'
 
-export const BuiltCards: Card[] = [
+export const baseCards: Card[] = [
 	card({
 		code: 'colonizer_training_camp',
 		title: 'Colonizer Training Camp',

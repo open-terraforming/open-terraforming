@@ -169,6 +169,10 @@ export class Client {
 						return this.player.pickCards(message.data.cards)
 					}
 
+					case MessageType.PickPreludes: {
+						return this.player.pickPreludes(message.data.cards)
+					}
+
 					case MessageType.PlayerPass: {
 						return this.player.pass(message.data.force)
 					}

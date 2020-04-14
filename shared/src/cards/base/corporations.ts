@@ -1,4 +1,4 @@
-import { condition } from './cards/conditions'
+import { condition } from '../conditions'
 import {
 	earthCardPriceChange,
 	effect,
@@ -9,19 +9,15 @@ import {
 	productionChange,
 	resourceChange,
 	titanPriceChange
-} from './cards/effects'
-import { passiveEffect } from './cards/passive-effects'
-import { Card, CardCategory, CardType, CardSpecial } from './cards/types'
-import {
-	card,
-	updatePlayerProduction,
-	updatePlayerResource
-} from './cards/utils'
-import { GridCellContent } from './game'
-import { withUnits } from './units'
-import { f } from './utils'
+} from '../effects'
+import { passiveEffect } from '../passive-effects'
+import { Card, CardCategory, CardType, CardSpecial } from '../types'
+import { card, updatePlayerProduction, updatePlayerResource } from '../utils'
+import { GridCellContent } from '../../game'
+import { withUnits } from '../../units'
+import { f } from '../../utils'
 
-const corp = (c: Card, pickingCards = true): Card => {
+export const corp = (c: Card, pickingCards = true): Card => {
 	if (pickingCards) {
 		c.playEffects = [
 			effect({ ...pickTopCards(10), description: '' }),
@@ -31,7 +27,7 @@ const corp = (c: Card, pickingCards = true): Card => {
 	return c
 }
 
-export const Corporations = [
+export const baseCorporations = [
 	corp(
 		card({
 			title: 'Starting Corporation',
@@ -224,7 +220,8 @@ export const Corporations = [
 						withUnits('money', 3)
 					),
 					perform: ({ player }) => {
-						player.powerPriceChange = -3
+						player.tagPriceChange[CardCategory.Power] =
+							(player.tagPriceChange[CardCategory.Power] || 0) + -3
 						player.powerProjectCost = 11 - 3
 					}
 				})
@@ -307,8 +304,3 @@ export const Corporations = [
 		})
 	)
 ]
-
-export const CorporationsLookup = Corporations.reduce((acc, c) => {
-	acc[c.code] = c
-	return acc
-}, {} as Record<string, Card | undefined>)

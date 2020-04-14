@@ -41,7 +41,13 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 		evaluate: ({ player }) =>
 			player.usedCards
 				.map(c => CardsLookupApi.get(c.code))
-				.filter(c => c && c.categories.includes(category)).length >= value,
+				.reduce(
+					(acc, c) =>
+						acc +
+						c.categories.filter(c => c === category || c === CardCategory.Any)
+							.length,
+					0
+				) >= value,
 		description: `Requires ${value} ${CardCategory[category]} cards`
 	})
 

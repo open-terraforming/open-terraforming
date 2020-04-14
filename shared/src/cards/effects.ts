@@ -12,7 +12,14 @@ import {
 	PlacementConditionsLookup
 } from '../placements'
 import { withUnits } from '../units'
-import { allCells, drawCard, drawCards, flatten, f } from '../utils'
+import {
+	allCells,
+	drawCard,
+	drawCards,
+	flatten,
+	f,
+	drawPreludeCards
+} from '../utils'
 import {
 	cardArg,
 	cellArg,
@@ -305,6 +312,10 @@ export function placeTile({
 	})
 }
 
+export const placeOcean = () => placeTile({ type: GridCellContent.Ocean })
+export const placeCity = () => placeTile({ type: GridCellContent.City })
+export const placeGreenery = () => placeTile({ type: GridCellContent.Forest })
+
 export const convertResource = (
 	srcRes: Resource,
 	srcCount: number,
@@ -512,7 +523,7 @@ export const productionChangeForTags = (
 	tag: CardCategory
 ) => {
 	return effect({
-		description: `Increase your ${res} production by ${change} for each ${CardCategory[tag]} card you have`,
+		description: `Increase your ${res} production by ${change} for each ${CardCategory[tag]} tag you played`,
 		perform: ({ player }) => {
 			updatePlayerProduction(
 				player,
@@ -521,8 +532,9 @@ export const productionChangeForTags = (
 					player.usedCards.reduce(
 						(acc, c) =>
 							acc +
-							CardsLookupApi.get(c.code).categories.filter(c => c === tag)
-								.length,
+							CardsLookupApi.get(c.code).categories.filter(
+								c => c === tag || c === CardCategory.Any
+							).length,
 						0
 					)
 			)
@@ -552,6 +564,17 @@ export const convertTopCardToCardResource = (
 		}
 	})
 
+export const pickPreludes = (cardCount: number, pickCount: number) =>
+	effect({
+		description: `Draw ${cardCount} prelude cards, use ${pickCount} of them and discard the rest`,
+		perform: ({ player, game }) => {
+			player.cardsPick = drawPreludeCards(game, cardCount)
+			player.cardsPickFree = true
+			player.cardsPickLimit = pickCount
+			player.state = PlayerStateValue.PickingPreludes
+		}
+	})
+
 export const pickTopCards = (count: number, pickCount?: number, free = false) =>
 	effect({
 		description: `Look at top ${count} cards and either buy them or discard them`,
@@ -570,6 +593,29 @@ export const getTopCards = (count: number) =>
 		conditions: [gameCardsCondition(count)],
 		perform: ({ player, game }) => {
 			player.cards.push(...drawCards(game, count))
+		}
+	})
+
+export const getTopCardsWithTag = (count: number, tag: CardCategory) =>
+	effect({
+		description: `Draw cards until you have ${count} card(s) with ${CardCategory[tag]} tag, discard the rest`,
+		conditions: [gameCardsCondition(count)],
+		perform: ({ player, game }) => {
+			const picked = [] as string[]
+			while (picked.length < count) {
+				try {
+					const card = drawCard(game)
+					if (CardsLookupApi.get(card).categories.includes(tag)) {
+						picked.push(card)
+					} else {
+						game.discarded.push(card)
+					}
+				} catch (e) {
+					break
+				}
+			}
+
+			player.cards.push(...picked)
 		}
 	})
 
@@ -701,24 +747,19 @@ export const cardPriceChange = (change: number) =>
 	})
 
 export const spaceCardPriceChange = (change: number) =>
-	effect({
-		description: `Effect: When you play a Space card, you pay ${withUnits(
-			'money',
-			-change
-		)} less for it`,
-		perform: ({ player }) => {
-			player.spacePriceChange += change
-		}
-	})
+	tagPriceChange(CardCategory.Space, change)
 
 export const earthCardPriceChange = (change: number) =>
+	tagPriceChange(CardCategory.Earth, change)
+
+export const tagPriceChange = (tag: CardCategory, change: number) =>
 	effect({
-		description: `Effect: When you play a Earth card, you pay ${withUnits(
-			'money',
-			-change
-		)} less for it`,
+		description: `Effect: When you play a ${
+			CardCategory[tag]
+		} card, you pay ${withUnits('money', -change)} less for it`,
 		perform: ({ player }) => {
-			player.earthPriceChange += change
+			const prev = player.tagPriceChange[tag] ?? 0
+			player.tagPriceChange[tag] = prev + change
 		}
 	})
 
@@ -731,7 +772,7 @@ export const resourceChangeIfTags = (
 	effect({
 		...productionChange(res, amount),
 		conditions: [cardCountCondition(tag, tagCount)],
-		description: `+ ${amount} if you have ${tagCount} ${CardCategory[tag]} cards`
+		description: `+ ${amount} if you have ${tagCount} ${CardCategory[tag]} tags`
 	})
 
 export const claimCell = () =>
@@ -935,13 +976,16 @@ export const productionForPlayersTags = (
 
 export const terraformRatingForTags = (tag: CardCategory, amount: number) =>
 	effect({
-		description: `Raise your terraform rating by ${amount} per every ${CardCategory[tag]} card you played`,
+		description: `Raise your terraform rating by ${amount} per every ${CardCategory[tag]} tag you played`,
 		type: CardEffectType.Production,
 		perform: ({ player }) => {
 			player.terraformRating += player.usedCards
 				.map(c => CardsLookupApi.get(c.code))
 				.reduce(
-					(acc, c) => acc + c.categories.filter(cat => cat === tag).length,
+					(acc, c) =>
+						acc +
+						c.categories.filter(cat => cat === tag || cat === CardCategory.Any)
+							.length,
 					0
 				)
 		}
@@ -955,12 +999,12 @@ export const productionForTags = (
 	return effect({
 		description:
 			resPerCard >= 1
-				? `Increase your ${res} production by ${resPerCard} per every ${CardCategory[tag]} card you played (including this if applicable)`
-				: `Increase your ${res} production by 1 per every ${Math.round(
+				? `Increase your ${res} production by ${resPerCard} per every ${CardCategory[tag]} tag you played (including this if applicable)`
+				: `Increase your ${res} production by 1 per every ${Math.ceil(
 						1 / resPerCard
 				  )} ${
 						CardCategory[tag]
-				  } card(s) you played (including this if applicable)`,
+				  } tags you played (including this if applicable)`,
 		type: CardEffectType.Production,
 		perform: ({ player, card }) => {
 			updatePlayerProduction(
@@ -970,9 +1014,13 @@ export const productionForTags = (
 					player.usedCards
 						.map(c => CardsLookupApi.get(c.code))
 						.reduce(
-							(acc, c) => acc + c.categories.filter(cat => cat === tag).length,
+							(acc, c) =>
+								acc +
+								c.categories.filter(
+									cat => cat === tag || cat === CardCategory.Any
+								).length,
 							CardsLookupApi.get(card.code).categories.filter(
-								cat => cat === tag
+								cat => cat === tag || cat === CardCategory.Any
 							).length
 						) * resPerCard
 				)
@@ -990,7 +1038,7 @@ export const resourcesForPlayersTags = (
 	return effect({
 		description: `Gain ${withUnits(res, resPerCard)} per every ${
 			CardCategory[tag]
-		} card${self ? '' : ' your OPPONENTS'} played`,
+		} tag${self ? '' : ' your OPPONENTS'} played`,
 		type: CardEffectType.Production,
 		perform: ({ game, player, playerId }) => {
 			updatePlayerResource(
@@ -1004,7 +1052,10 @@ export const resourcesForPlayersTags = (
 								.map(c => CardsLookupApi.get(c.code))
 								.reduce(
 									(acc, c) =>
-										acc + c.categories.filter(cat => cat === tag).length,
+										acc +
+										c.categories.filter(
+											cat => cat === tag || (self && cat === CardCategory.Any)
+										).length,
 									0
 								)
 						)
@@ -1024,7 +1075,7 @@ export const resourcesForTags = (
 	return effect({
 		description: `Gain ${withUnits(res, resPerCard)} per every ${
 			CardCategory[tag]
-		} card you played`,
+		} tag you played`,
 		type: CardEffectType.Production,
 		perform: ({ player }) => {
 			updatePlayerResource(
@@ -1033,7 +1084,11 @@ export const resourcesForTags = (
 				player.usedCards
 					.map(c => CardsLookupApi.get(c.code))
 					.reduce(
-						(acc, c) => acc + c.categories.filter(cat => cat === tag).length,
+						(acc, c) =>
+							acc +
+							c.categories.filter(
+								cat => cat === tag || cat === CardCategory.Any
+							).length,
 						0
 					)
 			)

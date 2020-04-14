@@ -46,7 +46,8 @@ export enum MessageType {
 	PlaceTile,
 	AdminChange,
 	AdminLogin,
-	PickColor
+	PickColor,
+	PickPreludes
 }
 
 export const handshakeRequest = (version: string) =>
@@ -197,6 +198,12 @@ export const adminLogin = (password: string) =>
 		}
 	} as const)
 
+export const pickPreludes = (cards: number[]) =>
+	({
+		type: MessageType.PickPreludes,
+		data: { cards }
+	} as const)
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -218,3 +225,4 @@ export type GameMessage =
 	| ReturnType<typeof sponsorCompetition>
 	| ReturnType<typeof pickColor>
 	| ReturnType<typeof adminLogin>
+	| ReturnType<typeof pickPreludes>

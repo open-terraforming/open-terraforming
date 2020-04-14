@@ -2,16 +2,17 @@ import { CompetitionType } from './competitions'
 import { MilestoneType } from './milestones'
 import { GameModeType } from './modes/types'
 import { PlacementState } from './placements'
+import { CardCategory } from './cards'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
 	WaitingForPlayers = 1,
-	/** Players are picking companies */
-	PickingCorporations,
+	/** Players are picking companies / cards / preludes */
+	Starting,
 	/** Players are picking cards */
 	PickingCards,
-	/** Players are picking their cards */
-	GenerationStart,
+	/** Players are picking prelude cards */
+	PickingPreludes,
 	/** Generation is in progress */
 	GenerationInProgress,
 	/** Players are placing finishing greeneries */
@@ -21,23 +22,25 @@ export enum GameStateValue {
 }
 
 export enum PlayerStateValue {
-	/**  Is in progress of connecting */
+	/** Is in progress of connecting */
 	Connecting = 1,
-	/**  Waiting for other players */
+	/** Waiting for other players */
 	Waiting,
 	/** Player is picking corporation */
 	PickingCorporation,
-	/**  Player is picking cards */
+	/** Player is picking cards */
 	PickingCards,
-	/**  Ready to start the game */
+	/** Player is picking preludes */
+	PickingPreludes,
+	/** Ready to start the game */
 	Ready,
-	/**  Currently playing his round */
+	/** Currently playing his round */
 	Playing,
-	/**  Passed his round */
+	/** Passed his round */
 	Passed,
 	/** Placing finishing greeneries */
 	EndingTiles,
-	/**  Waiting for his turn */
+	/** Waiting for his turn */
 	WaitingForTurn
 }
 
@@ -67,8 +70,15 @@ export interface GameState {
 	milestones: MilestoneState[]
 	competitions: CompetitionState[]
 
+	corporations: string[]
+	corporationsDiscarded: string[]
+
 	cards: string[]
 	discarded: string[]
+
+	prelude: boolean
+	preludeCards: string[]
+	preludeDiscarded: string[]
 
 	/** ISO Date of game start */
 	started: string
@@ -196,12 +206,9 @@ export interface PlayerState {
 
 	/** General card price change */
 	cardPriceChange: number
-	/** Space card price change */
-	spacePriceChange: number
-	/** Earth card price change */
-	earthPriceChange: number
-	/** Power card price change */
-	powerPriceChange: number
+
+	/** Price change for specific tags */
+	tagPriceChange: Record<CardCategory, number | undefined>
 
 	/** Player TR */
 	terraformRating: number

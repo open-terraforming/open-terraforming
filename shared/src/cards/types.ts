@@ -55,7 +55,8 @@ export enum CardCategory {
 	Power,
 	Earth,
 	City,
-	Event
+	Event,
+	Any
 }
 
 export enum CardType {
@@ -63,12 +64,14 @@ export enum CardType {
 	Action,
 	Effect,
 	Building,
-	Corporation
+	Corporation,
+	Prelude
 }
 
 export enum CardSpecial {
 	CorporationsEra = 1,
-	StartingCorporation
+	StartingCorporation,
+	Prelude
 }
 
 export interface CardVictoryPointsCallback {

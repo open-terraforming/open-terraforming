@@ -4,13 +4,12 @@ import { setTableState } from '@/store/modules/table'
 import { colors } from '@/styles'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import {
-	faAngleUp,
 	faArrowRight,
 	faThermometerHalf,
 	faTree
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Corporations } from '@shared/corporations'
+import { CardsLookupApi } from '@shared/cards'
 import {
 	buyStandardProject,
 	GridCellContent,
@@ -24,14 +23,12 @@ import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { CardBuy } from '../CardBuy/CardBuy'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
-import { Hand } from '../Hand/Hand'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
-import { PlayedCards } from '../PlayedCards/PlayedCards'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
-import { Resources } from './components/Resources/Resources'
 import { HandButton } from './components/HandButton/HandButton'
 import { PlayedButton } from './components/PlayedButton/PlayedButton'
+import { Resources } from './components/Resources/Resources'
 
 export const Controls = () => {
 	const api = useApi()
@@ -42,7 +39,11 @@ export const Controls = () => {
 	const buyingCardIndex = useAppStore(state => state.table.buyingCardIndex)
 	const playingCardIndex = useAppStore(state => state.table.playingCardIndex)
 	const state = player
-	const corporation = Corporations.find(c => c.code === state?.corporation)
+
+	const corporation = state?.corporation
+		? CardsLookupApi.get(state?.corporation as string)
+		: undefined
+
 	const [projectsOpened, setProjectsOpened] = useState(false)
 	const [competitionsOpened, setCompetitionsOpened] = useState(false)
 	const [milestonesOpened, setMilestonesOpened] = useState(false)

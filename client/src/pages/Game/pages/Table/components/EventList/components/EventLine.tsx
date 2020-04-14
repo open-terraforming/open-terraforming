@@ -5,7 +5,6 @@ import { PlayerState, GridCellContent, GridCellOther } from '@shared/index'
 import { CardsLookupApi } from '@shared/cards'
 import { withUnits } from '@shared/units'
 import { ucFirst } from '@shared/utils'
-import { CorporationsLookup } from '@shared/corporations'
 import { lighten } from 'polished'
 import { CardModal } from './CardModal'
 import { Competitions } from '@shared/competitions'
@@ -84,7 +83,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} />
-						{` picked ${CorporationsLookup[event.corporation]?.title}`}
+						{` picked ${CardsLookupApi.get(event.corporation).title}`}
 					</>
 				)
 			case EventType.ResourceChanged:

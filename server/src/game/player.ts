@@ -27,7 +27,6 @@ import {
 	MILESTONE_PRICE,
 	MILESTONE_REWARD
 } from '@shared/constants'
-import { Corporations } from '@shared/corporations'
 import {
 	GameStateValue,
 	GridCell,
@@ -43,7 +42,12 @@ import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, PlacementConditionsLookup } from '@shared/placements'
 import { Projects, StandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
-import { adjacentCells, allCells, drawCards } from '@shared/utils'
+import {
+	adjacentCells,
+	allCells,
+	drawCards,
+	drawPreludeCards
+} from '@shared/utils'
 import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
@@ -84,7 +88,7 @@ export class Player {
 	}
 
 	get corporation() {
-		return Corporations.find(c => c.code === this.state.corporation)
+		return CardsLookupApi.get(this.state.corporation)
 	}
 
 	get name() {
@@ -146,8 +150,8 @@ export class Player {
 			throw new Error(`This corporation wasn't in your options`)
 		}
 
-		const corp = Corporations.find(c => c.code === code)
-		if (!corp) {
+		const corp = CardsLookupApi.get(code)
+		if (!corp || corp.type !== CardType.Corporation) {
 			throw new Error(`Unknown corporation ${code}`)
 		}
 
@@ -171,10 +175,84 @@ export class Player {
 			[]
 		)
 
+		this.onCardPlayed.emit({ card: corp, cardIndex: -1, player: this })
+
 		if (
 			(this.state.state as PlayerStateValue) !== PlayerStateValue.PickingCards
 		) {
 			this.state.state = PlayerStateValue.WaitingForTurn
+		}
+
+		this.updated()
+	}
+
+	pickPreludes(cards: number[]) {
+		if (this.state.state !== PlayerStateValue.PickingPreludes) {
+			throw new Error('You are not picking preludes right now')
+		}
+
+		if (new Set(cards).size !== cards.length) {
+			throw new Error('You cant pick one card twice')
+		}
+
+		if (cards.find(c => c >= this.state.cardsPick.length || c < 0)) {
+			throw new Error('Invalid list of cards to pick')
+		}
+
+		if (this.state.cardsPickLimit > 0) {
+			if (cards.length !== this.state.cardsPickLimit) {
+				throw new Error(`You have to pick ${cards.length} cards`)
+			}
+		}
+
+		this.logger.log(
+			f(
+				'Picked preludes: {0}',
+				cards.map(c => this.state.cardsPick[c]).join(', ')
+			)
+		)
+
+		const usedCards = cards.map(c => emptyCardState(this.state.cardsPick[c]))
+
+		this.state.usedCards = [...this.state.usedCards, ...usedCards]
+
+		this.game.state.preludeDiscarded = [
+			...this.game.state.preludeDiscarded,
+			...this.state.cardsPick.filter((_c, i) => !cards.includes(i))
+		]
+
+		this.state.cardsPick = []
+		this.state.cardsPickFree = false
+		this.state.cardsPickLimit = 0
+
+		this.state.usedCards.forEach((c, i) => {
+			if (usedCards.includes(c)) {
+				const card = CardsLookupApi.get(c.code)
+				this.runCardEffects(
+					card.playEffects,
+					{
+						game: this.game.state,
+						player: this.state,
+						playerId: this.state.id,
+						cardIndex: i,
+						card: c
+					},
+					[]
+				)
+			}
+		})
+
+		switch (this.game.state.state) {
+			case GameStateValue.Starting: {
+				this.state.state = PlayerStateValue.WaitingForTurn
+				break
+			}
+
+			case GameStateValue.GenerationInProgress: {
+				this.state.state = PlayerStateValue.Playing
+				this.actionPlayed()
+				break
+			}
 		}
 
 		this.updated()
@@ -225,7 +303,18 @@ export class Player {
 		this.state.cardsPickLimit = 0
 
 		switch (this.game.state.state) {
-			case GameStateValue.PickingCorporations:
+			case GameStateValue.Starting: {
+				if (this.game.state.prelude) {
+					this.state.cardsPick = drawPreludeCards(this.game.state, 4)
+					this.state.cardsPickFree = true
+					this.state.cardsPickLimit = 2
+					this.state.state = PlayerStateValue.PickingPreludes
+				} else {
+					this.state.state = PlayerStateValue.WaitingForTurn
+				}
+				break
+			}
+
 			case GameStateValue.PickingCards: {
 				this.state.state = PlayerStateValue.WaitingForTurn
 				break

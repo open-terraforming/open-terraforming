@@ -1,27 +1,33 @@
-import { GameMode, GameModeType } from './types'
 import { GameState, PlayerStateValue } from '../game'
-import { Card, CardSpecial } from '../cards'
-import { shuffle, range } from '../utils'
-import { Corporations } from '../corporations'
+import { range, drawCorporation } from '../utils'
+import { GameMode, GameModeType } from './types'
+import { CardsLookupApi, CardSpecial } from '../cards'
 
 export const gameMode = (m: GameMode) => m
 
 export const prepareCorporations = (game: GameState, amount = 2) => {
-	let corporations = [] as Card[]
-	const nextCorp = () => {
-		if (corporations.length === 0) {
-			corporations = shuffle(
-				Corporations.slice().filter(
-					c => !c.special.includes(CardSpecial.StartingCorporation)
-				)
-			)
-		}
+	const startingCorp = Object.values(CardsLookupApi.data()).find(c =>
+		c.special.includes(CardSpecial.StartingCorporation)
+	)
 
-		return corporations.pop() as Card
+	if (!startingCorp) {
+		throw new Error('Failed to find starting corporation')
 	}
 
+	game.corporations = game.corporations.filter(c => c !== startingCorp.code)
+
 	game.players.forEach(p => {
-		p.cardsPick = range(0, amount).map(() => nextCorp().code)
+		p.cardsPick = []
+		try {
+			range(0, amount).forEach(() => {
+				p.cardsPick.push(drawCorporation(game))
+			})
+		} catch (e) {
+			if (p.cardsPick.length === 0) {
+				p.cardsPick.push(startingCorp.code)
+			}
+		}
+
 		p.state = PlayerStateValue.PickingCorporation
 	})
 }

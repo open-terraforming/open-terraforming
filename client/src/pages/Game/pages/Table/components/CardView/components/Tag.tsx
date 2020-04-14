@@ -12,7 +12,8 @@ import {
 	faSun,
 	faCity,
 	faWarehouse,
-	faMicroscope
+	faMicroscope,
+	faQuestion
 } from '@fortawesome/free-solid-svg-icons'
 import { Jupiter } from './Jupiter'
 
@@ -87,6 +88,12 @@ export const Tag = ({ tag }: Props) => {
 				return (
 					<IconContainer background="#BCE444">
 						<FontAwesomeIcon icon={faMicroscope} color="#5A703B" />
+					</IconContainer>
+				)
+			case CardCategory.Any:
+				return (
+					<IconContainer background="#fff">
+						<FontAwesomeIcon icon={faQuestion} color="#333" />
 					</IconContainer>
 				)
 		}

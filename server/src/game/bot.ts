@@ -285,6 +285,16 @@ export class Bot extends Player {
 				break
 			}
 
+			case PlayerStateValue.PickingPreludes: {
+				const picked = shuffle(this.state.cardsPick.map((_c, i) => i)).slice(
+					0,
+					this.state.cardsPickLimit
+				)
+
+				this.pickPreludes(picked)
+				break
+			}
+
 			case PlayerStateValue.EndingTiles: {
 				const placed = this.state.placingTile[0]
 				if (placed) {

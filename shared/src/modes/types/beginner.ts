@@ -1,7 +1,6 @@
-import { gameMode, prepareCorporations } from '../utils'
+import { CardsLookupApi, CardSpecial } from '../../cards'
 import { GameModeType } from '../types'
-import { CardSpecial } from '../../cards'
-import { Corporations } from '../../corporations'
+import { gameMode, prepareCorporations } from '../utils'
 
 export const BeginnerMode = gameMode({
 	type: GameModeType.Beginner,
@@ -9,9 +8,10 @@ export const BeginnerMode = gameMode({
 	description:
 		'Starting corporation is available, everybody starts with 1 production of every resource and the cards selection is limited.',
 	onGameStart: game => {
-		const startingCorp = Corporations.find(c =>
-			c.special.includes(CardSpecial.StartingCorporation)
-		)
+		const startingCorp = game.corporations
+			.map(c => CardsLookupApi.get(c))
+			.find(c => c.special.includes(CardSpecial.StartingCorporation))
+
 		if (!startingCorp) {
 			throw new Error('Failed to find starting corporation')
 		}

@@ -28,6 +28,9 @@ export const Table = () => {
 				<CorporationPicker />
 			)}
 			{playerState === PlayerStateValue.PickingCards && <CardPicker />}
+			{playerState === PlayerStateValue.PickingPreludes && (
+				<CardPicker prelude />
+			)}
 			<GameContainer>
 				<Players />
 				<GameMap />

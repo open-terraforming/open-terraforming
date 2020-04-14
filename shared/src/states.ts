@@ -1,6 +1,7 @@
 import { GameState, GameStateValue, PlayerState, PlayerStateValue } from '.'
 import { defaultMap } from './map'
 import { GameModeType } from './modes/types'
+import { CardCategory } from './cards'
 
 export const initialGameState = (id: string): GameState => ({
 	id,
@@ -14,11 +15,16 @@ export const initialGameState = (id: string): GameState => ({
 	oceans: 0,
 	oxygen: 0,
 	temperature: 0,
+	prelude: true,
 	map: defaultMap(),
 	competitions: [],
 	milestones: [],
 	cards: [],
 	discarded: [],
+	preludeCards: [],
+	preludeDiscarded: [],
+	corporations: [],
+	corporationsDiscarded: [],
 	started: new Date().toISOString(),
 	maxPlayers: 5
 })
@@ -52,14 +58,12 @@ export const initialPlayerState = (
 	usedCards: [],
 	cardsPick: [],
 	corporation: '',
-	spacePriceChange: 0,
+	tagPriceChange: {} as Record<CardCategory, number>,
 	cardPriceChange: 0,
 	cardsPickFree: false,
 	cardsPickLimit: 0,
 	cardsToPlay: [],
-	earthPriceChange: 0,
 	greeneryCost: 8,
-	powerPriceChange: 0,
 	powerProjectCost: 11,
 	temperatureCost: 8,
 	placingTile: [],

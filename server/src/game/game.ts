@@ -2,10 +2,9 @@ import { deepExtend, range, shuffle } from '@/utils/collections'
 import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
 import { f } from '@/utils/string'
-import { CardsLookupApi, CardType } from '@shared/cards'
+import { CardsLookupApi, CardType, CardSpecial } from '@shared/cards'
 import { Competitions, CompetitionType } from '@shared/competitions'
 import { COMPETITIONS_REWARDS } from '@shared/constants'
-import { Corporations } from '@shared/corporations'
 import {
 	GameState,
 	GameStateValue,
@@ -290,21 +289,42 @@ export class Game {
 		})
 
 		// Create card pool
-		let cards = Object.values(CardsLookupApi.data()).filter(
-			c => c.type !== CardType.Corporation
-		)
+		let cards = Object.values(CardsLookupApi.data())
+
+		// Remove Prelude if not desired
+		if (!this.state.prelude) {
+			cards = cards.filter(c => !c.special.includes(CardSpecial.Prelude))
+		}
+
 		if (this.mode.filterCards) {
 			cards = this.mode.filterCards(cards)
 		}
 
-		this.state.cards = shuffle(cards.map(c => c.code))
+		// Pick corporations
+		this.state.corporations = shuffle(
+			cards.filter(c => c.type === CardType.Corporation).map(c => c.code)
+		)
 
-		// Start picking corporations
+		// Pick preludes
+		this.state.preludeCards = this.state.prelude
+			? shuffle(cards.filter(c => c.type === CardType.Prelude).map(c => c.code))
+			: []
+
+		// Pick projects
+		this.state.cards = shuffle(
+			cards
+				.filter(
+					c => c.type !== CardType.Corporation && c.type !== CardType.Prelude
+				)
+				.map(c => c.code)
+		)
+
+		// Start picking corporations or whatever the mode desires
 		if (this.mode.onGameStart) {
 			this.mode.onGameStart(this.state)
 		}
 
-		this.state.state = GameStateValue.PickingCorporations
+		this.state.state = GameStateValue.Starting
 	}
 
 	checkState() {
@@ -320,7 +340,7 @@ export class Game {
 				}
 				break
 
-			case GameStateValue.PickingCorporations:
+			case GameStateValue.Starting:
 			case GameStateValue.PickingCards:
 				if (this.all(PlayerStateValue.WaitingForTurn)) {
 					this.logger.log(`All players ready, starting the round`)
@@ -356,7 +376,7 @@ export class Game {
 						this.logger.log(
 							`${p.name} is disconnected, picking first corporation`
 						)
-						p.pickCorporation(Corporations[0].code)
+						p.pickCorporation(p.state.cardsPick[0])
 					}
 					if (p.state.state === PlayerStateValue.PickingCards) {
 						this.logger.log(

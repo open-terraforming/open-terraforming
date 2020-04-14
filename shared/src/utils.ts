@@ -66,6 +66,22 @@ export function shuffle<T>(a: T[]) {
 	return a
 }
 
+export const drawPreludeCards = (game: GameState, count: number) =>
+	range(0, count).map(() => drawPreludeCard(game))
+
+export const drawPreludeCard = (game: GameState) => {
+	if (game.preludeCards.length === 0) {
+		game.preludeCards = shuffle(game.preludeDiscarded.slice(0))
+		game.preludeDiscarded = []
+	}
+
+	if (game.preludeCards.length === 0) {
+		throw new Error(`There are no more prelude cards.`)
+	}
+
+	return game.preludeCards.pop() as string
+}
+
 export const drawCard = (game: GameState) => {
 	if (game.cards.length === 0) {
 		game.cards = shuffle(game.discarded.slice(0))
@@ -88,6 +104,22 @@ export const drawCard = (game: GameState) => {
 
 export const drawCards = (game: GameState, count: number) =>
 	range(0, count).map(() => drawCard(game))
+
+export const drawCorporation = (game: GameState) => {
+	if (game.corporations.length === 0) {
+		game.corporations = shuffle(game.corporationsDiscarded.slice(0))
+		game.corporationsDiscarded = []
+	}
+
+	if (game.corporations.length === 0) {
+		throw new Error(`There are no more corporations to pick from`)
+	}
+
+	return game.corporations.pop() as string
+}
+
+export const drawCorporations = (game: GameState, count: number) =>
+	range(0, count).map(() => drawCorporation(game))
 
 /**
  * Generates array containing numbers between start and end (excluding).

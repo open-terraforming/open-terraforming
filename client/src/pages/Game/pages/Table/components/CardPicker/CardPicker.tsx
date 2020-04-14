@@ -4,7 +4,7 @@ import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { CARD_PRICE } from '@shared/constants'
-import { pickCards } from '@shared/index'
+import { pickCards, pickPreludes } from '@shared/index'
 import React, { useState } from 'react'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
@@ -13,7 +13,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTint, faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
 import { colors } from '@/styles'
 
-export const CardPicker = () => {
+type Props = {
+	prelude?: boolean
+}
+
+export const CardPicker = ({ prelude }: Props) => {
 	const api = useApi()
 	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
@@ -23,16 +27,26 @@ export const CardPicker = () => {
 		state => state.game.player?.cardsPick
 	)?.map(c => CardsLookupApi.get(c))
 
+	const cardsLimit =
+		useAppStore(state => state.game.player?.cardsPickLimit) ?? 0
+
+	const isFree = useAppStore(state => state.game.player?.cardsPickFree) ?? false
+
 	const [selected, setSelected] = useState([] as number[])
 
 	const [loading, setLoading] = useState(false)
 
-	const price = selected.length * CARD_PRICE
+	const price = isFree ? 0 : selected.length * CARD_PRICE
 	const canAfford = state && price <= state.money
 
 	const handleConfirm = () => {
 		setLoading(true)
-		api.send(pickCards(selected))
+
+		if (prelude) {
+			api.send(pickPreludes(selected))
+		} else {
+			api.send(pickCards(selected))
+		}
 	}
 
 	if (!game || !player) {
@@ -43,16 +57,24 @@ export const CardPicker = () => {
 		<Modal
 			open={true}
 			allowClose={false}
-			header={'Pick cards'}
+			header={cardsLimit === 0 ? `Pick cards` : `Pick ${cardsLimit} cards`}
 			footer={
 				<Button
 					onClick={handleConfirm}
-					disabled={loading || !canAfford}
+					disabled={
+						loading ||
+						!canAfford ||
+						(cardsLimit !== 0 && isFree && selected.length !== cardsLimit)
+					}
 					isLoading={loading}
 				>
-					{selected.length > 0
-						? `Buy ${selected.length} cards for ${price}`
-						: 'Buy nothing'}
+					{!isFree
+						? selected.length > 0
+							? `Buy ${selected.length} cards for ${price}`
+							: 'Buy nothing'
+						: selected.length > 0
+						? `Select ${selected.length}`
+						: 'Select nothing'}
 				</Button>
 			}
 		>
@@ -98,7 +120,9 @@ export const CardPicker = () => {
 												setSelected(
 													selected.includes(i)
 														? selected.filter(s => s !== i)
-														: [...selected, i]
+														: cardsLimit === 0 || selected.length < cardsLimit
+														? [...selected, i]
+														: selected
 												)
 										  }
 										: undefined

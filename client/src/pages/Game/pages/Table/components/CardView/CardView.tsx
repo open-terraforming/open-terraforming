@@ -91,7 +91,7 @@ export const CardView = ({
 			}
 		>
 			<Head>
-				{card.type !== CardType.Corporation && (
+				{card.type !== CardType.Corporation && card.type !== CardType.Prelude && (
 					<Cost affordable={affordable}>
 						<div>{card.cost}</div>
 					</Cost>
@@ -163,7 +163,8 @@ const typeToColor = {
 	[CardType.Building]: '#56BA1B',
 	[CardType.Effect]: '#0F87E2 ',
 	[CardType.Event]: '#FF6868',
-	[CardType.Corporation]: '#BAC404'
+	[CardType.Corporation]: '#BAC404',
+	[CardType.Prelude]: '#FF86C2'
 } as const
 
 const Head = styled.div`

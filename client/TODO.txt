@@ -13,9 +13,7 @@ CHECK CARDS:
  * media group - will you only receive selected cards?
 
 PRELUDE:
-* add prelude cards
-* add prelude picking stage
-* WILD TAG implementation
+* resource production card arg
 
 NICE TODO:
 * redesign right part of the bottom panel
