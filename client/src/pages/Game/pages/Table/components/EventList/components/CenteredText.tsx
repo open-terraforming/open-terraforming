@@ -54,7 +54,7 @@ const CenteredContainer = styled.div`
 	right: 0;
 	bottom: 0;
 	z-index: 1000;
-	background: rgba(0, 0, 0, 0.6);
+	background: rgba(0, 0, 0, 0.2);
 
 	animation-name: bg-in-out;
 	animation-duration: 1500ms;

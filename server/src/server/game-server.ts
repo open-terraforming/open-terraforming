@@ -1,13 +1,13 @@
-import { cachePath } from '@/config'
 import { Game, GameConfig } from '@/game/game'
+import { saveOngoing } from '@/storage'
 import { debounce } from '@/utils/debounce'
+import { MyEvent } from '@/utils/events'
 import { Logger } from '@/utils/log'
 import { GameState, gameStateUpdate, GameStateValue } from '@shared/index'
-import { promises as fs } from 'fs'
-import { join } from 'path'
 import WebSocket from 'ws'
 import { Client } from './game-client'
-import { MyEvent } from '@/utils/events'
+import { Socket } from 'net'
+import { IncomingMessage } from 'http'
 
 export class GameServer {
 	logger = new Logger('GameServer')
@@ -52,7 +52,7 @@ export class GameServer {
 	}
 
 	get acceptsConnections() {
-		return this.game.state.state !== GameStateValue.Ended
+		return true
 	}
 
 	get listable() {
@@ -63,11 +63,17 @@ export class GameServer {
 		)
 	}
 
-	handleConnection = (s: WebSocket) => {
-		if (!this.acceptsConnections) {
-			s.close()
-		}
+	handleUpgrade = (
+		request: IncomingMessage,
+		socket: Socket,
+		upgradeHead: Buffer
+	) => {
+		this.socket.handleUpgrade(request, socket, upgradeHead, ws => {
+			this.socket.emit('connection', ws)
+		})
+	}
 
+	handleConnection = (s: WebSocket) => {
 		const client = new Client(this, s)
 		client.onDisconnected.on(() => this.handleDisconnect(client))
 		this.clients.push(client)
@@ -99,9 +105,9 @@ export class GameServer {
 			this.game.state.state === GameStateValue.Ended &&
 			this.endedTimeout === undefined
 		) {
-			this.onEnded.emit()
-
 			this.endedTimeout = setTimeout(() => {
+				this.onEnded.emit()
+
 				this.clients.forEach(c => {
 					c.socket.close()
 				})
@@ -109,10 +115,7 @@ export class GameServer {
 		}
 
 		try {
-			await fs.writeFile(
-				join(cachePath, this.game.state.id + '.json'),
-				JSON.stringify(s)
-			)
+			saveOngoing(this.game.state)
 		} catch (e) {
 			this.logger.error('Failed to save game state:', e)
 		}

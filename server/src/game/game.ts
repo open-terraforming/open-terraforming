@@ -41,7 +41,9 @@ export interface GameConfig {
 	public: boolean
 }
 export class Game {
-	logger = new Logger('Game')
+	get logger() {
+		return new Logger(`Game(${this.state.id})`)
+	}
 
 	config: GameConfig
 
@@ -65,8 +67,10 @@ export class Game {
 		this.state.mode = this.config.mode
 
 		range(0, this.config.bots).forEach(() => {
-			this.add(new Bot(this))
+			this.add(new Bot(this), false)
 		})
+
+		this.updated()
 	}
 
 	get inProgress() {
@@ -74,7 +78,13 @@ export class Game {
 	}
 
 	get currentPlayer() {
-		return this.state.players[this.state.currentPlayer]
+		const player = this.state.players[this.state.currentPlayer]
+
+		if (!player) {
+			throw new Error(`Undefined player ${this.state.currentPlayer}`)
+		}
+
+		return player
 	}
 
 	get mode() {
@@ -93,15 +103,17 @@ export class Game {
 		this.state = state
 		this.players = []
 		state.players.forEach(p => {
-			const player = new Player(this)
+			const player = p.bot ? new Bot(this) : new Player(this)
 			player.state = p
 
 			this.logger.log(
 				f('Player {0} session: {1}', player.name, player.state.session)
 			)
 
-			this.add(player)
+			this.add(player, false)
 		})
+
+		this.updated()
 	}
 
 	updated = () => {
@@ -109,7 +121,7 @@ export class Game {
 		this.onStateUpdated.emit(this.state)
 	}
 
-	add(player: Player) {
+	add(player: Player, triggerUpdate = true) {
 		if (this.players.find(p => p.id === player.id)) {
 			throw new Error(`ID ${player.id} is not unique player id`)
 		}
@@ -130,7 +142,9 @@ export class Game {
 
 		this.logger.log(`Player ${player.name} (${player.id}) added to the game`)
 
-		this.updated()
+		if (triggerUpdate) {
+			this.updated()
+		}
 	}
 
 	remove(player: Player) {
@@ -311,7 +325,12 @@ export class Game {
 				if (this.all(PlayerStateValue.WaitingForTurn)) {
 					this.logger.log(`All players ready, starting the round`)
 
-					this.state.currentPlayer = this.state.startingPlayer - 1
+					// Reset to starting player
+					this.state.currentPlayer =
+						this.state.startingPlayer > 0
+							? (this.state.startingPlayer - 1) % this.state.players.length
+							: this.state.players.length - 1
+
 					this.state.state = GameStateValue.GenerationInProgress
 					this.updated()
 				}
@@ -385,6 +404,13 @@ export class Game {
 						: PlayerStateValue.Playing
 				this.currentPlayer.actionsPlayed = 0
 			}
+		}
+
+		if (
+			this.currentPlayer.state === PlayerStateValue.EndingTiles &&
+			this.currentPlayer.placingTile.length === 0
+		) {
+			this.currentPlayer.state = PlayerStateValue.Passed
 		}
 	}
 
@@ -492,7 +518,6 @@ export class Game {
 		if (this.hasReachedLimits) {
 			this.state.state = GameStateValue.EndingTiles
 			this.players.forEach(p => {
-				p.state.state = PlayerStateValue.WaitingForTurn
 				p.state.placingTile = []
 				range(0, Math.floor(p.state.plants / p.state.greeneryCost)).forEach(
 					() => {
@@ -500,6 +525,11 @@ export class Game {
 						p.state.plants -= p.state.greeneryCost
 					}
 				)
+
+				p.state.state =
+					p.state.placingTile.length > 0
+						? PlayerStateValue.WaitingForTurn
+						: PlayerStateValue.Passed
 			})
 		} else {
 			this.players.forEach(p => {

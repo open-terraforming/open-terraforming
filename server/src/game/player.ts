@@ -657,7 +657,7 @@ export class Player {
 
 		// Perform production
 		state.heat += state.energy + state.heatProduction
-		state.energy += state.energyProduction
+		state.energy = state.energyProduction
 		state.ore += state.oreProduction
 		state.titan += state.titanProduction
 		state.plants += state.plantsProduction

@@ -285,6 +285,22 @@ export class Bot extends Player {
 				break
 			}
 
+			case PlayerStateValue.EndingTiles: {
+				const placed = this.state.placingTile[0]
+				if (placed) {
+					const tile = shuffle(allCells(this.game.state)).find(c =>
+						canPlace(this.game.state, this.state, c, placed)
+					)
+					if (tile) {
+						this.placeTile(tile.x, tile.y)
+					} else {
+						this.pass(true)
+					}
+				} else {
+					this.pass(true)
+				}
+			}
+
 			case PlayerStateValue.Playing: {
 				const placed = this.state.placingTile[0]
 				const playing = this.state.cardsToPlay[0]

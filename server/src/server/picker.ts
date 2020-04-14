@@ -1,11 +1,9 @@
-import { Router } from 'express'
-import { CardsLookupApi, CardCategory } from '@shared/cards'
-import { promises as fs, existsSync } from 'fs'
-import { cachePath } from './images'
-import { join } from 'path'
-import config from '../../config'
 import ImageSearch from '@/lib/image-google-search'
+import { saveToCache, tryLoadCache } from '@/storage'
+import { CardCategory, CardsLookupApi } from '@shared/cards'
+import { Router } from 'express'
 import got from 'got'
+import config from '../../config'
 
 const attr = (s: string) => s.replace(/"/g, '"')
 
@@ -16,7 +14,7 @@ export default () => {
 
 	router.get('/picker', async (req, res) => {
 		const card = Object.values(CardsLookupApi.data()).find(c => {
-			return !existsSync(join(cachePath, c.code))
+			return !tryLoadCache(c.code)
 		})
 
 		if (!card) {
@@ -81,7 +79,7 @@ export default () => {
 
 			if (image.body && image.headers['content-type']?.includes('image')) {
 				res.redirect('/picker')
-				await fs.writeFile(join(cachePath, card.code), image.body)
+				await saveToCache(card.code, image.body)
 			} else {
 				throw Error(
 					'Response was not an image (' +

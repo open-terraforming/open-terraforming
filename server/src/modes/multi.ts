@@ -12,6 +12,8 @@ import { createServer, IncomingMessage } from 'http'
 import { Socket } from 'net'
 import { join } from 'path'
 import { GameServer } from '../server/game-server'
+import { tryLoadOngoing } from '@/storage'
+import { GameConfig } from '@/game/game'
 
 export const multiApp = (config: ServerOptions) => {
 	const logger = new Logger('Master')
@@ -27,9 +29,26 @@ export const multiApp = (config: ServerOptions) => {
 	app.use(bodyParser.raw())
 	app.use(cardsImagesMiddleware())
 
+	const createGameServer = (config?: Partial<GameConfig>) => {
+		const gameServer = new GameServer(config)
+
+		gameServer.onEnded.on(() => {
+			logger.log(`Server ${gameServer.id} removed - game ended`)
+			servers = servers.filter(s => s !== gameServer)
+		})
+		gameServer.onEmpty.on(() => {
+			logger.log(`Server ${gameServer.id} removed - no active players`)
+			servers = servers.filter(s => s !== gameServer)
+		})
+
+		servers.push(gameServer)
+
+		return gameServer
+	}
+
 	server.on(
 		'upgrade',
-		(request: IncomingMessage, socket: Socket, head: Buffer) => {
+		async (request: IncomingMessage, socket: Socket, head: Buffer) => {
 			try {
 				const gameMatch = /game\/([a-z0-9-]+)\/socket$/.exec(
 					request.url as string
@@ -38,18 +57,26 @@ export const multiApp = (config: ServerOptions) => {
 					throw new Error(`Cannot upgrade, unknown game id ${request.url}`)
 				}
 
-				const game = servers.find(
+				let game = servers.find(
 					s => s.acceptsConnections && s.id === gameMatch[1]
 				)
+
+				if (!game) {
+					// TODO: Check server limit when creating ongoing game
+					const ongoing = await tryLoadOngoing(gameMatch[1])
+					if (ongoing) {
+						game = createGameServer()
+						game.load(ongoing)
+					}
+				}
+
 				if (!game) {
 					throw new Error(`Failed to find game ${gameMatch[1]}`)
 				}
 
 				logger.log('New connection to ' + game.id)
 
-				game.socket.handleUpgrade(request, socket, head, ws => {
-					game.socket.emit('connection', ws, request)
-				})
+				game.handleUpgrade(request, socket, head)
 			} catch (e) {
 				logger.error(e)
 				socket.end()
@@ -104,27 +131,16 @@ export const multiApp = (config: ServerOptions) => {
 				throw new Error(`Unknown game mode ${req.body.mode}`)
 			}
 
-			const gameServer = new GameServer({
+			const gameServer = createGameServer({
 				name,
 				mode: mode.type,
 				bots,
 				public: isPublic
 			})
 
-			gameServer.onEnded.on(() => {
-				logger.log(`Server ${gameServer.id} removed - game ended`)
-				servers = servers.filter(s => s !== gameServer)
-			})
-			gameServer.onEmpty.on(() => {
-				logger.log(`Server ${gameServer.id} removed - no active players`)
-				servers = servers.filter(s => s !== gameServer)
-			})
-
-			servers.push(gameServer)
+			logger.log(`New ${gameServer.id} - ${name}`)
 
 			res.json(gameServer.info())
-
-			logger.log(`New ${gameServer.id} - ${name}`)
 		}
 	)
 

@@ -11,6 +11,8 @@ type Props = {
 	onClick: () => void
 }
 
+const hexPoints = '-8.5,4.4 -8.5,-4.5 0,-9.5 8.5,-4.5 8.5,4.5 0,9.5'
+
 export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 	const game = useAppStore(state => state.game.state)
 
@@ -66,14 +68,14 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 				stroke={'rgba(255,255,255,0.3)'}
 				fill="transparent"
 				strokeWidth="0.5"
-				points="-9,5 -9,-5 0,-10 9,-5 9,5 0,10"
+				points={hexPoints}
 			/>
 			{diffAnim && (
 				<DiffAnim
 					stroke={'rgba(255,255,255,0.3)'}
 					fill="transparent"
 					strokeWidth="2"
-					points="-9,5 -9,-5 0,-10 9,-5 9,5 0,10"
+					points={hexPoints}
 				/>
 			)}
 			{owner && cell.content !== GridCellContent.Ocean && (
@@ -82,7 +84,7 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 					fill="transparent"
 					strokeWidth="1"
 					transform="scale(0.9)"
-					points="-9,5 -9,-5 0,-10 9,-5 9,5 0,10"
+					points={hexPoints}
 				/>
 			)}
 			{cell.content === GridCellContent.City && (

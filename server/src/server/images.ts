@@ -1,10 +1,10 @@
+import ImageSearch from '@/lib/image-google-search'
+import { saveToCache, tryLoadCache } from '@/storage'
+import { CardCategory, CardsLookupApi } from '@shared/cards'
 import { Router } from 'express'
-import { promises as fs } from 'fs'
-import { CardsLookupApi, CardCategory } from '@shared/cards'
 import got from 'got'
 import { join } from 'path'
 import config from '../../config'
-import ImageSearch from '@/lib/image-google-search'
 
 export const cachePath = join(__dirname, '..', '..', '.cache')
 
@@ -14,11 +14,11 @@ export const cardsImagesMiddleware = () => {
 
 	router.get('/card/:code', async (req, res) => {
 		const cardId = req.params['code']
-		const cacheFilename = join(cachePath, cardId)
-		try {
-			await fs.access(cacheFilename)
-			res.contentType('image/jpeg').send(await fs.readFile(cacheFilename))
-		} catch (e) {
+
+		const cacheContents = await tryLoadCache(cardId)
+		if (cacheContents) {
+			res.contentType('image/jpeg').send(cacheContents)
+		} else {
 			try {
 				const card = CardsLookupApi.get(cardId)
 				const data = await searchClient.search(
@@ -43,7 +43,9 @@ export const cardsImagesMiddleware = () => {
 							res
 								.contentType(image.headers['content-type'] || 'image/jpeg')
 								.send(image.body)
-							fs.writeFile(cacheFilename, image.body)
+
+							saveToCache(cardId, image.body)
+
 							return
 						}
 					} catch (e) {
