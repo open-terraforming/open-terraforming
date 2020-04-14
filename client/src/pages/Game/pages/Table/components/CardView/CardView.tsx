@@ -21,6 +21,7 @@ export const CardView = ({
 	buying = false,
 	evaluate = true,
 	hover = true,
+	fade = true,
 	state,
 	cardIndex,
 	onClick
@@ -33,6 +34,7 @@ export const CardView = ({
 	buying?: boolean
 	evaluate?: boolean
 	hover?: boolean
+	fade?: boolean
 }) => {
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
@@ -84,7 +86,7 @@ export const CardView = ({
 			selected={selected}
 			onClick={onClick}
 			hover={hover}
-			playable={!evaluate || (playable && affordable)}
+			playable={!fade || !evaluate || (playable && affordable)}
 			played={!!(state && state.played)}
 			className={
 				!evaluate || (playable && affordable) ? 'playable' : 'unplayable'

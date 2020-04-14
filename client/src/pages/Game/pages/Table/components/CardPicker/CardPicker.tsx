@@ -113,7 +113,7 @@ export const CardPicker = ({ prelude }: Props) => {
 								card={c}
 								selected={selected.includes(i)}
 								key={i}
-								evaluate={false}
+								fade={false}
 								onClick={
 									!loading
 										? () => {

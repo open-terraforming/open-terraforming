@@ -1776,7 +1776,8 @@ export const baseCards: Card[] = [
 		],
 		passiveEffects: [
 			cardResourcePerTilePlaced(GridCellContent.Forest, 'animals', 1)
-		]
+		],
+		victoryPointsCallback: vpsForCardResources('animals', 1 / 2)
 	}),
 	card({
 		code: 'insects',

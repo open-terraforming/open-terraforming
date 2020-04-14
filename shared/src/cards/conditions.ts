@@ -1,16 +1,15 @@
-import {
-	CardEffectArgumentType,
-	CardCondition,
-	CardResource,
-	CardCategory,
-	GameProgress,
-	Resource,
-	CardCallbackContext
-} from './types'
-import { progressResToStr, withUnits } from '../units'
 import { GridCellContent } from '../game'
-import { countGridContent, resourceProduction } from './utils'
+import { progressResToStr, withUnits } from '../units'
 import { CardsLookupApi } from './lookup'
+import {
+	CardCategory,
+	CardCondition,
+	CardEffectArgumentType,
+	CardResource,
+	GameProgress,
+	Resource
+} from './types'
+import { countGridContent, resourceProduction } from './utils'
 
 export const condition = <T extends (CardEffectArgumentType | undefined)[]>(
 	c: CardCondition<T>
@@ -48,7 +47,7 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 							.length,
 					0
 				) >= value,
-		description: `Requires ${value} ${CardCategory[category]} cards`
+		description: `Requires ${value} ${CardCategory[category]} tag(s)`
 	})
 
 export const gameProgressConditionMin = (res: GameProgress, value: number) =>

@@ -10,7 +10,7 @@ TODO:
 
 CHECK CARDS:
  * pets
- * media group - will you only receive selected cards?
+ * advanced_ecosystems - broken Any tag
 
 PRELUDE:
 * resource production card arg
