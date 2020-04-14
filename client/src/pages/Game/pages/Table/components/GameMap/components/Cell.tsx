@@ -47,6 +47,8 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 		(cell.claimantId === undefined || cell.claimantId === playerId) &&
 		canPlace(game, player, cell, placing)
 
+	console.log(cell.x, cell.y, cell.x / cell.y)
+
 	return (
 		<StyledHex
 			gridType={cell.type}
@@ -56,6 +58,13 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 			onClick={active ? onClick : undefined}
 		>
 			<polygon
+				style={{
+					animationDelay:
+						((game?.map.width || 0) +
+							(cell.y - ((game?.map.width || 0) - cell.x))) *
+							50 +
+						'ms'
+				}}
 				stroke={'rgba(255,255,255,0.3)'}
 				fill="transparent"
 				strokeWidth="0.5"
@@ -110,12 +119,22 @@ const DiffAnim = styled.polygon`
 	z-index: 1;
 `
 
+const highlightAnimation = keyframes`
+	0% { stroke: rgba(255,255,255,0.3); stroke-width: 0.5; }
+	3% { stroke: rgba(255,255,255,0.5); stroke-width: 0.8; }
+	6% { stroke: rgba(255,255,255,0.3); stroke-width: 0.5; }
+`
+
 const StyledHex = styled.g<{
 	gridType: GridCellType
 	gridContent?: GridCellContent
 	gridActive?: boolean
 }>`
 	polygon:first-child {
+
+		animation-name: ${highlightAnimation};
+		animation-duration: 15000ms;
+		animation-iteration-count: infinite;
 
 		${props =>
 			props.gridType === GridCellType.Ocean &&

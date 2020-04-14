@@ -72,6 +72,22 @@ export class Game {
 		return this.state.state !== GameStateValue.WaitingForPlayers
 	}
 
+	get currentPlayer() {
+		return this.state.players[this.state.currentPlayer]
+	}
+
+	get mode() {
+		return GameModes[this.state.mode]
+	}
+
+	get hasReachedLimits() {
+		return (
+			this.state.oceans >= this.state.map.oceans &&
+			this.state.oxygen >= this.state.map.oxygen &&
+			this.state.temperature >= this.state.map.temperature
+		)
+	}
+
 	load = (state: GameState) => {
 		this.state = state
 		this.players = []
@@ -114,6 +130,18 @@ export class Game {
 		this.logger.log(`Player ${player.name} (${player.id}) added to the game`)
 
 		this.updated()
+	}
+
+	remove(player: Player) {
+		this.players = this.players.filter(p => p !== player)
+		this.state.players = this.state.players.filter(p => p !== player.state)
+
+		this.logger.log(
+			`Player ${player.name} (${player.id}) removed from the game`
+		)
+
+		player.onStateChanged.off(this.updated)
+		this.onStateUpdated.emit(this.state)
 	}
 
 	handleGenerationEnd = () => {
@@ -213,48 +241,30 @@ export class Game {
 		})
 	}
 
-	remove(player: Player) {
-		this.players = this.players.filter(p => p !== player)
-		this.state.players = this.state.players.filter(p => p !== player.state)
-
-		this.logger.log(
-			`Player ${player.name} (${player.id}) removed from the game`
-		)
-
-		player.onStateChanged.off(this.updated)
-		this.onStateUpdated.emit(this.state)
-	}
-
 	all(state: PlayerStateValue) {
 		return this.state.players.every(p => p.state === state)
-	}
-
-	get currentPlayer() {
-		return this.state.players[this.state.currentPlayer]
-	}
-
-	get mode() {
-		return GameModes[this.state.mode]
 	}
 
 	startGame() {
 		this.logger.log(`Game starting`)
 
-		this.state.state = GameStateValue.PickingCorporations
-
+		// Initial game progress
 		this.state.started = new Date().toISOString()
 		this.state.oxygen = this.state.map.initialOxygen
 		this.state.oceans = this.state.map.initialOceans
 		this.state.temperature = this.state.map.initialTemperature
 
+		// Pick first starting player
 		this.state.startingPlayer = Math.round(
 			Math.random() * (this.players.length - 1)
 		)
 
+		// Assign random colors to players
 		this.state.players.forEach(p => {
 			p.color = nextColor()
 		})
 
+		// Create card pool
 		let cards = Object.values(CardsLookupApi.data()).filter(
 			c => c.type !== CardType.Corporation
 		)
@@ -264,35 +274,16 @@ export class Game {
 
 		this.state.cards = shuffle(cards.map(c => c.code))
 
+		// Start picking corporations
 		if (this.mode.onGameStart) {
 			this.mode.onGameStart(this.state)
 		}
+
+		this.state.state = GameStateValue.PickingCorporations
 	}
 
 	checkState() {
-		if (!this.players.every(p => !p.state.connected || p.state.bot)) {
-			// Make sure disconnected players are not stalling others
-			this.players.forEach(p => {
-				if (!p.state.connected) {
-					if (p.state.state === PlayerStateValue.PickingCorporation) {
-						this.logger.log(
-							`${p.name} is disconnected, picking first corporation`
-						)
-						p.pickCorporation(Corporations[0].code)
-					}
-					if (p.state.state === PlayerStateValue.PickingCards) {
-						this.logger.log(
-							`${p.name} is disconnected, cancelling card picking`
-						)
-						p.pickCards([])
-					}
-					if (p.state.state === PlayerStateValue.Playing) {
-						this.logger.log(`${p.name} is disconnected, passing`)
-						p.pass(true)
-					}
-				}
-			})
-		}
+		this.checkDisconnected()
 
 		switch (this.state.state) {
 			case GameStateValue.WaitingForPlayers:
@@ -310,53 +301,120 @@ export class Game {
 					this.logger.log(`All players ready, starting the round`)
 
 					this.state.currentPlayer = this.state.startingPlayer - 1
-					this.nextPlayer()
 					this.state.state = GameStateValue.GenerationInProgress
 					this.updated()
 				}
 				break
 
+			case GameStateValue.EndingTiles:
 			case GameStateValue.GenerationInProgress:
-				this.state.map.oxygenMilestones.forEach(m => {
-					if (!m.used && m.value <= this.state.oxygen) {
-						this.logger.log(
-							`Oxygen milestone ${ProgressMilestoneType[m.type]} (at ${
-								m.value
-							}) reached`
-						)
-
-						m.used = true
-						ProgressMilestones[m.type].effects.forEach(e =>
-							e(this.state, this.currentPlayer)
-						)
-					}
-				})
-
-				this.state.map.temperatureMilestones.forEach(m => {
-					if (!m.used && m.value <= this.state.temperature) {
-						this.logger.log(
-							`Temperature milestone ${ProgressMilestoneType[m.type]} (at ${
-								m.value
-							}) reached`
-						)
-
-						m.used = true
-						ProgressMilestones[m.type].effects.forEach(e =>
-							e(this.state, this.currentPlayer)
-						)
-					}
-				})
-
-				if (!this.currentPlayer.connected) {
-					this.currentPlayer.state = PlayerStateValue.Passed
-					this.nextPlayer()
-					this.updated()
-				}
-
+				this.checkMilestones()
+				this.checkCurrentPlayer()
 				break
 		}
 	}
 
+	/**
+	 * Checks disconnected players and skips them if they're playing right now
+	 */
+	checkDisconnected() {
+		if (!this.players.every(p => !p.state.connected || p.state.bot)) {
+			// Make sure disconnected players are not stalling others
+			this.players.forEach(p => {
+				if (!p.state.connected) {
+					if (p.state.state === PlayerStateValue.PickingCorporation) {
+						this.logger.log(
+							`${p.name} is disconnected, picking first corporation`
+						)
+						p.pickCorporation(Corporations[0].code)
+					}
+					if (p.state.state === PlayerStateValue.PickingCards) {
+						this.logger.log(
+							`${p.name} is disconnected, cancelling card picking`
+						)
+						p.pickCards([])
+					}
+					if (
+						p.state.state === PlayerStateValue.Playing ||
+						p.state.state === PlayerStateValue.EndingTiles
+					) {
+						this.logger.log(`${p.name} is disconnected, passing`)
+						p.pass(true)
+					}
+				}
+			})
+		}
+	}
+
+	/**
+	 * Checks if current player finished his turn and passes to next or ends the round
+	 */
+	checkCurrentPlayer() {
+		if (
+			this.currentPlayer.state !== PlayerStateValue.Playing &&
+			this.currentPlayer.state !== PlayerStateValue.EndingTiles
+		) {
+			if (this.all(PlayerStateValue.Passed)) {
+				if (this.state.state === GameStateValue.EndingTiles) {
+					this.finishGame()
+				} else {
+					this.endGeneration()
+				}
+			} else {
+				do {
+					this.state.currentPlayer =
+						(this.state.currentPlayer + 1) % this.players.length
+				} while (this.currentPlayer.state === PlayerStateValue.Passed)
+
+				this.logger.log(f(`Next player: {0}`, this.currentPlayer.name))
+
+				this.currentPlayer.state =
+					this.state.state === GameStateValue.EndingTiles
+						? PlayerStateValue.EndingTiles
+						: PlayerStateValue.Playing
+				this.currentPlayer.actionsPlayed = 0
+			}
+		}
+	}
+
+	/**
+	 * Checks if game passed any milestone
+	 */
+	checkMilestones() {
+		this.state.map.oxygenMilestones.forEach(m => {
+			if (!m.used && m.value <= this.state.oxygen) {
+				this.logger.log(
+					`Oxygen milestone ${ProgressMilestoneType[m.type]} (at ${
+						m.value
+					}) reached`
+				)
+
+				m.used = true
+				ProgressMilestones[m.type].effects.forEach(e =>
+					e(this.state, this.currentPlayer)
+				)
+			}
+		})
+
+		this.state.map.temperatureMilestones.forEach(m => {
+			if (!m.used && m.value <= this.state.temperature) {
+				this.logger.log(
+					`Temperature milestone ${ProgressMilestoneType[m.type]} (at ${
+						m.value
+					}) reached`
+				)
+
+				m.used = true
+				ProgressMilestones[m.type].effects.forEach(e =>
+					e(this.state, this.currentPlayer)
+				)
+			}
+		})
+	}
+
+	/**
+	 * Finish game!
+	 */
 	finishGame() {
 		this.logger.log(`Game finished`)
 
@@ -410,29 +468,9 @@ export class Game {
 		})
 	}
 
-	nextPlayer() {
-		if (this.all(PlayerStateValue.Passed)) {
-			if (this.state.state === GameStateValue.EndingTiles) {
-				this.finishGame()
-			} else {
-				this.endGeneration()
-			}
-		} else {
-			do {
-				this.state.currentPlayer =
-					(this.state.currentPlayer + 1) % this.players.length
-			} while (this.currentPlayer.state === PlayerStateValue.Passed)
-
-			this.logger.log(f(`Next player: {0}`, this.currentPlayer.name))
-
-			this.currentPlayer.state =
-				this.state.state === GameStateValue.EndingTiles
-					? PlayerStateValue.EndingTiles
-					: PlayerStateValue.Playing
-			this.currentPlayer.actionsPlayed = 0
-		}
-	}
-
+	/**
+	 * End the generation, go to next or finish the game
+	 */
 	endGeneration() {
 		this.handleGenerationEnd()
 
@@ -440,11 +478,7 @@ export class Game {
 			p.endGeneration()
 		})
 
-		if (
-			this.state.oceans >= this.state.map.oceans &&
-			this.state.oxygen >= this.state.map.oxygen &&
-			this.state.temperature >= this.state.map.temperature
-		) {
+		if (this.hasReachedLimits) {
 			this.state.state = GameStateValue.EndingTiles
 			this.players.forEach(p => {
 				p.state.state = PlayerStateValue.WaitingForTurn
@@ -456,7 +490,6 @@ export class Game {
 					}
 				)
 			})
-			this.nextPlayer()
 		} else {
 			this.players.forEach(p => {
 				p.state.state = PlayerStateValue.PickingCards

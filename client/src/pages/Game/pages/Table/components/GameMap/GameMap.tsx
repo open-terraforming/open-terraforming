@@ -23,6 +23,7 @@ export const GameMap = ({}: Props) => {
 	const map = useAppStore(state => state.game.state?.map)
 	const containerRef = useRef<HTMLDivElement>(null)
 
+	/*
 	useWindowEvent('mousemove', (e: MouseEvent) => {
 		if (containerRef.current) {
 			const windowRatio = window.innerHeight / window.innerWidth
@@ -54,6 +55,7 @@ export const GameMap = ({}: Props) => {
 			}
 		}
 	})
+	*/
 
 	const placingList = useAppStore(state => state.game.player?.placingTile)
 

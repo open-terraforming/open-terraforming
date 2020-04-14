@@ -2242,7 +2242,7 @@ export const BuiltCards: Card[] = [
 		cost: 1,
 		categories: [CardCategory.Event],
 		playEffects: [
-			productionChange('heat', -5),
+			resourceChange('heat', -5),
 			effectChoice([
 				resourceChange('plants', 4),
 				otherCardResourceChange('animals', 2)

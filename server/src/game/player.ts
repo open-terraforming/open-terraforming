@@ -601,7 +601,6 @@ export class Player {
 
 		if (this.state.actionsPlayed >= 2) {
 			this.state.state = PlayerStateValue.WaitingForTurn
-			this.game.nextPlayer()
 			this.game.updated()
 		}
 	}
@@ -626,7 +625,6 @@ export class Player {
 			this.state.actionsPlayed === 0 || force
 				? PlayerStateValue.Passed
 				: PlayerStateValue.WaitingForTurn
-		this.game.nextPlayer()
 		this.game.updated()
 	}
 
