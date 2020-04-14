@@ -18,13 +18,18 @@ export const PopEventDisplay = ({ events }: Props) => {
 
 	useEffect(() => {
 		if (events.length > processed) {
-			setPopEvents(e => [
-				...e,
-				...(filterEvents(events.slice(processed), [
-					EventType.NewGeneration,
-					EventType.PlayingChanged
-				]) as PopEvent[])
-			])
+			setPopEvents(e =>
+				[
+					...e,
+					...(filterEvents(
+						events.map((e, i) => ({ ...e, id: i })).slice(processed),
+						[EventType.NewGeneration, EventType.PlayingChanged]
+					) as PopEvent[])
+				]
+					.reverse()
+					.slice(0, 3)
+					.reverse()
+			)
 
 			setProcessed(events.length)
 		}
@@ -37,7 +42,7 @@ export const PopEventDisplay = ({ events }: Props) => {
 			case EventType.PlayingChanged: {
 				return (
 					<PlayingChanged
-						key={event.playing}
+						key={event.id}
 						playing={event.playing}
 						onDone={handleDone}
 					/>
@@ -45,7 +50,7 @@ export const PopEventDisplay = ({ events }: Props) => {
 			}
 
 			case EventType.NewGeneration: {
-				return <GenerationChanged onDone={handleDone} />
+				return <GenerationChanged key={event.id} onDone={handleDone} />
 			}
 		}
 	} else {

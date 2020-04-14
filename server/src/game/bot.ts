@@ -20,15 +20,38 @@ import { allCells } from '@shared/utils'
 import { Game } from './game'
 import { Player } from './player'
 
-const BotNames = ['Rick', 'Jon', 'Joana', 'James', 'Jack', 'Oprah', 'Trump']
+const BotNames = [
+	'Rick',
+	'Jon',
+	'Joana',
+	'James',
+	'Jack',
+	'Oprah',
+	'Trump',
+	'Lin',
+	'Sarah',
+	'Bojack',
+	'Horse',
+	'Theodor',
+	'Pierre',
+	'Keren',
+	'Sanders',
+	'Babish',
+	'Robert',
+	'Sir',
+	'China',
+	'Europe',
+	'Fredrick',
+	'Harry'
+]
 
 let names = [] as string[]
-const pickBotName = () => {
+const pickBotName = (id: number) => {
 	if (names.length === 0) {
 		names = shuffle(BotNames)
 	}
 
-	return names.pop() || '<unnamed>'
+	return names.pop() || `Bot ${id}`
 }
 
 export class Bot extends Player {
@@ -37,7 +60,7 @@ export class Bot extends Player {
 	constructor(game: Game) {
 		super(game)
 
-		this.name = pickBotName()
+		this.name = pickBotName(this.state.id)
 		this.state.connected = true
 		this.state.bot = true
 		this.state.state = PlayerStateValue.Ready
@@ -57,9 +80,13 @@ export class Bot extends Player {
 				try {
 					this.doSomething()
 				} catch (e) {
-					console.log('Bot failed:')
-					console.error(e)
-					this.pass()
+					this.logger.log('Bot failed:')
+					this.logger.error(e)
+					try {
+						this.pass()
+					} catch (e) {
+						this.logger.error('Unable to pass', e)
+					}
 				}
 			}, 100) // 2000 + Math.random() * 5000
 		}

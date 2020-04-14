@@ -45,7 +45,8 @@ export enum MessageType {
 	PlayerPass,
 	PlaceTile,
 	AdminChange,
-	AdminLogin
+	AdminLogin,
+	PickColor
 }
 
 export const handshakeRequest = (version: string) =>
@@ -180,6 +181,14 @@ export const sponsorCompetition = (type: CompetitionType) =>
 		}
 	} as const)
 
+export const pickColor = (index: number) =>
+	({
+		type: MessageType.PickColor,
+		data: {
+			index
+		}
+	} as const)
+
 export const adminLogin = (password: string) =>
 	({
 		type: MessageType.AdminLogin,
@@ -207,4 +216,5 @@ export type GameMessage =
 	| ReturnType<typeof buyStandardProject>
 	| ReturnType<typeof buyMilestone>
 	| ReturnType<typeof sponsorCompetition>
+	| ReturnType<typeof pickColor>
 	| ReturnType<typeof adminLogin>

@@ -26,7 +26,9 @@ export const Lobby = () => {
 				{players?.map(p => (
 					<Player
 						name={p.name}
+						color={p.color}
 						key={p.id}
+						current={p.id === player?.id}
 						ready={p.state === PlayerStateValue.Ready}
 					/>
 				))}

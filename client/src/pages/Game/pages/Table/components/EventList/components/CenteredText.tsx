@@ -16,12 +16,23 @@ export const CenteredText = ({
 	color = '#4267B2',
 	textColor = '#fff'
 }: Props) => {
+	const mounted = useRef(true)
 	const doneRef = useRef(onDone)
 	doneRef.current = onDone
 
 	useEffect(() => {
+		mounted.current = true
+
+		return () => {
+			mounted.current = false
+		}
+	}, [])
+
+	useEffect(() => {
 		setTimeout(() => {
-			doneRef.current()
+			if (mounted.current) {
+				doneRef.current()
+			}
 		}, 1500)
 	}, [])
 

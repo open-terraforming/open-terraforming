@@ -1,5 +1,4 @@
 import { deepExtend, range, shuffle } from '@/utils/collections'
-import { nextColor } from '@/utils/colors'
 import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
 import { f } from '@/utils/string'
@@ -31,6 +30,8 @@ import {
 } from './player'
 import { GameInfo } from '@shared/extra'
 import { v4 as uuidv4 } from 'uuid'
+import { PlayerColors } from '@shared/player-colors'
+import { randomPlayerColor } from '@/utils/colors'
 
 export interface GameConfig {
 	bots: number
@@ -260,8 +261,18 @@ export class Game {
 		)
 
 		// Assign random colors to players
+		const usedColors = this.state.players.map(p => p.color)
+		const availableColors = shuffle(
+			PlayerColors.filter(c => !usedColors.includes(c))
+		)
+
 		this.state.players.forEach(p => {
-			p.color = nextColor()
+			p.color =
+				availableColors.length > 0
+					? (availableColors.pop() as string)
+					: randomPlayerColor(
+							this.state.players.map(p => p.color).filter(c => c !== '')
+					  )
 		})
 
 		// Create card pool

@@ -17,6 +17,7 @@ type Props = {
 	onChange: (v: number) => void
 	icon?: IconProp
 	iconComponent?: React.ReactChild
+	valueComponent?: (value: number) => React.ReactChild
 }
 
 export const NumberInput = ({
@@ -26,7 +27,8 @@ export const NumberInput = ({
 	min,
 	max,
 	icon,
-	iconComponent
+	iconComponent,
+	valueComponent
 }: Props) => {
 	const handleChange = (v: number) => {
 		if (min !== undefined) {
@@ -52,17 +54,20 @@ export const NumberInput = ({
 			>
 				<FontAwesomeIcon icon={faChevronLeft} />
 			</ChangeButton>
-			<Value hasIcon={!!(icon || iconComponent)}>
-				{value}
+			{valueComponent && valueComponent(value)}
+			{!valueComponent && (
+				<Value hasIcon={!!(icon || iconComponent)}>
+					{value}
 
-				{icon && (
-					<Icon>
-						<FontAwesomeIcon icon={icon} />
-					</Icon>
-				)}
+					{icon && (
+						<Icon>
+							<FontAwesomeIcon icon={icon} />
+						</Icon>
+					)}
 
-				{iconComponent && <Icon>{iconComponent}</Icon>}
-			</Value>
+					{iconComponent && <Icon>{iconComponent}</Icon>}
+				</Value>
+			)}
 			<ChangeButton
 				disabled={max !== undefined && value >= max}
 				onClick={() => {

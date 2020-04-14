@@ -7,13 +7,19 @@ type Props = {
 	title?: string
 	card: string
 	onClose: () => void
+	disablePortal?: boolean
 }
 
-export const CardModal = ({ card, onClose, title }: Props) => {
+export const CardModal = ({ card, onClose, title, disablePortal }: Props) => {
 	const info = CardsLookupApi.get(card)
 
 	return (
-		<Modal open={true} header={title} onClose={onClose}>
+		<Modal
+			open={true}
+			header={title}
+			onClose={onClose}
+			disablePortal={disablePortal}
+		>
 			<CardView card={info} evaluate={false} hover={false} />
 		</Modal>
 	)

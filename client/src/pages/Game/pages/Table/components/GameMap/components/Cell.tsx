@@ -47,8 +47,6 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 		(cell.claimantId === undefined || cell.claimantId === playerId) &&
 		canPlace(game, player, cell, placing)
 
-	console.log(cell.x, cell.y, cell.x / cell.y)
-
 	return (
 		<StyledHex
 			gridType={cell.type}

@@ -48,6 +48,7 @@ import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
 import Hashids from 'hashids/cjs'
+import { PlayerColors } from '@shared/player-colors'
 
 export interface CardPlayedEvent {
 	player: Player
@@ -340,6 +341,24 @@ export class Player {
 			this.actionPlayed()
 		}
 
+		this.updated()
+	}
+
+	pickColor(index: number) {
+		if (this.state.state !== PlayerStateValue.Waiting) {
+			throw new Error(
+				f(
+					"You can't change your color now {0}",
+					PlayerStateValue[this.state.state]
+				)
+			)
+		}
+
+		if (index < -1 || index >= PlayerColors.length) {
+			throw new Error('Unknown color')
+		}
+
+		this.state.color = index >= 0 ? PlayerColors[index] : ''
 		this.updated()
 	}
 

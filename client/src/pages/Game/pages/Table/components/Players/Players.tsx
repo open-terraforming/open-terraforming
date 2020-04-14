@@ -22,14 +22,16 @@ export const Players = () => {
 				/>
 			)}
 
-			{players?.map((p, i) => (
-				<Player
-					player={p}
-					key={p.id}
-					starting={i === startingPlayer}
-					onClick={() => setShowingPlayerId(p.id)}
-				/>
-			))}
+			<PlayersList>
+				{players?.map((p, i) => (
+					<Player
+						player={p}
+						key={p.id}
+						starting={i === startingPlayer}
+						onClick={() => setShowingPlayerId(p.id)}
+					/>
+				))}
+			</PlayersList>
 
 			<EventList />
 		</PlayersContainer>
@@ -41,4 +43,9 @@ const PlayersContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+`
+
+const PlayersList = styled.div`
+	max-height: 50%;
+	overflow: auto;
 `

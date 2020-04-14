@@ -124,4 +124,4 @@ export type GameEvent =
 	| PlayingChanged
 	| NewGeneration
 
-export type PopEvent = PlayingChanged | NewGeneration
+export type PopEvent = (PlayingChanged | NewGeneration) & { id: number }

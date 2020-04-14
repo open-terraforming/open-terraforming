@@ -32,18 +32,22 @@ export const CardsPlayedDisplay = ({ events }: Props) => {
 
 	return (
 		<>
-			{cardsPlayed.map(c => (
-				<CardModal
-					key={`${c.card}_${c.type}`}
-					card={c.card}
-					title={
-						c.type === EventType.CardPlayed
-							? `Card played by ${playerMap[c.playerId].name}`
-							: `Action played by ${playerMap[c.playerId].name}`
-					}
-					onClose={() => setCardsPlayed(e => e.filter(i => i !== c))}
-				/>
-			))}
+			{cardsPlayed
+				.slice(0, 3)
+				.reverse()
+				.map(c => (
+					<CardModal
+						disablePortal={true}
+						key={`${c.card}_${c.type}`}
+						card={c.card}
+						title={
+							c.type === EventType.CardPlayed
+								? `Card played by ${playerMap[c.playerId].name}`
+								: `Action played by ${playerMap[c.playerId].name}`
+						}
+						onClose={() => setCardsPlayed(e => e.filter(i => i !== c))}
+					/>
+				))}
 		</>
 	)
 }

@@ -1,25 +1,30 @@
 TODO:
- * Multi-game support
-   -> save suspended games to disk, load on demand
- * only send data, that should be visible to the player
- * only send changed data
- * filter event log by player or text search
- * redesign right part of the bottom panel
- * passive effects
-   -> maybe the active effect could be part of the definition?
- * production phase display
-   -> animations for resource changes of other players
+* Multi-game support
+  -> save suspended games to disk, load on demand
+* only send data, that should be visible to the player
+* only send changed data
+* passive effects
+  -> maybe the active effect could be part of the definition?
+* production phase display
+  -> animations for resource changes of other players
 
 CHECK CARDS:
  * pets
  * media group - will you only receive selected cards?
 
+PRELUDE:
+* add prelude cards
+* add prelude picking stage
+* WILD TAG implementation
+
 NICE TODO:
- * player color picker
- * player emoticons
- * wait for players to reconnect
- * add effects icons to cards
- * 3D mars
- * admin panel
- * spectator mode
- * poke button
+* redesign right part of the bottom panel
+* filter event log by player or text search
+* player color picker
+* player emoticons
+* poke button
+* wait for players to reconnect
+* add effects icons to cards
+* 3D mars
+* admin panel
+* spectator mode

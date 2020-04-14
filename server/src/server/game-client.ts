@@ -10,7 +10,8 @@ import {
 	joinResponse,
 	MessageType,
 	serverMessage,
-	VERSION
+	VERSION,
+	PlayerStateValue
 } from '@shared/index'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
@@ -53,11 +54,22 @@ export class Client {
 		if (player) {
 			// Remove player when in lobby, mark as disconnected otherwise
 			if (this.game.state.state === GameStateValue.WaitingForPlayers) {
+				this.logger.log(
+					'Client disconnected in lobby - removing player from game'
+				)
+
 				this.game.remove(player)
 			} else {
 				player.state.connected = !!this.server.clients.find(
 					p => p !== this && p.player?.id === player.id
 				)
+
+				this.logger.log(
+					player.state.connected
+						? 'Client disconnected - but other clients are connected to its player'
+						: 'Client disconnected - marking as disconnected'
+				)
+
 				this.game.checkState()
 			}
 		}
@@ -126,8 +138,10 @@ export class Client {
 
 						this.state = ClientState.Connected
 						this.player = new Player(this.game)
+						this.player.state.state = PlayerStateValue.Waiting
 						this.player.state.name = name
 						this.player.state.connected = true
+
 						this.game.add(this.player)
 
 						return joinResponse(
@@ -136,6 +150,7 @@ export class Client {
 							this.player.state.id
 						)
 					}
+
 					default: {
 						return serverMessage(`Unknown action ${message.type}`)
 					}
@@ -205,6 +220,10 @@ export class Client {
 
 					case MessageType.SponsorCompetition: {
 						return this.player.sponsorCompetition(message.data.type)
+					}
+
+					case MessageType.PickColor: {
+						return this.player.pickColor(message.data.index)
 					}
 
 					default: {
