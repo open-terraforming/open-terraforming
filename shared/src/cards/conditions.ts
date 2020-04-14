@@ -50,6 +50,46 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 		description: `Requires ${value} ${CardCategory[category]} tag(s)`
 	})
 
+export const joinedCardCountCondition = (
+	conditions: { category: CardCategory; value: number }[]
+) =>
+	condition({
+		evaluate: ({ player }) => {
+			let anyTags = player.usedCards
+				.map(c => CardsLookupApi.get(c.code))
+				.reduce(
+					(acc, c) =>
+						acc + c.categories.filter(c => c === CardCategory.Any).length,
+					0
+				)
+
+			return conditions.every(cond => {
+				const length = player.usedCards
+					.map(c => CardsLookupApi.get(c.code))
+					.reduce(
+						(acc, c) =>
+							acc + c.categories.filter(c => c === cond.category).length,
+						0
+					)
+
+				const diff = cond.value - length
+				if (diff <= 0) {
+					return true
+				}
+
+				if (diff > anyTags) {
+					return false
+				}
+
+				anyTags -= diff
+				return true
+			})
+		},
+		description: `Requires ${conditions
+			.map(c => `${c.value} ${CardCategory[c.category]}`)
+			.join(', ')} tag(s)`
+	})
+
 export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 	condition({
 		evaluate: ({ game, player }) =>

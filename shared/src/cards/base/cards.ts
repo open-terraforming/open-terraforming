@@ -5,7 +5,8 @@ import {
 	gameProgressConditionMax,
 	gameProgressConditionMin,
 	ownedCellTypeCondition,
-	productionCondition
+	productionCondition,
+	joinedCardCountCondition
 } from '../conditions'
 import {
 	addResourceToCard,
@@ -1626,9 +1627,11 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Animal, CardCategory.Microbe, CardCategory.Plant],
 		victoryPoints: 3,
 		conditions: [
-			cardCountCondition(CardCategory.Plant, 1),
-			cardCountCondition(CardCategory.Microbe, 1),
-			cardCountCondition(CardCategory.Animal, 1)
+			joinedCardCountCondition([
+				{ category: CardCategory.Plant, value: 1 },
+				{ category: CardCategory.Microbe, value: 1 },
+				{ category: CardCategory.Animal, value: 1 }
+			])
 		]
 	}),
 	card({
