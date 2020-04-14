@@ -10,7 +10,6 @@ TODO:
 
 CHECK CARDS:
  * pets
- * advanced_ecosystems - broken Any tag
 
 PRELUDE:
 * resource production card arg
