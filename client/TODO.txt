@@ -1,6 +1,4 @@
 TODO:
-* Multi-game support
-  -> save suspended games to disk, load on demand
 * only send data, that should be visible to the player
 * only send changed data
 * passive effects
@@ -17,7 +15,6 @@ PRELUDE:
 NICE TODO:
 * redesign right part of the bottom panel
 * filter event log by player or text search
-* player color picker
 * player emoticons
 * poke button
 * wait for players to reconnect
