@@ -103,7 +103,7 @@ export class Client {
 							return handshakeResponse(HandshakeError.InvalidVersion)
 						}
 
-						return handshakeResponse(undefined, this.game.state.state)
+						return handshakeResponse(undefined, this.game.info())
 					}
 
 					case MessageType.JoinRequest: {
