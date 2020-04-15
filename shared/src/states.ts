@@ -3,7 +3,7 @@ import { defaultMap } from './map'
 import { GameModeType } from './modes/types'
 import { CardCategory } from './cards'
 
-export const initialGameState = (id: string): GameState => ({
+export const initialGameState = (id = 'game'): GameState => ({
 	id,
 	name: 'Standard Game',
 	state: GameStateValue.WaitingForPlayers,
@@ -29,10 +29,7 @@ export const initialGameState = (id: string): GameState => ({
 	maxPlayers: 5
 })
 
-export const initialPlayerState = (
-	id: number,
-	session: string
-): PlayerState => ({
+export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	connected: false,
 	id,
 	bot: false,
