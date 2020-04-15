@@ -206,9 +206,15 @@ export interface PlayerState {
 
 	/** General card price change */
 	cardPriceChange: number
-
 	/** Price change for specific tags */
 	tagPriceChange: Record<CardCategory, number | undefined>
+
+	/** Cost of greenery in plants */
+	greeneryCost: number
+	/** Cost of temperature increase in heat */
+	temperatureCost: number
+	/** Cost of standard power project in money */
+	powerProjectCost: number
 
 	/** Player TR */
 	terraformRating: number
@@ -232,13 +238,6 @@ export interface PlayerState {
 
 	/** List of cards that are to be played - index in usedCards */
 	cardsToPlay: number[]
-
-	/** Cost of greenery in plants */
-	greeneryCost: number
-	/** Cost of temperature increase in heat */
-	temperatureCost: number
-	/** Cost of standard power project in money */
-	powerProjectCost: number
 
 	/** Bonus for game progress changes */
 	progressConditionBonus: number

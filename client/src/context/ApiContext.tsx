@@ -87,7 +87,7 @@ export const ApiContextProvider = ({
 		client.onMessage = m => {
 			switch (m.type) {
 				case MessageType.HandshakeResponse: {
-					const { error, state } = m.data
+					const { error, info } = m.data
 
 					if (error) {
 						dispatch(
@@ -106,13 +106,13 @@ export const ApiContextProvider = ({
 
 						dispatch(
 							setClientState({
-								gameState: state
+								gameState: info?.state
 							})
 						)
 
 						const session = sessions[sessionKey]
 
-						if (state !== GameStateValue.WaitingForPlayers && session) {
+						if (info?.state !== GameStateValue.WaitingForPlayers && session) {
 							client.send(joinRequest(undefined, session))
 						}
 					}

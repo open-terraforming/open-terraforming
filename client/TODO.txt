@@ -1,10 +1,9 @@
 TODO:
 * only send data, that should be visible to the player
 * only send changed data
-* passive effects
-  -> maybe the active effect could be part of the definition?
 * production phase display
   -> animations for resource changes of other players
+* player which creates a game should be admin of said game
 
 CHECK CARDS:
  * pets

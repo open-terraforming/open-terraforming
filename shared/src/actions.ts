@@ -1,7 +1,8 @@
-import { GameState, StandardProjectType, GameStateValue } from './game'
 import { CardEffectArgumentType } from './cards'
-import { MilestoneType } from './milestones'
 import { CompetitionType } from './competitions'
+import { GameInfo } from './extra'
+import { GameState, StandardProjectType } from './game'
+import { MilestoneType } from './milestones'
 
 /**
  * Deep partial, where Arrays can also be objects with numeric indexes (updating only specific array key)
@@ -58,15 +59,12 @@ export const handshakeRequest = (version: string) =>
 		}
 	} as const)
 
-export const handshakeResponse = (
-	error?: HandshakeError,
-	state?: GameStateValue
-) =>
+export const handshakeResponse = (error?: HandshakeError, info?: GameInfo) =>
 	({
 		type: MessageType.HandshakeResponse,
 		data: {
 			error,
-			state
+			info
 		}
 	} as const)
 

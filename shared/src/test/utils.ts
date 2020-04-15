@@ -1,5 +1,7 @@
 import { initialGameState, initialPlayerState } from '../states'
 import { range } from '../utils'
+import { Card, CardType } from '../cards'
+import { card } from '../cards/utils'
 
 export const prepareTestState = (players = 2) => {
 	const game = initialGameState()
@@ -8,3 +10,13 @@ export const prepareTestState = (players = 2) => {
 	})
 	return game
 }
+
+export const prepareTestCard = (props: Partial<Card>) =>
+	card({
+		code: 'test',
+		categories: [],
+		cost: 0,
+		title: 'Test',
+		type: CardType.Building,
+		...props
+	})

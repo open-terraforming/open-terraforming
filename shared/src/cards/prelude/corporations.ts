@@ -1,5 +1,4 @@
-import { withUnits } from '../../units'
-import { drawCard, f } from '../../utils'
+import { drawCard } from '../../utils'
 import { corp } from '../base/corporations'
 import {
 	pickPreludes,
@@ -9,7 +8,7 @@ import {
 } from '../effects'
 import { passiveEffect } from '../passive-effects'
 import { CardCategory, CardSpecial, CardType } from '../types'
-import { card, updatePlayerResource } from '../utils'
+import { card } from '../utils'
 
 export const preludeCorporations = [
 	corp(
@@ -66,7 +65,14 @@ export const preludeCorporations = [
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [],
-			special: [CardSpecial.Prelude]
+			special: [CardSpecial.Prelude],
+			playEffects: [
+				resourceChange('money', 47)
+			],
+			actionEffects: [
+				resourceChange('money', -4),
+				lowestProductionChange(1)
+			]
 		})
 	)
 	*/
@@ -84,7 +90,9 @@ export const preludeCorporations = [
 				pickPreludes(3, 1)
 			]
 		})
-	),
+	)
+	/*
+	TODO:
 	corp(
 		card({
 			code: 'vitor',
@@ -93,7 +101,7 @@ export const preludeCorporations = [
 			type: CardType.Corporation,
 			categories: [CardCategory.Earth],
 			special: [CardSpecial.Prelude],
-			playEffects: [resourceChange('money', 45) /* TODO: AWARDS DISCOUNT */],
+			playEffects: [resourceChange('money', 45), pickAward()],
 			passiveEffects: [
 				passiveEffect({
 					description: f(
@@ -112,4 +120,5 @@ export const preludeCorporations = [
 			]
 		})
 	)
+	*/
 ]

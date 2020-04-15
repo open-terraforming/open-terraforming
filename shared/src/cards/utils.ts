@@ -110,13 +110,16 @@ export const emptyCardState = (cardCode: string) => ({
 })
 
 export const minimalCardPrice = (card: Card, player: PlayerGameState) =>
-	adjustedCardPrice(card, player) -
-	(card.categories.includes(CardCategory.Building)
-		? player.ore * player.orePrice
-		: 0) -
-	(card.categories.includes(CardCategory.Space)
-		? player?.titan * player?.titanPrice
-		: 0)
+	Math.max(
+		0,
+		adjustedCardPrice(card, player) -
+			(card.categories.includes(CardCategory.Building)
+				? player.ore * player.orePrice
+				: 0) -
+			(card.categories.includes(CardCategory.Space)
+				? player?.titan * player?.titanPrice
+				: 0)
+	)
 
 export const adjustedCardPrice = (card: Card, player: PlayerGameState) =>
 	Math.max(
