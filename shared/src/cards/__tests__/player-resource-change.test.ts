@@ -64,3 +64,62 @@ test('playerResourceChange is limited by maximum number of resources', () => {
 
 	expect(state.players[1].ore).toBe(15)
 })
+
+test('playerResourceChange removes exact amount when not optional', () => {
+	const card = emptyCardState('void')
+	const state = prepareTestState()
+	state.players[1].ore = 20
+
+	playerResourceChange('ore', -5, false).perform(
+		{
+			card,
+			cardIndex: 0,
+			player: state.players[0],
+			playerId: state.players[0].id,
+			game: state
+		},
+		[state.players[1].id, 3]
+	)
+
+	expect(state.players[1].ore).toBe(15)
+})
+
+test('playerResourceChange accepts single arg when not optional', () => {
+	const card = emptyCardState('void')
+	const state = prepareTestState()
+	state.players[1].ore = 20
+
+	playerResourceChange('ore', -5, false).perform(
+		{
+			card,
+			cardIndex: 0,
+			player: state.players[0],
+			playerId: state.players[0].id,
+			game: state
+		},
+		state.players[1].id
+	)
+
+	expect(state.players[1].ore).toBe(15)
+})
+
+test('playerResourceChange requires player not optional', () => {
+	const card = emptyCardState('void')
+	const state = prepareTestState()
+	state.players[1].ore = 20
+
+	expect(() =>
+		playerResourceChange('ore', -5, false).perform(
+			{
+				card,
+				cardIndex: 0,
+				player: state.players[0],
+				playerId: state.players[0].id,
+				game: state
+			},
+			-1
+		)
+	).toThrowError()
+
+	expect(state.players[1].ore).toBe(20)
+})
