@@ -95,10 +95,8 @@ export class GameServer {
 	}
 
 	handleGameUpdate = debounce(async (s: GameState) => {
-		const update = gameStateUpdate(s)
-
 		this.clients.forEach(c => {
-			c.send(update)
+			c.sendUpdate(s)
 		})
 
 		if (

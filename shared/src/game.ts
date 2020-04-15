@@ -3,6 +3,7 @@ import { MilestoneType } from './milestones'
 import { GameModeType } from './modes/types'
 import { PlacementState } from './placements'
 import { CardCategory } from './cards'
+import { PlayerAction } from './player-actions'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
@@ -243,6 +244,8 @@ export interface PlayerState {
 	progressConditionBonus: number
 
 	victoryPoints: VictoryPoints[]
+
+	pendingActions: PlayerAction[]
 }
 
 export enum VictoryPointsSource {

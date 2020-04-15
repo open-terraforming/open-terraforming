@@ -1,13 +1,8 @@
-import { Card, CardType, CardCategory, CardSpecial } from '../types'
-import { card } from '../utils'
-import { gameProgressConditionMax, cardCountCondition } from '../conditions'
-import {
-	resourceChange,
-	productionChange,
-	placeTile,
-	getTopCards
-} from '../effects'
 import { GridCellContent, GridCellSpecial } from '../../game'
+import { cardCountCondition, gameProgressConditionMax } from '../conditions'
+import { getTopCards, placeTile, productionChange } from '../effects'
+import { Card, CardCategory, CardSpecial, CardType } from '../types'
+import { card } from '../utils'
 
 export const preludeCards: Card[] = [
 	card({
@@ -19,7 +14,7 @@ export const preludeCards: Card[] = [
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Prelude],
 		victoryPoints: 1,
-		playEffects: [resourceChange('ore', 1)]
+		playEffects: [productionChange('ore', 1)]
 	}),
 	card({
 		code: 'lava_tube_settlement',

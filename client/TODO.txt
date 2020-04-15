@@ -1,4 +1,5 @@
 TODO:
+  * Preludes category in cards display
   * production phase display
     -> animations for resource changes of other players
   * player which creates a game should be admin of said game
@@ -21,15 +22,13 @@ TODO:
   * effect argument type - production
     -> allows to choose between different resources
     -> allow choice from only selected list of resources
-  * only send data, that should be visible to the player
-    -> filter out data that shouldn't be visible
-    -> obfluscate card names in deck and in players hands
   * only send changed data
     -> 15 kiB per message is not the best way to do this
     -> keep track of what state was sent to client last, only send the diff
 
 CHECK CARDS:
   * pets
+  * PER CITY ON MARS - filter out the colonies?
 
 NICE TODO:
   * redesign right part of the bottom panel

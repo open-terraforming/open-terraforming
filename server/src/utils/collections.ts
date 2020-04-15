@@ -301,3 +301,24 @@ export const deepExtend = (source: any, extending: any) => {
 
 	return source
 }
+
+export const deepCopy = <T>(s: T): T => {
+	if (typeof s === 'object') {
+		if (s === null) {
+			return s
+		}
+
+		if (Array.isArray(s)) {
+			return (s.map(i => deepCopy(i)) as unknown) as T
+		}
+
+		const res = {} as any
+		Object.entries(s).forEach(([key, value]) => {
+			res[key] = deepCopy(value)
+		})
+
+		return res
+	} else {
+		return s
+	}
+}

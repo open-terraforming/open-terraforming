@@ -401,8 +401,8 @@ export class Game {
 	 */
 	checkCurrentPlayer() {
 		if (
-			this.currentPlayer.state !== PlayerStateValue.Playing &&
-			this.currentPlayer.state !== PlayerStateValue.EndingTiles
+			this.currentPlayer.state === PlayerStateValue.WaitingForTurn ||
+			this.currentPlayer.state === PlayerStateValue.Passed
 		) {
 			if (this.all(PlayerStateValue.Passed)) {
 				if (this.state.state === GameStateValue.EndingTiles) {

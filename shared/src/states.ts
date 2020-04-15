@@ -68,5 +68,6 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	name: '<unknown>',
 	color: '',
 	session,
-	victoryPoints: []
+	victoryPoints: [],
+	pendingActions: []
 })

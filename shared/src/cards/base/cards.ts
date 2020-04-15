@@ -915,7 +915,7 @@ export const baseCards: Card[] = [
 		resource: 'animals',
 		categories: [CardCategory.Animal],
 		conditions: [gameProgressConditionMin('oxygen', 13)],
-		playEffects: [playerProductionChange('plants', 2)],
+		playEffects: [playerProductionChange('plants', -2)],
 		actionEffects: [cardResourceChange('animals', 1)],
 		victoryPointsCallback: vpsForCardResources('animals', 1)
 	}),

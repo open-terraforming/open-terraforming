@@ -44,6 +44,10 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 			: (state?.usedCards[index].code as string)
 	)
 
+	const adjustedPrice = card
+		? adjustedCardPrice(card, state as PlayerGameState)
+		: 0
+
 	const canUseOre =
 		(state?.ore || 0) > 0 && card?.categories.includes(CardCategory.Building)
 
@@ -52,12 +56,12 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 
 	const maxOre =
 		canUseOre && state && card
-			? Math.min(state.ore, Math.ceil(card.cost / state.orePrice))
+			? Math.min(state.ore, Math.ceil(adjustedPrice / state.orePrice))
 			: 0
 
 	const maxTitan =
 		canUseTitan && state && card
-			? Math.min(state.titan || 0, Math.ceil(card.cost / state.titanPrice))
+			? Math.min(state.titan || 0, Math.ceil(adjustedPrice / state.titanPrice))
 			: 0
 
 	const [ore, setOre] = useState(maxOre)
@@ -72,7 +76,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 	const price = card
 		? Math.max(
 				0,
-				adjustedCardPrice(card, state as PlayerGameState) -
+				adjustedPrice -
 					(canUseOre ? ore : 0) * (state?.orePrice || 2) -
 					(canUseTitan ? titan : 0) * (state?.titanPrice || 3)
 		  )

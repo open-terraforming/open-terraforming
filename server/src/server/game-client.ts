@@ -1,17 +1,20 @@
 import { Player } from '@/game/player'
 import { MyEvent } from '@/utils/events'
+import { obfuscateGame } from '@/utils/game'
 import { Logger } from '@/utils/log'
 import {
 	GameMessage,
+	GameState,
+	gameStateUpdate,
 	GameStateValue,
 	HandshakeError,
 	handshakeResponse,
 	JoinError,
 	joinResponse,
 	MessageType,
+	PlayerStateValue,
 	serverMessage,
-	VERSION,
-	PlayerStateValue
+	VERSION
 } from '@shared/index'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
@@ -31,6 +34,8 @@ export class Client {
 	server: GameServer
 	socket: WebSocket
 	state: ClientState
+
+	lastState?: GameState
 
 	player?: Player
 
@@ -243,5 +248,9 @@ export class Client {
 
 	send(update: GameMessage) {
 		this.socket.send(JSON.stringify(update))
+	}
+
+	sendUpdate(game: GameState) {
+		this.send(gameStateUpdate(obfuscateGame(game, this.player?.state)))
 	}
 }
