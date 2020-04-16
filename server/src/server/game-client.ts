@@ -18,6 +18,7 @@ import {
 } from '@shared/index'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
+import { sanitize } from '@shared/utils'
 
 enum ClientState {
 	Initializing,
@@ -113,7 +114,10 @@ export class Client {
 					}
 
 					case MessageType.JoinRequest: {
-						const { name, session } = message.data
+						let { name } = message.data
+						const { session } = message.data
+
+						name = sanitize(name)
 
 						if (session) {
 							const p = this.game.players.find(p => p.state.session === session)
@@ -140,6 +144,14 @@ export class Client {
 
 						if (!name || name.trim().length < 3 || name.length > 10) {
 							return joinResponse(JoinError.InvalidName)
+						}
+
+						if (
+							this.game.players.find(
+								p => p.name.replace(/\s/g, '') === name?.replace(/\s/g, '')
+							)
+						) {
+							return joinResponse(JoinError.DuplicateName)
 						}
 
 						this.state = ClientState.Connected

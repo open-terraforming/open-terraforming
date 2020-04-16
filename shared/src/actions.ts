@@ -23,6 +23,7 @@ export enum HandshakeError {
 
 export enum JoinError {
 	InvalidName = 'InvalidName',
+	DuplicateName = 'DuplicateName',
 	GameInProgress = 'GameInProgress',
 	InvalidSession = 'InvalidSession'
 }

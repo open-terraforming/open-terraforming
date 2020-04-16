@@ -51,7 +51,7 @@ export const Controls = () => {
 
 	const isPlaying = state?.state === PlayerStateValue.Playing
 
-	const placingTile = state?.placingTile[0]
+	const placingTile = isPlaying ? state?.placingTile[0] : undefined
 
 	const handlePass = () => {
 		api.send(playerPass(false))

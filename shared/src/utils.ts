@@ -152,3 +152,10 @@ export const f = (s: string, ...args: any[]) =>
 			),
 		s
 	)
+
+/**
+ * Removes control characters from input string
+ * @param str
+ */
+export const sanitize = (str?: string) =>
+	str ? str.replace(/[\x00-\x1F\x7F-\x9F]/g, '') : str
