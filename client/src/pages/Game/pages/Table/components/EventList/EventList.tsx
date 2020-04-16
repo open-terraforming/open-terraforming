@@ -1,47 +1,25 @@
 import mars from '@/assets/mars-icon.png'
 import { Button } from '@/components'
-import { useAppStore, useInterval } from '@/utils/hooks'
+import { useAppStore } from '@/utils/hooks'
 import { PlayerStateValue } from '@shared/index'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { CardsPlayedDisplay } from './components/CardsPlayedDisplay'
-import { EventLine } from './components/EventLine'
 import { EventsModal } from './components/EventsModal'
+import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay'
 import { GameEvent } from './types'
 import { getEvents } from './utils'
 
 type Props = {}
 
-type DisplayedEvent = {
-	id: number
-	event: GameEvent
-}
-
 export const EventList = ({}: Props) => {
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
 
 	const [events, setEvents] = useState([] as GameEvent[])
-	const [lastDisplayed, setLastDisplayed] = useState(0 as number)
-	const [displayedEvents, setDisplayedEvents] = useState([] as DisplayedEvent[])
 	const [lastGame, setLastGame] = useState(game)
 	const [displayModal, setDisplayModal] = useState(false)
-
-	useInterval(() => {
-		if (lastDisplayed < events.length) {
-			setDisplayedEvents(e => [
-				{ id: lastDisplayed, event: events[lastDisplayed] },
-				...e
-			])
-
-			setLastDisplayed(e => e + 1)
-		}
-	}, 250)
-
-	const handleDone = () => {
-		setDisplayedEvents(d => d.slice(0, d.length - 1))
-	}
 
 	useEffect(() => {
 		if (game && lastGame) {
@@ -81,14 +59,7 @@ export const EventList = ({}: Props) => {
 				<EventsModal events={events} onClose={() => setDisplayModal(false)} />
 			)}
 			<CardsPlayedDisplay events={events} />
-			{displayedEvents.map(e => (
-				<EventLine
-					event={e.event}
-					key={e.id}
-					animated={true}
-					onDone={handleDone}
-				/>
-			))}
+			<LastEventsDisplay events={events} />
 			<PopEventDisplay events={events} />
 			<Button onClick={() => setDisplayModal(true)}>Event log</Button>
 		</Centered>
