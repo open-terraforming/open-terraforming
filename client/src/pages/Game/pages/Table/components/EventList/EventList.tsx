@@ -80,6 +80,7 @@ export const EventList = ({}: Props) => {
 			{displayModal && (
 				<EventsModal events={events} onClose={() => setDisplayModal(false)} />
 			)}
+			<CardsPlayedDisplay events={events} />
 			{displayedEvents.map(e => (
 				<EventLine
 					event={e.event}
@@ -88,7 +89,6 @@ export const EventList = ({}: Props) => {
 					onDone={handleDone}
 				/>
 			))}
-			<CardsPlayedDisplay events={events} />
 			<PopEventDisplay events={events} />
 			<Button onClick={() => setDisplayModal(true)}>Event log</Button>
 		</Centered>
@@ -107,4 +107,5 @@ const Centered = styled.div`
 	max-width: 13rem;
 	width: 13rem;
 	min-width: 0;
+	position: relative;
 `

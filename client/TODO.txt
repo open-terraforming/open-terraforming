@@ -1,7 +1,7 @@
 TODO:
-  * Disconnected not sending update
   * Player name uniqueness
   * Preludes category in cards display
+  * PLACE_TILE - wait for player turn
   * production phase display
     -> animations for resource changes of other players
   * player which creates a game should be admin of said game

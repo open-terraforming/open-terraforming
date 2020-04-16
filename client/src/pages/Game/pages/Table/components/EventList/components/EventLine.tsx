@@ -54,14 +54,14 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 			case EventType.CardPlayed:
 				return (
 					<>
-						<PlayerSpan player={players[event.playerId]} /> played{' '}
+						<PlayerSpan player={players[event.playerId]} /> bought{' '}
 						<CardSpan card={event.card} />
 					</>
 				)
 			case EventType.CardUsed:
 				return (
 					<>
-						<PlayerSpan player={players[event.playerId]} /> used{' '}
+						<PlayerSpan player={players[event.playerId]} /> played{' '}
 						<CardSpan card={event.card} />
 					</>
 				)

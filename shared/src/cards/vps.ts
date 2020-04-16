@@ -15,7 +15,7 @@ export const minCardResourceToVP = (
 		description: `${vps} VPs if you have at least ${amount} of ${res} resources here`,
 		compute: ({ card }) => {
 			return card[res] >= amount ? vps : 0
-		},
+		}
 	})
 
 export const vpsForAdjacentTiles = (type: GridCellContent, perTile: number) =>
@@ -23,31 +23,33 @@ export const vpsForAdjacentTiles = (type: GridCellContent, perTile: number) =>
 		description: `${perTile} VPs for each adjacent ${GridCellContent[type]} tile`,
 		compute: ({ playerId, game, card, cardIndex }) => {
 			const tile = allCells(game).find(
-				(c) => c.ownerId === playerId && c.ownerCard === cardIndex
+				c => c.ownerId === playerId && c.ownerCard === cardIndex
 			)
 			if (!tile) {
 				throw new Error(`No tile placed for card ${card.code} (${cardIndex})`)
 			}
 
-			return (
-				adjacentCells(game, tile.x, tile.y).filter((c) => c.content === type)
+			return Math.floor(
+				adjacentCells(game, tile.x, tile.y).filter(c => c.content === type)
 					.length * perTile
 			)
-		},
+		}
 	})
 
 export const vpsForCards = (category: CardCategory, vpPerCategory: number) =>
 	vpCb({
 		description: `${vpPerCategory} VP for each ${CardCategory[category]} tag you have`,
 		compute: ({ player }) => {
-			return player.usedCards
-				.map((c) => CardsLookupApi.get(c.code))
-				.reduce(
-					(acc, c) =>
-						acc + c.categories.filter((cat) => cat === category).length,
-					0
-				)
-		},
+			return Math.floor(
+				player.usedCards
+					.map(c => CardsLookupApi.get(c.code))
+					.reduce(
+						(acc, c) =>
+							acc + c.categories.filter(cat => cat === category).length,
+						0
+					) * vpPerCategory
+			)
+		}
 	})
 
 export const vpsForCardResources = (res: CardResource, vpPerUnit: number) =>
@@ -57,7 +59,7 @@ export const vpsForCardResources = (res: CardResource, vpPerUnit: number) =>
 		} ${res} on this card`,
 		compute: ({ card }) => {
 			return Math.floor(card[res] * vpPerUnit)
-		},
+		}
 	})
 
 export const vpsForTiles = (type: GridCellContent, perTile: number) =>
@@ -69,6 +71,6 @@ export const vpsForTiles = (type: GridCellContent, perTile: number) =>
 						GridCellContent[type]
 				  } tiles in game`,
 		compute: ({ game }) => {
-			return countGridContent(game, type) * perTile
-		},
+			return Math.floor(countGridContent(game, type) * perTile)
+		}
 	})

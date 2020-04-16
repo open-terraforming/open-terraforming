@@ -138,7 +138,7 @@ export const EndGame = ({ onClose }: Props) => {
 								<Bar
 									key={`${v.source}_${i}`}
 									style={{
-										backgroundColor: rgba(vpToColor[v.source], 0.5),
+										backgroundColor: rgba(vpToColor[v.source], 0.9),
 										height:
 											(sources.includes(v.source)
 												? (v.amount / maxValue) * barHeight
