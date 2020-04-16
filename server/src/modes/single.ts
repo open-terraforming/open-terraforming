@@ -37,9 +37,15 @@ export const singleApp = (
 	})
 
 	server.on('upgrade', (request: IncomingMessage, socket, head) => {
-		game.socket.handleUpgrade(request, socket, head, ws => {
-			game.socket.emit('connection', ws, request)
-		})
+		if (request.url?.endsWith('events')) {
+			game.events.socket.handleUpgrade(request, socket, head, ws => {
+				game.events.socket.emit('connection', ws, request)
+			})
+		} else {
+			game.socket.handleUpgrade(request, socket, head, ws => {
+				game.socket.emit('connection', ws, request)
+			})
+		}
 	})
 
 	server.listen(config.port, () => {

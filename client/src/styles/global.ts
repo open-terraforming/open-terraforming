@@ -23,6 +23,10 @@ body {
 	color: ${mainColors.text};
 }
 
+body,html {
+	overflow: hidden;
+}
+
 
 div::-webkit-scrollbar {
 	width: 1rem;

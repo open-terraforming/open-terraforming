@@ -7,6 +7,7 @@ import { hot } from 'react-hot-loader/root'
 import * as styles from '@/styles'
 import { ThemeProvider } from 'styled-components'
 import { ApiContextProvider } from './context/ApiContext'
+import { EventsContextProvider } from './context/EventsContext'
 
 const RootComponent = () => {
 	const store = useMemo(() => buildStore(), [])
@@ -14,11 +15,13 @@ const RootComponent = () => {
 	return (
 		<Provider store={store}>
 			<ApiContextProvider>
-				<ThemeProvider theme={styles}>
-					<BrowserRouter>
-						<App />
-					</BrowserRouter>
-				</ThemeProvider>
+				<EventsContextProvider>
+					<ThemeProvider theme={styles}>
+						<BrowserRouter>
+							<App />
+						</BrowserRouter>
+					</ThemeProvider>
+				</EventsContextProvider>
 			</ApiContextProvider>
 		</Provider>
 	)

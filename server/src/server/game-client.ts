@@ -68,6 +68,7 @@ export class Client {
 				player.state.connected = !!this.server.clients.find(
 					p => p !== this && p.player?.id === player.id
 				)
+				player.updated()
 
 				this.logger.log(
 					player.state.connected

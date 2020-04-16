@@ -3,11 +3,12 @@ import { saveOngoing } from '@/storage'
 import { debounce } from '@/utils/debounce'
 import { MyEvent } from '@/utils/events'
 import { Logger } from '@/utils/log'
-import { GameState, gameStateUpdate, GameStateValue } from '@shared/index'
-import WebSocket from 'ws'
-import { Client } from './game-client'
-import { Socket } from 'net'
+import { GameState, GameStateValue } from '@shared/index'
 import { IncomingMessage } from 'http'
+import { Socket } from 'net'
+import WebSocket from 'ws'
+import { EventServer } from './event-server'
+import { Client } from './game-client'
 
 export class GameServer {
 	logger = new Logger('GameServer')
@@ -20,11 +21,13 @@ export class GameServer {
 
 	game: Game
 	socket: WebSocket.Server
+	events: EventServer
 
 	clients: Client[] = []
 
 	onEnded = new MyEvent()
 	onEmpty = new MyEvent()
+	onClose = new MyEvent()
 
 	emptyTimeout?: ReturnType<typeof setTimeout>
 	endedTimeout?: ReturnType<typeof setTimeout>
@@ -34,6 +37,8 @@ export class GameServer {
 		this.game.onStateUpdated.on(this.handleGameUpdate)
 
 		this.logger.log('Admin password', this.game.config.adminPassword)
+
+		this.events = new EventServer(this)
 
 		this.socket = new WebSocket.Server({ noServer: true })
 		this.socket.on('connection', this.handleConnection)
@@ -90,6 +95,7 @@ export class GameServer {
 		if (this.clients.length === 0 && this.emptyTimeout === undefined) {
 			this.emptyTimeout = setTimeout(() => {
 				this.onEmpty.emit()
+				this.close()
 			}, this.closeEmptyAfter)
 		}
 	}
@@ -105,10 +111,7 @@ export class GameServer {
 		) {
 			this.endedTimeout = setTimeout(() => {
 				this.onEnded.emit()
-
-				this.clients.forEach(c => {
-					c.socket.close()
-				})
+				this.close()
 			}, this.closeEndedAfter)
 		}
 
@@ -118,6 +121,15 @@ export class GameServer {
 			this.logger.error('Failed to save game state:', e)
 		}
 	}, 10)
+
+	close() {
+		this.socket.close()
+		this.clients.forEach(c => {
+			c.socket.close()
+		})
+		this.clients = []
+		this.onClose.emit()
+	}
 
 	info() {
 		return this.game.info()

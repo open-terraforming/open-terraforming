@@ -1,4 +1,6 @@
 TODO:
+  * Disconnected not sending update
+  * Player name uniqueness
   * Preludes category in cards display
   * production phase display
     -> animations for resource changes of other players
