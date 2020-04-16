@@ -10,6 +10,7 @@ import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay'
 import { GameEvent } from './types'
 import { getEvents } from './utils'
+import { EventSounds } from './components/EventSounds'
 
 type Props = {}
 
@@ -58,6 +59,7 @@ export const EventList = ({}: Props) => {
 			{displayModal && (
 				<EventsModal events={events} onClose={() => setDisplayModal(false)} />
 			)}
+			<EventSounds events={events} />
 			<CardsPlayedDisplay events={events} />
 			<LastEventsDisplay events={events} />
 			<PopEventDisplay events={events} />

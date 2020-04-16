@@ -2,7 +2,7 @@
 /// <reference path="./preload-webpack-plugin.d.ts" />
 
 import webpack from 'webpack'
-import path from 'path'
+import path, { join } from 'path'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
@@ -204,7 +204,8 @@ const config = (env: ENV): webpack.Configuration => {
 
 		devServer: {
 			hot: true,
-			historyApiFallback: true
+			historyApiFallback: true,
+			contentBase: join(__dirname, '..', 'static')
 		}
 	}
 }
