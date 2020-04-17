@@ -97,6 +97,8 @@ export const CardView = ({
 		? isCardActionable(card, condContext)
 		: isCardPlayable(card, condContext)
 
+	const played = card.type === CardType.Action ? state && state.played : false
+
 	return (
 		<Container
 			type={card.type}
@@ -104,7 +106,7 @@ export const CardView = ({
 			onClick={onClick}
 			hover={hover}
 			playable={!fade || !evaluate || (playable && affordable)}
-			played={!!(state && state.played)}
+			played={!!played}
 			className={
 				(!evaluate || (playable && affordable) ? 'playable' : 'unplayable') +
 				(className ? ` ${className}` : '')
@@ -133,9 +135,16 @@ export const CardView = ({
 				/>
 			)}
 			<Description>
-				{state && state.played && (
-					<Played>Card already played this generation</Played>
-				)}
+				<VPC>
+					{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
+					{card.victoryPointsCallback && (
+						<VP title={card.victoryPointsCallback.description}>
+							{calculatedVps ?? 'X'}*
+						</VP>
+					)}
+				</VPC>
+
+				{played && <Played>Card already played this generation</Played>}
 				{(card.actionEffects.length > 0 || card.passiveEffects.length > 0) && (
 					<Action>
 						<ActionTitle>
@@ -172,12 +181,6 @@ export const CardView = ({
 					<div key={i}>{d}</div>
 				))}
 				{state && <Resource card={card} state={state} />}
-				{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
-				{card.victoryPointsCallback && (
-					<VP title={card.victoryPointsCallback.description}>
-						{calculatedVps ?? 'X'}*
-					</VP>
-				)}
 			</Description>
 		</Container>
 	)
@@ -281,10 +284,21 @@ const Played = styled.div`
 	color: #f12e41;
 `
 
+const VPC = styled.div`
+	&:before {
+		content: '';
+		display: block;
+		float: right;
+		height: 60px;
+	}
+`
+
 const VP = styled.div`
-	position: absolute;
-	bottom: 10px;
-	right: 10px;
+	clear: both;
+	float: right;
+	margin-right: 0.1rem;
+	margin-top: 0.5rem;
+
 	border-radius: 50%;
 	width: 3rem;
 	height: 3rem;

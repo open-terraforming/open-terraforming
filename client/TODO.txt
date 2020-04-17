@@ -1,6 +1,7 @@
 TODO:
   * Preludes category in cards display
   * player which creates a game should be admin of said game?
+  * evaluate vps on enemy cards
   * actionQueue
     -> solution to some unimplementable cards
     -> list of actions player have to perform:

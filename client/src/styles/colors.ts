@@ -19,66 +19,6 @@ export default {
 				color: mainColors.text
 			}
 		},
-		secondary: {
-			background: MainColor.secondary,
-			borderColor: MainColor.secondary,
-			color: '#eee',
-			hover: {
-				background: lighten(0.2, MainColor.primary),
-				borderColor: lighten(0.2, MainColor.primary),
-				color: '#eee'
-			}
-		},
-		default: {
-			background: '#f8f8f8',
-			borderColor: '#ddd',
-			color: '#555',
-			hover: {
-				background: '#fff',
-				borderColor: '#ccc',
-				color: '#333'
-			}
-		},
-		success: {
-			background: MainColor.success,
-			borderColor: MainColor.success,
-			color: '#fff',
-			hover: {
-				background: darken(0.1, MainColor.success),
-				borderColor: darken(0.1, MainColor.success),
-				color: '#fff'
-			}
-		},
-		info: {
-			background: MainColor.info,
-			borderColor: MainColor.info,
-			color: '#fff',
-			hover: {
-				background: lighten(0.1, MainColor.info),
-				borderColor: lighten(0.1, MainColor.info),
-				color: '#fff'
-			}
-		},
-		danger: {
-			background: MainColor.danger,
-			borderColor: MainColor.danger,
-			color: '#fff',
-			hover: {
-				background: darken(0.1, MainColor.danger),
-				borderColor: darken(0.1, MainColor.danger),
-				color: '#fff'
-			}
-		},
-		warn: {
-			background: MainColor.warn,
-			borderColor: MainColor.warn,
-			color: '#fff',
-			hover: {
-				background: darken(0.2, MainColor.warn),
-				borderColor: darken(0.2, MainColor.warn),
-				color: '#fff'
-			}
-		},
 		transparent: {
 			background: 'none',
 			borderColor: 'transparent',
