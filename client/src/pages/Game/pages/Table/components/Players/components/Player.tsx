@@ -1,5 +1,5 @@
 import { colors } from '@/styles'
-import { useAppStore } from '@/utils/hooks'
+import useElementPosition, { useAppStore } from '@/utils/hooks'
 import {
 	faArrowRight,
 	faCheck,
@@ -12,8 +12,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { PlayerState, PlayerStateValue } from '@shared/index'
-import React from 'react'
+import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
+import { ResourcesDiff } from './ResourcesDiff/ResourcesDiff'
 
 const stateToStr = {
 	[PlayerStateValue.Passed]: 'Passed',
@@ -50,14 +51,18 @@ export const Player = ({
 	starting: boolean
 	onClick: () => void
 }) => {
+	const [container, setContainer] = useState(null as HTMLDivElement | null)
+	const position = useElementPosition(container)
 	const state = player
-
 	const isPlaying = state.state === PlayerStateValue.Playing
-
 	const isPlayer = player.id === useAppStore(state => state.game.playerId)
 
 	return (
-		<Container onClick={onClick} isPlaying={isPlaying}>
+		<Container
+			onClick={onClick}
+			isPlaying={isPlaying}
+			ref={e => setContainer(e)}
+		>
 			<InfoContainer>
 				<NameContainer>
 					<Name>
@@ -110,6 +115,11 @@ export const Player = ({
 			{starting && (
 				<Starting title="This player is first this generation">1</Starting>
 			)}
+			<ResourcesDiff
+				player={player}
+				x={position.left + position.width}
+				y={position.top}
+			/>
 		</Container>
 	)
 }
@@ -124,6 +134,7 @@ const Container = styled.div<{ isPlaying: boolean }>`
 	opacity: 0.8;
 	display: flex;
 	cursor: pointer;
+	position: relative;
 
 	${props =>
 		props.isPlaying &&

@@ -296,3 +296,88 @@ export const useAnimationFrame = (callback: () => void) => {
 		tick()
 	}, [])
 }
+
+interface Position {
+	left: number
+	top: number
+	width: number
+	height: number
+}
+
+function getPosition(el: HTMLElement, global = true): Position {
+	if (!el) {
+		return {
+			left: 0,
+			top: 0,
+			width: 0,
+			height: 0
+		}
+	}
+
+	const bb = el.getBoundingClientRect()
+	let offsetLeft = el.offsetLeft
+	let offsetTop = el.offsetTop
+	let current: HTMLElement | null = el.offsetParent as HTMLElement
+
+	while (current) {
+		offsetLeft += current.offsetLeft
+		offsetTop += current.offsetTop
+		current = current.offsetParent as HTMLElement
+
+		if (!global && current) {
+			const position = getComputedStyle(current).getPropertyValue('position')
+
+			if (position === 'relative' || position === 'absolute') {
+				break
+			}
+		}
+	}
+
+	return {
+		left: offsetLeft,
+		top: offsetTop,
+		width: bb.width,
+		height: bb.height
+	}
+}
+
+export const useElementPosition = (
+	element?: HTMLElement | null,
+	global = true
+): Position => {
+	const elementRef = useRef<HTMLElement | null>()
+
+	const [position, setPosition] = useState(
+		!elementRef.current && element
+			? getPosition(element, global)
+			: ({} as Position)
+	)
+
+	elementRef.current = element
+
+	useEffect(() => {
+		if (elementRef.current) {
+			setPosition(getPosition(elementRef.current, global))
+		}
+	}, [element])
+
+	useEffect(() => {
+		const update = () => {
+			if (elementRef.current) {
+				setPosition(getPosition(elementRef.current, global))
+			}
+		}
+
+		window.addEventListener('resize', update)
+		window.addEventListener('scroll', update)
+
+		return () => {
+			window.removeEventListener('resize', update)
+			window.removeEventListener('scroll', update)
+		}
+	}, [])
+
+	return position
+}
+
+export default useElementPosition

@@ -17,9 +17,10 @@ type Props = {
 	res: Resource
 	size?: SizeProp
 	production?: boolean
+	fixedWidth?: boolean
 }
 
-export const ResourceIcon = ({ res, size, production }: Props) => {
+export const ResourceIcon = ({ res, size, production, fixedWidth }: Props) => {
 	const icon = useMemo(() => {
 		switch (res) {
 			case 'money':
@@ -28,6 +29,7 @@ export const ResourceIcon = ({ res, size, production }: Props) => {
 						icon={faDollarSign}
 						color={resourceColors.money}
 						size={size}
+						fixedWidth={fixedWidth}
 					/>
 				)
 
@@ -37,6 +39,7 @@ export const ResourceIcon = ({ res, size, production }: Props) => {
 						icon={faHammer}
 						color={resourceColors.ore}
 						size={size}
+						fixedWidth={fixedWidth}
 					/>
 				)
 
@@ -46,6 +49,7 @@ export const ResourceIcon = ({ res, size, production }: Props) => {
 						icon={faStar}
 						color={resourceColors.titan}
 						size={size}
+						fixedWidth={fixedWidth}
 					/>
 				)
 
@@ -55,6 +59,7 @@ export const ResourceIcon = ({ res, size, production }: Props) => {
 						icon={faSeedling}
 						color={resourceColors.plants}
 						size={size}
+						fixedWidth={fixedWidth}
 					/>
 				)
 
@@ -64,6 +69,7 @@ export const ResourceIcon = ({ res, size, production }: Props) => {
 						icon={faBolt}
 						color={resourceColors.energy}
 						size={size}
+						fixedWidth={fixedWidth}
 					/>
 				)
 
@@ -73,6 +79,7 @@ export const ResourceIcon = ({ res, size, production }: Props) => {
 						icon={faFire}
 						color={resourceColors.heat}
 						size={size}
+						fixedWidth={fixedWidth}
 					/>
 				)
 		}
