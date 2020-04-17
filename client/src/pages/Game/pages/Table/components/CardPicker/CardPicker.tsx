@@ -1,17 +1,17 @@
 import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
+import { colors } from '@/styles'
 import { useAppStore } from '@/utils/hooks'
+import { faThermometerHalf, faTint } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi } from '@shared/cards'
 import { CARD_PRICE } from '@shared/constants'
 import { pickCards, pickPreludes } from '@shared/index'
 import React, { useState } from 'react'
+import styled, { keyframes } from 'styled-components'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
-import styled from 'styled-components'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTint, faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
-import { colors } from '@/styles'
 
 type Props = {
 	prelude?: boolean
@@ -33,7 +33,6 @@ export const CardPicker = ({ prelude }: Props) => {
 	const isFree = useAppStore(state => state.game.player?.cardsPickFree) ?? false
 
 	const [selected, setSelected] = useState([] as number[])
-
 	const [loading, setLoading] = useState(false)
 
 	const price = isFree ? 0 : selected.length * CARD_PRICE
@@ -109,31 +108,49 @@ export const CardPicker = ({ prelude }: Props) => {
 				{cardsToPick?.map(
 					(c, i) =>
 						c && (
-							<CardView
-								card={c}
-								selected={selected.includes(i)}
+							<PopInContainer
 								key={i}
-								fade={false}
-								onClick={
-									!loading
-										? () => {
-												setSelected(
-													selected.includes(i)
-														? selected.filter(s => s !== i)
-														: cardsLimit === 0 || selected.length < cardsLimit
-														? [...selected, i]
-														: selected
-												)
-										  }
-										: undefined
-								}
-							/>
+								style={{
+									animationDelay: `${i * 350}ms`
+								}}
+							>
+								<CardView
+									card={c}
+									selected={selected.includes(i)}
+									fade={false}
+									onClick={
+										!loading
+											? () => {
+													setSelected(
+														selected.includes(i)
+															? selected.filter(s => s !== i)
+															: cardsLimit === 0 || selected.length < cardsLimit
+															? [...selected, i]
+															: selected
+													)
+											  }
+											: undefined
+									}
+								/>
+							</PopInContainer>
 						)
 				)}
 			</CardsContainer>
 		</Modal>
 	)
 }
+
+const PopIn = keyframes`
+	0% { transform: scale(1.1); opacity: 0; }
+	100% { transform: scale(1); opacity: 1; }
+`
+
+const PopInContainer = styled.div`
+	animation-name: ${PopIn};
+	animation-duration: 300ms;
+	animation-fill-mode: forwards;
+	opacity: 0;
+`
 
 const GameProgress = styled.div`
 	display: flex;
