@@ -1,4 +1,4 @@
-import { GameState, PlayerState } from '@shared/index'
+import { GameState, PlayerState, PlayerStateValue } from '@shared/index'
 import { keyMap } from '@shared/utils'
 
 type State = Readonly<typeof initialState>
@@ -7,7 +7,9 @@ const initialState = {
 	playerId: undefined as number | undefined,
 	state: undefined as GameState | undefined,
 	player: undefined as PlayerState | undefined,
-	playerMap: {} as Record<number, PlayerState>
+	playerMap: {} as Record<number, PlayerState>,
+	playing: false,
+	interrupted: false
 }
 
 export default (state = initialState, action: Action): State => {
@@ -19,7 +21,18 @@ export default (state = initialState, action: Action): State => {
 				...state,
 				state: action.state,
 				player,
-				playerMap: keyMap(action.state.players, 'id')
+				playerMap: keyMap(action.state.players, 'id'),
+				playing:
+					player?.state === PlayerStateValue.Playing &&
+					player?.placingTile.length === 0 &&
+					player?.cardsToPlay.length === 0,
+				interrupted: player
+					? player?.placingTile.length > 0 ||
+					  player?.cardsToPlay.length > 0 ||
+					  player.state === PlayerStateValue.PickingCards ||
+					  player.state === PlayerStateValue.PickingCorporation ||
+					  player.state === PlayerStateValue.PickingPreludes
+					: false
 			}
 		}
 

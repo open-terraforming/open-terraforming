@@ -1,4 +1,3 @@
-import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { range } from '@/utils/collections'
@@ -17,7 +16,6 @@ import { MilestoneDisplay } from './components/MilestoneDisplay'
 
 type Props = {
 	onClose: () => void
-	playing: boolean
 }
 
 const milestones = [
@@ -28,13 +26,13 @@ const milestones = [
 	Milestones[MilestoneType.Planner]
 ]
 
-export const MilestonesModal = ({ onClose, playing }: Props) => {
+export const MilestonesModal = ({ onClose }: Props) => {
 	const api = useApi()
 	const bought = useAppStore(state => state.game.state?.milestones) || []
 	const players = useAppStore(state => state.game.state?.players) || []
+	const playing = useAppStore(state => state.game.playing)
 
-	const playerMoney =
-		useAppStore(state => state.game.player?.money) || 0
+	const playerMoney = useAppStore(state => state.game.player?.money) || 0
 
 	const affordable =
 		bought.length < MILESTONES_LIMIT && playerMoney >= MILESTONE_PRICE
@@ -48,7 +46,7 @@ export const MilestonesModal = ({ onClose, playing }: Props) => {
 	return (
 		<Modal
 			open={true}
-			header="Competitions"
+			header="Milestones"
 			onClose={onClose}
 			contentStyle={{ width: '500px' }}
 		>

@@ -13,9 +13,7 @@ export const PlayedButton = ({ playing }: Props) => {
 
 	return (
 		<DialogWrapper
-			dialog={(opened, close) =>
-				opened && <PlayedCards playing={playing} onClose={close} />
-			}
+			dialog={close => <PlayedCards playing={playing} onClose={close} />}
 		>
 			{open => (
 				<Button icon={faAngleUp} onClick={open} disabled={count === 0}>

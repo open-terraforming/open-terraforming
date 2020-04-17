@@ -1,22 +1,20 @@
-import React from 'react'
 import { Modal } from '@/components/Modal/Modal'
-import {
-	Competitions,
-	CompetitionType,
-	Competition
-} from '@shared/competitions'
-import { CompetitionDisplay } from './components/CompetitionDisplay'
-import { Button } from '@/components'
-import { useAppStore } from '@/utils/hooks'
-import { COMPETITIONS_PRICES, COMPETITIONS_REWARDS } from '@shared/constants'
 import { useApi } from '@/context/ApiContext'
+import { useAppStore } from '@/utils/hooks'
+import {
+	Competition,
+	Competitions,
+	CompetitionType
+} from '@shared/competitions'
+import { COMPETITIONS_PRICES, COMPETITIONS_REWARDS } from '@shared/constants'
 import { sponsorCompetition } from '@shared/index'
+import React from 'react'
 import styled from 'styled-components'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
+import { CompetitionDisplay } from './components/CompetitionDisplay'
 
 type Props = {
 	onClose: () => void
-	playing: boolean
 }
 
 const competitions = [
@@ -27,13 +25,13 @@ const competitions = [
 	Competitions[CompetitionType.Miner]
 ]
 
-export const CompetitionsModal = ({ onClose, playing }: Props) => {
+export const CompetitionsModal = ({ onClose }: Props) => {
 	const api = useApi()
 	const sponsored = useAppStore(state => state.game.state?.competitions) || []
 	const players = useAppStore(state => state.game.state?.players) || []
+	const playing = useAppStore(state => state.game.playing)
 
-	const playerMoney =
-		useAppStore(state => state.game.player?.money) || 0
+	const playerMoney = useAppStore(state => state.game.player?.money) || 0
 
 	const cost = COMPETITIONS_PRICES[sponsored.length]
 	const affordable = cost !== undefined && playerMoney >= cost

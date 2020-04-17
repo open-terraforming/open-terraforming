@@ -60,7 +60,9 @@ export const GameMap = ({}: Props) => {
 	const placingList = useAppStore(state => state.game.player?.placingTile)
 
 	const isPlaying = useAppStore(
-		state => state.game.player?.state === PlayerStateValue.Playing
+		state =>
+			state.game.player?.state === PlayerStateValue.Playing ||
+			state.game.player?.state === PlayerStateValue.EndingTiles
 	)
 
 	const placing =

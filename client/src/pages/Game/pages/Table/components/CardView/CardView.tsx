@@ -5,7 +5,8 @@ import { Card, CardCallbackContext, CardType } from '@shared/cards'
 import {
 	isCardActionable,
 	isCardPlayable,
-	minimalCardPrice
+	minimalCardPrice,
+	emptyCardState
 } from '@shared/cards/utils'
 import { UsedCardState } from '@shared/index'
 import React, { useMemo } from 'react'
@@ -77,6 +78,20 @@ export const CardView = ({
 	const adjusted = !buying ? card.cost : minimalCardPrice(card, player)
 
 	const affordable = !buying || adjusted <= player.money
+
+	const calculatedVps = useMemo(
+		() =>
+			evaluate && !buying && card.victoryPointsCallback
+				? card.victoryPointsCallback.compute({
+						card: state || emptyCardState(card.code),
+						cardIndex: cardIndex ?? -1,
+						player,
+						playerId: player.id,
+						game
+				  })
+				: undefined,
+		[card, player, game]
+	)
 
 	const playable = state
 		? isCardActionable(card, condContext)
@@ -158,6 +173,11 @@ export const CardView = ({
 				))}
 				{state && <Resource card={card} state={state} />}
 				{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
+				{card.victoryPointsCallback && (
+					<VP title={card.victoryPointsCallback.description}>
+						{calculatedVps ?? 'X'}*
+					</VP>
+				)}
 			</Description>
 		</Container>
 	)
@@ -175,6 +195,7 @@ const typeToColor = {
 const Head = styled.div`
 	display: flex;
 	align-items: center;
+	height: 2rem;
 `
 
 const Action = styled.div`
@@ -202,33 +223,21 @@ const Cost = styled.div<{ affordable: boolean }>`
 	height: 2rem;
 
 	> div {
-		border-top: 2px solid rgb(221, 221, 221);
-		border-left: 2px solid rgb(221, 221, 221);
-		border-bottom: 2px solid rgb(137, 137, 137);
-		border-right: 2px solid rgb(137, 137, 137);
+		background: ${colors.background};
 
 		position: absolute;
+
 		${props =>
 			props.affordable
 				? css`
-						background: linear-gradient(
-							rgb(255, 208, 4),
-							rgb(255, 255, 104),
-							rgb(255, 208, 4),
-							rgb(255, 208, 4)
-						);
-						color: #000;
+						border: 2px solid rgb(255, 255, 104);
+						color: rgb(255, 255, 104);
 				  `
 				: css`
-						background: linear-gradient(
-							to bottom,
-							rgba(255, 135, 135, 1) 0%,
-							rgba(255, 201, 201, 1) 33%,
-							rgba(255, 134, 134, 1) 66%,
-							rgba(255, 137, 135, 1) 100%
-						);
-						color: #000;
+						border: 2px solid rgba(255, 135, 135, 1);
+						color: rgba(255, 135, 135, 1);
 				  `}
+
 		width: 2.5rem;
 		height: 2.5rem;
 		line-height: 2.5rem;

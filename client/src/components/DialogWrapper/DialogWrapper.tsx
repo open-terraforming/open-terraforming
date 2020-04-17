@@ -3,7 +3,7 @@ import React, { useState, useCallback } from 'react'
 interface Props {
 	className?: string
 	/** Dialog renderer callback */
-	dialog: (opened: boolean, onClose: () => void) => React.ReactNode
+	dialog: (onClose: () => void) => React.ReactNode
 	/** Children renderer, callback can be used to use custom clickable element */
 	children: React.ReactNode | ((onClick: () => void) => React.ReactNode)
 }
@@ -30,7 +30,7 @@ export const DialogWrapper = ({ dialog, children, className }: Props) => {
 				</div>
 			)}
 			{typeof children === 'function' && children(onOpen)}
-			{dialog(opened, onClose)}
+			{opened && dialog(onClose)}
 		</>
 	)
 }

@@ -26,7 +26,7 @@ export const vpsForAdjacentTiles = (type: GridCellContent, perTile: number) =>
 				c => c.ownerId === playerId && c.ownerCard === cardIndex
 			)
 			if (!tile) {
-				throw new Error(`No tile placed for card ${card.code} (${cardIndex})`)
+				return 0
 			}
 
 			return Math.floor(

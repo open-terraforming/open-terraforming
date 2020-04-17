@@ -1,7 +1,8 @@
 TODO:
   * Preludes category in cards display
   * production phase display
-    -> animations for resource changes of other players
+    -> ProductionPhase in GameStateValue
+    -> Do production gradually
   * player which creates a game should be admin of said game?
   * actionQueue
     -> solution to some unimplementable cards

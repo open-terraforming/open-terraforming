@@ -43,11 +43,7 @@ export const HandButton = ({ playing }: Props) => {
 	}, [count])
 
 	return (
-		<DialogWrapper
-			dialog={(opened, close) =>
-				opened && <Hand playing={playing} onClose={close} />
-			}
-		>
+		<DialogWrapper dialog={close => <Hand playing={playing} onClose={close} />}>
 			{open => (
 				<CardButton icon={faAngleUp} onClick={open} disabled={count === 0}>
 					{count} cards in hand

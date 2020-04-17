@@ -49,9 +49,7 @@ export const GamesList = ({ allowCreate }: Props) => {
 	return (
 		<Container>
 			<Head>
-				<DialogWrapper
-					dialog={(opened, close) => opened && <NewGameModal onClose={close} />}
-				>
+				<DialogWrapper dialog={close => <NewGameModal onClose={close} />}>
 					{open => (
 						<Button
 							onClick={open}

@@ -15,17 +15,15 @@ import {
 	GridCellContent,
 	GridCellOther,
 	playerPass,
-	PlayerStateValue,
-	StandardProjectType
+	StandardProjectType,
+	PlayerStateValue
 } from '@shared/index'
 import { darken, rgba } from 'polished'
-import React, { useState } from 'react'
+import React from 'react'
 import styled, { css } from 'styled-components'
 import { CardBuy } from '../CardBuy/CardBuy'
-import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
-import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
-import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
+import { ActionableButton } from './components/ActionableButton/ActionableButton'
 import { HandButton } from './components/HandButton/HandButton'
 import { PlayedButton } from './components/PlayedButton/PlayedButton'
 import { Resources } from './components/Resources/Resources'
@@ -35,6 +33,7 @@ export const Controls = () => {
 	const dispatch = useAppDispatch()
 	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
+	const isPlaying = useAppStore(state => state.game.playing)
 
 	const buyingCardIndex = useAppStore(state => state.table.buyingCardIndex)
 	const playingCardIndex = useAppStore(state => state.table.playingCardIndex)
@@ -44,14 +43,13 @@ export const Controls = () => {
 		? CardsLookupApi.get(state?.corporation as string)
 		: undefined
 
-	const [projectsOpened, setProjectsOpened] = useState(false)
-	const [competitionsOpened, setCompetitionsOpened] = useState(false)
-	const [milestonesOpened, setMilestonesOpened] = useState(false)
 	const stackedActions = player?.cardsToPlay
 
-	const isPlaying = state?.state === PlayerStateValue.Playing
-
-	const placingTile = isPlaying ? state?.placingTile[0] : undefined
+	const placingTile =
+		player?.state === PlayerStateValue.Playing ||
+		player?.state === PlayerStateValue.EndingTiles
+			? state?.placingTile[0]
+			: undefined
 
 	const handlePass = () => {
 		api.send(playerPass(false))
@@ -107,27 +105,6 @@ export const Controls = () => {
 				/>
 			)}
 
-			{projectsOpened && (
-				<StandardProjectModal
-					playing={isPlaying}
-					onClose={() => setProjectsOpened(false)}
-				/>
-			)}
-
-			{competitionsOpened && (
-				<CompetitionsModal
-					playing={isPlaying}
-					onClose={() => setCompetitionsOpened(false)}
-				/>
-			)}
-
-			{milestonesOpened && (
-				<MilestonesModal
-					playing={isPlaying}
-					onClose={() => setMilestonesOpened(false)}
-				/>
-			)}
-
 			<Flexed>
 				<Resources state={state} />
 			</Flexed>
@@ -137,16 +114,7 @@ export const Controls = () => {
 			</CardButtons>
 			{/*<div>{corporation?.name}</div>*/}
 			<Flexed>
-				<Button onClick={() => setProjectsOpened(true)}>
-					Standard projects
-				</Button>
-
-				<CardButtons>
-					<Button onClick={() => setMilestonesOpened(true)}>Milestones</Button>
-					<Button onClick={() => setCompetitionsOpened(true)}>
-						Competitions
-					</Button>
-				</CardButtons>
+				<ActionableButton playing={isPlaying} />
 
 				<CardButtons>
 					<Button

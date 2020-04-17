@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { GameEvent, EventType } from '../types'
 import { Sounds } from '@/sounds/sounds'
 import { GridCellContent } from '@shared/index'
+import { isNotUndefined } from '@/utils/collections'
 
 type Props = {
 	events: GameEvent[]
@@ -34,10 +35,11 @@ export const EventSounds = ({ events }: Props) => {
 							}
 					}
 				})
-				.find(e => !!e)
+				.filter(isNotUndefined)
+				.slice(0, 3)
 
 			if (toPlay) {
-				toPlay.play()
+				toPlay.forEach(s => s.play())
 			}
 
 			setProcessed(events.length)

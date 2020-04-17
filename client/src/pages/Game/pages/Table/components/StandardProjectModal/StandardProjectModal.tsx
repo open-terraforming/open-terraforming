@@ -1,20 +1,19 @@
-import React, { useMemo, useState } from 'react'
+import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
-import { StandardProjectType, buyStandardProject } from '@shared/index'
+import { useApi } from '@/context/ApiContext'
+import { useAppStore } from '@/utils/hooks'
+import { buyStandardProject, StandardProjectType } from '@shared/index'
 import {
 	Projects,
-	StandardProjectContext,
-	StandardProject
+	StandardProject,
+	StandardProjectContext
 } from '@shared/projects'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
-import { Button } from '@/components'
-import { useAppStore } from '@/utils/hooks'
-import { useApi } from '@/context/ApiContext'
 import { ProjectDescription } from './components/ProjectDescription'
 import { SellCardsModal } from './components/SellCardsModal'
 
 type Props = {
-	playing: boolean
 	onClose: () => void
 }
 
@@ -27,10 +26,11 @@ const projects = [
 	Projects[StandardProjectType.City]
 ]
 
-export const StandardProjectModal = ({ onClose, playing }: Props) => {
+export const StandardProjectModal = ({ onClose }: Props) => {
 	const api = useApi()
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
+	const playing = useAppStore(state => state.game.playing)
 	const [selling, setSelling] = useState(false)
 
 	const ctx = useMemo(

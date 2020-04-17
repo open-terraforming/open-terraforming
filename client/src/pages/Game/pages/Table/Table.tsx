@@ -11,6 +11,7 @@ import { Players } from './components/Players/Players'
 import { useEvents } from '@/context/EventsContext'
 import { mouseMoveEvent, RealtimeEventEmit } from '@shared/events'
 import { Mouses } from './components/Mouses/Mouses'
+import { Header } from './components/Header/Header'
 
 export const Table = () => {
 	const gameState = useAppStore(state => state.game.state)
@@ -52,6 +53,7 @@ export const Table = () => {
 				<CardPicker prelude />
 			)}
 			<GameContainer>
+				<Header />
 				<Players />
 				<GameMap />
 				<GlobalState />

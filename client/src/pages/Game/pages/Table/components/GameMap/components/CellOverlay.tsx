@@ -26,7 +26,7 @@ const specialToName = {
 } as const
 
 export const CellOverlay = ({ cell, pos, width, height }: Props) => {
-	return !cell.content ? (
+	return (
 		<HexOverlay
 			style={{
 				top: `${pos.y * 100}%`,
@@ -37,32 +37,32 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 		>
 			{cell.type === GridCellType.PhobosSpaceHaven && <Phobos />}
 			{cell.type === GridCellType.GanymedeColony && <Ganymede />}
-			{cell.special !== undefined && (
-				<Special>{specialToName[cell.special]}</Special>
-			)}
-			{cell.content === undefined && (
-				<Resources>
-					{range(0, cell.plants).map(i => (
-						<PlantRes key={i}>
-							<FontAwesomeIcon icon={faSeedling} color="#356A00" />
-						</PlantRes>
-					))}
-					{range(0, cell.ore).map(i => (
-						<OreRes key={i}>
-							<FontAwesomeIcon icon={faHammer} color="#8A4500" />
-						</OreRes>
-					))}
-					{range(0, cell.titan).map(i => (
-						<FontAwesomeIcon key={i} icon={faStar} color="#FFFFAC" />
-					))}
-					{range(0, cell.cards).map(i => (
-						<Card key={i} />
-					))}
-				</Resources>
+			{!cell.content && (
+				<>
+					{cell.special !== undefined && (
+						<Special>{specialToName[cell.special]}</Special>
+					)}
+					<Resources>
+						{range(0, cell.plants).map(i => (
+							<PlantRes key={i}>
+								<FontAwesomeIcon icon={faSeedling} color="#356A00" />
+							</PlantRes>
+						))}
+						{range(0, cell.ore).map(i => (
+							<OreRes key={i}>
+								<FontAwesomeIcon icon={faHammer} color="#8A4500" />
+							</OreRes>
+						))}
+						{range(0, cell.titan).map(i => (
+							<FontAwesomeIcon key={i} icon={faStar} color="#FFFFAC" />
+						))}
+						{range(0, cell.cards).map(i => (
+							<Card key={i} />
+						))}
+					</Resources>
+				</>
 			)}
 		</HexOverlay>
-	) : (
-		<></>
 	)
 }
 
