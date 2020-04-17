@@ -16,6 +16,8 @@ export enum GameStateValue {
 	PickingPreludes,
 	/** Generation is in progress */
 	GenerationInProgress,
+	/** Production phase */
+	GenerationEnding,
 	/** Players are placing finishing greeneries */
 	EndingTiles,
 	/** Game ended */

@@ -143,6 +143,7 @@ const Container = styled.button<{
 			cursor: not-allowed;
 			opacity: 0.5;
 			background: ${props.theme.colors.button.disabledBackground} !important;
+			border-color: ${props.theme.colors.button.disabledBorder} !important;
 		`}
 
 	> * {

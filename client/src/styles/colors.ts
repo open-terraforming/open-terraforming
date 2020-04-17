@@ -7,7 +7,8 @@ export default {
 	border: rgba(lighten(0.1, mainColors.application), 0.8),
 
 	button: {
-		disabledBackground: '#eee',
+		disabledBackground: darken(0.2, MainColor.primary),
+		disabledBorder: darken(0.2, MainColor.primary),
 		primary: {
 			background: MainColor.primary,
 			borderColor: MainColor.primary,

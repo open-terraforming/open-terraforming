@@ -1,6 +1,6 @@
-import { Resource, CardResource, GameProgress } from '@shared/cards'
-import { GridCellContent, GridCellOther } from '@shared/index'
+import { CardResource, GameProgress, Resource } from '@shared/cards'
 import { CompetitionType } from '@shared/competitions'
+import { GridCellContent, GridCellOther } from '@shared/index'
 import { MilestoneType } from '@shared/milestones'
 
 export enum EventType {
@@ -17,7 +17,8 @@ export enum EventType {
 	CompetitionSponsored,
 	MilestoneBought,
 	PlayingChanged,
-	NewGeneration
+	NewGeneration,
+	ProductionPhase
 }
 
 export type CardPlayed = {
@@ -108,6 +109,10 @@ type NewGeneration = {
 	type: typeof EventType.NewGeneration
 }
 
+type ProductionPhase = {
+	type: typeof EventType.ProductionPhase
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -123,5 +128,8 @@ export type GameEvent =
 	| CompetitionSponsored
 	| PlayingChanged
 	| NewGeneration
+	| ProductionPhase
 
-export type PopEvent = (PlayingChanged | NewGeneration) & { id: number }
+export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
+	id: number
+}

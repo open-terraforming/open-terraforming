@@ -1,4 +1,4 @@
-import { GameState } from '@shared/index'
+import { GameState, GameStateValue } from '@shared/index'
 import { objDiff } from '@/utils/collections'
 import { GameEvent, EventType } from './types'
 import { CardsLookupApi, CardType, Resource, GameProgress } from '@shared/cards'
@@ -189,6 +189,12 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 	if (diff.generation !== undefined) {
 		newEvents.push({
 			type: EventType.NewGeneration
+		})
+	}
+
+	if (diff.state === GameStateValue.GenerationEnding) {
+		newEvents.push({
+			type: EventType.ProductionPhase
 		})
 	}
 

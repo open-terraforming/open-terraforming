@@ -64,8 +64,18 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 			? Math.min(state.titan || 0, Math.ceil(adjustedPrice / state.titanPrice))
 			: 0
 
-	const [ore, setOre] = useState(maxOre)
-	const [titan, setTitan] = useState(maxTitan)
+	const bestOre =
+		canUseOre && state && card
+			? Math.min(state.ore, Math.floor(adjustedPrice / state.orePrice))
+			: 0
+
+	const bestTitan =
+		canUseTitan && state && card
+			? Math.min(state.titan || 0, Math.floor(adjustedPrice / state.titanPrice))
+			: 0
+
+	const [ore, setOre] = useState(bestOre)
+	const [titan, setTitan] = useState(bestTitan)
 
 	const [effectsArgs, setEffectsArgs] = useState(
 		[] as CardEffectArgumentType[][]

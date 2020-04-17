@@ -31,6 +31,7 @@ import { GameInfo } from '@shared/extra'
 import { v4 as uuidv4 } from 'uuid'
 import { PlayerColors } from '@shared/player-colors'
 import { randomPlayerColor } from '@/utils/colors'
+import { wait } from '@/utils/async'
 
 export interface GameConfig {
 	bots: number
@@ -528,12 +529,19 @@ export class Game {
 	/**
 	 * End the generation, go to next or finish the game
 	 */
-	endGeneration() {
+	async endGeneration() {
+		this.state.state = GameStateValue.GenerationEnding
+
 		this.handleGenerationEnd()
 
-		this.players.forEach(p => {
+		for (const p of this.players) {
+			await wait(1000)
+
 			p.endGeneration()
-		})
+			this.onStateUpdated.emit(this.state)
+		}
+
+		await wait(1000)
 
 		if (this.hasReachedLimits) {
 			this.state.state = GameStateValue.EndingTiles

@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { PopEvent, EventType, GameEvent } from '../types'
-import { PlayingChanged } from './PlayingChanged'
-import { GenerationChanged } from './GenerationChanged'
-import { filterEvents } from '../utils'
+import { PopEvent, EventType, GameEvent } from '../../types'
+import { PlayingChanged } from './components/PlayingChanged'
+import { GenerationChanged } from './components/GenerationChanged'
+import { filterEvents } from '../../utils'
+import { ProductionPhase } from './components/ProductionPhase'
 
 type Props = {
 	events: GameEvent[]
@@ -23,7 +24,11 @@ export const PopEventDisplay = ({ events }: Props) => {
 					...e,
 					...(filterEvents(
 						events.map((e, i) => ({ ...e, id: i })).slice(processed),
-						[EventType.NewGeneration, EventType.PlayingChanged]
+						[
+							EventType.NewGeneration,
+							EventType.PlayingChanged,
+							EventType.ProductionPhase
+						]
 					) as PopEvent[])
 				]
 					.reverse()
@@ -51,6 +56,10 @@ export const PopEventDisplay = ({ events }: Props) => {
 
 			case EventType.NewGeneration: {
 				return <GenerationChanged key={event.id} onDone={handleDone} />
+			}
+
+			case EventType.ProductionPhase: {
+				return <ProductionPhase key={event.id} onDone={handleDone} />
 			}
 		}
 	} else {

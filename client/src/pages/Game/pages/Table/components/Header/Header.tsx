@@ -15,7 +15,7 @@ export const Header = ({}: Props) => {
 	return (
 		<E
 			style={{
-				transform: interrupted ? 'translate(0, -100%)' : 'translate(-50%, 0)'
+				transform: interrupted ? 'translate(-50%, -100%)' : 'translate(-50%, 0)'
 			}}
 		>
 			<DialogWrapper dialog={close => <MilestonesModal onClose={close} />}>
@@ -41,7 +41,7 @@ const E = styled.div`
 	display: flex;
 	transform: translate(-50%, 0);
 	align-items: flex-start;
-	transition: transform 0.2s;
+	transition: transform 0.5s;
 `
 
 const StyledButton = styled(Button)`
