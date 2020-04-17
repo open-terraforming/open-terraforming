@@ -5,15 +5,7 @@ import React, { memo, useMemo } from 'react'
 import Tooltip from '@/components/Tooltip/Tooltip'
 import styled, { css } from 'styled-components'
 
-export type Schema =
-	| 'default'
-	| 'primary'
-	| 'secondary'
-	| 'success'
-	| 'info'
-	| 'danger'
-	| 'warn'
-	| 'transparent'
+export type Schema = 'primary' | 'transparent'
 
 export type Size = 'xs' | 'sm' | 'md' | 'lg'
 
