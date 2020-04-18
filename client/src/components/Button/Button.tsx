@@ -104,6 +104,7 @@ const Container = styled.button<{
 	user-select: none;
 	display: flex;
 	justify-content: center;
+	font-size: 100%;
 
 	${props => css`
 		padding: ${props.size === 'sm' ? '0.1rem 0.2rem' : '0.4rem 0.8rem'};

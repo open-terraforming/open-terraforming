@@ -1,4 +1,5 @@
 import { Button } from '@/components'
+import { Flex } from '@/components/Flex/Flex'
 import { useApi } from '@/context/ApiContext'
 import { setTableState } from '@/store/modules/table'
 import { colors } from '@/styles'
@@ -15,18 +16,17 @@ import {
 	GridCellContent,
 	GridCellOther,
 	playerPass,
-	StandardProjectType,
-	PlayerStateValue
+	PlayerStateValue,
+	StandardProjectType
 } from '@shared/index'
 import { darken, rgba } from 'polished'
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { CardBuy } from '../CardBuy/CardBuy'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
-import { ActionableButton } from './components/ActionableButton/ActionableButton'
 import { HandButton } from './components/HandButton/HandButton'
-import { PlayedButton } from './components/PlayedButton/PlayedButton'
 import { Resources } from './components/Resources/Resources'
+import { TableButtons } from './components/TableButtons/TableButtons'
 
 export const Controls = () => {
 	const api = useApi()
@@ -67,99 +67,97 @@ export const Controls = () => {
 		}
 	}
 
-	return state ? (
-		<Container faded={!!placingTile}>
-			{stackedActions && stackedActions.length > 0 && (
-				<CardBuy
-					buying={false}
-					index={stackedActions[0]}
-					onClose={() => false}
-				/>
-			)}
+	return (
+		<Flex justify="center">
+			<Container faded={!!placingTile}>
+				{stackedActions && stackedActions.length > 0 && (
+					<CardBuy
+						buying={false}
+						index={stackedActions[0]}
+						onClose={() => false}
+					/>
+				)}
 
-			{playingCardIndex !== undefined && (
-				<CardBuy
-					buying={false}
-					index={playingCardIndex}
-					onClose={() =>
-						dispatch(
-							setTableState({
-								playingCardIndex: undefined
-							})
-						)
-					}
-				/>
-			)}
+				{playingCardIndex !== undefined && (
+					<CardBuy
+						buying={false}
+						index={playingCardIndex}
+						onClose={() =>
+							dispatch(
+								setTableState({
+									playingCardIndex: undefined
+								})
+							)
+						}
+					/>
+				)}
 
-			{buyingCardIndex !== undefined && (
-				<CardBuy
-					buying={true}
-					index={buyingCardIndex}
-					onClose={() =>
-						dispatch(
-							setTableState({
-								buyingCardIndex: undefined
-							})
-						)
-					}
-				/>
-			)}
+				{buyingCardIndex !== undefined && (
+					<CardBuy
+						buying={true}
+						index={buyingCardIndex}
+						onClose={() =>
+							dispatch(
+								setTableState({
+									buyingCardIndex: undefined
+								})
+							)
+						}
+					/>
+				)}
 
-			<Flexed>
-				<Resources state={state} />
-			</Flexed>
-			<CardButtons>
+				<Flexed>
+					<Resources state={state} />
+				</Flexed>
 				<HandButton playing={isPlaying} />
-				<PlayedButton playing={isPlaying} />
-			</CardButtons>
-			{/*<div>{corporation?.name}</div>*/}
-			<Flexed>
-				<ActionableButton playing={isPlaying} />
+				{/*<div>{corporation?.name}</div>*/}
+				<Flexed>
+					<TableButtons />
 
-				<CardButtons>
-					<Button
-						disabled={
-							!isPlaying ||
-							(player?.heat || 0) < 8 ||
-							(game?.temperature || 0) >= (game?.map.temperature || 0)
-						}
-						onClick={buyTemperature}
-					>
-						+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}
-						<ResourceIcon res="heat" />
-					</Button>
-					<Button
-						disabled={
-							!isPlaying || (player?.plants || 0) < (player?.greeneryCost || 0)
-						}
-						onClick={buyForest}
-					>
-						Build <FontAwesomeIcon icon={faTree} /> for {player?.greeneryCost}{' '}
-						<ResourceIcon res="plants" />
-					</Button>
-				</CardButtons>
+					<CardButtons>
+						<Button
+							disabled={
+								!isPlaying ||
+								(player?.heat || 0) < 8 ||
+								(game?.temperature || 0) >= (game?.map.temperature || 0)
+							}
+							onClick={buyTemperature}
+						>
+							+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}
+							<ResourceIcon res="heat" />
+						</Button>
+						<Button
+							disabled={
+								!isPlaying ||
+								(player?.plants || 0) < (player?.greeneryCost || 0)
+							}
+							onClick={buyForest}
+						>
+							Build <FontAwesomeIcon icon={faTree} /> for {player?.greeneryCost}{' '}
+							<ResourceIcon res="plants" />
+						</Button>
+					</CardButtons>
 
-				<PassButton
-					disabled={!isPlaying || !!placingTile}
-					onClick={handlePass}
-					icon={faArrowRight}
-				>
-					Pass
-				</PassButton>
-			</Flexed>
-			{placingTile && (
-				<Fade>
-					<div>
-						Placing{' '}
-						{placingTile.type === GridCellContent.Other
-							? GridCellOther[placingTile.other as GridCellOther]
-							: GridCellContent[placingTile.type]}{' '}
-					</div>
-				</Fade>
-			)}
-		</Container>
-	) : (
-		<></>
+					<PassButton
+						disabled={!isPlaying || !!placingTile}
+						onClick={handlePass}
+						icon={faArrowRight}
+					>
+						Pass
+					</PassButton>
+				</Flexed>
+				{placingTile && (
+					<Fade>
+						<div>
+							Placing{' '}
+							{placingTile.type === GridCellContent.Other
+								? GridCellOther[placingTile.other as GridCellOther]
+								: GridCellContent[placingTile.type]}{' '}
+						</div>
+					</Fade>
+				)}
+			</Container>
+		</Flex>
 	)
 }
 
@@ -204,8 +202,8 @@ const Fade = styled.div`
 `
 
 const Flexed = styled.div`
-	flex: 1;
 	display: flex;
+	width: 28rem;
 `
 
 const CardButtons = styled.div`

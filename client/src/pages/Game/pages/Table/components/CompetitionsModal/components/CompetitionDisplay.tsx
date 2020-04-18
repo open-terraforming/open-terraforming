@@ -5,7 +5,7 @@ import { Competition } from '@shared/competitions'
 import { PlayerState } from '@shared/index'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faAward } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
 	competition: Competition
@@ -57,7 +57,7 @@ export const CompetitionDisplay = ({
 					<Button
 						disabled={!playing || !canAfford || !!sponsored}
 						onClick={() => onBuy(competition)}
-						icon={sponsored ? faCheck : undefined}
+						icon={sponsored ? faCheck : faAward}
 					>
 						{sponsored
 							? `Sponsored by ${sponsored?.name}`

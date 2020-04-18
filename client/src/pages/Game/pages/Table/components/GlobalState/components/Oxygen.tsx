@@ -58,6 +58,8 @@ const Container = styled.div`
 	margin: 0 1rem;
 	position: relative;
 	margin-right: 2rem;
+	display: flex;
+	flex-direction: column;
 `
 
 const Step = styled.div<{ passed: boolean; active: boolean }>`
@@ -65,6 +67,7 @@ const Step = styled.div<{ passed: boolean; active: boolean }>`
 	padding: 0.55rem 1rem;
 	position: relative;
 	transition: background-color 500ms, opacity 500ms, color 500ms;
+	flex: 1;
 
 	${props =>
 		props.passed || props.active

@@ -1,26 +1,31 @@
 import { GameState, PlayerState, PlayerStateValue } from '@shared/index'
 import { keyMap } from '@shared/utils'
+import { initialGameState, initialPlayerState } from '@shared/states'
+import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
+import { getEvents } from './utils'
 
 type State = Readonly<typeof initialState>
 
 const initialState = {
 	playerId: undefined as number | undefined,
-	state: undefined as GameState | undefined,
-	player: undefined as PlayerState | undefined,
+	state: initialGameState(),
+	player: initialPlayerState(),
 	playerMap: {} as Record<number, PlayerState>,
 	playing: false,
-	interrupted: false
+	interrupted: false,
+	events: [] as GameEvent[]
 }
 
 export default (state = initialState, action: Action): State => {
 	switch (action.type) {
 		case SET_GAME_STATE: {
 			const player = action.state.players.find(p => p.id === state.playerId)
+			const events = getEvents(state.state, action.state)
 
 			return {
 				...state,
 				state: action.state,
-				player,
+				player: player ?? state.player,
 				playerMap: keyMap(action.state.players, 'id'),
 				playing:
 					player?.state === PlayerStateValue.Playing &&
@@ -32,7 +37,8 @@ export default (state = initialState, action: Action): State => {
 					  player.state === PlayerStateValue.PickingCards ||
 					  player.state === PlayerStateValue.PickingCorporation ||
 					  player.state === PlayerStateValue.PickingPreludes
-					: false
+					: false,
+				events: events.length > 0 ? [...state.events, ...events] : state.events
 			}
 		}
 
@@ -42,7 +48,7 @@ export default (state = initialState, action: Action): State => {
 			return {
 				...state,
 				playerId: action.playerId,
-				player
+				player: player ?? state.player
 			}
 		}
 

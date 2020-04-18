@@ -112,6 +112,7 @@ const popIn = keyframes`
 const Container = styled.div<{ diffAnim: boolean }>`
 	border-right: 0.2rem solid ${colors.border};
 	position: relative;
+	flex: 1;
 
 	z-index: 3;
 	width: 3.5rem;

@@ -1,7 +1,7 @@
 import { Button } from '@/components'
 import { colors } from '@/styles'
 import { useAppStore } from '@/utils/hooks'
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faMedal, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { PlayerState } from '@shared/index'
 import { Milestone } from '@shared/milestones'
 import React, { useMemo } from 'react'
@@ -46,7 +46,7 @@ export const MilestoneDisplay = ({
 					<Button
 						disabled={!playing || !reached || !canAfford || !!owner}
 						onClick={() => onBuy(milestone)}
-						icon={owner ? faCheck : undefined}
+						icon={owner ? faCheck : reached ? faMedal : faTimes}
 					>
 						{owner
 							? `Owned by ${owner.name}`

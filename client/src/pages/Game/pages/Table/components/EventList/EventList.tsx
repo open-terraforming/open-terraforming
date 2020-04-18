@@ -6,33 +6,17 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { CardsPlayedDisplay } from './components/CardsPlayedDisplay'
 import { EventsModal } from './components/EventsModal'
+import { EventSounds } from './components/EventSounds'
 import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
-import { GameEvent } from './types'
-import { getEvents } from './utils'
-import { EventSounds } from './components/EventSounds'
 
 type Props = {}
 
 export const EventList = ({}: Props) => {
-	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
+	const events = useAppStore(state => state.game.events)
 
-	const [events, setEvents] = useState([] as GameEvent[])
-	const [lastGame, setLastGame] = useState(game)
 	const [displayModal, setDisplayModal] = useState(false)
-
-	useEffect(() => {
-		if (game && lastGame) {
-			const newEvents = getEvents(lastGame, game)
-
-			if (newEvents.length > 0) {
-				setEvents([...events, ...newEvents])
-			}
-		}
-
-		setLastGame(game)
-	}, [game])
 
 	useEffect(() => {
 		if (

@@ -289,7 +289,7 @@ const VPC = styled.div`
 		content: '';
 		display: block;
 		float: right;
-		height: 60px;
+		height: 90px;
 	}
 `
 
@@ -335,11 +335,11 @@ type ContainerCtx = {
 const Container = styled.div<ContainerCtx>`
 	border: 0.2rem solid ${props => typeToColor[props.type]};
 	background: ${colors.background};
-	width: ${props => (props.type === CardType.Corporation ? '400px' : '200px')};
+	width: ${props => (props.type === CardType.Corporation ? '400px' : '240px')};
 	flex-shrink: 0;
 	min-width: 0;
-	height: 300px;
-	max-height: 300px;
+	height: 350px;
+	max-height: 350px;
 	overflow: visible;
 	margin: 0 0.5rem;
 	display: flex;

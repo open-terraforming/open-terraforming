@@ -19,7 +19,6 @@ html, body, #application {
 
 body {
 	font-family: Oswald, Arial, Helvetica, sans-serif;
-	font-size: 14px;
 	color: ${mainColors.text};
 }
 

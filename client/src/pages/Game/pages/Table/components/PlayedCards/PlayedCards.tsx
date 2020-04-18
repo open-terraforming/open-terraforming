@@ -6,16 +6,11 @@ import { isCardActionable } from '@shared/cards/utils'
 import React from 'react'
 import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
 
-export const PlayedCards = ({
-	onClose,
-	playing
-}: {
-	onClose: () => void
-	playing: boolean
-}) => {
+export const PlayedCards = ({ onClose }: { onClose: () => void }) => {
 	const dispatch = useAppDispatch()
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
+	const playing = useAppStore(state => state.game.playing)
 
 	const cards = useAppStore(state => state.game.player?.usedCards)?.map(
 		(c, i) =>

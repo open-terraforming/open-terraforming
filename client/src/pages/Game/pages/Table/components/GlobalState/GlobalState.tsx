@@ -1,14 +1,14 @@
-import React, { useState, useCallback } from 'react'
-import { useAppStore } from '@/utils/hooks'
-import styled from 'styled-components'
-import { GameStateValue, PlayerStateValue } from '@shared/index'
-import { EndGame } from '../EndGame/EndGame'
 import { Button } from '@/components'
-import { Temperature } from './components/Temperature'
-import { Oxygen } from './components/Oxygen'
-import { Oceans } from './components/Oceans'
 import { colors } from '@/styles'
+import { useAppStore } from '@/utils/hooks'
 import { faPoll } from '@fortawesome/free-solid-svg-icons'
+import { GameStateValue } from '@shared/index'
+import React, { useCallback, useState } from 'react'
+import styled from 'styled-components'
+import { EndGame } from '../EndGame/EndGame'
+import { Oceans } from './components/Oceans'
+import { Oxygen } from './components/Oxygen'
+import { Temperature } from './components/Temperature'
 
 export const GlobalState = () => {
 	const game = useAppStore(state => state.game.state)
@@ -24,49 +24,58 @@ export const GlobalState = () => {
 	}, [])
 
 	return game && player ? (
-		<div>
-			<Container>
-				<div>Generation</div>
+		<E>
+			<div>
+				<Container>
+					<div>Generation</div>
 
-				<Generation>{game?.generation}</Generation>
-			</Container>
+					<Generation>{game?.generation}</Generation>
+				</Container>
 
-			{game.state === GameStateValue.Ended && (
-				<Results>
-					<Button onClick={handleShow} icon={faPoll}>
-						Results
-					</Button>
-					{showEnd && <EndGame onClose={handleHide} />}
-				</Results>
-			)}
+				{game.state === GameStateValue.Ended && (
+					<Results>
+						<Button onClick={handleShow} icon={faPoll}>
+							Results
+						</Button>
+						{showEnd && <EndGame onClose={handleHide} />}
+					</Results>
+				)}
 
-			<div
-				style={{
-					display: 'flex',
-					justifyContent: 'flex-end',
-					alignItems: 'flex-end'
-				}}
-			>
-				<Temperature
-					start={game.map.initialTemperature}
-					current={game.temperature}
-					target={game.map.temperature}
-					milestones={game.map.temperatureMilestones}
-				/>
-				<Oxygen
-					start={game.map.initialOxygen}
-					current={game.oxygen}
-					target={game.map.oxygen}
-					milestones={game.map.oxygenMilestones}
-				/>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'flex-end',
+						alignItems: 'stretch'
+					}}
+				>
+					<Temperature
+						start={game.map.initialTemperature}
+						current={game.temperature}
+						target={game.map.temperature}
+						milestones={game.map.temperatureMilestones}
+					/>
+					<Oxygen
+						start={game.map.initialOxygen}
+						current={game.oxygen}
+						target={game.map.oxygen}
+						milestones={game.map.oxygenMilestones}
+					/>
+				</div>
+
+				<Oceans current={game.oceans} target={game.map.oceans} />
 			</div>
-
-			<Oceans current={game.oceans} target={game.map.oceans} />
-		</div>
+		</E>
 	) : (
 		<></>
 	)
 }
+
+const E = styled.div`
+	width: 208px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+`
 
 const Container = styled.div`
 	background-color: ${colors.background};
