@@ -1,5 +1,5 @@
 import mars from '@/assets/mars-icon.png'
-import { Button } from '@/components'
+import { Button, Portal } from '@/components'
 import { useAppStore } from '@/utils/hooks'
 import { PlayerStateValue } from '@shared/index'
 import React, { useEffect, useState } from 'react'
@@ -47,7 +47,9 @@ export const EventList = ({}: Props) => {
 			<CardsPlayedDisplay events={events} />
 			<LastEventsDisplay events={events} />
 			<PopEventDisplay events={events} />
-			<Button onClick={() => setDisplayModal(true)}>Event log</Button>
+			<Portal>
+				<EventLog onClick={() => setDisplayModal(true)}>Event log</EventLog>
+			</Portal>
 		</Centered>
 	)
 }
@@ -65,4 +67,10 @@ const Centered = styled.div`
 	width: 13rem;
 	min-width: 0;
 	position: relative;
+`
+
+const EventLog = styled(Button)`
+	position: absolute;
+	top: 0;
+	left: 0;
 `
