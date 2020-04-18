@@ -26,7 +26,7 @@ export const PlayedCard = ({ index, length, event, onRemove }: Props) => {
 	useEffect(() => {
 		setTimeout(() => {
 			setSpawning(true)
-		})
+		}, 1000)
 	}, [])
 
 	return (
@@ -34,8 +34,14 @@ export const PlayedCard = ({ index, length, event, onRemove }: Props) => {
 			removing={removing}
 			spawning={spawning}
 			style={{
-				opacity: 0.3 + ratio * 0.7,
-				left: spawning ? 100 - (length - 1 - index) * 30 : -200
+				opacity: spawning ? 0.3 + ratio * 0.7 : 1,
+				left: spawning
+					? ratio < 0
+						? -200
+						: 100 - (length - 1 - index) * 30
+					: window.innerWidth / 2,
+				bottom: spawning ? 0 : 400,
+				transform: !spawning ? 'translate(-50%, 0) scale(1)' : undefined
 			}}
 			onClick={() => {
 				if (!removing) {
@@ -84,7 +90,7 @@ const Played = styled.div<{ removing: boolean; spawning: boolean }>`
 	bottom: 0;
 	transform: scale(0.6);
 	transform-origin: bottom center;
-	transition: transform 0.2s, margin 0.2s, opacity 0.2s, left 0.2s;
+	transition: transform 0.2s, margin 0.2s, opacity 0.2s, left 0.5s, bottom 0.5s;
 	z-index: 0;
 	overflow: hidden;
 	opacity: 1;

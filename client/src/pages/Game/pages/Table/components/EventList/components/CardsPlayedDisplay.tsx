@@ -35,13 +35,13 @@ export const CardsPlayedDisplay = ({ events }: Props) => {
 	return (
 		<E>
 			{cardsPlayed
-				.slice(0, displayed)
+				.slice(0)
 				.reverse()
 				.map((c, i) => (
 					<PlayedCard
 						key={c.id}
 						event={c}
-						index={i}
+						index={i - (cardsPlayed.length - displayed)}
 						length={displayed}
 						onRemove={() => {
 							setCardsPlayed(e => e.filter(i => i !== c))
