@@ -24,7 +24,9 @@ export const CardSelector = ({
 
 	const handleSelect = (selected: CardInfo[]) => {
 		if (limit === 1) {
-			setSelected(selected.length > 0 ? [selected[selected.length - 1]] : [])
+			if (selected[0]) {
+				onSubmit(selected)
+			}
 		} else if (selected.length < limit) {
 			setSelected(selected)
 		}
@@ -42,22 +44,24 @@ export const CardSelector = ({
 	return (
 		<Modal
 			open={true}
-			contentStyle={{ width: '90%' }}
+			contentStyle={{ maxWidth: '90%' }}
 			allowClose={false}
 			header={title}
 			footer={
-				<Button
-					onClick={handleSubmit}
-					disabled={typeof submittable === 'string'}
-				>
-					{typeof submittable === 'string'
-						? submittable
-						: selected.length === 0
-						? 'Select nothing'
-						: limit > 1
-						? `Select ${selected.length} cards`
-						: 'Select'}
-				</Button>
+				limit !== 1 && (
+					<Button
+						onClick={handleSubmit}
+						disabled={typeof submittable === 'string'}
+					>
+						{typeof submittable === 'string'
+							? submittable
+							: selected.length === 0
+							? 'Select nothing'
+							: limit > 1
+							? `Select ${selected.length} cards`
+							: 'Select'}
+					</Button>
+				)
 			}
 		>
 			<CardDisplay
@@ -65,6 +69,7 @@ export const CardSelector = ({
 				onSelect={handleSelect}
 				selected={selected}
 				filters={filters}
+				evaluate={false}
 			/>
 		</Modal>
 	)

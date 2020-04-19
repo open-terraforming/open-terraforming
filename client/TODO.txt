@@ -1,10 +1,8 @@
 TODO:
-  * display number of bought milestones/competitions
   * display number of card tags with hover counts
   * display player corporation
   * SOUNDS:
     * milestone/award bought
-    * card bought
     * card played
     * player resources changed?
   * Preludes category in cards display
@@ -32,6 +30,7 @@ TODO:
   * only send changed data
     -> 15 kiB per message is not the best way to do this
     -> keep track of what state was sent to client last, only send the diff
+  * wait for second after playing last action before moving to another player?
 
 CHECK CARDS:
   * pets

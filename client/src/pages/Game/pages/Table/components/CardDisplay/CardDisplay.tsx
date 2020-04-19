@@ -203,7 +203,7 @@ const CardsContainer = styled.div<{ playableOnly: boolean }>`
 	justify-content: flex-start;
 	align-items: center;
 	min-width: 0;
-	padding: 1rem 0;
+	padding: 1.5rem 1rem;
 	min-height: 322px;
 
 	${props =>

@@ -14,9 +14,11 @@ export class GameSound {
 				audio.appendChild(source)
 			})
 
-			audio.autoplay = false
+			audio.preload = 'auto'
 
-			audio.load()
+			audio.addEventListener('canplaythrough', () => {
+				console.log(`${url} loaded`)
+			})
 
 			return audio
 		})

@@ -33,10 +33,13 @@ export const EventSounds = ({ events }: Props) => {
 								case GridCellContent.Other:
 									return Sounds.otherPlaced
 							}
+
+						case EventType.CardPlayed:
+							return Sounds.cardPlayed
 					}
 				})
 				.filter(isNotUndefined)
-				.slice(0, 3)
+				.slice(0, 4)
 
 			if (toPlay) {
 				toPlay.forEach(s => s.play())

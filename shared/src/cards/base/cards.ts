@@ -505,7 +505,7 @@ export const baseCards: Card[] = [
 		resource: 'microbes',
 		conditions: [gameProgressConditionMin('oxygen', 4)],
 		actionEffects: [
-			otherCardResourceChange('microbes', -1),
+			playerCardResourceChange('microbes', -1),
 			cardResourceChange('microbes', 1)
 		],
 		victoryPointsCallback: vpsForCardResources('microbes', 1 / 2)
