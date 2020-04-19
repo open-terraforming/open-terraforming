@@ -19,6 +19,7 @@ interface Props {
 	name?: string
 	onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
 	onMouseOver?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
+	onMouseLeave?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
 	tooltip?: string
 	ariaLabel?: string
 	className?: string
@@ -37,6 +38,7 @@ const Button = ({
 	onClick,
 	isLoading = false,
 	onMouseOver,
+	onMouseLeave,
 	tooltip,
 	ariaLabel,
 	className,
@@ -80,6 +82,7 @@ const Button = ({
 			name={name}
 			onClick={!disabled ? onClick : undefined}
 			onMouseOver={onMouseOver}
+			onMouseLeave={onMouseLeave}
 			type={type}
 			hasContent={hasContent}
 			schema={schema || 'primary'}

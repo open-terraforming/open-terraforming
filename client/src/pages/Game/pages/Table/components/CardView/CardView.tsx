@@ -26,7 +26,8 @@ export const CardView = ({
 	className,
 	state,
 	cardIndex,
-	onClick
+	onClick,
+	style
 }: {
 	card: Card
 	state?: UsedCardState
@@ -38,6 +39,7 @@ export const CardView = ({
 	hover?: boolean
 	fade?: boolean
 	className?: string
+	style?: React.CSSProperties
 }) => {
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
@@ -107,6 +109,7 @@ export const CardView = ({
 			hover={hover}
 			playable={!fade || !evaluate || (playable && affordable)}
 			played={!!played}
+			style={style}
 			className={
 				(!evaluate || (playable && affordable) ? 'playable' : 'unplayable') +
 				(className ? ` ${className}` : '')

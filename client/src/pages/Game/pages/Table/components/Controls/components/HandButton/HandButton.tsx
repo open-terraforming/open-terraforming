@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { Hand } from '../../../Hand/Hand'
 import { range } from '@shared/utils'
+import { CardsView } from './components/CardsView'
 
 type Props = {
 	playing: boolean
@@ -16,6 +17,7 @@ export const HandButton = ({ playing }: Props) => {
 	const [lastCount, setLastCount] = useState(count)
 	const [diff, setDiff] = useState(0)
 	const updateDiffRef = useRef<() => void>()
+	const [showCards, setShowCards] = useState(false)
 
 	updateDiffRef.current = () => {
 		if (diff > 0) {
@@ -50,7 +52,12 @@ export const HandButton = ({ playing }: Props) => {
 	return (
 		<DialogWrapper dialog={close => <Hand playing={playing} onClose={close} />}>
 			{open => (
-				<CardButton onClick={open} disabled={count === 0}>
+				<CardButton
+					onClick={open}
+					disabled={count === 0}
+					onMouseOver={() => setShowCards(true)}
+					onMouseLeave={() => setShowCards(false)}
+				>
 					<Cards>
 						{range(0, display).map(i => (
 							<CardC
@@ -92,6 +99,7 @@ export const HandButton = ({ playing }: Props) => {
 							<Card />
 						</DiffAnim>
 					)}
+					<CardsView open={showCards} />
 				</CardButton>
 			)}
 		</DialogWrapper>
@@ -115,6 +123,7 @@ const CardButton = styled(Button)`
 	position: relative;
 	min-width: 5rem;
 	background-color: transparent;
+	z-index: 3;
 `
 
 const Count = styled.div`

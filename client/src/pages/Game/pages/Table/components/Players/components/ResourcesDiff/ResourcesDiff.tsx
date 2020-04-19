@@ -81,7 +81,7 @@ export const ResourcesDiff = ({ player, x, y }: Props) => {
 		)
 	}, [player])
 
-	return diff ? (
+	return diff && !isNaN(x) && !isNaN(y) ? (
 		<Portal>
 			<E key={render} style={{ left: x, top: y, opacity: mounted ? 1 : 0 }}>
 				{resources

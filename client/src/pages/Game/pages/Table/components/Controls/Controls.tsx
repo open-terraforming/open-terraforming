@@ -178,6 +178,7 @@ const Container = styled.div<{ faded: boolean }>`
 		${colors.background}
 	);
 	background-size: 40px 40px;
+	z-index: 4;
 
 	${props =>
 		props.faded &&
@@ -199,6 +200,7 @@ const Fade = styled.div`
 	font-size: 125%;
 	font-weight: bold;
 	color: #fff;
+	z-index: 5;
 `
 
 const Flexed = styled.div`

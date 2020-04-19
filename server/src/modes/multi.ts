@@ -50,9 +50,7 @@ export const multiApp = (config: ServerOptions) => {
 		'upgrade',
 		async (request: IncomingMessage, socket: Socket, head: Buffer) => {
 			try {
-				const gameMatch = /game\/([a-z0-9-]+)\/socket$/.exec(
-					request.url as string
-				)
+				const gameMatch = /game\/([a-z0-9-]+)\//.exec(request.url as string)
 				if (!gameMatch) {
 					throw new Error(`Cannot upgrade, unknown game id ${request.url}`)
 				}
@@ -74,9 +72,15 @@ export const multiApp = (config: ServerOptions) => {
 					throw new Error(`Failed to find game ${gameMatch[1]}`)
 				}
 
-				logger.log('New connection to ' + game.id)
+				if (request.url?.endsWith('/events')) {
+					game.events.socket.handleUpgrade(request, socket, head, ws => {
+						game?.events.socket.emit('connection', ws, request)
+					})
+				} else {
+					logger.log('New connection to ' + game.id)
 
-				game.handleUpgrade(request, socket, head)
+					game.handleUpgrade(request, socket, head)
+				}
 			} catch (e) {
 				logger.error(e)
 				socket.end()
