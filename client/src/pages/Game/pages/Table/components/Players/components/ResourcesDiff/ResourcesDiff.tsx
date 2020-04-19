@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { PlayerState } from '@shared/index'
-import { Resource } from '@shared/cards'
+import { Resource, Production, Production } from '@shared/cards'
 import { voidReduce } from '@/utils/collections'
 import styled, { keyframes } from 'styled-components'
 import { ResourceIcon } from '../../../ResourceIcon/ResourceIcon'
@@ -8,6 +8,7 @@ import { Portal } from '@/components'
 import { colors } from '@/styles'
 import { rgba } from 'polished'
 import { nextFrame } from '@/utils/async'
+import { productionResource } from '@shared/cards/utils'
 
 type Props = {
 	player: PlayerState
@@ -24,13 +25,24 @@ const resources: Resource[] = [
 	'heat'
 ]
 
+const productions: Production[] = [
+	'moneyProduction',
+	'oreProduction',
+	'titanProduction',
+	'plantsProduction',
+	'energyProduction',
+	'heatProduction'
+]
+
+const allData = [...resources, ...productions]
+
 export const ResourcesDiff = ({ player, x, y }: Props) => {
 	const [diff, setDiff] = useState(
-		undefined as Record<Resource, number> | undefined
+		undefined as Record<Resource | Production, number> | undefined
 	)
 
 	const [render, setRender] = useState(0)
-	const [prev, setPrev] = useState({} as Record<Resource, number>)
+	const [prev, setPrev] = useState({} as Record<Resource | Production, number>)
 	const [mounted, setMounted] = useState(false)
 	const disappear = useRef<number>()
 
@@ -42,8 +54,8 @@ export const ResourcesDiff = ({ player, x, y }: Props) => {
 
 	useEffect(() => {
 		const newDiff = voidReduce(
-			resources,
-			{} as Record<Resource, number>,
+			allData,
+			{} as Record<Resource | Production, number>,
 			(acc, r) => {
 				acc[r] = player[r] - (prev[r] ?? 0)
 			}
@@ -51,7 +63,7 @@ export const ResourcesDiff = ({ player, x, y }: Props) => {
 
 		if (Object.values(newDiff).find(c => c !== 0)) {
 			if (diff) {
-				resources.forEach(r => {
+				allData.forEach(r => {
 					newDiff[r] += diff[r] ?? 0
 				})
 			}
@@ -75,9 +87,13 @@ export const ResourcesDiff = ({ player, x, y }: Props) => {
 		}
 
 		setPrev(
-			voidReduce(resources, {} as Record<Resource, number>, (acc, r) => {
-				acc[r] = player[r]
-			})
+			voidReduce(
+				allData,
+				{} as Record<Resource | Production, number>,
+				(acc, r) => {
+					acc[r] = player[r]
+				}
+			)
 		)
 	}, [player])
 
@@ -90,6 +106,14 @@ export const ResourcesDiff = ({ player, x, y }: Props) => {
 						<R key={r}>
 							<span>{diff[r] > 0 ? `+${diff[r]}` : diff[r]}</span>
 							<ResourceIcon res={r} />
+						</R>
+					))}
+				{productions
+					.filter(r => diff[r] !== 0)
+					.map(r => (
+						<R key={r}>
+							<span>{diff[r] > 0 ? `+${diff[r]}` : diff[r]}</span>
+							<ResourceIcon res={productionResource[r]} production={true} />
 						</R>
 					))}
 			</E>

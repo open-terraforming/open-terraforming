@@ -5,10 +5,15 @@ import styled, { css } from 'styled-components'
 type Props = {
 	cond: CardCondition
 	ctx: CardCallbackContext
+	evaluate?: boolean
 }
 
-export const Condition = ({ cond, ctx }: Props) => {
-	return <Container fine={cond.evaluate(ctx)}>{cond.description}</Container>
+export const Condition = ({ cond, ctx, evaluate = true }: Props) => {
+	return (
+		<Container fine={!evaluate || cond.evaluate(ctx)}>
+			{cond.description}
+		</Container>
+	)
 }
 
 const Container = styled.div<{ fine: boolean }>`

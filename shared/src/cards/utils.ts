@@ -18,6 +18,15 @@ export const resourceProduction = {
 	heat: 'heatProduction'
 } as const
 
+export const productionResource = {
+	moneyProduction: 'money',
+	oreProduction: 'ore',
+	titanProduction: 'titan',
+	plantsProduction: 'plants',
+	energyProduction: 'energy',
+	heatProduction: 'heat'
+} as const
+
 export const resToPrice = {
 	ore: 'orePrice',
 	titan: 'titanPrice'

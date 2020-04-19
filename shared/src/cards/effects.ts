@@ -48,7 +48,8 @@ import {
 	GameProgress,
 	PlayerCondition,
 	Resource,
-	WithOptional
+	WithOptional,
+	SymbolType
 } from './types'
 import {
 	cellByCoords,
@@ -59,13 +60,15 @@ import {
 	updatePlayerResource,
 	updatePlayerProduction
 } from './utils'
+import { otherWithArticle, tileWithArticle } from '../texts'
 
 export const effect = <T extends (CardEffectArgumentType | undefined)[]>(
-	c: WithOptional<CardEffect<T>, 'args' | 'conditions' | 'type'>
+	c: WithOptional<CardEffect<T>, 'args' | 'conditions' | 'type' | 'symbols'>
 ): CardEffect<T> =>
 	({
 		args: [],
 		conditions: [],
+		symbols: [],
 		type: CardEffectType.Other,
 		...c
 	} as CardEffect<T>)
@@ -78,6 +81,7 @@ export const resourceChange = (res: Resource, change: number) =>
 				? `+ ${withUnits(res, change)}`
 				: `- ${withUnits(res, -change)}`,
 		type: CardEffectType.Resource,
+		symbols: [{ resource: res, count: change }],
 		perform: ({ player }) => {
 			if (change < 0 && player[res] < -change) {
 				throw new Error(`Player doesn't have ${-change} of ${res}!`)
@@ -92,6 +96,7 @@ export const productionChange = (res: Resource, change: number) => {
 		conditions:
 			change < 0 && res !== 'money' ? [productionCondition(res, -change)] : [],
 		type: CardEffectType.Production,
+		symbols: [{ resource: res, production: true, count: change }],
 		description:
 			change > 0
 				? `+ ${change} ${res} production`
@@ -166,6 +171,7 @@ export const playerResourceChange = (
 						})
 				  ]
 				: [],
+		symbols: [{ resource: res, count: change, other: true }],
 		description:
 			change > 0
 				? `Give ${optional ? ' up to' : ''} ${withUnits(
@@ -227,6 +233,7 @@ export const playerProductionChange = (res: Resource, change: number) => {
 						})
 				  ]
 				: [],
+		symbols: [{ resource: res, count: change, production: true, other: true }],
 		description:
 			change > 0
 				? `Increase ${res} production of any player by ${change}`
@@ -278,7 +285,7 @@ export function placeTile({
 
 	return effect({
 		description:
-			`Place a ${other ? GridCellOther[other] : GridCellContent[type]}` +
+			`Place ${other ? otherWithArticle(other) : tileWithArticle(type)}` +
 			(conditions && conditions.length > 0
 				? ` (${conditions
 						?.map(c => PlacementConditionsLookup.get(c).description)
@@ -298,6 +305,7 @@ export function placeTile({
 				}
 			})
 		],
+		symbols: [{ tile: type, tileOther: other }],
 		perform: ({ player, cardIndex, game }) => {
 			// Only limited number of ocean tiles an be placed
 			if (type === GridCellContent.Ocean && game.oceans >= game.map.oceans) {
@@ -329,7 +337,7 @@ export const convertResource = (
 			dstCount
 		)}`,
 		perform: ({ player }) => {
-			updatePlayerResource(player, srcRes, srcCount)
+			updatePlayerResource(player, srcRes, -srcCount)
 			updatePlayerResource(player, dstRes, dstCount)
 		}
 	})
@@ -350,6 +358,7 @@ export const terraformRatingChange = (change: number) =>
 			change >= 0
 				? `+ ${change} Terraform Rating`
 				: `- ${-change} Terraform Rating`,
+		symbols: [{ symbol: SymbolType.TerraformingRating, count: change }],
 		perform: ({ player }) => {
 			player.terraformRating += change
 		}
@@ -378,6 +387,12 @@ export const effectChoice = (effects: CardEffect[]) =>
 				}
 			})
 		],
+		symbols: flatten(
+			effects
+				.map(e => e.symbols)
+				.filter(e => e.length > 0)
+				.map((e, i) => (i === 0 ? e : [{ symbol: SymbolType.Slash }, ...e]))
+		),
 		description: effects.map(e => e.description || '').join(' OR '),
 		perform: (ctx, args: [number, CardEffectArgumentType[]]) => {
 			const [chosenEffect, chosenArgs] = args || [undefined, []]

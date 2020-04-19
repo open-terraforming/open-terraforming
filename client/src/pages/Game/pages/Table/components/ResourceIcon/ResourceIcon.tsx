@@ -12,6 +12,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { SizeProp } from '@fortawesome/fontawesome-svg-core'
 import styled, { css } from 'styled-components'
+import { readableColor } from 'polished'
 
 type Props = {
 	res: Resource
@@ -27,7 +28,6 @@ export const ResourceIcon = ({ res, size, production, fixedWidth }: Props) => {
 				return (
 					<FontAwesomeIcon
 						icon={faDollarSign}
-						color={resourceColors.money}
 						size={size}
 						fixedWidth={fixedWidth}
 					/>
@@ -37,7 +37,6 @@ export const ResourceIcon = ({ res, size, production, fixedWidth }: Props) => {
 				return (
 					<FontAwesomeIcon
 						icon={faHammer}
-						color={resourceColors.ore}
 						size={size}
 						fixedWidth={fixedWidth}
 					/>
@@ -45,19 +44,13 @@ export const ResourceIcon = ({ res, size, production, fixedWidth }: Props) => {
 
 			case 'titan':
 				return (
-					<FontAwesomeIcon
-						icon={faStar}
-						color={resourceColors.titan}
-						size={size}
-						fixedWidth={fixedWidth}
-					/>
+					<FontAwesomeIcon icon={faStar} size={size} fixedWidth={fixedWidth} />
 				)
 
 			case 'plants':
 				return (
 					<FontAwesomeIcon
 						icon={faSeedling}
-						color={resourceColors.plants}
 						size={size}
 						fixedWidth={fixedWidth}
 					/>
@@ -65,36 +58,44 @@ export const ResourceIcon = ({ res, size, production, fixedWidth }: Props) => {
 
 			case 'energy':
 				return (
-					<FontAwesomeIcon
-						icon={faBolt}
-						color={resourceColors.energy}
-						size={size}
-						fixedWidth={fixedWidth}
-					/>
+					<FontAwesomeIcon icon={faBolt} size={size} fixedWidth={fixedWidth} />
 				)
 
 			case 'heat':
 				return (
-					<FontAwesomeIcon
-						icon={faFire}
-						color={resourceColors.heat}
-						size={size}
-						fixedWidth={fixedWidth}
-					/>
+					<FontAwesomeIcon icon={faFire} size={size} fixedWidth={fixedWidth} />
 				)
 		}
 	}, [res, size])
 
-	return <E production={production}>{icon}</E>
+	return (
+		<E production={production} res={res}>
+			{icon}
+		</E>
+	)
 }
 
-const E = styled.div<{ production?: boolean }>`
+const E = styled.div<{ production?: boolean; res: Resource }>`
 	display: inline-block;
 
 	${props =>
-		props.production &&
-		css`
-			border: 2px solid #ff6262;
-			padding: 0.1rem;
-		`}
+		props.production
+			? css`
+					background: ${resourceColors[props.res]};
+					color: ${readableColor(resourceColors[props.res])};
+					border-radius: 50%;
+					width: 1.25em;
+					height: 1.25em;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+
+					svg {
+						width: 0.8em !important;
+						height: 0.8em !important;
+					}
+			  `
+			: css`
+					color: ${resourceColors[props.res]};
+			  `}
 `

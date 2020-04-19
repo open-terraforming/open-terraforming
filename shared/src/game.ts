@@ -145,7 +145,7 @@ export enum GridCellContent {
 
 export enum GridCellOther {
 	Capital = 1,
-	Mars,
+	NaturalPreserve,
 	Mine,
 	CommercialDistrict,
 	NuclearZone,
@@ -153,7 +153,7 @@ export enum GridCellOther {
 	EcologicalZone,
 	Volcano,
 	Mohole,
-	Restricted
+	RestrictedZone
 }
 
 export interface GridCell {

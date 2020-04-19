@@ -18,7 +18,7 @@ export const EventsContextProvider = ({
 	const [client, setClient] = useState(null as EventsClient | null)
 
 	useEffect(() => {
-		if (apiState === ApiState.Ready && client) {
+		if (apiState !== ApiState.Joined && client) {
 			client.onClose = undefined
 			client.onOpen = undefined
 			client.disconnect()

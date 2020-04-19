@@ -15,6 +15,8 @@ import { Condition } from './components/Condition'
 import { PlayEffect } from './components/PlayEffect'
 import { Resource } from './components/Resource'
 import { Tag } from './components/Tag'
+import { flatten } from '@shared/utils'
+import { Symbols } from './components/Symbols'
 
 export const CardView = ({
 	card,
@@ -101,6 +103,10 @@ export const CardView = ({
 
 	const played = card.type === CardType.Action ? state && state.played : false
 
+	const symbols = useMemo(() => flatten(card.playEffects.map(e => e.symbols)), [
+		card
+	])
+
 	return (
 		<Container
 			type={card.type}
@@ -169,8 +175,11 @@ export const CardView = ({
 							))}
 					</Action>
 				)}
+
+				<Symbols symbols={symbols} />
+
 				{card.conditions.map((c, i) => (
-					<Condition key={i} cond={c} ctx={condContext} />
+					<Condition key={i} cond={c} ctx={condContext} evaluate={evaluate} />
 				))}
 				{card.playEffects.map((e, i) => (
 					<PlayEffect
@@ -271,7 +280,7 @@ const Title = styled.div`
 `
 
 const Description = styled.div`
-	padding: 1rem 0.5rem 0.5rem 0.5rem;
+	padding: 0.5rem 0.5rem 0.5rem 0.5rem;
 	overflow: auto;
 	min-height: 0;
 	flex-grow: 1;
@@ -292,7 +301,7 @@ const VPC = styled.div`
 		content: '';
 		display: block;
 		float: right;
-		height: 90px;
+		height: 70px;
 	}
 `
 

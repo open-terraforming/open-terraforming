@@ -3,7 +3,9 @@ import {
 	GameState,
 	UsedCardState,
 	GridCell,
-	PlayerState
+	PlayerState,
+	GridCellContent,
+	GridCellOther
 } from '../game'
 import { StandardProject } from '../projects'
 
@@ -132,6 +134,7 @@ export interface CardEffect<
 	conditions: CardCondition[]
 	description?: string
 	type: CardEffectType
+	symbols: CardSymbol[]
 	perform: (ctx: CardCallbackContext, ...args: T) => void
 }
 
@@ -188,4 +191,23 @@ export interface CardPassiveEffect {
 		playedBy: PlayerState
 	) => void
 	onGenerationEnd?: (ctx: CardCallbackContext) => void
+}
+
+export enum SymbolType {
+	Plus = 1,
+	Minus,
+	Slash,
+	Card,
+	TerraformingRating,
+	RightArrow
+}
+
+export interface CardSymbol {
+	count?: number
+	symbol?: SymbolType
+	resource?: Resource
+	production?: boolean
+	other?: boolean
+	tile?: GridCellContent
+	tileOther?: GridCellOther
 }

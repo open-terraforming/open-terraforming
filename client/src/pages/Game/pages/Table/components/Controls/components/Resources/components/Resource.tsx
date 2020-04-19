@@ -62,7 +62,7 @@ export const Resource = ({
 				</DiffAnim>
 			)}
 			{productionDiff !== 0 && (
-				<DiffAnim positive={productionDiff > 0}>
+				<DiffAnim positive={productionDiff > 0} production>
 					{productionDiff > 0 ? `+${productionDiff}` : productionDiff}
 					<ResourceIcon res={res} production />
 				</DiffAnim>
@@ -149,11 +149,11 @@ const Production = styled.div<{ negative: boolean }>`
 		`}
 `
 
-const DiffAnim = styled.div<{ positive: boolean }>`
+const DiffAnim = styled.div<{ positive: boolean; production?: boolean }>`
 	position: absolute;
 	z-index: 3;
 	left: 0;
-	top: 0;
+	top: ${props => (props.production ? '0' : '2em')};
 	animation-name: ${props => (props.positive ? popIn : popOut)};
 	animation-duration: 1500ms;
 	animation-timing-function: ease-out;

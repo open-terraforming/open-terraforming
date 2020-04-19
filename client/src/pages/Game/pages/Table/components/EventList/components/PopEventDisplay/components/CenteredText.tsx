@@ -88,6 +88,8 @@ const CenteredTitle = styled.div<{ color: string; textColor: string }>`
 	font-size: 200%;
 	text-transform: uppercase;
 
+	z-index: 1000;
+
 	${props => css`
 		color: ${props.textColor};
 		background: linear-gradient(

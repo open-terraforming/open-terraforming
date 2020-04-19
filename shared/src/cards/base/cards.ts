@@ -601,7 +601,7 @@ export const baseCards: Card[] = [
 			productionChange('money', 1),
 			placeTile({
 				type: GridCellContent.Other,
-				other: GridCellOther.Mars,
+				other: GridCellOther.NaturalPreserve,
 				conditions: [PlacementCode.Isolated]
 			})
 		]
@@ -2343,7 +2343,7 @@ export const baseCards: Card[] = [
 		playEffects: [
 			placeTile({
 				type: GridCellContent.Other,
-				other: GridCellOther.Restricted
+				other: GridCellOther.RestrictedZone
 			})
 		],
 		actionEffects: [resourceChange('money', -2), getTopCards(1)]
