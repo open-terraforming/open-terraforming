@@ -13,12 +13,23 @@ import {
 	isCardPlayable,
 	minimalCardPrice
 } from '@shared/cards/utils'
-import { CARD_PRICE } from '@shared/constants'
-import { PlayerStateValue, UsedCardState } from '@shared/game'
+import {
+	CARD_PRICE,
+	MILESTONES_LIMIT,
+	COMPETITIONS_LIMIT
+} from '@shared/constants'
+import {
+	PlayerStateValue,
+	UsedCardState,
+	StandardProjectType
+} from '@shared/game'
 import { canPlace } from '@shared/placements'
-import { allCells } from '@shared/utils'
+import { allCells, milestonePrice, competitionPrice } from '@shared/utils'
 import { Game } from './game'
 import { Player } from './player'
+import { Milestones } from '@shared/milestones'
+import { Competitions } from '@shared/competitions'
+import { Projects } from '@shared/projects'
 
 const BotNames = [
 	'Rick',
@@ -258,14 +269,19 @@ export class Bot extends Player {
 	}
 
 	doSomething() {
+		const actions = [] as [number, () => void][]
+
 		switch (this.state.state) {
 			case PlayerStateValue.Waiting: {
-				this.toggleReady(true)
+				actions.push([0, () => this.toggleReady(true)])
 				break
 			}
 
 			case PlayerStateValue.PickingCorporation: {
-				this.pickCorporation(shuffle(this.state.cardsPick.slice(0))[0])
+				actions.push([
+					0,
+					() => this.pickCorporation(shuffle(this.state.cardsPick.slice(0))[0])
+				])
 				break
 			}
 
@@ -278,10 +294,10 @@ export class Bot extends Player {
 					: shuffle(
 							this.state.cardsPick
 								.map((_c, i) => i)
-								.filter(() => Math.random() > 0.5)
+								.filter(() => Math.random() > 0.1)
 					  ).slice(0, Math.max(0, Math.floor(this.state.money / CARD_PRICE)))
 
-				this.pickCards(picked)
+				actions.push([0, () => this.pickCards(picked)])
 				break
 			}
 
@@ -291,7 +307,7 @@ export class Bot extends Player {
 					this.state.cardsPickLimit
 				)
 
-				this.pickPreludes(picked)
+				actions.push([0, () => this.pickPreludes(picked)])
 				break
 			}
 
@@ -302,13 +318,14 @@ export class Bot extends Player {
 						canPlace(this.game.state, this.state, c, placed)
 					)
 					if (tile) {
-						this.placeTile(tile.x, tile.y)
+						actions.push([0, () => this.placeTile(tile.x, tile.y)])
 					} else {
-						this.pass(true)
+						actions.push([0, () => this.pass(true)])
 					}
 				} else {
-					this.pass(true)
+					actions.push([0, () => this.pass(true)])
 				}
+				break
 			}
 
 			case PlayerStateValue.Playing: {
@@ -317,28 +334,100 @@ export class Bot extends Player {
 
 				if (playing) {
 					const card = this.state.usedCards[playing]
-					this.playCard(
-						card.code,
-						playing,
-						this.prepareParams(
-							CardsLookupApi.get(card.code).actionEffects,
-							card,
-							playing
-						)
-					)
+					actions.push([
+						0,
+						() =>
+							this.playCard(
+								card.code,
+								playing,
+								this.prepareParams(
+									CardsLookupApi.get(card.code).actionEffects,
+									card,
+									playing
+								)
+							)
+					])
 				} else if (placed) {
 					const placed = this.state.placingTile[0]
 					const tile = shuffle(allCells(this.game.state)).find(c =>
 						canPlace(this.game.state, this.state, c, placed)
 					)
 					if (tile) {
-						this.placeTile(tile.x, tile.y)
+						actions.push([0, () => this.placeTile(tile.x, tile.y)])
 					} else {
-						this.pass(true)
+						actions.push([0, () => this.pass(true)])
 					}
 				} else {
-					const playable = shuffle(
-						this.cards.filter(
+					if (this.game.state.milestones.length < MILESTONES_LIMIT) {
+						Object.values(Milestones)
+							.filter(
+								m => !this.game.state.milestones.find(s => s.type === m.type)
+							)
+							.forEach(m => {
+								if (
+									this.state.money >= milestonePrice() &&
+									m.getValue(this.game.state, this.state) >= m.limit
+								) {
+									actions.push([
+										10,
+										() => {
+											this.buyMilestone(m.type)
+										}
+									])
+								}
+							})
+					}
+
+					if (this.game.state.competitions.length < COMPETITIONS_LIMIT) {
+						Object.values(Competitions)
+							.filter(
+								m => !this.game.state.competitions.find(s => s.type === m.type)
+							)
+							.forEach(c => {
+								if (
+									this.state.money >= competitionPrice(this.game.state) &&
+									c.getScore(this.game.state, this.state) >
+										this.game.state.players
+											.filter(p => p.id !== this.id)
+											.reduce((m, p) => {
+												const s = c.getScore(this.game.state, p)
+												return s > m ? s : m
+											}, 0) &&
+									this.game.state.generation > 5
+								) {
+									actions.push([
+										0,
+										() => {
+											this.sponsorCompetition(c.type)
+										}
+									])
+								}
+							})
+					}
+
+					Object.values(Projects).forEach(p => {
+						if (
+							p.conditions.every(c =>
+								c({ game: this.game.state, player: this.state })
+							)
+						) {
+							if (
+								p.type !== StandardProjectType.SellPatents &&
+								(p.resource !== 'money' ||
+									(this.game.state.generation > 2 && Math.random() > 0.5))
+							) {
+								actions.push([
+									p.resource !== 'money' ? 10 : 0,
+									() => {
+										this.buyStandardProject(p.type, [])
+									}
+								])
+							}
+						}
+					})
+
+					this.cards
+						.filter(
 							c =>
 								isCardPlayable(c, {
 									card: emptyCardState(c.code),
@@ -348,61 +437,75 @@ export class Bot extends Player {
 									playerId: this.state.id
 								}) && minimalCardPrice(c, this.state) <= this.state.money
 						)
-					)[0]
+						.forEach(c => {
+							actions.push([
+								0,
+								() => {
+									const card = CardsLookupApi.get(c.code)
 
-					if (!playable) {
-						const usable = shuffle(
-							this.state.usedCards.filter(
-								(c, i) =>
-									CardsLookupApi.get(c.code).actionEffects.length > 0 &&
-									isCardActionable(CardsLookupApi.get(c.code), {
-										card: c,
-										cardIndex: i,
-										game: this.game.state,
-										player: this.state,
-										playerId: this.state.id
-									})
-							)
-						)[0]
+									this.buyCard(
+										c.code,
+										this.state.cards.indexOf(c.code),
+										card.categories.includes(CardCategory.Building)
+											? this.state.ore
+											: 0,
+										card.categories.includes(CardCategory.Space)
+											? this.state.titan
+											: 0,
+										this.prepareParams(
+											card.playEffects,
+											emptyCardState(c.code),
+											-1
+										)
+									)
+								}
+							])
+						})
 
-						if (!usable) {
-							this.pass(true)
-						} else {
-							const cardIndex = this.state.usedCards.indexOf(usable) as number
-
-							this.playCard(
-								usable.code,
-								cardIndex,
-								this.prepareParams(
-									CardsLookupApi.get(usable.code).actionEffects,
-									usable,
-									cardIndex
-								)
-							)
-						}
-					} else {
-						const card = CardsLookupApi.get(playable.code)
-
-						this.buyCard(
-							playable.code,
-							this.state.cards.indexOf(playable.code),
-							card.categories.includes(CardCategory.Building)
-								? this.state.ore
-								: 0,
-							card.categories.includes(CardCategory.Space)
-								? this.state.titan
-								: 0,
-							this.prepareParams(
-								card.playEffects,
-								emptyCardState(playable.code),
-								-1
-							)
+					this.state.usedCards
+						.filter(
+							(c, i) =>
+								CardsLookupApi.get(c.code).actionEffects.length > 0 &&
+								isCardActionable(CardsLookupApi.get(c.code), {
+									card: c,
+									cardIndex: i,
+									game: this.game.state,
+									player: this.state,
+									playerId: this.state.id
+								})
 						)
-					}
+						.forEach(c => {
+							actions.push([
+								0,
+								() => {
+									const cardIndex = this.state.usedCards.indexOf(c) as number
+
+									this.playCard(
+										c.code,
+										cardIndex,
+										this.prepareParams(
+											CardsLookupApi.get(c.code).actionEffects,
+											c,
+											cardIndex
+										)
+									)
+								}
+							])
+						})
 				}
 
 				break
 			}
+		}
+
+		if (actions.length === 0) {
+			if (this.isPlaying) {
+				this.pass()
+			}
+		} else {
+			const sorted = actions.sort(([a], [b]) => b - a)
+
+			shuffle(sorted.filter(s => s[0] === sorted[0][0]))[0][1]()
 		}
 	}
 }

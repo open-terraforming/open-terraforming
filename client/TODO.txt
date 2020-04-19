@@ -1,4 +1,14 @@
 TODO:
+  * display drawn card
+  * red grid border when not available for placement
+  * finishing phase display
+  * game progress symbols
+  * as your first action
+  * resource usage when buying card has wrong margin
+  * add played/bought icon
+  * add card resource icon
+  * symbols and text collisions :(
+
   * display number of card tags with hover counts
   * display player corporation
   * SOUNDS:

@@ -86,7 +86,7 @@ const E = styled.div<{ production?: boolean; res: Resource }>`
 					border-radius: 50%;
 					width: 1.25em;
 					height: 1.25em;
-					display: flex;
+					display: inline-flex;
 					justify-content: center;
 					align-items: center;
 

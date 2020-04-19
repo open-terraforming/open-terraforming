@@ -8,34 +8,32 @@ import {
 	MILESTONE_REWARD
 } from '@shared/constants'
 import { buyMilestone } from '@shared/index'
-import { Milestone, Milestones, MilestoneType } from '@shared/milestones'
-import React from 'react'
+import { Milestone, Milestones } from '@shared/milestones'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { MilestoneDisplay } from './components/MilestoneDisplay'
+import { milestonePrice } from '@shared/utils'
 
 type Props = {
 	onClose: () => void
 }
-
-const milestones = [
-	Milestones[MilestoneType.Terraformer],
-	Milestones[MilestoneType.Mayor],
-	Milestones[MilestoneType.Gardener],
-	Milestones[MilestoneType.Builder],
-	Milestones[MilestoneType.Planner]
-]
 
 export const MilestonesModal = ({ onClose }: Props) => {
 	const api = useApi()
 	const bought = useAppStore(state => state.game.state?.milestones) || []
 	const players = useAppStore(state => state.game.state?.players) || []
 	const playing = useAppStore(state => state.game.playing)
+	const milestonesTypes = useAppStore(state => state.game.state.map.milestones)
 
 	const playerMoney = useAppStore(state => state.game.player?.money) || 0
 
 	const affordable =
-		bought.length < MILESTONES_LIMIT && playerMoney >= MILESTONE_PRICE
+		bought.length < MILESTONES_LIMIT && playerMoney >= milestonePrice()
+
+	const milestones = useMemo(() => milestonesTypes.map(m => Milestones[m]), [
+		milestonesTypes
+	])
 
 	const handleBuy = (milestone: Milestone) => {
 		if (affordable) {

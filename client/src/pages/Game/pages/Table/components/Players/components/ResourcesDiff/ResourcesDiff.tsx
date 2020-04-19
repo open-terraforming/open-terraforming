@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { PlayerState } from '@shared/index'
-import { Resource, Production, Production } from '@shared/cards'
+import { Resource, Production } from '@shared/cards'
 import { voidReduce } from '@/utils/collections'
 import styled, { keyframes } from 'styled-components'
 import { ResourceIcon } from '../../../ResourceIcon/ResourceIcon'

@@ -15,5 +15,6 @@ export const Sounds = {
 		'audio/card-played-2',
 		'audio/card-played-3',
 		'audio/card-played-4'
-	])
+	]),
+	progressImproved: new GameSound(['audio/progress-improved'])
 }

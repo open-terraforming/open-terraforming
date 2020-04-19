@@ -35,7 +35,11 @@ export const EventSounds = ({ events }: Props) => {
 							}
 
 						case EventType.CardPlayed:
+						case EventType.CardUsed:
 							return Sounds.cardPlayed
+
+						case EventType.GameProgressChanged:
+							return Sounds.progressImproved
 					}
 				})
 				.filter(isNotUndefined)

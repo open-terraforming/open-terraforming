@@ -5,8 +5,10 @@ import {
 	GridCellType,
 	MapState,
 	ProgressMilestoneItem,
-	ProgressMilestoneType,
+	ProgressMilestoneType
 } from './game'
+import { CompetitionType } from './competitions'
+import { MilestoneType } from './milestones'
 
 const milestoneItem = (
 	m: WithOptional<ProgressMilestoneItem, 'used'>
@@ -15,19 +17,19 @@ const milestoneItem = (
 const heatAt = (value: number) =>
 	milestoneItem({
 		type: ProgressMilestoneType.Heat,
-		value,
+		value
 	})
 
 const temperatureAt = (value: number) =>
 	milestoneItem({
 		type: ProgressMilestoneType.Temperature,
-		value,
+		value
 	})
 
 const oceanAt = (value: number) =>
 	milestoneItem({
 		type: ProgressMilestoneType.Ocean,
-		value,
+		value
 	})
 
 const cell = (c: Partial<GridCell>): GridCell => ({
@@ -40,7 +42,7 @@ const cell = (c: Partial<GridCell>): GridCell => ({
 	plants: 0,
 	titan: 0,
 	outside: false,
-	...c,
+	...c
 })
 
 const generateGrid = (
@@ -58,7 +60,7 @@ const generateGrid = (
 					x,
 					y,
 					enabled: !!update,
-					...update,
+					...update
 				})
 			)
 		}
@@ -72,13 +74,13 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		0: {
 			type: GridCellType.PhobosSpaceHaven,
 			special: GridCellSpecial.PhobosSpaceHaven,
-			outside: true,
+			outside: true
 		},
 		2: { ore: 2 },
 		3: { ore: 2 },
 		4: {},
 		5: { cards: 1, type: GridCellType.Ocean },
-		6: { type: GridCellType.Ocean },
+		6: { type: GridCellType.Ocean }
 	},
 	1: {
 		1: {},
@@ -86,7 +88,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		3: {},
 		4: {},
 		5: {},
-		6: { cards: 2, type: GridCellType.Ocean },
+		6: { cards: 2, type: GridCellType.Ocean }
 	},
 	2: {
 		1: { cards: 1, special: GridCellSpecial.AscraeusMons },
@@ -95,7 +97,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: {},
 		5: {},
 		6: {},
-		7: { ore: 1 },
+		7: { ore: 1 }
 	},
 	3: {
 		0: { plants: 1, titan: 1, special: GridCellSpecial.PavonisMons },
@@ -105,7 +107,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: { plants: 2 },
 		5: { plants: 1 },
 		6: { plants: 1 },
-		7: { plants: 2, type: GridCellType.Ocean },
+		7: { plants: 2, type: GridCellType.Ocean }
 	},
 	4: {
 		0: { plants: 2, special: GridCellSpecial.ArsiaMons },
@@ -113,14 +115,14 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		2: {
 			plants: 2,
 			type: GridCellType.NoctisCity,
-			special: GridCellSpecial.NoctisCity,
+			special: GridCellSpecial.NoctisCity
 		},
 		3: { plants: 2, type: GridCellType.Ocean },
 		4: { plants: 2, type: GridCellType.Ocean },
 		5: { plants: 2, type: GridCellType.Ocean },
 		6: { plants: 2 },
 		7: { plants: 2 },
-		8: { plants: 2 },
+		8: { plants: 2 }
 	},
 	5: {
 		0: { plants: 1 },
@@ -130,7 +132,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: { plants: 1 },
 		5: { plants: 1, type: GridCellType.Ocean },
 		6: { plants: 1, type: GridCellType.Ocean },
-		7: { plants: 1, type: GridCellType.Ocean },
+		7: { plants: 1, type: GridCellType.Ocean }
 	},
 	6: {
 		1: {},
@@ -139,7 +141,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: {},
 		5: {},
 		6: { plants: 1 },
-		7: {},
+		7: {}
 	},
 	7: {
 		1: { ore: 2 },
@@ -147,20 +149,20 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		3: { cards: 1 },
 		4: { cards: 1 },
 		5: {},
-		6: { titan: 1 },
+		6: { titan: 1 }
 	},
 	8: {
 		0: {
 			type: GridCellType.GanymedeColony,
 			special: GridCellSpecial.GanymedeColony,
-			outside: true,
+			outside: true
 		},
 		2: { ore: 1 },
 		3: { ore: 2 },
 		4: {},
 		5: {},
-		6: { titan: 2, type: GridCellType.Ocean },
-	},
+		6: { titan: 2, type: GridCellType.Ocean }
+	}
 }
 
 export const defaultMap = () => {
@@ -178,6 +180,20 @@ export const defaultMap = () => {
 		oxygen: 14,
 		temperatureMilestones: [heatAt(-12), heatAt(-10), oceanAt(0)],
 		oxygenMilestones: [temperatureAt(8)],
+		competitions: [
+			CompetitionType.Landlord,
+			CompetitionType.Banker,
+			CompetitionType.Scientist,
+			CompetitionType.Thermalist,
+			CompetitionType.Miner
+		],
+		milestones: [
+			MilestoneType.Terraformer,
+			MilestoneType.Mayor,
+			MilestoneType.Gardener,
+			MilestoneType.Builder,
+			MilestoneType.Planner
+		]
 	}
 
 	return map

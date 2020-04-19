@@ -1,39 +1,33 @@
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
-import {
-	Competition,
-	Competitions,
-	CompetitionType
-} from '@shared/competitions'
+import { Competition, Competitions } from '@shared/competitions'
 import { COMPETITIONS_PRICES, COMPETITIONS_REWARDS } from '@shared/constants'
 import { sponsorCompetition } from '@shared/index'
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { CompetitionDisplay } from './components/CompetitionDisplay'
+import { competitionPrice } from '@shared/utils'
 
 type Props = {
 	onClose: () => void
 }
-
-const competitions = [
-	Competitions[CompetitionType.Landlord],
-	Competitions[CompetitionType.Banker],
-	Competitions[CompetitionType.Scientist],
-	Competitions[CompetitionType.Thermalist],
-	Competitions[CompetitionType.Miner]
-]
 
 export const CompetitionsModal = ({ onClose }: Props) => {
 	const api = useApi()
 	const sponsored = useAppStore(state => state.game.state?.competitions) || []
 	const players = useAppStore(state => state.game.state?.players) || []
 	const playing = useAppStore(state => state.game.playing)
+	const game = useAppStore(state => state.game.state)
+
+	const competitionTypes = useAppStore(
+		state => state.game.state.map.competitions
+	)
 
 	const playerMoney = useAppStore(state => state.game.player?.money) || 0
 
-	const cost = COMPETITIONS_PRICES[sponsored.length]
+	const cost = competitionPrice(game)
 	const affordable = cost !== undefined && playerMoney >= cost
 
 	const handleBuy = (competition: Competition) => {
@@ -41,6 +35,11 @@ export const CompetitionsModal = ({ onClose }: Props) => {
 			api.send(sponsorCompetition(competition.type))
 		}
 	}
+
+	const competitions = useMemo(
+		() => competitionTypes.map(c => Competitions[c]),
+		[competitionTypes]
+	)
 
 	return (
 		<Modal

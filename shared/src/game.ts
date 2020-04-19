@@ -116,6 +116,9 @@ export interface MapState {
 
 	temperatureMilestones: ProgressMilestoneItem[]
 	oxygenMilestones: ProgressMilestoneItem[]
+
+	milestones: MilestoneType[]
+	competitions: CompetitionType[]
 }
 
 export enum GridCellType {
