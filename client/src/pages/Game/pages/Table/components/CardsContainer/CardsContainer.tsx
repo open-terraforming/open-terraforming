@@ -6,7 +6,7 @@ export const CardsContainer = styled.div`
 	overflow-y: hidden;
 	justify-content: flex-start;
 	min-width: 0;
-	padding: 1rem 0;
+	padding: 1.5rem 1rem;
 `
 
 export const NoCards = styled.div`

@@ -1,5 +1,4 @@
 import { GameConfig } from '@/game/game'
-import { cardsImagesMiddleware } from '@/server/images'
 import { ServerOptions } from '@/server/types'
 import { Logger } from '@/utils/log'
 import bodyParser from 'body-parser'
@@ -20,11 +19,10 @@ export const singleApp = (
 	const server = createServer(app)
 
 	app.use(corsMiddleware())
-	app.use(express.static(join(__dirname, '..', 'static')))
+	app.use(express.static(join(__dirname, '..', '..', 'static')))
 	app.use(bodyParser.urlencoded({ extended: true }))
 	app.use(bodyParser.json())
 	app.use(bodyParser.raw())
-	app.use(cardsImagesMiddleware())
 
 	const game = new GameServer(gameConfig)
 

@@ -6,7 +6,12 @@ import { isCardActionable } from '@shared/cards/utils'
 import React from 'react'
 import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
 
-export const PlayedCards = ({ onClose }: { onClose: () => void }) => {
+type Props = {
+	onClose: () => void
+	defaultType?: CardType
+}
+
+export const PlayedCards = ({ onClose, defaultType }: Props) => {
 	const dispatch = useAppDispatch()
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
@@ -67,7 +72,7 @@ export const PlayedCards = ({ onClose }: { onClose: () => void }) => {
 				cards={cards || []}
 				onSelect={handleSelect}
 				selected={[]}
-				defaultType={CardType.Action}
+				defaultType={defaultType}
 			/>
 		</Modal>
 	)

@@ -1,9 +1,10 @@
 import { useAppStore } from '@/utils/hooks'
 import React, { useMemo } from 'react'
 import { CardsCounter } from '../../CardsCounter'
+import { CardType } from '@shared/cards'
 
 type Props = {
-	onClick: () => void
+	onClick: (defaultType?: CardType) => void
 }
 
 export const TotalCards = ({ onClick }: Props) => {
@@ -11,9 +12,13 @@ export const TotalCards = ({ onClick }: Props) => {
 
 	const count = useMemo(() => (player ? player.usedCards.length : 0), [player])
 
+	const handleClick = () => {
+		onClick()
+	}
+
 	return (
 		<CardsCounter
-			onClick={onClick}
+			onClick={handleClick}
 			count={count}
 			text="cards"
 			disabled={count === 0}

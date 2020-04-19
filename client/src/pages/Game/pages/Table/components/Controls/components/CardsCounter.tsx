@@ -7,13 +7,30 @@ type Props = {
 	text: React.ReactNode
 	disabled?: boolean
 	onClick?: () => void
+	children?: React.ReactNode
+	onMouseOver?: (e: React.MouseEvent) => void
+	onMouseLeave?: (e: React.MouseEvent) => void
 }
 
-export const CardsCounter = ({ count, text, disabled, onClick }: Props) => {
+export const CardsCounter = ({
+	count,
+	text,
+	disabled,
+	onClick,
+	children,
+	onMouseOver,
+	onMouseLeave
+}: Props) => {
 	return (
-		<D disabled={disabled} onClick={disabled ? undefined : onClick}>
+		<D
+			disabled={disabled}
+			onClick={disabled ? undefined : onClick}
+			onMouseOver={onMouseOver}
+			onMouseLeave={onMouseLeave}
+		>
 			<Count>{count}</Count>
 			<Text>{text}</Text>
+			{children}
 		</D>
 	)
 }
@@ -26,6 +43,9 @@ const D = styled.button<{ disabled?: boolean }>`
 	align-items: stretch;
 	color: ${mainColors.text};
 	flex: 1;
+	position: relative;
+
+	z-index: 2;
 
 	&:first-child {
 		border-left: 0.2rem solid ${colors.border};

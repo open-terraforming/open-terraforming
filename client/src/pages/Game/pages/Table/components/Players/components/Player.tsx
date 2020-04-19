@@ -1,5 +1,5 @@
 import { colors } from '@/styles'
-import useElementPosition, { useAppStore } from '@/utils/hooks'
+import { useAppStore, useElementPosition } from '@/utils/hooks'
 import {
 	faArrowRight,
 	faCheck,

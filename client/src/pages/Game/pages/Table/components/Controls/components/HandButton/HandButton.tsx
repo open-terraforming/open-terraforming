@@ -1,18 +1,26 @@
 import { Button, DialogWrapper } from '@/components'
 import { Card } from '@/icons/card'
 import { useAppStore } from '@/utils/hooks'
-import React, { useEffect, useRef, useState } from 'react'
+import { CardsLookupApi } from '@shared/cards'
+import {
+	emptyCardState,
+	isCardPlayable,
+	minimalCardPrice
+} from '@shared/cards/utils'
+import { range } from '@shared/utils'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { Hand } from '../../../Hand/Hand'
-import { range } from '@shared/utils'
-import { CardsView } from './components/CardsView'
+import { CardsView } from '../CardsView'
 
 type Props = {
 	playing: boolean
 }
 
 export const HandButton = ({ playing }: Props) => {
-	const count = useAppStore(state => state.game.player?.cards.length) || 0
+	const player = useAppStore(state => state.game.player)
+	const game = useAppStore(state => state.game.state)
+	const count = player.cards.length
 
 	const [lastCount, setLastCount] = useState(count)
 	const [diff, setDiff] = useState(0)
@@ -43,6 +51,25 @@ export const HandButton = ({ playing }: Props) => {
 		setLastCount(count)
 		setDiff(diff)
 	}, [count])
+
+	const cards = useMemo(
+		() =>
+			player.cards
+				.map((c, i) => ({ state: emptyCardState(c), cardIndex: i }))
+				.filter(
+					({ state, cardIndex }) =>
+						player.money >=
+							minimalCardPrice(CardsLookupApi.get(state.code), player) &&
+						isCardPlayable(CardsLookupApi.get(state.code), {
+							card: state,
+							cardIndex,
+							player,
+							game,
+							playerId: player.id
+						})
+				),
+		[game, player]
+	)
 
 	const display = Math.min(5, Math.max(3, count))
 
@@ -99,7 +126,7 @@ export const HandButton = ({ playing }: Props) => {
 							<Card />
 						</DiffAnim>
 					)}
-					<CardsView open={showCards} />
+					<CardsView cards={cards} open={showCards} />
 				</CardButton>
 			)}
 		</DialogWrapper>

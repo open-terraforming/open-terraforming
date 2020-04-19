@@ -124,14 +124,17 @@ const Container = styled.button<{
 
 			&:hover {
 				background: ${props.theme.colors.button[props.schema].hover.background};
-				border-color: ${props.theme.colors.button[props.schema].hover
-					.borderColor};
+				border-color: ${props.theme.colors.button[props.schema].hover.borderColor};
 				color: ${props.theme.colors.button[props.schema].hover.color};
+				
+				/*
 				& svg {
 					color: ${props.theme.colors.button[props.schema].hover.color};
 				}
+				*/
 			}
 		`}
+
 
 	${props =>
 		props.disabled &&

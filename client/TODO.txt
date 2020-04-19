@@ -1,4 +1,12 @@
 TODO:
+  * display number of bought milestones/competitions
+  * display number of card tags with hover counts
+  * display player corporation
+  * SOUNDS:
+    * milestone/award bought
+    * card bought
+    * card played
+    * player resources changed?
   * Preludes category in cards display
   * player which creates a game should be admin of said game?
   * evaluate vps on enemy cards

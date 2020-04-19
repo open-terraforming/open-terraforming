@@ -88,13 +88,13 @@ type RatingChanged = {
 	amount: number
 }
 
-type CompetitionSponsored = {
+export type CompetitionSponsored = {
 	type: typeof EventType.CompetitionSponsored
 	competition: CompetitionType
 	playerId: number
 }
 
-type MilestoneBought = {
+export type MilestoneBought = {
 	type: typeof EventType.MilestoneBought
 	milestone: MilestoneType
 	playerId: number

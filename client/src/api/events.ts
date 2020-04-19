@@ -37,7 +37,7 @@ export class EventsClient {
 			) {
 				this.socket?.close()
 			}
-		}, 2 * 1000)
+		}, 5 * 1000)
 
 		this.socket.onopen = () => {
 			clearTimeout(timeout)

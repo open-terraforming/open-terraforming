@@ -37,6 +37,7 @@
     "express-validator": "^6.4.0",
     "got": "^10.7.0",
     "hashids": "^2.2.1",
+    "jimp": "^0.10.2",
     "msgpack-lite": "^0.1.26",
     "querystring": "^0.2.0",
     "tsconfig-paths": "^3.9.0",

@@ -133,7 +133,7 @@ export const CardView = ({
 					style={{
 						backgroundImage: `url('${
 							process.env.APP_API_URL ? `http://${process.env.APP_API_URL}` : ''
-						}/card/${card.code.replace(/'/g, "\\'")}')`
+						}/card/${card.code.replace(/'/g, "\\'")}.jpg')`
 					}}
 				/>
 			)}

@@ -4,6 +4,7 @@ import { CardCategory, CardsLookupApi } from '@shared/cards'
 import { Router } from 'express'
 import got from 'got'
 import config from '../../config'
+import { normalizeImage } from '@/utils/images'
 
 const attr = (s: string) => s.replace(/"/g, '"')
 
@@ -78,8 +79,10 @@ export default () => {
 			})
 
 			if (image.body && image.headers['content-type']?.includes('image')) {
+				const jpeg = await normalizeImage(image.body)
+
 				res.redirect('/picker')
-				await saveToCache(card.code, image.body)
+				await saveToCache(card.code, jpeg)
 			} else {
 				throw Error(
 					'Response was not an image (' +

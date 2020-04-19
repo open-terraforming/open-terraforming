@@ -10,6 +10,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux'
 import { StoreState } from '@/store'
 import { AppDispatch } from '@/store/utils'
+import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
 
 export const useAppStore = <T>(selector: (state: StoreState) => T) => {
 	return useSelector(selector)
@@ -380,4 +381,20 @@ export const useElementPosition = (
 	return position
 }
 
-export default useElementPosition
+export const useProcessed = (
+	callback: (events: (GameEvent & { id: number })[], processed: number) => void
+) => {
+	const [processed, setProcessed] = useState(0)
+	const events = useAppStore(state => state.game.events)
+
+	useEffect(() => {
+		if (events.length > processed) {
+			callback(
+				events.slice(processed).map((e, i) => ({ ...e, id: processed + i })),
+				processed
+			)
+
+			setProcessed(events.length)
+		}
+	}, [events])
+}
