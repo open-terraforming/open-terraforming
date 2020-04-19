@@ -1,6 +1,6 @@
 import { Button, DialogWrapper } from '@/components'
 import { Card } from '@/icons/card'
-import { useAppStore } from '@/utils/hooks'
+import { useAppStore, useMounted } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import {
 	emptyCardState,
@@ -12,6 +12,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { Hand } from '../../../Hand/Hand'
 import { CardsView } from '../CardsView'
+import { CardView } from '../../../CardView/CardView'
 
 type Props = {
 	playing: boolean
@@ -22,34 +23,29 @@ export const HandButton = ({ playing }: Props) => {
 	const game = useAppStore(state => state.game.state)
 	const count = player.cards.length
 
-	const [lastCount, setLastCount] = useState(count)
-	const [diff, setDiff] = useState(0)
+	const [current, setCurrent] = useState(0)
 	const updateDiffRef = useRef<() => void>()
 	const [showCards, setShowCards] = useState(false)
+	const mounted = useMounted()
 
 	updateDiffRef.current = () => {
-		if (diff > 0) {
-			setDiff(diff - 1)
+		if (mounted && current < count) {
+			setCurrent(current + 1)
 
 			return true
 		}
 	}
 
 	useEffect(() => {
-		const diff = count - lastCount
-
-		if (diff > 0) {
+		if (current < count) {
 			const updateDiff = () => {
 				if (updateDiffRef.current && updateDiffRef.current()) {
-					setTimeout(updateDiff, 1000)
+					setTimeout(updateDiff, 1500)
 				}
 			}
 
-			setTimeout(updateDiff, 1000)
+			setTimeout(updateDiff, 1500)
 		}
-
-		setLastCount(count)
-		setDiff(diff)
 	}, [count])
 
 	const cards = useMemo(
@@ -121,9 +117,13 @@ export const HandButton = ({ playing }: Props) => {
 						))}
 					</Cards>
 					<Count>{count}</Count>
-					{diff > 0 && (
-						<DiffAnim key={diff}>
-							<Card />
+					{current < count && (
+						<DiffAnim key={current}>
+							<CardView
+								card={CardsLookupApi.get(player.cards[current])}
+								evaluate={false}
+								hover={false}
+							/>
 						</DiffAnim>
 					)}
 					<CardsView cards={cards} open={showCards} />
@@ -167,19 +167,23 @@ const Count = styled.div`
 const popIn = keyframes`
 	0% {
 		opacity: 0;
-		transform: translate(0, -10rem);
+		transform: translate(0, -30rem) scale(0.75);
 	}
-	50% {
+	20% {
 		opacity: 1;
-		transform: translate(0, -10rem);
+		transform: translate(0, -30rem) scale(0.75);
+	}
+	60% {
+		opacity: 1;
+		transform: translate(0, -30rem) scale(0.75);
 	}
 	90% {
 		opacity: 0.6;
-		transform: translate(0, -0.5rem);
+		transform: translate(0, -0.5rem) scale(0.3);
 	}
 	100% {
 		opacity: 0;
-		transform: translate(0, -0.5rem);
+		transform: translate(0, -0.5rem) scale(0.3);
 	}
 `
 
@@ -189,11 +193,12 @@ const DiffAnim = styled.div`
 	left: 0;
 	top: 0;
 	animation-name: ${popIn};
-	animation-duration: 1000ms;
+	animation-duration: 1500ms;
 	animation-timing-function: ease-out;
+	animation-fill-mode: forwards;
+
 	color: #fff;
 	text-align: center;
-	font-size: 200%;
 	display: flex;
 	align-items: center;
 	justify-content: center;

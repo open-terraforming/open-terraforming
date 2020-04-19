@@ -1,6 +1,7 @@
+BUGS:
+  * pick ecoline + business_empire and see what happens
+
 TODO:
-  * display drawn card
-  * red grid border when not available for placement
   * finishing phase display
   * game progress symbols
   * as your first action
@@ -8,6 +9,7 @@ TODO:
   * add played/bought icon
   * add card resource icon
   * symbols and text collisions :(
+  * reset game state after connecting
 
   * display number of card tags with hover counts
   * display player corporation

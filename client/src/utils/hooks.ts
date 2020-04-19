@@ -398,3 +398,15 @@ export const useProcessed = (
 		}
 	}, [events])
 }
+
+export const useMounted = () => {
+	const [mounted, setMounted] = useState(true)
+
+	useEffect(() => {
+		return () => {
+			setMounted(false)
+		}
+	}, [])
+
+	return mounted
+}

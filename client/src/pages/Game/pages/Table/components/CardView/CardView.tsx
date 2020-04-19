@@ -17,6 +17,7 @@ import { Resource } from './components/Resource'
 import { Tag } from './components/Tag'
 import { flatten } from '@shared/utils'
 import { Symbols } from './components/Symbols'
+import { rgba } from 'polished'
 
 export const CardView = ({
 	card,
@@ -301,7 +302,7 @@ const VPC = styled.div`
 		content: '';
 		display: block;
 		float: right;
-		height: 70px;
+		height: 90px;
 	}
 `
 
@@ -346,7 +347,7 @@ type ContainerCtx = {
 
 const Container = styled.div<ContainerCtx>`
 	border: 0.2rem solid ${props => typeToColor[props.type]};
-	background: ${colors.background};
+	background: ${rgba(colors.background, 1)};
 	width: ${props => (props.type === CardType.Corporation ? '400px' : '240px')};
 	flex-shrink: 0;
 	min-width: 0;

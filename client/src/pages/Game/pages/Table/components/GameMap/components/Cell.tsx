@@ -136,6 +136,8 @@ const StyledHex = styled.g<{
 		animation-duration: 15000ms;
 		animation-iteration-count: infinite;
 
+		transition: stroke 0.2s, fill 0.2s;
+
 		${props =>
 			props.gridType === GridCellType.Ocean &&
 			!props.gridContent &&
@@ -167,10 +169,14 @@ const StyledHex = styled.g<{
 			`}
 
 		${props =>
-			props.gridActive &&
-			css`
-				fill: rgba(36, 187, 23, 0.5);
-				cursor: pointer;
-			`}
+			props.gridActive
+				? css`
+						fill: rgba(36, 187, 23, 0.5);
+						cursor: pointer;
+				  `
+				: props.gridActive === false &&
+				  css`
+						stroke: rgba(241, 143, 143, 0.8);
+				  `}
 	}
 `
