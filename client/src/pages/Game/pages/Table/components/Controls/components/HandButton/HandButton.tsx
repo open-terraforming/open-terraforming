@@ -23,21 +23,25 @@ export const HandButton = ({ playing }: Props) => {
 	const game = useAppStore(state => state.game.state)
 	const count = player.cards.length
 
-	const [current, setCurrent] = useState(0)
+	const [toDisplay, setToDisplay] = useState([] as string[])
+	const [lastCards, setLastCards] = useState(player.cards)
+
 	const updateDiffRef = useRef<() => void>()
 	const [showCards, setShowCards] = useState(false)
 	const mounted = useMounted()
 
 	updateDiffRef.current = () => {
-		if (mounted && current < count) {
-			setCurrent(current + 1)
+		if (mounted && toDisplay.length > 0) {
+			setToDisplay(d => d.slice(1))
 
 			return true
 		}
 	}
 
 	useEffect(() => {
-		if (current < count) {
+		const newCards = player.cards.filter(c => !lastCards.includes(c))
+
+		if (newCards.length > 0) {
 			const updateDiff = () => {
 				if (updateDiffRef.current && updateDiffRef.current()) {
 					setTimeout(updateDiff, 1500)
@@ -45,6 +49,9 @@ export const HandButton = ({ playing }: Props) => {
 			}
 
 			setTimeout(updateDiff, 1500)
+
+			setLastCards(player.cards)
+			setToDisplay(d => [...d, ...newCards])
 		}
 	}, [count])
 
@@ -117,10 +124,10 @@ export const HandButton = ({ playing }: Props) => {
 						))}
 					</Cards>
 					<Count>{count}</Count>
-					{current < count && (
-						<DiffAnim key={current}>
+					{toDisplay[0] && (
+						<DiffAnim key={toDisplay[0]}>
 							<CardView
-								card={CardsLookupApi.get(player.cards[current])}
+								card={CardsLookupApi.get(toDisplay[0])}
 								evaluate={false}
 								hover={false}
 							/>
