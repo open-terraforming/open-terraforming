@@ -1,7 +1,8 @@
-import { GameState, PlayerStateValue } from '../game'
-import { range, drawCorporation } from '../utils'
-import { GameMode, GameModeType } from './types'
 import { CardsLookupApi, CardSpecial } from '../cards'
+import { GameState } from '../game'
+import { pickCorporationAction } from '../player-actions'
+import { pushPendingAction } from '../utils'
+import { GameMode, GameModeType } from './types'
 
 export const gameMode = (m: GameMode) => m
 
@@ -17,18 +18,23 @@ export const prepareCorporations = (game: GameState, amount = 2) => {
 	game.corporations = game.corporations.filter(c => c !== startingCorp.code)
 
 	game.players.forEach(p => {
-		p.cardsPick = []
+		const cards: string[] = []
+
+		/*
 		try {
 			range(0, amount).forEach(() => {
-				p.cardsPick.push(drawCorporation(game))
+				cards.push(drawCorporation(game))
 			})
 		} catch (e) {
-			if (p.cardsPick.length === 0) {
-				p.cardsPick.push(startingCorp.code)
+			if (cards.length === 0) {
+				cards.push(startingCorp.code)
 			}
 		}
+		*/
 
-		p.state = PlayerStateValue.PickingCorporation
+		cards.push(...game.corporations)
+
+		pushPendingAction(p, pickCorporationAction(cards))
 	})
 }
 

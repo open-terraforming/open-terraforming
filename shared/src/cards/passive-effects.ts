@@ -4,11 +4,13 @@ import {
 	CardCategory,
 	CardPassiveEffect,
 	CardResource,
-	Resource
+	Resource,
+	CardEffect
 } from './types'
 import { resourceProduction, updatePlayerResource } from './utils'
 import { CardsLookupApi } from './lookup'
-import { f } from '../utils'
+import { f, pushPendingAction } from '../utils'
+import { playCardAction } from '../player-actions'
 
 export const passiveEffect = (e: CardPassiveEffect) => e
 
@@ -131,7 +133,7 @@ export const cardExchangeEffect = (tag: CardCategory) =>
 				CardsLookupApi.get(playedCard.code).categories.includes(tag) &&
 				playedBy.id === playerId
 			) {
-				player.cardsToPlay.push(cardIndex)
+				pushPendingAction(player, playCardAction(cardIndex))
 			}
 		}
 	})
@@ -152,7 +154,7 @@ export const playWhenCard = (tags: CardCategory[]) =>
 				tags.find(t => playedCard.categories.includes(t))
 			) {
 				cardState.triggeredByCard = playedCardIndex
-				player.cardsToPlay.push(cardIndex)
+				pushPendingAction(player, playCardAction(cardIndex))
 			}
 		}
 	})
@@ -225,6 +227,16 @@ export const resetCardPriceChange = (amount: number) =>
 			if (card.data === undefined) {
 				player.cardPriceChange -= amount
 				card.data = true
+			}
+		}
+	})
+
+export const asFirstAction = (effect: CardEffect) =>
+	passiveEffect({
+		description: 'As your first action, ' + effect.description,
+		onGenerationStarted: (ctx, generation) => {
+			if (generation === 1) {
+				effect.perform(ctx)
 			}
 		}
 	})

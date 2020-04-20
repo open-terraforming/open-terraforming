@@ -1,6 +1,7 @@
 import { CardsLookupApi, CardSpecial } from '../../cards'
 import { GameModeType } from '../types'
 import { gameMode, prepareCorporations } from '../utils'
+import { PlayerActionType } from '../../player-actions'
 
 export const BeginnerMode = gameMode({
 	type: GameModeType.Beginner,
@@ -25,7 +26,11 @@ export const BeginnerMode = gameMode({
 			p.energyProduction = 1
 			p.titanProduction = 1
 			p.heatProduction = 1
-			p.cardsPick.push(startingCorp.code)
+			p.pendingActions.forEach(a => {
+				if (a.type === PlayerActionType.PickCorporation) {
+					a.cards.push(startingCorp.code)
+				}
+			})
 		})
 	},
 	filterCards: cards =>

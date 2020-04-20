@@ -46,13 +46,15 @@ import {
 	adjacentCells,
 	allCells,
 	drawCards,
-	drawPreludeCards
+	drawPreludeCards,
+	pushPendingAction
 } from '@shared/utils'
 import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
 import Hashids from 'hashids/cjs'
 import { PlayerColors } from '@shared/player-colors'
+import { PlayerActionType, pickPreludesAction } from '@shared/player-actions'
 
 export interface CardPlayedEvent {
 	player: Player
@@ -124,6 +126,10 @@ export class Player {
 		)
 	}
 
+	get pendingAction() {
+		return this.state.pendingActions[0]
+	}
+
 	constructor(game: Game) {
 		this.game = game
 		this.state.session = new Hashids(this.game.config.adminPassword, 5).encode(
@@ -141,12 +147,46 @@ export class Player {
 		this.updated()
 	}
 
+	popAction() {
+		if (!this.pendingAction) {
+			throw new Error("Trying to pop action when there aren't any")
+		}
+
+		this.state.pendingActions.shift()
+		if (this.state.pendingActions.length === 0) {
+			switch (this.game.state.state) {
+				case GameStateValue.GenerationInProgress: {
+					switch (this.state.state) {
+						case PlayerStateValue.Playing: {
+							this.actionPlayed()
+							break
+						}
+					}
+					break
+				}
+
+				case GameStateValue.Starting: {
+					this.state.state = PlayerStateValue.WaitingForTurn
+					break
+				}
+
+				case GameStateValue.EndingTiles: {
+					this.pass(true)
+				}
+			}
+		}
+
+		this.updated()
+	}
+
 	pickCorporation(code: string) {
-		if (this.state.state !== PlayerStateValue.PickingCorporation) {
+		const top = this.pendingAction
+
+		if (top.type !== PlayerActionType.PickCorporation) {
 			throw new Error('You are not picking corporations right now')
 		}
 
-		if (!this.state.cardsPick.includes(code)) {
+		if (!top.cards.includes(code)) {
 			throw new Error(`This corporation wasn't in your options`)
 		}
 
@@ -156,9 +196,6 @@ export class Player {
 		}
 
 		this.logger.log(f('Picked corporation {0}', code))
-
-		this.state.cardsPick = []
-		this.state.corporation = code
 
 		const card = emptyCardState(corp.code)
 		this.state.usedCards.push(card)
@@ -177,19 +214,14 @@ export class Player {
 
 		this.onCardPlayed.emit({ card: corp, cardIndex: -1, player: this })
 
-		console.log(PlayerStateValue[this.state.state])
-
-		if (
-			(this.state.state as PlayerStateValue) !== PlayerStateValue.PickingCards
-		) {
-			this.state.state = PlayerStateValue.WaitingForTurn
-		}
-
+		this.popAction()
 		this.updated()
 	}
 
 	pickPreludes(cards: number[]) {
-		if (this.state.state !== PlayerStateValue.PickingPreludes) {
+		const top = this.pendingAction
+
+		if (top.type !== PlayerActionType.PickPreludes) {
 			throw new Error('You are not picking preludes right now')
 		}
 
@@ -197,35 +229,28 @@ export class Player {
 			throw new Error('You cant pick one card twice')
 		}
 
-		if (cards.find(c => c >= this.state.cardsPick.length || c < 0)) {
+		if (cards.find(c => c >= top.cards.length || c < 0)) {
 			throw new Error('Invalid list of cards to pick')
 		}
 
-		if (this.state.cardsPickLimit > 0) {
-			if (cards.length !== this.state.cardsPickLimit) {
+		if (top.limit > 0) {
+			if (cards.length !== top.limit) {
 				throw new Error(`You have to pick ${cards.length} cards`)
 			}
 		}
 
 		this.logger.log(
-			f(
-				'Picked preludes: {0}',
-				cards.map(c => this.state.cardsPick[c]).join(', ')
-			)
+			f('Picked preludes: {0}', cards.map(c => top.cards[c]).join(', '))
 		)
 
-		const usedCards = cards.map(c => emptyCardState(this.state.cardsPick[c]))
+		const usedCards = cards.map(c => emptyCardState(top.cards[c]))
 
 		this.state.usedCards = [...this.state.usedCards, ...usedCards]
 
 		this.game.state.preludeDiscarded = [
 			...this.game.state.preludeDiscarded,
-			...this.state.cardsPick.filter((_c, i) => !cards.includes(i))
+			...top.cards.filter((_c, i) => !cards.includes(i))
 		]
-
-		this.state.cardsPick = []
-		this.state.cardsPickFree = false
-		this.state.cardsPickLimit = 0
 
 		this.state.usedCards.forEach((c, i) => {
 			if (usedCards.includes(c)) {
@@ -244,24 +269,13 @@ export class Player {
 			}
 		})
 
-		switch (this.game.state.state) {
-			case GameStateValue.Starting: {
-				this.state.state = PlayerStateValue.WaitingForTurn
-				break
-			}
-
-			case GameStateValue.GenerationInProgress: {
-				this.state.state = PlayerStateValue.Playing
-				this.actionPlayed()
-				break
-			}
-		}
-
-		this.updated()
+		this.popAction()
 	}
 
 	pickCards(cards: number[]) {
-		if (this.state.state !== PlayerStateValue.PickingCards) {
+		const top = this.pendingAction
+
+		if (top.type !== PlayerActionType.PickCards) {
 			throw new Error('You are not picking cards right now')
 		}
 
@@ -269,17 +283,17 @@ export class Player {
 			throw new Error('You cant pick one card twice')
 		}
 
-		if (cards.find(c => c >= this.state.cardsPick.length || c < 0)) {
+		if (cards.find(c => c >= top.cards.length || c < 0)) {
 			throw new Error('Invalid list of cards to pick')
 		}
 
-		if (this.state.cardsPickLimit > 0) {
-			if (cards.length !== this.state.cardsPickLimit) {
+		if (top.limit > 0) {
+			if (cards.length !== top.limit) {
 				throw new Error(`You have to pick ${cards.length} cards`)
 			}
 		}
 
-		if (!this.state.cardsPickFree) {
+		if (!top.free) {
 			if (cards.length * CARD_PRICE > this.state.money) {
 				throw new Error("You don't have money for that")
 			}
@@ -288,48 +302,27 @@ export class Player {
 		}
 
 		this.logger.log(
-			f('Picked cards: {0}', cards.map(c => this.state.cardsPick[c]).join(', '))
+			f('Picked cards: {0}', cards.map(c => top.cards[c]).join(', '))
 		)
 
-		this.state.cards = [
-			...this.state.cards,
-			...cards.map(c => this.state.cardsPick[c])
-		]
+		this.state.cards = [...this.state.cards, ...cards.map(c => top.cards[c])]
 
 		this.game.state.discarded.push(
-			...this.state.cardsPick.filter((_c, i) => !cards.includes(i))
+			...top.cards.filter((_c, i) => !cards.includes(i))
 		)
 
-		this.state.cardsPick = []
-		this.state.cardsPickFree = false
-		this.state.cardsPickLimit = 0
-
-		switch (this.game.state.state) {
-			case GameStateValue.Starting: {
-				if (this.game.state.prelude) {
-					this.state.cardsPick = drawPreludeCards(this.game.state, 4)
-					this.state.cardsPickFree = true
-					this.state.cardsPickLimit = 2
-					this.state.state = PlayerStateValue.PickingPreludes
-				} else {
-					this.state.state = PlayerStateValue.WaitingForTurn
-				}
-				break
-			}
-
-			case GameStateValue.PickingCards: {
-				this.state.state = PlayerStateValue.WaitingForTurn
-				break
-			}
-
-			case GameStateValue.GenerationInProgress: {
-				this.state.state = PlayerStateValue.Playing
-				this.actionPlayed()
-				break
-			}
+		// TODO: Move this elsewhere
+		if (
+			this.game.state.state === GameStateValue.Starting &&
+			this.game.state.prelude
+		) {
+			pushPendingAction(
+				this.state,
+				pickPreludesAction(drawPreludeCards(this.game.state, 4))
+			)
 		}
 
-		this.updated()
+		this.popAction()
 	}
 
 	buyCard(
@@ -341,6 +334,10 @@ export class Player {
 	) {
 		if (!this.isPlaying) {
 			throw new Error("You're not playing")
+		}
+
+		if (this.pendingAction) {
+			throw new Error("You've got pending actions to attend to")
 		}
 
 		if (this.state.cards[index] !== cardCode) {
@@ -425,10 +422,7 @@ export class Player {
 			player: this
 		})
 
-		if (
-			this.state.placingTile.length === 0 &&
-			this.state.state !== PlayerStateValue.PickingCards
-		) {
+		if (!this.pendingAction) {
 			this.actionPlayed()
 		}
 
@@ -566,27 +560,16 @@ export class Player {
 		}
 	}
 
-	giveCards(count: number) {
-		this.state.cardsPick = drawCards(
-			this.game.state,
-			Math.min(
-				this.game.state.cards.length + this.game.state.discarded.length,
-				count
-			)
-		)
-	}
-
 	placeTile(x: number, y: number) {
 		if (!this.isPlaying && this.state.state !== PlayerStateValue.EndingTiles) {
 			throw new Error('Player is not playing now')
 		}
 
-		const pendingTile = this.state.placingTile[0]
+		const top = this.pendingAction
 
-		if (!pendingTile) {
-			throw new Error('No tile to place!')
+		if (top.type !== PlayerActionType.PlaceTile) {
+			throw new Error("You're not placing tiles right now")
 		}
-
 		const cell = cellByCoords(this.game.state, x, y)
 
 		if (!cell) {
@@ -599,6 +582,8 @@ export class Player {
 		) {
 			throw new Error(`Cell is already owned by someone else`)
 		}
+
+		const pendingTile = top.state
 
 		if (pendingTile.conditions) {
 			const errors = pendingTile.conditions
@@ -674,24 +659,13 @@ export class Player {
 				c => c.content === GridCellContent.Ocean
 			).length * 2
 
-		this.state.placingTile.shift()
-
 		this.onTilePlaced.emit({
 			cell,
 			player: this
 		})
 
-		this.checkTilePlacement()
-
-		if (this.state.placingTile.length === 0) {
-			if (this.state.state === PlayerStateValue.EndingTiles) {
-				this.pass(true)
-			} else {
-				this.actionPlayed()
-			}
-		}
-
-		this.updated()
+		this.filterPendingActions()
+		this.popAction()
 	}
 
 	runCardEffects(
@@ -703,7 +677,7 @@ export class Player {
 			e.perform(ctx, ...(playArguments[i] || []))
 		})
 
-		this.checkTilePlacement()
+		this.filterPendingActions()
 	}
 
 	actionPlayed() {
@@ -711,7 +685,7 @@ export class Player {
 
 		if (this.state.actionsPlayed >= 2) {
 			this.state.state = PlayerStateValue.WaitingForTurn
-			this.game.updated()
+			this.updated()
 		}
 	}
 
@@ -735,7 +709,8 @@ export class Player {
 			this.state.actionsPlayed === 0 || force
 				? PlayerStateValue.Passed
 				: PlayerStateValue.WaitingForTurn
-		this.game.updated()
+
+		this.updated()
 	}
 
 	updated() {
@@ -763,15 +738,17 @@ export class Player {
 		index: number,
 		playArguments: CardEffectArgumentType[][]
 	) {
-		const forced = this.state.cardsToPlay[0]
+		const top = this.pendingAction
 
-		if (forced !== undefined && forced !== index) {
-			throw new Error(
-				'You have to resolve pending events before playing other cards'
-			)
+		if (
+			top === undefined ||
+			top.type !== PlayerActionType.PlayCard ||
+			top.cardIndex !== index
+		) {
+			throw new Error("You've got pending actions to attend to")
 		}
 
-		if (forced === undefined && !this.isPlaying) {
+		if (top === undefined && !this.isPlaying) {
 			throw new Error("You're not playing")
 		}
 
@@ -794,7 +771,7 @@ export class Player {
 		}
 
 		if (
-			forced === undefined &&
+			top === undefined &&
 			card.type !== CardType.Action &&
 			card.type !== CardType.Corporation
 		) {
@@ -815,17 +792,14 @@ export class Player {
 
 		this.runCardEffects(card.actionEffects, ctx, playArguments)
 
-		if (this.state.cardsToPlay.length > 0) {
-			this.state.cardsToPlay.shift()
+		if (top) {
+			this.popAction()
 		} else {
 			if (card.type !== CardType.Corporation) {
 				cardState.played = true
 			}
 
-			if (
-				this.state.placingTile.length === 0 &&
-				this.state.state !== PlayerStateValue.PickingCards
-			) {
+			if (!this.pendingAction) {
 				this.actionPlayed()
 			}
 		}
@@ -833,14 +807,15 @@ export class Player {
 		this.updated()
 	}
 
-	checkTilePlacement() {
-		this.state.placingTile = this.state.placingTile.filter(
-			t =>
-				(t.type !== GridCellContent.Ocean ||
+	filterPendingActions() {
+		this.state.pendingActions = this.state.pendingActions.filter(
+			p =>
+				p.type !== PlayerActionType.PlaceTile ||
+				((p.state.type !== GridCellContent.Ocean ||
 					this.game.state.oceans < this.game.state.map.oceans) &&
-				!!allCells(this.game.state).find(c =>
-					canPlace(this.game.state, this.state, c, t)
-				)
+					!!allCells(this.game.state).find(c =>
+						canPlace(this.game.state, this.state, c, p.state)
+					))
 		)
 	}
 
@@ -936,7 +911,7 @@ export class Player {
 			project
 		})
 
-		if (this.state.placingTile.length === 0) {
+		if (!this.pendingAction) {
 			this.actionPlayed()
 		}
 

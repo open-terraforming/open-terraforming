@@ -32,6 +32,12 @@ import { v4 as uuidv4 } from 'uuid'
 import { PlayerColors } from '@shared/player-colors'
 import { randomPlayerColor } from '@/utils/colors'
 import { wait } from '@/utils/async'
+import {
+	PlayerActionType,
+	placeTileAction,
+	pickCardsAction
+} from '@shared/player-actions'
+import { pushPendingAction, drawCards } from '@shared/utils'
 
 export interface GameConfig {
 	bots: number
@@ -232,6 +238,29 @@ export class Game {
 		})
 	}
 
+	handleNewGeneration = (generation: number) => {
+		this.state.players.forEach(player => {
+			player.usedCards
+				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c], cardIndex) => {
+					c.passiveEffects.forEach(
+						e =>
+							e.onGenerationStarted &&
+							e.onGenerationStarted(
+								{
+									card: s,
+									cardIndex,
+									game: this.state,
+									player: player,
+									playerId: player.id
+								},
+								generation
+							)
+					)
+				})
+		})
+	}
+
 	handleTilePlaced = ({ player: playedBy, cell }: TilePlacedEvent) => {
 		this.state.players.forEach(player => {
 			player.usedCards
@@ -342,7 +371,6 @@ export class Game {
 				break
 
 			case GameStateValue.Starting:
-			case GameStateValue.PickingCards:
 				if (this.all(PlayerStateValue.WaitingForTurn)) {
 					this.logger.log(`All players ready, starting the round`)
 
@@ -353,6 +381,8 @@ export class Game {
 							: this.state.players.length - 1
 
 					this.state.state = GameStateValue.GenerationInProgress
+					this.handleNewGeneration(this.state.generation)
+
 					this.updated()
 				}
 				break
@@ -373,18 +403,22 @@ export class Game {
 			// Make sure disconnected players are not stalling others
 			this.players.forEach(p => {
 				if (!p.state.connected) {
-					if (p.state.state === PlayerStateValue.PickingCorporation) {
-						this.logger.log(
-							`${p.name} is disconnected, picking first corporation`
-						)
-						p.pickCorporation(p.state.cardsPick[0])
+					if (p.state.state !== PlayerStateValue.Playing) {
+						if (p.state.pendingActions.length > 0) {
+							p.state.pendingActions.forEach(a => {
+								if (a.type === PlayerActionType.PickCorporation) {
+									p.pickCorporation(a.cards[0])
+								}
+								if (a.type === PlayerActionType.PickCards) {
+									p.pickCards([])
+								}
+								if (a.type === PlayerActionType.PickPreludes) {
+									p.pickPreludes([])
+								}
+							})
+						}
 					}
-					if (p.state.state === PlayerStateValue.PickingCards) {
-						this.logger.log(
-							`${p.name} is disconnected, cancelling card picking`
-						)
-						p.pickCards([])
-					}
+
 					if (
 						p.state.state === PlayerStateValue.Playing ||
 						p.state.state === PlayerStateValue.EndingTiles
@@ -401,6 +435,7 @@ export class Game {
 	 * Checks if current player finished his turn and passes to next or ends the round
 	 */
 	checkCurrentPlayer() {
+		// Check if we should move game state
 		if (
 			this.currentPlayer.state === PlayerStateValue.WaitingForTurn ||
 			this.currentPlayer.state === PlayerStateValue.Passed
@@ -427,9 +462,10 @@ export class Game {
 			}
 		}
 
+		// Pass him if there's no tile to be placed
 		if (
 			this.currentPlayer.state === PlayerStateValue.EndingTiles &&
-			this.currentPlayer.placingTile.length === 0
+			this.currentPlayer.pendingActions.length === 0
 		) {
 			this.currentPlayer.state = PlayerStateValue.Passed
 		}
@@ -547,28 +583,32 @@ export class Game {
 		if (this.hasReachedLimits) {
 			this.state.state = GameStateValue.EndingTiles
 			this.players.forEach(p => {
-				p.state.placingTile = []
+				p.state.pendingActions = []
+
 				range(0, Math.floor(p.state.plants / p.state.greeneryCost)).forEach(
 					() => {
-						p.state.placingTile.push({ type: GridCellContent.Forest })
+						pushPendingAction(
+							p.state,
+							placeTileAction({ type: GridCellContent.Forest })
+						)
 						p.state.plants -= p.state.greeneryCost
 					}
 				)
 
 				p.state.state =
-					p.state.placingTile.length > 0
+					p.state.pendingActions.length > 0
 						? PlayerStateValue.WaitingForTurn
 						: PlayerStateValue.Passed
 			})
 		} else {
 			this.players.forEach(p => {
-				p.state.state = PlayerStateValue.PickingCards
-				p.giveCards(4)
+				pushPendingAction(p.state, pickCardsAction(drawCards(this.state, 4)))
 			})
 
 			this.state.state = GameStateValue.PickingCards
 
 			this.state.generation++
+			this.handleNewGeneration(this.state.generation)
 
 			this.state.startingPlayer =
 				(this.state.startingPlayer + 1) % this.players.length

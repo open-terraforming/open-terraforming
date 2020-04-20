@@ -5,9 +5,10 @@ import {
 	PlayerState,
 	StandardProjectType
 } from './game'
-import { allCells, keyMap } from './utils'
+import { allCells, keyMap, pushPendingAction } from './utils'
 import { canPlace } from './placements'
 import { updatePlayerProduction, updatePlayerResource } from './cards/utils'
+import { placeTileAction } from './player-actions'
 
 export interface StandardProjectContext {
 	player: PlayerState
@@ -88,9 +89,12 @@ const ProjectsList = [
 		cost: () => 18,
 		conditions: [({ game }) => game.oceans < game.map.oceans],
 		execute: ({ player }) => {
-			player.placingTile.push({
-				type: GridCellContent.Ocean
-			})
+			pushPendingAction(
+				player,
+				placeTileAction({
+					type: GridCellContent.Ocean
+				})
+			)
 		}
 	}),
 	project({
@@ -99,9 +103,12 @@ const ProjectsList = [
 		cost: () => 23,
 		conditions: [canPlaceTile(GridCellContent.Forest)],
 		execute: ({ player }) => {
-			player.placingTile.push({
-				type: GridCellContent.Forest
-			})
+			pushPendingAction(
+				player,
+				placeTileAction({
+					type: GridCellContent.Forest
+				})
+			)
 		}
 	}),
 	project({
@@ -111,9 +118,12 @@ const ProjectsList = [
 		conditions: [canPlaceTile(GridCellContent.City)],
 		execute: ({ player }) => {
 			updatePlayerProduction(player, 'money', 1)
-			player.placingTile.push({
-				type: GridCellContent.City
-			})
+			pushPendingAction(
+				player,
+				placeTileAction({
+					type: GridCellContent.City
+				})
+			)
 		}
 	}),
 	project({
@@ -123,9 +133,12 @@ const ProjectsList = [
 		resource: 'plants',
 		conditions: [canPlaceTile(GridCellContent.Forest)],
 		execute: ({ player }) => {
-			player.placingTile.push({
-				type: GridCellContent.Forest
-			})
+			pushPendingAction(
+				player,
+				placeTileAction({
+					type: GridCellContent.Forest
+				})
+			)
 		}
 	}),
 	project({

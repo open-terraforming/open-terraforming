@@ -30,6 +30,7 @@ import { Player } from './player'
 import { Milestones } from '@shared/milestones'
 import { Competitions } from '@shared/competitions'
 import { Projects } from '@shared/projects'
+import { PlayerActionType, PlayerAction } from '@shared/player-actions'
 
 const BotNames = [
 	'Rick',
@@ -268,6 +269,59 @@ export class Bot extends Player {
 		)
 	}
 
+	performPending(a: PlayerAction) {
+		switch (a.type) {
+			case PlayerActionType.PickCorporation: {
+				return this.pickCorporation(shuffle(a.cards.slice(0))[0])
+			}
+
+			case PlayerActionType.PickCards: {
+				const picked = a.free
+					? shuffle(a.cards.map((_c, i) => i)).slice(
+							0,
+							a.limit || a.cards.length
+					  )
+					: shuffle(
+							a.cards.map((_c, i) => i).filter(() => Math.random() > 0.1)
+					  ).slice(0, Math.max(0, Math.floor(this.state.money / CARD_PRICE)))
+
+				return this.pickCards(picked)
+			}
+
+			case PlayerActionType.PickPreludes: {
+				const picked = shuffle(a.cards.map((_c, i) => i)).slice(0, a.limit)
+
+				return this.pickPreludes(picked)
+			}
+
+			case PlayerActionType.PlaceTile: {
+				const placed = a.state
+				const tile = shuffle(allCells(this.game.state)).find(c =>
+					canPlace(this.game.state, this.state, c, placed)
+				)
+				if (tile) {
+					return this.placeTile(tile.x, tile.y)
+				} else {
+					return this.pass(true)
+				}
+			}
+
+			case PlayerActionType.PlayCard: {
+				const card = this.state.usedCards[a.cardIndex]
+
+				return this.playCard(
+					card.code,
+					a.cardIndex,
+					this.prepareParams(
+						CardsLookupApi.get(card.code).actionEffects,
+						card,
+						a.cardIndex
+					)
+				)
+			}
+		}
+	}
+
 	doSomething() {
 		const actions = [] as [number, () => void][]
 
@@ -278,44 +332,16 @@ export class Bot extends Player {
 			}
 
 			case PlayerStateValue.PickingCorporation: {
-				actions.push([
-					0,
-					() => this.pickCorporation(shuffle(this.state.cardsPick.slice(0))[0])
-				])
-				break
-			}
-
-			case PlayerStateValue.PickingCards: {
-				const picked = this.state.cardsPickFree
-					? shuffle(this.state.cardsPick.map((_c, i) => i)).slice(
-							0,
-							this.state.cardsPickLimit || this.state.cardsPick.length
-					  )
-					: shuffle(
-							this.state.cardsPick
-								.map((_c, i) => i)
-								.filter(() => Math.random() > 0.1)
-					  ).slice(0, Math.max(0, Math.floor(this.state.money / CARD_PRICE)))
-
-				actions.push([0, () => this.pickCards(picked)])
-				break
-			}
-
-			case PlayerStateValue.PickingPreludes: {
-				const picked = shuffle(this.state.cardsPick.map((_c, i) => i)).slice(
-					0,
-					this.state.cardsPickLimit
-				)
-
-				actions.push([0, () => this.pickPreludes(picked)])
-				break
+				if (this.pendingAction) {
+					actions.push([0, () => this.performPending(this.pendingAction)])
+				}
 			}
 
 			case PlayerStateValue.EndingTiles: {
-				const placed = this.state.placingTile[0]
-				if (placed) {
+				const placed = this.pendingAction
+				if (placed && placed.type === PlayerActionType.PlaceTile) {
 					const tile = shuffle(allCells(this.game.state)).find(c =>
-						canPlace(this.game.state, this.state, c, placed)
+						canPlace(this.game.state, this.state, c, placed.state)
 					)
 					if (tile) {
 						actions.push([0, () => this.placeTile(tile.x, tile.y)])
@@ -329,34 +355,8 @@ export class Bot extends Player {
 			}
 
 			case PlayerStateValue.Playing: {
-				const placed = this.state.placingTile[0]
-				const playing = this.state.cardsToPlay[0]
-
-				if (playing) {
-					const card = this.state.usedCards[playing]
-					actions.push([
-						0,
-						() =>
-							this.playCard(
-								card.code,
-								playing,
-								this.prepareParams(
-									CardsLookupApi.get(card.code).actionEffects,
-									card,
-									playing
-								)
-							)
-					])
-				} else if (placed) {
-					const placed = this.state.placingTile[0]
-					const tile = shuffle(allCells(this.game.state)).find(c =>
-						canPlace(this.game.state, this.state, c, placed)
-					)
-					if (tile) {
-						actions.push([0, () => this.placeTile(tile.x, tile.y)])
-					} else {
-						actions.push([0, () => this.pass(true)])
-					}
+				if (this.pendingAction) {
+					actions.push([0, () => this.performPending(this.pendingAction)])
 				} else {
 					if (this.game.state.milestones.length < MILESTONES_LIMIT) {
 						Object.values(Milestones)

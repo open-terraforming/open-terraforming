@@ -11,60 +11,60 @@ export enum PlayerActionType {
 	SelectPlayer
 }
 
-export const placeTileAction = (ctx: PlacementState) => ({
-	type: PlayerActionType.PlaceTile,
-	data: ctx
-})
+export const placeTileAction = (state: PlacementState) =>
+	({
+		type: PlayerActionType.PlaceTile,
+		state
+	} as const)
 
-export const pickCorporationAction = (cards: string[]) => ({
-	type: PlayerActionType.PickCorporation,
-	data: {
+export const pickCorporationAction = (cards: string[]) =>
+	({
+		type: PlayerActionType.PickCorporation,
 		cards
-	}
-})
+	} as const)
 
-export const pickCardsAction = (cards: string[], limit = 0, free = false) => ({
-	type: PlayerActionType.PickCards,
-	data: {
+export const pickCardsAction = (cards: string[], limit = 0, free = false) =>
+	({
+		type: PlayerActionType.PickCards,
+
 		cards,
 		limit,
 		free
-	}
-})
+	} as const)
 
-export const pickPreludesAction = (cards: string[]) => ({
-	type: PlayerActionType.PickPreludes,
-	data: {
-		cards
-	}
-})
+export const pickPreludesAction = (cards: string[], limit = 0) =>
+	({
+		type: PlayerActionType.PickPreludes,
 
-export const playCardAction = (cardIndex: number) => ({
-	type: PlayerActionType.PlayCard,
-	data: {
+		cards,
+		limit
+	} as const)
+
+export const playCardAction = (cardIndex: number) =>
+	({
+		type: PlayerActionType.PlayCard,
+
 		cardIndex
-	}
-})
+	} as const)
 
-export const sponsorCompetition = (type: CompetitionType) => ({
-	type: PlayerActionType.SponsorCompetition,
-	data: {
-		type
-	}
-})
+export const sponsorCompetition = (competition: CompetitionType) =>
+	({
+		type: PlayerActionType.SponsorCompetition,
+
+		competition
+	} as const)
 
 export const selectPlayer = (
 	source: number,
 	choices: number[],
 	description: string
-) => ({
-	type: PlayerActionType.SponsorCompetition,
-	data: {
+) =>
+	({
+		type: PlayerActionType.SponsorCompetition,
 		source,
 		choices,
 		description
-	}
-})
+	} as const)
 
 export type PlayerAction =
 	| ReturnType<typeof placeTileAction>
@@ -74,3 +74,10 @@ export type PlayerAction =
 	| ReturnType<typeof playCardAction>
 	| ReturnType<typeof sponsorCompetition>
 	| ReturnType<typeof selectPlayer>
+
+export interface PlayerActionItem {
+	/** Action info */
+	action: PlayerAction
+	/** Should the action be only played when player is playing */
+	playing: boolean
+}

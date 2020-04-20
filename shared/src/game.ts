@@ -1,8 +1,7 @@
+import { CardCategory } from './cards'
 import { CompetitionType } from './competitions'
 import { MilestoneType } from './milestones'
 import { GameModeType } from './modes/types'
-import { PlacementState } from './placements'
-import { CardCategory } from './cards'
 import { PlayerAction } from './player-actions'
 
 export enum GameStateValue {
@@ -238,22 +237,12 @@ export interface PlayerState {
 	/** List of used cards */
 	usedCards: UsedCardState[]
 
-	/** List of cards to pick from */
-	cardsPick: string[]
-	cardsPickLimit: number
-	cardsPickFree: boolean
-
-	/** Is placing a tile */
-	placingTile: PlacementState[]
-
-	/** List of cards that are to be played - index in usedCards */
-	cardsToPlay: number[]
-
 	/** Bonus for game progress changes */
 	progressConditionBonus: number
 
 	victoryPoints: VictoryPoints[]
 
+	/** Pending actions to be played by the player */
 	pendingActions: PlayerAction[]
 }
 

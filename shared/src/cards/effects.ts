@@ -3,22 +3,28 @@ import {
 	GridCellOther,
 	GridCellSpecial,
 	GridCellType,
-	PlayerState,
-	PlayerStateValue
+	PlayerState
 } from '../game'
 import {
 	canPlace,
 	PlacementCode,
 	PlacementConditionsLookup
 } from '../placements'
+import {
+	pickCardsAction,
+	pickPreludesAction,
+	placeTileAction
+} from '../player-actions'
+import { otherWithArticle, tileWithArticle } from '../texts'
 import { withUnits } from '../units'
 import {
 	allCells,
 	drawCard,
 	drawCards,
-	flatten,
+	drawPreludeCards,
 	f,
-	drawPreludeCards
+	flatten,
+	pushPendingAction
 } from '../utils'
 import {
 	cardArg,
@@ -33,9 +39,9 @@ import {
 	cardResourceCondition,
 	cellTypeCondition,
 	condition,
+	gameCardsCondition,
 	productionCondition,
-	resourceCondition,
-	gameCardsCondition
+	resourceCondition
 } from './conditions'
 import { CardsLookupApi } from './lookup'
 import {
@@ -48,8 +54,8 @@ import {
 	GameProgress,
 	PlayerCondition,
 	Resource,
-	WithOptional,
-	SymbolType
+	SymbolType,
+	WithOptional
 } from './types'
 import {
 	cellByCoords,
@@ -57,10 +63,9 @@ import {
 	gamePlayer,
 	resourceProduction,
 	resToPrice,
-	updatePlayerResource,
-	updatePlayerProduction
+	updatePlayerProduction,
+	updatePlayerResource
 } from './utils'
-import { otherWithArticle, tileWithArticle } from '../texts'
 
 export const effect = <T extends (CardEffectArgumentType | undefined)[]>(
 	c: WithOptional<CardEffect<T>, 'args' | 'conditions' | 'type' | 'symbols'>
@@ -319,10 +324,13 @@ export function placeTile({
 				return
 			}
 
-			player.placingTile.push({
-				...placementState,
-				ownerCard: cardIndex
-			})
+			pushPendingAction(
+				player,
+				placeTileAction({
+					...placementState,
+					ownerCard: cardIndex
+				})
+			)
 		}
 	})
 }
@@ -591,22 +599,22 @@ export const pickPreludes = (cardCount: number, pickCount: number) =>
 	effect({
 		description: `Draw ${cardCount} prelude cards, use ${pickCount} of them and discard the rest`,
 		perform: ({ player, game }) => {
-			player.cardsPick = drawPreludeCards(game, cardCount)
-			player.cardsPickFree = true
-			player.cardsPickLimit = pickCount
-			player.state = PlayerStateValue.PickingPreludes
+			pushPendingAction(
+				player,
+				pickPreludesAction(drawPreludeCards(game, cardCount), pickCount)
+			)
 		}
 	})
 
-export const pickTopCards = (count: number, pickCount?: number, free = false) =>
+export const pickTopCards = (count: number, pickCount = 0, free = false) =>
 	effect({
 		description: `Look at top ${count} cards and either buy them or discard them`,
 		conditions: [gameCardsCondition(count)],
 		perform: ({ player, game }) => {
-			player.cardsPick = drawCards(game, count)
-			player.cardsPickFree = free
-			player.cardsPickLimit = pickCount || 0
-			player.state = PlayerStateValue.PickingCards
+			pushPendingAction(
+				player,
+				pickCardsAction(drawCards(game, count), pickCount || 0, free)
+			)
 		}
 	})
 

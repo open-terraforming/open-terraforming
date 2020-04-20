@@ -4,7 +4,8 @@ import {
 	PlayerState,
 	ProgressMilestoneType
 } from './game'
-import { keyMap } from './utils'
+import { keyMap, pushPendingAction } from './utils'
+import { placeTileAction } from './player-actions'
 
 export interface ProgressMilestone {
 	type: ProgressMilestoneType
@@ -34,9 +35,12 @@ const ProgressMilestonesList = [
 		effects: [
 			(game, player) => {
 				if (game.oceans < game.map.oceans) {
-					player.placingTile.push({
-						type: GridCellContent.Ocean
-					})
+					pushPendingAction(
+						player,
+						placeTileAction({
+							type: GridCellContent.Ocean
+						})
+					)
 				}
 			}
 		]

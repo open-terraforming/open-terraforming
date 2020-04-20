@@ -174,6 +174,7 @@ export interface CardEffectArgument {
 
 export interface CardPassiveEffect {
 	description: string
+	onGenerationStarted?: (ctx: CardCallbackContext, generation: number) => void
 	onTilePlaced?: (
 		ctx: CardCallbackContext,
 		cell: GridCell,

@@ -6,7 +6,7 @@ import {
 	resourceChange,
 	tagPriceChange
 } from '../effects'
-import { passiveEffect } from '../passive-effects'
+import { passiveEffect, asFirstAction } from '../passive-effects'
 import { CardCategory, CardSpecial, CardType } from '../types'
 import { card } from '../utils'
 
@@ -55,7 +55,7 @@ export const preludeCorporations = [
 				})
 			]
 		})
-	)
+	),
 	/*
 	TODO:
 	corp(
@@ -76,8 +76,6 @@ export const preludeCorporations = [
 		})
 	)
 	*/
-	/*
-	TODO: Pick preludes doesn't work like that
 	corp(
 		card({
 			code: 'valley_trust',
@@ -88,12 +86,11 @@ export const preludeCorporations = [
 			special: [CardSpecial.Prelude],
 			playEffects: [
 				resourceChange('money', 37),
-				tagPriceChange(CardCategory.Science, -2),
-				pickPreludes(3, 1)
-			]
+				tagPriceChange(CardCategory.Science, -2)
+			],
+			passiveEffects: [asFirstAction(pickPreludes(3, 1))]
 		})
 	)
-	*/
 	/*
 	TODO:
 	corp(

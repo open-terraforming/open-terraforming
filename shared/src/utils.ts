@@ -1,5 +1,6 @@
 import { COMPETITIONS_PRICES, MILESTONE_PRICE } from './constants'
-import { GameState, GridCell } from './game'
+import { GameState, GridCell, PlayerState } from './game'
+import { PlayerAction } from './player-actions'
 
 export const allCells = (game: GameState) => {
 	return game.map.grid.reduce((acc, c) => [...acc, ...c], [] as GridCell[])
@@ -167,4 +168,11 @@ export const milestonePrice = () => {
 
 export const competitionPrice = (game: GameState) => {
 	return COMPETITIONS_PRICES[game.competitions.length]
+}
+
+export const pushPendingAction = (
+	player: PlayerState,
+	action: PlayerAction
+) => {
+	player.pendingActions.push(action)
 }
