@@ -1,12 +1,12 @@
 import { GridCellContent, GridCellOther, GridCellSpecial } from '../../game'
-import { CityPlacement, OtherPlacement, PlacementCode } from '../../placements'
+import { OtherPlacement, PlacementCode } from '../../placements'
 import {
 	cardCountCondition,
 	gameProgressConditionMax,
 	gameProgressConditionMin,
+	joinedCardCountCondition,
 	ownedCellTypeCondition,
-	productionCondition,
-	joinedCardCountCondition
+	productionCondition
 } from '../conditions'
 import {
 	addResourceToCard,
@@ -1429,7 +1429,7 @@ export const baseCards: Card[] = [
 			productionChange('money', 2),
 			placeTile({
 				type: GridCellContent.City,
-				conditions: [...CityPlacement, PlacementCode.TwoCities]
+				conditions: [PlacementCode.NoOceans, PlacementCode.TwoCities]
 			})
 		]
 	}),

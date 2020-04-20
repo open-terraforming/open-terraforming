@@ -303,6 +303,9 @@ export function placeTile({
 				? ` (${conditions
 						?.map(c => PlacementConditionsLookup.get(c).description)
 						.join(', ')})`
+				: '') +
+			(special && special.length > 0
+				? ` on ${special?.map(c => GridCellSpecial[c]).join(' or ')})`
 				: ''),
 		conditions: [
 			condition({

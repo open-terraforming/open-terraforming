@@ -1,8 +1,12 @@
 BUGS:
-  * pick ecoline + business_empire and see what happens
+  * evaluate prelude conditions
+  * others can be placed anywhere
+  * LAVA TUBE SETTLEMENT -> better description
+  * pickTopCards incorrect description
+
 
 TODO:
-  * prelude conditions?
+  * playEffects are not important for actionable cards once played
   * finishing phase display
   * display sales when buying a card
   * better passive-effects display
@@ -11,8 +15,6 @@ TODO:
   * add played/bought icon
   * add card resource icon
   * symbols and text collisions :(
-  * reset game state after connecting
-
   * display number of card tags with hover counts
   * display player corporation
   * SOUNDS:
@@ -22,29 +24,6 @@ TODO:
   * Preludes category in cards display
   * player which creates a game should be admin of said game?
   * evaluate vps on enemy cards
-  * actionQueue
-    -> solution to some unimplementable cards
-    -> list of actions player have to perform:
-      - placeTile
-        -> currently implemented as placeTile[]
-      - playCardAction
-        -> currently implemented as cardAction[]
-      - buyAward
-        -> not implemented - blocking card implementation
-      - pickPlayer (with description)
-        -> not implemented - blocking card implementation
-    -> should dispatch onActionPerformed
-      - should include ID, so triggering card can recognize it and do some cleanup
-      - also data about action
-    -> finishing the action queue should count as action
-    -> doing anything will not count as action if there's something in actionQueue (what about milestones?)
-  * effect argument type - production
-    -> allows to choose between different resources
-    -> allow choice from only selected list of resources
-  * only send changed data
-    -> 15 kiB per message is not the best way to do this
-    -> keep track of what state was sent to client last, only send the diff
-  * wait for second after playing last action before moving to another player?
 
 CHECK CARDS:
   * pets

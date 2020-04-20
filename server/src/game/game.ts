@@ -309,14 +309,16 @@ export class Game {
 			PlayerColors.filter(c => !usedColors.includes(c))
 		)
 
-		this.state.players.forEach(p => {
-			p.color =
-				availableColors.length > 0
-					? (availableColors.pop() as string)
-					: randomPlayerColor(
-							this.state.players.map(p => p.color).filter(c => c !== '')
-					  )
-		})
+		this.state.players
+			.filter(p => !p.color || p.color === '')
+			.forEach(p => {
+				p.color =
+					availableColors.length > 0
+						? (availableColors.pop() as string)
+						: randomPlayerColor(
+								this.state.players.map(p => p.color).filter(c => c !== '')
+						  )
+			})
 
 		// Create card pool
 		let cards = Object.values(CardsLookupApi.data())

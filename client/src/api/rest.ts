@@ -1,7 +1,8 @@
 import { ServerInfo, GameInfo } from '@shared/extra'
 import { GameModeType } from '@shared/modes/types'
 
-const basePath = location.protocol + '//' + process.env.APP_API_URL
+const basePath =
+	location.protocol + '//' + (process.env.APP_API_URL || location.host)
 
 export const getServerInfo = (): Promise<ServerInfo> =>
 	fetch(basePath + '/info').then(res => res.json())

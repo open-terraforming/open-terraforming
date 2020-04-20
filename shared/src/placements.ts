@@ -150,10 +150,7 @@ export const PlacementConditionsLookup = {
 
 export const OceanPlacement = [PlacementCode.OceanOnly]
 export const CityPlacement = [PlacementCode.NoOceans, PlacementCode.NoCity]
-export const OtherPlacement = [
-	PlacementCode.NoOceans,
-	PlacementCode.NextToOwnOrFree
-]
+export const OtherPlacement = [PlacementCode.NoOceans]
 export const ForestPlacement = [
 	PlacementCode.NoOceans,
 	PlacementCode.NextToOwnOrFree

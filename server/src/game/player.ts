@@ -148,6 +148,8 @@ export class Player {
 
 		this.state.pendingActions.shift()
 
+		this.filterPendingActions()
+
 		// TODO: This works by accident
 		const actuallyPending = this.state.pendingActions.filter(p => {
 			if (p.type === PlayerActionType.PlaceTile) {
@@ -660,7 +662,6 @@ export class Player {
 			player: this
 		})
 
-		this.filterPendingActions()
 		this.popAction()
 	}
 

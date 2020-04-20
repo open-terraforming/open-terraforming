@@ -77,7 +77,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 			outside: true
 		},
 		2: { ore: 2 },
-		3: { ore: 2 },
+		3: { ore: 2, type: GridCellType.Ocean },
 		4: {},
 		5: { cards: 1, type: GridCellType.Ocean },
 		6: { type: GridCellType.Ocean }
