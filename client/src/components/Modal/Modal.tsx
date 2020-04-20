@@ -2,12 +2,11 @@ import { colors } from '@/styles'
 import { useWindowEvent } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useCallback, useState } from 'react'
-import styled, { css, keyframes, Keyframes } from 'styled-components'
-import { Portal } from '../Portal/Portal'
-import { Body, Footer, Header } from './styles'
 import { darken, rgba } from 'polished'
+import React, { useCallback, useState } from 'react'
 import ReactDOM from 'react-dom'
+import styled, { css, keyframes, Keyframes } from 'styled-components'
+import { Body, Footer, Header } from './styles'
 
 type RenderCallback = (
 	close: () => void,
@@ -193,7 +192,7 @@ const background = rgba(colors.background, 0.95)
 const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	position: relative;
 	min-width: 200px;
-	max-width: 90%;
+	max-width: 80%;
 	margin: auto;
 	border: 2px solid ${colors.border};
 	padding: 0px;

@@ -197,6 +197,8 @@ const DiffAnim = styled.div`
 	animation-timing-function: ease-out;
 	animation-fill-mode: forwards;
 
+	text-transform: none;
+
 	color: #fff;
 	text-align: center;
 	display: flex;

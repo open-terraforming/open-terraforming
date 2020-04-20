@@ -45,8 +45,10 @@ export const Controls = () => {
 		: undefined
 
 	const pending =
-		player.state === PlayerStateValue.Playing ||
-		player.state === PlayerStateValue.Picking
+		player.state === PlayerStateValue.Playing
+			? pendingAction
+			: player.state === PlayerStateValue.Picking &&
+			  pendingAction?.type !== PlayerActionType.PlaceTile
 			? pendingAction
 			: undefined
 

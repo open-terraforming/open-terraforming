@@ -334,7 +334,10 @@ export class Bot extends Player {
 			case PlayerStateValue.Picking: {
 				if (this.pendingAction) {
 					actions.push([0, () => this.performPending(this.pendingAction)])
+				} else {
+					this.logger.error('Nothing to do, yet I have to pick something...')
 				}
+				break
 			}
 
 			case PlayerStateValue.EndingTiles: {
@@ -345,11 +348,7 @@ export class Bot extends Player {
 					)
 					if (tile) {
 						actions.push([0, () => this.placeTile(tile.x, tile.y)])
-					} else {
-						actions.push([0, () => this.pass(true)])
 					}
-				} else {
-					actions.push([0, () => this.pass(true)])
 				}
 				break
 			}

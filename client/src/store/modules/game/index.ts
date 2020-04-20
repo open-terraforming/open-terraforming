@@ -5,6 +5,7 @@ import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
 import { getEvents } from './utils'
 import { GameInfo } from '@shared/extra'
 import { PlayerAction } from '@shared/player-actions'
+import { objDiff } from '@/utils/collections'
 
 type State = Readonly<typeof initialState>
 
@@ -26,6 +27,11 @@ export default (state = initialState, action: Action): State => {
 			const player = action.state.players.find(p => p.id === state.playerId)
 			const events = getEvents(state.state, action.state)
 			const pendingAction = player?.pendingActions[0]
+
+			console.groupCollapsed('Game changed')
+			console.log('GAME', action.state)
+			console.log('DIFF', objDiff(state.state, action.state))
+			console.groupEnd()
 
 			return {
 				...state,

@@ -2,6 +2,7 @@ BUGS:
   * pick ecoline + business_empire and see what happens
 
 TODO:
+  * prelude conditions?
   * finishing phase display
   * display sales when buying a card
   * better passive-effects display

@@ -354,7 +354,7 @@ const Container = styled.div<ContainerCtx>`
 	height: 350px;
 	max-height: 350px;
 	overflow: visible;
-	margin: 0 0.5rem;
+	margin: 0.5rem 0.5rem;
 	display: flex;
 	flex-direction: column;
 	position: relative;

@@ -55,6 +55,10 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 				if (gameChanges.usedCards) {
 					Object.entries(gameChanges.usedCards).forEach(
 						([cardIndex, cardChanges]) => {
+							if (!cardChanges) {
+								return
+							}
+
 							const oldCard = player.usedCards[parseInt(cardIndex)]
 
 							if (!oldCard) {

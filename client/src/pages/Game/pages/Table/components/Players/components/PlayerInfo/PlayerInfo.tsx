@@ -55,6 +55,7 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 			onClose={onClose}
 			header={`${player.name}`}
 			contentStyle={{ width: '80%' }}
+			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
 		>
 			<Info>
 				<ResItem

@@ -20,7 +20,7 @@ export const TotalCards = ({ onClick }: Props) => {
 		<CardsCounter
 			onClick={handleClick}
 			count={count}
-			text="cards"
+			text="all"
 			disabled={count === 0}
 		/>
 	)

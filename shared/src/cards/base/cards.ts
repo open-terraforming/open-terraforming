@@ -2413,7 +2413,7 @@ export const baseCards: Card[] = [
 		type: CardType.Event,
 		cost: 4,
 		categories: [CardCategory.Event, CardCategory.Science],
-		playEffects: [changeProgressConditionBonus(2)],
+		playEffects: [noDesc(changeProgressConditionBonus(2))],
 		passiveEffects: [resetProgressBonus(2)]
 	}),
 	card({

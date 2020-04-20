@@ -88,6 +88,7 @@ export const CardPicker = ({ prelude }: Props) => {
 						: 'Select nothing'}
 				</Button>
 			}
+			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
 		>
 			<GameProgress>
 				<ProgressItem>
@@ -116,7 +117,7 @@ export const CardPicker = ({ prelude }: Props) => {
 				</ProgressItem>
 			</GameProgress>
 
-			<CardsContainer>
+			<CardsContainer style={{ flex: 1 }}>
 				{cardsToPick?.map(
 					(c, i) =>
 						c && (

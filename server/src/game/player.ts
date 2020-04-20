@@ -7,16 +7,16 @@ import {
 	CardCondition,
 	CardEffect,
 	CardEffectArgumentType,
+	CardEffectTarget,
 	CardsLookupApi,
-	CardType,
-	CardEffectTarget
+	CardType
 } from '@shared/cards'
 import {
 	adjustedCardPrice,
 	cellByCoords,
-	updatePlayerResource,
 	emptyCardState,
-	gamePlayer
+	gamePlayer,
+	updatePlayerResource
 } from '@shared/cards/utils'
 import { CompetitionType } from '@shared/competitions'
 import {
@@ -40,21 +40,15 @@ import {
 } from '@shared/game'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, PlacementConditionsLookup } from '@shared/placements'
+import { PlayerActionType } from '@shared/player-actions'
+import { PlayerColors } from '@shared/player-colors'
 import { Projects, StandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
-import {
-	adjacentCells,
-	allCells,
-	drawCards,
-	drawPreludeCards,
-	pushPendingAction
-} from '@shared/utils'
+import { adjacentCells, allCells, drawCards } from '@shared/utils'
+import Hashids from 'hashids/cjs'
 import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
-import Hashids from 'hashids/cjs'
-import { PlayerColors } from '@shared/player-colors'
-import { PlayerActionType, pickPreludesAction } from '@shared/player-actions'
 
 export interface CardPlayedEvent {
 	player: Player
@@ -153,7 +147,19 @@ export class Player {
 		}
 
 		this.state.pendingActions.shift()
-		if (this.state.pendingActions.length === 0) {
+
+		// TODO: This works by accident
+		const actuallyPending = this.state.pendingActions.filter(p => {
+			if (p.type === PlayerActionType.PlaceTile) {
+				return (
+					this.game.state.state === GameStateValue.GenerationInProgress ||
+					this.game.state.state === GameStateValue.EndingTiles
+				)
+			}
+			return true
+		})
+
+		if (actuallyPending.length === 0) {
 			switch (this.game.state.state) {
 				case GameStateValue.GenerationInProgress: {
 					switch (this.state.state) {
@@ -731,9 +737,8 @@ export class Player {
 		const top = this.pendingAction
 
 		if (
-			top === undefined ||
-			top.type !== PlayerActionType.PlayCard ||
-			top.cardIndex !== index
+			top !== undefined &&
+			(top.type !== PlayerActionType.PlayCard || top.cardIndex !== index)
 		) {
 			throw new Error("You've got pending actions to attend to")
 		}

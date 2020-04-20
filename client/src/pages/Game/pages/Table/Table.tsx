@@ -16,6 +16,7 @@ import { Players } from './components/Players/Players'
 export const Table = () => {
 	const pending = useAppStore(state => state.game.pendingAction)
 
+	/*
 	const events = useEvents()
 	const lastEvent = useRef<RealtimeEventEmit | null>()
 
@@ -31,6 +32,7 @@ export const Table = () => {
 
 		lastEvent.current = mouseMoveEvent(pos[0], pos[1])
 	})
+	*/
 
 	useEffect(() => {
 		if (

@@ -198,13 +198,14 @@ export const CardDisplay = <T extends CardInfo>({
 
 const CardsContainer = styled.div<{ playableOnly: boolean }>`
 	display: flex;
-	overflow-x: scroll;
-	overflow-y: visible;
+	overflow: auto;
+	flex-wrap: wrap;
 	justify-content: flex-start;
 	align-items: center;
 	min-width: 0;
 	padding: 1.5rem 1rem;
 	min-height: 322px;
+	flex: 1;
 
 	${props =>
 		props.playableOnly &&

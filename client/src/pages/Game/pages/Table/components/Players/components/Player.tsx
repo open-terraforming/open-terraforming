@@ -105,7 +105,11 @@ export const Player = ({
 								color="#F5FC78"
 								fixedWidth
 							/>
-							{`Action ${state.actionsPlayed} of 2`}
+							{pending
+								? `${state.actionsPlayed}/2 `
+								: `Action ${state.actionsPlayed} of 2`}
+
+							{pending && `${pendingToStr[pending.type]}`}
 						</>
 					) : (
 						<>
@@ -116,11 +120,10 @@ export const Player = ({
 									size="sm"
 								/>
 							)}{' '}
-							{stateToStr[state.state] || PlayerStateValue[state.state]}
+							{stateToStr[state.state]}
+							{pending && ` ${pendingToStr[pending.type]}`}
 						</>
 					)}
-
-					{pending && ` ${pendingToStr[pending.type]}`}
 				</State>
 			</InfoContainer>
 			<Color style={{ backgroundColor: player.color }} />

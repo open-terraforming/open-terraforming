@@ -1,4 +1,3 @@
-import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
 import { setTableState } from '@/store/modules/table'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
@@ -65,9 +64,10 @@ export const Hand = ({
 	return (
 		<Modal
 			open={true}
-			contentStyle={{ width: '90%' }}
+			contentStyle={{ width: '80%', maxWidth: '80%' }}
 			onClose={onClose}
 			header={'Cards in your hand'}
+			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
 		>
 			<CardDisplay
 				buying
