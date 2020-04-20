@@ -22,6 +22,7 @@ export const Footer = styled.div<{ stretchFooterButtons: boolean }>`
 	padding: 10px;
 	display: flex;
 	justify-content: flex-end;
+	align-items: center;
 
 	> button {
 		display: inline-block;

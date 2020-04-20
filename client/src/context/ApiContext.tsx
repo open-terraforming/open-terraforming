@@ -1,7 +1,7 @@
 import { Client } from '@/api/api'
 import { ApiState, setApiError, setApiState } from '@/store/modules/api'
 import { setClientState } from '@/store/modules/client'
-import { setGamePlayer, setGameState } from '@/store/modules/game'
+import { setGamePlayer, setGameState, setGameInfo } from '@/store/modules/game'
 import { useAppStore } from '@/utils/hooks'
 import {
 	GameStateValue,
@@ -109,6 +109,10 @@ export const ApiContextProvider = ({
 								gameState: info?.state
 							})
 						)
+
+						if (info) {
+							dispatch(setGameInfo(info))
+						}
 
 						const session = sessions[sessionKey]
 

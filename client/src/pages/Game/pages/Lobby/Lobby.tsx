@@ -8,11 +8,14 @@ import React from 'react'
 import styled from 'styled-components'
 import { Player } from './components/Player'
 import { Modal } from '@/components/Modal/Modal'
+import { Flex } from '@/components/Flex/Flex'
+import { Info } from './components/Info'
 
 export const Lobby = () => {
 	const api = useApi()
 	const players = useAppStore(state => state.game.state?.players)
 	const player = useAppStore(state => state.game.player)
+	const info = useAppStore(state => state.game.info)
 	const isReady = player?.state === PlayerStateValue.Ready
 
 	const handleReady = () => {
@@ -22,25 +25,43 @@ export const Lobby = () => {
 	return (
 		<>
 			<Mars />
-			<Modal open={true} allowClose={false} header="Waiting for players">
-				{players?.map(p => (
-					<Player
-						name={p.name}
-						color={p.color}
-						key={p.id}
-						current={p.id === player?.id}
-						ready={p.state === PlayerStateValue.Ready}
-					/>
-				))}
-
-				<Ready onClick={handleReady} icon={isReady ? faTimes : faCheck}>
-					{isReady ? 'Not ready' : 'Ready'}
-				</Ready>
+			<Modal
+				open={true}
+				allowClose={false}
+				header={info?.name}
+				footer={
+					<>
+						<Waiting>Waiting for players</Waiting>
+						<Button onClick={handleReady} icon={isReady ? faTimes : faCheck}>
+							{isReady ? 'Not ready' : 'Ready'}
+						</Button>
+					</>
+				}
+			>
+				<Flex align="flex-start">
+					<Players>
+						{players?.map(p => (
+							<Player
+								name={p.name}
+								color={p.color}
+								key={p.id}
+								bot={p.bot}
+								current={p.id === player?.id}
+								ready={p.state === PlayerStateValue.Ready}
+							/>
+						))}
+					</Players>
+					{info && <Info info={info} />}
+				</Flex>
 			</Modal>
 		</>
 	)
 }
 
-const Ready = styled(Button)`
-	margin: 1rem auto 0 auto;
+const Players = styled.div`
+	min-width: 12rem;
+`
+
+const Waiting = styled.div`
+	margin-right: auto;
 `

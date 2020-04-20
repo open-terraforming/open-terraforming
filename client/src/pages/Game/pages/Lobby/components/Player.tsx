@@ -1,19 +1,23 @@
-import React, { useState } from 'react'
+import { useApi } from '@/context/ApiContext'
+import { useAppStore } from '@/utils/hooks'
+import { faRobot } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { pickColor } from '@shared/index'
+import { PlayerColors } from '@shared/player-colors'
+import React from 'react'
 import styled, { css } from 'styled-components'
 import { ColorPicker } from './ColorPicker'
-import { useAppStore } from '@/utils/hooks'
-import { PlayerColors } from '@shared/player-colors'
-import { useApi } from '@/context/ApiContext'
-import { pickColor } from '@shared/index'
+import { mainColors } from '@/styles'
 
 type Props = {
 	name: string
 	color: string
 	ready: boolean
 	current: boolean
+	bot: boolean
 }
 
-export const Player = ({ name, ready, color, current }: Props) => {
+export const Player = ({ name, ready, color, current, bot }: Props) => {
 	const api = useApi()
 
 	const playerId = useAppStore(state => state.game.playerId)
@@ -35,16 +39,25 @@ export const Player = ({ name, ready, color, current }: Props) => {
 
 	return (
 		<PlayerContainer>
-			<ColorPicker
-				value={colorIndex}
-				colors={colors}
-				readOnly={!current}
-				onChange={v => {
-					changeColor(v)
-				}}
-			/>
+			<Picker>
+				<ColorPicker
+					value={colorIndex}
+					colors={colors}
+					readOnly={!current}
+					onChange={v => {
+						changeColor(v)
+					}}
+				/>
+			</Picker>
 			<span>{name}</span>
-			<PlayerState ready={ready}>{ready ? 'Ready' : 'Waiting'}</PlayerState>
+			{!bot && (
+				<PlayerState ready={ready}>{ready ? 'Ready' : 'Waiting'}</PlayerState>
+			)}
+			{bot && (
+				<PlayerState ready>
+					<FontAwesomeIcon icon={faRobot} color={mainColors.text} />
+				</PlayerState>
+			)}
 		</PlayerContainer>
 	)
 }
@@ -61,4 +74,11 @@ const PlayerState = styled.div<{ ready: boolean }>`
 	${props => css`
 		color: ${props.ready ? '#33ff33' : '#999'};
 	`}
+`
+
+const Picker = styled.div`
+	width: 3rem;
+	max-width: 3rem;
+	display: flex;
+	justify-content: center;
 `

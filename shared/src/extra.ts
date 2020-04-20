@@ -8,6 +8,7 @@ export interface GameInfo {
 	state: GameStateValue
 	players: number
 	maxPlayers: number
+	prelude: boolean
 }
 
 export interface ServerInfo {

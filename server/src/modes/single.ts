@@ -40,9 +40,7 @@ export const singleApp = (
 				game.events.socket.emit('connection', ws, request)
 			})
 		} else {
-			game.socket.handleUpgrade(request, socket, head, ws => {
-				game.socket.emit('connection', ws, request)
-			})
+			game.handleUpgrade(request, socket, head)
 		}
 	})
 

@@ -177,6 +177,8 @@ export class Player {
 
 		this.onCardPlayed.emit({ card: corp, cardIndex: -1, player: this })
 
+		console.log(PlayerStateValue[this.state.state])
+
 		if (
 			(this.state.state as PlayerStateValue) !== PlayerStateValue.PickingCards
 		) {

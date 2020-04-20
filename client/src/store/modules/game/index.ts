@@ -3,11 +3,13 @@ import { keyMap } from '@shared/utils'
 import { initialGameState, initialPlayerState } from '@shared/states'
 import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
 import { getEvents } from './utils'
+import { GameInfo } from '@shared/extra'
 
 type State = Readonly<typeof initialState>
 
 const initialState = {
 	playerId: undefined as number | undefined,
+	info: undefined as GameInfo | undefined,
 	state: initialGameState(),
 	player: initialPlayerState(),
 	playerMap: {} as Record<number, PlayerState>,
@@ -52,6 +54,13 @@ export default (state = initialState, action: Action): State => {
 			}
 		}
 
+		case SET_GAME_INFO: {
+			return {
+				...state,
+				info: action.info
+			}
+		}
+
 		default:
 			return state
 	}
@@ -59,27 +68,27 @@ export default (state = initialState, action: Action): State => {
 
 const SET_GAME_STATE = 'SET_GAME_STATE'
 const SET_GAME_PLAYER = 'SET_GAME_PLAYER'
-
-interface SetGameState {
-	type: typeof SET_GAME_STATE
-	state: GameState
-}
+const SET_GAME_INFO = 'SET_GAME_INFO'
 
 export const setGameState = (state: GameState) =>
 	({
 		type: SET_GAME_STATE,
 		state
-	} as SetGameState)
-
-interface SetGamePlayer {
-	type: typeof SET_GAME_PLAYER
-	playerId: number
-}
+	} as const)
 
 export const setGamePlayer = (playerId: number) =>
 	({
 		type: SET_GAME_PLAYER,
 		playerId
-	} as SetGamePlayer)
+	} as const)
 
-type Action = SetGameState | SetGamePlayer
+export const setGameInfo = (info: GameInfo) =>
+	({
+		type: SET_GAME_INFO,
+		info
+	} as const)
+
+type Action =
+	| ReturnType<typeof setGameState>
+	| ReturnType<typeof setGamePlayer>
+	| ReturnType<typeof setGameInfo>

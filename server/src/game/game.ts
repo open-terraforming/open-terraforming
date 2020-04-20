@@ -476,6 +476,7 @@ export class Game {
 	finishGame() {
 		this.logger.log(`Game finished`)
 
+		this.state.ended = new Date().toISOString()
 		this.state.state = GameStateValue.Ended
 
 		this.players.forEach(p => {
@@ -589,7 +590,8 @@ export class Game {
 			state: this.state.state,
 			name: this.state.name,
 			players: this.players.length,
-			maxPlayers: this.state.maxPlayers
+			maxPlayers: this.state.maxPlayers,
+			prelude: this.state.prelude
 		}
 	}
 }

@@ -85,6 +85,8 @@ export interface GameState {
 
 	/** ISO Date of game start */
 	started: string
+	/** ISO Date of game end */
+	ended: string
 
 	maxPlayers: number
 }
@@ -100,6 +102,8 @@ export interface CompetitionState {
 }
 
 export interface MapState {
+	name: string
+
 	width: number
 	height: number
 

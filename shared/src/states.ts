@@ -26,6 +26,7 @@ export const initialGameState = (id = 'game'): GameState => ({
 	corporations: [],
 	corporationsDiscarded: [],
 	started: new Date().toISOString(),
+	ended: '',
 	maxPlayers: 5
 })
 

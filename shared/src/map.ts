@@ -168,6 +168,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 export const defaultMap = () => {
 	const grid = generateGrid(9, 9, (x, y) => preset[y][x])
 	const map: MapState = {
+		name: 'Standard',
 		width: 9,
 		height: 9,
 		grid,
