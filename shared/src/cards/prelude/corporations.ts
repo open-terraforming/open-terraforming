@@ -55,7 +55,7 @@ export const preludeCorporations = [
 				})
 			]
 		})
-	),
+	)
 	/*
 	TODO:
 	corp(
@@ -76,6 +76,8 @@ export const preludeCorporations = [
 		})
 	)
 	*/
+	/*
+	TODO: Pick preludes doesn't work like that
 	corp(
 		card({
 			code: 'valley_trust',
@@ -91,6 +93,7 @@ export const preludeCorporations = [
 			]
 		})
 	)
+	*/
 	/*
 	TODO:
 	corp(
