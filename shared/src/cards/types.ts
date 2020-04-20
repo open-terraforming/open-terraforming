@@ -199,7 +199,9 @@ export enum SymbolType {
 	Slash,
 	Card,
 	TerraformingRating,
-	RightArrow
+	RightArrow,
+	Temperature,
+	Oxygen
 }
 
 export interface CardSymbol {

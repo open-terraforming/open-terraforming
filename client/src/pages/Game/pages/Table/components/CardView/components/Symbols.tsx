@@ -4,6 +4,8 @@ import styled, { css } from 'styled-components'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { TileIcon } from '../../TileIcon/TileIcon'
 import { Card } from '@/icons/card'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
 	symbols: CardSymbol[]
@@ -22,6 +24,10 @@ const symbolToIcon = (s: CardSymbol) => {
 				return '/'
 			case SymbolType.TerraformingRating:
 				return 'TR'
+			case SymbolType.Oxygen:
+				return 'O2'
+			case SymbolType.Temperature:
+				return <FontAwesomeIcon icon={faThermometerHalf} />
 		}
 	}
 
@@ -43,8 +49,8 @@ export const Symbols = ({ symbols }: Props) => {
 				<S key={i} production={s.production} other={s.other}>
 					{s.count !== undefined && (
 						<Count>
-							{s.count > 0 ? '+' : ''}
-							{s.count}
+							{s.count >= 0 ? '+' : '-'}
+							{Math.abs(s.count) !== 1 && Math.abs(s.count)}
 						</Count>
 					)}{' '}
 					{symbolToIcon(s)}

@@ -3,7 +3,8 @@ BUGS:
 
 TODO:
   * finishing phase display
-  * game progress symbols
+  * display sales when buying a card
+  * better passive-effects display
   * as your first action
   * resource usage when buying card has wrong margin
   * add played/bought icon

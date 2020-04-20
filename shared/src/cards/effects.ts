@@ -252,6 +252,13 @@ export const gameProcessChange = (res: GameProgress, change: number) => {
 			change > 0
 				? `Increase ${res} by ${change} step`
 				: `Decrease ${res} by ${-change} step`,
+		symbols: [
+			{
+				symbol:
+					res === 'temperature' ? SymbolType.Temperature : SymbolType.Oxygen,
+				count: change
+			}
+		],
 		perform: ({ game, player }) => {
 			const update = Math.min(game.map[res] - game[res], change)
 
@@ -411,6 +418,7 @@ export const joinedEffects = (effects: CardEffect[]) =>
 		args: flatten(effects.map(e => e.args)),
 		description: effects.map(e => e.description || '').join(' and '),
 		conditions: flatten(effects.map(e => e.conditions)),
+		symbols: flatten(effects.map(e => e.symbols)),
 		perform: (ctx, ...args) => {
 			effects.forEach(e => {
 				e.perform(
