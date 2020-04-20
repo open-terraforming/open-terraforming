@@ -18,7 +18,8 @@ import {
 } from '@shared/index'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
-import { sanitize } from '@shared/utils'
+import { sanitize, shuffle } from '@shared/utils'
+import { CardsLookupApi } from '@shared/cards'
 
 enum ClientState {
 	Initializing,
@@ -35,6 +36,8 @@ export class Client {
 	server: GameServer
 	socket: WebSocket
 	state: ClientState
+
+	cardDictionary?: Record<string, string>
 
 	lastState?: GameState
 
@@ -264,6 +267,20 @@ export class Client {
 	}
 
 	sendUpdate(game: GameState) {
-		this.send(gameStateUpdate(obfuscateGame(game, this.player?.state)))
+		if (!this.cardDictionary) {
+			this.cardDictionary = shuffle(Object.keys(CardsLookupApi.data())).reduce(
+				(acc, c, i) => {
+					acc[c] = i.toString(16)
+					return acc
+				},
+				{} as Record<string, string>
+			)
+		}
+
+		this.send(
+			gameStateUpdate(
+				obfuscateGame(game, this.player?.state, this.cardDictionary)
+			)
+		)
 	}
 }
