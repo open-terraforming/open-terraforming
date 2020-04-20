@@ -1,5 +1,5 @@
 import { CardsLookupApi, CardSpecial } from '../cards'
-import { GameState } from '../game'
+import { GameState, PlayerStateValue } from '../game'
 import { pickCorporationAction } from '../player-actions'
 import { pushPendingAction } from '../utils'
 import { GameMode, GameModeType } from './types'
@@ -35,6 +35,7 @@ export const prepareCorporations = (game: GameState, amount = 2) => {
 		cards.push(...game.corporations)
 
 		pushPendingAction(p, pickCorporationAction(cards))
+		p.state = PlayerStateValue.Picking
 	})
 }
 

@@ -1,8 +1,9 @@
 import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
-import { useAppStore, useWindowEvent } from '@/utils/hooks'
+import { useAppStore } from '@/utils/hooks'
 import { placeTile } from '@shared/actions'
 import { GridCell, PlayerStateValue } from '@shared/game'
+import { PlayerActionType } from '@shared/player-actions'
 import React, { useRef } from 'react'
 import styled from 'styled-components'
 import { Cell } from './components/Cell'
@@ -57,7 +58,7 @@ export const GameMap = ({}: Props) => {
 	})
 	*/
 
-	const placingList = useAppStore(state => state.game.player?.placingTile)
+	const pending = useAppStore(state => state.game.pendingAction)
 
 	const isPlaying = useAppStore(
 		state =>
@@ -66,8 +67,8 @@ export const GameMap = ({}: Props) => {
 	)
 
 	const placing =
-		isPlaying && placingList && placingList.length > 0
-			? placingList[0]
+		isPlaying && pending && pending.type === PlayerActionType.PlaceTile
+			? pending.state
 			: undefined
 
 	const handleCellClick = (cell: GridCell) => {

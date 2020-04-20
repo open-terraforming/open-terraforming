@@ -1,26 +1,34 @@
+import { GridCellContent } from '../../game'
+import { withUnits } from '../../units'
+import { f } from '../../utils'
 import { condition } from '../conditions'
 import {
 	earthCardPriceChange,
 	effect,
 	exchangeResources,
 	getTopCards,
+	pickPreludes,
 	pickTopCards,
-	placeTile,
+	placeCity,
 	productionChange,
 	resourceChange,
-	titanPriceChange
+	titanPriceChange,
+	emptyEffect
 } from '../effects'
-import { passiveEffect } from '../passive-effects'
-import { Card, CardCategory, CardType, CardSpecial } from '../types'
-import { card, updatePlayerProduction, updatePlayerResource } from '../utils'
-import { GridCellContent } from '../../game'
-import { withUnits } from '../../units'
-import { f } from '../../utils'
+import { asFirstAction, passiveEffect } from '../passive-effects'
+import { Card, CardCategory, CardSpecial, CardType } from '../types'
+import {
+	card,
+	noDesc,
+	updatePlayerProduction,
+	updatePlayerResource
+} from '../utils'
 
 export const corp = (c: Card, pickingCards = true): Card => {
 	if (pickingCards) {
 		c.playEffects = [
-			effect({ ...pickTopCards(10), description: '' }),
+			noDesc(effect(pickTopCards(10))),
+			noDesc(effect(pickPreludes(4, 2))),
 			...c.playEffects
 		]
 	}
@@ -184,9 +192,12 @@ export const baseCorporations = [
 			type: CardType.Corporation,
 			playEffects: [
 				resourceChange('money', 40),
-				placeTile({ type: GridCellContent.City })
+				emptyEffect('As your first action, place a City', [
+					{ tile: GridCellContent.City }
+				])
 			],
 			passiveEffects: [
+				asFirstAction(placeCity()),
 				passiveEffect({
 					description: f(
 						'When any city tile is placed on Mars, increase your money production by 1. When you place a city tile, gain {0}',

@@ -165,13 +165,15 @@ export class Player {
 					break
 				}
 
-				case GameStateValue.Starting: {
+				case GameStateValue.Starting:
+				case GameStateValue.PickingCards: {
 					this.state.state = PlayerStateValue.WaitingForTurn
 					break
 				}
 
 				case GameStateValue.EndingTiles: {
 					this.pass(true)
+					break
 				}
 			}
 		}
@@ -215,7 +217,6 @@ export class Player {
 		this.onCardPlayed.emit({ card: corp, cardIndex: -1, player: this })
 
 		this.popAction()
-		this.updated()
 	}
 
 	pickPreludes(cards: number[]) {
@@ -310,17 +311,6 @@ export class Player {
 		this.game.state.discarded.push(
 			...top.cards.filter((_c, i) => !cards.includes(i))
 		)
-
-		// TODO: Move this elsewhere
-		if (
-			this.game.state.state === GameStateValue.Starting &&
-			this.game.state.prelude
-		) {
-			pushPendingAction(
-				this.state,
-				pickPreludesAction(drawPreludeCards(this.game.state, 4))
-			)
-		}
 
 		this.popAction()
 	}

@@ -371,6 +371,7 @@ export class Game {
 				break
 
 			case GameStateValue.Starting:
+			case GameStateValue.PickingCards:
 				if (this.all(PlayerStateValue.WaitingForTurn)) {
 					this.logger.log(`All players ready, starting the round`)
 
@@ -380,8 +381,11 @@ export class Game {
 							? (this.state.startingPlayer - 1) % this.state.players.length
 							: this.state.players.length - 1
 
+					if (this.state.state === GameStateValue.Starting) {
+						this.handleNewGeneration(this.state.generation)
+					}
+
 					this.state.state = GameStateValue.GenerationInProgress
-					this.handleNewGeneration(this.state.generation)
 
 					this.updated()
 				}
@@ -603,6 +607,7 @@ export class Game {
 		} else {
 			this.players.forEach(p => {
 				pushPendingAction(p.state, pickCardsAction(drawCards(this.state, 4)))
+				p.state.state = PlayerStateValue.Picking
 			})
 
 			this.state.state = GameStateValue.PickingCards

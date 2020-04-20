@@ -1,5 +1,7 @@
-import { useAppStore, useWindowEvent, useAnimationFrame } from '@/utils/hooks'
-import { PlayerStateValue } from '@shared/index'
+import { useEvents } from '@/context/EventsContext'
+import { useAnimationFrame, useAppStore, useWindowEvent } from '@/utils/hooks'
+import { mouseMoveEvent, RealtimeEventEmit } from '@shared/events'
+import { PlayerActionType } from '@shared/player-actions'
 import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { CardPicker } from './components/CardPicker/CardPicker'
@@ -7,15 +9,12 @@ import { Controls } from './components/Controls/Controls'
 import { CorporationPicker } from './components/CorporationPicker/CorporationPicker'
 import { GameMap } from './components/GameMap/GameMap'
 import { GlobalState } from './components/GlobalState/GlobalState'
-import { Players } from './components/Players/Players'
-import { useEvents } from '@/context/EventsContext'
-import { mouseMoveEvent, RealtimeEventEmit } from '@shared/events'
-import { Mouses } from './components/Mouses/Mouses'
 import { Header } from './components/Header/Header'
+import { Mouses } from './components/Mouses/Mouses'
+import { Players } from './components/Players/Players'
 
 export const Table = () => {
-	const gameState = useAppStore(state => state.game.state)
-	const playerState = useAppStore(state => state.game.player?.state)
+	const pending = useAppStore(state => state.game.pendingAction)
 
 	const events = useEvents()
 	const lastEvent = useRef<RealtimeEventEmit | null>()
@@ -45,12 +44,14 @@ export const Table = () => {
 	return (
 		<TableContainer>
 			<Mouses />
-			{playerState === PlayerStateValue.PickingCorporation && (
+			{pending?.type === PlayerActionType.PickCorporation && (
 				<CorporationPicker />
 			)}
-			{playerState === PlayerStateValue.PickingCards && <CardPicker />}
-			{playerState === PlayerStateValue.PickingPreludes && (
-				<CardPicker prelude />
+			{pending?.type === PlayerActionType.PickCards && (
+				<CardPicker key={pending.cards.join(',')} />
+			)}
+			{pending?.type === PlayerActionType.PickPreludes && (
+				<CardPicker key={pending.cards.join(',')} prelude />
 			)}
 			<GameContainer>
 				<Header />

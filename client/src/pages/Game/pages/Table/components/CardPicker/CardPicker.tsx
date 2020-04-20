@@ -8,10 +8,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi } from '@shared/cards'
 import { CARD_PRICE } from '@shared/constants'
 import { pickCards, pickPreludes } from '@shared/index'
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
+import { PlayerActionType } from '@shared/player-actions'
 
 type Props = {
 	prelude?: boolean
@@ -23,14 +24,25 @@ export const CardPicker = ({ prelude }: Props) => {
 	const game = useAppStore(state => state.game.state)
 	const state = player
 
-	const cardsToPick = useAppStore(
-		state => state.game.player?.cardsPick
-	)?.map(c => CardsLookupApi.get(c))
+	const pendingAction = useAppStore(state => state.game.pendingAction)
 
-	const cardsLimit =
-		useAppStore(state => state.game.player?.cardsPickLimit) ?? 0
+	if (
+		!pendingAction ||
+		(pendingAction?.type !== PlayerActionType.PickCards &&
+			pendingAction?.type !== PlayerActionType.PickPreludes)
+	) {
+		throw new Error('Not card picker')
+	}
 
-	const isFree = useAppStore(state => state.game.player?.cardsPickFree) ?? false
+	const cardsToPick = useMemo(
+		() => pendingAction.cards.map(c => CardsLookupApi.get(c)),
+		[pendingAction.cards]
+	)
+
+	const cardsLimit = pendingAction.limit
+
+	const isFree =
+		pendingAction?.type === PlayerActionType.PickPreludes || pendingAction.free
 
 	const [selected, setSelected] = useState([] as number[])
 	const [loading, setLoading] = useState(false)

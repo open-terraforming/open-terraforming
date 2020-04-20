@@ -60,7 +60,7 @@ export const selectPlayer = (
 	description: string
 ) =>
 	({
-		type: PlayerActionType.SponsorCompetition,
+		type: PlayerActionType.SelectPlayer,
 		source,
 		choices,
 		description
@@ -74,10 +74,3 @@ export type PlayerAction =
 	| ReturnType<typeof playCardAction>
 	| ReturnType<typeof sponsorCompetition>
 	| ReturnType<typeof selectPlayer>
-
-export interface PlayerActionItem {
-	/** Action info */
-	action: PlayerAction
-	/** Should the action be only played when player is playing */
-	playing: boolean
-}

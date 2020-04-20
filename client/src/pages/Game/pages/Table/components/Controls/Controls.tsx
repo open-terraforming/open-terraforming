@@ -13,18 +13,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi } from '@shared/cards'
 import {
 	buyStandardProject,
-	GridCellContent,
-	GridCellOther,
 	playerPass,
 	PlayerStateValue,
 	StandardProjectType
 } from '@shared/index'
-import { darken, rgba } from 'polished'
+import { PlayerActionType } from '@shared/player-actions'
+import { darken } from 'polished'
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { CardBuy } from '../CardBuy/CardBuy'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { HandButton } from './components/HandButton/HandButton'
+import { PendingDisplay } from './components/PendingDisplay'
 import { Resources } from './components/Resources/Resources'
 import { TableButtons } from './components/TableButtons/TableButtons'
 
@@ -34,6 +34,7 @@ export const Controls = () => {
 	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
 	const isPlaying = useAppStore(state => state.game.playing)
+	const pendingAction = useAppStore(state => state.game.pendingAction)
 
 	const buyingCardIndex = useAppStore(state => state.table.buyingCardIndex)
 	const playingCardIndex = useAppStore(state => state.table.playingCardIndex)
@@ -43,12 +44,10 @@ export const Controls = () => {
 		? CardsLookupApi.get(state?.corporation as string)
 		: undefined
 
-	const stackedActions = player?.cardsToPlay
-
-	const placingTile =
-		player?.state === PlayerStateValue.Playing ||
-		player?.state === PlayerStateValue.EndingTiles
-			? state?.placingTile[0]
+	const pending =
+		player.state === PlayerStateValue.Playing ||
+		player.state === PlayerStateValue.Picking
+			? pendingAction
 			: undefined
 
 	const handlePass = () => {
@@ -69,11 +68,11 @@ export const Controls = () => {
 
 	return (
 		<Flex justify="center">
-			<Container faded={!!placingTile}>
-				{stackedActions && stackedActions.length > 0 && (
+			<Container faded={!!pending}>
+				{pending?.type === PlayerActionType.PlayCard && (
 					<CardBuy
 						buying={false}
-						index={stackedActions[0]}
+						index={pending.cardIndex}
 						onClose={() => false}
 					/>
 				)}
@@ -139,23 +138,14 @@ export const Controls = () => {
 					</CardButtons>
 
 					<PassButton
-						disabled={!isPlaying || !!placingTile}
+						disabled={!isPlaying}
 						onClick={handlePass}
 						icon={faArrowRight}
 					>
 						Pass
 					</PassButton>
 				</Flexed>
-				{placingTile && (
-					<Fade>
-						<div>
-							Placing{' '}
-							{placingTile.type === GridCellContent.Other
-								? GridCellOther[placingTile.other as GridCellOther]
-								: GridCellContent[placingTile.type]}{' '}
-						</div>
-					</Fade>
-				)}
+				{pending && <PendingDisplay pending={pending} />}
 			</Container>
 		</Flex>
 	)
@@ -185,22 +175,6 @@ const Container = styled.div<{ faded: boolean }>`
 		css`
 			opacity: 0.7;
 		`}
-`
-
-const Fade = styled.div`
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background: ${rgba(colors.background, 0.5)};
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-size: 125%;
-	font-weight: bold;
-	color: #fff;
-	z-index: 5;
 `
 
 const Flexed = styled.div`

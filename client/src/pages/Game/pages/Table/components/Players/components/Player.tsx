@@ -15,15 +15,26 @@ import { PlayerState, PlayerStateValue } from '@shared/index'
 import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { ResourcesDiff } from './ResourcesDiff/ResourcesDiff'
+import { PlayerActionType } from '@shared/player-actions'
+
+// TODO: Map pending actions to strings too
+
+const pendingToStr = {
+	[PlayerActionType.PickCards]: 'Picking cards',
+	[PlayerActionType.PickCorporation]: 'Picking corporation',
+	[PlayerActionType.PickPreludes]: 'Picking preludes',
+	[PlayerActionType.PlaceTile]: 'Placing tile',
+	[PlayerActionType.PlayCard]: 'Playing card',
+	[PlayerActionType.SelectPlayer]: 'Selecting player',
+	[PlayerActionType.SponsorCompetition]: 'Selecting competition'
+}
 
 const stateToStr = {
 	[PlayerStateValue.Passed]: 'Passed',
 	[PlayerStateValue.Playing]: 'Playing',
 	[PlayerStateValue.EndingTiles]: 'Placing greeneries',
 	[PlayerStateValue.WaitingForTurn]: 'Waiting',
-	[PlayerStateValue.PickingCards]: 'Picking cards',
-	[PlayerStateValue.PickingPreludes]: 'Picking preludes',
-	[PlayerStateValue.PickingCorporation]: 'Picking corporation',
+	[PlayerStateValue.Picking]: '',
 	[PlayerStateValue.Connecting]: 'Connecting',
 	[PlayerStateValue.Waiting]: null,
 	[PlayerStateValue.Ready]: null
@@ -34,9 +45,7 @@ const stateToIcon = {
 	[PlayerStateValue.Playing]: faArrowRight,
 	[PlayerStateValue.EndingTiles]: faArrowRight,
 	[PlayerStateValue.WaitingForTurn]: faHourglassHalf,
-	[PlayerStateValue.PickingCards]: faUserClock,
-	[PlayerStateValue.PickingPreludes]: faUserClock,
-	[PlayerStateValue.PickingCorporation]: faUserClock,
+	[PlayerStateValue.Picking]: faUserClock,
 	[PlayerStateValue.Connecting]: faEthernet,
 	[PlayerStateValue.Waiting]: faHourglassHalf,
 	[PlayerStateValue.Ready]: faCheck
@@ -56,6 +65,7 @@ export const Player = ({
 	const state = player
 	const isPlaying = state.state === PlayerStateValue.Playing
 	const isPlayer = player.id === useAppStore(state => state.game.playerId)
+	const pending = player.pendingActions[0]
 
 	return (
 		<Container
@@ -109,6 +119,8 @@ export const Player = ({
 							{stateToStr[state.state] || PlayerStateValue[state.state]}
 						</>
 					)}
+
+					{pending && ` ${pendingToStr[pending.type]}`}
 				</State>
 			</InfoContainer>
 			<Color style={{ backgroundColor: player.color }} />

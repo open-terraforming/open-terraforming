@@ -55,7 +55,8 @@ import {
 	PlayerCondition,
 	Resource,
 	SymbolType,
-	WithOptional
+	WithOptional,
+	CardSymbol
 } from './types'
 import {
 	cellByCoords,
@@ -469,6 +470,7 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 			amount < 0
 				? `Remove ${-amount} ${res} from any other card`
 				: `Add ${amount} ${res} to any other card`,
+		symbols: [{ cardResource: res, count: amount }],
 		perform: ({ player }, cardIndex: number) => {
 			const cardState = player.usedCards[cardIndex]
 			if (!cardState) {
@@ -492,6 +494,7 @@ export const cardResourceChange = (res: CardResource, amount: number) =>
 			amount >= 0
 				? `Add ${amount} of ${res} units to this card`
 				: `Remove ${amount} of ${res} units from this card`,
+		symbols: [{ cardResource: res, count: amount }],
 		conditions: amount < 0 ? [cardResourceCondition(res, -amount)] : [],
 		perform: ({ card }) => {
 			card[res] += amount
@@ -527,6 +530,7 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 			amount < 0
 				? `Remove ${-amount} ${res} from any other player card`
 				: `Add ${amount} ${res} to any other player card`,
+		symbols: [{ cardResource: res, count: amount, other: true }],
 		perform: ({ game }, [playerId, cardIndex]: [number, number]) => {
 			const player = game.players.find(p => p.id === playerId)
 			if (!player) {
@@ -595,14 +599,18 @@ export const convertTopCardToCardResource = (
 		}
 	})
 
-export const pickPreludes = (cardCount: number, pickCount: number) =>
+export const pickPreludes = (cardCount: number, pickCount = 0) =>
 	effect({
-		description: `Draw ${cardCount} prelude cards, use ${pickCount} of them and discard the rest`,
+		description: `Draw ${cardCount} prelude cards${
+			pickCount !== 0 ? `, use ${pickCount} of them and discard the rest` : ''
+		}`,
 		perform: ({ player, game }) => {
-			pushPendingAction(
-				player,
-				pickPreludesAction(drawPreludeCards(game, cardCount), pickCount)
-			)
+			if (game.prelude) {
+				pushPendingAction(
+					player,
+					pickPreludesAction(drawPreludeCards(game, cardCount), pickCount)
+				)
+			}
 		}
 	})
 
@@ -1196,4 +1204,11 @@ export const changeProgressConditionBonus = (change: number) =>
 			change
 		),
 		perform: ({ player }) => (player.progressConditionBonus += change)
+	})
+
+export const emptyEffect = (description: string, symbols: CardSymbol[] = []) =>
+	effect({
+		description,
+		symbols,
+		perform: () => null
 	})

@@ -6,6 +6,7 @@ import { TileIcon } from '../../TileIcon/TileIcon'
 import { Card } from '@/icons/card'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
+import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 
 type Props = {
 	symbols: CardSymbol[]
@@ -29,6 +30,10 @@ const symbolToIcon = (s: CardSymbol) => {
 			case SymbolType.Temperature:
 				return <FontAwesomeIcon icon={faThermometerHalf} />
 		}
+	}
+
+	if (s.cardResource) {
+		return <CardResourceIcon res={s.cardResource} />
 	}
 
 	if (s.resource) {

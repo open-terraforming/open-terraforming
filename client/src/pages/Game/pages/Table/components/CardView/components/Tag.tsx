@@ -27,13 +27,13 @@ export const Tag = ({ tag }: Props) => {
 			case CardCategory.Animal:
 				return (
 					<IconContainer background="#266020">
-						<FontAwesomeIcon icon={faPaw} />
+						<FontAwesomeIcon icon={faPaw} color="#fff" />
 					</IconContainer>
 				)
 			case CardCategory.Plant:
 				return (
 					<IconContainer background="#09AA09">
-						<FontAwesomeIcon icon={faSeedling} />
+						<FontAwesomeIcon icon={faSeedling} color="#fff" />
 					</IconContainer>
 				)
 			case CardCategory.Science:

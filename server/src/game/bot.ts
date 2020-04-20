@@ -331,7 +331,7 @@ export class Bot extends Player {
 				break
 			}
 
-			case PlayerStateValue.PickingCorporation: {
+			case PlayerStateValue.Picking: {
 				if (this.pendingAction) {
 					actions.push([0, () => this.performPending(this.pendingAction)])
 				}

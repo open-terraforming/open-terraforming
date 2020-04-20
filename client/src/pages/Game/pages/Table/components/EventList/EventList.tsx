@@ -22,7 +22,7 @@ export const EventList = ({}: Props) => {
 		if (
 			document.hidden &&
 			(player?.state === PlayerStateValue.Playing ||
-				player?.state === PlayerStateValue.PickingCards)
+				player?.state === PlayerStateValue.Picking)
 		) {
 			if (Notification.permission === 'granted') {
 				const notification = new Notification("It's your turn!", {

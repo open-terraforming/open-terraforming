@@ -233,7 +233,7 @@ export const resetCardPriceChange = (amount: number) =>
 
 export const asFirstAction = (effect: CardEffect) =>
 	passiveEffect({
-		description: 'As your first action, ' + effect.description,
+		description: '',
 		onGenerationStarted: (ctx, generation) => {
 			if (generation === 1) {
 				effect.perform(ctx)

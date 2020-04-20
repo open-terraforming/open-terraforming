@@ -6,15 +6,17 @@ import { emptyCardState } from '@shared/cards/utils'
 import { pickCorporation } from '@shared/index'
 import React, { useMemo, useState } from 'react'
 import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
+import { PlayerActionType } from '@shared/player-actions'
 
 export const CorporationPicker = () => {
 	const api = useApi()
 	const player = useAppStore(state => state.game.player)
+	const pendingAction = useAppStore(state => state.game.pendingAction)
 
 	const cards = useMemo(
 		() =>
-			player
-				? cardsToCardList(player.cardsPick.map(p => emptyCardState(p)))
+			pendingAction && pendingAction.type === PlayerActionType.PickCorporation
+				? cardsToCardList(pendingAction.cards.map(p => emptyCardState(p)))
 				: [],
 		[player]
 	)

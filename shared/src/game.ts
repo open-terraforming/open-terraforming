@@ -11,8 +11,6 @@ export enum GameStateValue {
 	Starting,
 	/** Players are picking cards */
 	PickingCards,
-	/** Players are picking prelude cards */
-	PickingPreludes,
 	/** Generation is in progress */
 	GenerationInProgress,
 	/** Production phase */
@@ -28,12 +26,8 @@ export enum PlayerStateValue {
 	Connecting = 1,
 	/** Waiting for other players */
 	Waiting,
-	/** Player is picking corporation */
-	PickingCorporation,
-	/** Player is picking cards */
-	PickingCards,
-	/** Player is picking preludes */
-	PickingPreludes,
+	/** Player is picking (in the beginning of the game) */
+	Picking,
 	/** Ready to start the game */
 	Ready,
 	/** Currently playing his round */

@@ -4,7 +4,8 @@ import {
 	pickPreludes,
 	productionChange,
 	resourceChange,
-	tagPriceChange
+	tagPriceChange,
+	emptyEffect
 } from '../effects'
 import { passiveEffect, asFirstAction } from '../passive-effects'
 import { CardCategory, CardSpecial, CardType } from '../types'
@@ -86,7 +87,10 @@ export const preludeCorporations = [
 			special: [CardSpecial.Prelude],
 			playEffects: [
 				resourceChange('money', 37),
-				tagPriceChange(CardCategory.Science, -2)
+				tagPriceChange(CardCategory.Science, -2),
+				emptyEffect(
+					'As your first action, draw 3 prelude cards, pick 1 and discard the rest'
+				)
 			],
 			passiveEffects: [asFirstAction(pickPreludes(3, 1))]
 		})

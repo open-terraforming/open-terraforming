@@ -209,6 +209,7 @@ export interface CardSymbol {
 	count?: number
 	symbol?: SymbolType
 	resource?: Resource
+	cardResource?: CardResource
 	production?: boolean
 	other?: boolean
 	tile?: GridCellContent
