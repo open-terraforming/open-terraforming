@@ -289,7 +289,20 @@ export class Bot extends Player {
 			}
 
 			case PlayerActionType.PickPreludes: {
-				const picked = shuffle(a.cards.map((_c, i) => i)).slice(0, a.limit)
+				const picked = shuffle(
+					a.cards.map((c, i) => [CardsLookupApi.get(c), i] as const)
+				)
+					.filter(([c]) =>
+						isCardPlayable(c, {
+							card: emptyCardState(c.code),
+							cardIndex: -1,
+							game: this.game.state,
+							player: this.state,
+							playerId: this.state.id
+						})
+					)
+					.map(([, i]) => i)
+					.slice(0, a.limit)
 
 				return this.pickPreludes(picked)
 			}

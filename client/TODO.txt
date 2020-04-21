@@ -1,34 +1,37 @@
 BUGS:
-  * evaluate prelude conditions
-  * finishing greeneries -> take picked greeneries into account?
-  * PER CITY ON MARS - filter out cities outside mars
+  * GENERAL -> PER CITY ON MARS - filter out cities outside mars
 
 TODO:
-  * playEffects are not important for actionable cards once played
-  * finishing phase display
-  * display sales when buying a card
-  * better passive-effects display
-  * resource usage when buying card has wrong margin
-  * add played/bought icon
-  * symbols and text collisions :(
-  * display number of card tags with hover counts
-  * display player corporation
-  * SOUNDS:
-    * milestone/award bought
-    * resources changed?
-  * Preludes category in cards display
-  * player which creates a game should be admin of said game?
-  * evaluate vps on enemy cards
+  * UI [Cards] -> playEffects are not important for actionable cards once played
+  * UI [Cards] -> display sales when buying a card
+  * UI [Cards] -> better passive-effects display
+  * UI [Cards] -> resource usage when buying card has wrong margin
+  * UI [Cards] -> symbols and text collisions :(
+  * UI [Cards] -> preludes category in cards display
+  * UI [Cards] -> evaluate vps on enemy cards
+  * UI [Events] -> finishing phase display
+  * UI [Events] -> add played/bought icon
+  * UI [Events] -> filter event log by player or text search
+  * UI [Controls] -> display player corporation
+  * UI [Controls] -> add VPs category in played
+  * UI [Controls] -> add Tags category in played
+  * UI [EndGame] -> better end game animation
+
+  * SOUNDS -> milestone/award bought
+  * SOUNDS -> resources changed?
+
+  * GENERAL -> player which creates a game should be admin of said game?
+
+  * EXPANSIONS -> VENUS
+  * EXPANSIONS -> COLONIES
 
 CHECK CARDS:
-  * pets
+  * CHECK -> pets
 
-NICE TODO:
-  * better end game animation
-  * filter event log by player or text search
-  * player emoticons
-  * poke button
-  * wait for players to reconnect
-  * 3D mars
-  * admin panel
-  * spectator mode
+LOW PRIORITY TODO:
+  * GENERAL -> player emoticons
+  * GENERAL -> poke button
+  * GENERAL -> wait for players to reconnect
+  * UI -> 3D mars
+  * UI -> admin panel
+  * GENERAL -> spectator mode

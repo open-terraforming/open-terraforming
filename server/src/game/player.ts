@@ -40,11 +40,17 @@ import {
 } from '@shared/game'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, PlacementConditionsLookup } from '@shared/placements'
-import { PlayerActionType } from '@shared/player-actions'
+import { PlayerActionType, placeTileAction } from '@shared/player-actions'
 import { PlayerColors } from '@shared/player-colors'
 import { Projects, StandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
-import { adjacentCells, allCells, drawCards } from '@shared/utils'
+import {
+	adjacentCells,
+	allCells,
+	drawCards,
+	range,
+	pushPendingAction
+} from '@shared/utils'
 import Hashids from 'hashids/cjs'
 import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
@@ -247,6 +253,23 @@ export class Player {
 				throw new Error(`You have to pick ${cards.length} cards`)
 			}
 		}
+
+		// Preludes can actually be unplayable under certain conditions
+		cards
+			.map(c => CardsLookupApi.get(top.cards[c]))
+			.forEach(c =>
+				this.checkCardConditions(
+					c,
+					{
+						card: emptyCardState(c.code),
+						cardIndex: -1,
+						game: this.game.state,
+						player: this.state,
+						playerId: this.id
+					},
+					[]
+				)
+			)
 
 		this.logger.log(
 			f('Picked preludes: {0}', cards.map(c => top.cards[c]).join(', '))
@@ -666,7 +689,24 @@ export class Player {
 
 		this.game.checkMilestones()
 
+		// Make sure player spent all his plants in ending phase
+		if (this.state.state == PlayerStateValue.EndingTiles) {
+			this.buyAllGreeneries()
+		}
+
 		this.popAction()
+	}
+
+	buyAllGreeneries() {
+		range(0, Math.floor(this.state.plants / this.state.greeneryCost)).forEach(
+			() => {
+				pushPendingAction(
+					this.state,
+					placeTileAction({ type: GridCellContent.Forest })
+				)
+				this.state.plants -= this.state.greeneryCost
+			}
+		)
 	}
 
 	runCardEffects(

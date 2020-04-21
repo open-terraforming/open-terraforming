@@ -591,15 +591,7 @@ export class Game {
 			this.players.forEach(p => {
 				p.state.pendingActions = []
 
-				range(0, Math.floor(p.state.plants / p.state.greeneryCost)).forEach(
-					() => {
-						pushPendingAction(
-							p.state,
-							placeTileAction({ type: GridCellContent.Forest })
-						)
-						p.state.plants -= p.state.greeneryCost
-					}
-				)
+				p.buyAllGreeneries()
 
 				p.state.state =
 					p.state.pendingActions.length > 0
