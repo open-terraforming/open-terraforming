@@ -7,17 +7,14 @@ TODO:
   * finishing phase display
   * display sales when buying a card
   * better passive-effects display
-  * as your first action
   * resource usage when buying card has wrong margin
   * add played/bought icon
-  * add card resource icon
   * symbols and text collisions :(
   * display number of card tags with hover counts
   * display player corporation
   * SOUNDS:
     * milestone/award bought
-    * card played
-    * player resources changed?
+    * resources changed?
   * Preludes category in cards display
   * player which creates a game should be admin of said game?
   * evaluate vps on enemy cards
@@ -32,7 +29,6 @@ NICE TODO:
   * player emoticons
   * poke button
   * wait for players to reconnect
-  * add effects icons to cards
   * 3D mars
   * admin panel
   * spectator mode
