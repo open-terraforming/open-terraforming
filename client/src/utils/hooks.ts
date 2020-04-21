@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-	useState,
-	useEffect,
-	EffectCallback,
-	DependencyList,
-	useRef,
-	useCallback
-} from 'react'
-import { useSelector, useDispatch } from 'react-redux'
+import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
 import { StoreState } from '@/store'
 import { AppDispatch } from '@/store/utils'
-import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
+import {
+	DependencyList,
+	EffectCallback,
+	useCallback,
+	useEffect,
+	useRef,
+	useState
+} from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 
 export const useAppStore = <T>(selector: (state: StoreState) => T) => {
 	return useSelector(selector)
@@ -401,12 +401,22 @@ export const useProcessed = (
 }
 
 export const useMounted = () => {
-	const [mounted, setMounted] = useState(true)
+	const mounted = useRef(true)
 
 	useEffect(() => {
 		return () => {
-			setMounted(false)
+			mounted.current = false
 		}
+	}, [])
+
+	return mounted
+}
+
+export const useMountAnim = () => {
+	const [mounted, setMounted] = useState(false)
+
+	useEffect(() => {
+		setTimeout(() => setMounted(true))
 	}, [])
 
 	return mounted

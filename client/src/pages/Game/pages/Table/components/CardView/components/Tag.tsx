@@ -20,9 +20,10 @@ import { Jupiter } from './Jupiter'
 type Props = {
 	tag: CardCategory
 	size?: 'md' | 'sm'
+	className?: string
 }
 
-export const Tag = ({ tag, size = 'md' }: Props) => {
+export const Tag = ({ tag, size = 'md', className }: Props) => {
 	const image = useMemo(() => {
 		switch (tag) {
 			case CardCategory.Animal:
@@ -101,7 +102,7 @@ export const Tag = ({ tag, size = 'md' }: Props) => {
 	}, [tag])
 
 	return (
-		<Category title={CardCategory[tag]} size={size}>
+		<Category title={CardCategory[tag]} size={size} className={className}>
 			{image || CardCategory[tag]}
 		</Category>
 	)

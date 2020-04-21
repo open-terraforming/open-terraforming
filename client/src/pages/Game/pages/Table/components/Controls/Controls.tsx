@@ -4,19 +4,10 @@ import { useApi } from '@/context/ApiContext'
 import { setTableState } from '@/store/modules/table'
 import { colors } from '@/styles'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
-import {
-	faArrowRight,
-	faThermometerHalf,
-	faTree
-} from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faThermometerHalf, faTree } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi } from '@shared/cards'
-import {
-	buyStandardProject,
-	playerPass,
-	PlayerStateValue,
-	StandardProjectType
-} from '@shared/index'
+import { buyStandardProject, playerPass, PlayerStateValue, StandardProjectType } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { darken } from 'polished'
 import React from 'react'
@@ -181,7 +172,7 @@ const Container = styled.div<{ faded: boolean }>`
 
 const Flexed = styled.div`
 	display: flex;
-	width: 28rem;
+	width: 35rem;
 `
 
 const CardButtons = styled.div`

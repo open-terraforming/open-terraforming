@@ -14,7 +14,6 @@ TODO:
   * UI [Events] -> filter event log by player or text search
   * UI [Controls] -> display player corporation
   * UI [Controls] -> add VPs category in played
-  * UI [Controls] -> add Tags category in played
   * UI [EndGame] -> better end game animation
 
   * SOUNDS -> milestone/award bought

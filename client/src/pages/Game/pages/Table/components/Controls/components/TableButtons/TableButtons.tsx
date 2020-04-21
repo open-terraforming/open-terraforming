@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
-import { ActionableButton } from './components/ActionableButton'
-import { PlayedCards } from '../../../PlayedCards/PlayedCards'
-import { EffectCards } from './components/EffectCards'
-import { TotalCards } from './components/TotalCards'
 import { CardType } from '@shared/cards'
+import React, { useState } from 'react'
+import { PlayedCards } from '../../../PlayedCards/PlayedCards'
+import { ActionableButton } from './components/ActionableButton'
+import { EffectCards } from './components/EffectCards'
+import { Tags } from './components/Tags'
+import { TotalCards } from './components/TotalCards'
 
 type Props = {}
 
@@ -30,6 +31,7 @@ export const TableButtons = ({}: Props) => {
 
 			<ActionableButton onClick={handleShow} />
 			<EffectCards onClick={handleShow} />
+			<Tags onClick={handleShow} />
 			<TotalCards onClick={handleShow} />
 		</>
 	)

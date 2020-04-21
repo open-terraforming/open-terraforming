@@ -10,9 +10,9 @@ import {
 import { range } from '@shared/utils'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
+import { CardView } from '../../../CardView/CardView'
 import { Hand } from '../../../Hand/Hand'
 import { CardsView } from '../CardsView'
-import { CardView } from '../../../CardView/CardView'
 
 type Props = {
 	playing: boolean
@@ -31,7 +31,7 @@ export const HandButton = ({ playing }: Props) => {
 	const mounted = useMounted()
 
 	updateDiffRef.current = () => {
-		if (mounted && toDisplay.length > 0) {
+		if (mounted.current && toDisplay.length > 0) {
 			setToDisplay(d => d.slice(1))
 
 			return true
