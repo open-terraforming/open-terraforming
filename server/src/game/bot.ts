@@ -438,7 +438,7 @@ export class Bot extends Player {
 						)
 						.forEach(c => {
 							actions.push([
-								0,
+								1,
 								() => {
 									const card = CardsLookupApi.get(c.code)
 
