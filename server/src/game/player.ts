@@ -420,6 +420,8 @@ export class Player {
 			player: this
 		})
 
+		this.game.checkMilestones()
+
 		if (!this.pendingAction) {
 			this.actionPlayed()
 		}
@@ -662,6 +664,8 @@ export class Player {
 			player: this
 		})
 
+		this.game.checkMilestones()
+
 		this.popAction()
 	}
 
@@ -788,6 +792,8 @@ export class Player {
 
 		this.runCardEffects(card.actionEffects, ctx, playArguments)
 
+		this.game.checkMilestones()
+
 		if (top) {
 			this.popAction()
 		} else {
@@ -798,9 +804,9 @@ export class Player {
 			if (!this.pendingAction) {
 				this.actionPlayed()
 			}
-		}
 
-		this.updated()
+			this.updated()
+		}
 	}
 
 	filterPendingActions() {
@@ -906,6 +912,8 @@ export class Player {
 			player: this,
 			project
 		})
+
+		this.game.checkMilestones()
 
 		if (!this.pendingAction) {
 			this.actionPlayed()

@@ -264,6 +264,7 @@ export const useAnimatedNumber = (value: number, delay = 100) => {
 	}, [])
 
 	useEffect(() => {
+		setLastValue(lastValue)
 		lastTime.current = new Date().getTime()
 		update()
 	}, [value])

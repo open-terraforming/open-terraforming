@@ -619,7 +619,12 @@ export const pickPreludes = (cardCount: number, pickCount = 0) =>
 
 export const pickTopCards = (count: number, pickCount = 0, free = false) =>
 	effect({
-		description: `Look at top ${count} cards and either buy them or discard them`,
+		description: !free
+			? pickCount === 0
+				? `Look at top ${count} cards and either buy them or discard them`
+				: `Look at top ${count} cards and either buy them or discard ${pickCount} of them`
+			: `Look at top ${count} cards and pick ${pickCount} of them
+			`,
 		conditions: [gameCardsCondition(count)],
 		perform: ({ player, game }) => {
 			pushPendingAction(
