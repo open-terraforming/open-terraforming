@@ -305,7 +305,7 @@ export function placeTile({
 						.join(', ')})`
 				: '') +
 			(special && special.length > 0
-				? ` on ${special?.map(c => GridCellSpecial[c]).join(' or ')})`
+				? ` on ${special?.map(c => GridCellSpecial[c]).join(' or ')}`
 				: ''),
 		conditions: [
 			condition({

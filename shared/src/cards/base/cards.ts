@@ -602,7 +602,7 @@ export const baseCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.NaturalPreserve,
-				conditions: [PlacementCode.Isolated]
+				conditions: [PlacementCode.NoOceans, PlacementCode.Isolated]
 			})
 		]
 	}),

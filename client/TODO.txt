@@ -3,7 +3,10 @@ BUGS:
   * others can be placed anywhere
   * LAVA TUBE SETTLEMENT -> better description
   * pickTopCards incorrect description
-
+  * NOTIFICATIONS!
+  * milestones count as additional action
+  * finishing greeneries -> take picked greeneries into account?
+  * end game -> wrong counters
 
 TODO:
   * playEffects are not important for actionable cards once played
@@ -30,7 +33,7 @@ CHECK CARDS:
   * PER CITY ON MARS - filter out the colonies?
 
 NICE TODO:
-  * redesign right part of the bottom panel
+  * better end game animation
   * filter event log by player or text search
   * player emoticons
   * poke button
