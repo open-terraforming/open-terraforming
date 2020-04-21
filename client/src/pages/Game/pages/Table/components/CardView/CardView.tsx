@@ -108,6 +108,19 @@ export const CardView = ({
 		card
 	])
 
+	const actionSymbols = useMemo(
+		() =>
+			flatten(card.actionEffects.map(e => e.symbols)).concat(
+				flatten(card.passiveEffects.map(e => e.symbols))
+			),
+		[card]
+	)
+
+	const conditionSymbols = useMemo(
+		() => flatten(card.conditions.map(e => e.symbols)),
+		[card]
+	)
+
 	return (
 		<Container
 			type={card.type}
@@ -128,6 +141,9 @@ export const CardView = ({
 						<div>{card.cost}</div>
 					</Cost>
 				)}
+				{conditionSymbols.length > 0 && (
+					<HeadSymbols symbols={conditionSymbols} />
+				)}
 				<Categories>
 					{card.categories.map((c, i) => (
 						<Tag key={i} tag={c} />
@@ -135,31 +151,41 @@ export const CardView = ({
 				</Categories>
 			</Head>
 			<Title>{card.title}</Title>
-			{card.type !== CardType.Corporation && (
+			{card.type !== CardType.Corporation ? (
 				<Image
 					style={{
 						backgroundImage: `url('${
 							process.env.APP_API_URL ? `http://${process.env.APP_API_URL}` : ''
 						}/card/${card.code.replace(/'/g, "\\'")}.jpg')`
 					}}
-				/>
-			)}
-			<Description>
-				<VPC>
+				>
 					{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
 					{card.victoryPointsCallback && (
 						<VP title={card.victoryPointsCallback.description}>
 							{calculatedVps ?? 'X'}*
 						</VP>
 					)}
-				</VPC>
-
+				</Image>
+			) : (
+				<>
+					{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
+					{card.victoryPointsCallback && (
+						<VP title={card.victoryPointsCallback.description}>
+							{calculatedVps ?? 'X'}*
+						</VP>
+					)}
+				</>
+			)}
+			<Description>
 				{played && <Played>Card already played this generation</Played>}
 				{(card.actionEffects.length > 0 || card.passiveEffects.length > 0) && (
 					<Action>
 						<ActionTitle>
 							{card.type === CardType.Action ? 'Action' : 'Effect'}
 						</ActionTitle>
+
+						<Symbols symbols={actionSymbols} />
+
 						{card.actionEffects.map((e, i) => (
 							<PlayEffect
 								key={i}
@@ -168,6 +194,7 @@ export const CardView = ({
 								evaluate={evaluate}
 							/>
 						))}
+
 						{card.passiveEffects
 							.map(e => e.description)
 							.filter(e => !!e)
@@ -212,6 +239,17 @@ const Head = styled.div`
 	display: flex;
 	align-items: center;
 	height: 2rem;
+`
+
+const HeadSymbols = styled(Symbols)`
+	border: 0.2rem solid #ff3333;
+	margin-left: 2.5rem;
+	background-color: rgba(255, 0, 0, 0.5);
+
+	> div {
+		padding-top: 0.1rem;
+		padding-bottom: 0.1rem;
+	}
 `
 
 const Action = styled.div`
@@ -297,15 +335,6 @@ const Played = styled.div`
 	color: #f12e41;
 `
 
-const VPC = styled.div`
-	&:before {
-		content: '';
-		display: block;
-		float: right;
-		height: 90px;
-	}
-`
-
 const VP = styled.div`
 	clear: both;
 	float: right;
@@ -334,7 +363,6 @@ const Image = styled.div`
 	background-position: center center;
 	background-size: 100% auto;
 	background-repeat: no-repeat;
-	opacity: 0.5;
 `
 
 type ContainerCtx = {

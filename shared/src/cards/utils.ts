@@ -6,7 +6,10 @@ import {
 	CardCategory,
 	CardType,
 	Resource,
-	WithOptional
+	WithOptional,
+	CardSymbol,
+	SymbolType,
+	GameProgress
 } from './types'
 
 export const resourceProduction = {
@@ -175,4 +178,17 @@ export const updatePlayerProduction = (
 export const noDesc = <T extends { description?: string }>(e: T) => {
 	delete e.description
 	return e
+}
+
+export const withRightArrow = <T extends { symbols: CardSymbol[] }>(
+	e: T
+): T => ({
+	...e,
+	symbols: [...e.symbols, { symbol: SymbolType.RightArrow }]
+})
+
+export const progressSymbol: Record<GameProgress, Readonly<CardSymbol>> = {
+	oceans: { tile: GridCellContent.Ocean },
+	oxygen: { symbol: SymbolType.Oxygen },
+	temperature: { symbol: SymbolType.Temperature }
 }

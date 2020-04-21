@@ -107,11 +107,13 @@ export type CardCondition<
 	T extends (CardEffectArgumentType | undefined)[] = any
 > = {
 	description?: string
+	symbols: CardSymbol[]
 	evaluate: (ctx: CardCallbackContext, ...args: T) => boolean
 }
 
 export type PlayerCondition = {
 	description?: string
+	symbols: CardSymbol[]
 	evaluate: (ctx: PlayerCallbackContext) => boolean
 }
 
@@ -174,6 +176,7 @@ export interface CardEffectArgument {
 
 export interface CardPassiveEffect {
 	description: string
+	symbols: CardSymbol[]
 	onGenerationStarted?: (ctx: CardCallbackContext, generation: number) => void
 	onTilePlaced?: (
 		ctx: CardCallbackContext,
@@ -202,7 +205,11 @@ export enum SymbolType {
 	TerraformingRating,
 	RightArrow,
 	Temperature,
-	Oxygen
+	Oxygen,
+	X,
+	Colon,
+	LessOrEqual,
+	MoreOrEqual
 }
 
 export interface CardSymbol {
@@ -214,4 +221,6 @@ export interface CardSymbol {
 	other?: boolean
 	tile?: GridCellContent
 	tileOther?: GridCellOther
+	tag?: CardCategory
+	text?: string
 }

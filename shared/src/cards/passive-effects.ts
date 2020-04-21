@@ -5,14 +5,18 @@ import {
 	CardPassiveEffect,
 	CardResource,
 	Resource,
-	CardEffect
+	CardEffect,
+	WithOptional,
+	SymbolType
 } from './types'
 import { resourceProduction, updatePlayerResource } from './utils'
 import { CardsLookupApi } from './lookup'
 import { f, pushPendingAction } from '../utils'
 import { playCardAction } from '../player-actions'
 
-export const passiveEffect = (e: CardPassiveEffect) => e
+export const passiveEffect = (
+	e: WithOptional<CardPassiveEffect, 'symbols'>
+): CardPassiveEffect => ({ symbols: [], ...e })
 
 export const resourcePerPlacedTile = (
 	content: GridCellContent,
@@ -23,6 +27,11 @@ export const resourcePerPlacedTile = (
 		description: `When anyone places an ${
 			GridCellContent[content]
 		} tile, gain ${withUnits(res, amount)}`,
+		symbols: [
+			{ tile: content, other: true },
+			{ symbol: SymbolType.Colon },
+			{ resource: res, count: amount }
+		],
 		onTilePlaced: ({ player }, cell) => {
 			if (cell.content === content) {
 				player[res] += amount
@@ -37,6 +46,11 @@ export const productionPerPlacedTile = (
 ) =>
 	passiveEffect({
 		description: `When anyone places an ${GridCellContent[content]} tile, increase ${res} production by ${amount}`,
+		symbols: [
+			{ tile: content, other: true },
+			{ symbol: SymbolType.Colon },
+			{ resource: res, count: amount, production: true }
+		],
 		onTilePlaced: ({ player }, cell) => {
 			if (cell.content === content) {
 				player[resourceProduction[res]] += amount
@@ -53,6 +67,11 @@ export const resourcePerCardPlayed = (
 		description: `When you play a ${categories
 			.map(c => CardCategory[c])
 			.join(' ')} card, you gain ${withUnits(res, amount)}`,
+		symbols: [
+			...categories.map(c => ({ tag: c })),
+			{ symbol: SymbolType.Colon },
+			{ resource: res, count: amount }
+		],
 		onCardPlayed: ({ player, playerId }, card, _cardIndex, playedBy) => {
 			if (
 				playedBy.id === playerId &&
@@ -72,6 +91,11 @@ export const cardResourcePerCardPlayed = (
 		description: `When you play a ${categories
 			.map(c => CardCategory[c])
 			.join(' or ')} card, place ${amount} ${res} on this card`,
+		symbols: [
+			...categories.map(c => ({ tag: c })),
+			{ symbol: SymbolType.Colon },
+			{ cardResource: res, count: amount }
+		],
 		onCardPlayed: (
 			{ playerId, card: cardState },
 			card,
@@ -93,7 +117,12 @@ export const cardResourcePerTilePlaced = (
 	amount: number
 ) =>
 	passiveEffect({
-		description: `When you play place a ${GridCellContent[tile]} tile, place ${amount} of ${res} on this card`,
+		description: `When you place a ${GridCellContent[tile]} tile, place ${amount} of ${res} on this card`,
+		symbols: [
+			{ tile },
+			{ symbol: SymbolType.Colon },
+			{ cardResource: res, count: amount }
+		],
 		onTilePlaced: ({ playerId, card }, cell, playedBy) => {
 			if (playedBy.id === playerId && cell.content === tile) {
 				card[res] += amount

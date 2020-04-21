@@ -1,6 +1,7 @@
 BUGS:
   * evaluate prelude conditions
   * finishing greeneries -> take picked greeneries into account?
+  * PER CITY ON MARS - filter out cities outside mars
 
 TODO:
   * playEffects are not important for actionable cards once played
@@ -21,7 +22,6 @@ TODO:
 
 CHECK CARDS:
   * pets
-  * PER CITY ON MARS - filter out the colonies?
 
 NICE TODO:
   * better end game animation

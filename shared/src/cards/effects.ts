@@ -355,6 +355,11 @@ export const convertResource = (
 			dstRes,
 			dstCount
 		)}`,
+		symbols: [
+			{ resource: srcRes, count: srcCount },
+			{ symbol: SymbolType.RightArrow },
+			{ resource: dstRes, count: dstCount }
+		],
 		perform: ({ player }) => {
 			updatePlayerResource(player, srcRes, -srcCount)
 			updatePlayerResource(player, dstRes, dstCount)
@@ -365,6 +370,11 @@ export const cardsForResource = (res: Resource, count: number, cards: number) =>
 	effect({
 		conditions: [resourceCondition(res, count), gameCardsCondition(count)],
 		description: `Spend ${withUnits(res, count)} to draw ${cards} cards`,
+		symbols: [
+			{ resource: res, count },
+			{ symbol: SymbolType.RightArrow },
+			{ symbol: SymbolType.Card, count: cards }
+		],
 		perform: ({ player, game }) => {
 			updatePlayerResource(player, res, -count)
 			player.cards.push(...drawCards(game, cards))
@@ -588,6 +598,13 @@ export const convertTopCardToCardResource = (
 	effect({
 		conditions: [resourceCondition('money', 1), gameCardsCondition(1)],
 		description: `Spend 1 $ to reveal top card of the draw deck. If the card has ${CardCategory[category]} tag, add ${amount} ${res} resource here`,
+		symbols: [
+			{ resource: 'money' as const, count: 1 },
+			{ symbol: SymbolType.RightArrow },
+			{ tag: category },
+			{ symbol: SymbolType.RightArrow },
+			{ cardResource: res, count: amount }
+		],
 		perform: ({ player, game, card }) => {
 			const drawnCard = drawCard(game)
 			const drawn = CardsLookupApi.get(drawnCard)
@@ -626,6 +643,7 @@ export const pickTopCards = (count: number, pickCount = 0, free = false) =>
 			: `Look at top ${count} cards and pick ${pickCount} of them
 			`,
 		conditions: [gameCardsCondition(count)],
+		symbols: [{ symbol: SymbolType.Card, count }],
 		perform: ({ player, game }) => {
 			pushPendingAction(
 				player,
@@ -638,6 +656,7 @@ export const getTopCards = (count: number) =>
 	effect({
 		description: `Draw ${count} card(s)`,
 		conditions: [gameCardsCondition(count)],
+		symbols: [{ symbol: SymbolType.Card, count }],
 		perform: ({ player, game }) => {
 			player.cards.push(...drawCards(game, count))
 		}
@@ -761,6 +780,11 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 			'money',
 			cost
 		)} to place an ocean tile, ${res} can also be used`,
+		symbols: [
+			{ resource: res, count: cost },
+			{ symbol: SymbolType.RightArrow },
+			{ tile: GridCellContent.Ocean }
+		],
 		perform: (ctx, value: number) => {
 			if (value > ctx.player[res]) {
 				throw new Error(`You don't have that much ${res}`)
@@ -804,6 +828,11 @@ export const tagPriceChange = (tag: CardCategory, change: number) =>
 		description: `Effect: When you play a ${
 			CardCategory[tag]
 		} card, you pay ${withUnits('money', -change)} less for it`,
+		symbols: [
+			{ tag },
+			{ symbol: SymbolType.Colon },
+			{ resource: 'money', count: change }
+		],
 		perform: ({ player }) => {
 			const prev = player.tagPriceChange[tag] ?? 0
 			player.tagPriceChange[tag] = prev + change
@@ -923,7 +952,7 @@ export const duplicateProduction = (type: CardCategory) =>
 		args: [
 			cardArg(
 				[
-					{
+					condition({
 						evaluate: ctx => {
 							const data = CardsLookupApi.get(ctx.card.code)
 							return (
@@ -936,13 +965,13 @@ export const duplicateProduction = (type: CardCategory) =>
 									.every(e => e.conditions.every(c => c.evaluate(ctx)))
 							)
 						}
-					}
+					})
 				],
 				'Duplicate production of'
 			)
 		],
 		conditions: [
-			{
+			condition({
 				evaluate: ctx =>
 					!!ctx.player.usedCards.find((card, cardIndex) => {
 						const data = CardsLookupApi.get(card.code)
@@ -966,7 +995,7 @@ export const duplicateProduction = (type: CardCategory) =>
 								)
 						)
 					})
-			}
+			})
 		],
 		perform: (ctx, cardIndex: number) => {
 			const { player } = ctx
@@ -997,6 +1026,11 @@ export const productionForPlayersTags = (
 			CardCategory[tag]
 		} card${self ? '' : ' your OPPONENTS'} played`,
 		type: CardEffectType.Production,
+		symbols: [
+			{ tag, other: true },
+			{ symbol: SymbolType.RightArrow },
+			{ resource: res, count: resPerCard, production: true }
+		],
 		perform: ({ game, player, playerId }) => {
 			updatePlayerProduction(
 				player,
@@ -1025,6 +1059,11 @@ export const terraformRatingForTags = (tag: CardCategory, amount: number) =>
 	effect({
 		description: `Raise your terraform rating by ${amount} per every ${CardCategory[tag]} tag you played`,
 		type: CardEffectType.Production,
+		symbols: [
+			{ tag },
+			{ symbol: SymbolType.RightArrow },
+			{ symbol: SymbolType.TerraformingRating, count: amount }
+		],
 		perform: ({ player }) => {
 			player.terraformRating += player.usedCards
 				.map(c => CardsLookupApi.get(c.code))
@@ -1053,6 +1092,15 @@ export const productionForTags = (
 						CardCategory[tag]
 				  } tags you played (including this if applicable)`,
 		type: CardEffectType.Production,
+		symbols: [
+			{ tag, count: resPerCard < 1 ? Math.ceil(1 / resPerCard) : 1 },
+			{ symbol: SymbolType.RightArrow },
+			{
+				resource: res,
+				production: true,
+				count: resPerCard >= 1 ? resPerCard : 1
+			}
+		],
 		perform: ({ player, card }) => {
 			updatePlayerProduction(
 				player,
@@ -1087,6 +1135,11 @@ export const resourcesForPlayersTags = (
 			CardCategory[tag]
 		} tag${self ? '' : ' your OPPONENTS'} played`,
 		type: CardEffectType.Production,
+		symbols: [
+			{ tag, other: true },
+			{ symbol: SymbolType.RightArrow },
+			{ resource: res, count: resPerCard }
+		],
 		perform: ({ game, player, playerId }) => {
 			updatePlayerResource(
 				player,
@@ -1124,6 +1177,11 @@ export const resourcesForTags = (
 			CardCategory[tag]
 		} tag you played`,
 		type: CardEffectType.Production,
+		symbols: [
+			{ tag },
+			{ symbol: SymbolType.RightArrow },
+			{ resource: res, count: resPerCard }
+		],
 		perform: ({ player }) => {
 			updatePlayerResource(
 				player,
@@ -1148,12 +1206,12 @@ export const addResourceToCard = () =>
 		description: 'Add 1 resource to a card with at least 1 resource on it',
 		args: [
 			cardArg([
-				{
+				condition({
 					evaluate: ({ card }) => {
 						const res = CardsLookupApi.get(card.code)?.resource
 						return !!res && card[res] >= 1
 					}
-				}
+				})
 			])
 		],
 		conditions: [
@@ -1194,6 +1252,13 @@ export const exchangeResources = (srcRes: Resource, dstRes: Resource) =>
 			'X'
 		)}`,
 		conditions: [resourceCondition(srcRes, 1)],
+		symbols: [
+			{ symbol: SymbolType.X },
+			{ resource: srcRes },
+			{ symbol: SymbolType.RightArrow },
+			{ symbol: SymbolType.X },
+			{ resource: dstRes }
+		],
 		perform: ({ player }, amount: number) => {
 			if (player[srcRes] < amount) {
 				throw new Error(`You don't have ${amount} of ${srcRes}`)

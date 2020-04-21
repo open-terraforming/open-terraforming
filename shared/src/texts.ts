@@ -41,8 +41,8 @@ export const otherArticle = (other: GridCellOther) => {
 		case GridCellOther.Mohole:
 		case GridCellOther.RestrictedZone:
 		case GridCellOther.Volcano:
-			return 'a'
 		case GridCellOther.NuclearZone:
+			return 'a'
 		case GridCellOther.IndustrialCenter:
 		case GridCellOther.EcologicalZone:
 			return 'an'

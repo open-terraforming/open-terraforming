@@ -19,9 +19,10 @@ import { Jupiter } from './Jupiter'
 
 type Props = {
 	tag: CardCategory
+	size?: 'md' | 'sm'
 }
 
-export const Tag = ({ tag }: Props) => {
+export const Tag = ({ tag, size = 'md' }: Props) => {
 	const image = useMemo(() => {
 		switch (tag) {
 			case CardCategory.Animal:
@@ -100,22 +101,13 @@ export const Tag = ({ tag }: Props) => {
 	}, [tag])
 
 	return (
-		<Category title={CardCategory[tag]}>{image || CardCategory[tag]}</Category>
+		<Category title={CardCategory[tag]} size={size}>
+			{image || CardCategory[tag]}
+		</Category>
 	)
 }
 
-const Category = styled.div`
-	width: 2rem;
-	height: 2rem;
-
-	img {
-		width: 100%;
-		height: 100%;
-		border-radius: 50%;
-	}
-`
-
-const IconContainer = styled.div<{ background: string }>`
+const IconContainer = styled.div<{ background: string; size?: Props['size'] }>`
 	${props => css`
 		background: ${props.background};
 		width: 100%;
@@ -128,7 +120,35 @@ const IconContainer = styled.div<{ background: string }>`
 		border-left: 2px solid rgb(221, 221, 221);
 		border-bottom: 2px solid rgb(137, 137, 137);
 		border-right: 2px solid rgb(137, 137, 137);
-		margin-top: -2px;
-		margin-left: -2px;
 	`}
+`
+
+const Category = styled.div<{ size?: Props['size'] }>`
+	${props =>
+		props.size === 'md'
+			? css`
+					width: 2rem;
+					height: 2rem;
+
+					> ${IconContainer} {
+						margin-top: -2px;
+						margin-left: -2px;
+					}
+			  `
+			: css`
+					width: 1.25rem;
+					height: 1.25rem;
+
+					font-size: 85%;
+
+					> ${IconContainer} {
+						box-sizing: border-box;
+					}
+			  `}
+
+	img {
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+	}
 `

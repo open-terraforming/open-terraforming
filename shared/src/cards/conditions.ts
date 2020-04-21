@@ -7,13 +7,15 @@ import {
 	CardEffectArgumentType,
 	CardResource,
 	GameProgress,
-	Resource
+	Resource,
+	WithOptional,
+	SymbolType
 } from './types'
-import { countGridContent, resourceProduction } from './utils'
+import { countGridContent, resourceProduction, progressSymbol } from './utils'
 
 export const condition = <T extends (CardEffectArgumentType | undefined)[]>(
-	c: CardCondition<T>
-): CardCondition<T> => c
+	c: WithOptional<CardCondition<T>, 'symbols'>
+): CardCondition<T> => ({ symbols: [], ...c })
 
 export const gameCardsCondition = (amount: number) =>
 	condition({
@@ -47,6 +49,7 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 							.length,
 					0
 				) >= value,
+		symbols: [{ tag: category, count: value }],
 		description: `Requires ${value} ${CardCategory[category]} tag(s)`
 	})
 
@@ -85,6 +88,7 @@ export const joinedCardCountCondition = (
 				return true
 			})
 		},
+		symbols: conditions.map(c => ({ tag: c.category, count: c.value })),
 		description: `Requires ${conditions
 			.map(c => `${c.value} ${CardCategory[c.category]}`)
 			.join(', ')} tag(s)`
@@ -94,6 +98,11 @@ export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 	condition({
 		evaluate: ({ game, player }) =>
 			game[res] >= value - player.progressConditionBonus,
+		symbols: [
+			{ ...progressSymbol[res] },
+			{ symbol: SymbolType.MoreOrEqual },
+			{ text: withUnits(res, value) }
+		],
 		description: `${progressResToStr(res)} has to be at least ${withUnits(
 			res,
 			value
@@ -104,6 +113,11 @@ export const gameProgressConditionMax = (res: GameProgress, value: number) =>
 	condition({
 		evaluate: ({ game, player }) =>
 			game[res] <= value + player.progressConditionBonus,
+		symbols: [
+			{ ...progressSymbol[res] },
+			{ symbol: SymbolType.LessOrEqual },
+			{ text: withUnits(res, value) }
+		],
 		description: `${progressResToStr(res)} has to be at most ${withUnits(
 			res,
 			value
@@ -119,12 +133,14 @@ export const resourceCondition = (res: Resource, value: number) =>
 export const cellTypeCondition = (type: GridCellContent, amount: number) =>
 	condition({
 		description: `Requires at least ${amount} ${GridCellContent[type]} to be placed by anybody`,
+		symbols: [{ tile: type, count: amount }],
 		evaluate: ({ game }) => countGridContent(game, type) >= amount
 	})
 
 export const ownedCellTypeCondition = (type: GridCellContent, amount: number) =>
 	condition({
 		description: `Requires at least ${amount} ${GridCellContent[type]} to be placed by you`,
+		symbols: [{ tile: type, count: amount }],
 		evaluate: ({ game, playerId }) =>
 			countGridContent(game, type, playerId) >= amount
 	})

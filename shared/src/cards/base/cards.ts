@@ -63,7 +63,7 @@ import {
 	resourcePerPlacedTile
 } from '../passive-effects'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
-import { card, noDesc } from '../utils'
+import { card, noDesc, withRightArrow } from '../utils'
 import {
 	minCardResourceToVP,
 	vpsForAdjacentTiles,
@@ -234,7 +234,10 @@ export const baseCards: Card[] = [
 		type: CardType.Action,
 		cost: 11,
 		categories: [CardCategory.Building],
-		actionEffects: [productionChange('energy', -1), terraformRatingChange(1)]
+		actionEffects: [
+			withRightArrow(productionChange('energy', -1)),
+			terraformRatingChange(1)
+		]
 	}),
 	card({
 		code: 'domed_crater',
@@ -356,7 +359,7 @@ export const baseCards: Card[] = [
 		resource: 'animals',
 		conditions: [gameProgressConditionMin('oxygen', 11)],
 		actionEffects: [
-			otherCardResourceChange('animals', -1),
+			withRightArrow(otherCardResourceChange('animals', -1)),
 			cardResourceChange('animals', 1)
 		],
 		victoryPointsCallback: vpsForCardResources('animals', 1)
@@ -404,7 +407,7 @@ export const baseCards: Card[] = [
 		special: [CardSpecial.CorporationsEra],
 		resource: 'fighters',
 		actionEffects: [
-			resourceChange('titan', -1),
+			withRightArrow(resourceChange('titan', -1)),
 			cardResourceChange('fighters', 1)
 		],
 		victoryPointsCallback: vpsForCardResources('fighters', 1)
@@ -472,7 +475,7 @@ export const baseCards: Card[] = [
 			effectChoice([
 				cardResourceChange('microbes', 1),
 				joinedEffects([
-					cardResourceChange('microbes', -2),
+					withRightArrow(cardResourceChange('microbes', -2)),
 					gameProcessChange('oxygen', 1)
 				])
 			])
@@ -490,7 +493,7 @@ export const baseCards: Card[] = [
 			effectChoice([
 				cardResourceChange('microbes', 1),
 				joinedEffects([
-					cardResourceChange('microbes', -2),
+					withRightArrow(cardResourceChange('microbes', -2)),
 					gameProcessChange('temperature', 1)
 				])
 			])
@@ -505,7 +508,7 @@ export const baseCards: Card[] = [
 		resource: 'microbes',
 		conditions: [gameProgressConditionMin('oxygen', 4)],
 		actionEffects: [
-			playerCardResourceChange('microbes', -1),
+			withRightArrow(playerCardResourceChange('microbes', -1)),
 			cardResourceChange('microbes', 1)
 		],
 		victoryPointsCallback: vpsForCardResources('microbes', 1 / 2)
@@ -966,7 +969,10 @@ export const baseCards: Card[] = [
 		type: CardType.Action,
 		cost: 3,
 		categories: [CardCategory.Space, CardCategory.Power],
-		actionEffects: [resourceChange('money', -7), productionChange('energy', 1)]
+		actionEffects: [
+			withRightArrow(resourceChange('money', -7)),
+			productionChange('energy', 1)
+		]
 	}),
 	card({
 		code: 'solar_wind_power',
@@ -1161,7 +1167,7 @@ export const baseCards: Card[] = [
 		special: [CardSpecial.CorporationsEra],
 		resource: 'science',
 		actionEffects: [
-			resourceChange('energy', -6),
+			withRightArrow(resourceChange('energy', -6)),
 			cardResourceChange('science', 1)
 		],
 		victoryPointsCallback: vpsForCardResources('science', 2)
@@ -1223,7 +1229,7 @@ export const baseCards: Card[] = [
 		cost: 11,
 		categories: [CardCategory.Building],
 		actionEffects: [
-			resourceChange('energy', -4),
+			withRightArrow(resourceChange('energy', -4)),
 			resourceChange('ore', 1),
 			gameProcessChange('oxygen', 1)
 		]
@@ -1243,7 +1249,7 @@ export const baseCards: Card[] = [
 		cost: 15,
 		categories: [CardCategory.Building],
 		actionEffects: [
-			resourceChange('energy', -4),
+			withRightArrow(resourceChange('energy', -4)),
 			resourceChange('ore', 2),
 			gameProcessChange('oxygen', 1)
 		]
@@ -1255,7 +1261,7 @@ export const baseCards: Card[] = [
 		cost: 13,
 		categories: [CardCategory.Building],
 		actionEffects: [
-			resourceChange('energy', -4),
+			withRightArrow(resourceChange('energy', -4)),
 			resourceChange('titan', 1),
 			gameProcessChange('oxygen', 1)
 		]
@@ -1471,7 +1477,10 @@ export const baseCards: Card[] = [
 				conditions: [...OtherPlacement, PlacementCode.OneCity]
 			})
 		],
-		actionEffects: [resourceChange('money', -7), productionChange('ore', 1)]
+		actionEffects: [
+			withRightArrow(resourceChange('money', -7)),
+			productionChange('ore', 1)
+		]
 	}),
 	card({
 		code: 'hired_raiders',
@@ -1845,7 +1854,10 @@ export const baseCards: Card[] = [
 		categories: [],
 		special: [CardSpecial.CorporationsEra],
 		conditions: [gameProgressConditionMin('temperature', 0 / 2)],
-		actionEffects: [resourceChange('heat', -8), terraformRatingChange(1)]
+		actionEffects: [
+			withRightArrow(resourceChange('heat', -8)),
+			terraformRatingChange(1)
+		]
 	}),
 	card({
 		code: 'designed_microorganisms',
@@ -1877,7 +1889,7 @@ export const baseCards: Card[] = [
 			effectChoice([
 				cardResourceChange('microbes', 1),
 				joinedEffects([
-					cardResourceChange('microbes', -3),
+					withRightArrow(cardResourceChange('microbes', -3)),
 					terraformRatingChange(1)
 				])
 			])
@@ -2096,7 +2108,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Building],
 		conditions: [gameProgressConditionMin('oceans', 2)],
 		actionEffects: [
-			resourceChange('energy', -3),
+			withRightArrow(resourceChange('energy', -3)),
 			gameProcessChange('oxygen', 1)
 		]
 	}),
@@ -2196,7 +2208,10 @@ export const baseCards: Card[] = [
 		actionEffects: [
 			effectChoice([
 				cardResourceChange('science', 1),
-				joinedEffects([cardResourceChange('science', -1), getTopCards(1)])
+				joinedEffects([
+					withRightArrow(cardResourceChange('science', -1)),
+					getTopCards(1)
+				])
 			])
 		],
 		passiveEffects: [playWhenCard([CardCategory.Science])]
@@ -2346,7 +2361,7 @@ export const baseCards: Card[] = [
 				other: GridCellOther.RestrictedZone
 			})
 		],
-		actionEffects: [resourceChange('money', -2), getTopCards(1)]
+		actionEffects: [withRightArrow(resourceChange('money', -2)), getTopCards(1)]
 	}),
 	card({
 		code: 'immigrant_city',
@@ -2380,7 +2395,10 @@ export const baseCards: Card[] = [
 		type: CardType.Action,
 		cost: 6,
 		categories: [CardCategory.Building],
-		actionEffects: [resourceChange('money', -10), productionChange('heat', 2)]
+		actionEffects: [
+			withRightArrow(resourceChange('money', -10)),
+			productionChange('heat', 2)
+		]
 	}),
 	card({
 		code: 'soletta',

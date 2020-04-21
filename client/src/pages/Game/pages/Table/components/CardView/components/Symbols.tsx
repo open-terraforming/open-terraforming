@@ -1,15 +1,20 @@
+import { Card } from '@/icons/card'
+import {
+	faAngleRight,
+	faThermometerHalf
+} from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardSymbol, SymbolType } from '@shared/cards'
 import React from 'react'
 import styled, { css } from 'styled-components'
+import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { TileIcon } from '../../TileIcon/TileIcon'
-import { Card } from '@/icons/card'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
-import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
+import { Tag } from './Tag'
 
 type Props = {
 	symbols: CardSymbol[]
+	className?: string
 }
 
 const symbolToIcon = (s: CardSymbol) => {
@@ -23,13 +28,31 @@ const symbolToIcon = (s: CardSymbol) => {
 				return '+'
 			case SymbolType.Slash:
 				return '/'
+			case SymbolType.Colon:
+				return ':'
+			case SymbolType.X:
+				return <XSymbol>X</XSymbol>
+			case SymbolType.RightArrow:
+				return <FontAwesomeIcon icon={faAngleRight} />
 			case SymbolType.TerraformingRating:
 				return 'TR'
 			case SymbolType.Oxygen:
 				return 'O2'
 			case SymbolType.Temperature:
 				return <FontAwesomeIcon icon={faThermometerHalf} />
+			case SymbolType.MoreOrEqual:
+				return '\u2265'
+			case SymbolType.LessOrEqual:
+				return '\u2264'
 		}
+	}
+
+	if (s.text) {
+		return s.text
+	}
+
+	if (s.tag) {
+		return <Tag tag={s.tag} size="sm" />
 	}
 
 	if (s.cardResource) {
@@ -47,20 +70,37 @@ const symbolToIcon = (s: CardSymbol) => {
 	return null
 }
 
-export const Symbols = ({ symbols }: Props) => {
+export const Symbols = ({ symbols, className }: Props) => {
 	return symbols.length > 0 ? (
-		<E>
-			{symbols.map((s, i) => (
-				<S key={i} production={s.production} other={s.other}>
-					{s.count !== undefined && (
-						<Count>
-							{s.count >= 0 ? '+' : '-'}
-							{Math.abs(s.count) !== 1 && Math.abs(s.count)}
-						</Count>
-					)}{' '}
-					{symbolToIcon(s)}
-				</S>
-			))}
+		<E className={className}>
+			{symbols.map((s, i) => {
+				const countStr =
+					s.count === undefined
+						? undefined
+						: (s.count < 0
+								? '-'
+								: s.symbol === SymbolType.Oxygen ||
+								  s.symbol === SymbolType.Temperature
+								? '+'
+								: '') + (Math.abs(s.count) !== 1 ? Math.abs(s.count) : '')
+
+				return (
+					<S
+						key={i}
+						production={s.production}
+						other={s.other}
+						noSpacing={
+							s.symbol === SymbolType.X ||
+							s.symbol === SymbolType.RightArrow ||
+							s.symbol === SymbolType.LessOrEqual ||
+							s.symbol === SymbolType.MoreOrEqual
+						}
+					>
+						{countStr && countStr.length > 0 && <Count>{countStr}</Count>}
+						{symbolToIcon(s)}
+					</S>
+				)
+			})}
 		</E>
 	) : null
 }
@@ -70,16 +110,29 @@ const E = styled.div`
 	justify-content: center;
 `
 
-const S = styled.div<{ production?: boolean; other?: boolean }>`
+const S = styled.div<{
+	production?: boolean
+	other?: boolean
+	noSpacing?: boolean
+}>`
 	display: flex;
 	align-items: center;
-	padding: 0.3rem 0.3rem;
+	${props =>
+		!props.noSpacing &&
+		css`
+			padding: 0.3rem 0.3rem;
+		`}
 
 	${props =>
 		props.other &&
 		css`
 			border: 0.2rem solid #b00000;
 		`}
+`
+
+const XSymbol = styled.div`
+	padding-left: 0.3rem;
+	margin-right: -0.25rem;
 `
 
 const Count = styled.div`

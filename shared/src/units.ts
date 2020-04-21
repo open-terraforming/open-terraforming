@@ -23,7 +23,7 @@ export const withUnits = (
 		case 'oxygen':
 			return `${amount} %`
 		default:
-			return amount
+			return amount.toString()
 	}
 }
 

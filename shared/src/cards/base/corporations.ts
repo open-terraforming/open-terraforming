@@ -21,7 +21,8 @@ import {
 	card,
 	noDesc,
 	updatePlayerProduction,
-	updatePlayerResource
+	updatePlayerResource,
+	withRightArrow
 } from '../utils'
 
 export const corp = (c: Card, pickingCards = true): Card => {
@@ -248,7 +249,7 @@ export const baseCorporations = [
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 40)],
 			actionEffects: [
-				resourceChange('money', -3),
+				withRightArrow(resourceChange('money', -3)),
 				effect({
 					description:
 						'If your terraforming rating was increased this generation, you may increase it by 1',
