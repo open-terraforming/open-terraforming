@@ -147,8 +147,8 @@ export enum CardEffectTarget {
 	PlayerResource,
 	// Type - amount: number
 	Resource,
-	// Type - amount: number
-	Production,
+	// Type - resource: Resource
+	ResourceType,
 	// Type - cardIndex: number
 	Card,
 	// Type - [player: number, cardIndex: number]
@@ -166,7 +166,7 @@ export interface CardEffectArgument {
 	playerConditions: PlayerCondition[]
 	cardConditions: CardCondition[]
 	cellConditions: CellCondition[]
-	productionConditions: ProductionCondition[]
+	resourceConditions: ResourceCondition[]
 	drawnCards?: number
 	amount?: number
 	maxAmount?: number
@@ -177,7 +177,7 @@ export interface CardEffectArgument {
 	effects?: CardEffect[]
 }
 
-export type ProductionCondition = (
+export type ResourceCondition = (
 	context: { player: PlayerState; game: GameState },
 	resource: Resource
 ) => boolean

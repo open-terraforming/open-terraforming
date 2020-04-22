@@ -58,7 +58,8 @@ input[type=checkbox] {
 }
 
 select option {
-	color: #000;
+	color: #eee;
+	background: #000;
 }
 
 button, a {

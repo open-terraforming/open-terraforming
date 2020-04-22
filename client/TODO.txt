@@ -19,7 +19,7 @@ TODO:
   * SOUNDS -> milestone/award bought
   * SOUNDS -> resources changed?
 
-  * GENERAL -> player resource argument (with filter option)
+  * GENERAL -> implement Tile card argument target and card using it (Claim)
   * GENERAL -> implement SelectPlayerAction and card using it
   * GENERAL -> implement SponsorCompetition and card using it
   * GENERAL -> player which creates a game should be admin of said game?

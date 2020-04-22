@@ -32,7 +32,7 @@ import {
 	effectArg,
 	effectChoiceArg,
 	playerCardArg,
-	productionArg
+	resourceTypeArg
 } from './args'
 import {
 	cardCountCondition,
@@ -1292,18 +1292,23 @@ export const lowestProductionChange = (amount: number) =>
 	effect({
 		description: `Increase your lowest production by ${amount}`,
 		args: [
-			productionArg([
-				({ player }, res) =>
-					!productions.find(
-						sub => player[sub] < player[resourceProduction[res]]
-					)
-			])
+			effectArg({
+				...resourceTypeArg([
+					({ player }, res) =>
+						!productions.find(
+							sub => player[sub] < player[resourceProduction[res]]
+						)
+				]),
+				descriptionPrefix: 'Increase production of'
+			})
 		],
-		perform: ({ player }, resource) => {
+		perform: ({ card, player }, resource) => {
 			if (typeof resource !== 'string' || !(resource in resourceProduction)) {
 				throw new Error(`${resource} is not a resource`)
 			}
 
 			updatePlayerProduction(player, resource as Resource, amount)
+
+			card.played = true
 		}
 	})

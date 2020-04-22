@@ -5,11 +5,12 @@ import {
 	productionChange,
 	resourceChange,
 	tagPriceChange,
-	emptyEffect
+	emptyEffect,
+	lowestProductionChange
 } from '../effects'
 import { passiveEffect, asFirstAction } from '../passive-effects'
 import { CardCategory, CardSpecial, CardType } from '../types'
-import { card } from '../utils'
+import { card, withRightArrow } from '../utils'
 
 export const preludeCorporations = [
 	corp(
@@ -57,8 +58,6 @@ export const preludeCorporations = [
 			]
 		})
 	),
-	/*
-	TODO:
 	corp(
 		card({
 			code: 'robinson_industries',
@@ -67,16 +66,13 @@ export const preludeCorporations = [
 			type: CardType.Corporation,
 			categories: [],
 			special: [CardSpecial.Prelude],
-			playEffects: [
-				resourceChange('money', 47)
-			],
+			playEffects: [resourceChange('money', 47)],
 			actionEffects: [
-				resourceChange('money', -4),
+				withRightArrow(resourceChange('money', -4)),
 				lowestProductionChange(1)
 			]
 		})
-	)
-	*/
+	),
 	corp(
 		card({
 			code: 'valley_trust',

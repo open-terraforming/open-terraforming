@@ -16,7 +16,7 @@ import {
 	emptyEffect
 } from '../effects'
 import { asFirstAction, passiveEffect } from '../passive-effects'
-import { Card, CardCategory, CardSpecial, CardType } from '../types'
+import { Card, CardCategory, CardSpecial, CardType, SymbolType } from '../types'
 import {
 	card,
 	noDesc,
@@ -260,6 +260,7 @@ export const baseCorporations = [
 								card.data === undefined || card.data < player.terraformRating
 						})
 					],
+					symbols: [{ symbol: SymbolType.TerraformingRating, count: 1 }],
 					perform: ({ player, card }) => {
 						player.terraformRating++
 						card.played = true

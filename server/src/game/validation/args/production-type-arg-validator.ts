@@ -2,7 +2,7 @@ import { ValidatorContext } from './types'
 import { resources } from '@shared/cards/utils'
 import { Resource } from '@shared/cards'
 
-export const productionArgValidator = ({
+export const productionTypeArgValidator = ({
 	a,
 	value,
 	ctx: { game, player }
@@ -14,9 +14,7 @@ export const productionArgValidator = ({
 		throw new Error(`${value} is not a resource`)
 	}
 
-	if (
-		a.productionConditions.find(c => !c({ player, game }, value as Resource))
-	) {
+	if (a.resourceConditions.find(c => !c({ player, game }, value as Resource))) {
 		throw new Error(`${value} is not a valid resource argument`)
 	}
 }

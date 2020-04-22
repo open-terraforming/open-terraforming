@@ -10,6 +10,7 @@ import { ResourceArg } from './ResourceArg'
 import { ChoiceArg } from './ChoiceArg'
 import { CardArg } from './CardArg'
 import { PlayerResourceArg } from './PlayerResourceArg'
+import { ResourceTypeArg } from './ResourceTypeArg'
 
 type Props = {
 	arg: CardEffectArgument
@@ -41,6 +42,8 @@ export const Arg = ({ arg, cardState, card, cardIndex, onChange }: Props) => {
 			return <CardArg arg={arg} onChange={onChange} otherPlayer={true} />
 		case CardEffectTarget.PlayerResource:
 			return <PlayerResourceArg arg={arg} onChange={onChange} />
+		case CardEffectTarget.ResourceType:
+			return <ResourceTypeArg arg={arg} onChange={onChange} />
 		default:
 			return (
 				<div style={{ color: '#FFB0B7' }}>
