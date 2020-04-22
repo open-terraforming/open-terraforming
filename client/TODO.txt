@@ -29,6 +29,7 @@ TODO:
 
 CHECK CARDS:
   * CHECK -> pets
+  * CHECK -> TERRAFORMING GANYMEDE - extra TR added?
 
 LOW PRIORITY TODO:
   * GENERAL -> player emoticons
