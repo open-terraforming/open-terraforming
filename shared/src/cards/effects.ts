@@ -31,7 +31,8 @@ import {
 	cellArg,
 	effectArg,
 	effectChoiceArg,
-	playerCardArg
+	playerCardArg,
+	productionArg
 } from './args'
 import {
 	cardCountCondition,
@@ -65,7 +66,8 @@ import {
 	resourceProduction,
 	resToPrice,
 	updatePlayerProduction,
-	updatePlayerResource
+	updatePlayerResource,
+	productions
 } from './utils'
 
 export const effect = <T extends (CardEffectArgumentType | undefined)[]>(
@@ -1284,4 +1286,24 @@ export const emptyEffect = (description: string, symbols: CardSymbol[] = []) =>
 		description,
 		symbols,
 		perform: () => null
+	})
+
+export const lowestProductionChange = (amount: number) =>
+	effect({
+		description: `Increase your lowest production by ${amount}`,
+		args: [
+			productionArg([
+				({ player }, res) =>
+					!productions.find(
+						sub => player[sub] < player[resourceProduction[res]]
+					)
+			])
+		],
+		perform: ({ player }, resource) => {
+			if (typeof resource !== 'string' || !(resource in resourceProduction)) {
+				throw new Error(`${resource} is not a resource`)
+			}
+
+			updatePlayerProduction(player, resource as Resource, amount)
+		}
 	})

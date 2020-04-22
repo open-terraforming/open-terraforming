@@ -9,8 +9,27 @@ import {
 	WithOptional,
 	CardSymbol,
 	SymbolType,
-	GameProgress
+	GameProgress,
+	Production
 } from './types'
+
+export const resources: Resource[] = [
+	'money',
+	'ore',
+	'titan',
+	'plants',
+	'energy',
+	'heat'
+]
+
+export const productions: Production[] = [
+	'moneyProduction',
+	'oreProduction',
+	'titanProduction',
+	'plantsProduction',
+	'energyProduction',
+	'heatProduction'
+]
 
 export const resourceProduction = {
 	money: 'moneyProduction',

@@ -1,23 +1,29 @@
+import { unprotectedCard } from './conditions'
 import {
 	CardCondition,
-	WithOptional,
-	CardEffectArgument,
 	CardEffect,
+	CardEffectArgument,
 	CardEffectTarget,
-	CellCondition
+	CellCondition,
+	WithOptional,
+	ProductionCondition
 } from './types'
-import { unprotectedCard } from './conditions'
 
 export const effectArg = (
 	c: WithOptional<
 		CardEffectArgument,
-		'playerConditions' | 'cardConditions' | 'optional' | 'cellConditions'
+		| 'playerConditions'
+		| 'cardConditions'
+		| 'optional'
+		| 'cellConditions'
+		| 'productionConditions'
 	>
 ) =>
 	({
 		playerConditions: [],
 		cardConditions: [],
 		cellConditions: [],
+		productionConditions: [],
 		optional: true,
 		...c
 	} as CardEffectArgument)
@@ -57,4 +63,12 @@ export const playerCardArg = (conditions: CardCondition[] = [], amount = 0) =>
 		type: CardEffectTarget.PlayerCardResource,
 		cardConditions: [...conditions, unprotectedCard()],
 		amount
+	})
+
+export const productionArg = (
+	productionConditions: ProductionCondition[] = []
+) =>
+	effectArg({
+		type: CardEffectTarget.Production,
+		productionConditions
 	})

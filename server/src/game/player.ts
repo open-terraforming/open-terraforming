@@ -7,7 +7,6 @@ import {
 	CardCondition,
 	CardEffect,
 	CardEffectArgumentType,
-	CardEffectTarget,
 	CardsLookupApi,
 	CardType
 } from '@shared/cards'
@@ -15,7 +14,6 @@ import {
 	adjustedCardPrice,
 	cellByCoords,
 	emptyCardState,
-	gamePlayer,
 	updatePlayerResource
 } from '@shared/cards/utils'
 import { CompetitionType } from '@shared/competitions'
@@ -40,7 +38,7 @@ import {
 } from '@shared/game'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, PlacementConditionsLookup } from '@shared/placements'
-import { PlayerActionType, placeTileAction } from '@shared/player-actions'
+import { placeTileAction, PlayerActionType } from '@shared/player-actions'
 import { PlayerColors } from '@shared/player-colors'
 import { Projects, StandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
@@ -48,13 +46,14 @@ import {
 	adjacentCells,
 	allCells,
 	drawCards,
-	range,
-	pushPendingAction
+	pushPendingAction,
+	range
 } from '@shared/utils'
 import Hashids from 'hashids/cjs'
 import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
+import { validateArgValue } from './validation/validate-arg-value'
 
 export interface CardPlayedEvent {
 	player: Player
@@ -513,70 +512,17 @@ export class Player {
 						)
 					}
 
-					// Check if card is valid
-					if (a.type === CardEffectTarget.Card) {
-						const card = a.fromHand
-							? emptyCardState(this.state.cards[value as number])
-							: this.state.usedCards[value as number]
-
-						const errors = a.cardConditions.filter(
-							c =>
-								!c.evaluate({
-									card,
-									cardIndex: value as number,
-									player: this.state,
-									game: this.game.state,
-									playerId: this.state.id
-								})
+					try {
+						validateArgValue({
+							a,
+							card,
+							ctx,
+							value
+						})
+					} catch (e) {
+						throw new Error(
+							f('{0}: Effect {1} argument {2} - {3}', card.title, i, ai, e)
 						)
-
-						if (errors.length > 0) {
-							throw new Error(
-								f(
-									`{0}: Card selected for effect {1} argument {2} doesn't meet the conditions: {3}`,
-									card.code,
-									i,
-									ai,
-									errors.map((e, i) => e.description || i.toString()).join(', ')
-								)
-							)
-						}
-					}
-
-					// Check if player is valid
-					if (a.type === CardEffectTarget.Player) {
-						if (value === -1 && !a.optional) {
-							throw new Error(
-								f(
-									`{0}: Effect {1} argument {2}: player is required`,
-									card.code,
-									i,
-									ai
-								)
-							)
-						}
-
-						const player = gamePlayer(this.game.state, value as number)
-
-						const errors = a.playerConditions.filter(
-							c =>
-								!c.evaluate({
-									game: this.game.state,
-									player
-								})
-						)
-
-						if (errors.length > 0) {
-							throw new Error(
-								f(
-									`{0}: Player selected for effect {1} argument {2} doesn't meet the conditions: {3}`,
-									card.code,
-									i,
-									ai,
-									errors.map((e, i) => e.description || i.toString()).join(', ')
-								)
-							)
-						}
 					}
 				})
 			})
