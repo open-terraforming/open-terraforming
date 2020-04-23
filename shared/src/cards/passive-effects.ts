@@ -299,7 +299,7 @@ export const changeResourceFromNeighbor = (res: Resource, amount: number) => ({
 			amount < 0
 				? 'You may remove {0} from one of the owners of adjacent tiles'
 				: 'You may give {0} to one of the owners of adjacent tiles',
-			withUnits(res, -amount)
+			withUnits(res, Math.abs(amount))
 		),
 		onTilePlaced: ({ game, player, card, cardIndex }, cell, placedBy) => {
 			if (card.data || placedBy.id !== player.id) {

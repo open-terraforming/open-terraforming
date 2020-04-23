@@ -2244,8 +2244,8 @@ export const baseCards: Card[] = [
 		cost: 7,
 		categories: [CardCategory.Event],
 		playEffects: [placeOcean()],
-		actionEffects: [changeResourceFromNeighbor('money', 4).action],
-		passiveEffects: [changeResourceFromNeighbor('money', 4).effect],
+		actionEffects: [changeResourceFromNeighbor('money', -4).action],
+		passiveEffects: [changeResourceFromNeighbor('money', -4).effect],
 		victoryPoints: -1
 	}),
 	card({

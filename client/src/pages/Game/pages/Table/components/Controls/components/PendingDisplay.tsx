@@ -25,10 +25,10 @@ export const PendingDisplay = ({ pending }: Props) => {
 						? otherToStr(pending.state.other)
 						: tileToStr(pending.state.type))
 				)
+			case PlayerActionType.ClaimTile:
+				return 'Selecting tile to claim'
 			case PlayerActionType.PlayCard:
 				return 'Playing card'
-			case PlayerActionType.SelectPlayer:
-				return 'Selecting player'
 			case PlayerActionType.SponsorCompetition:
 				return 'Selecting competition'
 		}

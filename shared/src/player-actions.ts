@@ -8,8 +8,7 @@ export enum PlayerActionType {
 	PlaceTile,
 	PlayCard,
 	ClaimTile,
-	SponsorCompetition,
-	SelectPlayer
+	SponsorCompetition
 }
 
 export const placeTileAction = (state: PlacementState) =>
@@ -55,18 +54,6 @@ export const sponsorCompetitionAction = (competition: CompetitionType) =>
 		competition
 	} as const)
 
-export const selectPlayerAction = (
-	source: number,
-	choices: number[],
-	description: string
-) =>
-	({
-		type: PlayerActionType.SelectPlayer,
-		source,
-		choices,
-		description
-	} as const)
-
 export const claimTileAction = () =>
 	({
 		type: PlayerActionType.ClaimTile
@@ -79,5 +66,4 @@ export type PlayerAction =
 	| ReturnType<typeof pickPreludesAction>
 	| ReturnType<typeof playCardAction>
 	| ReturnType<typeof sponsorCompetitionAction>
-	| ReturnType<typeof selectPlayerAction>
 	| ReturnType<typeof claimTileAction>
