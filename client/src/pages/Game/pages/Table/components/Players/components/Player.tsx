@@ -24,6 +24,7 @@ const pendingToStr = {
 	[PlayerActionType.PickCorporation]: 'Picking corporation',
 	[PlayerActionType.PickPreludes]: 'Picking preludes',
 	[PlayerActionType.PlaceTile]: 'Placing tile',
+	[PlayerActionType.ClaimTile]: 'Claiming tile',
 	[PlayerActionType.PlayCard]: 'Playing card',
 	[PlayerActionType.SelectPlayer]: 'Selecting player',
 	[PlayerActionType.SponsorCompetition]: 'Selecting competition'
@@ -32,7 +33,7 @@ const pendingToStr = {
 const stateToStr = {
 	[PlayerStateValue.Passed]: 'Passed',
 	[PlayerStateValue.Playing]: 'Playing',
-	[PlayerStateValue.EndingTiles]: 'Placing greeneries',
+	[PlayerStateValue.EndingTiles]: '',
 	[PlayerStateValue.WaitingForTurn]: 'Waiting',
 	[PlayerStateValue.Picking]: '',
 	[PlayerStateValue.Connecting]: 'Connecting',

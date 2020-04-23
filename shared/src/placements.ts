@@ -197,3 +197,8 @@ export const canPlace = (
 		.map(c => PlacementConditionsLookup.get(c))
 		.every(c => c.evaluate(ctx))
 }
+
+export const isClaimable = (cell: GridCell) =>
+	cell.content === undefined &&
+	cell.claimantId === undefined &&
+	cell.type === GridCellType.General

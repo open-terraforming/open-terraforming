@@ -23,7 +23,7 @@ import {
 	UsedCardState,
 	StandardProjectType
 } from '@shared/game'
-import { canPlace } from '@shared/placements'
+import { canPlace, isClaimable } from '@shared/placements'
 import { allCells, milestonePrice, competitionPrice } from '@shared/utils'
 import { Game } from './game'
 import { Player } from './player'
@@ -314,6 +314,17 @@ export class Bot extends Player {
 				)
 				if (tile) {
 					return this.placeTile(tile.x, tile.y)
+				} else {
+					return this.pass(true)
+				}
+			}
+
+			case PlayerActionType.ClaimTile: {
+				const tile = shuffle(allCells(this.game.state)).find(c =>
+					isClaimable(c)
+				)
+				if (tile) {
+					return this.claimTile(tile.x, tile.y)
 				} else {
 					return this.pass(true)
 				}

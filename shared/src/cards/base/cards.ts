@@ -47,7 +47,8 @@ import {
 	terraformRatingChange,
 	terraformRatingForTags,
 	titanPriceChange,
-	triggerCardResourceChange
+	triggerCardResourceChange,
+	claimCell
 } from '../effects'
 import {
 	cardExchangeEffect,
@@ -840,16 +841,15 @@ export const baseCards: Card[] = [
 		special: [CardSpecial.CorporationsEra],
 		playEffects: [productionChange('energy', -1), productionChange('ore', 2)]
 	}),
-	/*
 	card({
 		code: 'land_claim',
 		title: 'Land Claim',
 		type: CardType.Event,
 		cost: 1,
-		categories: [CardCategory.Event],special: [CardSpecial.AgeOfCorporations],
-		playEffects: [claimCell()],
+		categories: [CardCategory.Event],
+		special: [CardSpecial.CorporationsEra],
+		playEffects: [claimCell()]
 	}),
-	*/
 	card({
 		code: 'mining_rights',
 		title: 'Mining Rights',

@@ -13,7 +13,8 @@ import {
 import {
 	pickCardsAction,
 	pickPreludesAction,
-	placeTileAction
+	placeTileAction,
+	claimTileAction
 } from '../player-actions'
 import { otherWithArticle, tileWithArticle } from '../texts'
 import { withUnits } from '../units'
@@ -855,22 +856,10 @@ export const resourceChangeIfTags = (
 
 export const claimCell = () =>
 	effect({
-		args: [
-			cellArg(
-				[
-					{
-						evaluate: ({ cell }) =>
-							!cell.content && cell.type === GridCellType.General
-					}
-				],
-				'Cell to claim'
-			)
-		],
 		description:
 			'Place your marker on any area. Only you will be able to place tiles on this area.',
-		perform: ({ playerId, game }, [x, y]: [number, number]) => {
-			const cell = cellByCoords(game, x, y)
-			cell.claimantId = playerId
+		perform: ({ player }) => {
+			pushPendingAction(player, claimTileAction())
 		}
 	})
 

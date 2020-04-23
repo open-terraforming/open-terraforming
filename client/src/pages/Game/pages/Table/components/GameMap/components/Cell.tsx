@@ -1,23 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { GridCellType, GridCellContent, GridCell } from '@shared/index'
-import { PlacementState, canPlace } from '@shared/placements'
+import { PlacementState, canPlace, isClaimable } from '@shared/placements'
 import { useAppStore } from '@/utils/hooks'
 
 type Props = {
 	cell: GridCell
 	pos: { x: number; y: number }
 	placing?: PlacementState
+	claiming?: boolean
 	onClick: () => void
 }
 
 const hexPoints = '-8.5,4.4 -8.5,-4.5 0,-9.5 8.5,-4.5 8.5,4.5 0,9.5'
 
-export const Cell = ({ cell, pos, placing, onClick }: Props) => {
+export const Cell = ({ cell, pos, placing, onClick, claiming }: Props) => {
 	const game = useAppStore(state => state.game.state)
 
 	const owner = useAppStore(state =>
-		state.game.state?.players.find(p => p.id === cell.ownerId)
+		state.game.state.players.find(
+			p => p.id === cell.ownerId || p.id === cell.claimantId
+		)
 	)
 
 	const player = useAppStore(state => state.game.player)
@@ -41,19 +44,17 @@ export const Cell = ({ cell, pos, placing, onClick }: Props) => {
 	}, [cell.content])
 
 	const active =
-		!!placing &&
-		!!game &&
-		!!player &&
-		playerId !== undefined &&
-		cell.content === undefined &&
-		(cell.claimantId === undefined || cell.claimantId === playerId) &&
-		canPlace(game, player, cell, placing)
+		(!!placing &&
+			cell.content === undefined &&
+			(cell.claimantId === undefined || cell.claimantId === playerId) &&
+			canPlace(game, player, cell, placing)) ||
+		(!!claiming && isClaimable(cell))
 
 	return (
 		<StyledHex
 			gridType={cell.type}
 			gridContent={cell.content}
-			gridActive={placing ? active : undefined}
+			gridActive={placing || claiming ? active : undefined}
 			transform={`translate(${pos.x},${pos.y})`}
 			onClick={active ? onClick : undefined}
 		>

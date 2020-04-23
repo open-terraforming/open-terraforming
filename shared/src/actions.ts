@@ -49,7 +49,8 @@ export enum MessageType {
 	AdminChange,
 	AdminLogin,
 	PickColor,
-	PickPreludes
+	PickPreludes,
+	ClaimTile
 }
 
 export const handshakeRequest = (version: string) =>
@@ -147,6 +148,12 @@ export const placeTile = (x: number, y: number) =>
 		data: { x, y }
 	} as const)
 
+export const claimTile = (x: number, y: number) =>
+	({
+		type: MessageType.ClaimTile,
+		data: { x, y }
+	} as const)
+
 export const adminChange = (state: UpdateDeepPartial<GameState>) =>
 	({
 		type: MessageType.AdminChange,
@@ -225,3 +232,4 @@ export type GameMessage =
 	| ReturnType<typeof pickColor>
 	| ReturnType<typeof adminLogin>
 	| ReturnType<typeof pickPreludes>
+	| ReturnType<typeof claimTile>

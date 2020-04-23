@@ -29,7 +29,6 @@ import {
 	GameStateValue,
 	GridCell,
 	GridCellContent,
-	GridCellSpecial,
 	PlayerState,
 	PlayerStateValue,
 	StandardProjectType,
@@ -37,7 +36,7 @@ import {
 	VictoryPointsSource
 } from '@shared/game'
 import { Milestones, MilestoneType } from '@shared/milestones'
-import { canPlace, PlacementConditionsLookup } from '@shared/placements'
+import { canPlace, isClaimable } from '@shared/placements'
 import { placeTileAction, PlayerActionType } from '@shared/player-actions'
 import { PlayerColors } from '@shared/player-colors'
 import { Projects, StandardProject } from '@shared/projects'
@@ -545,45 +544,10 @@ export class Player {
 			throw new Error('Cell not found')
 		}
 
-		if (
-			cell.content ||
-			(cell.claimantId !== undefined && cell.claimantId !== this.id)
-		) {
-			throw new Error(`Cell is already owned by someone else`)
-		}
-
 		const pendingTile = top.state
 
-		if (pendingTile.conditions) {
-			const errors = pendingTile.conditions
-				.map(c => PlacementConditionsLookup.get(c))
-				.filter(
-					c =>
-						!c.evaluate({
-							game: this.game.state,
-							player: this.state,
-							playerId: this.id,
-							cell
-						})
-				)
-			if (errors.length > 0) {
-				throw new Error(
-					`Placement not possible: ${errors.map(e => e.description).join(', ')}`
-				)
-			}
-		}
-
-		if (
-			pendingTile.special &&
-			pendingTile.special.length &&
-			(cell.special === undefined ||
-				!pendingTile.special.includes(cell.special))
-		) {
-			throw new Error(
-				`You cannot place tile here, can only be placed at: ${pendingTile.special
-					.map(s => GridCellSpecial[s])
-					.join(' or ')}`
-			)
+		if (!canPlace(this.game.state, this.state, cell, pendingTile)) {
+			throw new Error(`You cannot place the tile here`)
 		}
 
 		this.logger.log(
@@ -793,6 +757,34 @@ export class Player {
 
 			this.updated()
 		}
+	}
+
+	claimTile(x: number, y: number) {
+		if (!this.isPlaying) {
+			throw new Error('Player is not playing now')
+		}
+
+		const top = this.pendingAction
+
+		if (top.type !== PlayerActionType.ClaimTile) {
+			throw new Error("You're not claiming now")
+		}
+
+		const cell = cellByCoords(this.game.state, x, y)
+
+		if (!cell) {
+			throw new Error('Cell not found')
+		}
+
+		if (!isClaimable(cell)) {
+			throw new Error(`This cell is reserved or owned by someone else`)
+		}
+
+		this.logger.log(f('Claimed {0},{1}', cell.x, cell.y))
+
+		cell.claimantId = this.state.id
+
+		this.popAction()
 	}
 
 	filterPendingActions() {

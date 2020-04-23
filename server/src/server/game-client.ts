@@ -251,6 +251,10 @@ export class Client {
 						return this.player.pickColor(message.data.index)
 					}
 
+					case MessageType.ClaimTile: {
+						return this.player.claimTile(message.data.x, message.data.y)
+					}
+
 					default: {
 						return serverMessage(`Unknown action ${message.type}`)
 					}

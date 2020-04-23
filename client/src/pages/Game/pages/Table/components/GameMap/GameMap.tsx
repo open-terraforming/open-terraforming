@@ -1,7 +1,7 @@
 import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
-import { placeTile } from '@shared/actions'
+import { claimTile, placeTile } from '@shared/actions'
 import { GridCell, PlayerStateValue } from '@shared/game'
 import { PlayerActionType } from '@shared/player-actions'
 import React, { useRef } from 'react'
@@ -71,9 +71,17 @@ export const GameMap = ({}: Props) => {
 			? pending.state
 			: undefined
 
+	const claiming = !!(
+		isPlaying &&
+		pending &&
+		pending.type === PlayerActionType.ClaimTile
+	)
+
 	const handleCellClick = (cell: GridCell) => {
 		if (placing) {
 			api.send(placeTile(cell.x, cell.y))
+		} else if (claiming) {
+			api.send(claimTile(cell.x, cell.y))
 		}
 	}
 
@@ -119,6 +127,7 @@ export const GameMap = ({}: Props) => {
 								<Cell
 									cell={cell}
 									placing={placing}
+									claiming={claiming}
 									key={`${cell.x},${cell.y}`}
 									pos={cellPos(cell.x, cell.y)}
 									onClick={() => handleCellClick(cell)}
@@ -144,14 +153,6 @@ const Container = styled.div`
 		position: relative;
 		z-index: 1;
 	}
-`
-
-const Overlay = styled.div`
-	position: absolute;
-	left: 0;
-	top: 0;
-	right: 0;
-	bottom: 0;
 `
 
 const Background = styled.div`
