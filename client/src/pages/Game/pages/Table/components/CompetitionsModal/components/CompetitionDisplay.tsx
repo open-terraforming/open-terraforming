@@ -10,6 +10,7 @@ import { faCheck, faAward } from '@fortawesome/free-solid-svg-icons'
 type Props = {
 	competition: Competition
 	canAfford: boolean
+	freePick?: boolean
 	sponsored?: PlayerState
 	cost: number
 	playing: boolean
@@ -22,7 +23,8 @@ export const CompetitionDisplay = ({
 	onBuy,
 	sponsored,
 	playing,
-	cost
+	cost,
+	freePick: pendingAction
 }: Props) => {
 	const game = useAppStore(state => state.game.state)
 	const playerId = useAppStore(state => state.game.playerId)
@@ -61,7 +63,7 @@ export const CompetitionDisplay = ({
 					>
 						{sponsored
 							? `Sponsored by ${sponsored?.name}`
-							: `Sponsor for ${cost}`}
+							: `Sponsor for ${pendingAction ? 'free' : cost}`}
 					</Button>
 				)}
 			</Head>

@@ -1,21 +1,30 @@
 import ImageSearch from '@/lib/image-google-search'
-import { saveToCache, tryLoadCache } from '@/storage'
+import { saveStatic, tryLoadStaticSync } from '@/storage'
+import { normalizeImage } from '@/utils/images'
+import { Logger } from '@/utils/log'
 import { CardCategory, CardsLookupApi } from '@shared/cards'
-import { Router } from 'express'
+import express from 'express'
 import got from 'got'
 import config from '../../config'
-import { normalizeImage } from '@/utils/images'
+import { ServerOptions } from './types'
+import bodyParser from 'body-parser'
 
 const attr = (s: string) => s.replace(/"/g, '"')
 
-export default () => {
-	const router = Router()
+export default (serverConfig: ServerOptions) => {
+	const logger = new Logger('Picker')
+
+	const app = express()
 
 	const searchClient = new ImageSearch(config.googleCseId, config.googleApiKey)
 
-	router.get('/picker', async (req, res) => {
+	app.use(bodyParser.urlencoded({ extended: true }))
+	app.use(bodyParser.json())
+	app.use(bodyParser.raw())
+
+	app.get('/picker', async (req, res) => {
 		const card = Object.values(CardsLookupApi.data()).find(c => {
-			return !tryLoadCache(c.code)
+			return !tryLoadStaticSync(`card/${c.code}.jpg`)
 		})
 
 		if (!card) {
@@ -46,6 +55,10 @@ export default () => {
 		#application { display: flex; flex-wrap: wrap; }
 		#application img { width: 200px; transition: transform 0.1s; }
 		#application img:hover { transform: scale(1.2); }
+		
+		button { width: 240px; height: 105px; background-position: center center;
+			background-size: 100% auto;
+			background-repeat: no-repeat; }
 		</style>
 	</head>
 	<body>
@@ -61,7 +74,9 @@ export default () => {
 							card.code
 						}"><input type="hidden" name="url" value="${attr(
 							d
-						)}" /><button><img src="${attr(d)}" /></button></form>`
+						)}" /><button style="background-image: url('${attr(
+							d
+						)}')"></button></form>`
 				)
 				.join('')}
 		</div>
@@ -70,7 +85,7 @@ export default () => {
 		`)
 	})
 
-	router.post('/picker/:code', async (req, res) => {
+	app.post('/picker/:code', async (req, res) => {
 		const card = CardsLookupApi.get(req.params['code'])
 		const url = req.body.url
 		try {
@@ -82,7 +97,7 @@ export default () => {
 				const jpeg = await normalizeImage(image.body)
 
 				res.redirect('/picker')
-				await saveToCache(card.code, jpeg)
+				await saveStatic(`card/${card.code}.jpg`, jpeg)
 			} else {
 				throw Error(
 					'Response was not an image (' +
@@ -98,5 +113,9 @@ export default () => {
 		}
 	})
 
-	return router
+	app.listen(serverConfig.port, () => {
+		logger.log('Listening on', serverConfig.port)
+	})
+
+	return app
 }

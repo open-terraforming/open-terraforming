@@ -1,5 +1,5 @@
 import { GameState, PlayerState, PlayerStateValue } from '@shared/index'
-import { keyMap } from '@shared/utils'
+import { keyMap, pendingActions } from '@shared/utils'
 import { initialGameState, initialPlayerState } from '@shared/states'
 import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
 import { getEvents } from './utils'
@@ -26,7 +26,7 @@ export default (state = initialState, action: Action): State => {
 		case SET_GAME_STATE: {
 			const player = action.state.players.find(p => p.id === state.playerId)
 			const events = getEvents(state.state, action.state)
-			const pendingAction = player?.pendingActions[0]
+			const pendingAction = player && pendingActions(player)[0]
 
 			console.groupCollapsed('Game changed')
 			console.log('GAME', action.state)

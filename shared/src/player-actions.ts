@@ -1,5 +1,4 @@
 import { PlacementState } from './placements'
-import { CompetitionType } from './competitions'
 
 export enum PlayerActionType {
 	PickCorporation = 1,
@@ -26,7 +25,6 @@ export const pickCorporationAction = (cards: string[]) =>
 export const pickCardsAction = (cards: string[], limit = 0, free = false) =>
 	({
 		type: PlayerActionType.PickCards,
-
 		cards,
 		limit,
 		free
@@ -35,7 +33,6 @@ export const pickCardsAction = (cards: string[], limit = 0, free = false) =>
 export const pickPreludesAction = (cards: string[], limit = 0) =>
 	({
 		type: PlayerActionType.PickPreludes,
-
 		cards,
 		limit
 	} as const)
@@ -43,15 +40,12 @@ export const pickPreludesAction = (cards: string[], limit = 0) =>
 export const playCardAction = (cardIndex: number) =>
 	({
 		type: PlayerActionType.PlayCard,
-
 		cardIndex
 	} as const)
 
-export const sponsorCompetitionAction = (competition: CompetitionType) =>
+export const sponsorCompetitionAction = () =>
 	({
-		type: PlayerActionType.SponsorCompetition,
-
-		competition
+		type: PlayerActionType.SponsorCompetition
 	} as const)
 
 export const claimTileAction = () =>

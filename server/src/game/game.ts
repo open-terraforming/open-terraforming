@@ -37,7 +37,7 @@ import {
 	placeTileAction,
 	pickCardsAction
 } from '@shared/player-actions'
-import { pushPendingAction, drawCards } from '@shared/utils'
+import { pushPendingAction, drawCards, pendingActions } from '@shared/utils'
 
 export interface GameConfig {
 	bots: number
@@ -471,7 +471,7 @@ export class Game {
 		// Pass him if there's no tile to be placed
 		if (
 			this.currentPlayer.state === PlayerStateValue.EndingTiles &&
-			this.currentPlayer.pendingActions.length === 0
+			pendingActions(this.currentPlayer).length === 0
 		) {
 			this.currentPlayer.state = PlayerStateValue.Passed
 		}

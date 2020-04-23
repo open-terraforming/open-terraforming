@@ -20,6 +20,11 @@ async function main() {
 			default: false,
 			description: 'Start server in single-game mode'
 		})
+		.option('picker', {
+			type: 'boolean',
+			default: false,
+			description: 'Start card image picker instead'
+		})
 		.option('port', {
 			type: 'number',
 			alias: 'p',
@@ -65,8 +70,10 @@ async function main() {
 		singleGame: argv.single
 	}
 
-	if (argv.single) {
-		const { app, game } = singleApp(serverConfig, {
+	if (argv.picker) {
+		picker(serverConfig)
+	} else if (argv.single) {
+		const { game } = singleApp(serverConfig, {
 			bots: argv.bots,
 			mode: mode
 		})
@@ -79,8 +86,6 @@ async function main() {
 				throw new Error('Failed to load game state from file')
 			}
 		}
-
-		app.use(picker())
 	} else {
 		multiApp(serverConfig)
 	}

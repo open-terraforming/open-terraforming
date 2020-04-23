@@ -1,6 +1,6 @@
 import { COMPETITIONS_PRICES, MILESTONE_PRICE } from './constants'
-import { GameState, GridCell, PlayerState } from './game'
-import { PlayerAction } from './player-actions'
+import { GameState, GridCell, PlayerState, PlayerStateValue } from './game'
+import { PlayerAction, PlayerActionType } from './player-actions'
 
 export const allCells = (game: GameState) => {
 	return game.map.grid.reduce((acc, c) => [...acc, ...c], [] as GridCell[])
@@ -175,4 +175,24 @@ export const pushPendingAction = (
 	action: PlayerAction
 ) => {
 	player.pendingActions.push(action)
+}
+
+const allowedActions: Record<number, PlayerActionType[] | undefined> = {
+	[PlayerStateValue.Picking]: [
+		PlayerActionType.PickCorporation,
+		PlayerActionType.PickCards,
+		PlayerActionType.PickPreludes
+	],
+	[PlayerStateValue.EndingTiles]: [PlayerActionType.PlaceTile],
+	[PlayerStateValue.Playing]: []
+}
+
+export const pendingActions = (player: PlayerState) => {
+	const allowed = allowedActions[player.state]
+
+	return allowed
+		? allowed.length === 0
+			? player.pendingActions
+			: player.pendingActions.filter(p => allowed.includes(p.type))
+		: []
 }

@@ -1,7 +1,7 @@
 import { GameState } from '@shared/index'
-import { promises as fs } from 'fs'
-import { join } from 'path'
-import { storagePath, cachePath } from './config'
+import { promises as fs, readFileSync } from 'fs'
+import { join, dirname } from 'path'
+import { storagePath, cachePath, staticPath } from './config'
 
 const historyPath = join(storagePath, 'history')
 const ongoingPath = join(storagePath, 'ongoing')
@@ -33,6 +33,27 @@ export const saveToCache = async (name: string, data: Buffer | string) => {
 export const tryLoadCache = async (name: string) => {
 	try {
 		return await fs.readFile(join(cachePath, name))
+	} catch (e) {
+		return null
+	}
+}
+
+export const saveStatic = async (name: string, data: Buffer | string) => {
+	await fs.mkdir(dirname(join(staticPath, name)), { recursive: true })
+	await fs.writeFile(join(staticPath, name), data)
+}
+
+export const tryLoadStatic = async (name: string) => {
+	try {
+		return await fs.readFile(join(staticPath, name))
+	} catch (e) {
+		return null
+	}
+}
+
+export const tryLoadStaticSync = (name: string) => {
+	try {
+		return readFileSync(join(staticPath, name))
 	} catch (e) {
 		return null
 	}

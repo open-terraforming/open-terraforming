@@ -2,7 +2,6 @@ import {
 	GridCellContent,
 	GridCellOther,
 	GridCellSpecial,
-	GridCellType,
 	PlayerState
 } from '../game'
 import {
@@ -11,10 +10,11 @@ import {
 	PlacementConditionsLookup
 } from '../placements'
 import {
+	claimTileAction,
 	pickCardsAction,
 	pickPreludesAction,
 	placeTileAction,
-	claimTileAction
+	sponsorCompetitionAction
 } from '../player-actions'
 import { otherWithArticle, tileWithArticle } from '../texts'
 import { withUnits } from '../units'
@@ -29,7 +29,6 @@ import {
 } from '../utils'
 import {
 	cardArg,
-	cellArg,
 	effectArg,
 	effectChoiceArg,
 	playerCardArg,
@@ -53,22 +52,21 @@ import {
 	CardEffectTarget,
 	CardEffectType,
 	CardResource,
+	CardSymbol,
 	GameProgress,
 	PlayerCondition,
 	Resource,
 	SymbolType,
-	WithOptional,
-	CardSymbol
+	WithOptional
 } from './types'
 import {
-	cellByCoords,
 	countGridContent,
 	gamePlayer,
+	productions,
 	resourceProduction,
 	resToPrice,
 	updatePlayerProduction,
-	updatePlayerResource,
-	productions
+	updatePlayerResource
 } from './utils'
 
 export const effect = <T extends (CardEffectArgumentType | undefined)[]>(
@@ -1299,5 +1297,13 @@ export const lowestProductionChange = (amount: number) =>
 			updatePlayerProduction(player, resource as Resource, amount)
 
 			card.played = true
+		}
+	})
+
+export const sponsorCompetitionForFree = () =>
+	effect({
+		description: 'As your first action, sponsor competition for free',
+		perform: ({ player }) => {
+			pushPendingAction(player, sponsorCompetitionAction())
 		}
 	})

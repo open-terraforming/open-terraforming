@@ -16,6 +16,7 @@ import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { ResourcesDiff } from './ResourcesDiff/ResourcesDiff'
 import { PlayerActionType } from '@shared/player-actions'
+import { pendingActions } from '@shared/utils'
 
 // TODO: Map pending actions to strings too
 
@@ -65,7 +66,7 @@ export const Player = ({
 	const state = player
 	const isPlaying = state.state === PlayerStateValue.Playing
 	const isPlayer = player.id === useAppStore(state => state.game.playerId)
-	const pending = player.pendingActions[0]
+	const pending = pendingActions(player)[0]
 
 	return (
 		<Container

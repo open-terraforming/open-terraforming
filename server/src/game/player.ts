@@ -36,7 +36,11 @@ import {
 } from '@shared/game'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, isClaimable } from '@shared/placements'
-import { placeTileAction, PlayerActionType } from '@shared/player-actions'
+import {
+	placeTileAction,
+	PlayerActionType,
+	PlayerAction
+} from '@shared/player-actions'
 import { PlayerColors } from '@shared/player-colors'
 import { Projects, StandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
@@ -45,7 +49,8 @@ import {
 	allCells,
 	drawCards,
 	pushPendingAction,
-	range
+	range,
+	pendingActions
 } from '@shared/utils'
 import Hashids from 'hashids/cjs'
 import { MyEvent } from 'src/utils/events'
@@ -123,8 +128,12 @@ export class Player {
 		)
 	}
 
-	get pendingAction() {
-		return this.state.pendingActions[0]
+	get pendingActions() {
+		return pendingActions(this.state)
+	}
+
+	get pendingAction(): PlayerAction | undefined {
+		return this.pendingActions[0]
 	}
 
 	constructor(game: Game) {
@@ -153,18 +162,7 @@ export class Player {
 
 		this.filterPendingActions()
 
-		// TODO: This works by accident
-		const actuallyPending = this.state.pendingActions.filter(p => {
-			if (p.type === PlayerActionType.PlaceTile) {
-				return (
-					this.game.state.state === GameStateValue.GenerationInProgress ||
-					this.game.state.state === GameStateValue.EndingTiles
-				)
-			}
-			return true
-		})
-
-		if (actuallyPending.length === 0) {
+		if (this.pendingActions.length === 0) {
 			switch (this.game.state.state) {
 				case GameStateValue.GenerationInProgress: {
 					switch (this.state.state) {
@@ -195,7 +193,7 @@ export class Player {
 	pickCorporation(code: string) {
 		const top = this.pendingAction
 
-		if (top.type !== PlayerActionType.PickCorporation) {
+		if (top?.type !== PlayerActionType.PickCorporation) {
 			throw new Error('You are not picking corporations right now')
 		}
 
@@ -233,7 +231,7 @@ export class Player {
 	pickPreludes(cards: number[]) {
 		const top = this.pendingAction
 
-		if (top.type !== PlayerActionType.PickPreludes) {
+		if (top?.type !== PlayerActionType.PickPreludes) {
 			throw new Error('You are not picking preludes right now')
 		}
 
@@ -304,7 +302,7 @@ export class Player {
 	pickCards(cards: number[]) {
 		const top = this.pendingAction
 
-		if (top.type !== PlayerActionType.PickCards) {
+		if (top?.type !== PlayerActionType.PickCards) {
 			throw new Error('You are not picking cards right now')
 		}
 
@@ -527,7 +525,7 @@ export class Player {
 
 		const top = this.pendingAction
 
-		if (top.type !== PlayerActionType.PlaceTile) {
+		if (top?.type !== PlayerActionType.PlaceTile) {
 			throw new Error("You're not placing tiles right now")
 		}
 		const cell = cellByCoords(this.game.state, x, y)
@@ -758,7 +756,7 @@ export class Player {
 
 		const top = this.pendingAction
 
-		if (top.type !== PlayerActionType.ClaimTile) {
+		if (top?.type !== PlayerActionType.ClaimTile) {
 			throw new Error("You're not claiming now")
 		}
 
@@ -861,6 +859,10 @@ export class Player {
 			throw new Error("You're not playing")
 		}
 
+		if (this.pendingAction) {
+			throw new Error("You've got pending actions to attend to")
+		}
+
 		const project = Projects[projectType]
 		const ctx = {
 			game: this.game.state,
@@ -895,6 +897,10 @@ export class Player {
 	buyMilestone(type: MilestoneType) {
 		if (!this.isPlaying) {
 			throw new Error("You're not playing")
+		}
+
+		if (this.pendingAction) {
+			throw new Error("You've got pending actions to attend to")
 		}
 
 		if (this.game.state.milestones.length >= MILESTONES_LIMIT) {
@@ -933,33 +939,44 @@ export class Player {
 			throw new Error("You're not playing")
 		}
 
-		const sponsored = this.game.state.competitions.length
-		if (sponsored >= COMPETITIONS_LIMIT) {
-			throw new Error('All competitions are taken')
-		}
+		const top = this.pendingAction
 
-		const cost = COMPETITIONS_PRICES[sponsored]
+		if (top) {
+			if (top.type !== PlayerActionType.SponsorCompetition) {
+				throw new Error("You've got pending actions to attend to.")
+			}
+		} else {
+			const sponsored = this.game.state.competitions.length
+			if (sponsored >= COMPETITIONS_LIMIT) {
+				throw new Error('All competitions are taken')
+			}
 
-		if (this.state.money < cost) {
-			throw new Error("You can't afford a competition")
-		}
+			const cost = COMPETITIONS_PRICES[sponsored]
 
-		if (this.game.state.competitions.find(c => c.type === type)) {
-			throw new Error('This competition is already sponsored')
+			if (this.state.money < cost) {
+				throw new Error("You can't afford a competition")
+			}
+
+			if (this.game.state.competitions.find(c => c.type === type)) {
+				throw new Error('This competition is already sponsored')
+			}
+
+			updatePlayerResource(this.state, 'money', -cost)
 		}
 
 		this.logger.log(f('Sponsored {0} competition', CompetitionType[type]))
-
-		updatePlayerResource(this.state, 'money', -cost)
 
 		this.game.state.competitions.push({
 			playerId: this.state.id,
 			type
 		})
 
-		this.actionPlayed()
-
-		this.updated()
+		if (top) {
+			this.popAction()
+		} else {
+			this.actionPlayed()
+			this.updated()
+		}
 	}
 
 	adminLogin(password: string) {

@@ -345,6 +345,22 @@ export class Bot extends Player {
 					)
 				)
 			}
+
+			case PlayerActionType.SponsorCompetition: {
+				const comp = shuffle(
+					this.game.state.map.competitions
+						.map(c => Competitions[c])
+						.filter(
+							c => !this.game.state.competitions.find(b => b.type === c.type)
+						)
+				)[0]
+
+				if (comp) {
+					return this.sponsorCompetition(comp.type)
+				} else {
+					return this.pass(true)
+				}
+			}
 		}
 	}
 
@@ -358,8 +374,9 @@ export class Bot extends Player {
 			}
 
 			case PlayerStateValue.Picking: {
-				if (this.pendingAction) {
-					actions.push([0, () => this.performPending(this.pendingAction)])
+				const pending = this.pendingAction
+				if (pending) {
+					actions.push([0, () => this.performPending(pending)])
 				} else {
 					this.logger.error('Nothing to do, yet I have to pick something...')
 				}
@@ -380,8 +397,9 @@ export class Bot extends Player {
 			}
 
 			case PlayerStateValue.Playing: {
-				if (this.pendingAction) {
-					actions.push([0, () => this.performPending(this.pendingAction)])
+				const pending = this.pendingAction
+				if (pending) {
+					actions.push([0, () => this.performPending(pending)])
 				} else {
 					if (this.game.state.milestones.length < MILESTONES_LIMIT) {
 						Object.values(Milestones)

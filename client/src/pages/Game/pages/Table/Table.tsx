@@ -1,10 +1,9 @@
-import { useEvents } from '@/context/EventsContext'
-import { useAnimationFrame, useAppStore, useWindowEvent } from '@/utils/hooks'
-import { mouseMoveEvent, RealtimeEventEmit } from '@shared/events'
+import { useAppStore } from '@/utils/hooks'
 import { PlayerActionType } from '@shared/player-actions'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { CardPicker } from './components/CardPicker/CardPicker'
+import { CompetitionsModal } from './components/CompetitionsModal/CompetitionsModal'
 import { Controls } from './components/Controls/Controls'
 import { CorporationPicker } from './components/CorporationPicker/CorporationPicker'
 import { GameMap } from './components/GameMap/GameMap'
@@ -54,6 +53,9 @@ export const Table = () => {
 			)}
 			{pending?.type === PlayerActionType.PickPreludes && (
 				<CardPicker key={pending.cards.join(',')} prelude />
+			)}
+			{pending?.type === PlayerActionType.SponsorCompetition && (
+				<CompetitionsModal freePick onClose={() => null} />
 			)}
 			<GameContainer>
 				<Header />

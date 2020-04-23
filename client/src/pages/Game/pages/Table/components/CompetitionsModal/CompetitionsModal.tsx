@@ -11,14 +11,15 @@ import { CompetitionDisplay } from './components/CompetitionDisplay'
 import { competitionPrice } from '@shared/utils'
 
 type Props = {
+	freePick?: boolean
 	onClose: () => void
 }
 
-export const CompetitionsModal = ({ onClose }: Props) => {
+export const CompetitionsModal = ({ onClose, freePick }: Props) => {
 	const api = useApi()
 	const sponsored = useAppStore(state => state.game.state?.competitions) || []
 	const players = useAppStore(state => state.game.state?.players) || []
-	const playing = useAppStore(state => state.game.playing)
+	const playing = useAppStore(state => state.game.playing) || freePick
 	const game = useAppStore(state => state.game.state)
 
 	const competitionTypes = useAppStore(
@@ -28,7 +29,7 @@ export const CompetitionsModal = ({ onClose }: Props) => {
 	const playerMoney = useAppStore(state => state.game.player?.money) || 0
 
 	const cost = competitionPrice(game)
-	const affordable = cost !== undefined && playerMoney >= cost
+	const affordable = !!freePick || (cost !== undefined && playerMoney >= cost)
 
 	const handleBuy = (competition: Competition) => {
 		if (affordable) {
@@ -78,6 +79,7 @@ export const CompetitionsModal = ({ onClose }: Props) => {
 					key={c.type}
 					onBuy={handleBuy}
 					canAfford={affordable}
+					freePick={freePick}
 				/>
 			))}
 		</Modal>
