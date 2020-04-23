@@ -11,17 +11,10 @@ type Props = {
 	arg: CardEffectArgument
 	onChange: (v: [number, CardEffectArgumentType[]]) => void
 	card: string
-	cardIndex?: number
-	cardState?: UsedCardState
+	cardState: UsedCardState
 }
 
-export const ChoiceArg = ({
-	arg,
-	onChange,
-	card,
-	cardIndex,
-	cardState
-}: Props) => {
+export const ChoiceArg = ({ arg, onChange, card, cardState }: Props) => {
 	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
 
@@ -36,7 +29,7 @@ export const ChoiceArg = ({
 						effect.conditions.every(c =>
 							c.evaluate({
 								card: cardState || emptyCardState(card),
-								cardIndex: cardIndex === undefined ? -1 : cardIndex,
+								cardIndex: cardState === undefined ? -1 : cardState.index,
 								player: player,
 								game,
 								playerId: player.id
@@ -71,7 +64,6 @@ export const ChoiceArg = ({
 							<ArgsPicker
 								card={card}
 								cardState={cardState}
-								cardIndex={cardIndex}
 								onChange={v => {
 									setArgs(args => {
 										const updated = [...args]

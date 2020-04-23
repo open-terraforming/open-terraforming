@@ -3,13 +3,15 @@ import { CardEffectArgument } from '@shared/cards'
 import React, { useEffect, useMemo, useState } from 'react'
 import { ArgContainer } from './ArgContainer'
 import { PlayerPicker } from './PlayerPicker'
+import { UsedCardState } from '@shared/index'
 
 type Props = {
 	arg: CardEffectArgument
+	card: UsedCardState
 	onChange: (v: number) => void
 }
 
-export const PlayerArg = ({ arg, onChange }: Props) => {
+export const PlayerArg = ({ arg, card, onChange }: Props) => {
 	const gameState = useAppStore(state => state.game.state)
 	const playerId = useAppStore(state => state.game.playerId)
 	const playerState = useAppStore(state => state.game.player)
@@ -23,7 +25,8 @@ export const PlayerArg = ({ arg, onChange }: Props) => {
 							arg.playerConditions.every(c =>
 								c.evaluate({
 									player: p,
-									game: gameState
+									game: gameState,
+									card
 								})
 							)
 				  )

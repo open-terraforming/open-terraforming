@@ -3,15 +3,16 @@ import { CardEffectArgument, Resource } from '@shared/cards'
 import { ArgContainer } from './ArgContainer'
 import { useAppStore } from '@/utils/hooks'
 import { ResourceInput } from './ResourceInput'
-import { PlayerState } from '@shared/index'
+import { PlayerState, UsedCardState } from '@shared/index'
 import { PlayerPicker } from './PlayerPicker'
 
 type Props = {
 	arg: CardEffectArgument
+	card: UsedCardState
 	onChange: (v: number | [number, number]) => void
 }
 
-export const PlayerResourceArg = ({ arg, onChange }: Props) => {
+export const PlayerResourceArg = ({ arg, onChange, card }: Props) => {
 	const [amount, setAmount] = useState(0)
 	const game = useAppStore(state => state.game.state)
 	const playerId = useAppStore(state => state.game.playerId)
@@ -25,7 +26,8 @@ export const PlayerResourceArg = ({ arg, onChange }: Props) => {
 							arg.playerConditions.every(c =>
 								c.evaluate({
 									game,
-									player: p
+									player: p,
+									card
 								})
 							)
 				  )

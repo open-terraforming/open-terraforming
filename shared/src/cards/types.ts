@@ -38,6 +38,7 @@ export interface CardCallbackContext {
 export interface PlayerCallbackContext {
 	game: GameState
 	player: PlayerGameState
+	card: UsedCardState
 }
 
 export interface CellCallbackContext {

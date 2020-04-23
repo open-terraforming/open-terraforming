@@ -131,8 +131,9 @@ export const isCardActionable = (card: Card, ctx: CardCallbackContext) =>
 	card.actionEffects.length > 0 &&
 	!card.actionEffects.find(e => e.conditions.find(c => !c.evaluate(ctx)))
 
-export const emptyCardState = (cardCode: string) => ({
+export const emptyCardState = (cardCode: string, index = -1) => ({
 	code: cardCode,
+	index,
 	played: false,
 	animals: 0,
 	fighters: 0,

@@ -8,7 +8,7 @@ import {
 	CardEffectArgumentType,
 	CardsLookupApi
 } from '@shared/cards'
-import { adjustedCardPrice } from '@shared/cards/utils'
+import { adjustedCardPrice, emptyCardState } from '@shared/cards/utils'
 import {
 	buyCard,
 	playCard,
@@ -192,6 +192,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 							key={i}
 							effect={e}
 							card={card.code}
+							cardState={cardState || emptyCardState(card.code)}
 							onChange={v => {
 								const updated = [...effectsArgs]
 								updated[i] = v
@@ -207,8 +208,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 							key={i}
 							effect={e}
 							card={card.code}
-							cardState={cardState}
-							cardIndex={index}
+							cardState={cardState || emptyCardState(card.code)}
 							onChange={v => {
 								const updated = [...effectsArgs]
 								updated[i] = v

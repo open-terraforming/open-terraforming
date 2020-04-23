@@ -4,7 +4,7 @@ import { gamePlayer } from '@shared/cards/utils'
 export const playerArgValidator = ({
 	a,
 	value,
-	ctx: { game }
+	ctx: { game, card }
 }: ValidatorContext) => {
 	if (typeof value !== 'number') {
 		throw new Error('Has to be number')
@@ -20,7 +20,8 @@ export const playerArgValidator = ({
 		c =>
 			!c.evaluate({
 				game,
-				player: selectedPlayer
+				player: selectedPlayer,
+				card
 			})
 	)
 

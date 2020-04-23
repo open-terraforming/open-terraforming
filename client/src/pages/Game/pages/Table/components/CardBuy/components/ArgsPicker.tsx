@@ -6,18 +6,11 @@ import { Arg } from './Arg'
 type Props = {
 	effect: CardEffect
 	card: string
-	cardIndex?: number
-	cardState?: UsedCardState
+	cardState: UsedCardState
 	onChange: (args: CardEffectArgumentType[]) => void
 }
 
-export const ArgsPicker = ({
-	effect,
-	card,
-	cardState,
-	cardIndex,
-	onChange
-}: Props) => {
+export const ArgsPicker = ({ effect, card, cardState, onChange }: Props) => {
 	const [values, setValues] = useState([] as CardEffectArgumentType[])
 
 	useEffect(() => {
@@ -31,7 +24,6 @@ export const ArgsPicker = ({
 					key={i}
 					arg={a}
 					card={card}
-					cardIndex={cardIndex}
 					cardState={cardState}
 					onChange={v => {
 						setValues(values => {

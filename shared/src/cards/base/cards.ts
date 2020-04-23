@@ -48,7 +48,8 @@ import {
 	terraformRatingForTags,
 	titanPriceChange,
 	triggerCardResourceChange,
-	claimCell
+	claimCell,
+	placeOcean
 } from '../effects'
 import {
 	cardExchangeEffect,
@@ -61,7 +62,8 @@ import {
 	resetProgressBonus,
 	resourceForStandardProject,
 	resourcePerCardPlayed,
-	resourcePerPlacedTile
+	resourcePerPlacedTile,
+	changeResourceFromNeighbor
 } from '../passive-effects'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
 import { card, noDesc, withRightArrow } from '../utils'
@@ -2235,17 +2237,17 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Building],
 		actionEffects: [moneyOrResForOcean('ore', 8)]
 	}),
-	/*
-	TODO:
 	card({
 		code: 'flooding',
 		title: 'Flooding',
 		type: CardType.Event,
 		cost: 7,
 		categories: [CardCategory.Event],
-		victoryPoints: -1,
+		playEffects: [placeOcean()],
+		actionEffects: [changeResourceFromNeighbor('money', 4).action],
+		passiveEffects: [changeResourceFromNeighbor('money', 4).effect],
+		victoryPoints: -1
 	}),
-	*/
 	card({
 		code: 'energy_saving',
 		title: 'Energy Saving',

@@ -162,7 +162,8 @@ export class Bot extends Player {
 										c =>
 											!c.evaluate({
 												game: this.game.state,
-												player: player
+												player: player,
+												card
 											})
 									)
 							)
@@ -179,7 +180,8 @@ export class Bot extends Player {
 										c =>
 											!c.evaluate({
 												game: this.game.state,
-												player: player
+												player: player,
+												card
 											})
 									)
 							)

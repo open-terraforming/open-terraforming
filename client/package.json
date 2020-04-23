@@ -1,5 +1,5 @@
 {
-  "name": "card-game-client",
+  "name": "@openter/client",
   "version": "0.7.20",
   "description": "Card game client",
   "main": "src/index.ts",

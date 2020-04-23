@@ -32,7 +32,6 @@ import {
 	PlayerState,
 	PlayerStateValue,
 	StandardProjectType,
-	UsedCardState,
 	VictoryPointsSource
 } from '@shared/game'
 import { Milestones, MilestoneType } from '@shared/milestones'
@@ -405,21 +404,14 @@ export class Player {
 			)
 		}
 
-		const cardState: UsedCardState = {
-			code: cardCode,
-			animals: 0,
-			microbes: 0,
-			played: false,
-			science: 0,
-			fighters: 0
-		}
+		const cardState = emptyCardState(cardCode, this.state.usedCards.length)
 
 		const ctx = {
 			player: this.state,
 			playerId: this.id,
 			game: this.game.state,
 			card: cardState,
-			cardIndex: this.state.usedCards.length
+			cardIndex: cardState.index
 		}
 
 		this.checkCardConditions(card, ctx, playArguments)

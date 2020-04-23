@@ -1,18 +1,21 @@
 import { GridCellContent, GridCellOther, StandardProjectType } from '../game'
+import { playCardAction } from '../player-actions'
 import { withUnits } from '../units'
+import { adjacentCells, f, pushPendingAction } from '../utils'
+import { effectArg } from './args'
+import { effect } from './effects'
+import { CardsLookupApi } from './lookup'
 import {
 	CardCategory,
+	CardEffect,
+	CardEffectTarget,
 	CardPassiveEffect,
 	CardResource,
 	Resource,
-	CardEffect,
-	WithOptional,
-	SymbolType
+	SymbolType,
+	WithOptional
 } from './types'
-import { resourceProduction, updatePlayerResource } from './utils'
-import { CardsLookupApi } from './lookup'
-import { f, pushPendingAction } from '../utils'
-import { playCardAction } from '../player-actions'
+import { gamePlayer, resourceProduction, updatePlayerResource } from './utils'
 
 export const passiveEffect = (
 	e: WithOptional<CardPassiveEffect, 'symbols'>
@@ -137,14 +140,14 @@ export const productionChangeAfterPlace = (
 	passiveEffect({
 		description: `Your production of resource which has bonus on selected tile will increase by ${amount}`,
 		onTilePlaced: ({ player, card }, cell) => {
-			if (card.played) {
+			if (card.data) {
 				return
 			}
 
 			if (cell.other === type) {
 				const res = cell.titan > 0 ? 'titan' : 'ore'
 				player[resourceProduction[res]] += amount
-				card.played = true
+				card.data = true
 			}
 		}
 	})
@@ -269,3 +272,52 @@ export const asFirstAction = (effect: CardEffect) =>
 			}
 		}
 	})
+
+export const changeResourceFromNeighbor = (res: Resource, amount: number) => ({
+	action: effect({
+		args: [
+			effectArg({
+				type: CardEffectTarget.Player,
+				optional: true,
+				resource: res,
+				playerConditions: [
+					{
+						symbols: [],
+						evaluate: ({ player, card }) => card.data?.includes(player.id)
+					}
+				]
+			})
+		],
+		perform: ({ game }, playerId: number) => {
+			if (playerId >= 0) {
+				updatePlayerResource(gamePlayer(game, playerId), res, amount)
+			}
+		}
+	}),
+	effect: passiveEffect({
+		description: f(
+			amount < 0
+				? 'You may remove {0} from one of the owners of adjacent tiles'
+				: 'You may give {0} to one of the owners of adjacent tiles',
+			withUnits(res, -amount)
+		),
+		onTilePlaced: ({ game, player, card, cardIndex }, cell, placedBy) => {
+			if (card.data || placedBy.id !== player.id) {
+				return
+			}
+
+			card.data = adjacentCells(game, cell.x, cell.y).reduce((acc, c) => {
+				if (
+					c.ownerId !== undefined &&
+					c.ownerId !== player.id &&
+					!acc.includes(c.ownerId)
+				) {
+					acc.push(c.ownerId)
+				}
+				return acc
+			}, [] as number[])
+
+			pushPendingAction(player, playCardAction(cardIndex))
+		}
+	})
+})

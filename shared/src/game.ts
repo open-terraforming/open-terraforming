@@ -261,6 +261,9 @@ export type PlayerGameState = PlayerState
 export interface UsedCardState {
 	/** Used car code */
 	code: string
+	/** Index in used card list */
+	index: number
+
 	/** Was the card played this generation */
 	played: boolean
 

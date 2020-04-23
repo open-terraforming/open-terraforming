@@ -1,5 +1,5 @@
 {
-  "name": "card-game-shared",
+  "name": "@openter/shared",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
