@@ -21,7 +21,7 @@ TODO:
   * SOUNDS -> milestone/award bought
   * SOUNDS -> resources changed?
 
-  * GENERAL -> player which creates a game should be admin of said game?
+  * SERVER -> player which creates a game should be admin of said game?
 
   * EXPANSIONS -> VENUS
   * EXPANSIONS -> COLONIES
@@ -30,6 +30,7 @@ CHECK CARDS:
   * CHECK -> pets
   * CHECK -> TERRAFORMING GANYMEDE - extra TR added?
   * CHECK -> claim - does it work?
+  * CHECK -> protected_habitats -> does it actually work?
 
 LOW PRIORITY TODO:
   * GENERAL -> player emoticons

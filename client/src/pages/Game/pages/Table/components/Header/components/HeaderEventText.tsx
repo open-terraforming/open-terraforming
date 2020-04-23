@@ -45,8 +45,8 @@ export const HeaderEventText = ({ ev, onDone }: Props) => {
 const PopIn = keyframes`
 	0% { top: 10%; opacity: 0; }
 	30% { top: 10%; opacity: 1; }
-	60% { top: 10%; opacity: 1; }
-	100% { top: -10%; opacity: 0; }
+	70% { top: 10%; opacity: 1; }
+	100% { top: -20%; opacity: 0; }
 `
 
 const Display = styled.div<{ color: string }>`
@@ -61,7 +61,7 @@ const Display = styled.div<{ color: string }>`
 	z-index: 1000;
 
 	animation-name: ${PopIn};
-	animation-duration: 5000ms;
+	animation-duration: 4000ms;
 	animation-fill-mode: forwards;
 
 	color: #111;

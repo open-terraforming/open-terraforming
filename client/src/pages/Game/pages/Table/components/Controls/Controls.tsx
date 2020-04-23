@@ -4,10 +4,18 @@ import { useApi } from '@/context/ApiContext'
 import { setTableState } from '@/store/modules/table'
 import { colors } from '@/styles'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
-import { faArrowRight, faThermometerHalf, faTree } from '@fortawesome/free-solid-svg-icons'
+import {
+	faArrowRight,
+	faThermometerHalf,
+	faTree
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi } from '@shared/cards'
-import { buyStandardProject, playerPass, PlayerStateValue, StandardProjectType } from '@shared/index'
+import {
+	buyStandardProject,
+	playerPass,
+	StandardProjectType
+} from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { darken } from 'polished'
 import React from 'react'
@@ -35,13 +43,7 @@ export const Controls = () => {
 		? CardsLookupApi.get(state?.corporation as string)
 		: undefined
 
-	const pending =
-		player.state === PlayerStateValue.Playing
-			? pendingAction
-			: player.state === PlayerStateValue.Picking &&
-			  pendingAction?.type !== PlayerActionType.PlaceTile
-			? pendingAction
-			: undefined
+	const pending = pendingAction
 
 	const handlePass = () => {
 		api.send(playerPass(false))

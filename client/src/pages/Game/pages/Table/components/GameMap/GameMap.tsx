@@ -1,12 +1,12 @@
 import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
-import { useAppStore } from '@/utils/hooks'
+import { useAppStore, useInterval } from '@/utils/hooks'
 import { claimTile, placeTile } from '@shared/actions'
 import { GridCell, PlayerStateValue } from '@shared/game'
 import { PlayerActionType } from '@shared/player-actions'
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Cell } from './components/Cell'
+import { Cell, delayFunctions } from './components/Cell'
 import { CellOverlay } from './components/CellOverlay'
 
 type Props = {}
@@ -23,6 +23,7 @@ export const GameMap = ({}: Props) => {
 	const api = useApi()
 	const map = useAppStore(state => state.game.state?.map)
 	const containerRef = useRef<HTMLDivElement>(null)
+	const [delayFunction, setDelayFunction] = useState(0)
 
 	/*
 	useWindowEvent('mousemove', (e: MouseEvent) => {
@@ -85,6 +86,10 @@ export const GameMap = ({}: Props) => {
 		}
 	}
 
+	useInterval(() => {
+		setDelayFunction(Math.round(Math.random() * (delayFunctions.length - 1)))
+	}, 20000)
+
 	const width = ((map?.width || 0) + 0.5) * 18
 	const height = ((map?.height || 0) + 0.5) * 20 * 0.75
 
@@ -128,6 +133,7 @@ export const GameMap = ({}: Props) => {
 									cell={cell}
 									placing={placing}
 									claiming={claiming}
+									delayFunction={delayFunction}
 									key={`${cell.x},${cell.y}`}
 									pos={cellPos(cell.x, cell.y)}
 									onClick={() => handleCellClick(cell)}

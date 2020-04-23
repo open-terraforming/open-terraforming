@@ -26,6 +26,7 @@
     "debounce": "^1.2.0",
     "file-loader": "^6.0.0",
     "file-saver": "^2.0.2",
+    "hexasphere.js": "^0.2.2",
     "memoize-one": "^5.0.5",
     "msgpack-lite": "^0.1.26",
     "polished": "^3.4.1",

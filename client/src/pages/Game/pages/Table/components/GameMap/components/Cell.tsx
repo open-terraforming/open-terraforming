@@ -9,12 +9,51 @@ type Props = {
 	pos: { x: number; y: number }
 	placing?: PlacementState
 	claiming?: boolean
+	delayFunction: number
 	onClick: () => void
 }
 
 const hexPoints = '-8.5,4.4 -8.5,-4.5 0,-9.5 8.5,-4.5 8.5,4.5 0,9.5'
 
-export const Cell = ({ cell, pos, placing, onClick, claiming }: Props) => {
+const hexDistance = (p1X: number, p1Y: number, p2X: number, p2Y: number) => {
+	const ax = p1X - Floor2(p1Y)
+	const ay = p1X + Ceil2(p1Y)
+	const bx = p2X - Floor2(p2Y)
+	const by = p2X + Ceil2(p2Y)
+	const dx = bx - ax
+	const dy = by - ay
+
+	if (Math.sign(dx) === Math.sign(dy)) {
+		return Math.max(Math.abs(dx), Math.abs(dy))
+	}
+
+	return Math.abs(dx) + Math.abs(dy)
+}
+
+const Floor2 = (x: number) => {
+	return x >= 0 ? x >> 1 : (x - 1) / 2
+}
+
+const Ceil2 = (x: number) => {
+	return x >= 0 ? (x + 1) >> 1 : x / 2
+}
+
+export const delayFunctions = [
+	(width: number, height: number, x: number, y: number) =>
+		width + (y - height - x),
+	(width: number, height: number, x: number, y: number) =>
+		hexDistance(x, y, (width - 1) / 2, (height - 1) / 2) * 2,
+	(_width: number, height: number, x: number, y: number) => y - height - x
+]
+
+export const Cell = ({
+	cell,
+	pos,
+	placing,
+	onClick,
+	claiming,
+	delayFunction
+}: Props) => {
 	const game = useAppStore(state => state.game.state)
 
 	const owner = useAppStore(state =>
@@ -61,8 +100,12 @@ export const Cell = ({ cell, pos, placing, onClick, claiming }: Props) => {
 			<polygon
 				style={{
 					animationDelay:
-						((game?.map.width || 0) +
-							(cell.y - ((game?.map.width || 0) - cell.x))) *
+						delayFunctions[delayFunction](
+							game.map.width,
+							game.map.height,
+							cell.x,
+							cell.y
+						) *
 							50 +
 						'ms'
 				}}
@@ -71,6 +114,7 @@ export const Cell = ({ cell, pos, placing, onClick, claiming }: Props) => {
 				strokeWidth="0.5"
 				points={hexPoints}
 			/>
+
 			{diffAnim && (
 				<DiffAnim
 					stroke={'rgba(255,255,255,0.3)'}

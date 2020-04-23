@@ -65,5 +65,6 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	color: '',
 	session,
 	victoryPoints: [],
-	pendingActions: []
+	pendingActions: [],
+	protectedHabitat: false
 })

@@ -153,8 +153,21 @@ export const productionCondition = (res: Resource, value: number) => {
 	})
 }
 
+const protectedHabitatResources: CardResource[] = ['animals', 'microbes']
+
 export const unprotectedCard = () =>
 	condition({
-		evaluate: ({ card }) =>
-			CardsLookupApi.get(card.code).resourceProtected === undefined
+		evaluate: ({ card, player }) => {
+			const info = CardsLookupApi.get(card.code)
+			return (
+				info.resourceProtected === undefined &&
+				(!player.protectedHabitat ||
+					!protectedHabitatResources.includes(info.resource as CardResource))
+			)
+		}
+	})
+
+export const unprotectedPlayerResource = (res: Resource) =>
+	condition({
+		evaluate: ({ player }) => res !== 'plants' || !player.protectedHabitat
 	})

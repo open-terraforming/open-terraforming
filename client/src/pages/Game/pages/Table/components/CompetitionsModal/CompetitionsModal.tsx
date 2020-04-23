@@ -19,7 +19,7 @@ export const CompetitionsModal = ({ onClose, freePick }: Props) => {
 	const api = useApi()
 	const sponsored = useAppStore(state => state.game.state?.competitions) || []
 	const players = useAppStore(state => state.game.state?.players) || []
-	const playing = useAppStore(state => state.game.playing) || freePick
+	const playing = useAppStore(state => state.game.playing) || freePick === true
 	const game = useAppStore(state => state.game.state)
 
 	const competitionTypes = useAppStore(

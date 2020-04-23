@@ -238,6 +238,9 @@ export interface PlayerState {
 
 	/** Pending actions to be played by the player */
 	pendingActions: PlayerAction[]
+
+	/** Protects plants/microbes/animals */
+	protectedHabitat: boolean
 }
 
 export enum VictoryPointsSource {

@@ -1,22 +1,20 @@
-import React, { useMemo, useState, useEffect } from 'react'
-import {
-	WebGLRenderer,
-	Scene,
-	PerspectiveCamera,
-	SphereGeometry,
-	MeshBasicMaterial,
-	Mesh,
-	TextureLoader,
-	Texture,
-	PointLight,
-	MeshPhongMaterial,
-	MeshLambertMaterial,
-	Vector2,
-	AmbientLight
-} from 'three'
-import { useAnimationFrame } from '@/utils/hooks'
 import marsTexture from '@/assets/mars_4k_color.jpg'
 import marsNormal from '@/assets/mars_4k_normal.jpg'
+import { useAnimationFrame } from '@/utils/hooks'
+import React, { useEffect, useMemo, useState } from 'react'
+import {
+	AmbientLight,
+	Mesh,
+	MeshPhongMaterial,
+	PerspectiveCamera,
+	PointLight,
+	Scene,
+	SphereGeometry,
+	Texture,
+	TextureLoader,
+	Vector2,
+	WebGLRenderer
+} from 'three'
 
 type Props = {}
 

@@ -42,7 +42,8 @@ import {
 	condition,
 	gameCardsCondition,
 	productionCondition,
-	resourceCondition
+	resourceCondition,
+	unprotectedPlayerResource
 } from './conditions'
 import { CardsLookupApi } from './lookup'
 import {
@@ -144,7 +145,8 @@ export const playerResourceChange = (
 										resourceCondition(
 											res,
 											optional ? 1 : -change
-										) as PlayerCondition
+										) as PlayerCondition,
+										unprotectedPlayerResource(res) as PlayerCondition
 								  ]
 								: []
 				  })
@@ -160,7 +162,8 @@ export const playerResourceChange = (
 										resourceCondition(
 											res,
 											optional ? 1 : -change
-										) as PlayerCondition
+										) as PlayerCondition,
+										unprotectedPlayerResource(res) as PlayerCondition
 								  ]
 								: []
 				  })
@@ -1305,5 +1308,13 @@ export const sponsorCompetitionForFree = () =>
 		description: 'As your first action, sponsor competition for free',
 		perform: ({ player }) => {
 			pushPendingAction(player, sponsorCompetitionAction())
+		}
+	})
+
+export const protectedHabitat = () =>
+	effect({
+		description: "Opponents can't remove your plants, microbes or animals.",
+		perform: ({ player }) => {
+			player.protectedHabitat = true
 		}
 	})

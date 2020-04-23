@@ -49,7 +49,8 @@ import {
 	titanPriceChange,
 	triggerCardResourceChange,
 	claimCell,
-	placeOcean
+	placeOcean,
+	protectedHabitat
 } from '../effects'
 import {
 	cardExchangeEffect,
@@ -2059,16 +2060,15 @@ export const baseCards: Card[] = [
 		],
 		victoryPointsCallback: vpsForCardResources('animals', 1 / 3)
 	}),
-	/*
-	TODO:
 	card({
 		code: 'protected_habitats',
 		title: 'Protected Habitats',
 		type: CardType.Action,
 		cost: 5,
-		categories: [],special: [CardSpecial.AgeOfCorporations],
+		categories: [],
+		special: [CardSpecial.CorporationsEra],
+		playEffects: [protectedHabitat()]
 	}),
-	*/
 	card({
 		code: 'protected_valley',
 		title: 'Protected Valley',
