@@ -14,6 +14,10 @@ export const playerArgValidator = ({
 		throw new Error('Player is required')
 	}
 
+	if (value === -1) {
+		return
+	}
+
 	const selectedPlayer = gamePlayer(game, value)
 
 	const errors = a.playerConditions.filter(
