@@ -7,6 +7,7 @@ import { pickCorporation } from '@shared/index'
 import React, { useMemo, useState } from 'react'
 import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
 import { PlayerActionType } from '@shared/player-actions'
+import { HelpMessage } from '@/components/HelpMessage/HelpMessage'
 
 export const CorporationPicker = () => {
 	const api = useApi()
@@ -37,13 +38,24 @@ export const CorporationPicker = () => {
 	}
 
 	return (
-		<Modal open={true} allowClose={false} header={'Pick corporation'}>
+		<Modal
+			open={true}
+			allowClose={false}
+			headerStyle={{ justifyContent: 'center' }}
+			header={'Pick your corporation'}
+		>
 			<CardDisplay
 				cards={cards}
 				filters={false}
 				evaluate={false}
 				onSelect={handlePick}
 				selected={[]}
+			/>
+
+			<HelpMessage
+				message={
+					'Corporation provides initial funds, production and effects which can help you during the game.'
+				}
 			/>
 		</Modal>
 	)

@@ -68,7 +68,8 @@ export const CardPicker = ({ prelude }: Props) => {
 		<Modal
 			open={true}
 			allowClose={false}
-			header={cardsLimit === 0 ? `Pick cards` : `Pick ${cardsLimit} cards`}
+			headerStyle={{ justifyContent: 'center' }}
+			header={cardsLimit === 0 ? `Pick your cards` : `Pick ${cardsLimit} cards`}
 			footer={
 				<Button
 					onClick={handleConfirm}
