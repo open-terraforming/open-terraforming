@@ -1,12 +1,13 @@
+import ganymede from '@/assets/ganymede.png'
+import phobos from '@/assets/phobos.png'
+import { Card } from '@/icons/card'
 import { range } from '@/utils/collections'
 import { faHammer, faSeedling, faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { GridCell, GridCellSpecial, GridCellType } from '@shared/index'
+import { GridCell, GridCellType } from '@shared/index'
+import { specialToStr } from '@shared/texts'
 import React from 'react'
 import styled from 'styled-components'
-import { Card } from '@/icons/card'
-import phobos from '@/assets/phobos.png'
-import ganymede from '@/assets/ganymede.png'
 
 type Props = {
 	cell: GridCell
@@ -14,16 +15,6 @@ type Props = {
 	width: number
 	height: number
 }
-
-const specialToName = {
-	[GridCellSpecial.NoctisCity]: 'Noctis City',
-	[GridCellSpecial.TharsisTholus]: 'Tharsis Tholus',
-	[GridCellSpecial.AscraeusMons]: 'Ascraeus Mons',
-	[GridCellSpecial.PavonisMons]: 'Pavonis Mons',
-	[GridCellSpecial.ArsiaMons]: 'Arsia Mons',
-	[GridCellSpecial.GanymedeColony]: 'Ganymede Colony',
-	[GridCellSpecial.PhobosSpaceHaven]: 'Phobos Space Haven'
-} as const
 
 export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 	return (
@@ -40,7 +31,7 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 			{!cell.content && (
 				<>
 					{cell.special !== undefined && (
-						<Special>{specialToName[cell.special]}</Special>
+						<Special>{specialToStr(cell.special)}</Special>
 					)}
 					<Resources>
 						{range(0, cell.plants).map(i => (

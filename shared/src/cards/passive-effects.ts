@@ -16,6 +16,7 @@ import {
 	WithOptional
 } from './types'
 import { gamePlayer, resourceProduction, updatePlayerResource } from './utils'
+import { tileWithArticle } from '../texts'
 
 export const passiveEffect = (
 	e: WithOptional<CardPassiveEffect, 'symbols'>
@@ -27,9 +28,9 @@ export const resourcePerPlacedTile = (
 	amount: number
 ) =>
 	passiveEffect({
-		description: `When anyone places an ${
-			GridCellContent[content]
-		} tile, gain ${withUnits(res, amount)}`,
+		description: `When anyone places ${tileWithArticle(
+			content
+		)} tile, gain ${withUnits(res, amount)}`,
 		symbols: [
 			{ tile: content, other: true },
 			{ symbol: SymbolType.Colon },
@@ -48,7 +49,9 @@ export const productionPerPlacedTile = (
 	amount: number
 ) =>
 	passiveEffect({
-		description: `When anyone places an ${GridCellContent[content]} tile, increase ${res} production by ${amount}`,
+		description: `When anyone places ${tileWithArticle(
+			content
+		)} tile, increase ${res} production by ${amount}`,
 		symbols: [
 			{ tile: content, other: true },
 			{ symbol: SymbolType.Colon },

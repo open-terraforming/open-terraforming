@@ -1,4 +1,5 @@
-import { GridCellContent, GridCellOther } from './game'
+import { GridCellContent, GridCellOther, GridCellSpecial } from './game'
+import { CardSpecial } from './cards'
 
 export const tileWithArticle = (content: GridCellContent) => {
 	return `${tileArticle(content)} ${tileToStr(content)}`
@@ -71,5 +72,24 @@ export const otherToStr = (other: GridCellOther) => {
 			return 'Restricted Zone'
 		case GridCellOther.Volcano:
 			return 'Volcano'
+	}
+}
+
+export const specialToStr = (special: GridCellSpecial) => {
+	switch (special) {
+		case GridCellSpecial.NoctisCity:
+			return 'Noctis City'
+		case GridCellSpecial.TharsisTholus:
+			return 'Tharsis Tholus'
+		case GridCellSpecial.AscraeusMons:
+			return 'Ascraeus Mons'
+		case GridCellSpecial.PavonisMons:
+			return 'Pavonis Mons'
+		case GridCellSpecial.ArsiaMons:
+			return 'Arsia Mons'
+		case GridCellSpecial.GanymedeColony:
+			return 'Ganymede Colony'
+		case GridCellSpecial.PhobosSpaceHaven:
+			return 'Phobos Space Haven'
 	}
 }

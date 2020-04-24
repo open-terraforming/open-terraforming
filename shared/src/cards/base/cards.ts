@@ -1663,10 +1663,7 @@ export const baseCards: Card[] = [
 		cost: 8,
 		categories: [CardCategory.Earth],
 		special: [CardSpecial.CorporationsEra],
-		playEffects: [
-			productionChange('money', 1),
-			productionForTags(CardCategory.Event, 'money', 1)
-		]
+		playEffects: [productionForTags(CardCategory.Earth, 'money', 1)]
 	}),
 	card({
 		code: 'strip_mine',

@@ -16,7 +16,7 @@ import {
 	placeTileAction,
 	sponsorCompetitionAction
 } from '../player-actions'
-import { otherWithArticle, tileWithArticle } from '../texts'
+import { otherWithArticle, tileWithArticle, specialToStr } from '../texts'
 import { withUnits } from '../units'
 import {
 	allCells,
@@ -309,7 +309,7 @@ export function placeTile({
 						.join(', ')})`
 				: '') +
 			(special && special.length > 0
-				? ` on ${special?.map(c => GridCellSpecial[c]).join(' or ')}`
+				? ` on ${special?.map(c => specialToStr(c)).join(' or ')}`
 				: ''),
 		conditions: [
 			condition({
@@ -1049,14 +1049,14 @@ export const productionForPlayersTags = (
 
 export const terraformRatingForTags = (tag: CardCategory, amount: number) =>
 	effect({
-		description: `Raise your terraform rating by ${amount} per every ${CardCategory[tag]} tag you played`,
+		description: `Raise your terraform rating by ${amount} per every ${CardCategory[tag]} tag you played (including this if applicable)`,
 		type: CardEffectType.Production,
 		symbols: [
 			{ tag },
 			{ symbol: SymbolType.RightArrow },
 			{ symbol: SymbolType.TerraformingRating, count: amount }
 		],
-		perform: ({ player }) => {
+		perform: ({ player, card }) => {
 			player.terraformRating += player.usedCards
 				.map(c => CardsLookupApi.get(c.code))
 				.reduce(
@@ -1064,7 +1064,7 @@ export const terraformRatingForTags = (tag: CardCategory, amount: number) =>
 						acc +
 						c.categories.filter(cat => cat === tag || cat === CardCategory.Any)
 							.length,
-					0
+					CardsLookupApi.get(card.code).categories.filter(c => tag === c).length
 				)
 		}
 	})

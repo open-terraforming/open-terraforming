@@ -283,9 +283,15 @@ export class Bot extends Player {
 							0,
 							a.limit || a.cards.length
 					  )
-					: shuffle(
-							a.cards.map((_c, i) => i).filter(() => Math.random() > 0.1)
-					  ).slice(0, Math.max(0, Math.floor(this.state.money / CARD_PRICE)))
+					: shuffle(a.cards.map((_c, i) => i)).slice(
+							0,
+							Math.max(
+								0,
+								Math.floor(
+									(this.state.money / CARD_PRICE) * (0.5 + 0.5 * Math.random())
+								)
+							)
+					  )
 
 				return this.pickCards(picked)
 			}
