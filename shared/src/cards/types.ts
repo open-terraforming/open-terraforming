@@ -138,6 +138,7 @@ export interface CardEffect<
 	description?: string
 	type: CardEffectType
 	symbols: CardSymbol[]
+	aiScore: number | ((ctx: CardCallbackContext) => number)
 	perform: (ctx: CardCallbackContext, ...args: T) => void
 }
 

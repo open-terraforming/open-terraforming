@@ -1,5 +1,11 @@
 import { COMPETITIONS_PRICES, MILESTONE_PRICE } from './constants'
-import { GameState, GridCell, PlayerState, PlayerStateValue } from './game'
+import {
+	GameState,
+	GridCell,
+	PlayerState,
+	PlayerStateValue,
+	GridCellContent
+} from './game'
 import { PlayerAction, PlayerActionType } from './player-actions'
 
 export const allCells = (game: GameState) => {
@@ -196,3 +202,65 @@ export const pendingActions = (player: PlayerState) => {
 			: player.pendingActions.filter(p => allowed.includes(p.type))
 		: []
 }
+
+type CellCondition = (c: GridCell) => boolean
+
+export class TileCollection {
+	private __evaluated: GridCell[] | undefined
+
+	private nextNegative = false
+
+	private list: GridCell[]
+	private conditions = [] as CellCondition[]
+
+	constructor(list: GridCell[]) {
+		this.list = list
+	}
+
+	get length() {
+		return this.asArray().length
+	}
+
+	asArray() {
+		if (this.__evaluated) {
+			return this.__evaluated
+		}
+
+		return (this.__evaluated = this.list.filter(
+			cell => !this.conditions.find(condition => !condition(cell))
+		))
+	}
+
+	condition(c: CellCondition) {
+		this.conditions.push(c)
+		this.__evaluated = undefined
+		return this
+	}
+
+	ownedBy(playerId: number) {
+		return this.condition((c: GridCell) => c.ownerId === playerId)
+	}
+
+	notOwnedBy(playerId: number) {
+		return this.condition((c: GridCell) => c.ownerId !== playerId)
+	}
+
+	hasContent(content: GridCellContent) {
+		return this.condition((c: GridCell) => c.content === content)
+	}
+
+	hasAnyContent(content: GridCellContent[]) {
+		return this.condition(
+			(c: GridCell) => c.content !== undefined && content.includes(c.content)
+		)
+	}
+
+	hasCity = () => this.hasContent(GridCellContent.City)
+	hasOcean = () => this.hasContent(GridCellContent.Ocean)
+	hasGreenery = () => this.hasContent(GridCellContent.Forest)
+	hasOther = () => this.hasContent(GridCellContent.Other)
+}
+
+export const tiles = (list: GridCell[]) => new TileCollection(list)
+export const adjTilesList = (game: GameState, x: number, y: number) =>
+	new TileCollection(adjacentCells(game, x, y))

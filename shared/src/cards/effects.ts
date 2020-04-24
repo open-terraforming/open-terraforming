@@ -16,7 +16,7 @@ import {
 	placeTileAction,
 	sponsorCompetitionAction
 } from '../player-actions'
-import { otherWithArticle, tileWithArticle, specialToStr } from '../texts'
+import { otherWithArticle, specialToStr, tileWithArticle } from '../texts'
 import { withUnits } from '../units'
 import {
 	allCells,
@@ -47,6 +47,7 @@ import {
 } from './conditions'
 import { CardsLookupApi } from './lookup'
 import {
+	CardCallbackContext,
 	CardCategory,
 	CardEffect,
 	CardEffectArgumentType,
@@ -70,14 +71,42 @@ import {
 	updatePlayerResource
 } from './utils'
 
+const productionAiScoreMultiplier = 9
+
+const resourceAiScoreMultiplier: Record<Resource, number> = {
+	energy: 0.1,
+	heat: 0.1,
+	ore: 0.1,
+	titan: 0.1,
+	plants: 0.125,
+	money: 0.07
+}
+
+const resourceAiScore = (res: Resource, amount: number) => ({
+	player
+}: CardCallbackContext) => {
+	return resourceAiScoreMultiplier[res] * amount * (amount / player[res])
+}
+
+const productionAiScore = (res: Resource, amount: number) => ({
+	game
+}: CardCallbackContext) =>
+	resourceAiScoreMultiplier[res] *
+	amount *
+	(productionAiScoreMultiplier - game.generation)
+
 export const effect = <T extends (CardEffectArgumentType | undefined)[]>(
-	c: WithOptional<CardEffect<T>, 'args' | 'conditions' | 'type' | 'symbols'>
+	c: WithOptional<
+		CardEffect<T>,
+		'args' | 'conditions' | 'type' | 'symbols' | 'aiScore'
+	>
 ): CardEffect<T> =>
 	({
 		args: [],
 		conditions: [],
 		symbols: [],
 		type: CardEffectType.Other,
+		aiScore: 0,
 		...c
 	} as CardEffect<T>)
 
@@ -182,6 +211,7 @@ export const playerResourceChange = (
 				  ]
 				: [],
 		symbols: [{ resource: res, count: change, other: true }],
+		aiScore: resourceAiScore(res, -change * 0.8),
 		description:
 			change > 0
 				? `Give ${optional ? ' up to' : ''} ${withUnits(
@@ -244,6 +274,7 @@ export const playerProductionChange = (res: Resource, change: number) => {
 				  ]
 				: [],
 		symbols: [{ resource: res, count: change, production: true, other: true }],
+		aiScore: productionAiScore(res, -change * 0.8),
 		description:
 			change > 0
 				? `Increase ${res} production of any player by ${change}`
@@ -269,6 +300,7 @@ export const gameProcessChange = (res: GameProgress, change: number) => {
 				count: change
 			}
 		],
+		aiScore: ({ game }) => (game[res] < game.map[res] ? change * 5 : 0),
 		perform: ({ game, player }) => {
 			const update = Math.min(game.map[res] - game[res], change)
 
@@ -325,6 +357,7 @@ export function placeTile({
 				}
 			})
 		],
+		aiScore: type === GridCellContent.Other ? 1 : 3,
 		symbols: [{ tile: type, tileOther: other }],
 		perform: ({ player, cardIndex, game }) => {
 			// Only limited number of ocean tiles an be placed
@@ -364,6 +397,9 @@ export const convertResource = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: dstRes, count: dstCount }
 		],
+		aiScore: ctx =>
+			resourceAiScore(dstRes, dstCount)(ctx) -
+			resourceAiScore(srcRes, srcCount)(ctx),
 		perform: ({ player }) => {
 			updatePlayerResource(player, srcRes, -srcCount)
 			updatePlayerResource(player, dstRes, dstCount)
@@ -379,6 +415,7 @@ export const cardsForResource = (res: Resource, count: number, cards: number) =>
 			{ symbol: SymbolType.RightArrow },
 			{ symbol: SymbolType.Card, count: cards }
 		],
+		aiScore: ctx => cards - resourceAiScore(res, count)(ctx),
 		perform: ({ player, game }) => {
 			updatePlayerResource(player, res, -count)
 			player.cards.push(...drawCards(game, cards))
@@ -392,6 +429,7 @@ export const terraformRatingChange = (change: number) =>
 				? `+ ${change} Terraform Rating`
 				: `- ${-change} Terraform Rating`,
 		symbols: [{ symbol: SymbolType.TerraformingRating, count: change }],
+		aiScore: change,
 		perform: ({ player }) => {
 			player.terraformRating += change
 		}
@@ -426,6 +464,12 @@ export const effectChoice = (effects: CardEffect[]) =>
 				.filter(e => e.length > 0)
 				.map((e, i) => (i === 0 ? e : [{ symbol: SymbolType.Slash }, ...e]))
 		),
+		aiScore: ctx =>
+			Math.max(
+				...effects.map(e =>
+					typeof e.aiScore === 'function' ? e.aiScore(ctx) : e.aiScore
+				)
+			),
 		description: effects.map(e => e.description || '').join(' OR '),
 		perform: (ctx, args: [number, CardEffectArgumentType[]]) => {
 			const [chosenEffect, chosenArgs] = args || [undefined, []]
@@ -445,6 +489,12 @@ export const joinedEffects = (effects: CardEffect[]) =>
 		description: effects.map(e => e.description || '').join(' and '),
 		conditions: flatten(effects.map(e => e.conditions)),
 		symbols: flatten(effects.map(e => e.symbols)),
+		aiScore: ctx =>
+			effects
+				.map(e =>
+					typeof e.aiScore === 'function' ? e.aiScore(ctx) : e.aiScore
+				)
+				.reduce((acc, s) => acc + s),
 		perform: (ctx, ...args) => {
 			effects.forEach(e => {
 				e.perform(

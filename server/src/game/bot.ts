@@ -13,24 +13,30 @@ import {
 	isCardPlayable,
 	minimalCardPrice
 } from '@shared/cards/utils'
+import { Competitions } from '@shared/competitions'
 import {
 	CARD_PRICE,
-	MILESTONES_LIMIT,
-	COMPETITIONS_LIMIT
+	COMPETITIONS_LIMIT,
+	MILESTONES_LIMIT
 } from '@shared/constants'
 import {
 	PlayerStateValue,
+	StandardProjectType,
 	UsedCardState,
-	StandardProjectType
+	GameStateValue
 } from '@shared/game'
+import { Milestones } from '@shared/milestones'
 import { canPlace, isClaimable } from '@shared/placements'
-import { allCells, milestonePrice, competitionPrice } from '@shared/utils'
+import { PlayerAction, PlayerActionType } from '@shared/player-actions'
+import { Projects } from '@shared/projects'
+import { allCells, competitionPrice, milestonePrice } from '@shared/utils'
 import { Game } from './game'
 import { Player } from './player'
-import { Milestones } from '@shared/milestones'
-import { Competitions } from '@shared/competitions'
-import { Projects } from '@shared/projects'
-import { PlayerActionType, PlayerAction } from '@shared/player-actions'
+import { placeTileScore } from './scoring/place-tile-score'
+import { ScoringContext } from './scoring/types'
+import { pickBest } from './scoring/utils'
+import { claimTileScore } from './scoring/claim-tile-score'
+import { standardProjectScore } from './scoring/standard-project-score'
 
 const BotNames = [
 	'Rick',
@@ -72,11 +78,10 @@ export class Bot extends Player {
 	constructor(game: Game) {
 		super(game)
 
-		this.name = pickBotName(this.state.id)
+		this.state.name = pickBotName(this.state.id)
 		this.state.connected = true
 		this.state.bot = true
 		this.state.state = PlayerStateValue.Ready
-		this.updated()
 
 		this.game.onStateUpdated.on(() => this.updated(false))
 	}
@@ -271,6 +276,13 @@ export class Bot extends Player {
 		)
 	}
 
+	get scoringContext(): ScoringContext {
+		return {
+			game: this.game.state,
+			player: this.state
+		}
+	}
+
 	performPending(a: PlayerAction) {
 		switch (a.type) {
 			case PlayerActionType.PickCorporation: {
@@ -288,7 +300,12 @@ export class Bot extends Player {
 							Math.max(
 								0,
 								Math.floor(
-									(this.state.money / CARD_PRICE) * (0.5 + 0.5 * Math.random())
+									((this.state.money *
+										(this.game.state.state === GameStateValue.Starting
+											? 0.8
+											: 0.3)) /
+										CARD_PRICE) *
+										(0.6 + 0.4 * Math.random())
 								)
 							)
 					  )
@@ -317,9 +334,13 @@ export class Bot extends Player {
 
 			case PlayerActionType.PlaceTile: {
 				const placed = a.state
-				const tile = shuffle(allCells(this.game.state)).find(c =>
-					canPlace(this.game.state, this.state, c, placed)
+				const tile = pickBest(
+					allCells(this.game.state).filter(c =>
+						canPlace(this.game.state, this.state, c, placed)
+					),
+					c => placeTileScore(this.scoringContext, placed, c)
 				)
+
 				if (tile) {
 					return this.placeTile(tile.x, tile.y)
 				} else {
@@ -328,9 +349,11 @@ export class Bot extends Player {
 			}
 
 			case PlayerActionType.ClaimTile: {
-				const tile = shuffle(allCells(this.game.state)).find(c =>
-					isClaimable(c)
+				const tile = pickBest(
+					allCells(this.game.state).filter(c => isClaimable(c)),
+					c => claimTileScore(this.scoringContext, c)
 				)
+
 				if (tile) {
 					return this.claimTile(tile.x, tile.y)
 				} else {
@@ -392,9 +415,13 @@ export class Bot extends Player {
 			case PlayerStateValue.EndingTiles: {
 				const placed = this.pendingAction
 				if (placed && placed.type === PlayerActionType.PlaceTile) {
-					const tile = shuffle(allCells(this.game.state)).find(c =>
-						canPlace(this.game.state, this.state, c, placed.state)
+					const tile = pickBest(
+						allCells(this.game.state).filter(c =>
+							canPlace(this.game.state, this.state, c, placed.state)
+						),
+						c => placeTileScore(this.scoringContext, placed.state, c)
 					)
+
 					if (tile) {
 						actions.push([0, () => this.placeTile(tile.x, tile.y)])
 					}
@@ -404,6 +431,7 @@ export class Bot extends Player {
 
 			case PlayerStateValue.Playing: {
 				const pending = this.pendingAction
+
 				if (pending) {
 					actions.push([0, () => this.performPending(pending)])
 				} else {
@@ -460,13 +488,9 @@ export class Bot extends Player {
 								c({ game: this.game.state, player: this.state })
 							)
 						) {
-							if (
-								p.type !== StandardProjectType.SellPatents &&
-								(p.resource !== 'money' ||
-									(this.game.state.generation > 2 && Math.random() > 0.5))
-							) {
+							if (p.type !== StandardProjectType.SellPatents) {
 								actions.push([
-									p.resource !== 'money' ? 10 : 0,
+									standardProjectScore(this.scoringContext, p),
 									() => {
 										this.buyStandardProject(p.type, [])
 									}
