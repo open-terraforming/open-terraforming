@@ -2,6 +2,7 @@ BUGS:
   * GENERAL -> PER CITY ON MARS - filter out cities outside mars
 
 TODO:
+  * UI [General] -> better pick dialog
   * UI [Cards] -> playEffects are not important for actionable cards once played
   * UI [Cards] -> display sales when buying a card
   * UI [Cards] -> better passive-effects display
@@ -21,12 +22,16 @@ TODO:
   * SOUNDS -> milestone/award bought
   * SOUNDS -> resources changed?
 
+  * GENERAL -> delay when switching to next player
+
+  * SERVER -> AI evaluates effect of a card
   * SERVER -> player which creates a game should be admin of said game?
 
   * EXPANSIONS -> VENUS
   * EXPANSIONS -> COLONIES
 
 CHECK CARDS:
+  * CHECK -> Great Escarpment Consortium -> didn't ask me
   * CHECK -> pets
   * CHECK -> TERRAFORMING GANYMEDE - extra TR added?
   * CHECK -> claim - does it work?
