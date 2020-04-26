@@ -1,4 +1,10 @@
-import { GameMessage, adminChange, adminLogin } from '@shared/index'
+import {
+	GameMessage,
+	adminChange,
+	adminLogin,
+	MessageType
+} from '@shared/index'
+import { decode, encode } from 'msgpack-lite'
 
 export class Client {
 	server: string
@@ -18,7 +24,7 @@ export class Client {
 			throw new Error('Trying to send non-object - no!')
 		}
 
-		return this.socket?.send(JSON.stringify(msg))
+		return this.socket?.send(encode(msg))
 	}
 
 	connect() {
@@ -35,8 +41,19 @@ export class Client {
 			this.onOpen && this.onOpen()
 		}
 
-		this.socket.onmessage = msg => {
-			const data = JSON.parse(msg.data.toString())
+		this.socket.onmessage = async msg => {
+			const data = decode(
+				new Uint8Array(await msg.data.arrayBuffer())
+			) as GameMessage
+
+			if (!data) {
+				throw new Error('Failed to parse message')
+			}
+
+			console.groupCollapsed(`Received ${MessageType[data?.type]}`)
+			console.log(data)
+			console.groupEnd()
+
 			this.onMessage && this.onMessage(data)
 		}
 

@@ -11,6 +11,7 @@ import { GlobalState } from './components/GlobalState/GlobalState'
 import { Header } from './components/Header/Header'
 import { Mouses } from './components/Mouses/Mouses'
 import { Players } from './components/Players/Players'
+import ThreeGameMap from './components/ThreeGameMap/ThreeGameMap'
 
 export const Table = () => {
 	const pending = useAppStore(state => state.game.pendingAction)
@@ -60,7 +61,8 @@ export const Table = () => {
 			<GameContainer>
 				<Header />
 				<Players />
-				<GameMap />
+				{/*<GameMap />*/}
+				{<ThreeGameMap />}
 				<GlobalState />
 			</GameContainer>
 			<Controls />

@@ -39,6 +39,7 @@ export class EventClient {
 			if (typeof data === 'string') {
 				throw new Error('Not a binary message')
 			}
+
 			if (data instanceof ArrayBuffer) {
 				parsed = decode(new Uint8Array(data))
 			} else {

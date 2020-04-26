@@ -1,5 +1,10 @@
 BUGS:
   * GENERAL -> PER CITY ON MARS - filter out cities outside mars
+  * Duplicate production -> filter out corporations
+  * Place a City (on Noctis City) on Noctis City
+  * Make oceans more obvious
+  * buy card cancel -> don't show it when the dialog is forced
+  * AQUIFER PUMPING -> doesn't evaluate ocean condition
 
 TODO:
   * UI [General] -> better pick dialog
@@ -36,6 +41,7 @@ CHECK CARDS:
   * CHECK -> TERRAFORMING GANYMEDE - extra TR added?
   * CHECK -> claim - does it work?
   * CHECK -> protected_habitats -> does it actually work?
+  * CHECK -> AQUIFER PUMPING
 
 LOW PRIORITY TODO:
   * GENERAL -> player emoticons
