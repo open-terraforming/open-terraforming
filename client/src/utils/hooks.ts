@@ -118,7 +118,7 @@ export const useDocumentEvent = <E extends Event>(
  * @param cancelBubble
  */
 export const useEvent = <E extends Event>(
-	target: EventTarget,
+	target: EventTarget | undefined | null,
 	event: string,
 	callback: (e: E) => void,
 	cancelBubble = false
@@ -128,19 +128,21 @@ export const useEvent = <E extends Event>(
 	callbackRef.current = callback
 
 	useEffect(() => {
-		// Since we use ref, .current will always be correct callback
-		const listener = (e: any) => {
-			if (callbackRef.current) {
-				callbackRef.current(e as E)
+		if (target) {
+			// Since we use ref, .current will always be correct callback
+			const listener = (e: any) => {
+				if (callbackRef.current) {
+					callbackRef.current(e as E)
+				}
 			}
+
+			// Add our listener on mount
+			target.addEventListener(event, listener, cancelBubble)
+
+			// Remove it on dismount
+			return () => target.removeEventListener(event, listener)
 		}
-
-		// Add our listener on mount
-		target.addEventListener(event, listener, cancelBubble)
-
-		// Remove it on dismount
-		return () => target.removeEventListener(event, listener)
-	}, [])
+	}, [target])
 }
 
 /**
