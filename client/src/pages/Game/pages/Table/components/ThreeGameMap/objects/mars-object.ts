@@ -139,11 +139,11 @@ export class MarsObject {
 		this.game = game
 		this.player = player
 
-		Object.values(this.cells).forEach((v, x) => {
+		Object.values(this.cells).forEach(v => {
 			if (v) {
-				Object.values(v).forEach((v, y) => {
-					if (v) {
-						v.update(game.map.grid[x][y])
+				Object.values(v).forEach(v => {
+					if (v && v.cell) {
+						v.update(game.map.grid[v.cell.x][v.cell.y])
 					}
 				})
 			}

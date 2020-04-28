@@ -10,10 +10,14 @@ import {
 	PointLight,
 	PointLightHelper,
 	Scene,
-	WebGLRenderer
+	WebGLRenderer,
+	Vector2
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { MarsObject } from './objects/mars-object'
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
 
 type Props = {}
 
@@ -140,19 +144,30 @@ export default ({}: Props) => {
 			renderer.setPixelRatio(window.devicePixelRatio)
 			renderer.setSize(size[0], size[1])
 
+			if (composer) {
+				composer.setSize(size[0], size[1])
+			}
+
 			positionsNeedUpdate.current = true
 		}
 	}, [size])
 
-	const renderer = useMemo(() => {
+	const [renderer, composer] = useMemo(() => {
 		if (canvas) {
 			const renderer = new WebGLRenderer({ canvas: canvas, alpha: true })
 			renderer.setPixelRatio(window.devicePixelRatio)
 			renderer.setSize(size[0], size[1])
 
-			return renderer
+			const composer = new EffectComposer(renderer)
+			composer.addPass(new RenderPass(scene, camera))
+
+			composer.addPass(
+				new UnrealBloomPass(new Vector2(size[0], size[1]), 1.5, 0.4, 0.85)
+			)
+
+			return [renderer, composer] as const
 		} else {
-			return undefined
+			return [undefined, undefined] as const
 		}
 	}, [canvas])
 
@@ -258,7 +273,8 @@ export default ({}: Props) => {
 
 			planet.tick(camera, mouse.current)
 
-			renderer.render(scene, camera)
+			// renderer.render(scene, camera)
+			composer?.render()
 		}
 	})
 

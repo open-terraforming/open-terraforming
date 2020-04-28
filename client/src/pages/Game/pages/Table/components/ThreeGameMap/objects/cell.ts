@@ -36,6 +36,7 @@ export const resources = new ResourcesLoader()
 	.add('ore', 'models/Ore.glb')
 	.add('titan', 'models/Titan.glb')
 	.add('card', 'models/Card.glb')
+	.add('volcano', 'models/Volcano.glb')
 
 resources.load()
 
@@ -59,6 +60,7 @@ export class Cell {
 	size = 2 * 0.052
 
 	constructor(mars: MarsObject, cell: GridCell, position: Vector3) {
+		this.cell = cell
 		this.mars = mars
 
 		this.container = new Object3D()
@@ -204,10 +206,7 @@ export class Cell {
 		)
 
 		this.available =
-			(!!placing &&
-				cell.content === undefined &&
-				(cell.claimantId === undefined || cell.claimantId === player.id) &&
-				canPlace(game, player, cell, placing)) ||
+			(!!placing && canPlace(game, player, cell, placing)) ||
 			(!!claiming && isClaimable(cell))
 	}
 
@@ -255,8 +254,15 @@ export class Cell {
 				return resources.get('greenery')
 			case GridCellContent.Ocean:
 				return resources.get('ocean')
-			case GridCellContent.Other:
+
+			case GridCellContent.Other: {
+				switch (other) {
+					case GridCellOther.Volcano:
+						return resources.get('volcano')
+				}
+
 				return resources.get('other')
+			}
 		}
 
 		return undefined

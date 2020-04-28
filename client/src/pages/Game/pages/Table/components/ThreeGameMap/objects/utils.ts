@@ -13,7 +13,7 @@ export function makeLabelTexture(
 		throw new Error('Failed to initialize drawing context')
 	}
 
-	const font = `${size}px bold ${fontName}`
+	const font = `${size}px ${fontName}`
 	ctx.font = font
 	// measure how long the name will be
 	const textWidth = ctx.measureText(text).width
@@ -33,7 +33,7 @@ export function makeLabelTexture(
 	const scaleFactor = Math.min(1, baseWidth / textWidth)
 	ctx.translate(width / 2, height / 2)
 	ctx.scale(scaleFactor, 1)
-	ctx.fillStyle = '#99aaaa'
+	ctx.fillStyle = '#ccc'
 	ctx.fillText(text, 0, 0)
 
 	const texture = new CanvasTexture(ctx.canvas)
