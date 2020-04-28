@@ -12,8 +12,7 @@ import {
 	Vector2,
 	Vector3
 } from 'three'
-import { resources } from '../resources'
-import { Cell } from './cell'
+import { Cell, resources } from './cell'
 
 const loader = new TextureLoader()
 
@@ -87,12 +86,16 @@ export class MarsObject {
 
 		this.cells = []
 
+		while (this.cellsContainer.children.length > 0) {
+			this.cellsContainer.remove(this.cellsContainer.children[0])
+		}
+
 		const inc = Math.PI / 30
 
 		for (let x = 0; x < game.map.width; x++) {
 			for (let y = 0; y < game.map.height; y++) {
 				if (game.map.grid[x][y].enabled) {
-					const pitch = -hH * inc * 0.9 + y * inc * 0.9
+					const pitch = hH * inc * 0.9 - y * inc * 0.9
 					const yaw = -hW * inc + x * inc + ((y % 2) * inc) / 2
 
 					const position = new Vector3(

@@ -4,38 +4,45 @@ import {
 	GridCellOther,
 	PlayerStateValue
 } from '@shared/index'
-import { Object3D, Vector3, Mesh, MeshStandardMaterial, Vector2 } from 'three'
-import { resources } from '../resources'
+import {
+	Object3D,
+	Vector3,
+	Mesh,
+	MeshStandardMaterial,
+	Vector2,
+	SpriteMaterial,
+	Sprite,
+	MeshBasicMaterial,
+	PlaneBufferGeometry
+} from 'three'
+import { extractMesh, ResourcesLoader } from '../resources'
 import { MarsObject } from './mars-object'
-import { pendingActions } from '@shared/utils'
+import { pendingActions, range } from '@shared/utils'
 import { PlayerActionType } from '@shared/player-actions'
 import { canPlace, isClaimable } from '@shared/placements'
+import { makeLabelTexture } from './utils'
+import { specialToStr } from '@shared/texts'
 
-const findMesh = (s: Object3D) => {
-	let found = undefined as Mesh | undefined
+export const resources = new ResourcesLoader()
+	.add('hex', 'models/Hex.glb', extractMesh())
+	.add('hex-hover', 'models/HexHover.glb', extractMesh())
+	.add('hex-available', 'models/HexAvailable.glb', extractMesh())
+	.add('hex-collider', 'models/HexCollider.glb', extractMesh())
+	.add('city', 'models/City.glb')
+	.add('greenery', 'models/Greenery.glb')
+	.add('ocean', 'models/Ocean.glb')
+	.add('other', 'models/Other.glb')
+	.add('plant', 'models/Plant.glb')
+	.add('ore', 'models/Ore.glb')
+	.add('titan', 'models/Titan.glb')
+	.add('card', 'models/Card.glb')
 
-	s.traverse(i => {
-		if (i instanceof Mesh) {
-			found = i
-		}
-	})
-
-	return found
-}
-
-resources.add('hex', 'models/Hex.glb')
-resources.add('hex-hover', 'models/HexHover.glb')
-resources.add('hex-available', 'models/HexAvailable.glb')
-resources.add('hex-collider', 'models/HexCollider.glb')
-resources.add('city', 'models/City.glb')
-resources.add('greenery', 'models/Greenery.glb')
-resources.add('ocean', 'models/Ocean.glb')
-resources.add('other', 'models/Other.glb')
 resources.load()
 
 export class Cell {
 	container: Object3D
 	collider: Object3D
+	resources: Object3D
 
 	mars: MarsObject
 	cell: GridCell | undefined
@@ -49,20 +56,17 @@ export class Cell {
 	hover = false
 	available = false
 
+	size = 2 * 0.052
+
 	constructor(mars: MarsObject, cell: GridCell, position: Vector3) {
 		this.mars = mars
 
 		this.container = new Object3D()
 		this.container.position.copy(position)
-		this.container.scale.multiplyScalar(0.052)
+		this.container.scale.multiplyScalar(this.size / 2)
+		this.container.lookAt(new Vector3())
 
-		const hexCollider = findMesh(resources.get('hex-collider'))
-
-		if (!hexCollider) {
-			throw new Error('No mesh in hex collider!')
-		}
-
-		this.collider = hexCollider.clone()
+		this.collider = resources.get('hex-collider').clone()
 		this.collider.rotateX(-Math.PI * 0.5)
 		this.collider.visible = false
 
@@ -78,10 +82,63 @@ export class Cell {
 		this.add(this.hexHover)
 		this.add(this.hexAvailable)
 
-		this.container.lookAt(new Vector3())
+		this.resources = new Object3D()
+
+		const total = cell.cards + cell.plants + cell.ore + cell.titan
+		let totalCards = cell.cards
+		let totalPlants = cell.plants
+		let totalOre = cell.ore
+		let totalTitan = cell.titan
+
+		range(0, total).forEach(i => {
+			const rx = ((total - 1) / 2 - i) * 0.45
+
+			const res =
+				totalPlants-- > 0
+					? 'plant'
+					: totalOre-- > 0
+					? 'ore'
+					: totalTitan-- > 0
+					? 'titan'
+					: totalCards--
+					? 'card'
+					: null
+
+			if (res) {
+				const mesh = resources.get(res).clone()
+				mesh.position.set(rx, cell.special ? 0.5 : 0, 0)
+				mesh.rotateX(-Math.PI * 0.5)
+
+				this.resources.add(mesh)
+			}
+		})
+
+		if (cell.special) {
+			const labelTexture = makeLabelTexture(
+				250,
+				'Oswald',
+				60,
+				specialToStr(cell.special)
+			)
+
+			const labelMaterial = new MeshBasicMaterial({
+				map: labelTexture,
+				transparent: true
+			})
+
+			const label = new Mesh(new PlaneBufferGeometry(1, 1), labelMaterial)
+			label.rotateY(Math.PI)
+			label.scale.set(1.6, 0.5, 1)
+
+			this.resources.add(label)
+		}
+
+		this.container.add(this.resources)
 	}
 
 	tick() {
+		this.resources.visible = !this.cell?.content
+
 		this.hexAvailable.visible = this.available
 
 		this.hex.visible =
@@ -91,7 +148,9 @@ export class Cell {
 		this.hexHover.visible = this.available && this.hover
 
 		if (this.ocean) {
-			this.ocean.map?.offset.add(new Vector2(1 / 60).multiplyScalar(0.01))
+			this.ocean.map?.offset.add(
+				new Vector2(1, 1).normalize().multiplyScalar((1 / 60) * 0.01)
+			)
 		}
 	}
 
@@ -170,12 +229,11 @@ export class Cell {
 			const newModel = model.clone()
 			newModel.name = 'Model'
 
-			console.log(newModel)
-
 			if (type === GridCellContent.Ocean) {
 				newModel.traverse(i => {
 					if (i instanceof Mesh && i.material instanceof MeshStandardMaterial) {
 						this.ocean = i.material.clone()
+						i.material.opacity = 0.5
 						i.material = this.ocean
 					}
 				})

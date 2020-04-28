@@ -1,7 +1,8 @@
 import { Card } from '@/icons/card'
 import {
 	faAngleRight,
-	faThermometerHalf
+	faThermometerHalf,
+	faArrowRight
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardSymbol, SymbolType } from '@shared/cards'
@@ -33,7 +34,7 @@ const symbolToIcon = (s: CardSymbol) => {
 			case SymbolType.X:
 				return <XSymbol>X</XSymbol>
 			case SymbolType.RightArrow:
-				return <FontAwesomeIcon icon={faAngleRight} />
+				return <FontAwesomeIcon icon={faArrowRight} />
 			case SymbolType.TerraformingRating:
 				return 'TR'
 			case SymbolType.Oxygen:
