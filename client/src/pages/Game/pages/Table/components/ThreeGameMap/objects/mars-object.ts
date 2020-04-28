@@ -1,5 +1,5 @@
-import marsTexture from '@/assets/mars_1k_color.jpg'
-import marsNormal from '@/assets/mars_1k_normal.jpg'
+import marsTexture from '@/assets/mars_4k_color.jpg'
+import marsNormal from '@/assets/mars_4k_normal.jpg'
 import { GameState, PlayerState } from '@shared/index'
 import {
 	Camera,
