@@ -23,8 +23,20 @@ type EventHandler<T> = (e: T) => void
 export class MyEvent<T = void> {
 	listeners: EventHandler<T>[] = []
 
+	emitted?: boolean
+	lastEmit?: T
+	rememberLastEmit: boolean
+
+	constructor(rememberLastEmit = false) {
+		this.rememberLastEmit = rememberLastEmit
+	}
+
 	on(handler: EventHandler<T>) {
 		this.listeners.push(handler)
+
+		if (this.rememberLastEmit && this.emitted) {
+			handler(this.lastEmit as T)
+		}
 
 		return handler
 	}
@@ -42,15 +54,24 @@ export class MyEvent<T = void> {
 	}
 
 	once(handle: EventHandler<T>) {
-		const handler = (e: T) => {
-			handle(e)
-			this.off(handler)
-		}
+		if (this.rememberLastEmit && this.emitted) {
+			handle(this.lastEmit as T)
+		} else {
+			const handler = (e: T) => {
+				handle(e)
+				this.off(handler)
+			}
 
-		this.on(handler)
+			this.on(handler)
+		}
 	}
 
 	emit(e: T) {
+		if (this.rememberLastEmit) {
+			this.emitted = true
+			this.lastEmit = e
+		}
+
 		this.listeners.forEach(l => {
 			l(e)
 		})

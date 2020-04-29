@@ -4,41 +4,22 @@ import {
 	GridCellOther,
 	PlayerStateValue
 } from '@shared/index'
-import {
-	Object3D,
-	Vector3,
-	Mesh,
-	MeshStandardMaterial,
-	Vector2,
-	SpriteMaterial,
-	Sprite,
-	MeshBasicMaterial,
-	PlaneBufferGeometry
-} from 'three'
-import { extractMesh, ResourcesLoader } from '../resources'
-import { MarsObject } from './mars-object'
-import { pendingActions, range } from '@shared/utils'
-import { PlayerActionType } from '@shared/player-actions'
 import { canPlace, isClaimable } from '@shared/placements'
-import { makeLabelTexture } from './utils'
+import { PlayerActionType } from '@shared/player-actions'
 import { specialToStr } from '@shared/texts'
-
-export const resources = new ResourcesLoader()
-	.add('hex', 'models/Hex.glb', extractMesh())
-	.add('hex-hover', 'models/HexHover.glb', extractMesh())
-	.add('hex-available', 'models/HexAvailable.glb', extractMesh())
-	.add('hex-collider', 'models/HexCollider.glb', extractMesh())
-	.add('city', 'models/City.glb')
-	.add('greenery', 'models/Greenery2.glb')
-	.add('ocean', 'models/Ocean.glb')
-	.add('other', 'models/Other.glb')
-	.add('plant', 'models/Plant.glb')
-	.add('ore', 'models/Ore.glb')
-	.add('titan', 'models/Titan.glb')
-	.add('card', 'models/Card.glb')
-	.add('volcano', 'models/Volcano.glb')
-
-resources.load()
+import { pendingActions, range } from '@shared/utils'
+import {
+	Mesh,
+	MeshBasicMaterial,
+	MeshStandardMaterial,
+	Object3D,
+	PlaneBufferGeometry,
+	Vector2,
+	Vector3
+} from 'three'
+import { resources } from '../resources'
+import { MarsObject } from './mars-object'
+import { makeLabelTexture } from './utils'
 
 export class Cell {
 	container: Object3D

@@ -120,3 +120,21 @@ export const findMesh = (s: Object3D, condition: (i: Object3D) => boolean) => {
 
 	return found
 }
+
+export const resources = new ResourcesLoader()
+	.add('hex', 'models/Hex.glb', extractMesh())
+	.add('hex-hover', 'models/HexHover.glb', extractMesh())
+	.add('hex-available', 'models/HexAvailable.glb', extractMesh())
+	.add('hex-collider', 'models/HexCollider.glb', extractMesh())
+	.add('city', 'models/City.glb')
+	.add('greenery', 'models/Greenery2.glb')
+	.add('ocean', 'models/Ocean.glb')
+	.add('other', 'models/Other.glb')
+	.add('plant', 'models/Plant.glb')
+	.add('ore', 'models/Ore.glb')
+	.add('titan', 'models/Titan.glb')
+	.add('card', 'models/Card.glb')
+	.add('volcano', 'models/Volcano.glb')
+	.add('mars-4k', 'models/Mars4K.glb')
+
+resources.load()

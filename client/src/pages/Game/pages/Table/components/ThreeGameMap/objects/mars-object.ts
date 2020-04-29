@@ -1,5 +1,3 @@
-import marsTexture from '@/assets/mars_4k_color.jpg'
-import marsNormal from '@/assets/mars_4k_normal.jpg'
 import { GameState, PlayerState } from '@shared/index'
 import {
 	Camera,
@@ -8,16 +6,14 @@ import {
 	Object3D,
 	Raycaster,
 	SphereGeometry,
-	TextureLoader,
 	Vector2,
-	Vector3
+	Vector3,
+	PointLight,
+	SpotLight
 } from 'three'
-import { Cell, resources } from './cell'
-
-const loader = new TextureLoader()
-
-const texture = loader.load(marsTexture)
-const normal = loader.load(marsNormal)
+import { resources, findMesh } from '../resources'
+import { Cell } from './cell'
+import { MyEvent } from '@/utils/events'
 
 const raycaster = new Raycaster()
 
@@ -26,8 +22,6 @@ export class MarsObject {
 
 	cellsContainer: Object3D
 
-	planet: Mesh
-
 	game: GameState
 	player: PlayerState
 
@@ -35,6 +29,10 @@ export class MarsObject {
 
 	cells: Cell[][] = []
 	colliders: Object3D[] = []
+
+	cameraObject = new Object3D()
+
+	onLoad = new MyEvent(true)
 
 	constructor(game: GameState, player: PlayerState) {
 		this.game = game
@@ -50,35 +48,41 @@ export class MarsObject {
 
 		this.container.add(this.cellsContainer)
 
-		const geometry = new SphereGeometry(this.radius, 64, 64)
-
-		const material = new MeshPhongMaterial({
-			color: 0xffffff,
-			map: texture,
-			normalMap: normal,
-			shininess: 0.1,
-			normalScale: new Vector2(5, 5)
-		})
-
-		this.planet = new Mesh(geometry, material)
-
-		// this.planet.rotateZ(-Math.PI / 2)
-
-		this.container.add(this.planet)
-
-		this.buildHex()
-	}
-
-	buildHex() {
 		if (!resources.loaded) {
 			resources.onLoad = () => {
-				this.buildHex()
-				this.update(this.game, this.player)
+				this.initialize()
 			}
 
 			return
 		}
 
+		this.initialize()
+	}
+
+	initialize() {
+		const scene = resources.get('mars-4k').clone()
+		const camera = findMesh(scene, i => i.name === 'Camera')
+
+		scene.traverse(i => {
+			if (i instanceof PointLight || i instanceof SpotLight) {
+				i.intensity /= 20
+			}
+		})
+
+		if (!camera) {
+			throw new Error('Failed to locate camera in scene object')
+		}
+
+		this.cameraObject = camera
+
+		this.container.add(scene)
+
+		this.buildHex()
+		this.update(this.game, this.player)
+		this.onLoad.emit()
+	}
+
+	buildHex() {
 		const game = this.game
 
 		const hW = (game.map.width - 1) / 2

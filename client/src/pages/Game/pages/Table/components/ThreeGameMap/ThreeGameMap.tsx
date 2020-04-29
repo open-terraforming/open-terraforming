@@ -5,19 +5,16 @@ import { PlayerActionType } from '@shared/player-actions'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import {
-	AmbientLight,
+	ACESFilmicToneMapping,
 	PerspectiveCamera,
-	PointLight,
-	PointLightHelper,
 	Scene,
-	WebGLRenderer,
-	Vector2
+	sRGBEncoding,
+	WebGLRenderer
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { MarsObject } from './objects/mars-object'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
-import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
+import { MarsObject } from './objects/mars-object'
 
 type Props = {}
 
@@ -83,24 +80,16 @@ export default ({}: Props) => {
 	const scene = useMemo(() => {
 		const scene = new Scene()
 
+		/*
 		const pointLight = new PointLight(0xffd09d, 1.5)
 		pointLight.position.z = 1.5
 		pointLight.position.y = 0
 		pointLight.position.x = 0
 		scene.add(pointLight)
-		//scene.add(new PointLightHelper(pointLight, 0.5))
 
-		/*
-		const pointLight2 = new PointLight(0xffd09d, 0.5)
-		pointLight2.position.z = 1.5
-		pointLight2.position.y = -0.2
-		pointLight2.position.x = -0.6
-		scene.add(pointLight2)
-		scene.add(new PointLightHelper(pointLight2, 0.5))
-		*/
-
-		const ambientLight = new AmbientLight(0xfebd76, 0.3)
+		const ambientLight = new AmbientLight(0xfebd76, 0.05)
 		scene.add(ambientLight)
+		*/
 
 		return scene
 	}, [])
@@ -116,6 +105,11 @@ export default ({}: Props) => {
 		})
 
 		const newPlanet = new MarsObject(game, player)
+
+		newPlanet.onLoad.on(() => {
+			camera.position.copy(newPlanet.cameraObject.position)
+			camera.quaternion.copy(newPlanet.cameraObject.quaternion)
+		})
 
 		scene.add(newPlanet.container)
 
@@ -143,6 +137,7 @@ export default ({}: Props) => {
 			camera.updateProjectionMatrix()
 			renderer.setPixelRatio(window.devicePixelRatio)
 			renderer.setSize(size[0], size[1])
+			renderer.toneMapping = ACESFilmicToneMapping
 
 			if (composer) {
 				composer.setSize(size[0], size[1])
@@ -157,14 +152,17 @@ export default ({}: Props) => {
 			const renderer = new WebGLRenderer({ canvas: canvas, alpha: true })
 			renderer.setPixelRatio(window.devicePixelRatio)
 			renderer.setSize(size[0], size[1])
+			renderer.outputEncoding = sRGBEncoding
 
 			const composer = new EffectComposer(renderer)
 			composer.addPass(new RenderPass(scene, camera))
 
+			// composer.renderTarget1.format = RGBAFormat
+			/*
 			composer.addPass(
 				new UnrealBloomPass(new Vector2(size[0], size[1]), 1.5, 0.4, 0.85)
 			)
-
+*/
 			return [renderer, composer] as const
 		} else {
 			return [undefined, undefined] as const
