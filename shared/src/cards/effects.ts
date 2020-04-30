@@ -119,21 +119,25 @@ export const resourceChange = (res: Resource, change: number) =>
 				: `- ${withUnits(res, -change)}`,
 		type: CardEffectType.Resource,
 		symbols: [{ resource: res, count: change }],
+		aiScore: resourceAiScore(res, change),
 		perform: ({ player }) => {
 			if (change < 0 && player[res] < -change) {
 				throw new Error(`Player doesn't have ${-change} of ${res}!`)
 			}
+
 			player[res] += change
 		}
 	})
 
 export const productionChange = (res: Resource, change: number) => {
 	const prod = resourceProduction[res]
+
 	return effect({
 		conditions:
 			change < 0 && res !== 'money' ? [productionCondition(res, -change)] : [],
 		type: CardEffectType.Production,
 		symbols: [{ resource: res, production: true, count: change }],
+		aiScore: productionAiScore(res, change),
 		description:
 			change > 0
 				? `+ ${change} ${res} production`
@@ -248,6 +252,7 @@ export const playerResourceChange = (
 
 export const playerProductionChange = (res: Resource, change: number) => {
 	const prod = resourceProduction[res]
+
 	return effect({
 		args: [
 			effectArg({
@@ -450,6 +455,7 @@ export const effectChoice = (effects: CardEffect[]) =>
 					}
 
 					const effect = effects[chosenEffect]
+
 					if (!effect) {
 						throw new Error(`Unknown effect choice ${chosenEffect}`)
 					}
@@ -475,6 +481,7 @@ export const effectChoice = (effects: CardEffect[]) =>
 			const [chosenEffect, chosenArgs] = args || [undefined, []]
 
 			const effect = effects[chosenEffect]
+
 			if (!effect) {
 				throw new Error(`Unknown effect choice ${chosenEffect}`)
 			}
@@ -540,6 +547,7 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 		symbols: [{ cardResource: res, count: amount }],
 		perform: ({ player }, cardIndex: number) => {
 			const cardState = player.usedCards[cardIndex]
+
 			if (!cardState) {
 				throw new Error(`Invalid card target ${cardIndex}`)
 			}
@@ -600,9 +608,11 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 		symbols: [{ cardResource: res, count: amount, other: true }],
 		perform: ({ game }, [playerId, cardIndex]: [number, number]) => {
 			const player = game.players.find(p => p.id === playerId)
+
 			if (!player) {
 				throw new Error(`Invalid player id ${playerId}`)
 			}
+
 			const cardState = player.usedCards[cardIndex]
 
 			if (!cardState) {
@@ -626,6 +636,20 @@ export const productionChangeForTags = (
 ) => {
 	return effect({
 		description: `Increase your ${res} production by ${change} for each ${CardCategory[tag]} tag you played`,
+		aiScore: ctx => {
+			return productionAiScore(
+				res,
+				change *
+					ctx.player.usedCards.reduce(
+						(acc, c) =>
+							acc +
+							CardsLookupApi.get(c.code).categories.filter(
+								c => c === tag || c === CardCategory.Any
+							).length,
+						0
+					)
+			)(ctx)
+		},
 		perform: ({ player }) => {
 			updatePlayerProduction(
 				player,
@@ -711,6 +735,7 @@ export const getTopCards = (count: number) =>
 		description: `Draw ${count} card(s)`,
 		conditions: [gameCardsCondition(count)],
 		symbols: [{ symbol: SymbolType.Card, count }],
+		aiScore: count,
 		perform: ({ player, game }) => {
 			player.cards.push(...drawCards(game, count))
 		}
@@ -720,11 +745,14 @@ export const getTopCardsWithTag = (count: number, tag: CardCategory) =>
 	effect({
 		description: `Draw cards until you have ${count} card(s) with ${CardCategory[tag]} tag, discard the rest`,
 		conditions: [gameCardsCondition(count)],
+		aiScore: count,
 		perform: ({ player, game }) => {
 			const picked = [] as string[]
+
 			while (picked.length < count) {
 				try {
 					const card = drawCard(game)
+
 					if (CardsLookupApi.get(card).categories.includes(tag)) {
 						picked.push(card)
 					} else {
@@ -758,6 +786,14 @@ export const resourceForCities = (
 				? `${withUnits(res, resPerCity)} for each city on Mars`
 				: `${withUnits(res, 1)} per ${Math.ceil(1 / resPerCity)} cities on Mars`
 		}`,
+		aiScore: ctx => {
+			return resourceAiScore(
+				res,
+				Math.floor(
+					countGridContent(ctx.game, GridCellContent.City) * resPerCity
+				)
+			)(ctx)
+		},
 		perform: ({ player, game }) => {
 			updatePlayerResource(
 				player,
@@ -782,6 +818,12 @@ export const resourcesForTiles = (
 						GridCellContent[tile]
 				  } on Mars`
 		}`,
+		aiScore: ctx => {
+			return resourceAiScore(
+				res,
+				Math.floor(Math.floor(countGridContent(ctx.game, tile) * resPerTile))
+			)(ctx)
+		},
 		perform: ({ player, game }) => {
 			updatePlayerResource(
 				player,
@@ -805,6 +847,12 @@ export const productionForTiles = (
 				  } on Mars`
 		}`,
 		type: CardEffectType.Production,
+		aiScore: ctx => {
+			return productionAiScore(
+				res,
+				Math.floor(countGridContent(ctx.game, tile) * resPerTile)
+			)(ctx)
+		},
 		perform: ({ player, game }) => {
 			updatePlayerProduction(
 				player,
@@ -839,6 +887,7 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 			{ symbol: SymbolType.RightArrow },
 			{ tile: GridCellContent.Ocean }
 		],
+		aiScore: 1,
 		perform: (ctx, value: number) => {
 			if (value > ctx.player[res]) {
 				throw new Error(`You don't have that much ${res}`)
@@ -852,6 +901,7 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 			placeTile({ type: GridCellContent.Ocean }).perform(ctx)
 
 			updatePlayerResource(ctx.player, res, -usedRes)
+
 			updatePlayerResource(
 				ctx.player,
 				'money',
@@ -866,6 +916,7 @@ export const cardPriceChange = (change: number) =>
 			'money',
 			-change
 		)} less for it`,
+		aiScore: -change,
 		perform: ({ player }) => {
 			player.cardPriceChange += change
 		}
@@ -887,6 +938,7 @@ export const tagPriceChange = (tag: CardCategory, change: number) =>
 			{ symbol: SymbolType.Colon },
 			{ resource: 'money', count: change }
 		],
+		aiScore: -change * 0.8,
 		perform: ({ player }) => {
 			const prev = player.tagPriceChange[tag] ?? 0
 			player.tagPriceChange[tag] = prev + change
@@ -917,6 +969,7 @@ export const claimCell = () =>
 export const orePriceChange = (change: number) =>
 	effect({
 		description: `Effect: Ore is worth ${withUnits('money', change)} extra`,
+		aiScore: change,
 		perform: ({ player }) => {
 			player.orePrice += change
 		}
@@ -925,6 +978,7 @@ export const orePriceChange = (change: number) =>
 export const titanPriceChange = (change: number) =>
 	effect({
 		description: `Effect: Titan is worth ${withUnits('money', change)} extra`,
+		aiScore: change,
 		perform: ({ player }) => {
 			player.titanPrice += change
 		}
@@ -960,11 +1014,13 @@ export const triggerCardResourceChange = (amount: number) =>
 			condition({
 				evaluate: ({ card, player }) => {
 					const target = player.usedCards[card.triggeredByCard as number]
+
 					if (!target) {
 						return false
 					}
 
 					const targetResource = CardsLookupApi.get(target.code).resource
+
 					if (!targetResource) {
 						return false
 					}
@@ -975,11 +1031,13 @@ export const triggerCardResourceChange = (amount: number) =>
 		],
 		perform: ({ card, player }) => {
 			const target = player.usedCards[card.triggeredByCard as number]
+
 			if (!target) {
 				throw new Error(`Can't add 1 resource to played card!`)
 			}
 
 			const targetResource = CardsLookupApi.get(target.code).resource
+
 			if (!targetResource) {
 				throw new Error('Target card is resource-less')
 			}
@@ -997,6 +1055,7 @@ export const duplicateProduction = (type: CardCategory) =>
 					condition({
 						evaluate: ctx => {
 							const data = CardsLookupApi.get(ctx.card.code)
+
 							return (
 								data.categories.includes(type) &&
 								!!data.playEffects.find(
@@ -1012,11 +1071,13 @@ export const duplicateProduction = (type: CardCategory) =>
 				'Duplicate production of'
 			)
 		],
+		aiScore: 1,
 		conditions: [
 			condition({
 				evaluate: ctx =>
 					!!ctx.player.usedCards.find((card, cardIndex) => {
 						const data = CardsLookupApi.get(card.code)
+
 						return (
 							data.categories.includes(type) &&
 							!!data.playEffects.find(
@@ -1090,6 +1151,7 @@ export const productionForPlayersTags = (
 								)
 						)
 					}
+
 					return acc
 				}, 0)
 			)
@@ -1143,6 +1205,25 @@ export const productionForTags = (
 				count: resPerCard >= 1 ? resPerCard : 1
 			}
 		],
+		aiScore: ctx => {
+			return productionAiScore(
+				res,
+				Math.floor(
+					ctx.player.usedCards
+						.map(c => CardsLookupApi.get(c.code))
+						.reduce(
+							(acc, c) =>
+								acc +
+								c.categories.filter(
+									cat => cat === tag || cat === CardCategory.Any
+								).length,
+							CardsLookupApi.get(ctx.card.code).categories.filter(
+								cat => cat === tag || cat === CardCategory.Any
+							).length
+						) * resPerCard
+				)
+			)(ctx)
+		},
 		perform: ({ player, card }) => {
 			updatePlayerProduction(
 				player,
@@ -1182,6 +1263,30 @@ export const resourcesForPlayersTags = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: resPerCard }
 		],
+		aiScore: ctx => {
+			return resourceAiScore(
+				res,
+				ctx.game.players.reduce((acc, p) => {
+					if (self || p.id !== ctx.player.id) {
+						return (
+							acc +
+							p.usedCards
+								.map(c => CardsLookupApi.get(c.code))
+								.reduce(
+									(acc, c) =>
+										acc +
+										c.categories.filter(
+											cat => cat === tag || (self && cat === CardCategory.Any)
+										).length,
+									0
+								)
+						)
+					}
+
+					return acc
+				}, 0)
+			)(ctx)
+		},
 		perform: ({ game, player, playerId }) => {
 			updatePlayerResource(
 				player,
@@ -1202,6 +1307,7 @@ export const resourcesForPlayersTags = (
 								)
 						)
 					}
+
 					return acc
 				}, 0)
 			)
@@ -1224,7 +1330,24 @@ export const resourcesForTags = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: resPerCard }
 		],
-		perform: ({ player }) => {
+		aiScore: ctx => {
+			return resourceAiScore(
+				res,
+				player.usedCards
+					.map(c => CardsLookupApi.get(c.code))
+					.reduce(
+						(acc, c) =>
+							acc +
+							c.categories.filter(
+								cat => cat === tag || cat === CardCategory.Any
+							).length,
+						CardsLookupApi.get(card.code).categories.filter(
+							cat => cat === tag || cat === CardCategory.Any
+						).length
+					)
+			)(ctx)
+		},
+		perform: ({ player, card }) => {
 			updatePlayerResource(
 				player,
 				res,
@@ -1236,7 +1359,9 @@ export const resourcesForTags = (
 							c.categories.filter(
 								cat => cat === tag || cat === CardCategory.Any
 							).length,
-						0
+						CardsLookupApi.get(card.code).categories.filter(
+							cat => cat === tag || cat === CardCategory.Any
+						).length
 					)
 			)
 		}
@@ -1251,6 +1376,7 @@ export const addResourceToCard = () =>
 				condition({
 					evaluate: ({ card }) => {
 						const res = CardsLookupApi.get(card.code)?.resource
+
 						return !!res && card[res] >= 1
 					}
 				})
@@ -1266,9 +1392,11 @@ export const addResourceToCard = () =>
 		],
 		perform: ({ player }, cardIndex: number) => {
 			const card = player.usedCards[cardIndex]
+
 			if (!card) {
 				throw new Error(`Unknown card index ${cardIndex}`)
 			}
+
 			const res = CardsLookupApi.get(card.code).resource
 
 			if (!res) {
