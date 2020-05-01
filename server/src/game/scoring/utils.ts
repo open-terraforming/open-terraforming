@@ -203,7 +203,7 @@ export const getBestArgs = (
 }
 
 export const moneyCostScore = (player: PlayerState, cost: number) =>
-	Math.pow(cost / player.money, 3) * 15
+	Math.pow(Math.min(1, cost / player.money), 3) * 15
 
 export const copyGame = (game: GameState, player: PlayerState) => {
 	const gameCopy = deepCopy(game)

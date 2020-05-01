@@ -47,3 +47,17 @@ LOW PRIORITY TODO:
   * UI -> 3D mars
   * UI -> admin panel
   * GENERAL -> spectator mode
+  * AI BUG:
+  Failed to score virus with [ [ [ 1, [Array] ] ] ]
+  2020-05-01T16:13:36.893Z Game(5e..41) Sarah Bot failed:
+  2020-05-01T16:13:36.896Z Game(5e..41) Sarah Error: Invalid player id undefined
+      at Object.perform (C:\Users\Kamen\dev\games\isc-games\shared\src\cards\effects.ts:570:11)
+      at Object.perform (C:\Users\Kamen\dev\games\isc-games\shared\src\cards\effects.ts:449:11)
+      at C:\Users\Kamen\dev\games\isc-games\server\src\game\scoring\utils.ts:146:8
+      at Array.forEach (<anonymous>)
+      at evalEffect (C:\Users\Kamen\dev\games\isc-games\server\src\game\scoring\utils.ts:145:13)
+      at C:\Users\Kamen\dev\games\isc-games\server\src\game\scoring\utils.ts:174:12
+      at Array.map (<anonymous>)
+      at evalEffect (C:\Users\Kamen\dev\games\isc-games\server\src\game\scoring\utils.ts:171:32)
+      at Object.exports.getBestArgs (C:\Users\Kamen\dev\games\isc-games\server\src\game\scoring\utils.ts:202:9)
+      at Object.exports.playCardScore (C:\Users\Kamen\dev\games\isc-games\server\src\game\scoring\play-card-score.ts:9:15)
