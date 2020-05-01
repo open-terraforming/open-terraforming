@@ -20,8 +20,7 @@ const prepareGame = () => {
 		player.energy = 5
 		player.heat = 7
 
-		const card = emptyCardState('tardigrades')
-		card.microbes = 4
+		const card = emptyCardState('united_nations_mars_initiative')
 
 		player.usedCards.push(card)
 
@@ -36,7 +35,7 @@ const pretty = <A>(a: A) => inspect(a, { depth: 20, colors: true })
 it('should prepare arguments correctly', () => {
 	const game = prepareGame()
 	const player = game.players[0]
-	const card = CardsLookupApi.get('ants')
+	const card = CardsLookupApi.get('united_nations_mars_initiative')
 
 	const cardState = player.usedCards[0]
 

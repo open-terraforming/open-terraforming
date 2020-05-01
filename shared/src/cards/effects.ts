@@ -593,6 +593,11 @@ export const productionChangeForTags = (
 ) => {
 	return effect({
 		description: `Increase your ${res} production by ${change} for each ${CardCategory[tag]} tag you played`,
+		symbols: [
+			{ tag },
+			{ symbol: SymbolType.RightArrow },
+			{ resource: res, count: change, production: true }
+		],
 		perform: ({ player }) => {
 			updatePlayerProduction(
 				player,

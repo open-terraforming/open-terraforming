@@ -38,6 +38,7 @@ CHECK CARDS:
   * CHECK -> TERRAFORMING GANYMEDE - extra TR added?
   * CHECK -> claim - does it work?
   * CHECK -> protected_habitats -> does it actually work?
+  * CHECK -> miranda_resort -> added 1 more production than expected
 
 LOW PRIORITY TODO:
   * GENERAL -> player emoticons

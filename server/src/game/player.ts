@@ -276,7 +276,9 @@ export class Player {
 			f('Picked preludes: {0}', cards.map(c => top.cards[c]).join(', '))
 		)
 
-		const usedCards = cards.map(c => emptyCardState(top.cards[c]))
+		const usedCards = cards.map(c =>
+			emptyCardState(top.cards[c], this.state.usedCards.length)
+		)
 
 		this.state.usedCards = [...this.state.usedCards, ...usedCards]
 
@@ -707,7 +709,11 @@ export class Player {
 
 		if (cardState === undefined || cardState?.code !== cardCode) {
 			throw new Error(
-				'Something is wrong, incorrect card index and card type combination'
+				f(
+					'Something is wrong, incorrect card index and card type combination {0}/{1}',
+					cardCode,
+					index
+				)
 			)
 		}
 
