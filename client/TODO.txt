@@ -1,5 +1,7 @@
 BUGS:
   * grid animation doesn't switch properly
+  * don't allow players to change color when ready
+  * limit player count to "Max players"
 
 TODO:
   * UI [General] -> better pick dialog
@@ -15,6 +17,7 @@ TODO:
   * UI [Events] -> add played/bought icon
   * UI [Events] -> filter event log by player or text search
   * UI [Events] -> card resource change
+  * UI [Events] -> corporation picked doesn't work
   * UI [Controls] -> move BuyGreenery and IncreaseHeat actions
   * UI [Controls] -> better interruption block
   * UI [Controls] -> display player corporation
@@ -40,6 +43,7 @@ CHECK CARDS:
   * CHECK -> claim - does it work?
   * CHECK -> protected_habitats -> does it actually work?
   * CHECK -> miranda_resort -> added 1 more production than expected
+  * CHECK -> IMPORTED HYDROGEN
 
 LOW PRIORITY TODO:
   * GENERAL -> player emoticons

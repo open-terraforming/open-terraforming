@@ -1,4 +1,10 @@
-import { GameState, GridCell, GridCellContent, PlayerGameState } from '../game'
+import {
+	GameState,
+	GridCell,
+	GridCellContent,
+	PlayerGameState,
+	UsedCardState
+} from '../game'
 import { withUnits } from '../units'
 import {
 	Card,
@@ -12,7 +18,8 @@ import {
 	GameProgress,
 	Production
 } from './types'
-import { tiles, allCells } from '../utils'
+import { tiles, allCells, CardsCollection } from '../utils'
+import { CardsLookupApi } from '.'
 
 export const resources: Resource[] = [
 	'money',

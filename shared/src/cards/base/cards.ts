@@ -2283,7 +2283,6 @@ export const baseCards: Card[] = [
 		cost: 2,
 		categories: [CardCategory.Event, CardCategory.Science],
 		special: [CardSpecial.CorporationsEra],
-		conditions: [gameProgressConditionMin('temperature', 3 / 2)],
 		playEffects: [pickTopCards(3, 1, true)]
 	}),
 	card({

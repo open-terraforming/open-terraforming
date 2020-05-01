@@ -3,10 +3,30 @@ import {
 	CardEffectArgument,
 	CardEffectArgumentType,
 	CardEffectTarget,
-	Resource
+	Resource,
+	CardsLookupApi
 } from '@shared/cards'
 import { GameState, PlayerState, UsedCardState } from '@shared/index'
-import { cardsList, range, shuffle } from '@shared/utils'
+import { range, shuffle, CardsCollection } from '@shared/utils'
+import { emptyCardState } from '@shared/cards/utils'
+
+export const cardsList = (list: (string | UsedCardState)[]) => {
+	return new CardsCollection(
+		list.map(i => {
+			if (typeof i === 'string') {
+				return {
+					info: CardsLookupApi.get(i),
+					state: emptyCardState(i)
+				}
+			} else {
+				return {
+					info: CardsLookupApi.get(i.code),
+					state: i
+				}
+			}
+		})
+	)
+}
 
 const getPossibleOptions = (
 	player: PlayerState,

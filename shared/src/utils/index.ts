@@ -158,21 +158,3 @@ export const adjTilesList = (game: GameState, x: number, y: number) =>
 	new TileCollection(adjacentCells(game, x, y))
 
 export * from './collections'
-
-export const cardsList = (list: (string | UsedCardState)[]) => {
-	return new CardsCollection(
-		list.map(i => {
-			if (typeof i === 'string') {
-				return {
-					info: CardsLookupApi.get(i),
-					state: emptyCardState(i)
-				}
-			} else {
-				return {
-					info: CardsLookupApi.get(i.code),
-					state: i
-				}
-			}
-		})
-	)
-}

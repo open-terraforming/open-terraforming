@@ -143,6 +143,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						</ResourceE>
 					</>
 				)
+			/*
 			case EventType.CardResourceChanged:
 				return (
 					<>
@@ -152,6 +153,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						{event.amount} {event.resource}
 					</>
 				)
+			*/
 		}
 	}, [event, players])
 

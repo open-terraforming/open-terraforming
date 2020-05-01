@@ -415,8 +415,8 @@ export const effectChoice = (effects: CardEffect[]) =>
 					const [chosenEffect, chosenArgs] = args || [undefined, []]
 
 					if (chosenEffect === undefined) {
-						return !!effects.find(e =>
-							e.conditions.every(c => c.evaluate(ctx, ...chosenArgs))
+						return !effects.find(e =>
+							e.conditions.find(c => !c.evaluate(ctx, ...chosenArgs))
 						)
 					}
 

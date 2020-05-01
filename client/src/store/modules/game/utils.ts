@@ -79,7 +79,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 									newEvents.push({
 										type: EventType.CardResourceChanged,
 										playerId: player.id,
-										card: cardChanges.code,
+										card: oldCard.code,
 										resource: card.resource,
 										index: parseInt(cardIndex),
 										amount: cardChanges[card.resource] - oldCard[card.resource]

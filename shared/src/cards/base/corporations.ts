@@ -33,6 +33,7 @@ export const corp = (c: Card, pickingCards = true): Card => {
 			...c.playEffects
 		]
 	}
+
 	return c
 }
 
@@ -206,7 +207,10 @@ export const baseCorporations = [
 					),
 					onTilePlaced: ({ player }, cell, placedBy) => {
 						if (cell.content === GridCellContent.City) {
-							updatePlayerProduction(player, 'money', 1)
+							if (!cell.outside) {
+								updatePlayerProduction(player, 'money', 1)
+							}
+
 							if (player.id === placedBy.id) {
 								updatePlayerResource(player, 'money', 3)
 							}
@@ -234,6 +238,7 @@ export const baseCorporations = [
 					perform: ({ player }) => {
 						player.tagPriceChange[CardCategory.Power] =
 							(player.tagPriceChange[CardCategory.Power] || 0) + -3
+
 						player.powerProjectCost = 11 - 3
 					}
 				})
