@@ -1,18 +1,21 @@
-import { shuffle, allCells, tiles, adjTilesList, sortBy } from '@shared/utils'
-import { PlayerState, UsedCardState, GridCellContent } from '@shared/index'
-import { GameState } from '@shared/index'
+import { deepCopy } from '@/utils/collections'
 import {
 	CardEffect,
-	CardsLookupApi,
 	CardEffectArgumentType,
-	CardEffectArgument
+	CardsLookupApi
 } from '@shared/cards'
-import { PlayerAction, PlayerActionType } from '@shared/player-actions'
+import { resourceProduction, resources } from '@shared/cards/utils'
+import {
+	GameState,
+	GridCellContent,
+	PlayerState,
+	UsedCardState
+} from '@shared/index'
 import { canPlace } from '@shared/placements'
-import { placeTileScore } from './place-tile-score'
-import { resources, resourceProduction } from '@shared/cards/utils'
+import { PlayerAction, PlayerActionType } from '@shared/player-actions'
+import { adjTilesList, allCells, shuffle, sortBy, tiles } from '@shared/utils'
 import { getPossibleArgs } from './args/get-possible-args'
-import { deepCopy } from '@/utils/collections'
+import { placeTileScore } from './place-tile-score'
 
 export const pickBest = <T>(values: T[], scoring: (v: T) => number) => {
 	if (values.length === 0) {
@@ -65,6 +68,14 @@ const computePendingActionScore = (
 
 export const computeScore = (g: GameState, p: PlayerState) => {
 	return (
+		p.terraformRating +
+		p.titanPrice +
+		p.orePrice +
+		-p.cardPriceChange +
+		(Object.values(p.tagPriceChange).reduce(
+			(acc, p) => (acc ?? 0) + (p ?? 0),
+			0
+		) ?? 0) +
 		p.cards.length * 0.5 +
 		resources.reduce(
 			(acc, r) =>
