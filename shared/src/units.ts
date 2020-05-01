@@ -1,5 +1,4 @@
 import { Resource, GameProgress } from './cards'
-import { ucFirst } from './utils'
 
 export const withUnits = (
 	res: Resource | GameProgress,
@@ -27,4 +26,13 @@ export const withUnits = (
 	}
 }
 
-export const progressResToStr = (res: GameProgress) => ucFirst(res)
+export const progressResToStr = (res: GameProgress) => {
+	switch (res) {
+		case 'oceans':
+			return 'Oceans'
+		case 'oxygen':
+			return 'Oxygen'
+		case 'temperature':
+			return 'Temperature'
+	}
+}

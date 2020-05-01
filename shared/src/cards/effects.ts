@@ -581,9 +581,12 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 		args: [
 			{
 				...playerCardArg(
-					amount < 0 ? [cardResourceCondition(res, -amount)] : [],
+					amount < 0
+						? [cardResourceCondition(res, -amount)]
+						: [cardHasResource(res)],
 					Math.abs(amount)
 				),
+				optional: false,
 				descriptionPrefix:
 					amount > 0
 						? `add ${amount} ${res} to `
@@ -1330,23 +1333,6 @@ export const resourcesForTags = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: resPerCard }
 		],
-		aiScore: ctx => {
-			return resourceAiScore(
-				res,
-				player.usedCards
-					.map(c => CardsLookupApi.get(c.code))
-					.reduce(
-						(acc, c) =>
-							acc +
-							c.categories.filter(
-								cat => cat === tag || cat === CardCategory.Any
-							).length,
-						CardsLookupApi.get(card.code).categories.filter(
-							cat => cat === tag || cat === CardCategory.Any
-						).length
-					)
-			)(ctx)
-		},
 		perform: ({ player, card }) => {
 			updatePlayerResource(
 				player,

@@ -1,12 +1,5 @@
 import { shuffle } from '@/utils/collections'
-import {
-	CardCategory,
-	CardEffect,
-	CardEffectArgumentType,
-	CardEffectTarget,
-	CardsLookupApi,
-	Resource
-} from '@shared/cards'
+import { CardCategory, CardsLookupApi } from '@shared/cards'
 import {
 	emptyCardState,
 	isCardActionable,
@@ -20,10 +13,9 @@ import {
 	MILESTONES_LIMIT
 } from '@shared/constants'
 import {
+	GameStateValue,
 	PlayerStateValue,
-	StandardProjectType,
-	UsedCardState,
-	GameStateValue
+	StandardProjectType
 } from '@shared/game'
 import { Milestones } from '@shared/milestones'
 import { canPlace, isClaimable } from '@shared/placements'
@@ -32,11 +24,13 @@ import { Projects } from '@shared/projects'
 import { allCells, competitionPrice, milestonePrice } from '@shared/utils'
 import { Game } from './game'
 import { Player } from './player'
-import { placeTileScore } from './scoring/place-tile-score'
-import { ScoringContext } from './scoring/types'
-import { pickBest } from './scoring/utils'
 import { claimTileScore } from './scoring/claim-tile-score'
+import { placeTileScore } from './scoring/place-tile-score'
+import { playCardScore } from './scoring/play-card-score'
 import { standardProjectScore } from './scoring/standard-project-score'
+import { ScoringContext } from './scoring/types'
+import { useCardScore } from './scoring/use-card-score'
+import { getBestArgs, pickBest, computeScore } from './scoring/utils'
 
 const BotNames = [
 	'Rick',
@@ -64,6 +58,7 @@ const BotNames = [
 ]
 
 let names = [] as string[]
+
 const pickBotName = (id: number) => {
 	if (names.length === 0) {
 		names = shuffle(BotNames)
@@ -94,11 +89,13 @@ export class Bot extends Player {
 		if (!this.doing) {
 			this.doing = setTimeout(() => {
 				this.doing = undefined
+
 				try {
 					this.doSomething()
 				} catch (e) {
 					this.logger.log('Bot failed:')
 					this.logger.error(e)
+
 					try {
 						this.pass()
 					} catch (e) {
@@ -111,169 +108,6 @@ export class Bot extends Player {
 		if (broadcast) {
 			super.updated()
 		}
-	}
-
-	prepareParams(
-		effects: CardEffect[],
-		card: UsedCardState,
-		cardIndex: number
-	): CardEffectArgumentType[][] {
-		return effects.map(e =>
-			e.args.map(a => {
-				switch (a.type) {
-					case CardEffectTarget.Card: {
-						const card = shuffle(
-							a.fromHand
-								? this.state.cards
-										.filter(
-											(card, cardIndex) =>
-												!a.cardConditions.find(
-													c =>
-														!c.evaluate({
-															card: emptyCardState(card),
-															cardIndex,
-															game: this.game.state,
-															player: this.state,
-															playerId: this.id
-														})
-												)
-										)
-										.map(c => this.state.cards.indexOf(c))
-								: this.state.usedCards
-										.filter(
-											(card, cardIndex) =>
-												!a.cardConditions.find(
-													c =>
-														!c.evaluate({
-															card,
-															cardIndex,
-															game: this.game.state,
-															player: this.state,
-															playerId: this.id
-														})
-												)
-										)
-										.map(c => this.state.usedCards.indexOf(c))
-						)[0]
-
-						return card as number
-					}
-					case CardEffectTarget.Player: {
-						const player = shuffle(
-							this.game.state.players.filter(
-								player =>
-									player.id !== this.id &&
-									!a.playerConditions.find(
-										c =>
-											!c.evaluate({
-												game: this.game.state,
-												player: player,
-												card
-											})
-									)
-							)
-						)[0]
-
-						return player?.id as number
-					}
-					case CardEffectTarget.PlayerResource: {
-						const player = shuffle(
-							this.game.state.players.filter(
-								player =>
-									player.id !== this.id &&
-									!a.playerConditions.find(
-										c =>
-											!c.evaluate({
-												game: this.game.state,
-												player: player,
-												card
-											})
-									)
-							)
-						)[0]
-
-						if (player) {
-							return [
-								player.id,
-								Math.min(player[a.resource as Resource], a.maxAmount as number)
-							]
-						}
-
-						return [-1, 0]
-					}
-					case CardEffectTarget.PlayerCardResource: {
-						const player = shuffle(
-							this.game.state.players
-								.filter(player => player.id !== this.id)
-								.map(player => ({
-									player,
-									cards: shuffle(
-										player.usedCards
-											.filter(
-												(card, cardIndex) =>
-													!a.cardConditions.find(
-														c =>
-															!c.evaluate({
-																card,
-																cardIndex,
-																game: this.game.state,
-																player: player,
-																playerId: player.id
-															})
-													)
-											)
-											.map(c => player.usedCards.indexOf(c))
-									)
-								}))
-								.filter(({ cards }) => cards.length > 0)
-						)[0]
-
-						if (player) {
-							return [player.player.id, player.cards[0]]
-						}
-
-						return [-1, 0]
-					}
-					case CardEffectTarget.Resource: {
-						return this.state[a.resource as Resource]
-					}
-					case CardEffectTarget.EffectChoice: {
-						const effect = shuffle(
-							(a.effects || [])
-								.filter(
-									e =>
-										!e.conditions.find(
-											c =>
-												!c.evaluate({
-													card,
-													cardIndex,
-													game: this.game.state,
-													player: this.state,
-													playerId: this.id
-												})
-										)
-								)
-								.map(e => a.effects?.indexOf(e))
-						)[0]
-
-						if (effect !== undefined && a.effects) {
-							return [
-								effect,
-								this.prepareParams(
-									[a.effects[effect]],
-									card,
-									cardIndex
-								)[0] as CardEffectArgumentType[]
-							]
-						}
-
-						return [-1, []]
-					}
-					default:
-						return -1
-				}
-			})
-		)
 	}
 
 	get scoringContext(): ScoringContext {
@@ -334,6 +168,7 @@ export class Bot extends Player {
 
 			case PlayerActionType.PlaceTile: {
 				const placed = a.state
+
 				const tile = pickBest(
 					allCells(this.game.state).filter(c =>
 						canPlace(this.game.state, this.state, c, placed)
@@ -364,15 +199,14 @@ export class Bot extends Player {
 			case PlayerActionType.PlayCard: {
 				const card = this.state.usedCards[a.cardIndex]
 
-				return this.playCard(
-					card.code,
-					a.cardIndex,
-					this.prepareParams(
-						CardsLookupApi.get(card.code).actionEffects,
-						card,
-						a.cardIndex
-					)
+				const args = getBestArgs(
+					this.game.state,
+					this.state,
+					card,
+					CardsLookupApi.get(card.code).actionEffects
 				)
+
+				return this.playCard(card.code, a.cardIndex, args.args)
 			}
 
 			case PlayerActionType.SponsorCompetition: {
@@ -394,7 +228,7 @@ export class Bot extends Player {
 	}
 
 	doSomething() {
-		const actions = [] as [number, () => void][]
+		let actions = [] as [number, () => void][]
 
 		switch (this.state.state) {
 			case PlayerStateValue.Waiting: {
@@ -404,16 +238,19 @@ export class Bot extends Player {
 
 			case PlayerStateValue.Picking: {
 				const pending = this.pendingAction
+
 				if (pending) {
 					actions.push([0, () => this.performPending(pending)])
 				} else {
 					this.logger.error('Nothing to do, yet I have to pick something...')
 				}
+
 				break
 			}
 
 			case PlayerStateValue.EndingTiles: {
 				const placed = this.pendingAction
+
 				if (placed && placed.type === PlayerActionType.PlaceTile) {
 					const tile = pickBest(
 						allCells(this.game.state).filter(c =>
@@ -426,6 +263,7 @@ export class Bot extends Player {
 						actions.push([0, () => this.placeTile(tile.x, tile.y)])
 					}
 				}
+
 				break
 			}
 
@@ -446,7 +284,7 @@ export class Bot extends Player {
 									m.getValue(this.game.state, this.state) >= m.limit
 								) {
 									actions.push([
-										10,
+										computeScore(this.game.state, this.state) + 5,
 										() => {
 											this.buyMilestone(m.type)
 										}
@@ -468,6 +306,7 @@ export class Bot extends Player {
 											.filter(p => p.id !== this.id)
 											.reduce((m, p) => {
 												const s = c.getScore(this.game.state, p)
+
 												return s > m ? s : m
 											}, 0) &&
 									this.game.state.generation > 5
@@ -511,26 +350,38 @@ export class Bot extends Player {
 								}) && minimalCardPrice(c, this.state) <= this.state.money
 						)
 						.forEach(c => {
-							actions.push([
-								1,
-								() => {
-									const card = CardsLookupApi.get(c.code)
+							const score = playCardScore(this.scoringContext, c)
 
-									this.buyCard(
-										c.code,
-										this.state.cards.indexOf(c.code),
-										card.categories.includes(CardCategory.Building)
-											? this.state.ore
-											: 0,
-										card.categories.includes(CardCategory.Space)
-											? this.state.titan
-											: 0,
-										this.prepareParams(
-											card.playEffects,
-											emptyCardState(c.code),
-											-1
+							this.logger.log(
+								c.code,
+								'score',
+								score.score,
+								'with',
+								JSON.stringify(score.args)
+							)
+
+							actions.push([
+								score.score,
+								() => {
+									try {
+										this.buyCard(
+											c.code,
+											this.state.cards.indexOf(c.code),
+											c.categories.includes(CardCategory.Building)
+												? this.state.ore
+												: 0,
+											c.categories.includes(CardCategory.Space)
+												? this.state.titan
+												: 0,
+											score.args
 										)
-									)
+									} catch (e) {
+										this.logger.log(
+											`Failed to play ${c.code} with ${score.args}`
+										)
+
+										throw e
+									}
 								}
 							])
 						})
@@ -548,20 +399,20 @@ export class Bot extends Player {
 								})
 						)
 						.forEach(c => {
-							actions.push([
-								0,
-								() => {
-									const cardIndex = this.state.usedCards.indexOf(c) as number
+							const score = useCardScore(this.scoringContext, c)
 
-									this.playCard(
-										c.code,
-										cardIndex,
-										this.prepareParams(
-											CardsLookupApi.get(c.code).actionEffects,
-											c,
-											cardIndex
+							actions.push([
+								score.score,
+								() => {
+									try {
+										this.playCard(c.code, c.index, score.args)
+									} catch (e) {
+										this.logger.log(
+											`Failed to use ${c.code} with ${score.args}`
 										)
-									)
+
+										throw e
+									}
 								}
 							])
 						})
@@ -570,6 +421,8 @@ export class Bot extends Player {
 				break
 			}
 		}
+
+		actions = actions.filter(([s]) => s >= 0)
 
 		if (actions.length === 0) {
 			if (this.isPlaying) {

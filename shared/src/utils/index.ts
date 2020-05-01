@@ -1,12 +1,15 @@
-import { COMPETITIONS_PRICES, MILESTONE_PRICE } from './constants'
+import { COMPETITIONS_PRICES, MILESTONE_PRICE } from '../constants'
 import {
 	GameState,
 	GridCell,
 	PlayerState,
 	PlayerStateValue,
-	GridCellContent
-} from './game'
-import { PlayerAction, PlayerActionType } from './player-actions'
+	UsedCardState
+} from '../game'
+import { PlayerAction, PlayerActionType } from '../player-actions'
+import { range, shuffle, TileCollection, CardsCollection } from './collections'
+import { CardsLookupApi } from '../cards/lookup'
+import { emptyCardState } from '../cards/utils'
 
 export const allCells = (game: GameState) => {
 	return game.map.grid.reduce((acc, c) => [...acc, ...c], [] as GridCell[])
@@ -39,40 +42,6 @@ export const adjacentCells = (game: GameState, x: number, y: number) => {
 
 export const ucFirst = (value: string) =>
 	value.charAt(0).toUpperCase() + value.slice(1)
-
-type KeysMatching<T, V> = {
-	[K in keyof T]: T[K] extends V ? K : never
-}[keyof T]
-
-/**
- * Creates map from array using specified key.
- * @param collection array of items
- * @param key key to be used in the map
- */
-export function keyMap<T, K extends KeysMatching<T, string | number>>(
-	collection: T[],
-	key: K,
-	source = {} as Record<Extract<T[K], string | number | symbol>, T>
-): Record<Extract<T[K], string | number | symbol>, T> {
-	return collection.reduce((acc, item) => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		acc[item[key] as Extract<T[K], string | number | symbol>] = item
-
-		return acc
-	}, source)
-}
-
-/**
- * Shuffles array in place. ES6 version
- * @param {Array} a items An array containing the items.
- */
-export function shuffle<T>(a: T[]) {
-	for (let i = a.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1))
-		;[a[i], a[j]] = [a[j], a[i]]
-	}
-	return a
-}
 
 export const drawPreludeCards = (game: GameState, count: number) =>
 	range(0, count).map(() => drawPreludeCard(game))
@@ -129,25 +98,6 @@ export const drawCorporation = (game: GameState) => {
 export const drawCorporations = (game: GameState, count: number) =>
 	range(0, count).map(() => drawCorporation(game))
 
-/**
- * Generates array containing numbers between start and end (excluding).
- * @param start beginning number
- * @param end ending number (excluding)
- * @param step range step, defaults to 1
- */
-export function range(start: number, end: number, step = 1) {
-	const result = [] as number[]
-
-	for (let i = start; i < end; i += step) {
-		result.push(i)
-	}
-
-	return result
-}
-
-export const flatten = <T>(a: T[][]) =>
-	a.reduce((acc, a) => [...acc, ...a], [] as T[])
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const f = (s: string, ...args: any[]) =>
 	args.reduce(
@@ -203,64 +153,26 @@ export const pendingActions = (player: PlayerState) => {
 		: []
 }
 
-type CellCondition = (c: GridCell) => boolean
-
-export class TileCollection {
-	private __evaluated: GridCell[] | undefined
-
-	private nextNegative = false
-
-	private list: GridCell[]
-	private conditions = [] as CellCondition[]
-
-	constructor(list: GridCell[]) {
-		this.list = list
-	}
-
-	get length() {
-		return this.asArray().length
-	}
-
-	asArray() {
-		if (this.__evaluated) {
-			return this.__evaluated
-		}
-
-		return (this.__evaluated = this.list.filter(
-			cell => !this.conditions.find(condition => !condition(cell))
-		))
-	}
-
-	condition(c: CellCondition) {
-		this.conditions.push(c)
-		this.__evaluated = undefined
-		return this
-	}
-
-	ownedBy(playerId: number) {
-		return this.condition((c: GridCell) => c.ownerId === playerId)
-	}
-
-	notOwnedBy(playerId: number) {
-		return this.condition((c: GridCell) => c.ownerId !== playerId)
-	}
-
-	hasContent(content: GridCellContent) {
-		return this.condition((c: GridCell) => c.content === content)
-	}
-
-	hasAnyContent(content: GridCellContent[]) {
-		return this.condition(
-			(c: GridCell) => c.content !== undefined && content.includes(c.content)
-		)
-	}
-
-	hasCity = () => this.hasContent(GridCellContent.City)
-	hasOcean = () => this.hasContent(GridCellContent.Ocean)
-	hasGreenery = () => this.hasContent(GridCellContent.Forest)
-	hasOther = () => this.hasContent(GridCellContent.Other)
-}
-
 export const tiles = (list: GridCell[]) => new TileCollection(list)
 export const adjTilesList = (game: GameState, x: number, y: number) =>
 	new TileCollection(adjacentCells(game, x, y))
+
+export * from './collections'
+
+export const cardsList = (list: (string | UsedCardState)[]) => {
+	return new CardsCollection(
+		list.map(i => {
+			if (typeof i === 'string') {
+				return {
+					info: CardsLookupApi.get(i),
+					state: emptyCardState(i)
+				}
+			} else {
+				return {
+					info: CardsLookupApi.get(i.code),
+					state: i
+				}
+			}
+		})
+	)
+}

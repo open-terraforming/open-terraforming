@@ -1,6 +1,7 @@
-import { ScoringContext } from './types'
-import { StandardProject } from '@shared/projects'
 import { StandardProjectType } from '@shared/index'
+import { StandardProject } from '@shared/projects'
+import { ScoringContext } from './types'
+import { copyGame, computeScore, moneyCostScore } from './utils'
 
 const baseScore = {
 	[StandardProjectType.Aquifer]: 5,
@@ -17,14 +18,14 @@ export const standardProjectScore = (
 	ctx: ScoringContext,
 	project: StandardProject
 ) => {
-	if (project.resource !== 'money') {
-		return 10
-	}
+	const { gameCopy, playerCopy } = copyGame(ctx.game, ctx.player)
 
-	let score = baseScore[project.type] ?? 0
+	project.execute({ game: gameCopy, player: playerCopy }, [])
 
-	score -=
-		Math.max(0, project.cost(ctx) / ctx.player[project.resource] - 0.2) * 2
-
-	return score
+	return (
+		computeScore(gameCopy, playerCopy) -
+		(project.resource === 'money'
+			? moneyCostScore(ctx.player, project.cost(ctx))
+			: 0)
+	)
 }
