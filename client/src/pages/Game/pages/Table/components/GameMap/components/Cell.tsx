@@ -221,7 +221,7 @@ const StyledHex = styled.g<{
 				  `
 				: props.gridActive === false &&
 				  css`
-						stroke: rgba(241, 143, 143, 0.8);
+						stroke: rgba(255, 66, 66, 0.8);
 				  `}
 	}
 `

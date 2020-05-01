@@ -214,7 +214,7 @@ export class Player {
 
 		this.logger.log(f('Picked corporation {0}', code))
 
-		const card = emptyCardState(corp.code)
+		const card = emptyCardState(corp.code, this.state.usedCards.length)
 		this.state.usedCards.push(card)
 
 		this.runCardEffects(
@@ -276,8 +276,8 @@ export class Player {
 			f('Picked preludes: {0}', cards.map(c => top.cards[c]).join(', '))
 		)
 
-		const usedCards = cards.map(c =>
-			emptyCardState(top.cards[c], this.state.usedCards.length)
+		const usedCards = cards.map((c, i) =>
+			emptyCardState(top.cards[c], this.state.usedCards.length + i)
 		)
 
 		this.state.usedCards = [...this.state.usedCards, ...usedCards]

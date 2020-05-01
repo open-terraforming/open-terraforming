@@ -86,9 +86,11 @@ export const GameMap = ({}: Props) => {
 		}
 	}
 
+	/*
 	useInterval(() => {
 		setDelayFunction(Math.round(Math.random() * (delayFunctions.length - 1)))
-	}, 20000)
+	}, 15000)
+	*/
 
 	const width = ((map?.width || 0) + 0.5) * 18
 	const height = ((map?.height || 0) + 0.5) * 20 * 0.75

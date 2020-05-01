@@ -3,6 +3,7 @@ BUGS:
 
 TODO:
   * UI [General] -> better pick dialog
+  * UI [General] -> starting player animation
   * UI [Cards] -> playEffects are not important for actionable cards once played
   * UI [Cards] -> display sales when buying a card
   * UI [Cards] -> better passive-effects display
@@ -47,6 +48,7 @@ LOW PRIORITY TODO:
   * UI -> 3D mars
   * UI -> admin panel
   * GENERAL -> spectator mode
+  * AI -> standard project scoring is off
   * AI BUG:
   Failed to score virus with [ [ [ 1, [Array] ] ] ]
   2020-05-01T16:13:36.893Z Game(5e..41) Sarah Bot failed:
