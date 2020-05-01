@@ -20,7 +20,6 @@ export const prepareCorporations = (game: GameState, amount = 2) => {
 	game.players.forEach(p => {
 		const cards: string[] = []
 
-		/*
 		try {
 			range(0, amount).forEach(() => {
 				cards.push(drawCorporation(game))
@@ -30,9 +29,8 @@ export const prepareCorporations = (game: GameState, amount = 2) => {
 				cards.push(startingCorp.code)
 			}
 		}
-		*/
 
-		cards.push(...game.corporations)
+		// cards.push(...game.corporations)
 
 		pushPendingAction(p, pickCorporationAction(cards))
 		p.state = PlayerStateValue.Picking
