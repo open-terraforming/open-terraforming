@@ -1,25 +1,31 @@
+import { wait } from '@/utils/async'
 import { deepExtend, range, shuffle } from '@/utils/collections'
+import { randomPlayerColor } from '@/utils/colors'
 import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
 import { f } from '@/utils/string'
-import { CardsLookupApi, CardType, CardSpecial } from '@shared/cards'
+import { CardsLookupApi, CardSpecial, CardType } from '@shared/cards'
 import { Competitions, CompetitionType } from '@shared/competitions'
 import { COMPETITIONS_REWARDS } from '@shared/constants'
+import { GameInfo } from '@shared/extra'
 import {
 	GameState,
 	GameStateValue,
 	PlayerState,
 	PlayerStateValue,
 	ProgressMilestoneType,
-	VictoryPointsSource,
-	GridCellContent
+	VictoryPointsSource
 } from '@shared/game'
 import { UpdateDeepPartial } from '@shared/index'
 import { GameModes } from '@shared/modes'
 import { GameModeType } from '@shared/modes/types'
+import { pickCardsAction, PlayerActionType } from '@shared/player-actions'
+import { PlayerColors } from '@shared/player-colors'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
+import { drawCards, pendingActions, pushPendingAction } from '@shared/utils'
 import { MyEvent } from 'src/utils/events'
+import { v4 as uuidv4 } from 'uuid'
 import { Bot } from './bot'
 import {
 	CardPlayedEvent,
@@ -27,17 +33,6 @@ import {
 	ProjectBought,
 	TilePlacedEvent
 } from './player'
-import { GameInfo } from '@shared/extra'
-import { v4 as uuidv4 } from 'uuid'
-import { PlayerColors } from '@shared/player-colors'
-import { randomPlayerColor } from '@/utils/colors'
-import { wait } from '@/utils/async'
-import {
-	PlayerActionType,
-	placeTileAction,
-	pickCardsAction
-} from '@shared/player-actions'
-import { pushPendingAction, drawCards, pendingActions } from '@shared/utils'
 
 export interface GameConfig {
 	bots: number
@@ -48,7 +43,12 @@ export interface GameConfig {
 }
 export class Game {
 	get logger() {
-		return new Logger(`Game(${this.state.id})`)
+		const shortId =
+			this.state.id.length > 5
+				? this.state.id.slice(0, 2) + '..' + this.state.id.slice(-2)
+				: this.state.id
+
+		return new Logger(`Game(${shortId})`)
 	}
 
 	config: GameConfig
@@ -108,6 +108,7 @@ export class Game {
 	load = (state: GameState) => {
 		this.state = state
 		this.players = []
+
 		state.players.forEach(p => {
 			const player = p.bot ? new Bot(this) : new Player(this)
 			player.state = p
@@ -305,6 +306,7 @@ export class Game {
 
 		// Assign random colors to players
 		const usedColors = this.state.players.map(p => p.color)
+
 		const availableColors = shuffle(
 			PlayerColors.filter(c => !usedColors.includes(c))
 		)
@@ -370,6 +372,7 @@ export class Game {
 				) {
 					this.startGame()
 				}
+
 				break
 
 			case GameStateValue.Starting:
@@ -391,6 +394,7 @@ export class Game {
 
 					this.updated()
 				}
+
 				break
 
 			case GameStateValue.EndingTiles:
@@ -415,9 +419,11 @@ export class Game {
 								if (a.type === PlayerActionType.PickCorporation) {
 									p.pickCorporation(a.cards[0])
 								}
+
 								if (a.type === PlayerActionType.PickCards) {
 									p.pickCards([])
 								}
+
 								if (a.type === PlayerActionType.PickPreludes) {
 									p.pickPreludes([])
 								}
@@ -464,6 +470,7 @@ export class Game {
 					this.state.state === GameStateValue.EndingTiles
 						? PlayerStateValue.EndingTiles
 						: PlayerStateValue.Playing
+
 				this.currentPlayer.actionsPlayed = 0
 			}
 		}
@@ -490,6 +497,7 @@ export class Game {
 				)
 
 				m.used = true
+
 				ProgressMilestones[m.type].effects.forEach(e =>
 					e(this.state, this.currentPlayer)
 				)
@@ -505,6 +513,7 @@ export class Game {
 				)
 
 				m.used = true
+
 				ProgressMilestones[m.type].effects.forEach(e =>
 					e(this.state, this.currentPlayer)
 				)
@@ -530,6 +539,7 @@ export class Game {
 
 		this.state.competitions.forEach(({ type }) => {
 			const competition = Competitions[type]
+
 			const score = this.state.players.reduce((acc, p) => {
 				const s = competition.getScore(this.state, p)
 
@@ -555,6 +565,7 @@ export class Game {
 								CompetitionType[type]
 							)
 						)
+
 						p.victoryPoints.push({
 							source: VictoryPointsSource.Awards,
 							amount: COMPETITIONS_REWARDS[index],
@@ -588,6 +599,7 @@ export class Game {
 
 		if (this.hasReachedLimits) {
 			this.state.state = GameStateValue.EndingTiles
+
 			this.players.forEach(p => {
 				p.state.pendingActions = []
 
@@ -614,6 +626,7 @@ export class Game {
 
 			this.logger.log(`New generation ${this.state.generation}`)
 		}
+
 		this.updated()
 	}
 

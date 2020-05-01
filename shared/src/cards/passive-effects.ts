@@ -13,7 +13,8 @@ import {
 	CardResource,
 	Resource,
 	SymbolType,
-	WithOptional
+	WithOptional,
+	CardSymbol
 } from './types'
 import { gamePlayer, resourceProduction, updatePlayerResource } from './utils'
 import { tileWithArticle } from '../texts'
@@ -74,7 +75,14 @@ export const resourcePerCardPlayed = (
 			.map(c => CardCategory[c])
 			.join(' ')} card, you gain ${withUnits(res, amount)}`,
 		symbols: [
-			...categories.map(c => ({ tag: c })),
+			...categories.reduce(
+				(acc, c) => [
+					...acc,
+					...(acc.length > 0 ? [{ symbol: SymbolType.Plus }] : []),
+					{ tag: c }
+				],
+				[] as CardSymbol[]
+			),
 			{ symbol: SymbolType.Colon },
 			{ resource: res, count: amount }
 		],
@@ -317,6 +325,7 @@ export const changeResourceFromNeighbor = (res: Resource, amount: number) => ({
 				) {
 					acc.push(c.ownerId)
 				}
+
 				return acc
 			}, [] as number[])
 

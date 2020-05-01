@@ -1,5 +1,5 @@
 BUGS:
-  * GENERAL -> PER CITY ON MARS - filter out cities outside mars
+  * grid animation doesn't switch properly
 
 TODO:
   * UI [Cards] -> playEffects are not important for actionable cards once played
@@ -12,6 +12,7 @@ TODO:
   * UI [Events] -> finishing phase display
   * UI [Events] -> add played/bought icon
   * UI [Events] -> filter event log by player or text search
+  * UI [Events] -> card resource change
   * UI [Controls] -> move BuyGreenery and IncreaseHeat actions
   * UI [Controls] -> better interruption block
   * UI [Controls] -> display player corporation
@@ -27,6 +28,7 @@ TODO:
   * EXPANSIONS -> COLONIES
 
 CHECK CARDS:
+  * CHECK -> all cards with tile counts
   * CHECK -> pets
   * CHECK -> TERRAFORMING GANYMEDE - extra TR added?
   * CHECK -> claim - does it work?

@@ -124,6 +124,7 @@ export const getBestArgs = (
 		if (effectIndex === effects.length) {
 			const copyGame = deepCopy(game)
 			const copyPlayer = copyGame.players.find(p => p.id === player.id)
+			const copyState = deepCopy(cardState)
 
 			if (!copyPlayer) {
 				throw new Error('Failed to find myself in game copy')
@@ -135,8 +136,8 @@ export const getBestArgs = (
 						{
 							player: copyPlayer,
 							game: copyGame,
-							card: cardState,
-							cardIndex: cardState.index,
+							card: copyState,
+							cardIndex: copyState.index,
 							playerId: copyPlayer.id
 						},
 						...effectArgs[ei]

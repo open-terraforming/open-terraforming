@@ -6,8 +6,8 @@ const clearArray = (a: string[], cards?: Record<string, string>) =>
 
 export const obfuscateGame = (
 	g: GameState,
-	player?: PlayerState,
-	cards?: Record<string, string>
+	player: PlayerState,
+	cards: Record<string, string>
 ) => {
 	const copy = deepCopy(g)
 
@@ -25,7 +25,7 @@ export const obfuscateGame = (
 	})
 
 	copy.players.forEach(p => {
-		if (p.id !== player?.id) {
+		if (p.id !== player.id) {
 			p.session = ''
 			p.cards = clearArray(p.cards, cards)
 		}

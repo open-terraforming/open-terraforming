@@ -76,7 +76,9 @@ export interface ProjectBought {
 export class Player {
 	static idCounter = 1
 
-	logger = new Logger('Player')
+	get logger() {
+		return new Logger(this.game.logger.category + ' ' + this.state.name)
+	}
 
 	state = initialPlayerState(Player.idCounter++, uuidv4())
 
@@ -138,6 +140,7 @@ export class Player {
 
 	constructor(game: Game) {
 		this.game = game
+
 		this.state.session = new Hashids(this.game.config.adminPassword, 5).encode(
 			this.state.id
 		)
@@ -171,10 +174,12 @@ export class Player {
 							break
 						}
 					}
+
 					break
 				}
 
 				case GameStateValue.Starting:
+
 				case GameStateValue.PickingCards: {
 					this.state.state = PlayerStateValue.WaitingForTurn
 					break
@@ -202,6 +207,7 @@ export class Player {
 		}
 
 		const corp = CardsLookupApi.get(code)
+
 		if (!corp || corp.type !== CardType.Corporation) {
 			throw new Error(`Unknown corporation ${code}`)
 		}
@@ -282,6 +288,7 @@ export class Player {
 		this.state.usedCards.forEach((c, i) => {
 			if (usedCards.includes(c)) {
 				const card = CardsLookupApi.get(c.code)
+
 				this.runCardEffects(
 					card.playEffects,
 					{
@@ -414,7 +421,7 @@ export class Player {
 
 		this.checkCardConditions(card, ctx, playArguments)
 
-		this.logger.log(`Bought ${card.code} with`, playArguments)
+		this.logger.log(`Bought ${card.code} with`, JSON.stringify(playArguments))
 
 		updatePlayerResource(this.state, 'money', -Math.max(0, cost))
 		updatePlayerResource(this.state, 'titan', -useTitan)
@@ -528,6 +535,7 @@ export class Player {
 		if (top?.type !== PlayerActionType.PlaceTile) {
 			throw new Error("You're not placing tiles right now")
 		}
+
 		const cell = cellByCoords(this.game.state, x, y)
 
 		if (!cell) {
@@ -568,8 +576,10 @@ export class Player {
 					this.game.state.oxygen++
 					this.state.terraformRating++
 				}
+
 				break
 			}
+
 			case GridCellContent.Ocean: {
 				this.state.terraformRating++
 				this.game.state.oceans++
@@ -604,6 +614,7 @@ export class Player {
 					this.state,
 					placeTileAction({ type: GridCellContent.Forest })
 				)
+
 				this.state.plants -= this.state.greeneryCost
 			}
 		)
@@ -728,7 +739,7 @@ export class Player {
 
 		this.checkCardConditions(card, ctx, playArguments, true)
 
-		this.logger.log(`Played ${card.code} with`, playArguments)
+		this.logger.log(`Played ${card.code} with`, JSON.stringify(playArguments))
 
 		this.runCardEffects(card.actionEffects, ctx, playArguments)
 
@@ -793,6 +804,7 @@ export class Player {
 		const cardVps = this.state.usedCards.reduce((acc, state, cardIndex) => {
 			const card = CardsLookupApi.get(state.code)
 			acc += card.victoryPoints
+
 			if (card.victoryPointsCallback) {
 				acc += card.victoryPointsCallback.compute({
 					card: state,
@@ -802,6 +814,7 @@ export class Player {
 					playerId: this.id
 				})
 			}
+
 			return acc
 		}, 0)
 
@@ -813,16 +826,19 @@ export class Player {
 							acc.forests += 1
 							break
 						}
+
 						case GridCellContent.City: {
 							acc.cities += adjacentCells(
 								this.game.state,
 								cell.x,
 								cell.y
 							).filter(c => c.content === GridCellContent.Forest).length
+
 							break
 						}
 					}
 				}
+
 				return acc
 			},
 			{ forests: 0, cities: 0 }
@@ -864,6 +880,7 @@ export class Player {
 		}
 
 		const project = Projects[projectType]
+
 		const ctx = {
 			game: this.game.state,
 			player: this.state
@@ -924,6 +941,7 @@ export class Player {
 		this.logger.log(f('Bought milestone {0}', MilestoneType[type]))
 
 		updatePlayerResource(this.state, 'money', -MILESTONE_PRICE)
+
 		this.game.state.milestones.push({
 			playerId: this.state.id,
 			type
@@ -947,6 +965,7 @@ export class Player {
 			}
 		} else {
 			const sponsored = this.game.state.competitions.length
+
 			if (sponsored >= COMPETITIONS_LIMIT) {
 				throw new Error('All competitions are taken')
 			}

@@ -12,6 +12,7 @@ import {
 	GameProgress,
 	Production
 } from './types'
+import { tiles, allCells } from '../utils'
 
 export const resources: Resource[] = [
 	'money',
@@ -56,14 +57,17 @@ export const resToPrice = {
 
 export const gamePlayer = (game: GameState, playerId: number) => {
 	const p = game.players.find(p => p.id === playerId)
+
 	if (!p) {
 		throw new Error(`Failed to find player #${playerId}`)
 	}
+
 	return p
 }
 
 export const cellByCoords = (game: GameState, x: number, y: number) => {
 	const spec = game.map.special.find(s => s.x === x && s.y === y)
+
 	if (spec) {
 		return spec
 	}
@@ -81,21 +85,29 @@ export const cellByCoords = (game: GameState, x: number, y: number) => {
 	return cell
 }
 
-export const countGridContent = (
+export const countGridContentOnMars = (
 	game: GameState,
 	content: GridCellContent,
 	playerId?: number
+) => countGridContent(game, content, playerId, true)
+
+export const countGridContent = (
+	game: GameState,
+	content: GridCellContent,
+	playerId?: number,
+	onMars = false
 ) => {
-	return game.map.grid.reduce(
-		(acc, c) =>
-			acc +
-			c.filter(
-				c =>
-					c.content === content &&
-					(playerId === undefined || c.ownerId === playerId)
-			).length,
-		0
-	)
+	const query = tiles(allCells(game)).hasContent(content)
+
+	if (onMars) {
+		query.onMars()
+	}
+
+	if (playerId !== undefined) {
+		query.ownedBy(playerId)
+	}
+
+	return query.length
 }
 
 export const card = (
@@ -197,6 +209,7 @@ export const updatePlayerProduction = (
 
 export const noDesc = <T extends { description?: string }>(e: T) => {
 	delete e.description
+
 	return e
 }
 

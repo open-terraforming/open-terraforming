@@ -51,10 +51,13 @@ const generateGrid = (
 	cb: (x: number, y: number) => Partial<GridCell> | undefined
 ) => {
 	const grid = [] as GridCell[][]
+
 	for (let x = 0; x < w; x++) {
 		const col = [] as GridCell[]
+
 		for (let y = 0; y < h; y++) {
 			const update = cb(x, y)
+
 			col.push(
 				cell({
 					x,
@@ -64,8 +67,10 @@ const generateGrid = (
 				})
 			)
 		}
+
 		grid.push(col)
 	}
+
 	return grid
 }
 
@@ -167,6 +172,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 
 export const defaultMap = () => {
 	const grid = generateGrid(9, 9, (x, y) => preset[y][x])
+
 	const map: MapState = {
 		name: 'Standard',
 		width: 9,

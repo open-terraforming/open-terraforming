@@ -67,7 +67,7 @@ export class FilteredCollection<T> {
 	}
 
 	sortBy(score: (i: T) => number) {
-		this.list = sortBy(this.list, score)
+		return sortBy(this.asArray(), score)
 	}
 
 	not() {
@@ -75,7 +75,7 @@ export class FilteredCollection<T> {
 	}
 
 	map<R>(mapping: (i: T) => R) {
-		return this.list.map(mapping)
+		return this.asArray().map(mapping)
 	}
 }
 
@@ -96,6 +96,10 @@ export class TileCollection extends FilteredCollection<GridCell> {
 		return this.c(
 			(c: GridCell) => c.content !== undefined && content.includes(c.content)
 		)
+	}
+
+	onMars() {
+		return this.c((c: GridCell) => !c.outside)
 	}
 
 	hasCity = () => this.hasContent(GridCellContent.City)

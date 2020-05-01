@@ -60,6 +60,7 @@ export class Client {
 
 	handleClose = () => {
 		const player = this.player
+
 		if (player) {
 			// Remove player when in lobby, mark as disconnected otherwise
 			if (this.game.state.state === GameStateValue.WaitingForPlayers) {
@@ -72,6 +73,7 @@ export class Client {
 				player.state.connected = !!this.server.clients.find(
 					p => p !== this && p.player?.id === player.id
 				)
+
 				player.updated()
 
 				this.logger.log(
@@ -89,14 +91,17 @@ export class Client {
 
 	handleRawMessage = (data: WebSocket.Data) => {
 		let parsed: GameMessage
+
 		try {
 			parsed = JSON.parse(data.toString())
 		} catch (e) {
 			console.error('Failed to parse', data)
+
 			return
 		}
 
 		const result = this.handleMessage(parsed)
+
 		if (result) {
 			this.send(result)
 		}
@@ -124,6 +129,7 @@ export class Client {
 
 						if (session) {
 							const p = this.game.players.find(p => p.state.session === session)
+
 							if (p) {
 								this.logger.log('Session matched, joining as existing player')
 
@@ -262,6 +268,7 @@ export class Client {
 			}
 		} catch (e) {
 			console.error(e)
+
 			return serverMessage(e.toString())
 		}
 	}
@@ -275,16 +282,21 @@ export class Client {
 			this.cardDictionary = shuffle(Object.keys(CardsLookupApi.data())).reduce(
 				(acc, c, i) => {
 					acc[c] = i.toString(16)
+
 					return acc
 				},
 				{} as Record<string, string>
 			)
 		}
 
-		this.send(
-			gameStateUpdate(
-				obfuscateGame(game, this.player?.state, this.cardDictionary)
+		if (this.player) {
+			this.send(
+				gameStateUpdate(
+					obfuscateGame(game, this.player.state, this.cardDictionary)
+				)
 			)
-		)
+		} else {
+			this.logger.warn("Client doesn't have player yet")
+		}
 	}
 }

@@ -25,6 +25,7 @@ export const vpsForAdjacentTiles = (type: GridCellContent, perTile: number) =>
 			const tile = allCells(game).find(
 				c => c.ownerId === playerId && c.ownerCard === cardIndex
 			)
+
 			if (!tile) {
 				return 0
 			}

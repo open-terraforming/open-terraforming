@@ -76,6 +76,7 @@ export const joinedCardCountCondition = (
 					)
 
 				const diff = cond.value - length
+
 				if (diff <= 0) {
 					return true
 				}
@@ -85,6 +86,7 @@ export const joinedCardCountCondition = (
 				}
 
 				anyTags -= diff
+
 				return true
 			})
 		},
@@ -147,6 +149,7 @@ export const ownedCellTypeCondition = (type: GridCellContent, amount: number) =>
 
 export const productionCondition = (res: Resource, value: number) => {
 	const prod = resourceProduction[res]
+
 	return condition({
 		evaluate: ({ player }) => player[prod] >= value,
 		description: `Your ${res} production has to be at least ${value}`
@@ -159,6 +162,7 @@ export const unprotectedCard = () =>
 	condition({
 		evaluate: ({ card, player }) => {
 			const info = CardsLookupApi.get(card.code)
+
 			return (
 				info.resourceProtected === undefined &&
 				(!player.protectedHabitat ||

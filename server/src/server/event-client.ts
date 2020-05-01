@@ -30,15 +30,18 @@ export class EventClient {
 		this.socket.on('close', () => {
 			this.onDisconnected.emit()
 		})
+
 		this.socket.on('message', this.handleRawMessage)
 	}
 
 	handleRawMessage = (data: WebSocket.Data) => {
 		let parsed: RealtimeEventEmit
+
 		try {
 			if (typeof data === 'string') {
 				throw new Error('Not a binary message')
 			}
+
 			if (data instanceof ArrayBuffer) {
 				parsed = decode(new Uint8Array(data))
 			} else {
@@ -56,9 +59,11 @@ export class EventClient {
 			if (!this.playerId) {
 				if (parsed.type === RealtimeEventType.Auth) {
 					const session = parsed.session
+
 					this.playerId = this.server.master.game.state.players.find(
 						p => p.session === session
 					)?.id
+
 					this.logger.info('Auth request')
 				}
 			} else {
@@ -69,6 +74,7 @@ export class EventClient {
 			}
 		} catch (e) {
 			this.logger.error('Failed to parse', data)
+
 			return
 		}
 	}
