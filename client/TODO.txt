@@ -5,7 +5,7 @@ LOW PRIORITY BUGS:
   * limit player count to "Max players"
 
 TODO:
-  * UI [General] -> better pick dialog
+  * UI [General] -> better pick dialog (tag counts)
   * UI [General] -> starting player animation
   * UI [Cards] -> playEffects are not important for actionable cards once played
   * UI [Cards] -> display sales when buying a card

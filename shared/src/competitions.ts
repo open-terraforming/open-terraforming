@@ -1,4 +1,4 @@
-import { GameState, PlayerState } from './game'
+import { GameState, PlayerState, GridCellType } from './game'
 import { allCells, keyMap } from './utils'
 import { CardsLookupApi, CardType, CardCategory } from './cards'
 
@@ -25,7 +25,9 @@ const CompetitionsList = [
 		title: 'Landlord',
 		description: 'Most owned tiles on the map',
 		getScore: (game, player) =>
-			allCells(game).filter(c => c.ownerId === player.id).length
+			allCells(game).filter(
+				c => c.ownerId === player.id && c.type !== GridCellType.Ocean
+			).length
 	}),
 	competition({
 		type: CompetitionType.Banker,
