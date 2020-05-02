@@ -85,7 +85,9 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 				c =>
 					c.ownerId === playerId &&
 					c.content !== GridCellContent.Ocean &&
-					!!adjacentCells(game, c.x, c.y).find(c => !c.content)
+					!!adjacentCells(game, c.x, c.y).find(
+						c => !c.content && c.type !== GridCellType.NoctisCity
+					)
 			) ||
 			!!adjacentCells(game, cell.x, cell.y).find(
 				c => c.ownerId === playerId && c.content !== GridCellContent.Ocean
@@ -135,11 +137,13 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 export const PlacementConditionsLookup = {
 	data: PlacementConditions.reduce((acc, c) => {
 		acc[c.code] = c
+
 		return acc
 	}, {} as Record<PlacementCode, PlacementCondition | undefined>),
 
 	get(code: PlacementCode) {
 		const c = this.data[code]
+
 		if (!c) {
 			throw new Error(`Failed to find placement condition ${code}`)
 		}

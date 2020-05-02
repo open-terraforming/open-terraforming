@@ -67,6 +67,7 @@ export const Controls = () => {
 				{pending?.type === PlayerActionType.PlayCard && (
 					<CardBuy
 						buying={false}
+						key={pending.cardIndex}
 						index={pending.cardIndex}
 						onClose={() => false}
 					/>

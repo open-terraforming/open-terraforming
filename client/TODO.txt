@@ -3,6 +3,12 @@ BUGS:
   * don't allow players to change color when ready
   * limit player count to "Max players"
   * EXTREME-COLD FUNGUS -> doesn't allow to be played
+  * mars_university + OLYMPUS CONFERENCE -> wtf?
+  * beam_from_a_thorium_asteroid -> null arg -> why?
+  * city standard project doesn't check for tile availability
+  * noctis_city should be properly handled in next to owned (if possible)
+  * RESTRICTED AREA -> still placeable when the board is full
+  * game ending -> skip greeneries when board is full 
 
 TODO:
   * UI [General] -> better pick dialog

@@ -604,6 +604,7 @@ export class Game {
 				p.state.pendingActions = []
 
 				p.buyAllGreeneries()
+				p.filterPendingActions()
 
 				p.state.state =
 					p.state.pendingActions.length > 0
