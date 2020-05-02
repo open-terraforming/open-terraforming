@@ -159,7 +159,7 @@ export const Cell = ({
 			)}
 			{cell.content === GridCellContent.Ocean && (
 				<path
-					fill="#1570B3"
+					fill="#184EAF"
 					d="M5.96 2.69C4.5 7.62 1.37 8.96 1.37 12.43C1.37 15.51 3.83 18 6.87 18C9.91 18 12.37 15.51 12.37 12.43C12.37 8.94 9.25 7.64 7.79 2.69C7.54 1.79 6.24 1.75 5.96 2.69ZM3.37 12.5C3.37 12.22 3.6 12 3.87 12C4.15 12 4.37 12.22 4.37 12.5C4.37 13.88 5.49 15 6.87 15C7.15 15 7.37 15.22 7.37 15.5C7.37 15.78 7.15 16 6.87 16C4.94 16 3.37 14.43 3.37 12.5Z"
 					transform="translate(-3, -4) scale(0.4)"
 				/>
@@ -224,7 +224,7 @@ const StyledHex = styled.g<{
 		${props =>
 			props.gridContent === GridCellContent.Ocean &&
 			css`
-				fill: rgba(15, 135, 226, 0.6);
+				fill: rgba(15, 135, 226, 0.8);
 			`}
 
 		${props =>
