@@ -118,6 +118,7 @@ const ProjectsList = [
 		conditions: [canPlaceTile(GridCellContent.City)],
 		execute: ({ player }) => {
 			updatePlayerProduction(player, 'money', 1)
+
 			pushPendingAction(
 				player,
 				placeTileAction({
