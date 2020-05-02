@@ -18,6 +18,9 @@ export const useAppStore = <T>(selector: (state: StoreState) => T) => {
 
 export const useAppDispatch = useDispatch as () => AppDispatch
 
+export const usePlayerState = () => useAppStore(state => state.game.player)
+export const useGameState = () => useAppStore(state => state.game.state)
+
 export const useDebounce = <T>(value: T, delay: number): T => {
 	const [debouncedValue, setDebouncedValue] = useState(value)
 

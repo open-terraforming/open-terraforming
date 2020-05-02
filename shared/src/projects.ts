@@ -1,14 +1,14 @@
-import { WithOptional, Resource } from './cards'
+import { Resource, WithOptional } from './cards'
+import { updatePlayerProduction, updatePlayerResource } from './cards/utils'
 import {
 	GameState,
 	GridCellContent,
 	PlayerState,
 	StandardProjectType
 } from './game'
-import { allCells, keyMap, pushPendingAction } from './utils'
-import { canPlace } from './placements'
-import { updatePlayerProduction, updatePlayerResource } from './cards/utils'
+import { canPlaceAnywhere } from './placements'
 import { placeTileAction } from './player-actions'
+import { keyMap, pushPendingAction } from './utils'
 
 export interface StandardProjectContext {
 	player: PlayerState
@@ -40,11 +40,9 @@ const canPlaceTile = (type: GridCellContent) => ({
 	game,
 	player
 }: StandardProjectContext) =>
-	!!allCells(game).find(c =>
-		canPlace(game, player, c, {
-			type
-		})
-	)
+	canPlaceAnywhere(game, player, {
+		type
+	})
 
 const ProjectsList = [
 	project({

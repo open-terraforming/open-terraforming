@@ -4,25 +4,17 @@ import { useApi } from '@/context/ApiContext'
 import { setTableState } from '@/store/modules/table'
 import { colors } from '@/styles'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
-import {
-	faArrowRight,
-	faThermometerHalf,
-	faTree
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { CardsLookupApi } from '@shared/cards'
-import {
-	buyStandardProject,
-	playerPass,
-	StandardProjectType
-} from '@shared/index'
+import { playerPass } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { darken } from 'polished'
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { CardBuy } from '../CardBuy/CardBuy'
-import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
+import { GreeneryButton } from './components/GreeneryButton'
 import { HandButton } from './components/HandButton/HandButton'
+import { HeatButton } from './components/HeatButton'
 import { PendingDisplay } from './components/PendingDisplay'
 import { Resources } from './components/Resources/Resources'
 import { TableButtons } from './components/TableButtons/TableButtons'
@@ -47,18 +39,6 @@ export const Controls = () => {
 
 	const handlePass = () => {
 		api.send(playerPass(false))
-	}
-
-	const buyTemperature = () => {
-		if (player && player.heat >= 8) {
-			api.send(buyStandardProject(StandardProjectType.TemperatureForHeat))
-		}
-	}
-
-	const buyForest = () => {
-		if (player && player.plants >= player.greeneryCost) {
-			api.send(buyStandardProject(StandardProjectType.GreeneryForPlants))
-		}
 	}
 
 	return (
@@ -110,27 +90,8 @@ export const Controls = () => {
 					<TableButtons />
 
 					<CardButtons>
-						<Button
-							disabled={
-								!isPlaying ||
-								(player?.heat || 0) < 8 ||
-								(game?.temperature || 0) >= (game?.map.temperature || 0)
-							}
-							onClick={buyTemperature}
-						>
-							+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}
-							<ResourceIcon res="heat" />
-						</Button>
-						<Button
-							disabled={
-								!isPlaying ||
-								(player?.plants || 0) < (player?.greeneryCost || 0)
-							}
-							onClick={buyForest}
-						>
-							Build <FontAwesomeIcon icon={faTree} /> for {player?.greeneryCost}{' '}
-							<ResourceIcon res="plants" />
-						</Button>
+						<HeatButton />
+						<GreeneryButton />
 					</CardButtons>
 
 					<PassButton

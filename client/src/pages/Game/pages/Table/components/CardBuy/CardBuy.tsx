@@ -78,7 +78,9 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 	const [titan, setTitan] = useState(bestTitan)
 
 	const [effectsArgs, setEffectsArgs] = useState(
-		[] as CardEffectArgumentType[][]
+		(
+			(buying ? card?.playEffects : card?.actionEffects) ?? []
+		).map(() => []) as CardEffectArgumentType[][]
 	)
 
 	const isPlaying = state?.state === PlayerStateValue.Playing

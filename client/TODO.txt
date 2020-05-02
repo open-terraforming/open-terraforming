@@ -1,9 +1,4 @@
 BUGS:
-  ? mars_university + OLYMPUS CONFERENCE -> wtf?
-  * beam_from_a_thorium_asteroid -> null arg -> why?
-  * city standard project doesn't check for tile availability
-  * noctis_city should be properly handled in next to owned (if possible)
-  ? game ending -> skip greeneries when board is full 
 
 LOW PRIORITY BUGS:
   * grid animation doesn't switch properly
@@ -36,30 +31,38 @@ TODO:
 
   * GENERAL -> delay when switching to next player
   * GENERAL -> start game when player clicks start
+  * GENERAL -> allow room owner to change game settings
 
   * SERVER -> AI evaluates effect of a card
-  * SERVER -> player which creates a game should be admin of said game?
+  * SERVER -> mark player as creator, allow him to start the game
 
+  * EXPANSIONS -> extra boards
   * EXPANSIONS -> VENUS
   * EXPANSIONS -> COLONIES
+
+REFACTORING:
+  * GENERAL -> remove playerId and cardIndex from contexts
+  * CLIENT -> (player, game) cannot be undefined anymore, remove undefined checks
+  * SHARED -> split effects to separate files
+  * SERVER -> game state machine
 
 CHECK CARDS:
   * CHECK -> all cards with tile counts
   * CHECK -> Great Escarpment Consortium -> didn't ask me
   * CHECK -> pets
   * CHECK -> TERRAFORMING GANYMEDE - extra TR added?
-  * CHECK -> claim - does it work?
   * CHECK -> protected_habitats -> does it actually work?
   * CHECK -> miranda_resort -> added 1 more production than expected
   * CHECK -> IMPORTED HYDROGEN
 
 LOW PRIORITY TODO:
+  * CLIENT -> disconnect & switch to read-only mode when game ends
   * GENERAL -> player emoticons
   * GENERAL -> poke button
   * GENERAL -> wait for players to reconnect
+  * GENERAL -> spectator mode
   * UI -> 3D mars
   * UI -> admin panel
-  * GENERAL -> spectator mode
   * AI -> standard project scoring is off
   * AI BUG:
   Failed to score virus with [ [ [ 1, [Array] ] ] ]

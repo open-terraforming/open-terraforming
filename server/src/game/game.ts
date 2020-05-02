@@ -432,8 +432,9 @@ export class Game {
 					}
 
 					if (
-						p.state.state === PlayerStateValue.Playing ||
-						p.state.state === PlayerStateValue.EndingTiles
+						p.id === this.currentPlayer.id &&
+						(p.state.state === PlayerStateValue.Playing ||
+							p.state.state === PlayerStateValue.EndingTiles)
 					) {
 						this.logger.log(`${p.name} is disconnected, passing`)
 						p.pass(true)

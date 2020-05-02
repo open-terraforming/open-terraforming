@@ -206,3 +206,9 @@ export const isClaimable = (cell: GridCell) =>
 	cell.content === undefined &&
 	cell.claimantId === undefined &&
 	cell.type === GridCellType.General
+
+export const canPlaceAnywhere = (
+	game: GameState,
+	player: PlayerState,
+	state: PlacementState
+) => allCells(game).find(c => canPlace(game, player, c, state)) !== undefined
