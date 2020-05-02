@@ -163,7 +163,7 @@ export class Player {
 
 		this.state.pendingActions.shift()
 
-		this.filterPendingActions()
+		this.game.filterPendingActions()
 
 		if (this.pendingActions.length === 0) {
 			switch (this.game.state.state) {
@@ -795,15 +795,21 @@ export class Player {
 	}
 
 	filterPendingActions() {
-		this.state.pendingActions = this.state.pendingActions.filter(
-			p =>
-				p.type !== PlayerActionType.PlaceTile ||
-				((p.state.type !== GridCellContent.Ocean ||
-					this.game.state.oceans < this.game.state.map.oceans) &&
-					!!allCells(this.game.state).find(c =>
-						canPlace(this.game.state, this.state, c, p.state)
-					))
-		)
+		this.state.pendingActions = this.state.pendingActions.filter(p => {
+			if (p.type !== PlayerActionType.PlaceTile) {
+				return true
+			}
+
+			if (p.state.type === GridCellContent.Ocean) {
+				return this.game.state.oceans < this.game.state.map.oceans
+			}
+
+			return (
+				allCells(this.game.state).find(c =>
+					canPlace(this.game.state, this.state, c, p.state)
+				) !== undefined
+			)
+		})
 	}
 
 	finishGame() {

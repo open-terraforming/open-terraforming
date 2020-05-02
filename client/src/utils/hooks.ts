@@ -231,30 +231,45 @@ export const useInterval = (callback: () => void, delay: number) => {
 }
 
 export const useAnimatedNumber = (value: number, delay = 100) => {
+	// Stop animating when component unmounts
 	const mounted = useRef(true)
-	const [lastValue, setLastValue] = useState(value)
-	const lastTime = useRef<number>()
+
+	// This is the only change that should cause render
 	const [display, setDisplay] = useState(value)
 
-	const update = () => {
+	// Internal data, no need to rerender when those change
+	const state = useRef<{
+		targetValue: number
+		startValue: number
+		startTime: number
+		animationFrame?: number
+	}>({
+		targetValue: value,
+		startTime: 0,
+		startValue: value
+	})
+
+	// Keeps requesting frames and updating value until we reach the target delay
+	const update = useCallback(() => {
 		if (!mounted.current) {
 			return
 		}
 
-		const diff = lastTime.current
-			? new Date().getTime() - lastTime.current
-			: delay
+		const { startTime, startValue, targetValue } = state.current
 
-		if (diff < delay) {
-			setDisplay(Math.round(lastValue + ((value - lastValue) * diff) / delay))
+		const time = (startTime ? new Date().getTime() - startTime : delay) / delay
 
-			window.requestAnimationFrame(update)
+		if (time < 1) {
+			setDisplay(Math.round(startValue + (targetValue - startValue) * time))
+
+			state.current.animationFrame = window.requestAnimationFrame(update)
 		} else {
-			setDisplay(value)
-			setLastValue(value)
+			setDisplay(targetValue)
+			state.current.animationFrame = undefined
 		}
-	}
+	}, [])
 
+	// Tracks if component is mounted
 	useEffect(() => {
 		mounted.current = true
 
@@ -263,10 +278,15 @@ export const useAnimatedNumber = (value: number, delay = 100) => {
 		}
 	}, [])
 
+	// Updates counter when target value changes
 	useEffect(() => {
-		setLastValue(lastValue)
-		lastTime.current = new Date().getTime()
-		update()
+		state.current.startTime = new Date().getTime()
+		state.current.startValue = display
+		state.current.targetValue = value
+
+		if (state.current.animationFrame === undefined) {
+			update()
+		}
 	}, [value])
 
 	return display

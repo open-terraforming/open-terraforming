@@ -481,6 +481,7 @@ export class Game {
 			pendingActions(this.currentPlayer).length === 0
 		) {
 			this.currentPlayer.state = PlayerStateValue.Passed
+			this.checkCurrentPlayer()
 		}
 	}
 
@@ -629,6 +630,12 @@ export class Game {
 		}
 
 		this.updated()
+	}
+
+	filterPendingActions() {
+		this.players.forEach(p => {
+			p.filterPendingActions()
+		})
 	}
 
 	adminChange(data: UpdateDeepPartial<GameState>) {

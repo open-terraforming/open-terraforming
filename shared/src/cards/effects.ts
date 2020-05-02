@@ -322,16 +322,8 @@ export function placeTile({
 				: ''),
 		conditions: [
 			condition({
-				evaluate: ({ game, playerId }) => {
-					return !!allCells(game).find(c =>
-						canPlace(
-							game,
-							game.players.find(p => p.id === playerId) as PlayerState,
-							c,
-							placementState
-						)
-					)
-				}
+				evaluate: ({ game, player }) =>
+					!!allCells(game).find(c => canPlace(game, player, c, placementState))
 			})
 		],
 		symbols: [{ tile: type, tileOther: other }],

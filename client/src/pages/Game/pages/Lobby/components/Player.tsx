@@ -43,7 +43,7 @@ export const Player = ({ name, ready, color, current, bot }: Props) => {
 				<ColorPicker
 					value={colorIndex}
 					colors={colors}
-					readOnly={!current}
+					readOnly={!current || ready}
 					onChange={v => {
 						changeColor(v)
 					}}

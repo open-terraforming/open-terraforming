@@ -1,18 +1,12 @@
 import { COMPETITIONS_PRICES, MILESTONE_PRICE } from '../constants'
-import {
-	GameState,
-	GridCell,
-	PlayerState,
-	PlayerStateValue,
-	UsedCardState
-} from '../game'
+import { GameState, GridCell, PlayerState, PlayerStateValue } from '../game'
 import { PlayerAction, PlayerActionType } from '../player-actions'
-import { range, shuffle, TileCollection, CardsCollection } from './collections'
-import { CardsLookupApi } from '../cards/lookup'
-import { emptyCardState } from '../cards/utils'
+import { range, shuffle, TileCollection } from './collections'
 
 export const allCells = (game: GameState) => {
-	return game.map.grid.reduce((acc, c) => [...acc, ...c], [] as GridCell[])
+	return game.map.grid
+		.reduce((acc, c) => [...acc, ...c], [] as GridCell[])
+		.filter(c => c.enabled)
 }
 
 export const adjacentCells = (game: GameState, x: number, y: number) => {
