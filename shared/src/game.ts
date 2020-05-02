@@ -9,8 +9,8 @@ export enum GameStateValue {
 	WaitingForPlayers = 1,
 	/** Players are picking companies / cards / preludes */
 	Starting,
-	/** Players are picking cards */
-	PickingCards,
+	/** Players are picking cards at the beginning of the generation */
+	GenerationStart,
 	/** Generation is in progress */
 	GenerationInProgress,
 	/** Production phase */

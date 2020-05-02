@@ -20,6 +20,7 @@ module.exports = {
         '@typescript-eslint/member-delimiter-style': ['warn', { multiline: { delimiter: 'none' } }],
         '@typescript-eslint/no-object-literal-type-assertion': 'off',
         '@typescript-eslint/prefer-interface': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
         'prettier/prettier': 'warn'
     },
     settings: {

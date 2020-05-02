@@ -1,32 +1,32 @@
-import { wait } from '@/utils/async'
-import { deepExtend, range, shuffle } from '@/utils/collections'
-import { randomPlayerColor } from '@/utils/colors'
+import { StateMachine } from '@/lib/state-machine'
+import { deepExtend, range } from '@/utils/collections'
 import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
 import { f } from '@/utils/string'
-import { CardsLookupApi, CardSpecial, CardType } from '@shared/cards'
-import { Competitions, CompetitionType } from '@shared/competitions'
-import { COMPETITIONS_REWARDS } from '@shared/constants'
+import { CardsLookupApi } from '@shared/cards'
 import { GameInfo } from '@shared/extra'
 import {
 	GameState,
 	GameStateValue,
-	PlayerState,
 	PlayerStateValue,
-	ProgressMilestoneType,
-	VictoryPointsSource
+	ProgressMilestoneType
 } from '@shared/game'
 import { UpdateDeepPartial } from '@shared/index'
 import { GameModes } from '@shared/modes'
 import { GameModeType } from '@shared/modes/types'
-import { pickCardsAction, PlayerActionType } from '@shared/player-actions'
-import { PlayerColors } from '@shared/player-colors'
+import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
-import { drawCards, pendingActions, pushPendingAction } from '@shared/utils'
 import { MyEvent } from 'src/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Bot } from './bot'
+import { EndedGameState } from './game-sm/ended-game-state'
+import { EndingTilesGameState } from './game-sm/ending-tiles-game-state'
+import { GenerationEndingState } from './game-sm/generation-ending-state'
+import { GenerationInProgressGameState } from './game-sm/generation-in-progress-game-state'
+import { GenerationStartGameState } from './game-sm/generation-start-game-state'
+import { StartingGameState } from './game-sm/starting-game-state'
+import { WaitingForPlayersGameState } from './game-sm/waiting-for-players-game-state'
 import {
 	CardPlayedEvent,
 	Player,
@@ -59,6 +59,8 @@ export class Game {
 
 	onStateUpdated = new MyEvent<Readonly<GameState>>()
 
+	sm = new StateMachine<GameStateValue>()
+
 	constructor(config?: Partial<GameConfig>) {
 		this.config = {
 			bots: 0,
@@ -75,6 +77,23 @@ export class Game {
 		range(0, this.config.bots).forEach(() => {
 			this.add(new Bot(this), false)
 		})
+
+		this.sm.onStateChanged.on(({ current }) => {
+			if (!current.name) {
+				throw new Error(`Game state without name!`)
+			}
+
+			this.state.state = current.name
+			this.updated()
+		})
+
+		this.sm.addState(new WaitingForPlayersGameState(this))
+		this.sm.addState(new StartingGameState(this))
+		this.sm.addState(new GenerationInProgressGameState(this))
+		this.sm.addState(new GenerationStartGameState(this))
+		this.sm.addState(new GenerationEndingState(this))
+		this.sm.addState(new EndingTilesGameState(this))
+		this.sm.addState(new EndedGameState(this))
 
 		this.updated()
 	}
@@ -125,7 +144,12 @@ export class Game {
 
 	updated = () => {
 		this.checkState()
-		this.onStateUpdated.emit(this.state)
+
+		if (this.sm.update()) {
+			this.updated()
+		} else {
+			this.onStateUpdated.emit(this.state)
+		}
 	}
 
 	add(player: Player, triggerUpdate = true) {
@@ -290,119 +314,8 @@ export class Game {
 		return this.state.players.every(p => p.state === state)
 	}
 
-	startGame() {
-		this.logger.log(`Game starting`)
-
-		// Initial game progress
-		this.state.started = new Date().toISOString()
-		this.state.oxygen = this.state.map.initialOxygen
-		this.state.oceans = this.state.map.initialOceans
-		this.state.temperature = this.state.map.initialTemperature
-
-		// Pick first starting player
-		this.state.startingPlayer = Math.round(
-			Math.random() * (this.players.length - 1)
-		)
-
-		// Assign random colors to players
-		const usedColors = this.state.players.map(p => p.color)
-
-		const availableColors = shuffle(
-			PlayerColors.filter(c => !usedColors.includes(c))
-		)
-
-		this.state.players
-			.filter(p => !p.color || p.color === '')
-			.forEach(p => {
-				p.color =
-					availableColors.length > 0
-						? (availableColors.pop() as string)
-						: randomPlayerColor(
-								this.state.players.map(p => p.color).filter(c => c !== '')
-						  )
-			})
-
-		// Create card pool
-		let cards = Object.values(CardsLookupApi.data())
-
-		// Remove Prelude if not desired
-		if (!this.state.prelude) {
-			cards = cards.filter(c => !c.special.includes(CardSpecial.Prelude))
-		}
-
-		if (this.mode.filterCards) {
-			cards = this.mode.filterCards(cards)
-		}
-
-		// Pick corporations
-		this.state.corporations = shuffle(
-			cards.filter(c => c.type === CardType.Corporation).map(c => c.code)
-		)
-
-		// Pick preludes
-		this.state.preludeCards = this.state.prelude
-			? shuffle(cards.filter(c => c.type === CardType.Prelude).map(c => c.code))
-			: []
-
-		// Pick projects
-		this.state.cards = shuffle(
-			cards
-				.filter(
-					c => c.type !== CardType.Corporation && c.type !== CardType.Prelude
-				)
-				.map(c => c.code)
-		)
-
-		// Start picking corporations or whatever the mode desires
-		if (this.mode.onGameStart) {
-			this.mode.onGameStart(this.state)
-		}
-
-		this.state.state = GameStateValue.Starting
-	}
-
 	checkState() {
 		this.checkDisconnected()
-
-		switch (this.state.state) {
-			case GameStateValue.WaitingForPlayers:
-				if (
-					this.players.filter(p => !p.state.bot).length > 0 &&
-					this.all(PlayerStateValue.Ready)
-				) {
-					this.startGame()
-				}
-
-				break
-
-			case GameStateValue.Starting:
-			case GameStateValue.PickingCards:
-				if (this.all(PlayerStateValue.WaitingForTurn)) {
-					this.logger.log(`All players ready, starting the round`)
-
-					// Reset to starting player
-					this.state.currentPlayer =
-						this.state.startingPlayer > 0
-							? (this.state.startingPlayer - 1) % this.state.players.length
-							: this.state.players.length - 1
-
-					if (this.state.state === GameStateValue.Starting) {
-						this.handleNewGeneration(this.state.generation)
-					}
-
-					this.state.state = GameStateValue.GenerationInProgress
-
-					this.updated()
-				}
-
-				break
-
-			case GameStateValue.EndingTiles:
-			case GameStateValue.GenerationInProgress:
-				this.checkMilestones()
-				this.checkCurrentPlayer()
-				break
-		}
 	}
 
 	/**
@@ -445,48 +358,6 @@ export class Game {
 	}
 
 	/**
-	 * Checks if current player finished his turn and passes to next or ends the round
-	 */
-	checkCurrentPlayer() {
-		// Check if we should move game state
-		if (
-			this.currentPlayer.state === PlayerStateValue.WaitingForTurn ||
-			this.currentPlayer.state === PlayerStateValue.Passed
-		) {
-			if (this.all(PlayerStateValue.Passed)) {
-				if (this.state.state === GameStateValue.EndingTiles) {
-					this.finishGame()
-				} else {
-					this.endGeneration()
-				}
-			} else {
-				do {
-					this.state.currentPlayer =
-						(this.state.currentPlayer + 1) % this.players.length
-				} while (this.currentPlayer.state === PlayerStateValue.Passed)
-
-				this.logger.log(f(`Next player: {0}`, this.currentPlayer.name))
-
-				this.currentPlayer.state =
-					this.state.state === GameStateValue.EndingTiles
-						? PlayerStateValue.EndingTiles
-						: PlayerStateValue.Playing
-
-				this.currentPlayer.actionsPlayed = 0
-			}
-		}
-
-		// Pass him if there's no tile to be placed
-		if (
-			this.currentPlayer.state === PlayerStateValue.EndingTiles &&
-			pendingActions(this.currentPlayer).length === 0
-		) {
-			this.currentPlayer.state = PlayerStateValue.Passed
-			this.checkCurrentPlayer()
-		}
-	}
-
-	/**
 	 * Checks if game passed any milestone
 	 */
 	checkMilestones() {
@@ -521,116 +392,6 @@ export class Game {
 				)
 			}
 		})
-	}
-
-	/**
-	 * Finish game!
-	 */
-	finishGame() {
-		this.logger.log(`Game finished`)
-
-		this.state.ended = new Date().toISOString()
-		this.state.state = GameStateValue.Ended
-
-		this.players.forEach(p => {
-			p.state.victoryPoints.push({
-				source: VictoryPointsSource.Rating,
-				amount: p.state.terraformRating
-			})
-		})
-
-		this.state.competitions.forEach(({ type }) => {
-			const competition = Competitions[type]
-
-			const score = this.state.players.reduce((acc, p) => {
-				const s = competition.getScore(this.state, p)
-
-				if (!acc[s]) {
-					acc[s] = []
-				}
-
-				acc[s].push(p)
-
-				return acc
-			}, {} as Record<number, PlayerState[]>)
-
-			Object.entries(score)
-				.sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
-				.slice(0, 2)
-				.forEach(([, players], index) => {
-					players.forEach(p => {
-						this.logger.log(
-							f(
-								`Player {0} is {1}. at {3} competition`,
-								p.name,
-								index + 1,
-								CompetitionType[type]
-							)
-						)
-
-						p.victoryPoints.push({
-							source: VictoryPointsSource.Awards,
-							amount: COMPETITIONS_REWARDS[index],
-							competition: type
-						})
-					})
-				})
-		})
-
-		this.players.forEach(p => {
-			p.finishGame()
-		})
-	}
-
-	/**
-	 * End the generation, go to next or finish the game
-	 */
-	async endGeneration() {
-		this.state.state = GameStateValue.GenerationEnding
-
-		this.handleGenerationEnd()
-
-		for (const p of this.players) {
-			await wait(1000)
-
-			p.endGeneration()
-			this.onStateUpdated.emit(this.state)
-		}
-
-		await wait(1000)
-
-		if (this.hasReachedLimits) {
-			this.state.state = GameStateValue.EndingTiles
-
-			this.players.forEach(p => {
-				p.state.pendingActions = []
-
-				p.buyAllGreeneries()
-				p.filterPendingActions()
-
-				p.state.state =
-					p.state.pendingActions.length > 0
-						? PlayerStateValue.WaitingForTurn
-						: PlayerStateValue.Passed
-			})
-		} else {
-			this.players.forEach(p => {
-				pushPendingAction(p.state, pickCardsAction(drawCards(this.state, 4)))
-				p.state.state = PlayerStateValue.Picking
-			})
-
-			this.state.state = GameStateValue.PickingCards
-
-			this.state.generation++
-			this.handleNewGeneration(this.state.generation)
-
-			this.state.startingPlayer =
-				(this.state.startingPlayer + 1) % this.players.length
-
-			this.logger.log(`New generation ${this.state.generation}`)
-		}
-
-		this.updated()
 	}
 
 	filterPendingActions() {

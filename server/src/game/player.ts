@@ -180,7 +180,7 @@ export class Player {
 
 				case GameStateValue.Starting:
 
-				case GameStateValue.PickingCards: {
+				case GameStateValue.GenerationStart: {
 					this.state.state = PlayerStateValue.WaitingForTurn
 					break
 				}
@@ -813,6 +813,11 @@ export class Player {
 	}
 
 	finishGame() {
+		this.state.victoryPoints.push({
+			source: VictoryPointsSource.Rating,
+			amount: this.state.terraformRating
+		})
+
 		const cardVps = this.state.usedCards.reduce((acc, state, cardIndex) => {
 			const card = CardsLookupApi.get(state.code)
 			acc += card.victoryPoints
