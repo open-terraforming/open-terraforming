@@ -59,10 +59,12 @@ export const prepareCards = (game: GameState, count = 10) => {
 }
 
 export const preparePreludes = (game: GameState, count = 4, limit = 2) => {
-	game.players.forEach(p => {
-		pushPendingAction(
-			p,
-			pickPreludesAction(drawPreludeCards(game, count), limit)
-		)
-	})
+	if (game.prelude) {
+		game.players.forEach(p => {
+			pushPendingAction(
+				p,
+				pickPreludesAction(drawPreludeCards(game, count), limit)
+			)
+		})
+	}
 }
