@@ -17,8 +17,6 @@ export class EndingTilesGameState extends BaseGameState {
 					? PlayerStateValue.WaitingForTurn
 					: PlayerStateValue.Passed
 		})
-
-		this.logger.log(`Players are now placing last greeneries`)
 	}
 
 	update() {

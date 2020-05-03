@@ -8,8 +8,6 @@ export class EndedGameState extends BaseGameState {
 	name = GameStateValue.Ended
 
 	onEnter() {
-		this.logger.log(`Game finished`)
-
 		this.state.ended = new Date().toISOString()
 
 		this.game.players.forEach(p => {
