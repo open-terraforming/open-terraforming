@@ -148,7 +148,7 @@ const Icon = styled.span<{
 	${props =>
 		!props.isDisabled &&
 		css`
-			color: ${props.theme.colors.button[props.schema].background};
+			color: ${props.theme.colors.button[props.schema].color};
 		`}
 
 	${props =>
