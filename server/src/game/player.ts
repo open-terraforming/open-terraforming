@@ -642,7 +642,6 @@ export class Player {
 
 		if (this.state.actionsPlayed >= 2) {
 			this.state.state = PlayerStateValue.WaitingForTurn
-			this.state.actionsPlayed = 0
 			this.updated()
 		}
 	}

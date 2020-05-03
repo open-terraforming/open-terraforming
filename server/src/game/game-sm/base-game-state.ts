@@ -22,6 +22,7 @@ export class BaseGameState extends State<GameStateValue> {
 
 	selectCurrentPlayer(index: number, state = PlayerStateValue.Playing) {
 		this.state.currentPlayer = index
+		this.game.currentPlayer.actionsPlayed = 0
 		this.game.currentPlayer.state = state
 	}
 
