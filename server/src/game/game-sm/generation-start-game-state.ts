@@ -22,7 +22,7 @@ export class GenerationStartGameState extends BaseGameState {
 	}
 
 	transition() {
-		if (this.game.all(PlayerStateValue.Ready)) {
+		if (this.game.all(PlayerStateValue.WaitingForTurn)) {
 			return GameStateValue.GenerationInProgress
 		}
 	}

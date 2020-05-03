@@ -295,8 +295,6 @@ export class Client {
 					obfuscateGame(game, this.player.state, this.cardDictionary)
 				)
 			)
-		} else {
-			this.logger.warn("Client doesn't have player yet")
 		}
 	}
 }

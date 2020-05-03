@@ -5,7 +5,10 @@ export class WaitingForPlayersGameState extends BaseGameState {
 	name = GameStateValue.WaitingForPlayers
 
 	transition() {
-		if (this.game.all(PlayerStateValue.Ready)) {
+		if (
+			this.state.players.filter(p => !p.bot).length > 0 &&
+			this.game.all(PlayerStateValue.Ready)
+		) {
 			return GameStateValue.Starting
 		}
 	}

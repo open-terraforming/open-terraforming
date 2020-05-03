@@ -17,7 +17,7 @@ import { GameModeType } from '@shared/modes/types'
 import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
-import { MyEvent } from 'src/utils/events'
+import { MyEvent } from '@/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Bot } from './bot'
 import { EndedGameState } from './game-sm/ended-game-state'
@@ -78,10 +78,16 @@ export class Game {
 			this.add(new Bot(this), false)
 		})
 
-		this.sm.onStateChanged.on(({ current }) => {
+		this.sm.onStateChanged.on(({ old, current }) => {
 			if (!current.name) {
 				throw new Error(`Game state without name!`)
 			}
+
+			this.logger.log(
+				`${old && old.name ? GameStateValue[old.name] : 'NONE'} -> ${
+					GameStateValue[current.name]
+				}`
+			)
 
 			this.state.state = current.name
 			this.updated()
@@ -95,7 +101,7 @@ export class Game {
 		this.sm.addState(new EndingTilesGameState(this))
 		this.sm.addState(new EndedGameState(this))
 
-		this.updated()
+		this.sm.setState(GameStateValue.WaitingForPlayers)
 	}
 
 	get inProgress() {
@@ -139,7 +145,7 @@ export class Game {
 			this.add(player, false)
 		})
 
-		this.updated()
+		this.sm.currentState = this.sm.findState(this.state.state)
 	}
 
 	updated = () => {

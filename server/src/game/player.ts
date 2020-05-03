@@ -53,7 +53,7 @@ import {
 	pendingActions
 } from '@shared/utils'
 import Hashids from 'hashids/cjs'
-import { MyEvent } from 'src/utils/events'
+import { MyEvent } from '@/utils/events'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
 import { validateArgValue } from './validation/validate-arg-value'
@@ -178,7 +178,10 @@ export class Player {
 					break
 				}
 
-				case GameStateValue.Starting:
+				case GameStateValue.Starting: {
+					this.state.state = PlayerStateValue.WaitingForTurn
+					break
+				}
 
 				case GameStateValue.GenerationStart: {
 					this.state.state = PlayerStateValue.WaitingForTurn
@@ -639,6 +642,7 @@ export class Player {
 
 		if (this.state.actionsPlayed >= 2) {
 			this.state.state = PlayerStateValue.WaitingForTurn
+			this.state.actionsPlayed = 0
 			this.updated()
 		}
 	}

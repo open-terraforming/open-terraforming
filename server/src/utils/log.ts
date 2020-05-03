@@ -9,7 +9,9 @@ export class Logger {
 	}
 
 	get prefix() {
-		return c.gray(new Date().toISOString()) + ' ' + c.green(this.category)
+		return (
+			c.gray(new Date().toISOString().substr(11)) + ' ' + c.green(this.category)
+		)
 	}
 
 	log(...args: any[]) {

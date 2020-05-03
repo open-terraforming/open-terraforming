@@ -6,15 +6,22 @@ export class GenerationEndingState extends BaseGameState {
 	name = GameStateValue.GenerationEnding
 
 	produced = false
+	checkLock = true
+
+	production?: Promise<void>
 
 	onEnter() {
+		this.checkLock = false
 		this.produced = false
+		this.createLock()
 
 		this.state.state = GameStateValue.GenerationEnding
 		this.game.handleGenerationEnd()
 
-		this.doProduction().then(() => {
+		this.production = this.doProduction().then(() => {
+			this.clearLock()
 			this.produced = true
+			this.game.updated()
 		})
 	}
 
@@ -27,6 +34,22 @@ export class GenerationEndingState extends BaseGameState {
 		}
 
 		await wait(1000)
+	}
+
+	update() {
+		if (this.checkLock) {
+			const lock = this.getLock()
+
+			if (lock) {
+				this.clearLock()
+				this.game.load(lock)
+				this.onEnter()
+			}
+		}
+
+		if (!this.production) {
+			this.onEnter()
+		}
 	}
 
 	transition() {

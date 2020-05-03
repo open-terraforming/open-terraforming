@@ -54,7 +54,7 @@ export class StateMachine<Name extends string | number = string> {
 		})
 	}
 
-	protected findState(name: Name) {
+	findState(name: Name) {
 		const result = this.dictionary[name]
 
 		if (result === undefined) {

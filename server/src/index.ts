@@ -1,3 +1,6 @@
+import 'module-alias/register'
+import 'source-map-support/register'
+
 import { strToMode } from '@shared/modes/utils'
 import { promises as fs } from 'fs'
 import yargs from 'yargs'
@@ -60,6 +63,7 @@ async function main() {
 	}
 
 	const mode = strToMode[argv.mode as keyof typeof strToMode]
+
 	if (!mode) {
 		throw new Error(`Unknown mode ${argv.mode}`)
 	}

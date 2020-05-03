@@ -79,7 +79,7 @@ export class StartingGameState extends BaseGameState {
 	}
 
 	transition() {
-		if (this.game.all(PlayerStateValue.Waiting)) {
+		if (this.game.all(PlayerStateValue.WaitingForTurn)) {
 			return GameStateValue.GenerationInProgress
 		}
 	}

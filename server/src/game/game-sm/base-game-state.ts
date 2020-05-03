@@ -1,4 +1,5 @@
 import { State } from '@/lib/state-machine'
+import { saveLock, tryLoadLock, clearLock } from '@/storage'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { Game } from '../game'
 
@@ -25,7 +26,8 @@ export class BaseGameState extends State<GameStateValue> {
 	}
 
 	findNextPlayer() {
-		for (let i = 1; i < this.state.players.length; i++) {
+		// Cycles all players (starting from player next to current)
+		for (let i = 1; i < this.state.players.length + 1; i++) {
 			const index = (this.state.currentPlayer + i) % this.state.players.length
 			const player = this.state.players[index]
 
@@ -33,5 +35,17 @@ export class BaseGameState extends State<GameStateValue> {
 				return index
 			}
 		}
+	}
+
+	createLock() {
+		return saveLock(this.state)
+	}
+
+	clearLock() {
+		clearLock(this.state.id)
+	}
+
+	getLock() {
+		return tryLoadLock(this.state.id)
 	}
 }
