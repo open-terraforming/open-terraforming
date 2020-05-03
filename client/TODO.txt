@@ -17,11 +17,7 @@ TODO:
   * UI [Events] -> finishing phase display
   * UI [Events] -> add played/bought icon
   * UI [Events] -> filter event log by player or text search
-  * UI [Events] -> card resource change
-  * UI [Events] -> corporation picked doesn't work
-  * UI [Controls] -> move BuyGreenery and IncreaseHeat actions
   * UI [Controls] -> better interruption block
-  * UI [Controls] -> display player corporation
   * UI [Controls] -> add VPs category in played
   * UI [Controls] -> display ore/titan cost
   * UI [EndGame] -> better end game animation
