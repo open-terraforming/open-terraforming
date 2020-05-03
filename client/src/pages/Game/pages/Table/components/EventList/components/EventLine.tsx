@@ -143,17 +143,16 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						</ResourceE>
 					</>
 				)
-			/*
 			case EventType.CardResourceChanged:
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} />{' '}
-						{CardsLookupApi.get(event.card).title}{' '}
 						{event.amount > 0 ? '+' : '-'}
 						{event.amount} {event.resource}
+						{' to '}
+						<CardSpan card={event.card} />
 					</>
 				)
-			*/
 		}
 	}, [event, players])
 

@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { colors } from '@/styles'
+import { useWindowEvent } from '@/utils/hooks'
+import { rgba } from 'polished'
+import React, { useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { Portal } from '../Portal/Portal'
-import { useWindowEvent } from '@/utils/hooks'
-import { colors } from '@/styles'
 
 export enum Position {
 	Top,
@@ -143,7 +144,7 @@ const Container = styled.div<{ disableStyle?: boolean }>`
 	${props =>
 		!props.disableStyle &&
 		css`
-			background: ${colors.background};
+			background: ${rgba(colors.background, 1)};
 			color: #ddd;
 			padding: 10px;
 

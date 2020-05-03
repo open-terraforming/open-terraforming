@@ -219,6 +219,7 @@ export class Player {
 
 		const card = emptyCardState(corp.code, this.state.usedCards.length)
 		this.state.usedCards.push(card)
+		this.state.corporation = card.code
 
 		this.runCardEffects(
 			corp.playEffects,

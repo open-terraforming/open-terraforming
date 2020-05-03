@@ -165,6 +165,8 @@ export const CardView = ({
 							{calculatedVps ?? 'X'}*
 						</VP>
 					)}
+
+					{state && <Resource card={card} state={state} />}
 				</Image>
 			) : (
 				<>
@@ -221,7 +223,6 @@ export const CardView = ({
 				{description.map((d, i) => (
 					<div key={i}>{d}</div>
 				))}
-				{state && <Resource card={card} state={state} />}
 			</Description>
 		</Container>
 	)
@@ -364,6 +365,8 @@ const Image = styled.div`
 	background-position: center center;
 	background-size: 100% auto;
 	background-repeat: no-repeat;
+	flex-shrink: 0;
+	flex-grow: 0;
 `
 
 type ContainerCtx = {

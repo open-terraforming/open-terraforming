@@ -63,7 +63,7 @@ LOW PRIORITY TODO:
   * GENERAL -> spectator mode
   * UI -> 3D mars
   * UI -> admin panel
-  * AI -> standard project scoring is off
+  * AI -> standard project scoring is off -> power project is un-resistible!
   * AI BUG:
   Failed to score virus with [ [ [ 1, [Array] ] ] ]
   2020-05-01T16:13:36.893Z Game(5e..41) Sarah Bot failed:

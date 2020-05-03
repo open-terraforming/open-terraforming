@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { ResourceIcon } from '../../../../ResourceIcon/ResourceIcon'
 import { useAnimatedNumber } from '@/utils/hooks'
+import { GreeneryButton } from '../../GreeneryButton'
+import { HeatButton } from '../../HeatButton'
 
 export const Resource = ({
 	name,
@@ -66,6 +68,16 @@ export const Resource = ({
 					{productionDiff > 0 ? `+${productionDiff}` : productionDiff}
 					<ResourceIcon res={res} production />
 				</DiffAnim>
+			)}
+			{res === 'plants' && (
+				<StyledResourceButton>
+					<GreeneryButton />
+				</StyledResourceButton>
+			)}
+			{res === 'heat' && (
+				<StyledResourceButton>
+					<HeatButton />
+				</StyledResourceButton>
 			)}
 		</Container>
 	)
@@ -163,4 +175,18 @@ const DiffAnim = styled.div<{ positive: boolean; production?: boolean }>`
 	font-size: 150%;
 	display: flex;
 	align-items: center;
+`
+
+const StyledResourceButton = styled.div`
+	position: absolute;
+	bottom: 100%;
+	left: 50%;
+	transform: translate(-50%, 0);
+	border: 0.2rem solid ${colors.border};
+	width: auto;
+	white-space: nowrap;
+
+	> button > span {
+		white-space: nowrap;
+	}
 `

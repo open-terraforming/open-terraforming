@@ -19,9 +19,16 @@ type Props = {
 	size?: SizeProp
 	production?: boolean
 	fixedWidth?: boolean
+	margin?: boolean
 }
 
-export const ResourceIcon = ({ res, size, production, fixedWidth }: Props) => {
+export const ResourceIcon = ({
+	res,
+	size,
+	production,
+	fixedWidth,
+	margin
+}: Props) => {
 	const icon = useMemo(() => {
 		switch (res) {
 			case 'money':
@@ -69,14 +76,20 @@ export const ResourceIcon = ({ res, size, production, fixedWidth }: Props) => {
 	}, [res, size])
 
 	return (
-		<E production={production} res={res}>
+		<E production={production} res={res} margin={margin}>
 			{icon}
 		</E>
 	)
 }
 
-const E = styled.div<{ production?: boolean; res: Resource }>`
+const E = styled.div<{ production?: boolean; res: Resource; margin?: boolean }>`
 	display: inline-block;
+
+	${props =>
+		props.margin &&
+		css`
+			margin: 0 0.3rem;
+		`}
 
 	${props =>
 		props.production

@@ -9,6 +9,7 @@ export default {
 	button: {
 		disabledBackground: darken(0.1, MainColor.primary),
 		disabledBorder: darken(0.1, MainColor.primary),
+		disabledColor: darken(0.1, mainColors.text),
 		primary: {
 			background: MainColor.primary,
 			borderColor: MainColor.primary,

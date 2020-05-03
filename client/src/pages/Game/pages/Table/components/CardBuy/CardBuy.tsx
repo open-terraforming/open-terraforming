@@ -163,7 +163,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 				<>
 					{canUseOre && (
 						<UseContainer>
-							Use{' '}
+							<span>Use</span>
 							<ResourceInput
 								max={maxOre}
 								res={'ore'}
@@ -177,7 +177,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 
 					{canUseTitan && (
 						<UseContainer>
-							Use{' '}
+							<span>Use</span>
 							<ResourceInput
 								max={maxTitan}
 								res={'titan'}
@@ -235,10 +235,10 @@ const UseContainer = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	margin-bottom: 1rem;
 
-	input {
-		margin: 0 0.5rem;
-		width: 5rem;
+	> span {
+		margin-right: 0.5rem;
 	}
 `
 

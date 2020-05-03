@@ -15,25 +15,29 @@ export const HeatButton = ({}: Props) => {
 	const playing = useAppStore(state => state.game.playing)
 	const player = usePlayerState()
 	const game = useGameState()
+	const project = Projects[StandardProjectType.TemperatureForHeat]
+
+	const usable =
+		playing && project.conditions.find(c => !c({ game, player })) === undefined
 
 	const buyTemperature = () => {
-		if (player && player.heat >= 8) {
+		if (player && usable) {
 			api.send(buyStandardProject(StandardProjectType.TemperatureForHeat))
 		}
 	}
 
 	return (
 		<Button
-			disabled={
-				!playing ||
-				Projects[StandardProjectType.TemperatureForHeat].conditions.find(
-					c => !c({ game, player })
-				) !== undefined
-			}
+			disabled={!usable}
 			onClick={buyTemperature}
+			tooltip={
+				<>
+					{`Increase temperature for ${project.cost({ game, player })}`}
+					<ResourceIcon margin res={project.resource} />
+				</>
+			}
 		>
-			+<FontAwesomeIcon icon={faThermometerHalf} /> for 8{' '}
-			<ResourceIcon res="heat" />
+			+<FontAwesomeIcon icon={faThermometerHalf} />
 		</Button>
 	)
 }

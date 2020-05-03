@@ -12,9 +12,7 @@ import { darken } from 'polished'
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { CardBuy } from '../CardBuy/CardBuy'
-import { GreeneryButton } from './components/GreeneryButton'
 import { HandButton } from './components/HandButton/HandButton'
-import { HeatButton } from './components/HeatButton'
 import { PendingDisplay } from './components/PendingDisplay'
 import { Resources } from './components/Resources/Resources'
 import { TableButtons } from './components/TableButtons/TableButtons'
@@ -85,14 +83,8 @@ export const Controls = () => {
 					<Resources state={state} />
 				</Flexed>
 				<HandButton playing={isPlaying} />
-				{/*<div>{corporation?.name}</div>*/}
 				<Flexed>
 					<TableButtons />
-
-					<CardButtons>
-						<HeatButton />
-						<GreeneryButton />
-					</CardButtons>
 
 					<PassButton
 						disabled={!isPlaying}
@@ -136,15 +128,7 @@ const Container = styled.div<{ faded: boolean }>`
 
 const Flexed = styled.div`
 	display: flex;
-	width: 35rem;
-`
-
-const CardButtons = styled.div`
-	display: flex;
-	flex-direction: column;
-	align-content: center;
-	justify-content: space-around;
-	margin: 0 1rem;
+	width: 33rem;
 `
 
 const PassButton = styled(Button)`
