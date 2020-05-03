@@ -5,35 +5,25 @@ import { condition } from '../conditions'
 import {
 	earthCardPriceChange,
 	effect,
+	emptyEffect,
 	exchangeResources,
 	getTopCards,
-	pickPreludes,
-	pickTopCards,
 	placeCity,
 	productionChange,
 	resourceChange,
-	titanPriceChange,
-	emptyEffect
+	titanPriceChange
 } from '../effects'
 import { asFirstAction, passiveEffect } from '../passive-effects'
 import { Card, CardCategory, CardSpecial, CardType, SymbolType } from '../types'
 import {
 	card,
-	noDesc,
 	updatePlayerProduction,
 	updatePlayerResource,
 	withRightArrow
 } from '../utils'
+import { PlayerActionType } from '../../player-actions'
 
-export const corp = (c: Card, pickingCards = true): Card => {
-	if (pickingCards) {
-		c.playEffects = [
-			noDesc(effect(pickTopCards(10))),
-			noDesc(effect(pickPreludes(4, 2))),
-			...c.playEffects
-		]
-	}
-
+export const corp = (c: Card): Card => {
 	return c
 }
 
@@ -45,7 +35,18 @@ export const baseCorporations = [
 			code: 'starting_corporation',
 			cost: 0,
 			type: CardType.Corporation,
-			playEffects: [resourceChange('money', 45), getTopCards(10)],
+			playEffects: [
+				resourceChange('money', 45),
+				getTopCards(10),
+				effect({
+					description: "You don't pick cards at the beginning",
+					perform: ({ player }) => {
+						player.pendingActions = player.pendingActions.filter(
+							a => a.type !== PlayerActionType.PickCards
+						)
+					}
+				})
+			],
 			special: [CardSpecial.StartingCorporation]
 		})
 	),

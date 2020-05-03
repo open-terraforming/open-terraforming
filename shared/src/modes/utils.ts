@@ -1,7 +1,17 @@
 import { CardsLookupApi, CardSpecial } from '../cards'
 import { GameState, PlayerStateValue } from '../game'
-import { pickCorporationAction } from '../player-actions'
-import { pushPendingAction, range, drawCorporation } from '../utils'
+import {
+	pickCardsAction,
+	pickCorporationAction,
+	pickPreludesAction
+} from '../player-actions'
+import {
+	drawCards,
+	drawCorporation,
+	drawPreludeCards,
+	pushPendingAction,
+	range
+} from '../utils'
 import { GameMode, GameModeType } from './types'
 
 export const gameMode = (m: GameMode) => m
@@ -41,3 +51,18 @@ export const strToMode = {
 	standard: GameModeType.Standard,
 	beginner: GameModeType.Beginner
 } as const
+
+export const prepareCards = (game: GameState, count = 10) => {
+	game.players.forEach(p => {
+		pushPendingAction(p, pickCardsAction(drawCards(game, count)))
+	})
+}
+
+export const preparePreludes = (game: GameState, count = 4, limit = 2) => {
+	game.players.forEach(p => {
+		pushPendingAction(
+			p,
+			pickPreludesAction(drawPreludeCards(game, count), limit)
+		)
+	})
+}
