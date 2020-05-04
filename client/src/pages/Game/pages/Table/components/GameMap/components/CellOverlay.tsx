@@ -4,10 +4,12 @@ import { Card } from '@/icons/card'
 import { range } from '@/utils/collections'
 import { faHammer, faSeedling, faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { GridCell, GridCellType } from '@shared/index'
+import { GridCell, GridCellType, GridCellContent } from '@shared/index'
 import { specialToStr } from '@shared/texts'
 import React from 'react'
 import styled from 'styled-components'
+import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
+import { TileIcon } from '../../TileIcon/TileIcon'
 
 type Props = {
 	cell: GridCell
@@ -47,6 +49,18 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 						{range(0, cell.titan).map(i => (
 							<FontAwesomeIcon key={i} icon={faStar} color="#FFFFAC" />
 						))}
+						{range(0, cell.heat).map(i => (
+							<ResourceIcon res="heat" key={i} />
+						))}
+						{range(0, cell.oceans).map(i => (
+							<TileIcon key={i} content={GridCellContent.Ocean} />
+						))}
+						{cell.money !== 0 && (
+							<>
+								{cell.money}
+								<ResourceIcon res="money" />{' '}
+							</>
+						)}
 						{range(0, cell.cards).map(i => (
 							<Card key={i} />
 						))}

@@ -1,8 +1,26 @@
 BUGS:
 
+TO TEST:
+  * -6 MONEY for tile
+  * OCEAN for tile
+  * Noctis City (both boards)
+  * Volcano (both boards)
+
+CHECK CARDS:
+  * CHECK -> Great Escarpment Consortium -> didn't ask me
+  * CHECK -> pets
+  * CHECK -> TERRAFORMING GANYMEDE - extra TR added?
+  * CHECK -> protected_habitats -> does it actually work?
+  * CHECK -> miranda_resort -> added 1 more production than expected
+  * CHECK -> IMPORTED HYDROGEN
+
 LOW PRIORITY BUGS:
   * grid animation doesn't switch properly
   * limit player count to "Max players"
+
+HELLAS:
+  * CARDS -> add heat to production for placing tile
+  * UI [NewGame] -> add map selection
 
 TODO:
   * UI [General] -> better pick dialog (tag counts)
@@ -41,15 +59,6 @@ REFACTORING:
   * CLIENT -> (player, game) cannot be undefined anymore, remove undefined checks
   * SHARED -> split effects to separate files
   * SERVER -> game state machine
-
-CHECK CARDS:
-  * CHECK -> all cards with tile counts
-  * CHECK -> Great Escarpment Consortium -> didn't ask me
-  * CHECK -> pets
-  * CHECK -> TERRAFORMING GANYMEDE - extra TR added?
-  * CHECK -> protected_habitats -> does it actually work?
-  * CHECK -> miranda_resort -> added 1 more production than expected
-  * CHECK -> IMPORTED HYDROGEN
 
 LOW PRIORITY TODO:
   * CLIENT -> disconnect & switch to read-only mode when game ends

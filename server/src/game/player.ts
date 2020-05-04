@@ -571,9 +571,21 @@ export class Player {
 		updatePlayerResource(this.state, 'ore', cell.ore)
 		updatePlayerResource(this.state, 'titan', cell.titan)
 		updatePlayerResource(this.state, 'plants', cell.plants)
+		updatePlayerResource(this.state, 'heat', cell.heat)
+		updatePlayerResource(this.state, 'money', cell.money)
 
 		if (cell.cards > 0) {
 			this.state.cards.push(...drawCards(this.game.state, cell.cards))
+		}
+
+		if (
+			cell.oceans > 0 &&
+			this.game.state.oceans < this.game.state.map.oceans
+		) {
+			pushPendingAction(
+				this.state,
+				placeTileAction({ type: GridCellContent.Ocean })
+			)
 		}
 
 		switch (pendingTile.type) {

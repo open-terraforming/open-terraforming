@@ -3,6 +3,7 @@ import { CompetitionType } from './competitions'
 import { MilestoneType } from './milestones'
 import { GameModeType } from './modes/types'
 import { PlayerAction } from './player-actions'
+import { MapType } from './map'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
@@ -95,7 +96,7 @@ export interface CompetitionState {
 }
 
 export interface MapState {
-	name: string
+	code: MapType
 
 	width: number
 	height: number
@@ -108,7 +109,6 @@ export interface MapState {
 	initialTemperature: number
 	initialOxygen: number
 
-	special: GridCell[]
 	grid: GridCell[][]
 
 	temperatureMilestones: ProgressMilestoneItem[]
@@ -160,10 +160,15 @@ export interface GridCell {
 	enabled: boolean
 	type: GridCellType
 	special?: GridCellSpecial
+
 	ore: number
 	titan: number
 	plants: number
 	cards: number
+	heat: number
+	money: number
+	oceans: number
+
 	x: number
 	y: number
 	outside: boolean

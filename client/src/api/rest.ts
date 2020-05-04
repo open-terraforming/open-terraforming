@@ -1,5 +1,6 @@
 import { ServerInfo, GameInfo } from '@shared/extra'
 import { GameModeType } from '@shared/modes/types'
+import { MapType } from '@shared/map'
 
 const basePath =
 	location.protocol + '//' + (process.env.APP_API_URL || location.host)
@@ -13,6 +14,7 @@ export const getGames = (): Promise<GameInfo[]> =>
 export const createGame = (
 	name: string,
 	mode: GameModeType,
+	map: MapType,
 	bots: number,
 	isPublic: boolean
 ): Promise<GameInfo> =>
@@ -24,6 +26,7 @@ export const createGame = (
 		body: JSON.stringify({
 			name,
 			mode,
+			map,
 			bots,
 			public: isPublic
 		})

@@ -12,6 +12,8 @@ import styled, { css } from 'styled-components'
 import { colors } from '@/styles'
 import { NumberInput } from '@/components/NumberInput/NumberInput'
 import { Flex } from '@/components/Flex/Flex'
+import { MapType } from '@shared/map'
+import { MapsList } from '@shared/maps'
 
 type Props = {
 	onClose: () => void
@@ -22,6 +24,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [error, setError] = useState(null as string | null)
 	const [name, setName] = useState('')
 	const [mode, setMode] = useState(GameModeType.Standard)
+	const [map, setMap] = useState(MapType.Standard)
 	const [isPublic, setPublic] = useState(true)
 	const [bots, setBots] = useState(0)
 
@@ -47,7 +50,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 		setLoading(true)
 
 		try {
-			const res = await createGame(name, mode, bots, isPublic)
+			const res = await createGame(name, mode, map, bots, isPublic)
 
 			if (res.id) {
 				dispatch(
@@ -129,18 +132,34 @@ export const NewGameModal = ({ onClose }: Props) => {
 				</Field>
 
 				{Object.values(GameModes).map(item => (
-					<ModeCont
+					<SelectItem
 						key={item.type}
 						onClick={() => setMode(item.type)}
 						selected={item.type === mode}
 					>
-						<ModeHead>
+						<SelectItemHead>
 							<input type="radio" checked={item.type === mode} readOnly />
 							<div>{item.name}</div>
-						</ModeHead>
-						<ModeDesc>{item.description}</ModeDesc>
-					</ModeCont>
+						</SelectItemHead>
+						<SelectItemDesc>{item.description}</SelectItemDesc>
+					</SelectItem>
 				))}
+
+				<Field>
+					<label>Board</label>
+					{MapsList.map(item => (
+						<SelectItem
+							selected={map === item.type}
+							key={item.type}
+							onClick={() => setMap(item.type)}
+						>
+							<SelectItemHead>
+								<input type="radio" checked={map === item.type} readOnly />
+								<div>{item.name}</div>
+							</SelectItemHead>
+						</SelectItem>
+					))}
+				</Field>
 			</Modal>
 
 			{error && (
@@ -155,7 +174,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 	)
 }
 
-const ModeCont = styled.div<{ selected: boolean }>`
+const SelectItem = styled.div<{ selected: boolean }>`
 	cursor: pointer;
 	margin: 0.5rem 0;
 	padding: 0.5rem;
@@ -169,7 +188,7 @@ const ModeCont = styled.div<{ selected: boolean }>`
 		`}
 `
 
-const ModeHead = styled.div`
+const SelectItemHead = styled.div`
 	display: flex;
 	align-items: center;
 	margin-bottom: 0.3rem;
@@ -188,6 +207,6 @@ const Field = styled.div`
 	}
 `
 
-const ModeDesc = styled.div`
+const SelectItemDesc = styled.div`
 	padding: 0.3rem 1rem;
 `

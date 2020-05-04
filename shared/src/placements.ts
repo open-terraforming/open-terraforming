@@ -130,7 +130,9 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 	placement({
 		code: PlacementCode.NoctisCity,
 		description: 'on Noctis City',
-		evaluate: ({ cell }) => cell.type === GridCellType.NoctisCity
+		evaluate: ({ game, cell }) =>
+			allCells(game).find(c => c.type === GridCellType.NoctisCity) ===
+				undefined || cell.type === GridCellType.NoctisCity
 	})
 ] as const
 
@@ -173,6 +175,7 @@ export const canPlace = (
 	cell: GridCell,
 	state: PlacementState
 ) => {
+	// Check if tile isn't already used or claimed
 	if (
 		cell.content !== undefined ||
 		(cell.claimantId !== undefined && cell.claimantId !== player.id)
@@ -180,13 +183,31 @@ export const canPlace = (
 		return false
 	}
 
+	// Check if player can afford placing tile here
+	if (
+		(['money', 'ore', 'titan', 'heat', 'plants'] as const).find(
+			r => cell[r] < 0 && player[r] < -cell[r]
+		)
+	) {
+		return false
+	}
+
 	let conditions = ContentToPlacement[state.type]
 
 	if (state.conditions) {
+		// Conditions are specified explicitly, use those
 		conditions = state.conditions
 	} else {
-		if (state.special && state.special.length > 0) {
-			return !!state.special.find(s => s === cell.special)
+		// If there's special cell specified, no other conditions are required
+		const special = state.special
+
+		if (special && special.length > 0) {
+			// If the board doesn't contain any of the special cells, switch to "other" placement conditions
+			if (allCells(game).find(c => c.special && special.includes(c.special))) {
+				return !!special.find(s => s === cell.special)
+			} else {
+				conditions = OtherPlacement
+			}
 		}
 	}
 

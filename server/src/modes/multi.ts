@@ -13,6 +13,8 @@ import { join } from 'path'
 import { GameServer } from '../server/game-server'
 import { tryLoadOngoing } from '@/storage'
 import { GameConfig } from '@/game/game'
+import { Maps } from '@shared/maps'
+import { MapType } from '@shared/map'
 
 export const multiApp = (config: ServerOptions) => {
 	const logger = new Logger('Master')
@@ -34,6 +36,7 @@ export const multiApp = (config: ServerOptions) => {
 			logger.log(`Server ${gameServer.id} removed - game ended`)
 			servers = servers.filter(s => s !== gameServer)
 		})
+
 		gameServer.onEmpty.on(() => {
 			logger.log(`Server ${gameServer.id} removed - no active players`)
 			servers = servers.filter(s => s !== gameServer)
@@ -49,6 +52,7 @@ export const multiApp = (config: ServerOptions) => {
 		async (request: IncomingMessage, socket: Socket, head: Buffer) => {
 			try {
 				const gameMatch = /game\/([a-z0-9-]+)\//.exec(request.url as string)
+
 				if (!gameMatch) {
 					throw new Error(`Cannot upgrade, unknown game id ${request.url}`)
 				}
@@ -60,6 +64,7 @@ export const multiApp = (config: ServerOptions) => {
 				if (!game) {
 					// TODO: Check server limit when creating ongoing game
 					const ongoing = await tryLoadOngoing(gameMatch[1])
+
 					if (ongoing) {
 						game = createGameServer()
 						game.load(ongoing)
@@ -112,7 +117,10 @@ export const multiApp = (config: ServerOptions) => {
 				.optional(true),
 			body('public')
 				.isBoolean()
-				.optional(true)
+				.optional(true),
+			body('map')
+				.notEmpty()
+				.isInt()
 		],
 		(req: Request, res: Response) => {
 			if (servers.length >= config.maxServers) {
@@ -120,14 +128,20 @@ export const multiApp = (config: ServerOptions) => {
 			}
 
 			const errors = validationResult(req)
+
 			if (!errors.isEmpty()) {
 				return res.status(422).json({ errors: errors.array() })
 			}
 
 			const name = req.body.name
 			const mode = GameModes[req.body.mode as GameModeType]
+			const map = req.body.map as MapType
 			const bots = req.body.bots
 			const isPublic = !!req.body.public
+
+			if (!Maps[map]) {
+				throw new Error(`Unknown map ${map}`)
+			}
 
 			if (!mode) {
 				throw new Error(`Unknown game mode ${req.body.mode}`)
@@ -137,7 +151,8 @@ export const multiApp = (config: ServerOptions) => {
 				name,
 				mode: mode.type,
 				bots,
-				public: isPublic
+				public: isPublic,
+				map: map
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)
@@ -155,6 +170,7 @@ export const multiApp = (config: ServerOptions) => {
 			next: () => void
 		) => {
 			logger.error(err)
+
 			res.status(500).json({
 				error: err.message
 			})

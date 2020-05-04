@@ -73,12 +73,6 @@ export const gamePlayer = (game: GameState, playerId: number) => {
 }
 
 export const cellByCoords = (game: GameState, x: number, y: number) => {
-	const spec = game.map.special.find(s => s.x === x && s.y === y)
-
-	if (spec) {
-		return spec
-	}
-
 	let cell: GridCell | undefined
 
 	if (x >= 0 && x < game.map.width) {

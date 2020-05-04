@@ -1,9 +1,13 @@
 import { GameState, GameStateValue, PlayerState, PlayerStateValue } from '.'
-import { defaultMap } from './map'
-import { GameModeType } from './modes/types'
 import { CardCategory } from './cards'
+import { MapType } from './map'
+import { Maps } from './maps'
+import { GameModeType } from './modes/types'
 
-export const initialGameState = (id = 'game'): GameState => ({
+export const initialGameState = (
+	id = 'game',
+	map = MapType.Standard
+): GameState => ({
 	id,
 	name: 'Standard Game',
 	state: GameStateValue.WaitingForPlayers,
@@ -16,7 +20,7 @@ export const initialGameState = (id = 'game'): GameState => ({
 	oxygen: 0,
 	temperature: 0,
 	prelude: true,
-	map: defaultMap(),
+	map: Maps[map].build(),
 	competitions: [],
 	milestones: [],
 	cards: [],

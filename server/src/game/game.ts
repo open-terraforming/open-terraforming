@@ -33,11 +33,14 @@ import {
 	ProjectBought,
 	TilePlacedEvent
 } from './player'
+import { MapType } from '@shared/map'
+import { Maps } from '@shared/maps'
 
 export interface GameConfig {
 	bots: number
 	adminPassword: string
 	mode: GameModeType
+	map: MapType
 	name: string
 	public: boolean
 }
@@ -66,11 +69,13 @@ export class Game {
 			bots: 0,
 			adminPassword: randomPassword(10),
 			mode: GameModeType.Standard,
+			map: MapType.Standard,
 			name: 'Standard game',
 			public: false,
 			...config
 		}
 
+		this.state.map = Maps[this.config.map].build()
 		this.state.name = this.config.name
 		this.state.mode = this.config.mode
 
