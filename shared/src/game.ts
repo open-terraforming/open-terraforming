@@ -133,7 +133,10 @@ export enum GridCellSpecial {
 	PavonisMons,
 	ArsiaMons,
 	GanymedeColony,
-	PhobosSpaceHaven
+	PhobosSpaceHaven,
+	HecatesTholus,
+	ElysiumMons,
+	OlympusMons
 }
 
 export enum GridCellContent {

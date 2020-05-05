@@ -1702,7 +1702,10 @@ export const baseCards: Card[] = [
 					GridCellSpecial.TharsisTholus,
 					GridCellSpecial.AscraeusMons,
 					GridCellSpecial.PavonisMons,
-					GridCellSpecial.ArsiaMons
+					GridCellSpecial.ArsiaMons,
+					GridCellSpecial.OlympusMons,
+					GridCellSpecial.HecatesTholus,
+					GridCellSpecial.ElysiumMons
 				]
 			})
 		]

@@ -2,7 +2,8 @@ import { MapState } from './game'
 
 export enum MapType {
 	Standard = 1,
-	Hellas
+	Hellas,
+	Elysium
 }
 
 export type MapInfo = {
