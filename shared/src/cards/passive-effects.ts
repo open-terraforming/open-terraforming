@@ -156,8 +156,12 @@ export const productionChangeAfterPlace = (
 			}
 
 			if (cell.other === type) {
-				const res = cell.titan > 0 ? 'titan' : 'ore'
-				player[resourceProduction[res]] += amount
+				const best = (['titan', 'ore', 'heat'] as const).find(r => cell[r] > 0)
+
+				if (best !== undefined) {
+					player[resourceProduction[best]] += amount
+				}
+
 				card.data = true
 			}
 		}

@@ -5,6 +5,8 @@ TO TEST:
   * OCEAN for tile
   * Noctis City (both boards)
   * Volcano (both boards)
+  * CARDS -> add heat to production for placing tile
+  * UI [NewGame] -> add map selection
 
 CHECK CARDS:
   * CHECK -> Great Escarpment Consortium -> didn't ask me
@@ -17,10 +19,6 @@ CHECK CARDS:
 LOW PRIORITY BUGS:
   * grid animation doesn't switch properly
   * limit player count to "Max players"
-
-HELLAS:
-  * CARDS -> add heat to production for placing tile
-  * UI [NewGame] -> add map selection
 
 TODO:
   * UI [General] -> better pick dialog (tag counts)
