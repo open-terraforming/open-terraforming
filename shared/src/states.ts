@@ -39,6 +39,7 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	id,
 	bot: false,
 	admin: false,
+	owner: false,
 	actionsPlayed: 0,
 	energy: 0,
 	energyProduction: 0,

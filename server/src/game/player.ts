@@ -1031,6 +1031,18 @@ export class Player {
 		}
 	}
 
+	startGame() {
+		if (this.game.state.state !== GameStateValue.WaitingForPlayers) {
+			throw new Error('Game is already running')
+		}
+
+		if (!this.state.owner) {
+			throw new Error('Only owner can start the game')
+		}
+
+		this.game.sm.setState(GameStateValue.Starting)
+	}
+
 	adminLogin(password: string) {
 		if (this.game.config.adminPassword !== password) {
 			throw new Error('Invalid admin password')

@@ -3,7 +3,7 @@ import { Mars } from '@/components/Mars/Mars'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
-import { playerReady, PlayerStateValue } from '@shared/index'
+import { playerReady, PlayerStateValue, startGame } from '@shared/index'
 import React from 'react'
 import styled from 'styled-components'
 import { Player } from './components/Player'
@@ -18,8 +18,15 @@ export const Lobby = () => {
 	const info = useAppStore(state => state.game.info)
 	const isReady = player?.state === PlayerStateValue.Ready
 
+	const allReady =
+		players.find(p => p.state !== PlayerStateValue.Ready) === undefined
+
 	const handleReady = () => {
 		api.send(playerReady(!isReady))
+	}
+
+	const handleStart = () => {
+		api.send(startGame())
 	}
 
 	return (
@@ -31,7 +38,11 @@ export const Lobby = () => {
 				header={info?.name}
 				footer={
 					<>
-						<Waiting>Waiting for players</Waiting>
+						{allReady ? (
+							player.owner && <Button onClick={handleStart}>Start game</Button>
+						) : (
+							<Waiting>Waiting for players</Waiting>
+						)}
 						<Button onClick={handleReady} icon={isReady ? faTimes : faCheck}>
 							{isReady ? 'Not ready' : 'Ready'}
 						</Button>

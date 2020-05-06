@@ -261,6 +261,10 @@ export class Client {
 						return this.player.claimTile(message.data.x, message.data.y)
 					}
 
+					case MessageType.StartGame: {
+						return this.player.startGame()
+					}
+
 					default: {
 						return serverMessage(`Unknown action ${message.type}`)
 					}

@@ -168,6 +168,13 @@ export class Game {
 			throw new Error(`ID ${player.id} is not unique player id`)
 		}
 
+		if (
+			!player.state.bot &&
+			this.state.players.find(p => p.owner) === undefined
+		) {
+			player.state.owner = true
+		}
+
 		this.players.push(player)
 
 		// Only add to state if not already present (eg - joining to saved game)

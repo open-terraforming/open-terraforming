@@ -192,6 +192,8 @@ export interface PlayerState {
 	session: string
 	connected: boolean
 	bot: boolean
+
+	owner: boolean
 	admin: boolean
 
 	state: PlayerStateValue

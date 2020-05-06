@@ -50,7 +50,8 @@ export enum MessageType {
 	AdminLogin,
 	PickColor,
 	PickPreludes,
-	ClaimTile
+	ClaimTile,
+	StartGame
 }
 
 export const handshakeRequest = (version: string) =>
@@ -210,6 +211,11 @@ export const pickPreludes = (cards: number[]) =>
 		data: { cards }
 	} as const)
 
+export const startGame = () =>
+	({
+		type: MessageType.StartGame
+	} as const)
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -233,3 +239,4 @@ export type GameMessage =
 	| ReturnType<typeof adminLogin>
 	| ReturnType<typeof pickPreludes>
 	| ReturnType<typeof claimTile>
+	| ReturnType<typeof startGame>
