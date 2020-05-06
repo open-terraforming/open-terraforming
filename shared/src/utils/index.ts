@@ -369,3 +369,11 @@ export const mapRight = <T, R>(
 	voidReduceRight(array, [] as R[], (acc, item, index) =>
 		acc.push(callback(item, index))
 	)
+
+export const isMarsTerraformed = (game: GameState) => {
+	return (
+		game.oceans >= game.map.oceans &&
+		game.oxygen >= game.map.oxygen &&
+		game.temperature >= game.map.temperature
+	)
+}

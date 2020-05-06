@@ -35,20 +35,14 @@ TODO:
   * UI [Events] -> filter event log by player or text search
   * UI [Controls] -> better interruption block
   * UI [Controls] -> add VPs category in played
-  * UI [Controls] -> display ore/titan cost
   * UI [EndGame] -> better end game animation
 
   * SOUNDS -> milestone/award bought
   * SOUNDS -> resources changed?
 
   * GENERAL -> delay when switching to next player
-  * GENERAL -> start game when player clicks start
   * GENERAL -> allow room owner to change game settings
 
-  * SERVER -> AI evaluates effect of a card
-  * SERVER -> mark player as creator, allow him to start the game
-
-  * EXPANSIONS -> extra boards
   * EXPANSIONS -> VENUS
   * EXPANSIONS -> COLONIES
 
@@ -56,7 +50,6 @@ REFACTORING:
   * GENERAL -> remove playerId and cardIndex from contexts
   * CLIENT -> (player, game) cannot be undefined anymore, remove undefined checks
   * SHARED -> split effects to separate files
-  * SERVER -> game state machine
 
 LOW PRIORITY TODO:
   * CLIENT -> disconnect & switch to read-only mode when game ends

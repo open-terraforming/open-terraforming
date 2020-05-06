@@ -54,7 +54,7 @@ export class GenerationEndingState extends BaseGameState {
 
 	transition() {
 		if (this.produced) {
-			if (this.game.hasReachedLimits) {
+			if (this.game.isMarsTerraformed) {
 				return GameStateValue.EndingTiles
 			} else {
 				return GameStateValue.GenerationStart

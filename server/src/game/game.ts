@@ -35,6 +35,7 @@ import {
 } from './player'
 import { MapType } from '@shared/map'
 import { Maps } from '@shared/maps'
+import { isMarsTerraformed } from '@shared/utils'
 
 export interface GameConfig {
 	bots: number
@@ -127,12 +128,8 @@ export class Game {
 		return GameModes[this.state.mode]
 	}
 
-	get hasReachedLimits() {
-		return (
-			this.state.oceans >= this.state.map.oceans &&
-			this.state.oxygen >= this.state.map.oxygen &&
-			this.state.temperature >= this.state.map.temperature
-		)
+	get isMarsTerraformed() {
+		return isMarsTerraformed(this.state)
 	}
 
 	load = (state: GameState) => {
