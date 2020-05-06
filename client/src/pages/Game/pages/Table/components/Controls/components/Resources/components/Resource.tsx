@@ -1,15 +1,18 @@
+import { HelpTooltip } from '@/components/HelpTooltip/HelpTooltip'
+import { helpStrings } from '@/i18n/en'
 import { colors } from '@/styles'
+import { useAnimatedNumber } from '@/utils/hooks'
 import { Resource as Res } from '@shared/cards'
 import React, { useEffect, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { ResourceIcon } from '../../../../ResourceIcon/ResourceIcon'
-import { useAnimatedNumber } from '@/utils/hooks'
 import { GreeneryButton } from '../../GreeneryButton'
 import { HeatButton } from '../../HeatButton'
 
 export const Resource = ({
 	name,
 	res,
+	worth = 0,
 	value = 0,
 	production = 0
 }: {
@@ -17,6 +20,7 @@ export const Resource = ({
 	res: Res
 	value: number | undefined
 	production: number | undefined
+	worth?: number
 }) => {
 	const [lastValue, setLastValue] = useState(value)
 	const [lastProduction, setLastProduction] = useState(production)
@@ -24,6 +28,8 @@ export const Resource = ({
 	const [productionDiff, setProductionDiff] = useState(0)
 	const valueDisplay = useAnimatedNumber(value, 500)
 	const productionDisplay = useAnimatedNumber(production, 500)
+
+	const helpStr = helpStrings[res].replace('{0}', worth.toString())
 
 	useEffect(() => {
 		const diff = value - lastValue
@@ -51,9 +57,11 @@ export const Resource = ({
 
 	return (
 		<Container diffAnim={productionDiff !== 0 || valueDiff !== 0}>
-			<Value title={name}>
-				{valueDisplay} <ResourceIcon res={res} />
-			</Value>
+			<HelpTooltip content={helpStr} title={name}>
+				<Value>
+					{valueDisplay} <ResourceIcon res={res} />
+				</Value>
+			</HelpTooltip>
 			<Production negative={production < 0}>
 				{production >= 0 ? `+${productionDisplay}` : productionDisplay}
 			</Production>

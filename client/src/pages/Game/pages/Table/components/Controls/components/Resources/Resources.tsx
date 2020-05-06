@@ -17,12 +17,14 @@ export const Resources = ({ state }: { state: PlayerGameState }) => {
 				res="ore"
 				value={state?.ore}
 				production={state?.oreProduction}
+				worth={state.orePrice}
 			/>
 			<Resource
 				name="Titan"
 				res="titan"
 				value={state?.titan}
 				production={state?.titanProduction}
+				worth={state.titanPrice}
 			/>
 			<Resource
 				name="Plants"

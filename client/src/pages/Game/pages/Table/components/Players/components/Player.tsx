@@ -1,4 +1,4 @@
-import { colors } from '@/styles'
+import { colors, mainColors } from '@/styles'
 import { useAppStore, useElementPosition } from '@/utils/hooks'
 import {
 	faArrowRight,
@@ -17,6 +17,8 @@ import styled, { css } from 'styled-components'
 import { ResourcesDiff } from './ResourcesDiff/ResourcesDiff'
 import { PlayerActionType } from '@shared/player-actions'
 import { pendingActions } from '@shared/utils'
+import { lighten } from 'polished'
+import { Tooltip } from '@/components'
 
 // TODO: Map pending actions to strings too
 
@@ -129,7 +131,9 @@ export const Player = ({
 			</InfoContainer>
 			<Color style={{ backgroundColor: player.color }} />
 			{starting && (
-				<Starting title="This player is first this generation">1</Starting>
+				<Starting>
+					<Tooltip content="Starting player this generation">1</Tooltip>
+				</Starting>
 			)}
 			<ResourcesDiff
 				player={player}
@@ -192,11 +196,10 @@ const Color = styled.div`
 
 const Starting = styled.div`
 	background: ${colors.background};
-	border-radius: 50%;
 	width: 2rem;
 	height: 2rem;
 	line-height: 2rem;
 	text-align: center;
 	align-self: center;
-	margin-left: 0.25rem;
+	color: ${lighten(0.1, mainColors.text)};
 `
