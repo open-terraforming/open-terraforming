@@ -1,9 +1,4 @@
-import {
-	GridCellContent,
-	GridCellOther,
-	GridCellSpecial,
-	PlayerState
-} from '../game'
+import { GridCellContent, GridCellOther, GridCellSpecial } from '../game'
 import {
 	canPlace,
 	PlacementCode,
@@ -47,7 +42,6 @@ import {
 } from './conditions'
 import { CardsLookupApi } from './lookup'
 import {
-	CardCallbackContext,
 	CardCategory,
 	CardEffect,
 	CardEffectArgumentType,
@@ -62,14 +56,13 @@ import {
 	WithOptional
 } from './types'
 import {
-	countGridContent,
+	countGridContentOnMars,
 	gamePlayer,
 	productions,
 	resourceProduction,
 	resToPrice,
 	updatePlayerProduction,
-	updatePlayerResource,
-	countGridContentOnMars
+	updatePlayerResource
 } from './utils'
 
 export const effect = <T extends (CardEffectArgumentType | undefined)[]>(

@@ -28,7 +28,11 @@ export default (serverConfig: ServerOptions) => {
 		})
 
 		if (!card) {
-			return res.send('No card to fill')
+			return res.send(
+				'No card to fill (out of ' +
+					Object.values(CardsLookupApi.data()).length +
+					')'
+			)
 		}
 
 		const q =
@@ -88,6 +92,7 @@ export default (serverConfig: ServerOptions) => {
 	app.post('/picker/:code', async (req, res) => {
 		const card = CardsLookupApi.get(req.params['code'])
 		const url = req.body.url
+
 		try {
 			const image = await got(url, {
 				responseType: 'buffer'

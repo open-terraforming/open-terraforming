@@ -3,10 +3,7 @@ BUGS:
 TO TEST:
   * -6 MONEY for tile
   * OCEAN for tile
-  * Noctis City (both boards)
-  * Volcano (both boards)
   * CARDS -> add heat to production for placing tile
-  * UI [NewGame] -> add map selection
 
 CHECK CARDS:
   * CHECK -> Great Escarpment Consortium -> didn't ask me

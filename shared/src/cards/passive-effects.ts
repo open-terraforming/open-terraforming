@@ -231,11 +231,14 @@ export const resourceForStandardProject = (res: Resource, amount: number) => {
 
 export const resetProgressBonus = (amount: number) =>
 	passiveEffect({
-		description: f(
-			`The next card you play this generation is +{0} or -{1} steps in global requirements, your choice.`,
-			amount,
-			amount
-		),
+		description:
+			amount < 30
+				? f(
+						`The next card you play this generation is +{0} or -{1} steps in global requirements, your choice.`,
+						amount,
+						amount
+				  )
+				: 'Ignore global requirements for the next card you play this generation.',
 		onCardPlayed: ({ player, card }, playedCard, _cardIndex, playedBy) => {
 			if (
 				playedBy.id === player.id &&
