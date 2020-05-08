@@ -341,33 +341,37 @@ export class Game {
 		if (!this.players.every(p => !p.state.connected || p.state.bot)) {
 			// Make sure disconnected players are not stalling others
 			this.players.forEach(p => {
-				if (!p.state.connected) {
-					if (p.state.state !== PlayerStateValue.Playing) {
-						if (p.state.pendingActions.length > 0) {
-							p.state.pendingActions.forEach(a => {
-								if (a.type === PlayerActionType.PickCorporation) {
-									p.pickCorporation(a.cards[0])
-								}
+				try {
+					if (!p.state.connected) {
+						if (p.state.state !== PlayerStateValue.Playing) {
+							if (p.state.pendingActions.length > 0) {
+								p.state.pendingActions.forEach(a => {
+									if (a.type === PlayerActionType.PickCorporation) {
+										p.pickCorporation(a.cards[0])
+									}
 
-								if (a.type === PlayerActionType.PickCards) {
-									p.pickCards([])
-								}
+									if (a.type === PlayerActionType.PickCards) {
+										p.pickCards([])
+									}
 
-								if (a.type === PlayerActionType.PickPreludes) {
-									p.pickPreludes([])
-								}
-							})
+									if (a.type === PlayerActionType.PickPreludes) {
+										p.pickPreludes([])
+									}
+								})
+							}
+						}
+
+						if (
+							p.id === this.currentPlayer.id &&
+							(p.state.state === PlayerStateValue.Playing ||
+								p.state.state === PlayerStateValue.EndingTiles)
+						) {
+							this.logger.log(`${p.name} is disconnected, passing`)
+							p.pass(true)
 						}
 					}
-
-					if (
-						p.id === this.currentPlayer.id &&
-						(p.state.state === PlayerStateValue.Playing ||
-							p.state.state === PlayerStateValue.EndingTiles)
-					) {
-						this.logger.log(`${p.name} is disconnected, passing`)
-						p.pass(true)
-					}
+				} catch (e) {
+					this.logger.error(e)
 				}
 			})
 		}
