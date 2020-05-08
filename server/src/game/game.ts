@@ -62,6 +62,7 @@ export class Game {
 	players: Player[] = []
 
 	onStateUpdated = new MyEvent<Readonly<GameState>>()
+	onPlayerKicked = new MyEvent<Player>()
 
 	sm = new StateMachine<GameStateValue>()
 

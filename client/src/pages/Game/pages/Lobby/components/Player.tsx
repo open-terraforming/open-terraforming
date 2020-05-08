@@ -2,14 +2,16 @@ import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { faRobot } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { pickColor } from '@shared/index'
+import { pickColor, kickPlayer } from '@shared/index'
 import { PlayerColors } from '@shared/player-colors'
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { ColorPicker } from './ColorPicker'
 import { mainColors } from '@/styles'
+import { Button } from '@/components'
 
 type Props = {
+	id: number
 	name: string
 	color: string
 	ready: boolean
@@ -17,14 +19,16 @@ type Props = {
 	bot: boolean
 }
 
-export const Player = ({ name, ready, color, current, bot }: Props) => {
+export const Player = ({ id, name, ready, color, current, bot }: Props) => {
 	const api = useApi()
 
-	const playerId = useAppStore(state => state.game.playerId)
+	const currentPlayer = useAppStore(state => state.game.player)
 
 	const pickedColors =
 		useAppStore(state =>
-			state.game.state?.players.filter(p => p.id !== playerId).map(p => p.color)
+			state.game.state.players
+				.filter(p => p.id !== currentPlayer.id)
+				.map(p => p.color)
 		) || []
 
 	const colors = PlayerColors.map((c, i) => [i, c] as const)
@@ -35,6 +39,10 @@ export const Player = ({ name, ready, color, current, bot }: Props) => {
 
 	const changeColor = (i: number) => {
 		api.send(pickColor(i))
+	}
+
+	const handleKick = () => {
+		api.send(kickPlayer(id))
 	}
 
 	return (
@@ -57,6 +65,9 @@ export const Player = ({ name, ready, color, current, bot }: Props) => {
 				<PlayerState ready>
 					<FontAwesomeIcon icon={faRobot} color={mainColors.text} />
 				</PlayerState>
+			)}
+			{currentPlayer.owner && !current && (
+				<Button onClick={handleKick}>Kick</Button>
 			)}
 		</PlayerContainer>
 	)

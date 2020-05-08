@@ -51,7 +51,9 @@ export enum MessageType {
 	PickColor,
 	PickPreludes,
 	ClaimTile,
-	StartGame
+	StartGame,
+	KickPlayer,
+	Kicked
 }
 
 export const handshakeRequest = (version: string) =>
@@ -216,6 +218,17 @@ export const startGame = () =>
 		type: MessageType.StartGame
 	} as const)
 
+export const kickPlayer = (playerId: number) =>
+	({
+		type: MessageType.KickPlayer,
+		data: { playerId }
+	} as const)
+
+export const kicked = () =>
+	({
+		type: MessageType.Kicked
+	} as const)
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -240,3 +253,5 @@ export type GameMessage =
 	| ReturnType<typeof pickPreludes>
 	| ReturnType<typeof claimTile>
 	| ReturnType<typeof startGame>
+	| ReturnType<typeof kickPlayer>
+	| ReturnType<typeof kicked>

@@ -178,6 +178,25 @@ export const ApiContextProvider = ({
 					dispatch(setGameState(m.data))
 					break
 				}
+
+				case MessageType.Kicked: {
+					location.hash = ''
+
+					dispatch(
+						setApiState({
+							error: "You've been kicked",
+							state: ApiState.Ready
+						})
+					)
+
+					dispatch(
+						setClientState({
+							id: undefined
+						})
+					)
+
+					break
+				}
 			}
 		}
 	}

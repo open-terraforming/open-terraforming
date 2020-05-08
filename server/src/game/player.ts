@@ -1043,6 +1043,25 @@ export class Player {
 		this.game.sm.setState(GameStateValue.Starting)
 	}
 
+	kickPlayer(playerId: number) {
+		if (this.game.state.state !== GameStateValue.WaitingForPlayers) {
+			throw new Error('Game is already running')
+		}
+
+		if (!this.state.owner) {
+			throw new Error('Only owner can start the game')
+		}
+
+		const player = this.game.players.find(p => p.id === playerId)
+
+		if (!player) {
+			throw new Error(`Unknown player ${playerId}`)
+		}
+
+		this.game.onPlayerKicked.emit(player)
+		this.game.remove(player)
+	}
+
 	adminLogin(password: string) {
 		if (this.game.config.adminPassword !== password) {
 			throw new Error('Invalid admin password')

@@ -124,9 +124,11 @@ export class GameServer {
 
 	close() {
 		this.socket.close()
+
 		this.clients.forEach(c => {
 			c.socket.close()
 		})
+
 		this.clients = []
 		this.onClose.emit()
 	}

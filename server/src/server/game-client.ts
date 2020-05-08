@@ -14,7 +14,8 @@ import {
 	MessageType,
 	PlayerStateValue,
 	serverMessage,
-	VERSION
+	VERSION,
+	kicked
 } from '@shared/index'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
@@ -53,9 +54,25 @@ export class Client {
 		this.server = server
 		this.state = ClientState.Initializing
 
+		this.game.onPlayerKicked.on(this.handlePlayerKicked)
+
 		this.socket = socket
 		this.socket.on('message', this.handleRawMessage)
 		this.socket.on('close', this.handleClose)
+	}
+
+	handlePlayerKicked = (player: Player) => {
+		if (player === this.player) {
+			this.send(kicked())
+
+			setTimeout(() => {
+				try {
+					this.socket.close()
+				} catch (e) {
+					this.logger.warn(`Failed to close socket for kicked player: ${e}`)
+				}
+			}, 1)
+		}
 	}
 
 	handleClose = () => {
@@ -263,6 +280,10 @@ export class Client {
 
 					case MessageType.StartGame: {
 						return this.player.startGame()
+					}
+
+					case MessageType.KickPlayer: {
+						return this.player.kickPlayer(message.data.playerId)
 					}
 
 					default: {

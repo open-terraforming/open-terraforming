@@ -53,6 +53,7 @@ export const Lobby = () => {
 					<Players>
 						{players?.map(p => (
 							<Player
+								id={p.id}
 								name={p.name}
 								color={p.color}
 								key={p.id}
