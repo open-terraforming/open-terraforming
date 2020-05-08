@@ -148,7 +148,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					<>
 						<PlayerSpan player={players[event.playerId]} />{' '}
 						{event.amount > 0 ? '+' : '-'}
-						{event.amount} {event.resource}
+						{Math.abs(event.amount)} {event.resource}
 						{' to '}
 						<CardSpan card={event.card} />
 					</>

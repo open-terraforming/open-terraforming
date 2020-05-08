@@ -2200,6 +2200,7 @@ export const baseCards: Card[] = [
 		title: 'Olympus Conference',
 		type: CardType.Effect,
 		cost: 10,
+		resource: 'science',
 		categories: [
 			CardCategory.Building,
 			CardCategory.Earth,

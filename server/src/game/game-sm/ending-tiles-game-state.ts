@@ -17,6 +17,11 @@ export class EndingTilesGameState extends BaseGameState {
 					? PlayerStateValue.WaitingForTurn
 					: PlayerStateValue.Passed
 		})
+
+		this.selectCurrentPlayer(
+			this.state.startingPlayer,
+			PlayerStateValue.EndingTiles
+		)
 	}
 
 	update() {
