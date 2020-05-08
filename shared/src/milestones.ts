@@ -116,6 +116,7 @@ const MilestonesList = [
 		getValue: (game, player) =>
 			tiles(allCells(game))
 				.ownedBy(player.id)
+				.onMars()
 				.c(c => c.y >= game.map.height - 2).length
 	}),
 	milestone({

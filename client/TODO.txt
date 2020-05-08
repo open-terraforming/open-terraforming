@@ -1,8 +1,5 @@
 BUGS:
-  * NITROGEN-RICH ASTEROID -> change resource to production
-  * POLAR_EXPLORER milestone -> don't count other
-  * milestone/awards notification has wrong text on different boards
-  * Large Convoy -> no icon :(
+  * milestone/awards notification has wrong text on different boards (??)
   * error:
     Cihlicka Played ants with [[[15,9]],[]]
     Error: Water Import From Europa doesn't accept microbes

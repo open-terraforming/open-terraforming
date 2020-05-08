@@ -39,7 +39,7 @@ import {
 	productionForTags,
 	productionForTiles,
 	resourceChange,
-	resourceChangeIfTags,
+	productionChangeIfTags,
 	resourceForCities,
 	resourcesForPlayersTags,
 	resourcesForTiles,
@@ -535,8 +535,8 @@ export const baseCards: Card[] = [
 			terraformRatingChange(2),
 			gameProcessChange('temperature', 1),
 			effectChoice([
-				resourceChangeIfTags('plants', 4, CardCategory.Plant, 3),
-				resourceChange('plants', 3)
+				productionChangeIfTags('plants', 4, CardCategory.Plant, 3),
+				productionChange('plants', 3)
 			])
 		]
 	}),
@@ -1741,7 +1741,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
 		victoryPoints: 2,
 		playEffects: [
-			placeTile({ type: GridCellContent.Other }),
+			placeOcean(),
 			getTopCards(2),
 			effectChoice([
 				resourceChange('plants', 5),

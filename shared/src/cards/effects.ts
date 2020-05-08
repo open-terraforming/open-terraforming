@@ -860,7 +860,7 @@ export const tagPriceChange = (tag: CardCategory, change: number) =>
 		}
 	})
 
-export const resourceChangeIfTags = (
+export const productionChangeIfTags = (
 	res: Resource,
 	amount: number,
 	tag: CardCategory,
@@ -869,7 +869,7 @@ export const resourceChangeIfTags = (
 	effect({
 		...productionChange(res, amount),
 		conditions: [cardCountCondition(tag, tagCount)],
-		description: `+ ${amount} if you have ${tagCount} ${CardCategory[tag]} tags`
+		description: `+ ${amount} production if you have ${tagCount} ${CardCategory[tag]} tags`
 	})
 
 export const claimCell = () =>
