@@ -12,7 +12,7 @@ export const EventsModal = ({ onClose, events }: Props) => {
 	return (
 		<Modal
 			open={true}
-			contentStyle={{ minWidth: '300px' }}
+			contentStyle={{ minWidth: '500px' }}
 			onClose={onClose}
 			header="Events"
 		>
