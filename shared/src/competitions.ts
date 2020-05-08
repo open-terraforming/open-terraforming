@@ -153,6 +153,7 @@ const CompetitionsList = [
 		getScore: (game, player) =>
 			allTiles(game)
 				.ownedBy(player.id)
+				.onMars()
 				.c(c => c.content !== undefined && c.y >= game.map.height - 4).length
 	}),
 	competition({
