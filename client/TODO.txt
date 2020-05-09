@@ -58,6 +58,7 @@ TODO:
 
   * GENERAL -> delay when switching to next player
   * GENERAL -> allow room owner to change game settings
+  * GENERAl -> AQUIFER PUMPING allows to use more ore than required
 
   * EXPANSIONS -> VENUS
   * EXPANSIONS -> COLONIES

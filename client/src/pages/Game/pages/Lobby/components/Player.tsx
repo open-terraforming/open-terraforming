@@ -1,6 +1,6 @@
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
-import { faRobot } from '@fortawesome/free-solid-svg-icons'
+import { faRobot, faBan } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { pickColor, kickPlayer } from '@shared/index'
 import { PlayerColors } from '@shared/player-colors'
@@ -61,13 +61,15 @@ export const Player = ({ id, name, ready, color, current, bot }: Props) => {
 			{!bot && (
 				<PlayerState ready={ready}>{ready ? 'Ready' : 'Waiting'}</PlayerState>
 			)}
+			{currentPlayer.owner && !current && (
+				<KickButton onClick={handleKick} icon={faBan}>
+					Kick
+				</KickButton>
+			)}
 			{bot && (
 				<PlayerState ready>
 					<FontAwesomeIcon icon={faRobot} color={mainColors.text} />
 				</PlayerState>
-			)}
-			{currentPlayer.owner && !current && (
-				<Button onClick={handleKick}>Kick</Button>
 			)}
 		</PlayerContainer>
 	)
@@ -92,4 +94,9 @@ const Picker = styled.div`
 	max-width: 3rem;
 	display: flex;
 	justify-content: center;
+`
+
+const KickButton = styled(Button)`
+	margin-left: 0.5rem;
+	padding: 0.1rem 0.2rem;
 `

@@ -8,7 +8,7 @@ import {
 } from '@shared/cards'
 import { GameState, PlayerState, UsedCardState } from '@shared/index'
 import { range, shuffle, CardsCollection } from '@shared/utils'
-import { emptyCardState } from '@shared/cards/utils'
+import { emptyCardState, resources } from '@shared/cards/utils'
 
 export const cardsList = (list: (string | UsedCardState)[]) => {
 	return new CardsCollection(
@@ -121,6 +121,13 @@ const getPossibleOptions = (
 
 		case CardEffectTarget.Resource: {
 			return range(0, player[a.resource as Resource] + 1)
+		}
+
+		case CardEffectTarget.ResourceType: {
+			return resources.filter(
+				r =>
+					a.resourceConditions.find(c => !c({ player, game }, r)) === undefined
+			)
 		}
 
 		case CardEffectTarget.EffectChoice: {

@@ -106,6 +106,7 @@ export const GameMap = ({}: Props) => {
 					.filter(c => c.enabled)
 					.map(cell => (
 						<CellOverlay
+							placing={placing}
 							cell={cell}
 							key={`${cell.x},${cell.y}`}
 							pos={{

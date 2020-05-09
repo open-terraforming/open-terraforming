@@ -2,6 +2,7 @@ import { GameInfo } from '@shared/extra'
 import { GameModes } from '@shared/modes'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
+import { Maps } from '@shared/maps'
 
 type Props = {
 	info: GameInfo
@@ -20,8 +21,8 @@ export const Info = ({ info }: Props) => {
 				<InfoV>{GameModes[info.mode]?.name}</InfoV>
 			</InfoLine>
 			<InfoLine>
-				<InfoL>Max players:</InfoL>
-				<InfoV>{info.maxPlayers}</InfoV>
+				<InfoL>Board:</InfoL>
+				<InfoV>{Maps[info.map]?.name}</InfoV>
 			</InfoLine>
 			<InfoLine>
 				<InfoL>Expansions:</InfoL>
@@ -36,6 +37,7 @@ export const Info = ({ info }: Props) => {
 const E = styled.div`
 	margin-left: 1.5rem;
 	margin-bottom: 1rem;
+	flex: 0.5;
 `
 
 const InfoLine = styled.div`

@@ -433,7 +433,8 @@ export class Game {
 			name: this.state.name,
 			players: this.players.length,
 			maxPlayers: this.state.maxPlayers,
-			prelude: this.state.prelude
+			prelude: this.state.prelude,
+			map: this.state.map.code
 		}
 	}
 }

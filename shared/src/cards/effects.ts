@@ -801,7 +801,9 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 			cost
 		)} to place an ocean tile, ${res} can also be used`,
 		symbols: [
-			{ resource: res, count: cost },
+			{ resource: 'money', count: cost },
+			{ symbol: SymbolType.Slash },
+			{ resource: res },
 			{ symbol: SymbolType.RightArrow },
 			{ tile: GridCellContent.Ocean }
 		],

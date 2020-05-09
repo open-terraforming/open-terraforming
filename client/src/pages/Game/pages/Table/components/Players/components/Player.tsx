@@ -137,8 +137,8 @@ export const Player = ({
 			)}
 			<ResourcesDiff
 				player={player}
-				x={position.left + position.width}
-				y={position.top}
+				x={position ? position.left + position.width : 0}
+				y={position ? position.top : 0}
 			/>
 		</Container>
 	)

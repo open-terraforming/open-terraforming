@@ -367,38 +367,34 @@ function getPosition(el: HTMLElement, global = true): Position {
 }
 
 export const useElementPosition = (
-	element?: HTMLElement | null,
-	global = true
-): Position => {
-	const elementRef = useRef<HTMLElement | null>()
+	element?: Element | null
+): DOMRect | undefined => {
+	const elementRef = useRef<Element | null>()
+	const bb = element ? element.getBoundingClientRect() : undefined
 
-	const [position, setPosition] = useState(
-		!elementRef.current && element
-			? getPosition(element, global)
-			: ({} as Position)
-	)
+	const [position, setPosition] = useState(bb)
 
 	elementRef.current = element
 
 	useEffect(() => {
-		if (elementRef.current) {
-			setPosition(getPosition(elementRef.current, global))
+		if (element) {
+			setPosition(element.getBoundingClientRect())
 		}
 	}, [element])
 
 	useEffect(() => {
 		const update = () => {
 			if (elementRef.current) {
-				setPosition(getPosition(elementRef.current, global))
+				setPosition(elementRef.current.getBoundingClientRect())
 			}
 		}
 
 		window.addEventListener('resize', update)
-		window.addEventListener('scroll', update)
+		window.addEventListener('scroll', update, true)
 
 		return () => {
 			window.removeEventListener('resize', update)
-			window.removeEventListener('scroll', update)
+			window.removeEventListener('scroll', update, true)
 		}
 	}, [])
 

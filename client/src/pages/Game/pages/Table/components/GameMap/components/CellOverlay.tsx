@@ -4,7 +4,8 @@ import { Card } from '@/icons/card'
 import { range } from '@/utils/collections'
 import { faHammer, faSeedling, faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { GridCell, GridCellType, GridCellContent } from '@shared/index'
+import { GridCell, GridCellContent, GridCellType } from '@shared/index'
+import { PlacementState } from '@shared/placements'
 import { specialToStr } from '@shared/texts'
 import React from 'react'
 import styled from 'styled-components'
@@ -16,6 +17,7 @@ type Props = {
 	pos: { x: number; y: number }
 	width: number
 	height: number
+	placing?: PlacementState
 }
 
 export const CellOverlay = ({ cell, pos, width, height }: Props) => {

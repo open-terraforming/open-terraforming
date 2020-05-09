@@ -1,10 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import styled, { css, keyframes } from 'styled-components'
-import { GridCellType, GridCellContent, GridCell } from '@shared/index'
-import { PlacementState, canPlace, isClaimable } from '@shared/placements'
-import { useAppStore } from '@/utils/hooks'
-import { OtherIcons } from '../icons/other'
+import { Portal } from '@/components'
+import { colors } from '@/styles'
+import { useAppStore, useElementPosition } from '@/utils/hooks'
+import { GridCell, GridCellContent, GridCellType } from '@shared/index'
+import { canPlace, isClaimable, PlacementState } from '@shared/placements'
 import { otherToStr, tileToStr } from '@shared/texts'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import styled, { css, keyframes } from 'styled-components'
+import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
+import { OtherIcons } from '../icons/other'
+import { getPlaceRewards } from '../utils'
 
 type Props = {
 	cell: GridCell
@@ -56,6 +60,11 @@ export const Cell = ({
 	claiming,
 	delayFunction
 }: Props) => {
+	const [hover, setHover] = useState(false)
+	const [container, setContainer] = useState(null as SVGElement | null)
+
+	const position = useElementPosition(hover ? container : null)
+
 	const game = useAppStore(state => state.game.state)
 
 	const owner = useAppStore(state =>
@@ -65,7 +74,6 @@ export const Cell = ({
 	)
 
 	const player = useAppStore(state => state.game.player)
-	const playerId = useAppStore(state => state.game.playerId)
 	const playerMap = useAppStore(state => state.game.playerMap)
 
 	const [lastContent, setLastContent] = useState(
@@ -86,10 +94,7 @@ export const Cell = ({
 	}, [cell.content])
 
 	const active =
-		(!!placing &&
-			cell.content === undefined &&
-			(cell.claimantId === undefined || cell.claimantId === playerId) &&
-			canPlace(game, player, cell, placing)) ||
+		(!!placing && canPlace(game, player, cell, placing)) ||
 		(!!claiming && isClaimable(cell))
 
 	const otherIcon = cell.other ? OtherIcons[cell.other] : undefined
@@ -105,13 +110,48 @@ export const Cell = ({
 			: undefined
 	].filter(i => i !== undefined)
 
+	const tooltip = useMemo(() => {
+		const rewards =
+			placing && active ? getPlaceRewards(game, player, placing, cell) : []
+
+		return rewards.length > 0
+			? rewards.map((r, i) => (
+					<div key={i}>
+						{`${r.count} `}
+						{r.resource === 'vp' ? (
+							r.count > 1 ? (
+								'VPs'
+							) : (
+								'VP'
+							)
+						) : (
+							<ResourceIcon res={r.resource} />
+						)}
+						{` ${r.description}`}
+					</div>
+			  ))
+			: undefined
+	}, [placing, active])
+
+	const handleMouseEnter = useCallback(() => {
+		setHover(active && !claiming)
+	}, [active, claiming])
+
+	const handleMouseLeave = useCallback(() => {
+		setHover(false)
+	}, [])
+
 	return (
 		<StyledHex
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}
 			gridType={cell.type}
 			gridContent={cell.content}
+			gridHover={hover}
 			gridActive={placing || claiming ? active : undefined}
 			transform={`translate(${pos.x},${pos.y})`}
 			onClick={active ? onClick : undefined}
+			ref={e => setContainer(e)}
 		>
 			<polygon
 				style={{
@@ -132,6 +172,31 @@ export const Cell = ({
 			/>
 
 			{title.length > 0 && <title>{title.join('')}</title>}
+
+			{active && hover && tooltip && (
+				<Portal>
+					<Tooltip
+						style={
+							position
+								? {
+										top: position.top + position.height / 2,
+										...(cell.x >= game.map.width / 2
+											? {
+													left: position.left - 20,
+													transform: 'translate(-100%, -50%)'
+											  }
+											: {
+													left: position.left + position.width + 20,
+													transform: 'translate(0, -50%)'
+											  })
+								  }
+								: {}
+						}
+					>
+						{tooltip}
+					</Tooltip>
+				</Portal>
+			)}
 
 			{diffAnim && (
 				<DiffAnim
@@ -206,7 +271,14 @@ const StyledHex = styled.g<{
 	gridType: GridCellType
 	gridContent?: GridCellContent
 	gridActive?: boolean
+	gridHover?: boolean
 }>`
+	${props =>
+		props.gridActive === false &&
+		css`
+			opacity: 0.5;
+		`}
+
 	polygon:first-child {
 
 		animation-name: ${highlightAnimation};
@@ -246,6 +318,12 @@ const StyledHex = styled.g<{
 			`}
 
 		${props =>
+			props.gridHover &&
+			css`
+				stroke: rgba(255, 255, 255, 0.9);
+			`}
+
+		${props =>
 			props.gridActive
 				? css`
 						fill: rgba(36, 187, 23, 0.5);
@@ -256,4 +334,10 @@ const StyledHex = styled.g<{
 						stroke: rgba(255, 66, 66, 0.8);
 				  `}
 	}
+`
+
+const Tooltip = styled.div`
+	position: absolute;
+	padding: 1rem;
+	background: ${colors.background};
 `

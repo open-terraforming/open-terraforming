@@ -35,6 +35,7 @@ export const Lobby = () => {
 			<Modal
 				open={true}
 				allowClose={false}
+				contentStyle={{ width: '35rem' }}
 				header={info?.name}
 				footer={
 					<>
@@ -72,6 +73,7 @@ export const Lobby = () => {
 
 const Players = styled.div`
 	min-width: 12rem;
+	flex: 1;
 `
 
 const Waiting = styled.div`
