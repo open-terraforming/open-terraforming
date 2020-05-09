@@ -59,7 +59,13 @@ export const Main = ({}: Props) => {
 	}, [])
 
 	return (
-		<Modal open={true} allowClose={false} contentStyle={{ minHeight: '4rem' }}>
+		<Modal
+			open={true}
+			allowClose={false}
+			contentStyle={{ minHeight: '4rem' }}
+			header="Open Terraforming"
+			headerStyle={{ justifyContent: 'center', fontSize: '150%' }}
+		>
 			<Loader loaded={!loading} absolute />
 			{!loading && info && (
 				<GamesList allowCreate={info?.servers < info?.maxServers} />

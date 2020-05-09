@@ -2,7 +2,11 @@ import { Button } from '@/components'
 import { Mars } from '@/components/Mars/Mars'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons'
+import {
+	faCheck,
+	faTimes,
+	faChevronRight
+} from '@fortawesome/free-solid-svg-icons'
 import { playerReady, PlayerStateValue, startGame } from '@shared/index'
 import React from 'react'
 import styled from 'styled-components'
@@ -39,11 +43,15 @@ export const Lobby = () => {
 				header={info?.name}
 				footer={
 					<>
-						{allReady ? (
-							player.owner && <Button onClick={handleStart}>Start game</Button>
-						) : (
-							<Waiting>Waiting for players</Waiting>
-						)}
+						<Waiting>
+							{allReady
+								? player.owner && (
+										<Button icon={faChevronRight} onClick={handleStart}>
+											Start game
+										</Button>
+								  )
+								: 'Waiting for players'}
+						</Waiting>
 						<Button onClick={handleReady} icon={isReady ? faTimes : faCheck}>
 							{isReady ? 'Not ready' : 'Ready'}
 						</Button>

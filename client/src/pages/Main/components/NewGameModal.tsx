@@ -109,6 +109,19 @@ export const NewGameModal = ({ onClose }: Props) => {
 					</Field>
 
 					<Field>
+						<label>Board</label>
+						<select
+							onChange={e => setMap((e.target.value as unknown) as MapType)}
+						>
+							{MapsList.map(item => (
+								<option key={item.type} value={item.type}>
+									{item.name}
+								</option>
+							))}
+						</select>
+					</Field>
+
+					<Field>
 						<label>Bots</label>
 						<NumberInput
 							min={0}
@@ -131,32 +144,19 @@ export const NewGameModal = ({ onClose }: Props) => {
 					</label>
 				</Field>
 
-				{Object.values(GameModes).map(item => (
-					<SelectItem
-						key={item.type}
-						onClick={() => setMode(item.type)}
-						selected={item.type === mode}
-					>
-						<SelectItemHead>
-							<input type="radio" checked={item.type === mode} readOnly />
-							<div>{item.name}</div>
-						</SelectItemHead>
-						<SelectItemDesc>{item.description}</SelectItemDesc>
-					</SelectItem>
-				))}
-
 				<Field>
-					<label>Board</label>
-					{MapsList.map(item => (
+					<label>Mode</label>
+					{Object.values(GameModes).map(item => (
 						<SelectItem
-							selected={map === item.type}
 							key={item.type}
-							onClick={() => setMap(item.type)}
+							onClick={() => setMode(item.type)}
+							selected={item.type === mode}
 						>
 							<SelectItemHead>
-								<input type="radio" checked={map === item.type} readOnly />
+								<input type="radio" checked={item.type === mode} readOnly />
 								<div>{item.name}</div>
 							</SelectItemHead>
+							<SelectItemDesc>{item.description}</SelectItemDesc>
 						</SelectItem>
 					))}
 				</Field>

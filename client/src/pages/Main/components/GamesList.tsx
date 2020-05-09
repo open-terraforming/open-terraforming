@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { GameInfo } from '@shared/extra'
 import { getGames } from '@/api/rest'
-import { Loader, Button, DialogWrapper } from '@/components'
-import { setApiState, ApiState } from '@/store/modules/api'
+import { Button, DialogWrapper, Loader } from '@/components'
+import { ApiState, setApiState } from '@/store/modules/api'
+import { mainColors } from '@/styles'
 import { useAppDispatch } from '@/utils/hooks'
-import styled from 'styled-components'
 import { faArrowRight, faSync } from '@fortawesome/free-solid-svg-icons'
+import { GameInfo } from '@shared/extra'
+import { Maps } from '@shared/maps'
+import { GameModes } from '@shared/modes'
+import React, { useEffect, useState } from 'react'
+import styled from 'styled-components'
 import { NewGameModal } from './NewGameModal'
+import { darken } from 'polished'
 
 type Props = {
 	allowCreate: boolean
@@ -70,9 +74,21 @@ export const GamesList = ({ allowCreate }: Props) => {
 
 			<Loader loaded={!loading} absolute />
 
+			{games.length !== 0 && (
+				<GameHeader>
+					<GameName>Name</GameName>
+					<GameMode>Mode</GameMode>
+					<GameMap>Board</GameMap>
+					<GamePlayers>Players</GamePlayers>
+					<Join>&nbsp;</Join>
+				</GameHeader>
+			)}
+
 			{games.map(game => (
 				<GameLine key={game.id}>
 					<GameName>{game.name}</GameName>
+					<GameMode>{GameModes[game.mode]?.name}</GameMode>
+					<GameMap>{Maps[game.map]?.name}</GameMap>
 					<GamePlayers>
 						{game.players} / {game.maxPlayers}
 					</GamePlayers>
@@ -106,18 +122,39 @@ const NoGames = styled.div`
 const GameLine = styled.div`
 	display: flex;
 	align-items: center;
+	margin: 0.5rem 0;
+`
+
+const GameHeader = styled(GameLine)`
+	margin-top: 2rem;
+	color: ${darken(0.1, mainColors.text)};
 `
 
 const GameName = styled.div`
 	flex: 1;
+	min-width: 10rem;
 `
 
 const GamePlayers = styled.div`
 	flex-grow: 0;
-	width: 64px;
+	width: 4rem;
+`
+
+const GameMode = styled.div`
+	flex-grow: 0;
+	width: 8rem;
+`
+
+const GameMap = styled.div`
+	flex-grow: 0;
+	width: 4rem;
 `
 
 const Join = styled.div`
 	flex-grow: 0;
-	width: 64px;
+	width: 6rem;
+
+	> button {
+		margin-left: auto;
+	}
 `
