@@ -18,7 +18,7 @@ export const createGame = (
 	bots: number,
 	isPublic: boolean
 ): Promise<GameInfo> =>
-	fetch(basePath + '/games', {
+	fetch(basePath + '/api/games', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json'
