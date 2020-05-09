@@ -7,7 +7,7 @@ import {
 	CardsLookupApi
 } from '@shared/cards'
 import { GameState, PlayerState, UsedCardState } from '@shared/index'
-import { range, shuffle, CardsCollection } from '@shared/utils'
+import { range, shuffle, CardsCollection, flatten } from '@shared/utils'
 import { emptyCardState, resources } from '@shared/cards/utils'
 
 export const cardsList = (list: (string | UsedCardState)[]) => {
@@ -70,53 +70,53 @@ const getPossibleOptions = (
 				throw new Error('PlayerResource arg requires resource prop')
 			}
 
-			return game.players
-				.filter(
-					other =>
-						other.id !== player.id &&
-						!a.playerConditions.find(
-							c =>
-								!c.evaluate({
-									game,
-									player: other,
-									card
-								})
-						)
-				)
-				.map(p => {
-					return range(1, p[res] + 1).map(r => [p.id, r])
-				})
-				.flat()
-				.concat([[-1, 0]])
+			return flatten(
+				game.players
+					.filter(
+						other =>
+							other.id !== player.id &&
+							!a.playerConditions.find(
+								c =>
+									!c.evaluate({
+										game,
+										player: other,
+										card
+									})
+							)
+					)
+					.map(p => {
+						return range(1, p[res] + 1).map(r => [p.id, r])
+					})
+			).concat([[-1, 0]])
 		}
 
 		case CardEffectTarget.PlayerCardResource: {
-			return game.players
-				.filter(other => other.id !== player.id)
-				.map(other => ({
-					other,
-					cards: shuffle(
-						other.usedCards
-							.filter(
-								(card, cardIndex) =>
-									!a.cardConditions.find(
-										c =>
-											!c.evaluate({
-												card,
-												cardIndex,
-												game,
-												player: other,
-												playerId: other.id
-											})
-									)
-							)
-							.map(c => other.usedCards.indexOf(c))
-					)
-				}))
-				.filter(({ cards }) => cards.length > 0)
-				.map(({ other, cards }) => cards.map(c => [other.id, c]))
-				.flat()
-				.concat(a.optional ? [[-1, 0]] : [])
+			return flatten(
+				game.players
+					.filter(other => other.id !== player.id)
+					.map(other => ({
+						other,
+						cards: shuffle(
+							other.usedCards
+								.filter(
+									(card, cardIndex) =>
+										!a.cardConditions.find(
+											c =>
+												!c.evaluate({
+													card,
+													cardIndex,
+													game,
+													player: other,
+													playerId: other.id
+												})
+										)
+								)
+								.map(c => other.usedCards.indexOf(c))
+						)
+					}))
+					.filter(({ cards }) => cards.length > 0)
+					.map(({ other, cards }) => cards.map(c => [other.id, c]))
+			).concat(a.optional ? [[-1, 0]] : [])
 		}
 
 		case CardEffectTarget.Resource: {
@@ -133,27 +133,28 @@ const getPossibleOptions = (
 		case CardEffectTarget.EffectChoice: {
 			const effects = a.effects || []
 
-			return effects
-				.filter(
-					e =>
-						!e.conditions.find(
-							c =>
-								!c.evaluate({
-									card,
-									cardIndex: card.index,
-									game,
-									player,
-									playerId: player.id
-								})
-						)
-				)
-				.map(e =>
-					getPossibleArgs(player, game, [e], card).map(args => [
-						effects.indexOf(e),
-						args
-					])
-				)
-				.flat()
+			return flatten(
+				effects
+					.filter(
+						e =>
+							!e.conditions.find(
+								c =>
+									!c.evaluate({
+										card,
+										cardIndex: card.index,
+										game,
+										player,
+										playerId: player.id
+									})
+							)
+					)
+					.map(e =>
+						getPossibleArgs(player, game, [e], card).map(args => [
+							effects.indexOf(e),
+							args
+						])
+					)
+			)
 		}
 
 		default:
