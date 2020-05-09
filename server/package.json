@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node dist/server/src/index.js",
-    "start-ts": "ts-node -r tsconfig-paths/register src/index.ts",
+    "build": "tsc",
+    "watch": "tsc --watch",
     "test": "jest"
   },
   "author": "Kamen",
