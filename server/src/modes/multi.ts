@@ -51,7 +51,9 @@ export const multiApp = (config: ServerOptions) => {
 		'upgrade',
 		async (request: IncomingMessage, socket: Socket, head: Buffer) => {
 			try {
-				const gameMatch = /game\/([a-z0-9-]+)\//.exec(request.url as string)
+				const gameMatch = /api\/ws\/game\/([a-z0-9-]+)\//.exec(
+					request.url as string
+				)
 
 				if (!gameMatch) {
 					throw new Error(`Cannot upgrade, unknown game id ${request.url}`)
@@ -91,7 +93,7 @@ export const multiApp = (config: ServerOptions) => {
 		}
 	)
 
-	app.get('/info', (_req, res) => {
+	app.get('/api/info', (_req, res) => {
 		res.json({
 			maxServers: config.maxServers,
 			servers: servers.length,
@@ -99,12 +101,12 @@ export const multiApp = (config: ServerOptions) => {
 		} as ServerInfo)
 	})
 
-	app.get('/games', (_req, res) => {
+	app.get('/api/games', (_req, res) => {
 		res.json(servers.filter(s => s.listable).map(s => s.info()))
 	})
 
 	app.post(
-		'/games',
+		'/api/games',
 		[
 			body('name')
 				.isLength({ min: 3, max: 20 })

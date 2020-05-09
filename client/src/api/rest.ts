@@ -6,10 +6,10 @@ const basePath =
 	location.protocol + '//' + (process.env.APP_API_URL || location.host)
 
 export const getServerInfo = (): Promise<ServerInfo> =>
-	fetch(basePath + '/info').then(res => res.json())
+	fetch(basePath + '/api/info').then(res => res.json())
 
 export const getGames = (): Promise<GameInfo[]> =>
-	fetch(basePath + '/games').then(res => res.json())
+	fetch(basePath + '/api/games').then(res => res.json())
 
 export const createGame = (
 	name: string,

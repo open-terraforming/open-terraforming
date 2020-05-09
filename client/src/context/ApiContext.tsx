@@ -13,6 +13,7 @@ import {
 } from '@shared/index'
 import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
+import { getWebsocketUrl } from '@/api/utils'
 
 export const ApiContext = React.createContext<Client | null>(null)
 
@@ -48,11 +49,7 @@ export const ApiContextProvider = ({
 			}
 
 			setClient(
-				new Client(
-					'ws://' +
-						(process.env.APP_API_URL || window.location.host) +
-						(gameId ? '/game/' + gameId + '/socket' : '')
-				)
+				new Client(getWebsocketUrl(gameId ? `game/${gameId}/socket` : ''))
 			)
 		}
 	}, [state, gameId])

@@ -26,7 +26,7 @@ export const singleApp = (
 
 	const game = new GameServer(gameConfig)
 
-	app.get('/info', (_req, res) => {
+	app.get('/api/info', (_req, res) => {
 		res.json({
 			maxServers: config.maxServers,
 			servers: 1,

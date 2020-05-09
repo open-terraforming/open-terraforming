@@ -3,6 +3,7 @@ import { ApiState } from '@/store/modules/api'
 import { useAppStore } from '@/utils/hooks'
 import { eventsAuth } from '@shared/events'
 import React, { useContext, useEffect, useState } from 'react'
+import { getWebsocketUrl } from '@/api/utils'
 
 export const EventsContext = React.createContext<EventsClient | null>(null)
 
@@ -26,12 +27,7 @@ export const EventsContextProvider = ({
 
 		if (apiState === ApiState.Joined && !client) {
 			setClient(
-				new EventsClient(
-					'ws://' +
-						(process.env.APP_API_URL || window.location.host) +
-						(gameId ? '/game/' + gameId : '') +
-						'/events'
-				)
+				new EventsClient(getWebsocketUrl(gameId ? `game/${gameId}/events` : ''))
 			)
 		}
 	}, [apiState, gameId])
