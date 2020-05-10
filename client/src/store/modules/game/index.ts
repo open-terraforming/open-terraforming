@@ -50,13 +50,18 @@ export default (state = initialState, action: Action): State => {
 		}
 
 		case SET_GAME_PLAYER: {
-			const player = state.state?.players.find(p => p.id === action.playerId)
+			let player =
+				state.state?.players.find(p => p.id === action.playerId) ?? state.player
+
+			if (action.spectating) {
+				player = { ...player, id: -1 }
+			}
 
 			return {
 				...state,
 				spectating: action.spectating,
 				playerId: action.playerId,
-				player: player ?? state.player
+				player
 			}
 		}
 
