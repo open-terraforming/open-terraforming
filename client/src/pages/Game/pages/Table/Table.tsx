@@ -11,6 +11,7 @@ import { GlobalState } from './components/GlobalState/GlobalState'
 import { Header } from './components/Header/Header'
 import { Mouses } from './components/Mouses/Mouses'
 import { Players } from './components/Players/Players'
+import { Spectator } from './components/Spectator/Spectator'
 
 export const Table = () => {
 	const pending = useAppStore(state => state.game.pendingAction)
@@ -65,6 +66,7 @@ export const Table = () => {
 				<GlobalState />
 			</GameContainer>
 			{!spectating && <Controls />}
+			{spectating && <Spectator />}
 		</TableContainer>
 	)
 }

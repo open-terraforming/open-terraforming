@@ -75,6 +75,8 @@ const E = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
+	overflow-y: auto;
+	overflow-x: hidden;
 `
 
 const Container = styled.div`
