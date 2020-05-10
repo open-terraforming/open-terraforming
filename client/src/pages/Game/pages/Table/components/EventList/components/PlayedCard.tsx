@@ -40,7 +40,7 @@ export const PlayedCard = ({ index, length, event, onRemove }: Props) => {
 						? -200
 						: 100 - (length - 1 - index) * 30
 					: window.innerWidth / 2,
-				bottom: spawning ? 0 : '40vh',
+				bottom: spawning ? 0 : '30vh',
 				transform: !spawning ? 'translate(-50%, 0) scale(1)' : undefined
 			}}
 			onClick={() => {
