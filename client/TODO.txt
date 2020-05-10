@@ -14,11 +14,7 @@ BUGS:
         at Receiver.receiverOnMessage (/home/kamen/card-game/server/node_modules/ws/lib/websocket.js:801:20)
 
 TO TEST:
-  * as your first action doesn't work
-  * endingTiles -> when the starting player has something to place, he doesn't get properly picked
-  * -6 MONEY for tile
-  * OCEAN for tile
-  * CARDS -> add heat to production for placing tile
+  -
 
 CHECK CARDS:
   * CHECK -> Great Escarpment Consortium -> didn't ask me
@@ -33,7 +29,7 @@ LOW PRIORITY BUGS:
   * limit player count to "Max players"
 
 TODO:
-  * UI [General] -> better pick dialog (tag counts) -> allow to minimalize card picking dialog
+  * UI [General] -> better pick dialog (tag counts) -> allow to hide card picking dialog
   * UI [General] -> starting player animation
   * UI [Cards] -> tooltips for different elements (card price etc)
   * UI [Cards] -> playEffects are not important for actionable cards once played
@@ -58,7 +54,8 @@ TODO:
 
   * GENERAL -> delay when switching to next player
   * GENERAL -> allow room owner to change game settings
-  * GENERAl -> AQUIFER PUMPING allows to use more ore than required
+  * GENERAL -> AQUIFER PUMPING allows to use more ore than required
+  * GENERAL -> add possibility to limit turn time
 
   * EXPANSIONS -> VENUS
   * EXPANSIONS -> COLONIES
@@ -73,7 +70,6 @@ LOW PRIORITY TODO:
   * GENERAL -> player emoticons
   * GENERAL -> poke button
   * GENERAL -> wait for players to reconnect
-  * GENERAL -> spectator mode
   * UI -> 3D mars
   * UI -> admin panel
   * AI -> standard project scoring is off -> power project is un-resistible!
