@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { GamesList } from './components/GamesList'
 import { faSync } from '@fortawesome/free-solid-svg-icons'
+import { Mars } from '@/components/Mars/Mars'
 
 type Props = {}
 
@@ -59,25 +60,28 @@ export const Main = ({}: Props) => {
 	}, [])
 
 	return (
-		<Modal
-			open={true}
-			allowClose={false}
-			contentStyle={{ minHeight: '4rem' }}
-			header="Open Terraforming"
-			headerStyle={{ justifyContent: 'center', fontSize: '150%' }}
-		>
-			<Loader loaded={!loading} absolute />
-			{!loading && info && (
-				<GamesList allowCreate={info?.servers < info?.maxServers} />
-			)}
-			{error && (
-				<>
-					<Message message={error} type="error" />
-					<Button icon={faSync} onClick={update}>
-						Retry
-					</Button>
-				</>
-			)}
-		</Modal>
+		<>
+			<Mars />
+			<Modal
+				open={true}
+				allowClose={false}
+				contentStyle={{ minHeight: '4rem' }}
+				header="Open Terraforming"
+				headerStyle={{ justifyContent: 'center', fontSize: '150%' }}
+			>
+				<Loader loaded={!loading} absolute />
+				{!loading && info && (
+					<GamesList allowCreate={info?.servers < info?.maxServers} />
+				)}
+				{error && (
+					<>
+						<Message message={error} type="error" />
+						<Button icon={faSync} onClick={update}>
+							Retry
+						</Button>
+					</>
+				)}
+			</Modal>
+		</>
 	)
 }
