@@ -3,7 +3,6 @@ import reset from './reset'
 import mainColors from './mainColors'
 import { rgba, darken } from 'polished'
 import { colors } from '.'
-import { sizes } from './sizes'
 import { media } from './media'
 
 export const GlobalStyle = createGlobalStyle`
@@ -40,6 +39,13 @@ div::-webkit-scrollbar-track {
 
 div::-webkit-scrollbar-thumb {
 	background-color: ${colors.border};
+}
+
+${media.medium} {
+	div::-webkit-scrollbar {
+		width: 0.2rem;
+		height: 0.2rem;
+	}
 }
 
 

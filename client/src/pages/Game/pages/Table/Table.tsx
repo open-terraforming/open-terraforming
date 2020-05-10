@@ -114,6 +114,7 @@ const HiddenPicker = styled.div`
 	justify-content: center;
 	width: 20rem;
 	margin-left: -10rem;
+	z-index: 3;
 
 	transition: opacity 200ms;
 

@@ -81,6 +81,7 @@ const Centered = styled.div`
 	position: absolute;
 	left: 0;
 	bottom: 0;
+	z-index: 2;
 	max-height: 50%;
 `
 

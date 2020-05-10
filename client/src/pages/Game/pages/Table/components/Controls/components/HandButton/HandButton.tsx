@@ -174,15 +174,15 @@ const Count = styled.div`
 const popIn = keyframes`
 	0% {
 		opacity: 0;
-		transform: translate(0, -30rem) scale(0.75);
+		transform: translate(0, -50vh) scale(0.75);
 	}
 	20% {
 		opacity: 1;
-		transform: translate(0, -30rem) scale(0.75);
+		transform: translate(0, -50vh) scale(0.75);
 	}
 	60% {
 		opacity: 1;
-		transform: translate(0, -30rem) scale(0.75);
+		transform: translate(0, -50vh) scale(0.75);
 	}
 	90% {
 		opacity: 0.6;
