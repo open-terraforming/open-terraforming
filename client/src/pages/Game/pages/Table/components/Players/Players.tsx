@@ -43,6 +43,13 @@ const PlayersContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 15rem;
+	overflow: hidden;
+	z-index: 2;
 `
 
 const PlayersList = styled.div`

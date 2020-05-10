@@ -13,6 +13,7 @@ import styled, { keyframes } from 'styled-components'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
 import { PlayerActionType } from '@shared/player-actions'
+import { media } from '@/styles/media'
 
 type Props = {
 	prelude?: boolean
@@ -173,6 +174,10 @@ const GameProgress = styled.div`
 	display: flex;
 	justify-content: center;
 	margin-bottom: 0.5rem;
+
+	${media.medium} {
+		display: none;
+	}
 `
 
 const ProgressItem = styled.div`

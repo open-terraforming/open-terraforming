@@ -99,11 +99,9 @@ const TableContainer = styled.div`
 `
 
 const GameContainer = styled.div`
-	display: flex;
-	flex-grow: 1;
+	position: relative;
 	width: 100%;
-	min-height: 0;
-	max-height: 100%;
+	height: 100%;
 `
 
 const HiddenPicker = styled.div`

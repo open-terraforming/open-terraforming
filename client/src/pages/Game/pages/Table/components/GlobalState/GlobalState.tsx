@@ -77,6 +77,11 @@ const E = styled.div`
 	align-items: flex-end;
 	overflow-y: auto;
 	overflow-x: hidden;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
 `
 
 const Container = styled.div`

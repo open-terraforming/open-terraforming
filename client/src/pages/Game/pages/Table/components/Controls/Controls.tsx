@@ -109,7 +109,7 @@ const Container = styled.div<{ faded: boolean }>`
 	border-top: 0.2rem solid ${colors.border};
 	margin: 0 auto;
 
-	width: 90%;
+	width: 100%;
 	max-width: 70rem;
 
 	background: linear-gradient(
