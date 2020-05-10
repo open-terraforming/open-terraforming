@@ -12,19 +12,12 @@ import { HeaderEventDisplay } from './components/HeaderEventDisplay'
 type Props = {}
 
 export const Header = ({}: Props) => {
-	const interrupted = useAppStore(state => state.game.interrupted)
 	const milestones = useAppStore(state => state.game.state.milestones)
 	const competitions = useAppStore(state => state.game.state.competitions)
 
 	return (
 		<>
-			<E
-				style={{
-					transform: interrupted
-						? 'translate(-50%, -100%)'
-						: 'translate(-50%, 0)'
-				}}
-			>
+			<E>
 				<DialogWrapper dialog={close => <MilestonesModal onClose={close} />}>
 					{open => (
 						<StyledButton onClick={open}>

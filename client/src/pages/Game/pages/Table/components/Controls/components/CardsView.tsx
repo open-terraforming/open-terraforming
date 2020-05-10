@@ -36,7 +36,7 @@ export const CardsView = ({
 		if (!open) {
 			closing.current = setTimeout(() => {
 				setMounted(false)
-			}, 500)
+			}, 100)
 		} else {
 			setMounted(true)
 			setOpening(true)
@@ -71,7 +71,7 @@ export const CardsView = ({
 									? width / 2 +
 									  (display - i - 1 - (display - 1) / 2) * cardWidth
 									: width / 2,
-							transition: 'all 0.5s',
+							transition: open ? 'all 0.5s' : 'all 0.1s',
 							bottom: open && !opening ? 20 : -10,
 							opacity: open && !opening ? 1 : 0
 						}}

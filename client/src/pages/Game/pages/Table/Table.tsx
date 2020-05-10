@@ -1,6 +1,6 @@
 import { useAppStore } from '@/utils/hooks'
 import { PlayerActionType } from '@shared/player-actions'
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { CardPicker } from './components/CardPicker/CardPicker'
 import { CompetitionsModal } from './components/CompetitionsModal/CompetitionsModal'
@@ -12,10 +12,17 @@ import { Header } from './components/Header/Header'
 import { Mouses } from './components/Mouses/Mouses'
 import { Players } from './components/Players/Players'
 import { Spectator } from './components/Spectator/Spectator'
+import { Button } from '@/components'
+import {
+	faWindowMaximize,
+	faExternalLinkAlt,
+	faChevronUp
+} from '@fortawesome/free-solid-svg-icons'
 
 export const Table = () => {
 	const pending = useAppStore(state => state.game.pendingAction)
 	const spectating = useAppStore(state => state.game.spectating)
+	const [pickerHidden, setPickerHidden] = useState(false)
 
 	/*
 	const events = useEvents()
@@ -50,8 +57,12 @@ export const Table = () => {
 			{pending?.type === PlayerActionType.PickCorporation && (
 				<CorporationPicker />
 			)}
-			{pending?.type === PlayerActionType.PickCards && (
-				<CardPicker key={pending.cards.join(',')} />
+			{!pickerHidden && pending?.type === PlayerActionType.PickCards && (
+				<CardPicker
+					key={pending.cards.join(',')}
+					closeable
+					onClose={() => setPickerHidden(true)}
+				/>
 			)}
 			{pending?.type === PlayerActionType.PickPreludes && (
 				<CardPicker key={pending.cards.join(',')} prelude />
@@ -65,6 +76,11 @@ export const Table = () => {
 				<GameMap />
 				<GlobalState />
 			</GameContainer>
+			<HiddenPicker style={{ opacity: pickerHidden ? 1 : 0 }}>
+				<Button icon={faChevronUp} onClick={() => setPickerHidden(false)}>
+					BACK TO CARD PICKER
+				</Button>
+			</HiddenPicker>
 			{!spectating && <Controls />}
 			{spectating && <Spectator />}
 		</TableContainer>
@@ -86,4 +102,20 @@ const GameContainer = styled.div`
 	width: 100%;
 	min-height: 0;
 	max-height: 100%;
+`
+
+const HiddenPicker = styled.div`
+	position: absolute;
+	bottom: 6rem;
+	left: 50%;
+	display: flex;
+	justify-content: center;
+	width: 20rem;
+	margin-left: -10rem;
+
+	transition: opacity 200ms;
+
+	> button {
+		padding: 1rem;
+	}
 `

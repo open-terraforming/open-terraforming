@@ -33,7 +33,10 @@ export const Controls = () => {
 		? CardsLookupApi.get(state?.corporation as string)
 		: undefined
 
-	const pending = pendingAction
+	const pending =
+		pendingAction?.type !== PlayerActionType.PickCards
+			? pendingAction
+			: undefined
 
 	const handlePass = () => {
 		api.send(playerPass(false))

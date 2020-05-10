@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components'
 import { NoCards } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
 import { Tag } from '../CardView/components/Tag'
+import { Checkbox } from '@/components/Checkbox/Checkbox'
 
 export type CardInfo = {
 	card: Card
@@ -136,14 +137,11 @@ export const CardDisplay = <T extends CardInfo>({
 					</Types>
 
 					{evaluate && (
-						<label>
-							<input
-								type="checkbox"
-								checked={playable}
-								onChange={e => setPlayable(e.target.checked)}
-							/>
-							Only playable
-						</label>
+						<Checkbox
+							checked={playable}
+							onChange={v => setPlayable(v)}
+							label="Only playable"
+						/>
 					)}
 
 					<Categories>

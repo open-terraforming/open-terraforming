@@ -16,9 +16,11 @@ import { PlayerActionType } from '@shared/player-actions'
 
 type Props = {
 	prelude?: boolean
+	closeable?: boolean
+	onClose?: () => void
 }
 
-export const CardPicker = ({ prelude }: Props) => {
+export const CardPicker = ({ prelude, closeable, onClose }: Props) => {
 	const api = useApi()
 	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
@@ -67,7 +69,8 @@ export const CardPicker = ({ prelude }: Props) => {
 	return (
 		<Modal
 			open={true}
-			allowClose={false}
+			allowClose={closeable}
+			onClose={onClose}
 			headerStyle={{ justifyContent: 'center' }}
 			header={cardsLimit === 0 ? `Pick your cards` : `Pick ${cardsLimit} cards`}
 			footer={
