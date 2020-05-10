@@ -1933,7 +1933,7 @@ export const baseCards: Card[] = [
 		type: CardType.Event,
 		cost: 15,
 		categories: [CardCategory.Event, CardCategory.Space],
-		playEffects: [placeTile({ type: GridCellContent.Other }), getTopCards(1)]
+		playEffects: [placeOcean(), getTopCards(1)]
 	}),
 	card({
 		code: 'imported_ghg',
