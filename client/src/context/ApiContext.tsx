@@ -1,7 +1,8 @@
 import { Client } from '@/api/api'
+import { getWebsocketUrl } from '@/api/utils'
 import { ApiState, setApiError, setApiState } from '@/store/modules/api'
 import { setClientState } from '@/store/modules/client'
-import { setGamePlayer, setGameState, setGameInfo } from '@/store/modules/game'
+import { setGameInfo, setGamePlayer, setGameState } from '@/store/modules/game'
 import { useAppStore } from '@/utils/hooks'
 import {
 	GameStateValue,
@@ -9,12 +10,10 @@ import {
 	JoinError,
 	joinRequest,
 	MessageType,
-	VERSION,
-	spectateRequest
+	VERSION
 } from '@shared/index'
 import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { getWebsocketUrl } from '@/api/utils'
 
 export const ApiContext = React.createContext<Client | null>(null)
 
@@ -104,7 +103,8 @@ export const ApiContextProvider = ({
 
 						dispatch(
 							setClientState({
-								gameState: info?.state
+								gameState: info?.state,
+								info: info
 							})
 						)
 
@@ -115,10 +115,6 @@ export const ApiContextProvider = ({
 						const session = sessions[sessionKey]
 
 						if (info?.state !== GameStateValue.WaitingForPlayers) {
-							if (info?.spectatorsEnabled) {
-								client.send(spectateRequest())
-							}
-
 							if (session) {
 								client.send(joinRequest(undefined, session))
 							}

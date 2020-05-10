@@ -1,5 +1,6 @@
 import { GameStateValue } from '@shared/game'
 import { NativeMap } from '@/utils/collections'
+import { GameInfo } from '@shared/extra'
 
 type State = Readonly<typeof initialState>
 
@@ -17,7 +18,8 @@ const initialState = {
 	name: '',
 	sessions,
 	id: undefined as number | undefined,
-	gameState: undefined as GameStateValue | undefined
+	gameState: undefined as GameStateValue | undefined,
+	info: undefined as GameInfo | undefined
 }
 
 export default (state = initialState, action: Actions): State => {
