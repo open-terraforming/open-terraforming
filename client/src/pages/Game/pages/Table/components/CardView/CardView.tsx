@@ -155,7 +155,9 @@ export const CardView = ({
 				<Image
 					style={{
 						backgroundImage: `url('${
-							process.env.APP_API_URL ? `http://${process.env.APP_API_URL}` : ''
+							process.env.APP_API_URL
+								? `${location.protocol}//${process.env.APP_API_URL}`
+								: ''
 						}/card/${card.code.replace(/'/g, "\\'")}.jpg')`
 					}}
 				>
