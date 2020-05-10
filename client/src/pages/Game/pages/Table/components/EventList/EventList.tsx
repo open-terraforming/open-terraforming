@@ -78,7 +78,10 @@ const Centered = styled.div`
 	max-width: 13rem;
 	width: 13rem;
 	min-width: 0;
-	position: relative;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	max-height: 50%;
 `
 
 const TopButtons = styled.div`

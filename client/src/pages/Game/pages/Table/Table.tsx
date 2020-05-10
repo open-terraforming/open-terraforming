@@ -14,6 +14,7 @@ import { Header } from './components/Header/Header'
 import { Mouses } from './components/Mouses/Mouses'
 import { Players } from './components/Players/Players'
 import { Spectator } from './components/Spectator/Spectator'
+import { EventList } from './components/EventList/EventList'
 
 export const Table = () => {
 	const pending = useAppStore(state => state.game.pendingAction)
@@ -75,6 +76,7 @@ export const Table = () => {
 			<GameContainer>
 				<Header />
 				<Players />
+				<EventList />
 				<GameMap />
 				<GlobalState />
 			</GameContainer>

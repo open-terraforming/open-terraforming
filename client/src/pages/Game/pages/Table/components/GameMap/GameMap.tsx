@@ -185,7 +185,7 @@ const Inner = styled.div`
 	margin: auto auto;
 
 	padding-top: 4rem;
-	padding-left: 15rem;
+	padding-left: 17rem;
 	padding-right: 220px;
 `
 
