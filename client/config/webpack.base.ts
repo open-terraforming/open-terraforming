@@ -16,6 +16,7 @@ import CircularDependencyPlugin from 'circular-dependency-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import PreloadWebpackPlugin from 'preload-webpack-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require(path.join(__dirname, '..', 'package.json'))
@@ -187,7 +188,11 @@ const config = (env: ENV): webpack.Configuration => {
 				exclude: /node_modules/
 			}),
 
-			...(bundleAnalysis ? [new BundleAnalyzerPlugin()] : [])
+			...(bundleAnalysis ? [new BundleAnalyzerPlugin()] : []),
+
+			...(env === 'production'
+				? [new CopyWebpackPlugin([srcPath('../static')])]
+				: [])
 		],
 
 		resolve: {
