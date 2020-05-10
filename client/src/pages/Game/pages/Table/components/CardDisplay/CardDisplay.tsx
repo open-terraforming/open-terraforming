@@ -7,6 +7,7 @@ import { NoCards } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
 import { Tag } from '../CardView/components/Tag'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
+import { media } from '@/styles/media'
 
 export type CardInfo = {
 	card: Card
@@ -203,6 +204,11 @@ const CardsContainer = styled.div<{ playableOnly: boolean }>`
 	min-width: 0;
 	padding: 1.5rem 1rem;
 	min-height: 322px;
+
+	${media.medium} {
+		min-height: 100px;
+	}
+
 	flex: 1;
 
 	${props =>

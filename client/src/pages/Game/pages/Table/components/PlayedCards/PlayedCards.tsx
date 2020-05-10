@@ -64,7 +64,7 @@ export const PlayedCards = ({ onClose, defaultType }: Props) => {
 		<Modal
 			open
 			allowClose
-			contentStyle={{ width: '90%' }}
+			contentStyle={{ minWidth: '90%' }}
 			onClose={onClose}
 			header={'Cards on table'}
 		>

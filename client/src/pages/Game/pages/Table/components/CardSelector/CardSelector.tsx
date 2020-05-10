@@ -44,7 +44,6 @@ export const CardSelector = ({
 	return (
 		<Modal
 			open={true}
-			contentStyle={{ maxWidth: '90%' }}
 			allowClose={false}
 			header={title}
 			footer={

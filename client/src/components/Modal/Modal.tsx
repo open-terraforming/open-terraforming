@@ -7,6 +7,7 @@ import React, { useCallback, useState } from 'react'
 import ReactDOM from 'react-dom'
 import styled, { css, keyframes, Keyframes } from 'styled-components'
 import { Body, Footer, Header } from './styles'
+import { media } from '@/styles/media'
 
 type RenderCallback = (
 	close: () => void,
@@ -191,8 +192,6 @@ const background = rgba(colors.background, 0.95)
 
 const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	position: relative;
-	min-width: 200px;
-	max-width: 80%;
 	margin: auto;
 	border: 2px solid ${colors.border};
 	padding: 0px;
@@ -211,10 +210,17 @@ const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	);
 	background-size: 40px 40px;
 
+	min-width: 200px;
+	max-width: 80%;
 	max-height: 80%;
 	overflow: auto;
 	display: flex;
 	flex-direction: column;
+
+	${media.medium} {
+		max-width: 100%;
+		max-height: 100%;
+	}
 
 	${props =>
 		props.closing

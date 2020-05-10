@@ -47,7 +47,7 @@ export const CompetitionsModal = ({ onClose, freePick }: Props) => {
 			open={true}
 			header="Competitions"
 			onClose={onClose}
-			contentStyle={{ width: '500px' }}
+			contentStyle={{ minWidth: '500px' }}
 		>
 			<Info>
 				<Flexed>

@@ -39,7 +39,7 @@ export const Lobby = () => {
 			<Modal
 				open={true}
 				allowClose={false}
-				contentStyle={{ width: '35rem' }}
+				contentStyle={{ minWidth: '35rem' }}
 				header={info?.name}
 				footer={
 					<>

@@ -135,7 +135,7 @@ const Container = styled.div<{ diffAnim: boolean }>`
 	flex: 1;
 
 	z-index: 3;
-	width: 3.5rem;
+	/*width: 3.5rem;*/
 	transition: background-color 0.2s;
 	height: 100%;
 	display: flex;

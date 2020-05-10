@@ -45,7 +45,7 @@ export const SellCardsModal = ({ onClose }: Props) => {
 
 	return (
 		<Modal
-			contentStyle={{ width: '80%' }}
+			contentStyle={{ minWidth: '80%' }}
 			open={true}
 			onClose={onClose}
 			footer={

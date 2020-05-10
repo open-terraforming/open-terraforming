@@ -43,63 +43,61 @@ export const Controls = () => {
 	}
 
 	return (
-		<Flex justify="center">
-			<Container faded={!!pending}>
-				{pending?.type === PlayerActionType.PlayCard && (
-					<CardBuy
-						buying={false}
-						key={pending.cardIndex}
-						index={pending.cardIndex}
-						onClose={() => false}
-					/>
-				)}
+		<Container faded={!!pending}>
+			{pending?.type === PlayerActionType.PlayCard && (
+				<CardBuy
+					buying={false}
+					key={pending.cardIndex}
+					index={pending.cardIndex}
+					onClose={() => false}
+				/>
+			)}
 
-				{playingCardIndex !== undefined && (
-					<CardBuy
-						buying={false}
-						index={playingCardIndex}
-						onClose={() =>
-							dispatch(
-								setTableState({
-									playingCardIndex: undefined
-								})
-							)
-						}
-					/>
-				)}
+			{playingCardIndex !== undefined && (
+				<CardBuy
+					buying={false}
+					index={playingCardIndex}
+					onClose={() =>
+						dispatch(
+							setTableState({
+								playingCardIndex: undefined
+							})
+						)
+					}
+				/>
+			)}
 
-				{buyingCardIndex !== undefined && (
-					<CardBuy
-						buying={true}
-						index={buyingCardIndex}
-						onClose={() =>
-							dispatch(
-								setTableState({
-									buyingCardIndex: undefined
-								})
-							)
-						}
-					/>
-				)}
+			{buyingCardIndex !== undefined && (
+				<CardBuy
+					buying={true}
+					index={buyingCardIndex}
+					onClose={() =>
+						dispatch(
+							setTableState({
+								buyingCardIndex: undefined
+							})
+						)
+					}
+				/>
+			)}
 
-				<Flexed>
-					<Resources state={state} />
-				</Flexed>
-				<HandButton playing={isPlaying} />
-				<Flexed>
-					<TableButtons />
+			<Flexed>
+				<Resources state={state} />
+			</Flexed>
+			<HandButton playing={isPlaying} />
+			<Flexed>
+				<TableButtons />
 
-					<PassButton
-						disabled={!isPlaying}
-						onClick={handlePass}
-						icon={faArrowRight}
-					>
-						Pass
-					</PassButton>
-				</Flexed>
-				{pending && <PendingDisplay pending={pending} />}
-			</Container>
-		</Flex>
+				<PassButton
+					disabled={!isPlaying}
+					onClick={handlePass}
+					icon={faArrowRight}
+				>
+					Pass
+				</PassButton>
+			</Flexed>
+			{pending && <PendingDisplay pending={pending} />}
+		</Container>
 	)
 }
 
@@ -109,6 +107,11 @@ const Container = styled.div<{ faded: boolean }>`
 	justify-content: center;
 	background-color: ${colors.background};
 	border-top: 0.2rem solid ${colors.border};
+	margin: 0 auto;
+
+	width: 90%;
+	max-width: 70rem;
+
 	background: linear-gradient(
 		45deg,
 		${darken(0.01, colors.background)} 25%,
@@ -131,7 +134,9 @@ const Container = styled.div<{ faded: boolean }>`
 
 const Flexed = styled.div`
 	display: flex;
-	width: 33rem;
+	flex-basis: 0;
+	flex-grow: 1;
+	flex-shrink: 1;
 `
 
 const PassButton = styled(Button)`

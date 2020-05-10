@@ -46,7 +46,7 @@ export const MilestonesModal = ({ onClose }: Props) => {
 			open={true}
 			header="Milestones"
 			onClose={onClose}
-			contentStyle={{ width: '500px' }}
+			contentStyle={{ minWidth: '500px' }}
 		>
 			<Info>
 				<Flexed>

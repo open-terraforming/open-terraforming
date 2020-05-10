@@ -58,7 +58,7 @@ export const StandardProjectModal = ({ onClose }: Props) => {
 	return (
 		<>
 			<Modal
-				contentStyle={{ width: '600px' }}
+				contentStyle={{ minWidth: '600px' }}
 				open={true}
 				header={'Standard projects'}
 				onClose={onClose}

@@ -64,7 +64,7 @@ export const Hand = ({
 	return (
 		<Modal
 			open={true}
-			contentStyle={{ width: '80%', maxWidth: '80%' }}
+			contentStyle={{ minWidth: '80%' }}
 			onClose={onClose}
 			header={'Cards in your hand'}
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}

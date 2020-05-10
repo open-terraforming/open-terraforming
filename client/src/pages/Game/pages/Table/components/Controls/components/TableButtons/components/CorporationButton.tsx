@@ -4,6 +4,7 @@ import { colors } from '@/styles'
 import { usePlayerState } from '@/utils/hooks'
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { CardsView } from '../../CardsView'
+import { media } from '@/styles/media'
 
 type Props = {
 	onClick: (defaultType?: CardType) => void
@@ -60,4 +61,8 @@ const Container = styled.div`
 
 	width: 6rem;
 	text-align: center;
+
+	${media.medium} {
+		display: none;
+	}
 `

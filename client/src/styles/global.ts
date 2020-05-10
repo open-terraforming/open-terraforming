@@ -3,6 +3,8 @@ import reset from './reset'
 import mainColors from './mainColors'
 import { rgba, darken } from 'polished'
 import { colors } from '.'
+import { sizes } from './sizes'
+import { media } from './media'
 
 export const GlobalStyle = createGlobalStyle`
 ${reset} 
@@ -93,6 +95,12 @@ button, a {
 .fade-exit-active {
 	opacity: 0;
 	transition: opacity 100ms;
+}
+
+${media.medium} {
+  html, body, button {
+    font-size: 85%;
+  }
 }
 
 `
