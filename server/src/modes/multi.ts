@@ -1,9 +1,12 @@
+import { GameConfig } from '@/game/game'
 import { corsMiddleware } from '@/server/cors'
 import { ServerOptions } from '@/server/types'
+import { tryLoadOngoing } from '@/storage'
 import { Logger } from '@/utils/log'
 import { ServerInfo } from '@shared/extra'
+import { Maps } from '@shared/maps'
 import { GameModes } from '@shared/modes'
-import { GameModeType } from '@shared/modes/types'
+import { NewGameRequest } from '@shared/requests'
 import bodyParser from 'body-parser'
 import express, { Request, Response } from 'express'
 import { body, validationResult } from 'express-validator'
@@ -11,10 +14,6 @@ import { createServer, IncomingMessage } from 'http'
 import { Socket } from 'net'
 import { join } from 'path'
 import { GameServer } from '../server/game-server'
-import { tryLoadOngoing } from '@/storage'
-import { GameConfig } from '@/game/game'
-import { Maps } from '@shared/maps'
-import { MapType } from '@shared/map'
 
 export const multiApp = (config: ServerOptions) => {
 	const logger = new Logger('Master')
@@ -120,6 +119,9 @@ export const multiApp = (config: ServerOptions) => {
 			body('public')
 				.isBoolean()
 				.optional(true),
+			body('spectatorsAllowed')
+				.isBoolean()
+				.optional(true),
 			body('map')
 				.notEmpty()
 				.isInt()
@@ -135,11 +137,13 @@ export const multiApp = (config: ServerOptions) => {
 				return res.status(422).json({ errors: errors.array() })
 			}
 
-			const name = req.body.name
-			const mode = GameModes[req.body.mode as GameModeType]
-			const map = req.body.map as MapType
-			const bots = req.body.bots
-			const isPublic = !!req.body.public
+			const request = req.body as NewGameRequest
+			const name = request.name as string
+			const mode = GameModes[request.mode]
+			const map = request.map
+			const bots = parseInt((request.bots ?? '0').toString(), 10)
+			const spectatorsAllowed = !!request.spectatorsAllowed
+			const isPublic = !!request.public
 
 			if (!Maps[map]) {
 				throw new Error(`Unknown map ${map}`)
@@ -152,9 +156,10 @@ export const multiApp = (config: ServerOptions) => {
 			const gameServer = createGameServer({
 				name,
 				mode: mode.type,
-				bots,
+				bots: isNaN(bots) ? 0 : bots,
 				public: isPublic,
-				map: map
+				map: map,
+				spectatorsAllowed
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)

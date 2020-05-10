@@ -26,6 +26,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [mode, setMode] = useState(GameModeType.Standard)
 	const [map, setMap] = useState(MapType.Standard)
 	const [isPublic, setPublic] = useState(true)
+	const [spectators, setSpectators] = useState(true)
 	const [bots, setBots] = useState(0)
 
 	const [loading, setLoading] = useState(false)
@@ -50,7 +51,14 @@ export const NewGameModal = ({ onClose }: Props) => {
 		setLoading(true)
 
 		try {
-			const res = await createGame(name, mode, map, bots, isPublic)
+			const res = await createGame({
+				name,
+				mode,
+				map,
+				bots,
+				public: isPublic,
+				spectatorsAllowed: spectators
+			})
 
 			if (res.id) {
 				dispatch(
@@ -140,7 +148,18 @@ export const NewGameModal = ({ onClose }: Props) => {
 							checked={isPublic}
 							onChange={e => setPublic(e.target.checked)}
 						/>{' '}
-						Allow players to join using server browser
+						Public (Allow players to join using server browser)
+					</label>
+				</Field>
+
+				<Field>
+					<label>
+						<input
+							type="checkbox"
+							checked={spectators}
+							onChange={e => setSpectators(e.target.checked)}
+						/>{' '}
+						Allow spectators
 					</label>
 				</Field>
 
