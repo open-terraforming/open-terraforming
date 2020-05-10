@@ -9,7 +9,8 @@ import {
 	JoinError,
 	joinRequest,
 	MessageType,
-	VERSION
+	VERSION,
+	spectateRequest
 } from '@shared/index'
 import React, { useContext, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -113,8 +114,14 @@ export const ApiContextProvider = ({
 
 						const session = sessions[sessionKey]
 
-						if (info?.state !== GameStateValue.WaitingForPlayers && session) {
-							client.send(joinRequest(undefined, session))
+						if (info?.state !== GameStateValue.WaitingForPlayers) {
+							if (info?.spectatorsEnabled) {
+								client.send(spectateRequest())
+							}
+
+							if (session) {
+								client.send(joinRequest(undefined, session))
+							}
 						}
 					}
 
@@ -143,7 +150,7 @@ export const ApiContextProvider = ({
 							})
 						)
 					} else {
-						dispatch(setGamePlayer(id as number))
+						dispatch(setGamePlayer(id as number, false))
 
 						dispatch(
 							setClientState({
@@ -154,6 +161,28 @@ export const ApiContextProvider = ({
 								}
 							})
 						)
+
+						dispatch(
+							setApiState({
+								state: ApiState.Joined,
+								error: undefined
+							})
+						)
+					}
+
+					break
+				}
+
+				case MessageType.SpectateResponse: {
+					if (m.data.error) {
+						dispatch(
+							setApiState({
+								state: ApiState.Connected,
+								error: m.data.error
+							})
+						)
+					} else {
+						dispatch(setGamePlayer(-1, true))
 
 						dispatch(
 							setApiState({

@@ -18,13 +18,17 @@ const initialState = {
 	playerMap: {} as Record<number, PlayerState>,
 	playing: false,
 	interrupted: false,
+	spectating: false,
 	events: [] as GameEvent[]
 }
 
 export default (state = initialState, action: Action): State => {
 	switch (action.type) {
 		case SET_GAME_STATE: {
-			const player = action.state.players.find(p => p.id === state.playerId)
+			const player = state.spectating
+				? undefined
+				: action.state.players.find(p => p.id === state.playerId)
+
 			const events = getEvents(state.state, action.state)
 			const pendingAction = player && pendingActions(player)[0]
 
@@ -50,6 +54,7 @@ export default (state = initialState, action: Action): State => {
 
 			return {
 				...state,
+				spectating: action.spectating,
 				playerId: action.playerId,
 				player: player ?? state.player
 			}
@@ -77,10 +82,11 @@ export const setGameState = (state: GameState) =>
 		state
 	} as const)
 
-export const setGamePlayer = (playerId: number) =>
+export const setGamePlayer = (playerId: number, spectating: boolean) =>
 	({
 		type: SET_GAME_PLAYER,
-		playerId
+		playerId,
+		spectating
 	} as const)
 
 export const setGameInfo = (info: GameInfo) =>

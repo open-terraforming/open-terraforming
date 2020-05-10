@@ -11,6 +11,7 @@ export interface GameInfo {
 	maxPlayers: number
 	prelude: boolean
 	map: MapType
+	spectatorsEnabled: boolean
 }
 
 export interface ServerInfo {

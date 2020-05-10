@@ -52,6 +52,5 @@ export const EventsContextProvider = ({
 }
 
 export const useEvents = () => {
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	return useContext(EventsContext)!
+	return useContext(EventsContext)
 }

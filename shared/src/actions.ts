@@ -28,6 +28,10 @@ export enum JoinError {
 	InvalidSession = 'InvalidSession'
 }
 
+export enum SpectateError {
+	NotAllowed = 'NotAllowed'
+}
+
 export enum MessageType {
 	JoinRequest = 1,
 	JoinResponse,
@@ -53,7 +57,9 @@ export enum MessageType {
 	ClaimTile,
 	StartGame,
 	KickPlayer,
-	Kicked
+	Kicked,
+	SpectateRequest,
+	SpectateResponse
 }
 
 export const handshakeRequest = (version: string) =>
@@ -229,6 +235,19 @@ export const kicked = () =>
 		type: MessageType.Kicked
 	} as const)
 
+export const spectateRequest = () =>
+	({
+		type: MessageType.SpectateRequest
+	} as const)
+
+export const spectateResponse = (error?: SpectateError) =>
+	({
+		type: MessageType.SpectateResponse,
+		data: {
+			error
+		}
+	} as const)
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -255,3 +274,5 @@ export type GameMessage =
 	| ReturnType<typeof startGame>
 	| ReturnType<typeof kickPlayer>
 	| ReturnType<typeof kicked>
+	| ReturnType<typeof spectateRequest>
+	| ReturnType<typeof spectateResponse>

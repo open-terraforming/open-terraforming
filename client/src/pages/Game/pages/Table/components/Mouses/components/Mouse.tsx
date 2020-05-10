@@ -43,10 +43,10 @@ export const Mouse = ({ player }: Props) => {
 			}
 		}
 
-		events.onEvent.on(handler)
+		events?.onEvent.on(handler)
 
 		return () => {
-			events.onEvent.off(handler)
+			events?.onEvent.off(handler)
 		}
 	}, [player.id, onMove, events])
 

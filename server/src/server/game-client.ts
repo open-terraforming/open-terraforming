@@ -15,7 +15,9 @@ import {
 	PlayerStateValue,
 	serverMessage,
 	VERSION,
-	kicked
+	kicked,
+	spectateResponse,
+	SpectateError
 } from '@shared/index'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
@@ -43,6 +45,8 @@ export class Client {
 	lastState?: GameState
 
 	player?: Player
+
+	spectator = false
 
 	onDisconnected = new MyEvent()
 
@@ -136,6 +140,18 @@ export class Client {
 						}
 
 						return handshakeResponse(undefined, this.game.info())
+					}
+
+					case MessageType.SpectateRequest: {
+						if (!this.game.config.spectatorsAllowed) {
+							return spectateResponse(SpectateError.NotAllowed)
+						}
+
+						this.state = ClientState.Connected
+						this.spectator = true
+						this.sendUpdate(this.game.state)
+
+						return spectateResponse()
 					}
 
 					case MessageType.JoinRequest: {
@@ -292,7 +308,7 @@ export class Client {
 				}
 			}
 		} catch (e) {
-			console.error(e)
+			this.logger.error(e)
 
 			return serverMessage(e.toString())
 		}
@@ -314,10 +330,10 @@ export class Client {
 			)
 		}
 
-		if (this.player) {
+		if (this.player || this.spectator) {
 			this.send(
 				gameStateUpdate(
-					obfuscateGame(game, this.player.state, this.cardDictionary)
+					obfuscateGame(game, this.player?.id ?? -1, this.cardDictionary)
 				)
 			)
 		}

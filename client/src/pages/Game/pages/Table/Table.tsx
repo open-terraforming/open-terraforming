@@ -14,6 +14,7 @@ import { Players } from './components/Players/Players'
 
 export const Table = () => {
 	const pending = useAppStore(state => state.game.pendingAction)
+	const spectating = useAppStore(state => state.game.spectating)
 
 	/*
 	const events = useEvents()
@@ -63,7 +64,7 @@ export const Table = () => {
 				<GameMap />
 				<GlobalState />
 			</GameContainer>
-			<Controls />
+			{!spectating && <Controls />}
 		</TableContainer>
 	)
 }

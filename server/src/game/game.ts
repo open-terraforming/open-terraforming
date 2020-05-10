@@ -44,6 +44,7 @@ export interface GameConfig {
 	map: MapType
 	name: string
 	public: boolean
+	spectatorsAllowed: boolean
 }
 export class Game {
 	get logger() {
@@ -74,6 +75,7 @@ export class Game {
 			map: MapType.Standard,
 			name: 'Standard game',
 			public: false,
+			spectatorsAllowed: true,
 			...config
 		}
 
@@ -434,7 +436,8 @@ export class Game {
 			players: this.players.length,
 			maxPlayers: this.state.maxPlayers,
 			prelude: this.state.prelude,
-			map: this.state.map.code
+			map: this.state.map.code,
+			spectatorsEnabled: this.config.spectatorsAllowed
 		}
 	}
 }
