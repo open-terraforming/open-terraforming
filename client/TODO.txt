@@ -1,5 +1,6 @@
 BUGS:
   * milestone/awards notification has wrong text on different boards (??)
+  * fish loosing animals? +2 animals card, imported hydrogen adds animals?
   * error: (offering wrong cards, or wrong card index?)
     Cihlicka Played ants with [[[15,9]],[]]
     Error: Water Import From Europa doesn't accept microbes
