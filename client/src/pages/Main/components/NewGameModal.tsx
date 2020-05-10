@@ -14,6 +14,7 @@ import { NumberInput } from '@/components/NumberInput/NumberInput'
 import { Flex } from '@/components/Flex/Flex'
 import { MapType } from '@shared/map'
 import { MapsList } from '@shared/maps'
+import { Checkbox } from '@/components/Checkbox/Checkbox'
 
 type Props = {
 	onClose: () => void
@@ -142,25 +143,17 @@ export const NewGameModal = ({ onClose }: Props) => {
 				</Flex>
 
 				<Field>
-					<label>
-						<input
-							type="checkbox"
-							checked={isPublic}
-							onChange={e => setPublic(e.target.checked)}
-						/>{' '}
-						Public (Allow players to join using server browser)
-					</label>
-				</Field>
+					<Checkbox
+						checked={isPublic}
+						onChange={v => setPublic(v)}
+						label="Public (Allow players to join using server browser)"
+					/>
 
-				<Field>
-					<label>
-						<input
-							type="checkbox"
-							checked={spectators}
-							onChange={e => setSpectators(e.target.checked)}
-						/>{' '}
-						Allow spectators
-					</label>
+					<Checkbox
+						checked={spectators}
+						onChange={v => setSpectators(v)}
+						label="Allow spectators"
+					/>
 				</Field>
 
 				<Field>
