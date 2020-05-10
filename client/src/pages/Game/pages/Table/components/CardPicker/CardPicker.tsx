@@ -125,7 +125,7 @@ export const CardPicker = ({ prelude }: Props) => {
 							<PopInContainer
 								key={i}
 								style={{
-									animationDelay: `${i * 350}ms`
+									animationDelay: `${i * 200}ms`
 								}}
 							>
 								<CardView
