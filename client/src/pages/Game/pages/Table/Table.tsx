@@ -1,6 +1,8 @@
+import { Button } from '@/components'
 import { useAppStore } from '@/utils/hooks'
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { PlayerActionType } from '@shared/player-actions'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { CardPicker } from './components/CardPicker/CardPicker'
 import { CompetitionsModal } from './components/CompetitionsModal/CompetitionsModal'
@@ -12,12 +14,6 @@ import { Header } from './components/Header/Header'
 import { Mouses } from './components/Mouses/Mouses'
 import { Players } from './components/Players/Players'
 import { Spectator } from './components/Spectator/Spectator'
-import { Button } from '@/components'
-import {
-	faWindowMaximize,
-	faExternalLinkAlt,
-	faChevronUp
-} from '@fortawesome/free-solid-svg-icons'
 
 export const Table = () => {
 	const pending = useAppStore(state => state.game.pendingAction)
@@ -41,6 +37,12 @@ export const Table = () => {
 		lastEvent.current = mouseMoveEvent(pos[0], pos[1])
 	})
 	*/
+
+	useEffect(() => {
+		if (pending?.type !== PlayerActionType.PickCards) {
+			setPickerHidden(false)
+		}
+	}, [pending])
 
 	useEffect(() => {
 		if (

@@ -1,8 +1,7 @@
 import { Card } from '@/icons/card'
 import {
-	faAngleRight,
-	faThermometerHalf,
-	faArrowRight
+	faArrowRight,
+	faThermometerHalf
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardSymbol, SymbolType } from '@shared/cards'
@@ -96,6 +95,7 @@ export const Symbols = ({ symbols, className }: Props) => {
 							s.symbol === SymbolType.LessOrEqual ||
 							s.symbol === SymbolType.MoreOrEqual ||
 							s.symbol === SymbolType.Plus ||
+							s.symbol === SymbolType.Colon ||
 							s.symbol === SymbolType.Minus
 						}
 					>
