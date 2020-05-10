@@ -9,6 +9,7 @@ import { EventsModal } from './components/EventsModal'
 import { EventSounds } from './components/EventSounds'
 import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
+import { faWindowMaximize, faExpand } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {}
 
@@ -38,6 +39,14 @@ export const EventList = ({}: Props) => {
 		}
 	}, [player?.state])
 
+	const handleFullscreen = () => {
+		if (document.fullscreen) {
+			document.exitFullscreen()
+		} else {
+			document.documentElement.requestFullscreen()
+		}
+	}
+
 	return (
 		<Centered>
 			{displayModal && (
@@ -48,7 +57,10 @@ export const EventList = ({}: Props) => {
 			<LastEventsDisplay events={events} />
 			<PopEventDisplay events={events} />
 			<Portal>
-				<EventLog onClick={() => setDisplayModal(true)}>Event log</EventLog>
+				<TopButtons>
+					<Button onClick={handleFullscreen} icon={faExpand} />
+					<EventLog onClick={() => setDisplayModal(true)}>Event log</EventLog>
+				</TopButtons>
 			</Portal>
 		</Centered>
 	)
@@ -69,8 +81,13 @@ const Centered = styled.div`
 	position: relative;
 `
 
-const EventLog = styled(Button)`
+const TopButtons = styled.div`
 	position: absolute;
-	top: 0;
-	left: 0;
+	top: 0.2rem;
+	left: 0.2rem;
+	display: flex;
+`
+
+const EventLog = styled(Button)`
+	margin-left: 0.2rem;
 `

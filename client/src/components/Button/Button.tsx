@@ -154,7 +154,7 @@ const Icon = styled.span<{
 	${props =>
 		!props.hasContent &&
 		css`
-			margin-right: 0;
+			margin: 0;
 		`}
 `
 
