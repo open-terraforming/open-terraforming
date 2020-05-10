@@ -1,7 +1,7 @@
 {
-  "name": "@openter/client",
-  "version": "0.7.20",
-  "description": "Card game client",
+  "name": "@open-terraforming/client",
+  "version": "1.0.0",
+  "description": "Open terraforming game client",
   "main": "src/index.ts",
   "scripts": {
     "lint": "eslint \"src/\" --ext .ts,.tsx",

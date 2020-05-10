@@ -1,10 +1,9 @@
 {
-  "name": "@openter/shared",
+  "name": "@open-terraforming/shared",
   "version": "1.0.0",
-  "description": "",
+  "description": "Open Terraforming shared library",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node -r tsconfig-paths/register src/index.ts",
     "test": "jest"
   },
   "author": "Kamen",

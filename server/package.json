@@ -1,7 +1,7 @@
 {
-  "name": "@openter/server",
+  "name": "@open-terraforming/server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Open Terraforming server",
   "main": "index.js",
   "scripts": {
     "start": "node dist/server/src/index.js",
