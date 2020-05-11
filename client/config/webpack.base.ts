@@ -40,7 +40,16 @@ const config = (env: ENV): webpack.Configuration => {
 		plugins: [
 			...(env === 'development' ? ['react-hot-loader/babel'] : []),
 			'@babel/transform-runtime',
-			'babel-plugin-styled-components'
+			'babel-plugin-styled-components',
+			[
+				'transform-imports',
+				{
+					'@fortawesome/free-solid-svg-icons': {
+						transform: '@fortawesome/free-solid-svg-icons/${member}',
+						skipDefaultConversion: true
+					}
+				}
+			]
 		],
 		cacheDirectory: true
 	}

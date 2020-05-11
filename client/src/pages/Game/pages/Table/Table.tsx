@@ -16,7 +16,7 @@ import { Players } from './components/Players/Players'
 import { Spectator } from './components/Spectator/Spectator'
 import { EventList } from './components/EventList/EventList'
 
-export const Table = () => {
+const Table = () => {
 	const pending = useAppStore(state => state.game.pendingAction)
 	const spectating = useAppStore(state => state.game.spectating)
 	const [pickerHidden, setPickerHidden] = useState(false)
@@ -122,3 +122,5 @@ const HiddenPicker = styled.div`
 		padding: 1rem;
 	}
 `
+
+export default Table

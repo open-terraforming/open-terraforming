@@ -15,7 +15,7 @@ import { Modal } from '@/components/Modal/Modal'
 import { Flex } from '@/components/Flex/Flex'
 import { Info } from './components/Info'
 
-export const Lobby = () => {
+const Lobby = () => {
 	const api = useApi()
 	const players = useAppStore(state => state.game.state?.players)
 	const player = useAppStore(state => state.game.player)
@@ -87,3 +87,5 @@ const Players = styled.div`
 const Waiting = styled.div`
 	margin-right: auto;
 `
+
+export default Lobby

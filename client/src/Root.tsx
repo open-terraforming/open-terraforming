@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react'
-import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import { App } from './pages/App/App'
 import { buildStore } from './store'
@@ -17,9 +16,7 @@ const RootComponent = () => {
 			<ApiContextProvider>
 				<EventsContextProvider>
 					<ThemeProvider theme={styles}>
-						<BrowserRouter>
-							<App />
-						</BrowserRouter>
+						<App />
 					</ThemeProvider>
 				</EventsContextProvider>
 			</ApiContextProvider>
