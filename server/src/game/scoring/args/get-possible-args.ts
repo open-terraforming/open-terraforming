@@ -99,15 +99,13 @@ const getPossibleOptions = (
 						cards: shuffle(
 							other.usedCards
 								.filter(
-									(card, cardIndex) =>
+									card =>
 										!a.cardConditions.find(
 											c =>
 												!c.evaluate({
 													card,
-													cardIndex,
 													game,
-													player: other,
-													playerId: other.id
+													player: other
 												})
 										)
 								)
@@ -141,10 +139,8 @@ const getPossibleOptions = (
 								c =>
 									!c.evaluate({
 										card,
-										cardIndex: card.index,
 										game,
-										player,
-										playerId: player.id
+										player
 									})
 							)
 					)

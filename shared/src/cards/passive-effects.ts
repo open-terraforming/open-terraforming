@@ -86,9 +86,9 @@ export const resourcePerCardPlayed = (
 			{ symbol: SymbolType.Colon },
 			{ resource: res, count: amount }
 		],
-		onCardPlayed: ({ player, playerId }, card, _cardIndex, playedBy) => {
+		onCardPlayed: ({ player }, card, _cardIndex, playedBy) => {
 			if (
-				playedBy.id === playerId &&
+				playedBy.id === player.id &&
 				categories.every(c => card.categories.includes(c))
 			) {
 				player[res] += amount
@@ -110,14 +110,9 @@ export const cardResourcePerCardPlayed = (
 			{ symbol: SymbolType.Colon },
 			{ cardResource: res, count: amount }
 		],
-		onCardPlayed: (
-			{ playerId, card: cardState },
-			card,
-			_cardIndex,
-			playedBy
-		) => {
+		onCardPlayed: ({ card: cardState, player }, card, _cardIndex, playedBy) => {
 			if (
-				playedBy.id === playerId &&
+				playedBy.id === player.id &&
 				categories.find(c => card.categories.includes(c))
 			) {
 				cardState[res] += amount
@@ -137,8 +132,8 @@ export const cardResourcePerTilePlaced = (
 			{ symbol: SymbolType.Colon },
 			{ cardResource: res, count: amount }
 		],
-		onTilePlaced: ({ playerId, card }, cell, playedBy) => {
-			if (playedBy.id === playerId && cell.content === tile) {
+		onTilePlaced: ({ player, card }, cell, playedBy) => {
+			if (playedBy.id === player.id && cell.content === tile) {
 				card[res] += amount
 			}
 		}
@@ -171,16 +166,16 @@ export const cardExchangeEffect = (tag: CardCategory) =>
 	passiveEffect({
 		description: `Action is triggered when you play a ${CardCategory[tag]} card`,
 		onCardPlayed: (
-			{ player, playerId, cardIndex },
+			{ player, card },
 			playedCard,
 			_playedCardIndex,
 			playedBy
 		) => {
 			if (
 				CardsLookupApi.get(playedCard.code).categories.includes(tag) &&
-				playedBy.id === playerId
+				playedBy.id === player.id
 			) {
-				pushPendingAction(player, playCardAction(cardIndex))
+				pushPendingAction(player, playCardAction(card.index))
 			}
 		}
 	})
@@ -191,17 +186,17 @@ export const playWhenCard = (tags: CardCategory[]) =>
 			.map(t => CardCategory[t])
 			.join(' or ')} card`,
 		onCardPlayed: (
-			{ playerId, player, card: cardState, cardIndex },
+			{ player, card: cardState },
 			playedCard,
 			playedCardIndex,
 			playedBy
 		) => {
 			if (
-				playerId === playedBy.id &&
+				player.id === playedBy.id &&
 				tags.find(t => playedCard.categories.includes(t))
 			) {
 				cardState.triggeredByCard = playedCardIndex
-				pushPendingAction(player, playCardAction(cardIndex))
+				pushPendingAction(player, playCardAction(cardState.index))
 			}
 		}
 	})
@@ -319,7 +314,7 @@ export const changeResourceFromNeighbor = (res: Resource, amount: number) => ({
 				: 'You may give {0} to one of the owners of adjacent tiles',
 			withUnits(res, Math.abs(amount))
 		),
-		onTilePlaced: ({ game, player, card, cardIndex }, cell, placedBy) => {
+		onTilePlaced: ({ game, player, card }, cell, placedBy) => {
 			if (card.data || placedBy.id !== player.id) {
 				return
 			}
@@ -336,7 +331,7 @@ export const changeResourceFromNeighbor = (res: Resource, amount: number) => ({
 				return acc
 			}, [] as number[])
 
-			pushPendingAction(player, playCardAction(cardIndex))
+			pushPendingAction(player, playCardAction(card.index))
 		}
 	})
 })

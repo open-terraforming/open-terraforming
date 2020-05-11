@@ -212,16 +212,14 @@ export class Game {
 		this.state.players.forEach(player => {
 			player.usedCards
 				.map(c => [c, CardsLookupApi.get(c.code)] as const)
-				.forEach(([s, c], cardIndex) => {
+				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
 						e =>
 							e.onGenerationEnd &&
 							e.onGenerationEnd({
 								card: s,
-								cardIndex,
 								game: this.state,
-								player: player,
-								playerId: player.id
+								player: player
 							})
 					)
 				})
@@ -232,17 +230,15 @@ export class Game {
 		this.state.players.forEach(player => {
 			player.usedCards
 				.map(c => [c, CardsLookupApi.get(c.code)] as const)
-				.forEach(([s, c], cardIndex) => {
+				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
 						e =>
 							e.onStandardProject &&
 							e.onStandardProject(
 								{
 									card: s,
-									cardIndex,
 									game: this.state,
-									player: player,
-									playerId: player.id
+									player: player
 								},
 								project,
 								playedBy.state
@@ -260,17 +256,15 @@ export class Game {
 		this.state.players.forEach(player => {
 			player.usedCards
 				.map(c => [c, CardsLookupApi.get(c.code)] as const)
-				.forEach(([s, c], cardIndex) => {
+				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
 						e =>
 							e.onCardPlayed &&
 							e.onCardPlayed(
 								{
 									card: s,
-									cardIndex,
 									game: this.state,
-									player: player,
-									playerId: player.id
+									player: player
 								},
 								card,
 								playedCardIndex,
@@ -285,17 +279,15 @@ export class Game {
 		this.state.players.forEach(player => {
 			player.usedCards
 				.map(c => [c, CardsLookupApi.get(c.code)] as const)
-				.forEach(([s, c], cardIndex) => {
+				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
 						e =>
 							e.onGenerationStarted &&
 							e.onGenerationStarted(
 								{
 									card: s,
-									cardIndex,
 									game: this.state,
-									player: player,
-									playerId: player.id
+									player: player
 								},
 								generation
 							)
@@ -308,17 +300,15 @@ export class Game {
 		this.state.players.forEach(player => {
 			player.usedCards
 				.map(c => [c, CardsLookupApi.get(c.code)] as const)
-				.forEach(([s, c], cardIndex) => {
+				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
 						e =>
 							e.onTilePlaced &&
 							e.onTilePlaced(
 								{
 									card: s,
-									cardIndex,
 									game: this.state,
-									player: player,
-									playerId: player.id
+									player: player
 								},
 								cell,
 								playedBy.state

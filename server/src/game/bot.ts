@@ -154,10 +154,8 @@ export class Bot extends Player {
 					.filter(([c]) =>
 						isCardPlayable(c, {
 							card: emptyCardState(c.code),
-							cardIndex: -1,
 							game: this.game.state,
-							player: this.state,
-							playerId: this.state.id
+							player: this.state
 						})
 					)
 					.map(([, i]) => i)
@@ -343,10 +341,8 @@ export class Bot extends Player {
 							c =>
 								isCardPlayable(c, {
 									card: emptyCardState(c.code),
-									cardIndex: -1,
 									game: this.game.state,
-									player: this.state,
-									playerId: this.state.id
+									player: this.state
 								}) && minimalCardPrice(c, this.state) <= this.state.money
 						)
 						.forEach(c => {
@@ -388,14 +384,12 @@ export class Bot extends Player {
 
 					this.state.usedCards
 						.filter(
-							(c, i) =>
+							c =>
 								CardsLookupApi.get(c.code).actionEffects.length > 0 &&
 								isCardActionable(CardsLookupApi.get(c.code), {
 									card: c,
-									cardIndex: i,
 									game: this.game.state,
-									player: this.state,
-									playerId: this.state.id
+									player: this.state
 								})
 						)
 						.forEach(c => {

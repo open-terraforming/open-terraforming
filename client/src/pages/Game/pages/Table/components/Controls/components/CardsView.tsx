@@ -10,7 +10,7 @@ import { CardView } from '../../CardView/CardView'
 
 type Props = {
 	open: boolean
-	cards: { state: UsedCardState; cardIndex: number }[]
+	cards: UsedCardState[]
 	play?: boolean
 	openable?: boolean
 }
@@ -59,7 +59,7 @@ export const CardsView = ({
 					width: width
 				}}
 			>
-				{cards.slice(0, display).map(({ state: c, cardIndex }, i) => (
+				{cards.slice(0, display).map((c, i) => (
 					<CV
 						key={c.code}
 						rotate={
@@ -83,10 +83,10 @@ export const CardsView = ({
 								dispatch(
 									play
 										? setTableState({
-												playingCardIndex: cardIndex
+												playingCardIndex: c.index
 										  })
 										: setTableState({
-												buyingCardIndex: cardIndex
+												buyingCardIndex: c.index
 										  })
 								)
 							}
@@ -95,7 +95,6 @@ export const CardsView = ({
 						<Card
 							card={CardsLookupApi.get(c.code)}
 							state={play ? c : undefined}
-							cardIndex={play ? cardIndex : undefined}
 							fade={false}
 						/>
 					</CV>

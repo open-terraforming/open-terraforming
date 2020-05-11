@@ -24,9 +24,7 @@ test('joinedEffect should properly work with arguments', () => {
 	]).perform(
 		{
 			card,
-			cardIndex: 0,
 			player: state.players[0],
-			playerId: state.players[0].id,
 			game: state
 		},
 		[state.players[1].id, 2]

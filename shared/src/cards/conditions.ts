@@ -143,8 +143,8 @@ export const ownedCellTypeCondition = (type: GridCellContent, amount: number) =>
 	condition({
 		description: `Requires at least ${amount} ${GridCellContent[type]} to be placed by you`,
 		symbols: [{ tile: type, count: amount }],
-		evaluate: ({ game, playerId }) =>
-			countGridContent(game, type, playerId) >= amount
+		evaluate: ({ game, player }) =>
+			countGridContent(game, type, player.id) >= amount
 	})
 
 export const productionCondition = (res: Resource, value: number) => {

@@ -23,9 +23,7 @@ test('resourceChange should change resources of right player', () => {
 
 	const ctx = {
 		card,
-		cardIndex: 0,
 		player: state.players[0],
-		playerId: state.players[0].id,
 		game: state
 	}
 
@@ -50,11 +48,10 @@ test("resourceChange won't allow negative result", () => {
 
 	const ctx = {
 		card,
-		cardIndex: 0,
 		player: state.players[0],
-		playerId: state.players[0].id,
 		game: state
 	}
+
 	resources.forEach(r => {
 		expect(resourceChange(r, -4).conditions.find(c => !c.evaluate(ctx)))
 		expect(() => resourceChange(r, -4).perform(ctx)).toThrowError()

@@ -16,17 +16,13 @@ export const ActionableButton = ({ onClick }: Props) => {
 
 	const cards = useMemo(
 		() =>
-			player.usedCards
-				.map((c, cardIndex) => ({ state: c, cardIndex }))
-				.filter(({ state, cardIndex }) =>
-					isCardActionable(CardsLookupApi.get(state.code), {
-						card: state,
-						cardIndex,
-						player,
-						game,
-						playerId: player.id
-					})
-				),
+			player.usedCards.filter(state =>
+				isCardActionable(CardsLookupApi.get(state.code), {
+					card: state,
+					player,
+					game
+				})
+			),
 		[player, game]
 	)
 

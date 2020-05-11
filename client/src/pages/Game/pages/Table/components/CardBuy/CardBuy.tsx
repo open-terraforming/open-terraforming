@@ -151,12 +151,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 			)}
 		>
 			<CardContainer>
-				<CardView
-					card={card}
-					state={cardState}
-					cardIndex={index}
-					hover={false}
-				/>
+				<CardView card={card} state={cardState} hover={false} />
 			</CardContainer>
 
 			{buying ? (

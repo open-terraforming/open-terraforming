@@ -42,9 +42,7 @@ export const PlayedCards = ({ onClose, defaultType }: Props) => {
 				game &&
 				isCardActionable(card, {
 					card: newlySelected.state,
-					cardIndex: newlySelected.index,
 					player: player,
-					playerId: player.id,
 					game: game
 				})
 

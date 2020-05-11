@@ -30,9 +30,7 @@ export type CardEffectArgumentType = number | string | CardEffectArgumentType[]
 export interface CardCallbackContext {
 	game: GameState
 	player: PlayerGameState
-	playerId: number
 	card: UsedCardState
-	cardIndex: number
 }
 
 export interface PlayerCallbackContext {

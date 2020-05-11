@@ -21,9 +21,9 @@ export const minCardResourceToVP = (
 export const vpsForAdjacentTiles = (type: GridCellContent, perTile: number) =>
 	vpCb({
 		description: `${perTile} VPs for each adjacent ${GridCellContent[type]} tile`,
-		compute: ({ playerId, game, card, cardIndex }) => {
+		compute: ({ game, player, card }) => {
 			const tile = allCells(game).find(
-				c => c.ownerId === playerId && c.ownerCard === cardIndex
+				c => c.ownerId === player.id && c.ownerCard === card.index
 			)
 
 			if (!tile) {

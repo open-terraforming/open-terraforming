@@ -41,9 +41,7 @@ export const Hand = ({
 				card &&
 				isCardPlayable(card, {
 					card: emptyCardState(card.code),
-					cardIndex: -1,
 					player: player,
-					playerId: player.id,
 					game: game
 				})
 

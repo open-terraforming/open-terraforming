@@ -29,10 +29,8 @@ export const ChoiceArg = ({ arg, onChange, card, cardState }: Props) => {
 						effect.conditions.every(c =>
 							c.evaluate({
 								card: cardState || emptyCardState(card),
-								cardIndex: cardState === undefined ? -1 : cardState.index,
 								player: player,
-								game,
-								playerId: player.id
+								game
 							})
 						)
 				),

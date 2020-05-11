@@ -33,8 +33,7 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 							player: p,
 							cards: cardsToCardList(p.usedCards, arg.cardConditions, {
 								game,
-								player: p,
-								playerId: p.id
+								player: p
 							})
 						}))
 						.filter(({ cards }) => cards.length > 0)
@@ -52,8 +51,7 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 						arg.cardConditions,
 						{
 							game,
-							player: playerState,
-							playerId
+							player: playerState
 						}
 				  )
 				: [],

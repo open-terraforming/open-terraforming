@@ -11,9 +11,7 @@ test('playerResourceChange should change resources of right player', () => {
 	playerResourceChange('ore', -2).perform(
 		{
 			card,
-			cardIndex: 0,
 			player: state.players[0],
-			playerId: state.players[0].id,
 			game: state
 		},
 		[state.players[1].id, 2]
@@ -33,9 +31,7 @@ test("playerResourceChange won't remove more than player owns", () => {
 		playerResourceChange('ore', -5).perform(
 			{
 				card,
-				cardIndex: 0,
 				player: state.players[0],
-				playerId: state.players[0].id,
 				game: state
 			},
 			[state.players[1].id, 5]
@@ -54,9 +50,7 @@ test('playerResourceChange is limited by maximum number of resources', () => {
 	playerResourceChange('ore', -5).perform(
 		{
 			card,
-			cardIndex: 0,
 			player: state.players[0],
-			playerId: state.players[0].id,
 			game: state
 		},
 		[state.players[1].id, 10]
@@ -73,9 +67,7 @@ test('playerResourceChange removes exact amount when not optional', () => {
 	playerResourceChange('ore', -5, false).perform(
 		{
 			card,
-			cardIndex: 0,
 			player: state.players[0],
-			playerId: state.players[0].id,
 			game: state
 		},
 		[state.players[1].id, 3]
@@ -92,9 +84,7 @@ test('playerResourceChange accepts single arg when not optional', () => {
 	playerResourceChange('ore', -5, false).perform(
 		{
 			card,
-			cardIndex: 0,
 			player: state.players[0],
-			playerId: state.players[0].id,
 			game: state
 		},
 		state.players[1].id
@@ -112,9 +102,7 @@ test('playerResourceChange requires player not optional', () => {
 		playerResourceChange('ore', -5, false).perform(
 			{
 				card,
-				cardIndex: 0,
 				player: state.players[0],
-				playerId: state.players[0].id,
 				game: state
 			},
 			-1

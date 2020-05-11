@@ -29,13 +29,11 @@ export const CardView = ({
 	fade = true,
 	className,
 	state,
-	cardIndex,
 	onClick,
 	style
 }: {
 	card: Card
 	state?: UsedCardState
-	cardIndex?: number
 	selected?: boolean
 	onClick?: () => void
 	buying?: boolean
@@ -65,20 +63,11 @@ export const CardView = ({
 	const condContext = useMemo(
 		() =>
 			({
-				card: state || {
-					code: card.code,
-					played: false,
-					animals: 0,
-					fighters: 0,
-					microbes: 0,
-					science: 0
-				},
-				cardIndex,
+				card: state || emptyCardState(card.code),
 				game,
-				player,
-				playerId
+				player
 			} as CardCallbackContext),
-		[state, card, cardIndex, game, playerId]
+		[state, card, game, playerId]
 	)
 
 	const adjusted = !buying ? card.cost : minimalCardPrice(card, player)
@@ -90,9 +79,7 @@ export const CardView = ({
 			evaluate && !buying && card.victoryPointsCallback
 				? card.victoryPointsCallback.compute({
 						card: state || emptyCardState(card.code),
-						cardIndex: cardIndex ?? -1,
 						player,
-						playerId: player.id,
 						game
 				  })
 				: undefined,

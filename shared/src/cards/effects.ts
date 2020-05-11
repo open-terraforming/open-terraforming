@@ -177,8 +177,10 @@ export const playerResourceChange = (
 								res,
 								-change
 							)}`,
-							evaluate: ({ game, playerId }) =>
-								!!game.players.find(p => p.id !== playerId && p[res] >= -change)
+							evaluate: ({ game, player }) =>
+								!!game.players.find(
+									p => p.id !== player.id && p[res] >= -change
+								)
 						})
 				  ]
 				: [],
@@ -238,9 +240,9 @@ export const playerProductionChange = (res: Resource, change: number) => {
 			change < 0
 				? [
 						condition({
-							evaluate: ({ game, playerId }) =>
+							evaluate: ({ game, player }) =>
 								!!game.players.find(
-									p => p.id !== playerId && p[prod] >= -change
+									p => p.id !== player.id && p[prod] >= -change
 								)
 						})
 				  ]
@@ -320,7 +322,7 @@ export function placeTile({
 			})
 		],
 		symbols: [{ tile: type, tileOther: other }],
-		perform: ({ player, cardIndex, game }) => {
+		perform: ({ player, card, game }) => {
 			// Only limited number of ocean tiles an be placed
 			if (type === GridCellContent.Ocean && game.oceans >= game.map.oceans) {
 				return
@@ -330,7 +332,7 @@ export function placeTile({
 				player,
 				placeTileAction({
 					...placementState,
-					ownerCard: cardIndex
+					ownerCard: card.index
 				})
 			)
 		}
@@ -1001,7 +1003,7 @@ export const duplicateProduction = (type: CardCategory) =>
 		conditions: [
 			condition({
 				evaluate: ctx =>
-					!!ctx.player.usedCards.find((card, cardIndex) => {
+					!!ctx.player.usedCards.find(card => {
 						const data = CardsLookupApi.get(card.code)
 
 						return (
@@ -1016,9 +1018,7 @@ export const duplicateProduction = (type: CardCategory) =>
 										c.evaluate({
 											game: ctx.game,
 											player: ctx.player,
-											playerId: ctx.playerId,
-											card,
-											cardIndex
+											card
 										})
 									)
 								)
@@ -1038,7 +1038,7 @@ export const duplicateProduction = (type: CardCategory) =>
 
 			cardData.playEffects.forEach(e => {
 				if (e.type === CardEffectType.Production) {
-					e.perform({ ...ctx, card, cardIndex })
+					e.perform({ ...ctx, card })
 				}
 			})
 		}
@@ -1060,12 +1060,12 @@ export const productionForPlayersTags = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: resPerCard, production: true }
 		],
-		perform: ({ game, player, playerId }) => {
+		perform: ({ game, player }) => {
 			updatePlayerProduction(
 				player,
 				res,
 				game.players.reduce((acc, p) => {
-					if (self || p.id !== playerId) {
+					if (self || p.id !== player.id) {
 						return (
 							acc +
 							p.usedCards
@@ -1170,12 +1170,12 @@ export const resourcesForPlayersTags = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: resPerCard }
 		],
-		perform: ({ game, player, playerId }) => {
+		perform: ({ game, player }) => {
 			updatePlayerResource(
 				player,
 				res,
 				game.players.reduce((acc, p) => {
-					if (self || p.id !== playerId) {
+					if (self || p.id !== player.id) {
 						return (
 							acc +
 							p.usedCards

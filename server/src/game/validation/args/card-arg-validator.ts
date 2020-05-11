@@ -10,8 +10,7 @@ export const cardArgValidator = ({ a, ctx, value }: ValidatorContext) => {
 		c =>
 			!c.evaluate({
 				...ctx,
-				card: selected,
-				cardIndex: value as number
+				card: selected
 			})
 	)
 

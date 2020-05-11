@@ -27,8 +27,7 @@ export const cardsToCardList = (
 				conditions.every(c =>
 					c.evaluate({
 						...ctx,
-						card: item.state || emptyCardState(item.card.code),
-						cardIndex: item.index
+						card: item.state || emptyCardState(item.card.code)
 					} as CardCallbackContext)
 				)
 		)

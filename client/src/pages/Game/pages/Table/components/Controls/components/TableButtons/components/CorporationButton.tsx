@@ -32,12 +32,7 @@ export const CorporationButton = ({ onClick }: Props) => {
 			{corporation?.title}
 
 			<CardsView
-				cards={[
-					{
-						state: player.usedCards[0],
-						cardIndex: 0
-					}
-				]}
+				cards={[player.usedCards[0]]}
 				play
 				open={opened}
 				openable={false}

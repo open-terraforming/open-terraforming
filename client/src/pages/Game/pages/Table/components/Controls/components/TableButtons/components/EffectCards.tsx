@@ -14,11 +14,9 @@ export const EffectCards = ({ onClick }: Props) => {
 
 	const cards = useMemo(
 		() =>
-			player.usedCards
-				.map((c, cardIndex) => ({ state: c, cardIndex }))
-				.filter(
-					({ state }) => CardsLookupApi.get(state.code).type === CardType.Effect
-				),
+			player.usedCards.filter(
+				state => CardsLookupApi.get(state.code).type === CardType.Effect
+			),
 		[player]
 	)
 

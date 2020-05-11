@@ -58,17 +58,15 @@ export const HandButton = ({ playing }: Props) => {
 	const cards = useMemo(
 		() =>
 			player.cards
-				.map((c, i) => ({ state: emptyCardState(c), cardIndex: i }))
+				.map(c => emptyCardState(c))
 				.filter(
-					({ state, cardIndex }) =>
+					state =>
 						player.money >=
 							minimalCardPrice(CardsLookupApi.get(state.code), player) &&
 						isCardPlayable(CardsLookupApi.get(state.code), {
 							card: state,
-							cardIndex,
 							player,
-							game,
-							playerId: player.id
+							game
 						})
 				),
 		[game, player]

@@ -225,10 +225,8 @@ export class Player {
 			corp.playEffects,
 			{
 				card,
-				cardIndex: 0,
 				game: this.game.state,
-				player: this.state,
-				playerId: this.state.id
+				player: this.state
 			},
 			[]
 		)
@@ -267,10 +265,8 @@ export class Player {
 					c,
 					{
 						card: emptyCardState(c.code),
-						cardIndex: -1,
 						game: this.game.state,
-						player: this.state,
-						playerId: this.id
+						player: this.state
 					},
 					[]
 				)
@@ -291,7 +287,7 @@ export class Player {
 			...top.cards.filter((_c, i) => !cards.includes(i))
 		]
 
-		this.state.usedCards.forEach((c, i) => {
+		this.state.usedCards.forEach(c => {
 			if (usedCards.includes(c)) {
 				const card = CardsLookupApi.get(c.code)
 
@@ -300,8 +296,6 @@ export class Player {
 					{
 						game: this.game.state,
 						player: this.state,
-						playerId: this.state.id,
-						cardIndex: i,
 						card: c
 					},
 					[]
@@ -419,10 +413,8 @@ export class Player {
 
 		const ctx = {
 			player: this.state,
-			playerId: this.id,
 			game: this.game.state,
-			card: cardState,
-			cardIndex: cardState.index
+			card: cardState
 		}
 
 		this.checkCardConditions(card, ctx, playArguments)
@@ -440,7 +432,7 @@ export class Player {
 
 		this.onCardPlayed.emit({
 			card,
-			cardIndex: ctx.cardIndex,
+			cardIndex: ctx.card.index,
 			player: this
 		})
 
@@ -753,10 +745,8 @@ export class Player {
 
 		const ctx = {
 			player: this.state,
-			playerId: this.id,
 			game: this.game.state,
-			card: cardState,
-			cardIndex: index
+			card: cardState
 		}
 
 		this.checkCardConditions(card, ctx, playArguments, true)
@@ -834,17 +824,15 @@ export class Player {
 			amount: this.state.terraformRating
 		})
 
-		const cardVps = this.state.usedCards.reduce((acc, state, cardIndex) => {
+		const cardVps = this.state.usedCards.reduce((acc, state) => {
 			const card = CardsLookupApi.get(state.code)
 			acc += card.victoryPoints
 
 			if (card.victoryPointsCallback) {
 				acc += card.victoryPointsCallback.compute({
 					card: state,
-					cardIndex,
 					game: this.game.state,
-					player: this.state,
-					playerId: this.id
+					player: this.state
 				})
 			}
 

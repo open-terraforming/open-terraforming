@@ -286,9 +286,7 @@ export class CardsCollection extends FilteredCollection<CardInfo> {
 						!c.evaluate({
 							game,
 							player,
-							card: i.state,
-							cardIndex: i.state.index,
-							playerId: player.id
+							card: i.state
 						})
 				)
 		)

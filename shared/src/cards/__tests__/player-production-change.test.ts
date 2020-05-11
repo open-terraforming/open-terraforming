@@ -12,9 +12,7 @@ test('playerProductionChange should change production of right player', () => {
 	playerProductionChange('ore', 2).perform(
 		{
 			card,
-			cardIndex: 0,
 			player: state.players[0],
-			playerId: state.players[0].id,
 			game: state
 		},
 		state.players[1].id
@@ -35,9 +33,7 @@ test("playerProductionChange won't allow negative production (except money)", ()
 		playerProductionChange('ore', -5).perform(
 			{
 				card,
-				cardIndex: 0,
 				player: state.players[0],
-				playerId: state.players[0].id,
 				game: state
 			},
 			state.players[1].id
@@ -51,9 +47,7 @@ test("playerProductionChange won't allow negative production (except money)", ()
 		playerProductionChange('money', -5).perform(
 			{
 				card,
-				cardIndex: 0,
 				player: state.players[0],
-				playerId: state.players[0].id,
 				game: state
 			},
 			state.players[1].id

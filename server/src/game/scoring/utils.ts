@@ -92,8 +92,6 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 						? info.victoryPointsCallback.compute({
 								player: p,
 								game: g,
-								playerId: p.id,
-								cardIndex: state.index,
 								card: state
 						  })
 						: 0),
@@ -147,9 +145,7 @@ export const getBestArgs = (
 						{
 							player: copyPlayer,
 							game: copyGame,
-							card: copyState,
-							cardIndex: copyState.index,
-							playerId: copyPlayer.id
+							card: copyState
 						},
 						...effectArgs[ei]
 					)
