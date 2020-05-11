@@ -1,4 +1,4 @@
-import { colors, mainColors } from '@/styles'
+import { colors } from '@/styles'
 import { useAppStore, useElementPosition } from '@/utils/hooks'
 import {
 	faArrowRight,
@@ -201,5 +201,5 @@ const Starting = styled.div`
 	line-height: 2rem;
 	text-align: center;
 	align-self: center;
-	color: ${lighten(0.1, mainColors.text)};
+	color: ${lighten(0.1, colors.text)};
 `

@@ -7,7 +7,7 @@ import { PlayerColors } from '@shared/player-colors'
 import React from 'react'
 import styled, { css } from 'styled-components'
 import { ColorPicker } from './ColorPicker'
-import { mainColors } from '@/styles'
+import { colors as themeColors } from '@/styles'
 import { Button } from '@/components'
 
 type Props = {
@@ -68,7 +68,7 @@ export const Player = ({ id, name, ready, color, current, bot }: Props) => {
 			)}
 			{bot && (
 				<PlayerState ready>
-					<FontAwesomeIcon icon={faRobot} color={mainColors.text} />
+					<FontAwesomeIcon icon={faRobot} color={themeColors.text} />
 				</PlayerState>
 			)}
 		</PlayerContainer>

@@ -6,7 +6,7 @@ import {
 	faChevronLeft,
 	faChevronRight
 } from '@fortawesome/free-solid-svg-icons'
-import { mainColors } from '@/styles'
+import { colors } from '@/styles'
 
 type Props = {
 	colors: number[]
@@ -81,5 +81,5 @@ const Value = styled.div`
 const Change = styled.button`
 	padding: 0.5rem 0.2rem;
 	cursor: pointer;
-	color: ${mainColors.text};
+	color: ${colors.text};
 `

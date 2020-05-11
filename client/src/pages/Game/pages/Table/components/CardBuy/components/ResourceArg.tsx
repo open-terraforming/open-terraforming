@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { ArgContainer } from './ArgContainer'
-import { Input } from '@/components/Input/Input'
-import { CardEffectArgument, Resource } from '@shared/cards'
-import { ResourceInput } from './ResourceInput'
 import { useAppStore } from '@/utils/hooks'
+import { CardEffectArgument, Resource } from '@shared/cards'
+import React, { useEffect } from 'react'
+import { ArgContainer } from './ArgContainer'
+import { ResourceInput } from './ResourceInput'
 
 type Props = {
 	arg: CardEffectArgument

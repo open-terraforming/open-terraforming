@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { Resource } from '@shared/cards'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { resourceColors } from '@/styles/resourceColors'
+import { resourceColors } from '@/styles/resource-colors'
 import {
 	faHammer,
 	faStar,

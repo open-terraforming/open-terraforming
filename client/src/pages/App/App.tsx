@@ -1,6 +1,6 @@
 import background from '@/assets/stars.jpg'
 import { ApiState } from '@/store/modules/api'
-import { mainColors } from '@/styles'
+import { colors } from '@/styles'
 import { GlobalStyle } from '@/styles/global'
 import { useAppStore } from '@/utils/hooks'
 import React from 'react'
@@ -39,6 +39,6 @@ const AppContainer = styled.div`
 	align-items: center;
 	justify-content: center;
 	background-color: #000;
-	color: ${mainColors.text};
+	color: ${colors.text};
 	background-image: url('${background}');
 `

@@ -1,79 +1,89 @@
-import MainColor from './mainColors'
 import { lighten, darken, rgba } from 'polished'
-import mainColors from './mainColors'
+
+const application = '#182541'
+const text = '#BDCBEE'
+const primary = lighten(0.1, application)
+const secondary = '#265560'
+const info = '#265560'
+const success = '#37B479'
+const danger = '#DB433A'
+const warn = '#FAA94B'
 
 export default {
-	background: rgba(mainColors.application, 0.8),
-	border: rgba(lighten(0.1, mainColors.application), 0.8),
+	application,
+	text,
+
+	background: rgba(application, 0.8),
+	border: rgba(lighten(0.1, application), 0.8),
 
 	button: {
-		disabledBackground: darken(0.1, MainColor.primary),
-		disabledBorder: darken(0.1, MainColor.primary),
-		disabledColor: darken(0.1, mainColors.text),
+		disabledBackground: darken(0.1, primary),
+		disabledBorder: darken(0.1, primary),
+		disabledColor: darken(0.1, text),
 		primary: {
-			background: MainColor.primary,
-			borderColor: MainColor.primary,
-			color: mainColors.text,
+			background: primary,
+			borderColor: primary,
+			color: text,
 			hover: {
-				background: lighten(0.1, MainColor.primary),
-				borderColor: lighten(0.1, MainColor.primary),
-				color: mainColors.text
+				background: lighten(0.1, primary),
+				borderColor: lighten(0.1, primary),
+				color: text
 			}
 		},
 		transparent: {
 			background: 'none',
 			borderColor: 'transparent',
-			color: MainColor.text,
+			color: text,
 			hover: {
 				background: 'none',
 				borderColor: 'transparent',
-				color: darken(0.2, MainColor.text)
+				color: darken(0.2, text)
 			}
 		}
 	},
 
 	success: {
-		light: lighten(0.52, MainColor.success),
-		base: MainColor.success
+		light: lighten(0.52, success),
+		base: success
 	},
 
 	primary: {
-		base: MainColor.primary,
-		light: lighten(0.52, MainColor.primary),
+		base: primary,
+		light: lighten(0.52, primary),
 		shadowColor: 'rgba(0,123,255,.4)'
 	},
 
 	secondary: {
-		base: MainColor.secondary,
-		light: lighten(0.52, MainColor.secondary),
+		base: secondary,
+		light: lighten(0.52, secondary),
 		shadowColor: 'rgba(0,123,255,.4)'
 	},
 
 	warn: {
-		base: MainColor.warn,
-		light: lighten(0.52, MainColor.warn)
+		base: warn,
+		light: lighten(0.52, warn)
 	},
 
 	danger: {
-		base: MainColor.danger,
-		light: lighten(0.15, MainColor.danger)
+		base: danger,
+		light: lighten(0.15, danger)
 	},
 
 	message: {
 		info: {
-			background: MainColor.info,
+			background: info,
 			color: '#fff'
 		},
 		warn: {
-			background: MainColor.warn,
+			background: warn,
 			color: '#fff'
 		},
 		error: {
-			background: MainColor.danger,
+			background: danger,
 			color: '#fff'
 		},
 		success: {
-			background: MainColor.success,
+			background: success,
 			color: '#fff'
 		}
 	}

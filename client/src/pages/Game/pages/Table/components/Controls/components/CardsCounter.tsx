@@ -1,4 +1,4 @@
-import { colors, mainColors } from '@/styles'
+import { colors } from '@/styles'
 import React from 'react'
 import styled, { css } from 'styled-components'
 
@@ -41,7 +41,7 @@ const D = styled.button<{ disabled?: boolean }>`
 	border-right: 0.2rem solid ${colors.border};
 	min-width: 3.5rem;
 	align-items: stretch;
-	color: ${mainColors.text};
+	color: ${colors.text};
 	flex: 1;
 	position: relative;
 

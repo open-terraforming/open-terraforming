@@ -4,7 +4,7 @@ import { range, keyMap } from '@/utils/collections'
 import { DiffAnim } from './DiffAnim'
 import { ProgressMilestoneItem } from '@shared/index'
 import { MilestoneDisplay } from './MilestoneDisplay'
-import { colors, mainColors } from '@/styles'
+import { colors } from '@/styles'
 import { darken } from 'polished'
 
 type Props = {
@@ -75,7 +75,7 @@ const Step = styled.div<{ passed: boolean; active: boolean }>`
 					background-color: ${colors.border};
 			  `
 			: css`
-					color: ${darken(0.3, mainColors.text)};
+					color: ${darken(0.3, colors.text)};
 			  `}
 `
 

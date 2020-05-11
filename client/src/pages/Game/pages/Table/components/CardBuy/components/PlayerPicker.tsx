@@ -4,7 +4,7 @@ import { Modal } from '@/components/Modal/Modal'
 import { Resource, Production } from '@shared/cards'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import styled from 'styled-components'
-import { colors, mainColors } from '@/styles'
+import { colors } from '@/styles'
 import { Button } from '@/components'
 import { lighten } from 'polished'
 import { resourceProduction } from '@shared/cards/utils'
@@ -145,7 +145,7 @@ const Production = styled.div`
 `
 
 const Player = styled.button`
-	color: ${mainColors.text};
+	color: ${colors.text};
 	background-color: ${colors.background};
 	display: flex;
 	align-items: center;
