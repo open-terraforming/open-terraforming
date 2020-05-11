@@ -8,8 +8,7 @@
     "start": "webpack-dev-server --config config/webpack.dev.ts",
     "build": "webpack --config config/webpack.prod.ts",
     "bundle-size": "webpack --config config/webpack.prod.ts --bundle-size",
-    "start-prod": "npm run build && serve dist",
-    "test": "jest"
+    "start-prod": "npm run build && serve dist"
   },
   "author": "Kamen",
   "license": "ISC",
