@@ -58,7 +58,7 @@ export const HandButton = ({ playing }: Props) => {
 	const cards = useMemo(
 		() =>
 			player.cards
-				.map(c => emptyCardState(c))
+				.map((c, i) => emptyCardState(c, i))
 				.filter(
 					state =>
 						player.money >=

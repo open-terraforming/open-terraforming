@@ -9,6 +9,7 @@ import {
 import { GameState, PlayerState, UsedCardState } from '@shared/index'
 import { range, shuffle, CardsCollection, flatten } from '@shared/utils'
 import { emptyCardState, resources } from '@shared/cards/utils'
+import { getBestArgs } from '../utils'
 
 export const cardsList = (list: (string | UsedCardState)[]) => {
 	return new CardsCollection(
@@ -131,26 +132,22 @@ const getPossibleOptions = (
 		case CardEffectTarget.EffectChoice: {
 			const effects = a.effects || []
 
-			return flatten(
-				effects
-					.filter(
-						e =>
-							!e.conditions.find(
-								c =>
-									!c.evaluate({
-										card,
-										game,
-										player
-									})
-							)
-					)
-					.map(e =>
-						getPossibleArgs(player, game, [e], card).map(args => [
-							effects.indexOf(e),
-							args
-						])
-					)
-			)
+			return effects
+				.filter(
+					e =>
+						!e.conditions.find(
+							c =>
+								!c.evaluate({
+									card,
+									game,
+									player
+								})
+						)
+				)
+				.map(e => [
+					effects.indexOf(e),
+					getBestArgs(game, player, card, [e]).args[0]
+				])
 		}
 
 		default:

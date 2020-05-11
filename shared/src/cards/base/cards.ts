@@ -186,7 +186,7 @@ export const baseCards: Card[] = [
 		cost: 21,
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
-			placeTile({ type: GridCellContent.Ocean }),
+			placeOcean(),
 			gameProcessChange('temperature', 1),
 			playerResourceChange('plants', -3)
 		]
@@ -296,7 +296,7 @@ export const baseCards: Card[] = [
 				otherCardResourceChange('microbes', 1),
 				otherCardResourceChange('animals', 1)
 			]),
-			placeTile({ type: GridCellContent.Ocean })
+			placeOcean()
 		]
 	}),
 	card({
@@ -342,7 +342,7 @@ export const baseCards: Card[] = [
 		playEffects: [
 			productionChange('money', -2),
 			productionChange('heat', 3),
-			placeTile({ type: GridCellContent.Ocean })
+			placeOcean()
 		]
 	}),
 	card({
@@ -704,10 +704,7 @@ export const baseCards: Card[] = [
 		categories: [],
 		victoryPoints: 2,
 		conditions: [gameProgressConditionMin('temperature', 0 / 2)],
-		playEffects: [
-			placeTile({ type: GridCellContent.Ocean }),
-			placeTile({ type: GridCellContent.Ocean })
-		]
+		playEffects: [placeOcean(), placeOcean()]
 	}),
 	card({
 		code: 'small_animals',
@@ -963,7 +960,7 @@ export const baseCards: Card[] = [
 		playEffects: [
 			resourceChange('plants', 2),
 			gameProcessChange('oxygen', 1),
-			placeTile({ type: GridCellContent.Ocean })
+			placeOcean()
 		]
 	}),
 	card({
@@ -991,10 +988,7 @@ export const baseCards: Card[] = [
 		type: CardType.Event,
 		cost: 23,
 		categories: [CardCategory.Event, CardCategory.Space],
-		playEffects: [
-			placeTile({ type: GridCellContent.Ocean }),
-			placeTile({ type: GridCellContent.Ocean })
-		]
+		playEffects: [placeOcean(), placeOcean()]
 	}),
 	card({
 		code: 'quantum_extractor',
@@ -1014,8 +1008,8 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Event, CardCategory.Space],
 		playEffects: [
 			gameProcessChange('temperature', 2),
-			placeTile({ type: GridCellContent.Ocean }),
-			placeTile({ type: GridCellContent.Ocean }),
+			placeOcean(),
+			placeOcean(),
 			playerResourceChange('plants', -6)
 		]
 	}),
@@ -1533,7 +1527,7 @@ export const baseCards: Card[] = [
 		type: CardType.Event,
 		cost: 11,
 		categories: [CardCategory.Event],
-		playEffects: [placeTile({ type: GridCellContent.Ocean })]
+		playEffects: [placeOcean()]
 	}),
 	card({
 		code: 'ecological_zone',
@@ -2155,7 +2149,7 @@ export const baseCards: Card[] = [
 		cost: 5,
 		categories: [CardCategory.Event],
 		conditions: [gameProgressConditionMin('temperature', 2 / 2)],
-		playEffects: [placeTile({ type: GridCellContent.Ocean })]
+		playEffects: [placeOcean()]
 	}),
 	card({
 		code: 'corporate_stronghold',
@@ -2278,7 +2272,7 @@ export const baseCards: Card[] = [
 		cost: 8,
 		categories: [CardCategory.Event],
 		conditions: [gameProgressConditionMin('temperature', -8 / 2)],
-		playEffects: [placeTile({ type: GridCellContent.Ocean })]
+		playEffects: [placeOcean()]
 	}),
 	card({
 		code: 'invention_contest',

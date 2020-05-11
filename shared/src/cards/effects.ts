@@ -499,7 +499,6 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 				throw new Error(`${card.title} doesn't accept ${res}`)
 			}
 
-			// TODO: Check if player can place it on this card
 			cardState[res] += amount
 		}
 	})
@@ -550,7 +549,13 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 				? `Remove ${-amount} ${res} from any other player card`
 				: `Add ${amount} ${res} to any other player card`,
 		symbols: [{ cardResource: res, count: amount, other: true }],
-		perform: ({ game }, [playerId, cardIndex]: [number, number]) => {
+		perform: ({ game }, args: [number, number]) => {
+			if (!Array.isArray(args)) {
+				throw new Error(`${args} is not an array!`)
+			}
+
+			const [playerId, cardIndex] = args
+
 			const player = game.players.find(p => p.id === playerId)
 
 			if (!player) {
