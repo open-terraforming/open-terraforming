@@ -1,4 +1,5 @@
 module.exports = {
+    root: true,
     parser: '@typescript-eslint/parser',
     extends: [
         'plugin:@typescript-eslint/recommended',
@@ -12,6 +13,11 @@ module.exports = {
     rules: {
         indent: 'off',
         curly: ['warn', 'all'],
+        'padding-line-between-statements': [
+            'warn',
+            { blankLine: "always", prev: "*", next: ["block-like", "multiline-expression", "multiline-const", "return"] },
+            { blankLine: "always", prev: ["block-like", "multiline-expression", "multiline-const"], next: "*" }
+        ],
         'react/prop-types': 'off',
         '@typescript-eslint/indent': 'off',
         '@typescript-eslint/no-use-before-define': 'off',
@@ -21,10 +27,5 @@ module.exports = {
         '@typescript-eslint/no-object-literal-type-assertion': 'off',
         '@typescript-eslint/prefer-interface': 'off',
         'prettier/prettier': 'warn'
-    },
-    settings: {
-        react: {
-            version: 'detect'
-        }
     }
 }
