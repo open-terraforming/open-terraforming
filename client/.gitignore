@@ -4,9 +4,6 @@ dist
 # depts
 node_modules
 
-# generated code
-src/api/swagger
-
 # misc
 .DS_Store
 .env.local

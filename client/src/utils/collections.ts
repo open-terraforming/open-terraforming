@@ -1,7 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export interface NativeMap<T> {
-	[key: string]: T | undefined
-}
 
 type KeysMatching<T, V> = {
 	[K in keyof T]: T[K] extends V ? K : never
@@ -29,14 +26,14 @@ export function keyMap<T, K extends KeysMatching<T, string | number>>(
  * Creates map from array using specified key and specified value key.
  * @param collection array of items
  * @param key key to be used in the map
- * @param valueKey key extraced from item
+ * @param valueKey key extracted from item
  */
 export function keyValueMap<T, K1 extends keyof T, K2 extends keyof T>(
 	collection: T[],
 	key: K1,
 	valueKey: K2,
-	source = {} as NativeMap<T[K2]>
-): NativeMap<T[K2]> {
+	source = {} as Record<string, T[K2]>
+): Record<string, T[K2]> {
 	return collection.reduce((acc, item) => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		acc[item[key] as any] = item[valueKey]
@@ -50,7 +47,7 @@ export function keyValueMap<T, K1 extends keyof T, K2 extends keyof T>(
  * @param arrays arrays to merge
  */
 export function uniqueMerge<T>(...arrays: T[][]) {
-	const items: NativeMap<T> = {}
+	const items: Record<string, T> = {}
 
 	arrays.forEach(array => {
 		array.forEach(item => {
@@ -90,7 +87,7 @@ export function range(start: number, end: number, step = 1) {
  * Finds first match in specified array.
  * @param items list of items
  * @param key key used for matching
- * @param value value to be matched agains key
+ * @param value value to be matched against the key
  * @param notFound value returned when there is no match
  */
 export function firstKeyMatch<T, K extends keyof T>(
@@ -182,58 +179,6 @@ export function compareFlatArrays<T>(
 	}
 
 	return true
-}
-
-export const detectChanges = (
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	a: { [key: string]: any },
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	b: { [key: string]: any }
-) => {
-	const messages = [] as string[]
-
-	/*
-	if (!compareFlatArrays(Object.keys(a), Object.keys(b))) {
-		let leftOut = Object.keys(b)
-		Object.keys(a).forEach(key => {
-			if (leftOut.includes(key)) {
-				leftOut = leftOut.filter(k => k !== key)
-			} else {
-				messages.push(`Key ${key} is not in the object B`)
-			}
-		})
-
-		leftOut.forEach(key => {
-			messages.push(`Key ${key} is not in the object A`)
-		})
-	}
-	*/
-
-	Object.entries(a).forEach(([key, value]) => {
-		const bValue = b[key]
-
-		if (bValue !== value) {
-			messages.push(`${key}: ${value} !== ${bValue}`)
-			//messages.push(JSON.stringify(value))
-			//messages.push(JSON.stringify(bValue))
-		}
-	})
-
-	return messages
-}
-
-/**
- * Creates value, label collection from enum
- * @param enum enumeration
- */
-export function enumToValueLabelCollection(enumeration: {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	[key: string]: any
-}): { value: string; label: string }[] {
-	return Object.keys(enumeration).map(entry => ({
-		value: entry,
-		label: enumeration[entry]
-	}))
 }
 
 /**

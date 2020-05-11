@@ -7,7 +7,6 @@ import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
 import ForkTsCheckerNotifierWebpackPlugin from 'fork-ts-checker-notifier-webpack-plugin'
-import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import { argv } from 'yargs'
 import { getEnvValues, loadEnv, ENV } from './lib/env'
@@ -21,27 +20,8 @@ import CopyWebpackPlugin from 'copy-webpack-plugin'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require(path.join(__dirname, '..', 'package.json'))
 
-// This is reused for .css, .less and module.less
-const styleLoaders = (env: ENV, cssConfig?: { modules?: boolean }) => [
-	...(env === 'development' ? ['style-loader'] : [MiniCssExtractPlugin.loader]),
-	{
-		loader: 'css-loader',
-		options: cssConfig
-	},
-	/*{
-		loader: 'postcss-loader',
-		options: { importLoaders: 1 }
-	},*/
-	'less-loader'
-]
-
 const config = (env: ENV): webpack.Configuration => {
 	const bundleAnalysis = !!argv.bundleSize
-
-	// Override server env, used in .env
-	if (typeof argv.server === 'string') {
-		process.env.SERVER_ENV = argv.server
-	}
 
 	// Loads .env files
 	loadEnv()
@@ -113,11 +93,11 @@ const config = (env: ENV): webpack.Configuration => {
 
 		output: {
 			path: path.join(__dirname, '..', 'dist'),
-			filename: 'static/js/[name].[hash].bundle.js',
+			filename: 'js/[name].[hash].bundle.js',
 			chunkFilename:
 				env === 'production'
-					? 'static/js/[name].[contenthash:8].chunk.js'
-					: 'static/js/[name].chunk.js'
+					? 'js/[name].[contenthash:8].chunk.js'
+					: 'js/[name].chunk.js'
 		},
 
 		module: {
@@ -143,22 +123,11 @@ const config = (env: ENV): webpack.Configuration => {
 					]
 				},
 				{
-					test: /\.module\.less$/,
-					exclude: /node_modules/,
-					use: styleLoaders(env, { modules: true })
-				},
-				{
-					test: /\.less$/,
-					exclude: /\.module\.less$/,
-					use: styleLoaders(env, { modules: false })
-				},
-				{
-					test: /\.css$/,
-					use: styleLoaders(env, { modules: false })
-				},
-				{
 					test: /\.(jpg|png)$/,
-					loader: 'file-loader'
+					loader: 'file-loader',
+					options: {
+						name: 'images/[path][name].[ext]'
+					}
 				}
 			]
 		},
@@ -166,7 +135,7 @@ const config = (env: ENV): webpack.Configuration => {
 		plugins: [
 			...(env === 'development'
 				? [new webpack.HotModuleReplacementPlugin()]
-				: [new CleanWebpackPlugin(), new MiniCssExtractPlugin()]),
+				: [new CleanWebpackPlugin()]),
 
 			new webpack.DefinePlugin(getEnvValues(env, pkg.version)),
 
@@ -179,17 +148,23 @@ const config = (env: ENV): webpack.Configuration => {
 				rel: 'prefetch'
 			}),
 
-			new ForkTsCheckerWebpackPlugin({
-				reportFiles: ['src/**/*.{ts,tsx}']
-			}),
-			new ForkTsCheckerNotifierWebpackPlugin(),
+			// Speed up build time by ignoring type checking and circular dependency checking
+			...(env === 'development'
+				? [
+						new ForkTsCheckerWebpackPlugin({
+							reportFiles: ['src/**/*.{ts,tsx}']
+						}),
+						new ForkTsCheckerNotifierWebpackPlugin(),
 
-			new CircularDependencyPlugin({
-				exclude: /node_modules/
-			}),
+						new CircularDependencyPlugin({
+							exclude: /node_modules/
+						})
+				  ]
+				: []),
 
 			...(bundleAnalysis ? [new BundleAnalyzerPlugin()] : []),
 
+			// Copy static assets to dist path
 			...(env === 'production'
 				? [new CopyWebpackPlugin([srcPath('../static')])]
 				: [])
@@ -197,7 +172,10 @@ const config = (env: ENV): webpack.Configuration => {
 
 		resolve: {
 			extensions: ['.js', '.ts', '.tsx'],
+
+			// Allow importing modules from shared library
 			modules: [path.resolve(__dirname, '..', 'node_modules'), 'node_modules'],
+
 			alias: {
 				...(env === 'development'
 					? { 'react-dom': '@hot-loader/react-dom' }
@@ -209,7 +187,6 @@ const config = (env: ENV): webpack.Configuration => {
 
 		devServer: {
 			hot: true,
-			historyApiFallback: true,
 			contentBase: join(__dirname, '..', 'static')
 		}
 	}
