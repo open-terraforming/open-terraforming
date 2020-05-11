@@ -75,6 +75,7 @@ import {
 	vpsForCards,
 	vpsForTiles
 } from '../vps'
+import { LavaCells } from '../../map'
 
 export const baseCards: Card[] = [
 	card({
@@ -1692,15 +1693,7 @@ export const baseCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.Volcano,
-				special: [
-					GridCellSpecial.TharsisTholus,
-					GridCellSpecial.AscraeusMons,
-					GridCellSpecial.PavonisMons,
-					GridCellSpecial.ArsiaMons,
-					GridCellSpecial.OlympusMons,
-					GridCellSpecial.HecatesTholus,
-					GridCellSpecial.ElysiumMons
-				]
+				special: LavaCells
 			})
 		]
 	}),

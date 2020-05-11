@@ -119,7 +119,7 @@ const getPossibleOptions = (
 		}
 
 		case CardEffectTarget.Resource: {
-			return range(0, player[a.resource as Resource] + 1)
+			return range(1, player[a.resource as Resource] + 1)
 		}
 
 		case CardEffectTarget.ResourceType: {

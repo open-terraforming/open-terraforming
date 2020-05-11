@@ -3,6 +3,7 @@ import { cardCountCondition, gameProgressConditionMax } from '../conditions'
 import { getTopCards, placeTile, productionChange } from '../effects'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
 import { card } from '../utils'
+import { LavaCells } from '../../map'
 
 export const preludeCards: Card[] = [
 	card({
@@ -29,12 +30,7 @@ export const preludeCards: Card[] = [
 			productionChange('money', 2),
 			placeTile({
 				type: GridCellContent.City,
-				special: [
-					GridCellSpecial.TharsisTholus,
-					GridCellSpecial.AscraeusMons,
-					GridCellSpecial.PavonisMons,
-					GridCellSpecial.ArsiaMons
-				]
+				special: LavaCells
 			})
 		]
 	}),

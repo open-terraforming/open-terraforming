@@ -37,14 +37,14 @@ export const pickBestScore = <T>(values: T[], scoring: (v: T) => number) => {
 		.sort(([a], [b]) => b - a)[0][0]
 }
 
-const resScore = {
+const resScore = (g: GameState) => ({
 	money: 0.7,
 	ore: 0.8,
 	titan: 0.8,
-	heat: 1,
-	energy: 0.8,
+	heat: g.temperature < g.map.temperature ? 1 : 0,
+	energy: g.temperature < g.map.temperature ? 0.8 : 0.2,
 	plants: 1
-}
+})
 
 const computePendingActionScore = (
 	g: GameState,
@@ -79,7 +79,9 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 		p.cards.length * 0.5 +
 		resources.reduce(
 			(acc, r) =>
-				acc + p[r] * resScore[r] + p[resourceProduction[r]] * resScore[r] * 1.2,
+				acc +
+				p[r] * resScore(g)[r] +
+				p[resourceProduction[r]] * resScore(g)[r] * 1.2,
 			0
 		) +
 		p.usedCards

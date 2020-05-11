@@ -17,6 +17,7 @@ const validators: Record<CardEffectTarget, ArgValidator | null> = {
 
 export const validateArgValue = (ctx: ValidatorContext) => {
 	const validator = validators[ctx.a.type]
+
 	if (validator !== null) {
 		validator(ctx)
 	}
