@@ -3,7 +3,7 @@ import { GameInfo } from '@shared/extra'
 
 type State = Readonly<typeof initialState>
 
-let sessions = {} as Record<string, string>
+let sessions = {} as Record<string, string | undefined>
 
 try {
 	if (localStorage['sessions']) {
