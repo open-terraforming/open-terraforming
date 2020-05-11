@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import Tooltip from '../Tooltip/Tooltip'
+import { Tooltip } from '../Tooltip/Tooltip'
 
 type Props = {
 	title?: React.ReactNode

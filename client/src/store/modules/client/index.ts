@@ -1,10 +1,9 @@
 import { GameStateValue } from '@shared/game'
-import { NativeMap } from '@/utils/collections'
 import { GameInfo } from '@shared/extra'
 
 type State = Readonly<typeof initialState>
 
-let sessions = {} as NativeMap<string>
+let sessions = {} as Record<string, string>
 
 try {
 	if (localStorage['sessions']) {

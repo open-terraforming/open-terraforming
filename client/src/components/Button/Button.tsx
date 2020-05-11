@@ -2,7 +2,7 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import React, { memo, useMemo } from 'react'
-import Tooltip from '@/components/Tooltip/Tooltip'
+import { Tooltip } from '@/components/Tooltip/Tooltip'
 import styled, { css } from 'styled-components'
 
 export type Schema = 'primary' | 'transparent'
@@ -24,7 +24,7 @@ interface Props {
 	children?: React.ReactNode
 }
 
-const Button = ({
+const ButtonComponent = ({
 	disabled = false,
 	name,
 	schema,
@@ -158,4 +158,4 @@ const Icon = styled.span<{
 		`}
 `
 
-export default memo(Button)
+export const Button = memo(ButtonComponent)

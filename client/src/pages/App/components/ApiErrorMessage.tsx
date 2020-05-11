@@ -5,7 +5,7 @@ import { setApiError } from '@/store/modules/api'
 
 export const ApiErrorMessage = () => {
 	const dispatch = useAppDispatch()
-	const error = useAppStore((state) => state.api.error)
+	const error = useAppStore(state => state.api.error)
 
 	return (
 		<>

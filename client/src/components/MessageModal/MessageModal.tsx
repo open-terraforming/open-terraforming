@@ -7,8 +7,8 @@ import {
 	faExclamationCircle,
 	faCheck
 } from '@fortawesome/free-solid-svg-icons'
-import Button from '../Button/Button'
-import styled, { css } from 'styled-components'
+import { Button } from '../Button/Button'
+import styled from 'styled-components'
 import { colors } from '@/styles'
 
 type MessageModalType = 'info' | 'warn' | 'error'

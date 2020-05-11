@@ -12,7 +12,7 @@ const middleWares = [reduxThunk]
 if (process.env.NODE_ENV === 'development') {
 	middleWares.push(
 		require('redux-logger').createLogger({
-			collapsed: true
+			collapsed: true,
 		}) as any
 	)
 }
@@ -20,6 +20,6 @@ if (process.env.NODE_ENV === 'development') {
 export const buildStore = (initialState: DeepPartial<StoreState> = {}) =>
 	createStore(
 		reducers,
-		initialState,
+		initialState as any,
 		composeWithDevTools({ trace: true })(applyMiddleware(...middleWares))
 	)

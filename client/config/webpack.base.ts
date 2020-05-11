@@ -13,7 +13,6 @@ import { getEnvValues, loadEnv, ENV } from './lib/env'
 import { srcPath } from './lib/paths'
 import CircularDependencyPlugin from 'circular-dependency-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
-import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin'
 import PreloadWebpackPlugin from 'preload-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 
@@ -76,13 +75,6 @@ const config = (env: ENV): webpack.Configuration => {
 					sourceMap: true,
 					terserOptions: {
 						ie8: false
-					}
-				}),
-				new OptimizeCssAssetsPlugin({
-					cssProcessorOptions: {
-						map: {
-							inline: false
-						}
 					}
 				})
 			],

@@ -159,5 +159,3 @@ const Container = styled.div<{ disableStyle?: boolean }>`
 			}
 		`}
 `
-
-export default Tooltip
