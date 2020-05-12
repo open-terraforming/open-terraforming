@@ -5,12 +5,7 @@ import {
 	CardEffect,
 	CardEffectArgumentType
 } from '@shared/cards'
-import {
-	GameState,
-	GameStateValue,
-	PlayerState,
-	PlayerStateValue
-} from '@shared/index'
+import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { f } from '@shared/utils'
 import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
@@ -23,15 +18,18 @@ export abstract class PlayerBaseAction<Args = {}> {
 		return this.parent.logger
 	}
 
-	player: PlayerState
-	game: GameState
+	get player() {
+		return this.parent.state
+	}
+
+	get game() {
+		return this.parent.game.state
+	}
 
 	parent: Player
 
 	constructor(player: Player) {
 		this.parent = player
-		this.player = player.state
-		this.game = player.game.state
 	}
 
 	get pendingActions() {
@@ -43,15 +41,20 @@ export abstract class PlayerBaseAction<Args = {}> {
 	}
 
 	tryPerform(args: Args) {
-		if (this.gameStates.length > 0 && !(this.game.state in this.gameStates)) {
+		const name = this.constructor.name
+
+		if (
+			this.gameStates.length > 0 &&
+			!this.gameStates.includes(this.game.state)
+		) {
 			throw new Error(
-				`Action not allowed when game is ${GameStateValue[this.game.state]}`
+				`${name} not allowed when game is ${GameStateValue[this.game.state]}`
 			)
 		}
 
-		if (this.states.length > 0 && !(this.player.state in this.states)) {
+		if (this.states.length > 0 && !this.states.includes(this.player.state)) {
 			throw new Error(
-				`Action not allowed when player is ${
+				`${name} not allowed when player is ${
 					PlayerStateValue[this.player.state]
 				}`
 			)

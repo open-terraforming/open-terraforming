@@ -82,7 +82,7 @@ export class Player {
 		return this.pendingActions[0]
 	}
 
-	actions = new PlayerActions(this)
+	actions: PlayerActions
 
 	constructor(game: Game) {
 		this.game = game
@@ -90,6 +90,8 @@ export class Player {
 		this.state.session = new Hashids(this.game.config.adminPassword, 5).encode(
 			this.state.id
 		)
+
+		this.actions = new PlayerActions(this)
 	}
 
 	performAction(action: GameMessage) {

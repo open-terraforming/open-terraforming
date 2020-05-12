@@ -10,7 +10,7 @@ import { PlayerBaseAction } from '../action'
 type Args = ReturnType<typeof buyCard>['data']
 
 export class BuyCardAction extends PlayerBaseAction<Args> {
-	states = [PlayerStateValue.Picking]
+	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
 	perform({ card: cardCode, index, args, useOre, useTitan }: Args) {

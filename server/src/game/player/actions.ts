@@ -1,22 +1,23 @@
-import { MessageType, GameMessage } from '@shared/actions'
-import { PlayerBaseAction } from './action'
+import { GameMessage, MessageType } from '@shared/actions'
 import { Player } from '../player'
-import { ToggleReadyAction } from './actions/toggle-ready'
-import { PickCorporationAction } from './actions/pick-corporation'
-import { PickCardsAction } from './actions/pick-cards'
-import { PickPreludesAction } from './actions/pick-preludes'
-import { PickColorAction } from './actions/pick-color'
+import { PlayerBaseAction } from './action'
+import { AdminChangeAction } from './actions/admin-change'
+import { AdminLoginAction } from './actions/admin-login'
 import { BuyCardAction } from './actions/buy-card'
 import { BuyMilestoneAction } from './actions/buy-milestone'
 import { BuyStandardProjectAction } from './actions/buy-standard-project'
-import { SponsorCompetitionAction } from './actions/sponsor-competition'
-import { PlayCardAction } from './actions/play-card'
-import { PlaceTileAction } from './actions/place-tile'
 import { ClaimTileAction } from './actions/claim-tile'
 import { KickPlayerAction } from './actions/kick-player'
-import { AdminLoginAction } from './actions/admin-login'
-import { AdminChangeAction } from './actions/admin-change'
+import { PassAction } from './actions/pass'
+import { PickCardsAction } from './actions/pick-cards'
+import { PickColorAction } from './actions/pick-color'
+import { PickCorporationAction } from './actions/pick-corporation'
+import { PickPreludesAction } from './actions/pick-preludes'
+import { PlaceTileAction } from './actions/place-tile'
+import { PlayCardAction } from './actions/play-card'
+import { SponsorCompetitionAction } from './actions/sponsor-competition'
 import { StartGameAction } from './actions/start-game'
+import { ToggleReadyAction } from './actions/toggle-ready'
 
 export class PlayerActions {
 	player: Player
@@ -45,7 +46,8 @@ export class PlayerActions {
 			[MessageType.KickPlayer]: new KickPlayerAction(this.player),
 			[MessageType.AdminLogin]: new AdminLoginAction(this.player),
 			[MessageType.AdminChange]: new AdminChangeAction(this.player),
-			[MessageType.StartGame]: new StartGameAction(this.player)
+			[MessageType.StartGame]: new StartGameAction(this.player),
+			[MessageType.PlayerPass]: new PassAction(this.player)
 		}
 	}
 
