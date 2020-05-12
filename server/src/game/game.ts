@@ -1,5 +1,6 @@
 import { StateMachine } from '@/lib/state-machine'
 import { deepExtend, range } from '@/utils/collections'
+import { MyEvent } from '@/utils/events'
 import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
 import { f } from '@/utils/string'
@@ -11,13 +12,21 @@ import {
 	PlayerStateValue,
 	ProgressMilestoneType
 } from '@shared/game'
-import { UpdateDeepPartial } from '@shared/index'
+import {
+	pickCards,
+	pickCorporation,
+	pickPreludes,
+	playerPass,
+	UpdateDeepPartial
+} from '@shared/index'
+import { MapType } from '@shared/map'
+import { Maps } from '@shared/maps'
 import { GameModes } from '@shared/modes'
 import { GameModeType } from '@shared/modes/types'
 import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
-import { MyEvent } from '@/utils/events'
+import { isMarsTerraformed } from '@shared/utils'
 import { v4 as uuidv4 } from 'uuid'
 import { Bot } from './bot'
 import { EndedGameState } from './game-sm/ended-game-state'
@@ -33,9 +42,6 @@ import {
 	ProjectBought,
 	TilePlacedEvent
 } from './player'
-import { MapType } from '@shared/map'
-import { Maps } from '@shared/maps'
-import { isMarsTerraformed } from '@shared/utils'
 
 export interface GameConfig {
 	bots: number
@@ -339,15 +345,15 @@ export class Game {
 							if (p.state.pendingActions.length > 0) {
 								p.state.pendingActions.forEach(a => {
 									if (a.type === PlayerActionType.PickCorporation) {
-										p.pickCorporation(a.cards[0])
+										p.performAction(pickCorporation(a.cards[0]))
 									}
 
 									if (a.type === PlayerActionType.PickCards) {
-										p.pickCards([])
+										p.performAction(pickCards([]))
 									}
 
 									if (a.type === PlayerActionType.PickPreludes) {
-										p.pickPreludes([])
+										p.performAction(pickPreludes(range(0, a.limit)))
 									}
 								})
 							}
@@ -359,7 +365,7 @@ export class Game {
 								p.state.state === PlayerStateValue.EndingTiles)
 						) {
 							this.logger.log(`${p.name} is disconnected, passing`)
-							p.pass(true)
+							p.performAction(playerPass())
 						}
 					}
 				} catch (e) {
