@@ -21,7 +21,7 @@ import {
 } from '@shared/index'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
-import { sanitize, shuffle } from '@shared/utils'
+import { sanitize, shuffle, nonEmptyStringLength } from '@shared/utils'
 import { CardsLookupApi } from '@shared/cards'
 
 enum ClientState {
@@ -158,8 +158,6 @@ export class Client {
 						let { name } = message.data
 						const { session } = message.data
 
-						name = sanitize(name)
-
 						if (session) {
 							const p = this.game.players.find(p => p.state.session === session)
 
@@ -184,7 +182,11 @@ export class Client {
 							return joinResponse(JoinError.GameInProgress)
 						}
 
-						if (!name || name.trim().length < 3 || name.length > 10) {
+						name = sanitize(name)
+
+						const length = nonEmptyStringLength(name)
+
+						if (!name || length < 3 || length > 10) {
 							return joinResponse(JoinError.InvalidName)
 						}
 

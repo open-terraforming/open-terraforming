@@ -117,7 +117,14 @@ export const f = (s: string, ...args: any[]) =>
  * @param str
  */
 export const sanitize = (str?: string) =>
-	str ? str.replace(/[\x00-\x1F\x7F-\x9F]/g, '') : str
+	str ? str.trim().replace(/[\x00-\x1F\x7F-\x9F\u200f]/g, '') : str
+
+/**
+ * Returns length of string without special characters
+ * @param str
+ */
+export const nonEmptyStringLength = (str?: string) =>
+	str ? str.replace(/[\x00-\x08\x0E-\x1F\x7F-\uFFFF ]/g, '').length : 0
 
 export const competitionPrice = (game: GameState) => {
 	return game.competitionsPrices[
