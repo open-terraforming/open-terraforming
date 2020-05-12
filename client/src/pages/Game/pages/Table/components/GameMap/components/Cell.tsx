@@ -285,7 +285,7 @@ const StyledHex = styled.g<{
 		animation-duration: 15000ms;
 		animation-iteration-count: infinite;
 
-		transition: stroke 0.2s, fill 0.2s;
+		transition: stroke 0.2s, fill 0.2s, stroke-width 0.2s;
 
 		${props =>
 			props.gridType === GridCellType.Ocean &&
@@ -321,6 +321,7 @@ const StyledHex = styled.g<{
 			props.gridHover &&
 			css`
 				stroke: rgba(255, 255, 255, 0.9);
+				stroke-width: 1;
 			`}
 
 		${props =>
