@@ -14,6 +14,7 @@ import { createServer, IncomingMessage } from 'http'
 import { Socket } from 'net'
 import { join } from 'path'
 import { GameServer } from '../server/game-server'
+import { nonEmptyStringLength } from '@shared/utils'
 
 export const multiApp = (config: ServerOptions) => {
 	const logger = new Logger('Master')
@@ -144,6 +145,10 @@ export const multiApp = (config: ServerOptions) => {
 			const bots = parseInt((request.bots ?? '0').toString(), 10)
 			const spectatorsAllowed = !!request.spectatorsAllowed
 			const isPublic = !!request.public
+
+			if (nonEmptyStringLength(name) < 3 || nonEmptyStringLength(name) > 20) {
+				throw new Error('Invalid name')
+			}
 
 			if (!Maps[map]) {
 				throw new Error(`Unknown map ${map}`)
