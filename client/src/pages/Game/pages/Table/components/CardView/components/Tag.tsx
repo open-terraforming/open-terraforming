@@ -121,6 +121,8 @@ const IconContainer = styled.div<{ background: string; size?: Props['size'] }>`
 		border-left: 2px solid rgb(221, 221, 221);
 		border-bottom: 2px solid rgb(137, 137, 137);
 		border-right: 2px solid rgb(137, 137, 137);
+
+		overflow: hidden;
 	`}
 `
 

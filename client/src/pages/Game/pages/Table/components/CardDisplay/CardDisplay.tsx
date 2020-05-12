@@ -8,6 +8,8 @@ import { CardView } from '../CardView/CardView'
 import { Tag } from '../CardView/components/Tag'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { media } from '@/styles/media'
+import { lighten } from 'polished'
+import { colors } from '@/styles'
 
 export type CardInfo = {
 	card: Card
@@ -122,7 +124,7 @@ export const CardDisplay = <T extends CardInfo>({
 				<Filters>
 					<Types>
 						{types.map(([cat, t, count]) => (
-							<FilterTag
+							<FilterItem
 								selected={cat === type}
 								onClick={() => {
 									setType(cat)
@@ -130,10 +132,8 @@ export const CardDisplay = <T extends CardInfo>({
 								key={cat === undefined ? -1 : cat}
 							>
 								<Type>{t}</Type>
-								<Count>
-									<div>{count}</div>
-								</Count>
-							</FilterTag>
+								<Count>{count}</Count>
+							</FilterItem>
 						))}
 					</Types>
 
@@ -145,7 +145,7 @@ export const CardDisplay = <T extends CardInfo>({
 						/>
 					)}
 
-					<Categories>
+					<Categories style={{ maxWidth: '50%', overflow: 'auto' }}>
 						{categories.map(([cat, count]) => (
 							<FilterTag
 								selected={selectedCategory === cat}
@@ -156,7 +156,9 @@ export const CardDisplay = <T extends CardInfo>({
 								}}
 								key={cat}
 							>
-								<Tag tag={cat} />
+								<Type>
+									<Tag tag={cat} size="sm" />
+								</Type>
 								<Count>
 									<div>{count}</div>
 								</Count>
@@ -238,36 +240,38 @@ const Filters = styled.div`
 	margin-bottom: 1rem;
 `
 
-const FilterTag = styled.div<{ selected: boolean }>`
-	margin: 0 0.2rem;
-	padding: 0.2rem;
-	position: relative;
+const Count = styled.div`
+	padding: 0.35rem;
+	background-color: ${lighten(0.1, colors.border)};
+
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`
+
+const Type = styled.div`
+	padding: 0.35rem;
+`
+
+const FilterItem = styled.div<{ selected: boolean }>`
 	cursor: pointer;
+	display: flex;
+	margin-right: 0.3rem;
+
+	background-color: ${colors.border};
 
 	${props =>
 		props.selected &&
 		css`
-			background: #44a8f2;
+			background-color: ${lighten(0.2, colors.border)};
+
+			${Count} {
+				background-color: ${lighten(0.3, colors.border)};
+			}
 		`}
 `
 
-const Count = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 25px;
-
-	> div {
-		border-radius: 3px;
-		background: rgba(98, 98, 255, 0.8);
-		padding: 0.25rem;
-	}
-`
-
-const Type = styled.div`
-	padding: 0.5rem 0;
-	margin: 0 0.5rem;
+const FilterTag = styled(FilterItem)`
+	margin-right: 0;
+	margin-left: 0.3rem;
 `
