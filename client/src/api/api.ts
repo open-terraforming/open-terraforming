@@ -1,4 +1,10 @@
-import { GameMessage, adminChange, adminLogin } from '@shared/index'
+import {
+	GameMessage,
+	adminChange,
+	adminLogin,
+	MessageType
+} from '@shared/index'
+import { encode, decode } from 'msgpack-lite'
 
 export class Client {
 	server: string
@@ -13,12 +19,14 @@ export class Client {
 		this.connect()
 	}
 
-	send(msg: object) {
+	send(msg: GameMessage) {
 		if (typeof msg !== 'object') {
 			throw new Error('Trying to send non-object - no!')
 		}
 
-		return this.socket?.send(JSON.stringify(msg))
+		console.log('Outgoing', MessageType[msg.type], msg)
+
+		return this.socket?.send(encode(msg))
 	}
 
 	connect() {
@@ -35,9 +43,18 @@ export class Client {
 			this.onOpen && this.onOpen()
 		}
 
-		this.socket.onmessage = msg => {
-			const data = JSON.parse(msg.data.toString())
-			this.onMessage && this.onMessage(data)
+		this.socket.onmessage = async msg => {
+			if (this.onMessage) {
+				if (typeof msg.data === 'string') {
+					this.onMessage(JSON.parse(msg.data.toString()))
+				} else if (msg.data instanceof Blob) {
+					const data = decode(new Uint8Array(await msg.data.arrayBuffer()))
+					this.onMessage(data)
+				} else {
+					console.error(msg)
+					throw new Error('Unknown message: ' + typeof msg)
+				}
+			}
 		}
 
 		this.socket.onclose = () => {

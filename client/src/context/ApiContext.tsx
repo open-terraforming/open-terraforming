@@ -56,6 +56,7 @@ export const ApiContextProvider = ({
 
 	if (client) {
 		client.onOpen = () => {
+			setReconnectCount(0)
 			client.send(handshakeRequest(VERSION))
 		}
 
@@ -82,6 +83,8 @@ export const ApiContextProvider = ({
 		}
 
 		client.onMessage = m => {
+			console.log('Incoming', MessageType[m.type], m)
+
 			switch (m.type) {
 				case MessageType.HandshakeResponse: {
 					const { error, info } = m.data

@@ -23,6 +23,7 @@ import WebSocket from 'ws'
 import { GameServer } from './game-server'
 import { sanitize, shuffle, nonEmptyStringLength } from '@shared/utils'
 import { CardsLookupApi } from '@shared/cards'
+import { decode, encode } from 'msgpack-lite'
 
 enum ClientState {
 	Initializing,
@@ -114,9 +115,19 @@ export class Client {
 		let parsed: GameMessage
 
 		try {
-			parsed = JSON.parse(data.toString())
+			if (typeof data === 'string') {
+				parsed = JSON.parse(data.toString())
+			} else if (data instanceof ArrayBuffer) {
+				parsed = decode(new Uint8Array(data))
+			} else {
+				if (Array.isArray(data)) {
+					data = Buffer.concat(data)
+				}
+
+				parsed = decode(data as Buffer)
+			}
 		} catch (e) {
-			console.error('Failed to parse', data)
+			this.logger.error('Failed to parse message', e)
 
 			return
 		}
@@ -228,7 +239,7 @@ export class Client {
 	}
 
 	send(update: GameMessage) {
-		this.socket.send(JSON.stringify(update))
+		this.socket.send(encode(update))
 	}
 
 	sendUpdate(game: GameState) {
