@@ -31,7 +31,14 @@ export const initialGameState = (
 	corporationsDiscarded: [],
 	started: new Date().toISOString(),
 	ended: '',
-	maxPlayers: 5
+	maxPlayers: 5,
+	cardPrice: 3,
+	milestonePrice: 8,
+	milestoneReward: 5,
+	milestonesLimit: 3,
+	competitionsLimit: 3,
+	competitionsPrices: [8, 14, 20],
+	competitionRewards: [5, 2]
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
