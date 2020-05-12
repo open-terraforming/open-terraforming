@@ -1,7 +1,6 @@
 import { Button, DialogWrapper } from '@/components'
 import { colors } from '@/styles'
-import { useAppStore } from '@/utils/hooks'
-import { COMPETITIONS_LIMIT, MILESTONES_LIMIT } from '@shared/constants'
+import { useGameState } from '@/utils/hooks'
 import React from 'react'
 import styled from 'styled-components'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
@@ -12,8 +11,9 @@ import { HeaderEventDisplay } from './components/HeaderEventDisplay'
 type Props = {}
 
 export const Header = ({}: Props) => {
-	const milestones = useAppStore(state => state.game.state.milestones)
-	const competitions = useAppStore(state => state.game.state.competitions)
+	const game = useGameState()
+	const milestones = game.milestones
+	const competitions = game.competitions
 
 	return (
 		<>
@@ -22,7 +22,7 @@ export const Header = ({}: Props) => {
 					{open => (
 						<StyledButton onClick={open}>
 							<Counter>
-								{milestones.length}/{MILESTONES_LIMIT}
+								{milestones.length}/{game.milestonesLimit}
 							</Counter>
 							<span>Milestones</span>
 						</StyledButton>
@@ -40,7 +40,7 @@ export const Header = ({}: Props) => {
 						<StyledButton onClick={open}>
 							<span>Competitions</span>
 							<Counter>
-								{competitions.length}/{COMPETITIONS_LIMIT}
+								{competitions.length}/{game.competitionsLimit}
 							</Counter>
 						</StyledButton>
 					)}

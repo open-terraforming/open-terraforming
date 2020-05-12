@@ -1,20 +1,19 @@
-import { Player } from '../player'
-import {
-	PlayerState,
-	PlayerStateValue,
-	GameStateValue,
-	GameState
-} from '@shared/index'
 import {
 	Card,
 	CardCallbackContext,
-	CardEffectArgumentType,
 	CardCondition,
-	CardEffect
+	CardEffect,
+	CardEffectArgumentType
 } from '@shared/cards'
+import {
+	GameState,
+	GameStateValue,
+	PlayerState,
+	PlayerStateValue
+} from '@shared/index'
+import { f } from '@shared/utils'
+import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
-import { f, pendingActions } from '@shared/utils'
-import { PlayerAction } from '@shared/player-actions'
 
 export abstract class PlayerBaseAction<Args = {}> {
 	abstract states: PlayerStateValue[]
@@ -36,11 +35,11 @@ export abstract class PlayerBaseAction<Args = {}> {
 	}
 
 	get pendingActions() {
-		return pendingActions(this.player)
+		return this.parent.pendingActions
 	}
 
-	get pendingAction(): PlayerAction | undefined {
-		return this.pendingActions[0]
+	get pendingAction() {
+		return this.parent.pendingAction
 	}
 
 	tryPerform(args: Args) {

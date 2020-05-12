@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { COMPETITIONS_PRICES, MILESTONE_PRICE } from '../constants'
+import { Card, CardCondition } from '../cards'
 import {
 	GameState,
 	GridCell,
+	GridCellContent,
 	PlayerState,
 	PlayerStateValue,
-	GridCellContent,
 	UsedCardState
 } from '../game'
 import { PlayerAction, PlayerActionType } from '../player-actions'
-import { Card, CardCondition } from '../cards'
 
 export const allCells = (game: GameState) => {
 	return game.map.grid
@@ -120,12 +119,10 @@ export const f = (s: string, ...args: any[]) =>
 export const sanitize = (str?: string) =>
 	str ? str.replace(/[\x00-\x1F\x7F-\x9F]/g, '') : str
 
-export const milestonePrice = () => {
-	return MILESTONE_PRICE
-}
-
 export const competitionPrice = (game: GameState) => {
-	return COMPETITIONS_PRICES[game.competitions.length]
+	return game.competitionsPrices[
+		Math.min(game.competitionsPrices.length - 1, game.competitions.length)
+	]
 }
 
 export const pushPendingAction = (

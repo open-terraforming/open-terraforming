@@ -1,5 +1,4 @@
 import { updatePlayerResource } from '@shared/cards/utils'
-import { MILESTONES_LIMIT, MILESTONE_PRICE } from '@shared/constants'
 import { buyMilestone, GameStateValue, PlayerStateValue } from '@shared/index'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { f } from '@shared/utils'
@@ -16,11 +15,11 @@ export class BuyMilestoneAction extends PlayerBaseAction<Args> {
 			throw new Error("You've got pending actions to attend to")
 		}
 
-		if (this.game.milestones.length >= MILESTONES_LIMIT) {
+		if (this.game.milestones.length >= this.game.milestonesLimit) {
 			throw new Error('All milestones are taken')
 		}
 
-		if (this.player.money < MILESTONE_PRICE) {
+		if (this.player.money < this.game.milestonePrice) {
 			throw new Error("You can't afford a milestone")
 		}
 
@@ -36,7 +35,7 @@ export class BuyMilestoneAction extends PlayerBaseAction<Args> {
 
 		this.logger.log(f('Bought milestone {0}', MilestoneType[type]))
 
-		updatePlayerResource(this.player, 'money', -MILESTONE_PRICE)
+		updatePlayerResource(this.player, 'money', -this.game.milestonePrice)
 
 		this.game.milestones.push({
 			playerId: this.player.id,

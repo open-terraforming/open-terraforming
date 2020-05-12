@@ -2,18 +2,17 @@ import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { colors } from '@/styles'
+import { media } from '@/styles/media'
 import { useAppStore } from '@/utils/hooks'
 import { faThermometerHalf, faTint } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi } from '@shared/cards'
-import { CARD_PRICE } from '@shared/constants'
 import { pickCards, pickPreludes } from '@shared/index'
-import React, { useState, useMemo } from 'react'
+import { PlayerActionType } from '@shared/player-actions'
+import React, { useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
-import { PlayerActionType } from '@shared/player-actions'
-import { media } from '@/styles/media'
 
 type Props = {
 	prelude?: boolean
@@ -50,7 +49,7 @@ export const CardPicker = ({ prelude, closeable, onClose }: Props) => {
 	const [selected, setSelected] = useState([] as number[])
 	const [loading, setLoading] = useState(false)
 
-	const price = isFree ? 0 : selected.length * CARD_PRICE
+	const price = isFree ? 0 : selected.length * game.cardPrice
 	const canAfford = state && price <= state.money
 
 	const handleConfirm = () => {

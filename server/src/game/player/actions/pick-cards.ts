@@ -1,4 +1,3 @@
-import { CARD_PRICE } from '@shared/constants'
 import { GameStateValue, pickCards, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils'
@@ -32,11 +31,13 @@ export class PickCardsAction extends PlayerBaseAction<Args> {
 		}
 
 		if (!top.free) {
-			if (cards.length * CARD_PRICE > this.player.money) {
+			const cost = cards.length * this.game.cardPrice
+
+			if (cost > this.player.money) {
 				throw new Error("You don't have money for that")
 			}
 
-			this.player.money -= cards.length * CARD_PRICE
+			this.player.money -= cost
 		}
 
 		this.logger.log(

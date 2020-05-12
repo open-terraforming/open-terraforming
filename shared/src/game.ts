@@ -43,29 +43,22 @@ export enum PlayerStateValue {
 
 export interface GameState {
 	id: string
-
 	name: string
-
 	state: GameStateValue
-
 	mode: GameModeType
-
 	generation: number
 	oxygen: number
 	oceans: number
 	temperature: number
+	map: MapState
 
 	/**  Player index (NOT ID) currently playing round (only for GenerationInProgress) */
 	currentPlayer: number
-
+	/**  Player index (NOT ID) of player starting current generation */
 	startingPlayer: number
 
 	players: PlayerState[]
-
-	map: MapState
-
-	milestones: MilestoneState[]
-	competitions: CompetitionState[]
+	maxPlayers: number
 
 	corporations: string[]
 	corporationsDiscarded: string[]
@@ -82,7 +75,26 @@ export interface GameState {
 	/** ISO Date of game end */
 	ended: string
 
-	maxPlayers: number
+	/** Basic card price, in money, for buying card to your hand */
+	cardPrice: number
+
+	/** List of bought milestones */
+	milestones: MilestoneState[]
+	/** Basic milestone price, in money */
+	milestonePrice: number
+	/** Victory points received milestone */
+	milestoneReward: number
+	/** Maximum number of milestones bought */
+	milestonesLimit: number
+
+	/** List of sponsored competitions */
+	competitions: CompetitionState[]
+	/** Maximum number of sponsored competitions */
+	competitionsLimit: number
+	/** List of competitions prices, index is number of bought competitions */
+	competitionsPrices: number[]
+	/** Victory points received for placing in competition, index is place in competition */
+	competitionRewards: number[]
 }
 
 export interface MilestoneState {

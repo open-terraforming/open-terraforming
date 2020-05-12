@@ -1,13 +1,12 @@
 import { updatePlayerResource } from '@shared/cards/utils'
 import { CompetitionType } from '@shared/competitions'
-import { COMPETITIONS_LIMIT, COMPETITIONS_PRICES } from '@shared/constants'
 import {
 	GameStateValue,
 	PlayerStateValue,
 	sponsorCompetition
 } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { f } from '@shared/utils'
+import { competitionPrice, f } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
 
 type Args = ReturnType<typeof sponsorCompetition>['data']
@@ -26,11 +25,11 @@ export class SponsorCompetitionAction extends PlayerBaseAction<Args> {
 		} else {
 			const sponsored = this.game.competitions.length
 
-			if (sponsored >= COMPETITIONS_LIMIT) {
+			if (sponsored >= this.game.competitionsLimit) {
 				throw new Error('All competitions are taken')
 			}
 
-			const cost = COMPETITIONS_PRICES[sponsored]
+			const cost = competitionPrice(this.game)
 
 			if (this.player.money < cost) {
 				throw new Error("You can't afford a competition")
