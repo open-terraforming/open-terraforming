@@ -3,7 +3,7 @@ import {
 	pickCorporation,
 	PlayerStateValue
 } from '@shared/index'
-import { PlayerBaseAction } from './action'
+import { PlayerBaseAction } from '../action'
 import { PlayerActionType } from '@shared/player-actions'
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { f } from '@shared/utils'

@@ -1,5 +1,5 @@
 import { GameStateValue, PlayerStateValue } from '@shared/index'
-import { PlayerBaseAction } from './action'
+import { PlayerBaseAction } from '../action'
 
 type Args = {} // ReturnType<typeof startGame>['data']
 

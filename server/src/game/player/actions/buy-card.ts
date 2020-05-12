@@ -5,7 +5,7 @@ import {
 	updatePlayerResource
 } from '@shared/cards/utils'
 import { buyCard, GameStateValue, PlayerStateValue } from '@shared/index'
-import { PlayerBaseAction } from './action'
+import { PlayerBaseAction } from '../action'
 
 type Args = ReturnType<typeof buyCard>['data']
 

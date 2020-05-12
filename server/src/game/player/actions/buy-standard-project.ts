@@ -7,7 +7,7 @@ import {
 } from '@shared/index'
 import { Projects } from '@shared/projects'
 import { f } from '@shared/utils'
-import { PlayerBaseAction } from './action'
+import { PlayerBaseAction } from '../action'
 
 type Args = ReturnType<typeof buyStandardProject>['data']
 

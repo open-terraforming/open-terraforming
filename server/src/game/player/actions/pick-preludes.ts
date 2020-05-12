@@ -3,7 +3,7 @@ import { emptyCardState } from '@shared/cards/utils'
 import { GameStateValue, pickPreludes, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils'
-import { PlayerBaseAction } from './action'
+import { PlayerBaseAction } from '../action'
 
 type Args = ReturnType<typeof pickPreludes>['data']
 

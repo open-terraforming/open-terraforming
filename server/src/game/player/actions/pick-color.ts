@@ -1,6 +1,6 @@
 import { GameStateValue, pickColor, PlayerStateValue } from '@shared/index'
 import { PlayerColors } from '@shared/player-colors'
-import { PlayerBaseAction } from './action'
+import { PlayerBaseAction } from '../action'
 
 type Args = ReturnType<typeof pickColor>['data']
 

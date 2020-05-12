@@ -1,4 +1,4 @@
-import { PlayerBaseAction } from './action'
+import { PlayerBaseAction } from '../action'
 import { PlayerStateValue, GameStateValue, playerReady } from '@shared/index'
 
 type ToggleReadyArgs = ReturnType<typeof playerReady>['data']

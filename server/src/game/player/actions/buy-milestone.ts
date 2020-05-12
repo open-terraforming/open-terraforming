@@ -3,7 +3,7 @@ import { MILESTONES_LIMIT, MILESTONE_PRICE } from '@shared/constants'
 import { buyMilestone, GameStateValue, PlayerStateValue } from '@shared/index'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { f } from '@shared/utils'
-import { PlayerBaseAction } from './action'
+import { PlayerBaseAction } from '../action'
 
 type Args = ReturnType<typeof buyMilestone>['data']
 
