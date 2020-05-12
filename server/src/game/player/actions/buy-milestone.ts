@@ -15,6 +15,10 @@ export class BuyMilestoneAction extends PlayerBaseAction<Args> {
 			throw new Error("You've got pending actions to attend to")
 		}
 
+		if (!this.game.map.milestones.includes(type)) {
+			throw new Error(`This milestone is not available no this board`)
+		}
+
 		if (this.game.milestones.length >= this.game.milestonesLimit) {
 			throw new Error('All milestones are taken')
 		}

@@ -18,6 +18,10 @@ export class SponsorCompetitionAction extends PlayerBaseAction<Args> {
 	perform({ type }: Args) {
 		const top = this.pendingAction
 
+		if (!this.game.map.competitions.includes(type)) {
+			throw new Error(`This competition is not available no this board`)
+		}
+
 		if (top) {
 			if (top.type !== PlayerActionType.SponsorCompetition) {
 				throw new Error("You've got pending actions to attend to.")
