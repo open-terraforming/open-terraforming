@@ -1,5 +1,5 @@
 import { getGames } from '@/api/rest'
-import { Button, DialogWrapper, Loader } from '@/components'
+import { Button, Loader } from '@/components'
 import { ApiState, setApiState } from '@/store/modules/api'
 import { colors } from '@/styles'
 import { useAppDispatch } from '@/utils/hooks'
@@ -7,16 +7,13 @@ import { faArrowRight, faSync } from '@fortawesome/free-solid-svg-icons'
 import { GameInfo } from '@shared/extra'
 import { Maps } from '@shared/maps'
 import { GameModes } from '@shared/modes'
+import { darken } from 'polished'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { NewGameModal } from './NewGameModal'
-import { darken } from 'polished'
 
-type Props = {
-	allowCreate: boolean
-}
+type Props = {}
 
-export const GamesList = ({ allowCreate }: Props) => {
+export const GamesList = ({}: Props) => {
 	const dispatch = useAppDispatch()
 	const [loading, setLoading] = useState(false)
 	const [games, setGames] = useState([] as GameInfo[])
@@ -53,20 +50,6 @@ export const GamesList = ({ allowCreate }: Props) => {
 	return (
 		<Container>
 			<Head>
-				<DialogWrapper dialog={close => <NewGameModal onClose={close} />}>
-					{open => (
-						<Button
-							onClick={open}
-							disabled={!allowCreate}
-							tooltip={
-								!allowCreate ? 'Game count limit reached, sorry' : undefined
-							}
-						>
-							Create new game
-						</Button>
-					)}
-				</DialogWrapper>
-
 				<Button icon={faSync} isLoading={loading} onClick={refresh}>
 					Refresh
 				</Button>
@@ -111,7 +94,7 @@ const Container = styled.div`
 const Head = styled.div`
 	display: flex;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: flex-end;
 `
 
 const NoGames = styled.div`

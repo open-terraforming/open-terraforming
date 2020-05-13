@@ -1,13 +1,19 @@
 import { getServerInfo } from '@/api/rest'
-import { Loader, Message, Button } from '@/components'
+import { Button, DialogWrapper, Loader, Message } from '@/components'
+import { Mars } from '@/components/Mars/Mars'
 import { Modal } from '@/components/Modal/Modal'
 import { ApiState, setApiState } from '@/store/modules/api'
+import {
+	faArrowRight,
+	faPlusCircle,
+	faSync
+} from '@fortawesome/free-solid-svg-icons'
 import { ServerInfo } from '@shared/extra'
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { GamesList } from './components/GamesList'
-import { faSync } from '@fortawesome/free-solid-svg-icons'
-import { Mars } from '@/components/Mars/Mars'
+import styled from 'styled-components'
+import { GamesListModal } from './components/GamesListModal'
+import { NewGameModal } from './components/NewGameModal'
 
 type Props = {}
 
@@ -59,20 +65,47 @@ export const Main = ({}: Props) => {
 		update()
 	}, [])
 
+	const allowCreate = info ? info.servers < info.maxServers : false
+
 	return (
 		<>
 			<Mars />
 			<Modal
 				open={true}
 				allowClose={false}
-				contentStyle={{ minHeight: '4rem' }}
+				contentStyle={{ minHeight: '4rem', minWidth: '10rem' }}
 				header="Open Terraforming"
 				headerStyle={{ justifyContent: 'center', fontSize: '150%' }}
 			>
 				<Loader loaded={!loading} absolute />
+
 				{!loading && info && (
-					<GamesList allowCreate={info?.servers < info?.maxServers} />
+					<Menu>
+						<DialogWrapper dialog={close => <NewGameModal onClose={close} />}>
+							{open => (
+								<Button
+									onClick={open}
+									disabled={!allowCreate}
+									tooltip={
+										!allowCreate ? 'Game count limit reached, sorry' : undefined
+									}
+									icon={faPlusCircle}
+								>
+									New game
+								</Button>
+							)}
+						</DialogWrapper>
+
+						<DialogWrapper dialog={close => <GamesListModal onClose={close} />}>
+							{open => (
+								<Button onClick={open} icon={faArrowRight}>
+									Join game
+								</Button>
+							)}
+						</DialogWrapper>
+					</Menu>
 				)}
+
 				{error && (
 					<>
 						<Message message={error} type="error" />
@@ -85,3 +118,13 @@ export const Main = ({}: Props) => {
 		</>
 	)
 }
+
+const Menu = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+
+	> button {
+		margin: 0.5rem 0;
+	}
+`
