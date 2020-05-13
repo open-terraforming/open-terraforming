@@ -36,7 +36,7 @@ const CompetitionsList = [
 		description: 'Most owned tiles on the map',
 		getScore: (game, player) =>
 			allCells(game).filter(
-				c => c.ownerId === player.id && c.type !== GridCellType.Ocean
+				c => c.ownerId === player.id && c.content !== GridCellContent.Ocean
 			).length
 	}),
 	competition({
