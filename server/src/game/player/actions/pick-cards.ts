@@ -7,7 +7,11 @@ type Args = ReturnType<typeof pickCards>['data']
 
 export class PickCardsAction extends PlayerBaseAction<Args> {
 	states = [PlayerStateValue.Picking]
-	gameStates = [GameStateValue.Starting, GameStateValue.GenerationStart]
+	gameStates = [
+		GameStateValue.Starting,
+		GameStateValue.GenerationStart,
+		GameStateValue.GenerationInProgress
+	]
 
 	perform({ cards }: Args) {
 		const top = this.pendingAction
