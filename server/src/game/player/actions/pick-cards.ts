@@ -6,7 +6,7 @@ import { PlayerBaseAction } from '../action'
 type Args = ReturnType<typeof pickCards>['data']
 
 export class PickCardsAction extends PlayerBaseAction<Args> {
-	states = [PlayerStateValue.Picking]
+	states = [PlayerStateValue.Picking, PlayerStateValue.Playing]
 	gameStates = [
 		GameStateValue.Starting,
 		GameStateValue.GenerationStart,
