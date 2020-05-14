@@ -29,7 +29,11 @@ export default (state = initialState, action: Action): State => {
 				? undefined
 				: action.state.players.find(p => p.id === state.playerId)
 
-			const events = getEvents(state.state, action.state)
+			const events =
+				state.state.id === action.state.id
+					? getEvents(state.state, action.state)
+					: []
+
 			const pendingAction = player && pendingActions(player)[0]
 
 			console.groupCollapsed('Game changed')
