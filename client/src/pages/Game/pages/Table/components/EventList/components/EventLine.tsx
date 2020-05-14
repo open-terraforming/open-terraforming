@@ -1,15 +1,16 @@
-import React, { useMemo, useEffect, useRef, useState } from 'react'
-import styled, { keyframes, css } from 'styled-components'
-import { EventType, GameEvent } from '../types'
-import { PlayerState, GridCellContent, GridCellOther } from '@shared/index'
+import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
+import { Competitions } from '@shared/competitions'
+import { PlayerState } from '@shared/index'
+import { Milestones } from '@shared/milestones'
+import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
 import { ucFirst } from '@shared/utils'
 import { lighten } from 'polished'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
+import styled, { css, keyframes } from 'styled-components'
+import { EventType, GameEvent } from '../types'
 import { CardModal } from './CardModal'
-import { Competitions } from '@shared/competitions'
-import { Milestones } from '@shared/milestones'
-import { useAppStore } from '@/utils/hooks'
 
 type Props = {
 	event: GameEvent
@@ -114,8 +115,8 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						{' placed '}
 						<CardSpanE>
 							{event.other !== undefined
-								? GridCellOther[event.other]
-								: GridCellContent[event.tile]}
+								? otherToStr(event.other)
+								: tileToStr(event.tile)}
 						</CardSpanE>
 					</>
 				)
