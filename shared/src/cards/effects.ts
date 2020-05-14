@@ -53,7 +53,8 @@ import {
 	PlayerCondition,
 	Resource,
 	SymbolType,
-	WithOptional
+	WithOptional,
+	CardType
 } from './types'
 import {
 	countGridContentOnMars,
@@ -992,6 +993,7 @@ export const duplicateProduction = (type: CardCategory) =>
 
 							return (
 								data.categories.includes(type) &&
+								data.type === CardType.Building &&
 								!!data.playEffects.find(
 									e => e.type === CardEffectType.Production
 								) &&
