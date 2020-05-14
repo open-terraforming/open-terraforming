@@ -263,7 +263,7 @@ export const baseCorporations = [
 						condition({
 							description: 'TR has to be increased',
 							evaluate: ({ player, card }) =>
-								card.data === undefined || card.data < player.terraformRating
+								(card.data ?? 20) < player.terraformRating
 						})
 					],
 					symbols: [{ symbol: SymbolType.TerraformingRating, count: 1 }],
@@ -276,7 +276,7 @@ export const baseCorporations = [
 			passiveEffects: [
 				passiveEffect({
 					description: '',
-					onGenerationEnd: ({ card, player }) => {
+					onGenerationStarted: ({ card, player }) => {
 						card.data = player.terraformRating
 					}
 				})
