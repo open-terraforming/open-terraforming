@@ -133,6 +133,7 @@ export class Bot extends Player {
 			}
 
 			case PlayerActionType.PickCards: {
+				// TODO: Add some kind of logic here
 				const picked = a.free
 					? shuffle(a.cards.map((_c, i) => i)).slice(
 							0,
@@ -157,6 +158,8 @@ export class Bot extends Player {
 			}
 
 			case PlayerActionType.PickPreludes: {
+				// TODO: Add some kind of logic here
+
 				const picked = shuffle(
 					a.cards.map((c, i) => [CardsLookupApi.get(c), i] as const)
 				)
