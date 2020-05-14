@@ -115,6 +115,7 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 					limit={1}
 					onSubmit={handleSubmit}
 					filters={false}
+					onClose={() => setPicking(false)}
 				/>
 			)}
 		</ArgContainer>

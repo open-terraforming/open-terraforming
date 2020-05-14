@@ -8,6 +8,7 @@ type Props = {
 	limit?: number
 	canSubmit?: (selected: CardInfo[]) => boolean | string
 	onSubmit: (selected: CardInfo[]) => void
+	onClose: () => void
 	title?: string
 	filters?: boolean
 }
@@ -16,6 +17,7 @@ export const CardSelector = ({
 	cards,
 	onSubmit,
 	canSubmit,
+	onClose,
 	filters = true,
 	title = 'Pick cards',
 	limit = 1
@@ -44,7 +46,7 @@ export const CardSelector = ({
 	return (
 		<Modal
 			open={true}
-			allowClose={false}
+			onClose={onClose}
 			header={title}
 			footer={
 				limit !== 1 && (
