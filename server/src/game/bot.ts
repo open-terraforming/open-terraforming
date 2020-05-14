@@ -30,7 +30,7 @@ import { Milestones } from '@shared/milestones'
 import { canPlace, isClaimable } from '@shared/placements'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import { Projects } from '@shared/projects'
-import { allCells, competitionPrice } from '@shared/utils'
+import { allCells, competitionPrice, f } from '@shared/utils'
 import { Game } from './game'
 import { Player } from './player'
 import { claimTileScore } from './scoring/claim-tile-score'
@@ -437,10 +437,13 @@ export class Bot extends Player {
 
 		actions = actions.filter(([s]) => s >= 0)
 
+		this.logger.log(f('{0} actions available', actions.length))
+
 		if (actions.length === 0) {
 			if (
-				this.state.state in
-				[PlayerStateValue.Playing, PlayerStateValue.EndingTiles]
+				[PlayerStateValue.Playing, PlayerStateValue.EndingTiles].includes(
+					this.state.state
+				)
 			) {
 				this.performAction(playerPass(false))
 			}
