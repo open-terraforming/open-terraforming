@@ -22,7 +22,7 @@ export const TimeDisplay = ({}: Props) => {
 				.padStart(2, '0') + ':'
 
 		result +=
-			Math.floor(diff / 60)
+			Math.floor((diff % 3600) / 60)
 				.toString()
 				.padStart(2, '0') + ':'
 
