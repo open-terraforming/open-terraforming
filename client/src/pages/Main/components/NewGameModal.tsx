@@ -15,10 +15,15 @@ import { Flex } from '@/components/Flex/Flex'
 import { MapType } from '@shared/map'
 import { MapsList } from '@shared/maps'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
+import { Expansions } from '@shared/expansions'
+import { ExpansionType } from '@shared/expansions/types'
+import { MultiSelect } from '@/components/MultiSelect/MultiSelect'
 
 type Props = {
 	onClose: () => void
 }
+
+const availableExpansions = [ExpansionType.Prelude]
 
 export const NewGameModal = ({ onClose }: Props) => {
 	const dispatch = useAppDispatch()
@@ -29,6 +34,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [isPublic, setPublic] = useState(true)
 	const [spectators, setSpectators] = useState(true)
 	const [bots, setBots] = useState(0)
+	const [expansions, setExpansions] = useState([ExpansionType.Prelude])
 
 	const [loading, setLoading] = useState(false)
 
@@ -58,7 +64,8 @@ export const NewGameModal = ({ onClose }: Props) => {
 				map,
 				bots,
 				public: isPublic,
-				spectatorsAllowed: spectators
+				spectatorsAllowed: spectators,
+				expansions
 			})
 
 			if (res.id) {
@@ -171,6 +178,18 @@ export const NewGameModal = ({ onClose }: Props) => {
 							<SelectItemDesc>{item.description}</SelectItemDesc>
 						</SelectItem>
 					))}
+				</Field>
+
+				<Field>
+					<label>Expansions</label>
+					<MultiSelect
+						value={expansions}
+						options={availableExpansions.map(e => ({
+							value: e,
+							label: Expansions[e].name
+						}))}
+						onChange={v => setExpansions(v)}
+					/>
 				</Field>
 			</Modal>
 

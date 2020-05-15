@@ -3,6 +3,7 @@ import { GameModes } from '@shared/modes'
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { Maps } from '@shared/maps'
+import { Expansions } from '@shared/expansions'
 
 type Props = {
 	info: GameInfo
@@ -10,7 +11,8 @@ type Props = {
 
 export const Info = ({ info }: Props) => {
 	const expansions = useMemo(
-		() => [['Prelude', info.prelude]].filter(([, e]) => e).map(([e]) => e),
+		() =>
+			info.expansions ? info.expansions.map(e => Expansions[e]?.name) : [],
 		[info]
 	)
 

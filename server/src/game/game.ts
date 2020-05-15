@@ -42,6 +42,7 @@ import {
 	ProjectBought,
 	TilePlacedEvent
 } from './player'
+import { ExpansionType } from '@shared/expansions/types'
 
 export interface GameConfig {
 	bots: number
@@ -51,6 +52,7 @@ export interface GameConfig {
 	name: string
 	public: boolean
 	spectatorsAllowed: boolean
+	expansions: ExpansionType[]
 }
 export class Game {
 	get logger() {
@@ -82,6 +84,7 @@ export class Game {
 			name: 'Standard game',
 			public: false,
 			spectatorsAllowed: true,
+			expansions: [ExpansionType.Base, ExpansionType.Prelude],
 			...config
 		}
 
@@ -433,7 +436,8 @@ export class Game {
 			maxPlayers: this.state.maxPlayers,
 			prelude: this.state.prelude,
 			map: this.state.map.code,
-			spectatorsEnabled: this.config.spectatorsAllowed
+			spectatorsEnabled: this.config.spectatorsAllowed,
+			expansions: this.state.expansions.filter(e => e !== ExpansionType.Base)
 		}
 	}
 }

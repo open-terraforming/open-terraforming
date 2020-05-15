@@ -251,3 +251,15 @@ export const useMountAnim = () => {
 
 	return mounted
 }
+
+export const useChange = (effect: EffectCallback, deps?: DependencyList) => {
+	const mounted = useRef(false)
+
+	useEffect(() => {
+		if (mounted.current) {
+			effect()
+		} else {
+			mounted.current = true
+		}
+	}, deps)
+}

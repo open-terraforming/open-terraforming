@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
-import styled from 'styled-components'
 import { colors } from '@/styles'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useChange } from '@/utils/hooks'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React, { useState } from 'react'
+import styled from 'styled-components'
 
 type Props = {
 	label?: string
@@ -13,9 +14,9 @@ type Props = {
 export const Checkbox = ({ label, checked, onChange }: Props) => {
 	const [value, setValue] = useState(checked ?? false)
 
-	useEffect(() => {
+	useChange(() => {
 		onChange && onChange(value)
-	}, [value, onChange])
+	}, [value])
 
 	return (
 		<E>

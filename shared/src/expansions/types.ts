@@ -1,14 +1,23 @@
 import { GameState } from '../game'
+import { WithOptional, Card } from '../cards'
 
 export enum ExpansionType {
-	Prelude = 1,
-	VenusNext,
-	Colonies
+	Base = 1,
+	Prelude
 }
 
 export interface Expansion {
 	type: ExpansionType
 	name: string
 
-	getCards(game: GameState): string[]
+	initialize(game: GameState): void
+	getCards(game: GameState): Card[]
 }
+
+export const expansion = (
+	e: WithOptional<Expansion, 'initialize' | 'getCards'>
+): Expansion => ({
+	initialize: () => null,
+	getCards: () => [],
+	...e
+})

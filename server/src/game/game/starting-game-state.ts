@@ -1,9 +1,10 @@
-import { BaseGameState } from './base-game-state'
-import { GameStateValue, PlayerStateValue } from '@shared/index'
-import { shuffle } from '@shared/utils'
-import { PlayerColors } from '@shared/player-colors'
 import { randomPlayerColor } from '@/utils/colors'
-import { CardsLookupApi, CardSpecial, CardType } from '@shared/cards'
+import { Card, CardType } from '@shared/cards'
+import { Expansions } from '@shared/expansions'
+import { GameStateValue, PlayerStateValue } from '@shared/index'
+import { PlayerColors } from '@shared/player-colors'
+import { shuffle } from '@shared/utils'
+import { BaseGameState } from './base-game-state'
 
 export class StartingGameState extends BaseGameState {
 	name = GameStateValue.Starting
@@ -41,12 +42,11 @@ export class StartingGameState extends BaseGameState {
 			})
 
 		// Create card pool
-		let cards = Object.values(CardsLookupApi.data())
+		let cards = [] as Card[]
 
-		// Remove Prelude if not desired
-		if (!this.state.prelude) {
-			cards = cards.filter(c => !c.special.includes(CardSpecial.Prelude))
-		}
+		this.state.expansions.forEach(e => {
+			cards = cards.concat(Expansions[e].getCards(this.state))
+		})
 
 		// Pick cards based on the game mode
 		if (this.game.mode.filterCards) {
@@ -58,11 +58,6 @@ export class StartingGameState extends BaseGameState {
 			cards.filter(c => c.type === CardType.Corporation).map(c => c.code)
 		)
 
-		// Pick preludes
-		this.state.preludeCards = this.state.prelude
-			? shuffle(cards.filter(c => c.type === CardType.Prelude).map(c => c.code))
-			: []
-
 		// Pick projects
 		this.state.cards = shuffle(
 			cards
@@ -71,6 +66,11 @@ export class StartingGameState extends BaseGameState {
 				)
 				.map(c => c.code)
 		)
+
+		// Initialize expansions
+		this.state.expansions.forEach(e => {
+			Expansions[e].initialize(this.state)
+		})
 
 		// Start picking corporations or whatever the mode desires
 		if (this.game.mode.onGameStart) {

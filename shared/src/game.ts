@@ -4,6 +4,7 @@ import { MilestoneType } from './milestones'
 import { GameModeType } from './modes/types'
 import { PlayerAction } from './player-actions'
 import { MapType } from './map'
+import { ExpansionType } from './expansions/types'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
@@ -69,6 +70,8 @@ export interface GameState {
 	prelude: boolean
 	preludeCards: string[]
 	preludeDiscarded: string[]
+
+	expansions: ExpansionType[]
 
 	/** ISO Date of game start */
 	started: string

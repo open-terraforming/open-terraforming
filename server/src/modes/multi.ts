@@ -15,6 +15,8 @@ import { Socket } from 'net'
 import { join } from 'path'
 import { GameServer } from '../server/game-server'
 import { nonEmptyStringLength } from '@shared/utils'
+import { Expansions } from '@shared/expansions'
+import { ExpansionType } from '@shared/expansions/types'
 
 export const multiApp = (config: ServerOptions) => {
 	const logger = new Logger('Master')
@@ -114,6 +116,7 @@ export const multiApp = (config: ServerOptions) => {
 			body('mode')
 				.notEmpty()
 				.isInt(),
+			body('expansions').isArray(),
 			body('bots')
 				.isInt({ min: 0, max: 4 })
 				.optional(true),
@@ -145,6 +148,17 @@ export const multiApp = (config: ServerOptions) => {
 			const bots = parseInt((request.bots ?? '0').toString(), 10)
 			const spectatorsAllowed = !!request.spectatorsAllowed
 			const isPublic = !!request.public
+			const expansions = Array.from(new Set(request.expansions))
+
+			expansions.forEach(e => {
+				if (
+					typeof e !== 'number' ||
+					!Expansions[e] ||
+					e === ExpansionType.Base
+				) {
+					throw new Error(`Invalid expansion ${e}`)
+				}
+			})
 
 			if (nonEmptyStringLength(name) < 3 || nonEmptyStringLength(name) > 20) {
 				throw new Error('Invalid name')
@@ -164,7 +178,8 @@ export const multiApp = (config: ServerOptions) => {
 				bots: isNaN(bots) ? 0 : bots,
 				public: isPublic,
 				map: map,
-				spectatorsAllowed
+				spectatorsAllowed,
+				expansions: [ExpansionType.Base, ...expansions]
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)

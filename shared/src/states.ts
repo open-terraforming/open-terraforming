@@ -3,6 +3,7 @@ import { CardCategory } from './cards'
 import { MapType } from './map'
 import { Maps } from './maps'
 import { GameModeType } from './modes/types'
+import { ExpansionType } from './expansions/types'
 
 export const initialGameState = (
 	id = 'game',
@@ -19,7 +20,7 @@ export const initialGameState = (
 	oceans: 0,
 	oxygen: 0,
 	temperature: 0,
-	prelude: true,
+	prelude: false,
 	map: Maps[map].build(),
 	competitions: [],
 	milestones: [],
@@ -38,7 +39,8 @@ export const initialGameState = (
 	milestonesLimit: 3,
 	competitionsLimit: 3,
 	competitionsPrices: [8, 14, 20],
-	competitionRewards: [5, 2]
+	competitionRewards: [5, 2],
+	expansions: [ExpansionType.Base]
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
