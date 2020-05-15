@@ -1,6 +1,7 @@
 import mars from '@/assets/mars-icon.png'
 import { Button, Portal } from '@/components'
 import { useAppStore } from '@/utils/hooks'
+import { faExpand } from '@fortawesome/free-solid-svg-icons'
 import { PlayerStateValue } from '@shared/index'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
@@ -9,7 +10,7 @@ import { EventsModal } from './components/EventsModal'
 import { EventSounds } from './components/EventSounds'
 import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
-import { faWindowMaximize, faExpand } from '@fortawesome/free-solid-svg-icons'
+import { TimeDisplay } from './components/TimeDisplay'
 
 type Props = {}
 
@@ -60,6 +61,7 @@ export const EventList = ({}: Props) => {
 				<TopButtons>
 					<Button onClick={handleFullscreen} icon={faExpand} />
 					<EventLog onClick={() => setDisplayModal(true)}>Event log</EventLog>
+					<TimeDisplay />
 				</TopButtons>
 			</Portal>
 		</Centered>
