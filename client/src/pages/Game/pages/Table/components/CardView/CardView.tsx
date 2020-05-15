@@ -432,7 +432,8 @@ const Container = styled.div<ContainerCtx>`
 	${props =>
 		props.selected &&
 		css`
-			box-shadow: 0px 0px 5px 5px #ffffaa;
+			box-shadow: 0px 0px 0px 4px #ffffa6;
+			transform: scale(1.01);
 		`}
 
 	${props =>
