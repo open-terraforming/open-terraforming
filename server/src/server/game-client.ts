@@ -92,19 +92,19 @@ export class Client {
 
 				this.game.remove(player)
 			} else {
-				player.state.connected = !!this.server.clients.find(
-					p => p !== this && p.player?.id === player.id
-				)
+				if (
+					this.server.clients.find(
+						p => p !== this && p.player?.id === player.id
+					) === undefined
+				) {
+					this.logger.log('Client disconnected - starting disconnect timer')
 
-				player.updated()
-
-				this.logger.log(
-					player.state.connected
-						? 'Client disconnected - but other clients are connected to its player'
-						: 'Client disconnected - marking as disconnected'
-				)
-
-				this.game.checkState()
+					player.handleDisconnect()
+				} else {
+					this.logger.log(
+						'Client disconnected - but other clients are connected to its player'
+					)
+				}
 			}
 		}
 
@@ -176,8 +176,7 @@ export class Client {
 								this.logger.log('Session matched, joining as existing player')
 
 								this.player = p
-								this.player.state.connected = true
-								this.player.updated()
+								this.player.handleConnect()
 
 								return joinResponse(
 									undefined,

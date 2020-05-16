@@ -52,6 +52,8 @@ export class Player {
 	onTilePlaced = new MyEvent<Readonly<TilePlacedEvent>>()
 	onProjectBought = new MyEvent<Readonly<ProjectBought>>()
 
+	disconnectTimeout?: NodeJS.Timeout
+
 	game: Game
 
 	get gameState() {
@@ -148,6 +150,27 @@ export class Player {
 				) !== undefined
 			)
 		})
+	}
+
+	handleConnect() {
+		if (this.disconnectTimeout) {
+			clearTimeout(this.disconnectTimeout)
+			this.disconnectTimeout = undefined
+		}
+
+		this.state.connected = true
+		this.updated()
+	}
+
+	handleDisconnect() {
+		if (this.disconnectTimeout) {
+			clearTimeout(this.disconnectTimeout)
+		}
+
+		this.disconnectTimeout = setTimeout(() => {
+			this.state.connected = false
+			this.updated()
+		}, 10000)
 	}
 
 	finishGame() {
