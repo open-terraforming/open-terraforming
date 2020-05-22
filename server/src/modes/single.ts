@@ -1,13 +1,20 @@
 import { GameConfig } from '@/game/game'
+import { corsMiddleware } from '@/server/cors'
 import { ServerOptions } from '@/server/types'
 import { Logger } from '@/utils/log'
+import { ServerInfo } from '@shared/extra'
 import bodyParser from 'body-parser'
 import express from 'express'
-import { createServer, IncomingMessage } from 'http'
+import { createServer, IncomingMessage, Server } from 'http'
 import { join } from 'path'
 import { GameServer } from '../server/game-server'
-import { ServerInfo } from '@shared/extra'
-import { corsMiddleware } from '@/server/cors'
+
+type SingleAppContext = {
+	app: express.Application
+	game: GameServer
+	server: Server
+	port: number
+}
 
 export const singleApp = (
 	config: ServerOptions,
@@ -44,9 +51,10 @@ export const singleApp = (
 		}
 	})
 
-	server.listen(config.port, () => {
-		logger.log('Listening on', config.port)
+	return new Promise<SingleAppContext>(resolve => {
+		server.listen(config.port, () => {
+			logger.log('Listening on', config.port)
+			resolve({ app, game, server, port: config.port })
+		})
 	})
-
-	return { app, game, server }
 }

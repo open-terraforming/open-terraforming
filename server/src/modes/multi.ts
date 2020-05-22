@@ -3,20 +3,26 @@ import { corsMiddleware } from '@/server/cors'
 import { ServerOptions } from '@/server/types'
 import { tryLoadOngoing } from '@/storage'
 import { Logger } from '@/utils/log'
+import { Expansions } from '@shared/expansions'
+import { ExpansionType } from '@shared/expansions/types'
 import { ServerInfo } from '@shared/extra'
 import { Maps } from '@shared/maps'
 import { GameModes } from '@shared/modes'
 import { NewGameRequest } from '@shared/requests'
+import { nonEmptyStringLength } from '@shared/utils'
 import bodyParser from 'body-parser'
 import express, { Request, Response } from 'express'
 import { body, validationResult } from 'express-validator'
-import { createServer, IncomingMessage } from 'http'
+import { createServer, IncomingMessage, Server } from 'http'
 import { Socket } from 'net'
 import { join } from 'path'
 import { GameServer } from '../server/game-server'
-import { nonEmptyStringLength } from '@shared/utils'
-import { Expansions } from '@shared/expansions'
-import { ExpansionType } from '@shared/expansions/types'
+
+type MultiAppContext = {
+	app: express.Application
+	server: Server
+	port: number
+}
 
 export const multiApp = (config: ServerOptions) => {
 	const logger = new Logger('Master')
@@ -204,9 +210,10 @@ export const multiApp = (config: ServerOptions) => {
 		}
 	)
 
-	server.listen(config.port, () => {
-		logger.log('Listening on', config.port)
+	return new Promise<MultiAppContext>(resolve => {
+		server.listen(config.port, () => {
+			logger.log('Listening on', config.port)
+			resolve({ app, server, port: config.port })
+		})
 	})
-
-	return { app, server }
 }
