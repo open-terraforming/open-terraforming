@@ -5,9 +5,10 @@ const root = (...p) => path.join(__dirname, ...p)
 module.exports = {
 	mode: "development",
 	target: "node",
-	entry: root("../server/src/index.ts"),
+	entry: root("../server/src/main.ts"),
 	output: {
-		path: root('../server/dist/desktop')
+		path: root('dist'),
+		libraryTarget: 'umd'
 	},
 	externals: {
 		'express': 'commonjs express',
