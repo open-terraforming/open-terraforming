@@ -94,6 +94,7 @@ export class Game {
 		this.state.map = Maps[this.config.map].build()
 		this.state.name = this.config.name
 		this.state.mode = this.config.mode
+		this.state.expansions = [...this.config.expansions]
 
 		range(0, this.config.bots).forEach(() => {
 			this.add(new Bot(this), false)
