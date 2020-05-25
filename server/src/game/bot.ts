@@ -41,48 +41,13 @@ import { ScoringContext } from './scoring/types'
 import { useCardScore } from './scoring/use-card-score'
 import { computeScore, getBestArgs, pickBest } from './scoring/utils'
 
-const BotNames = [
-	'Rick',
-	'Jon',
-	'Joana',
-	'James',
-	'Jack',
-	'Oprah',
-	'Trump',
-	'Lin',
-	'Sarah',
-	'Bojack',
-	'Horse',
-	'Theodor',
-	'Pierre',
-	'Keren',
-	'Sanders',
-	'Babish',
-	'Robert',
-	'Sir',
-	'China',
-	'Europe',
-	'Fredrick',
-	'Harry'
-]
-
-let names = [] as string[]
-
-const pickBotName = (id: number) => {
-	if (names.length === 0) {
-		names = shuffle(BotNames)
-	}
-
-	return names.pop() || `Bot ${id}`
-}
-
 export class Bot extends Player {
 	doing?: ReturnType<typeof setTimeout>
 
 	constructor(game: Game) {
 		super(game)
 
-		this.state.name = pickBotName(this.state.id)
+		this.state.name = game.pickBotName(this.state.id)
 		this.state.connected = true
 		this.state.bot = true
 		this.state.state = PlayerStateValue.Ready

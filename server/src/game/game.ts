@@ -26,7 +26,7 @@ import { GameModeType } from '@shared/modes/types'
 import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
-import { isMarsTerraformed } from '@shared/utils'
+import { isMarsTerraformed, shuffle } from '@shared/utils'
 import { v4 as uuidv4 } from 'uuid'
 import { Bot } from './bot'
 import { EndedGameState } from './game/ended-game-state'
@@ -43,6 +43,7 @@ import {
 	TilePlacedEvent
 } from './player'
 import { ExpansionType } from '@shared/expansions/types'
+import { BotNames } from './bot-names'
 
 export interface GameConfig {
 	bots: number
@@ -74,6 +75,8 @@ export class Game {
 	onPlayerKicked = new MyEvent<Player>()
 
 	sm = new StateMachine<GameStateValue>()
+
+	botNames = shuffle([...BotNames])
 
 	constructor(config?: Partial<GameConfig>) {
 		this.config = {
@@ -142,6 +145,10 @@ export class Game {
 
 	get isMarsTerraformed() {
 		return isMarsTerraformed(this.state)
+	}
+
+	pickBotName(id: number) {
+		return this.botNames.pop() || `Bot ${id}`
 	}
 
 	load = (state: GameState) => {
