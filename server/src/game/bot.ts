@@ -289,7 +289,8 @@ export class Bot extends Player {
 					if (
 						this.game.state.milestones.length < this.game.state.milestonesLimit
 					) {
-						Object.values(Milestones)
+						this.game.state.map.milestones
+							.map(m => Milestones[m])
 							.filter(
 								m => !this.game.state.milestones.find(s => s.type === m.type)
 							)
@@ -312,7 +313,8 @@ export class Bot extends Player {
 						this.game.state.competitions.length <
 						this.game.state.competitionsLimit
 					) {
-						Object.values(Competitions)
+						this.game.state.map.competitions
+							.map(c => Competitions[c])
 							.filter(
 								m => !this.game.state.competitions.find(s => s.type === m.type)
 							)
