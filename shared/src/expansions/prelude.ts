@@ -10,8 +10,7 @@ export const preludeExpansion = expansion({
 		g.prelude = true
 
 		g.preludeCards = shuffle(
-			g.cards
-				.map(c => CardsLookupApi.get(c))
+			Object.values(CardsLookupApi.data())
 				.filter(c => c.type === CardType.Prelude)
 				.map(c => c.code)
 		)
