@@ -4,7 +4,6 @@ import { f } from '../../utils'
 import { condition } from '../conditions'
 import {
 	earthCardPriceChange,
-	effect,
 	emptyEffect,
 	exchangeResources,
 	getTopCards,
@@ -22,6 +21,7 @@ import {
 	withRightArrow
 } from '../utils'
 import { PlayerActionType } from '../../player-actions'
+import { effect } from '../effects/types'
 
 export const corp = (c: Card): Card => {
 	return c

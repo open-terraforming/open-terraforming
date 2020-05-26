@@ -40,6 +40,7 @@ import {
 	resourceCondition,
 	unprotectedPlayerResource
 } from './conditions'
+import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
 import {
 	CardCategory,
@@ -49,12 +50,11 @@ import {
 	CardEffectType,
 	CardResource,
 	CardSymbol,
+	CardType,
 	GameProgress,
 	PlayerCondition,
 	Resource,
-	SymbolType,
-	WithOptional,
-	CardType
+	SymbolType
 } from './types'
 import {
 	countGridContentOnMars,
@@ -65,21 +65,6 @@ import {
 	updatePlayerProduction,
 	updatePlayerResource
 } from './utils'
-
-export const effect = <T extends (CardEffectArgumentType | undefined)[]>(
-	c: WithOptional<
-		CardEffect<T>,
-		'args' | 'conditions' | 'type' | 'symbols' | 'aiScore'
-	>
-): CardEffect<T> =>
-	({
-		args: [],
-		conditions: [],
-		symbols: [],
-		type: CardEffectType.Other,
-		aiScore: 0,
-		...c
-	} as CardEffect<T>)
 
 export const resourceChange = (res: Resource, change: number) =>
 	effect({
@@ -1369,3 +1354,5 @@ export const protectedHabitat = () =>
 			player.protectedHabitat = true
 		}
 	})
+
+export { exchangeProduction } from './effects/exchange-production'

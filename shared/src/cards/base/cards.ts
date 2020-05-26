@@ -76,6 +76,7 @@ import {
 	vpsForTiles
 } from '../vps'
 import { LavaCells } from '../../map'
+import { exchangeProduction } from '../effects/exchange-production'
 
 export const baseCards: Card[] = [
 	card({
@@ -1825,7 +1826,7 @@ export const baseCards: Card[] = [
 		type: CardType.Building,
 		cost: 2,
 		categories: [],
-		playEffects: [exchangeResources('heat', 'money')]
+		playEffects: [exchangeProduction('heat', 'money')]
 	}),
 	card({
 		code: 'adaptation_technology',

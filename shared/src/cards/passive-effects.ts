@@ -3,7 +3,6 @@ import { playCardAction } from '../player-actions'
 import { withUnits } from '../units'
 import { adjacentCells, f, pushPendingAction } from '../utils'
 import { effectArg } from './args'
-import { effect } from './effects'
 import { CardsLookupApi } from './lookup'
 import {
 	CardCategory,
@@ -18,6 +17,7 @@ import {
 } from './types'
 import { gamePlayer, resourceProduction, updatePlayerResource } from './utils'
 import { tileWithArticle } from '../texts'
+import { effect } from './effects/types'
 
 export const passiveEffect = (
 	e: WithOptional<CardPassiveEffect, 'symbols'>

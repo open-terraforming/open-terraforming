@@ -149,6 +149,8 @@ export enum CardEffectTarget {
 	Resource,
 	// Type - resource: Resource
 	ResourceType,
+	// Type - amount: number
+	Production,
 	// Type - cardIndex: number
 	Card,
 	// Type - [player: number, cardIndex: number]

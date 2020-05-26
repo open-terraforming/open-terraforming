@@ -6,7 +6,9 @@ import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 
 type Props = {
 	res: Resource
+	min?: number
 	max: number
+	production?: boolean
 	initialValue?: number
 	onChange: (v: number) => void
 }
@@ -14,7 +16,9 @@ type Props = {
 export const ResourceInput = ({
 	onChange,
 	res,
+	min = 0,
 	max,
+	production,
 	initialValue = 0
 }: Props) => {
 	const [value, setValue] = useState(initialValue)
@@ -26,11 +30,11 @@ export const ResourceInput = ({
 	return (
 		<E>
 			<NumberInput
-				min={0}
+				min={min}
 				max={max}
 				onChange={v => setValue(v)}
 				value={value}
-				iconComponent={<ResourceIcon res={res} />}
+				iconComponent={<ResourceIcon res={res} production={production} />}
 			/>
 		</E>
 	)
