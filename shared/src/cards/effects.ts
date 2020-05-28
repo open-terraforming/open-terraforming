@@ -802,7 +802,11 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 		],
 		perform: (ctx, value: number) => {
 			if (value > ctx.player[res]) {
-				throw new Error(`You don't have that much ${res}`)
+				throw new Error(`Player don't have that much ${res}`)
+			}
+
+			if (ctx.player.money + value * ctx.player[resToPrice[res]] < cost) {
+				throw new Error(`Player can't afford that`)
 			}
 
 			const usedRes = Math.min(
