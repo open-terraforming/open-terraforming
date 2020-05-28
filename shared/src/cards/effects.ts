@@ -454,38 +454,43 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 						: `Remove ${-amount} ${res} from`
 			}
 		],
-		conditions: [
-			condition({
-				description: `Player has to have a card that accepts ${res}`,
-				evaluate: ({ player }) =>
-					!!player.usedCards
-						.map(c => ({ card: CardsLookupApi.get(c.code), state: c }))
-						.find(
-							({ card, state }) =>
-								card.resource === res &&
-								(amount > 0 || state[card.resource] >= -amount)
-						)
-			})
-		],
+		conditions:
+			amount < 0
+				? [
+						condition({
+							description: `Player has to have a card that accepts ${res}`,
+							evaluate: ({ player }) =>
+								!!player.usedCards
+									.map(c => ({ card: CardsLookupApi.get(c.code), state: c }))
+									.find(
+										({ card, state }) =>
+											card.resource === res &&
+											(amount > 0 || state[card.resource] >= -amount)
+									)
+						})
+				  ]
+				: [],
 		description:
 			amount < 0
 				? `Remove ${-amount} ${res} from any other card`
 				: `Add ${amount} ${res} to any other card`,
 		symbols: [{ cardResource: res, count: amount }],
 		perform: ({ player }, cardIndex: number) => {
-			const cardState = player.usedCards[cardIndex]
+			if (typeof cardIndex === 'number' && cardIndex >= 0) {
+				const cardState = player.usedCards[cardIndex]
 
-			if (!cardState) {
-				throw new Error(`Invalid card target ${cardIndex}`)
+				if (!cardState) {
+					throw new Error(`Invalid card target ${cardIndex}`)
+				}
+
+				const card = CardsLookupApi.get(cardState?.code)
+
+				if (card.resource !== res) {
+					throw new Error(`${card.title} doesn't accept ${res}`)
+				}
+
+				cardState[res] += amount
 			}
-
-			const card = CardsLookupApi.get(cardState?.code)
-
-			if (card.resource !== res) {
-				throw new Error(`${card.title} doesn't accept ${res}`)
-			}
-
-			cardState[res] += amount
 		}
 	})
 
