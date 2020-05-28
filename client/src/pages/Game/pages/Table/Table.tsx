@@ -40,7 +40,10 @@ const Table = () => {
 	*/
 
 	useEffect(() => {
-		if (pending?.type !== PlayerActionType.PickCards) {
+		if (
+			pending?.type !== PlayerActionType.PickCards &&
+			pending?.type !== PlayerActionType.PickPreludes
+		) {
 			setPickerHidden(false)
 		}
 	}, [pending])
@@ -67,8 +70,12 @@ const Table = () => {
 					onClose={() => setPickerHidden(true)}
 				/>
 			)}
-			{pending?.type === PlayerActionType.PickPreludes && (
-				<CardPicker key={pending.cards.join(',')} prelude />
+			{!pickerHidden && pending?.type === PlayerActionType.PickPreludes && (
+				<CardPicker
+					key={pending.cards.join(',')}
+					onClose={() => setPickerHidden(true)}
+					prelude
+				/>
 			)}
 			{pending?.type === PlayerActionType.SponsorCompetition && (
 				<CompetitionsModal freePick onClose={() => null} />
