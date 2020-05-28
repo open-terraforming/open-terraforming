@@ -303,7 +303,11 @@ export const changeResourceFromNeighbor = (res: Resource, amount: number) => ({
 		],
 		perform: ({ game }, playerId: number) => {
 			if (playerId >= 0) {
-				updatePlayerResource(gamePlayer(game, playerId), res, amount)
+				const target = gamePlayer(game, playerId)
+				// Check how much money can we actually remove
+				const value = amount < 0 ? Math.max(amount, -target[res]) : amount
+
+				updatePlayerResource(gamePlayer(game, playerId), res, value)
 			}
 		}
 	}),
