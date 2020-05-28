@@ -54,24 +54,29 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 	const canUseTitan =
 		(state?.titan || 0) > 0 && card?.categories.includes(CardCategory.Space)
 
-	const maxOre =
-		canUseOre && state && card
-			? Math.min(state.ore, Math.ceil(adjustedPrice / state.orePrice))
-			: 0
-
 	const maxTitan =
 		canUseTitan && state && card
 			? Math.min(state.titan || 0, Math.ceil(adjustedPrice / state.titanPrice))
 			: 0
 
-	const bestOre =
+	const maxOre =
 		canUseOre && state && card
-			? Math.min(state.ore, Math.floor(adjustedPrice / state.orePrice))
+			? Math.min(state.ore, Math.ceil(adjustedPrice / state.orePrice))
 			: 0
 
 	const bestTitan =
 		canUseTitan && state && card
 			? Math.min(state.titan || 0, Math.floor(adjustedPrice / state.titanPrice))
+			: 0
+
+	const bestOre =
+		canUseOre && state && card
+			? Math.min(
+					state.ore,
+					Math.floor(
+						(adjustedPrice - bestTitan * state.titanPrice) / state.orePrice
+					)
+			  )
 			: 0
 
 	const [ore, setOre] = useState(bestOre)
