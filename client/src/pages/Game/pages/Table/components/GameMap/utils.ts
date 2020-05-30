@@ -26,7 +26,7 @@ export const getPlaceRewards = (
 		rewards.push({
 			resource: 'vp',
 			count: adjTilesList(game, cell.x, cell.y).hasGreenery().length,
-			description: 'for adjusted Greeneries'
+			description: 'for adjacent Greeneries'
 		})
 	}
 
@@ -42,14 +42,14 @@ export const getPlaceRewards = (
 			count: adjTilesList(game, cell.x, cell.y)
 				.hasCity()
 				.ownedBy(player.id).length,
-			description: 'for adjusted owned Cities'
+			description: 'for adjacent owned Cities'
 		})
 	}
 
 	rewards.push({
 		resource: 'money',
 		count: adjTilesList(game, cell.x, cell.y).hasOcean().length * 2,
-		description: 'for adjusted Oceans'
+		description: 'for adjacent Oceans'
 	})
 
 	return rewards.filter(r => r.count !== 0)
