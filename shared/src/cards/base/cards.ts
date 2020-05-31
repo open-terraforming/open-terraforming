@@ -2324,10 +2324,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Space, CardCategory.Jupiter],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 2,
-		playEffects: [
-			terraformRatingChange(1),
-			terraformRatingForTags(CardCategory.Jupiter, 1)
-		]
+		playEffects: [terraformRatingForTags(CardCategory.Jupiter, 1)]
 	}),
 	card({
 		code: 'immigration_shuttles',

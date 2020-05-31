@@ -19,7 +19,7 @@ import {
 	Production
 } from './types'
 import { tiles, allCells, CardsCollection } from '../utils'
-import { CardsLookupApi } from '.'
+import { CardsLookupApi } from './lookup'
 
 export const resources: Resource[] = [
 	'money',
@@ -225,4 +225,19 @@ export const progressSymbol: Record<GameProgress, Readonly<CardSymbol>> = {
 	oceans: { tile: GridCellContent.Ocean },
 	oxygen: { symbol: SymbolType.Oxygen },
 	temperature: { symbol: SymbolType.Temperature }
+}
+
+export const countTags = (
+	cards: (string | UsedCardState)[],
+	tag: CardCategory
+) => {
+	return cards
+		.map(c => CardsLookupApi.get(typeof c === 'string' ? c : c.code))
+		.reduce(
+			(acc, c) =>
+				acc +
+				c.categories.filter(cat => cat === tag || cat === CardCategory.Any)
+					.length,
+			0
+		)
 }

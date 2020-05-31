@@ -63,7 +63,8 @@ import {
 	resourceProduction,
 	resToPrice,
 	updatePlayerProduction,
-	updatePlayerResource
+	updatePlayerResource,
+	countTags
 } from './utils'
 
 export const resourceChange = (res: Resource, change: number) =>
@@ -1096,15 +1097,8 @@ export const terraformRatingForTags = (tag: CardCategory, amount: number) =>
 			{ symbol: SymbolType.TerraformingRating, count: amount }
 		],
 		perform: ({ player, card }) => {
-			player.terraformRating += player.usedCards
-				.map(c => CardsLookupApi.get(c.code))
-				.reduce(
-					(acc, c) =>
-						acc +
-						c.categories.filter(cat => cat === tag || cat === CardCategory.Any)
-							.length,
-					CardsLookupApi.get(card.code).categories.filter(c => tag === c).length
-				)
+			player.terraformRating +=
+				countTags([...player.usedCards, card.code], tag) * amount
 		}
 	})
 
@@ -1137,18 +1131,7 @@ export const productionForTags = (
 				player,
 				res,
 				Math.floor(
-					player.usedCards
-						.map(c => CardsLookupApi.get(c.code))
-						.reduce(
-							(acc, c) =>
-								acc +
-								c.categories.filter(
-									cat => cat === tag || cat === CardCategory.Any
-								).length,
-							CardsLookupApi.get(card.code).categories.filter(
-								cat => cat === tag || cat === CardCategory.Any
-							).length
-						) * resPerCard
+					countTags([...player.usedCards, card.code], tag) * resPerCard
 				)
 			)
 		}
@@ -1194,42 +1177,6 @@ export const resourcesForPlayersTags = (
 
 					return acc
 				}, 0)
-			)
-		}
-	})
-}
-
-export const resourcesForTags = (
-	tag: CardCategory,
-	res: Resource,
-	resPerCard: number
-) => {
-	return effect({
-		description: `Gain ${withUnits(res, resPerCard)} per every ${
-			CardCategory[tag]
-		} tag you played`,
-		type: CardEffectType.Production,
-		symbols: [
-			{ tag },
-			{ symbol: SymbolType.RightArrow },
-			{ resource: res, count: resPerCard }
-		],
-		perform: ({ player, card }) => {
-			updatePlayerResource(
-				player,
-				res,
-				player.usedCards
-					.map(c => CardsLookupApi.get(c.code))
-					.reduce(
-						(acc, c) =>
-							acc +
-							c.categories.filter(
-								cat => cat === tag || cat === CardCategory.Any
-							).length,
-						CardsLookupApi.get(card.code).categories.filter(
-							cat => cat === tag || cat === CardCategory.Any
-						).length
-					)
 			)
 		}
 	})
