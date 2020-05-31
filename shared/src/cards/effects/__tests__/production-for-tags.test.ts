@@ -1,6 +1,6 @@
 import { prepareTestState } from '../../../test/utils'
 import { emptyCardState } from '../../utils'
-import { productionForTags } from '../../effects'
+import { productionForTags } from '../production-for-tags'
 import { CardCategory } from '../../types'
 
 test('productionForTags should change production based on tag count', () => {

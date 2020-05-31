@@ -36,7 +36,6 @@ import {
 	productionChange,
 	productionChangeForTags,
 	productionForPlayersTags,
-	productionForTags,
 	productionForTiles,
 	resourceChange,
 	productionChangeIfTags,
@@ -52,6 +51,7 @@ import {
 	placeOcean,
 	protectedHabitat
 } from '../effects'
+import { productionForTags } from '../effects/production-for-tags'
 import {
 	cardExchangeEffect,
 	cardResourcePerCardPlayed,
