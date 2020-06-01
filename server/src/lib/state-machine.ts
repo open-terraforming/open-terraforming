@@ -23,10 +23,17 @@ export class StateMachine<Name extends string | number = string> {
 	}
 
 	update() {
-		const newState = this.shouldSwitchState()
+		this.currentState?.update()
 
-		if (newState !== undefined) {
-			this.setState(newState)
+		// Keep switching states until we stop at one
+		while (true) {
+			const newState = this.shouldSwitchState()
+
+			if (newState !== undefined) {
+				this.setState(newState)
+			} else {
+				break
+			}
 		}
 
 		return this.currentState?.update()
@@ -79,8 +86,11 @@ export class StateMachine<Name extends string | number = string> {
 export abstract class State<Name extends string | number> {
 	readonly name?: Name
 
-	onEnter(prevState?: State<Name>) {}
-	onLeave(nextState: State<Name>) {}
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	onEnter(_prevState?: State<Name>) {}
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	onLeave(_nextState: State<Name>) {}
 
 	/**
 	 * Called when game state was updated. Returning truthy value will enqueue another update after this update.
