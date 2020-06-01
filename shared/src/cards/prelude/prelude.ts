@@ -19,7 +19,7 @@ import { resetProgressBonus, resetCardPriceChange } from '../passive-effects'
 export const preludePreludes: Card[] = [
 	card({
 		code: 'allied_banks',
-		title: 'ALLIED BANKS',
+		title: 'Allied Banks',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Earth],
@@ -28,7 +28,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'aquifer_turbines',
-		title: 'AQUIFER TURBINES',
+		title: 'Aquifer Turbines',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Power],
@@ -41,7 +41,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'biofuels',
-		title: 'BIOFUELS',
+		title: 'Biofuels',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Microbe],
@@ -54,7 +54,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'biolab',
-		title: 'BIOLAB',
+		title: 'Biolab',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Science],
@@ -63,7 +63,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'biosphere_support',
-		title: 'BIOSPHERE SUPPORT',
+		title: 'Biosphere Support',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Plant],
@@ -72,7 +72,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'business_empire',
-		title: 'BUSINESS EMPIRE',
+		title: 'Business Empire',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Earth],
@@ -81,7 +81,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'dome_farming',
-		title: 'DOME FARMING',
+		title: 'Dome Farming',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Plant, CardCategory.Building],
@@ -90,7 +90,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'donation',
-		title: 'DONATION',
+		title: 'Donation',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
@@ -99,7 +99,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'early_settlement',
-		title: 'EARLY SETTLEMENT',
+		title: 'Early Settlement',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -111,7 +111,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'ecology_experts',
-		title: 'ECOLOGY EXPERTS',
+		title: 'Ecology Experts',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Microbe, CardCategory.Plant],
@@ -124,7 +124,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'eccentric_sponsor',
-		title: 'ECCENTRIC SPONSOR',
+		title: 'Eccentric Sponsor',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
@@ -134,7 +134,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'experimental_forest',
-		title: 'EXPERIMENTAL FOREST',
+		title: 'Experimental Forest',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Plant],
@@ -146,7 +146,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'galilean_mining',
-		title: 'GALILEAN MINING',
+		title: 'Galilean Mining',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Jupiter],
@@ -155,7 +155,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'great_aquifer',
-		title: 'GREAT AQUIFER',
+		title: 'Great Aquifer',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
@@ -164,7 +164,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'huge_asteroid',
-		title: 'HUGE ASTEROID',
+		title: 'Huge Asteroid',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
@@ -176,7 +176,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'io_research_outpost',
-		title: 'IO RESEARCH OUTPOST',
+		title: 'Io Research Outpost',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Jupiter, CardCategory.Science],
@@ -185,7 +185,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'loan',
-		title: 'LOAN',
+		title: 'Loan',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
@@ -194,7 +194,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'martian_industries',
-		title: 'MARTIAN INDUSTRIES',
+		title: 'Martian Industries',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Building],
@@ -207,7 +207,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'metal_rich_asteroid',
-		title: 'METAL-RICH ASTEROID',
+		title: 'Metal Rich Asteroid',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
@@ -220,7 +220,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'metals_company',
-		title: 'METALS COMPANY',
+		title: 'Metals Company',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
@@ -233,7 +233,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'mining_operations',
-		title: 'MINING OPERATIONS',
+		title: 'Mining Operations',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Building],
@@ -242,7 +242,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'mohole',
-		title: 'MOHOLE',
+		title: 'Mohole',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Building],
@@ -251,7 +251,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'mohole_excavation',
-		title: 'MOHOLE EXCAVATION',
+		title: 'Mohole Excavation',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Building],
@@ -264,7 +264,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'nitrogen_shipment',
-		title: 'NITROGEN SHIPMENT',
+		title: 'Nitrogen Shipment',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
@@ -277,7 +277,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'orbital_construction_yard',
-		title: 'ORBITAL CONSTRUCTION YARD',
+		title: 'Orbital Construction Yard',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Space],
@@ -286,7 +286,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'polar_industries',
-		title: 'POLAR INDUSTRIES',
+		title: 'Polar Industries',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Building],
@@ -295,7 +295,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'power_generation',
-		title: 'POWER GENERATION',
+		title: 'Power Generation',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Power],
@@ -304,7 +304,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'research_network',
-		title: 'RESEARCH NETWORK',
+		title: 'Research Network',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Any],
@@ -313,7 +313,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'self_sufficient_settlement',
-		title: 'SELF-SUFFICIENT SETTLEMENT',
+		title: 'Self-Sufficient Settlement',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -322,7 +322,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'smelting_plant',
-		title: 'SMELTING PLANT',
+		title: 'Smelting Plant',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Building],
@@ -331,7 +331,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'society_support',
-		title: 'SOCIETY SUPPORT',
+		title: 'Society Support',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
@@ -345,7 +345,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'supplier',
-		title: 'SUPPLIER',
+		title: 'Supplier',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Power],
@@ -354,7 +354,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'supply_drop',
-		title: 'SUPPLY DROP',
+		title: 'Supply Drop',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
@@ -367,7 +367,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'unmi_contractor',
-		title: 'UNMI CONTRACTOR',
+		title: 'UNMI Contractor',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [CardCategory.Earth],
@@ -376,7 +376,7 @@ export const preludePreludes: Card[] = [
 	}),
 	card({
 		code: 'acquired_space_agency',
-		title: 'ACQUIRED SPACE AGENCY',
+		title: 'Acquired Space Agency',
 		type: CardType.Prelude,
 		cost: 0,
 		categories: [],
