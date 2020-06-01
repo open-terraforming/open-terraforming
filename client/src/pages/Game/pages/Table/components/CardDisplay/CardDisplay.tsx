@@ -58,14 +58,15 @@ export const CardDisplay = <T extends CardInfo>({
 				CardCategory.Event,
 				CardCategory.Science
 			]
-				.map(
-					cat =>
-						[
-							cat,
-							cards.filter(c => c.card.categories.includes(cat)).length
-						] as const
-				)
-				.filter(([, count]) => count > 0),
+				.map(cat => ({
+					category: cat,
+					cards: cards.filter(
+						c =>
+							(cat === CardCategory.Event || c.card.type !== CardType.Event) &&
+							c.card.categories.includes(cat)
+					).length
+				}))
+				.filter(({ cards }) => cards > 0),
 		[cards]
 	)
 
@@ -97,7 +98,9 @@ export const CardDisplay = <T extends CardInfo>({
 				ci =>
 					(type === undefined || ci.card.type === type) &&
 					(selectedCategory === undefined ||
-						ci.card.categories.includes(selectedCategory))
+						((selectedCategory === CardCategory.Event ||
+							ci.card.type !== CardType.Event) &&
+							ci.card.categories.includes(selectedCategory)))
 			),
 		[cards, type, selectedCategory]
 	)
@@ -146,21 +149,21 @@ export const CardDisplay = <T extends CardInfo>({
 					)}
 
 					<Categories style={{ maxWidth: '50%', overflow: 'auto' }}>
-						{categories.map(([cat, count]) => (
+						{categories.map(({ category, cards }) => (
 							<FilterTag
-								selected={selectedCategory === cat}
+								selected={selectedCategory === category}
 								onClick={() => {
 									setSelectedCategory(
-										selectedCategory === cat ? undefined : cat
+										selectedCategory === category ? undefined : category
 									)
 								}}
-								key={cat}
+								key={category}
 							>
 								<Type>
-									<Tag tag={cat} size="sm" />
+									<Tag tag={category} size="sm" />
 								</Type>
 								<Count>
-									<div>{count}</div>
+									<div>{cards}</div>
 								</Count>
 							</FilterTag>
 						))}
