@@ -97,6 +97,7 @@ const Container = styled.button<{
 	user-select: none;
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	font-size: 100%;
 
 	padding: 0.4rem 0.8rem;
