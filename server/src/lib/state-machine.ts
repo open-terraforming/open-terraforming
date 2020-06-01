@@ -35,8 +35,6 @@ export class StateMachine<Name extends string | number = string> {
 				break
 			}
 		}
-
-		return this.currentState?.update()
 	}
 
 	setState(name: Name) {
