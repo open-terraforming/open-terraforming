@@ -5,7 +5,7 @@ type Args = ReturnType<typeof playerPass>['data']
 
 export class PassAction extends PlayerBaseAction<Args> {
 	states = [PlayerStateValue.Playing, PlayerStateValue.EndingTiles]
-	gameStates = [GameStateValue.GenerationInProgress]
+	gameStates = [GameStateValue.GenerationInProgress, GameStateValue.EndingTiles]
 
 	perform({ force }: Args) {
 		this.logger.log('Passed, force:', force)
