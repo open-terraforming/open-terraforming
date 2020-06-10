@@ -108,11 +108,13 @@ export abstract class PlayerBaseAction<Args = {}> {
 				e.args.forEach((a, ai) => {
 					const value = playArguments[i][ai]
 
+					/*
 					if (value === undefined) {
 						throw new Error(
 							`${card.code}: No value specified for effect ${i} argument ${ai}`
 						)
 					}
+					*/
 
 					try {
 						validateArgValue({

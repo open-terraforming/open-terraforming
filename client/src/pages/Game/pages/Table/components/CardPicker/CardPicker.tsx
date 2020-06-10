@@ -13,6 +13,7 @@ import React, { useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
+import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 
 type Props = {
 	prelude?: boolean
@@ -83,13 +84,20 @@ export const CardPicker = ({ prelude, closeable, onClose }: Props) => {
 					}
 					isLoading={loading}
 				>
-					{!isFree
-						? selected.length > 0
-							? `Buy ${selected.length} cards for ${price}`
-							: 'Buy nothing'
-						: selected.length > 0
-						? `Select ${selected.length}`
-						: 'Select nothing'}
+					{!isFree ? (
+						selected.length > 0 ? (
+							<>
+								{`Buy ${selected.length} cards for ${price}`}
+								<ResourceIcon res="money" />
+							</>
+						) : (
+							'Buy nothing'
+						)
+					) : selected.length > 0 ? (
+						`Select ${selected.length}`
+					) : (
+						'Select nothing'
+					)}
 				</Button>
 			}
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
