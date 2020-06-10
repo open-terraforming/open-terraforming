@@ -940,6 +940,7 @@ export const cardExchange = () =>
 export const triggerCardResourceChange = (amount: number) =>
 	effect({
 		description: `Add ${amount} resource(s) to the played card`,
+		symbols: [{ symbol: SymbolType.Plus }],
 		conditions: [
 			condition({
 				evaluate: ({ card, player }) => {

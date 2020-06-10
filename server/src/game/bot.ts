@@ -76,7 +76,7 @@ export class Bot extends Player {
 						this.logger.error('Unable to pass', e)
 					}
 				}
-			}, 2000 + Math.random() * 5000)
+			}, 100 /*2000 + Math.random() * 5000*/)
 		}
 
 		if (broadcast) {

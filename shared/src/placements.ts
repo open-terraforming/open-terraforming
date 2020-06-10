@@ -131,8 +131,10 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 		code: PlacementCode.NoctisCity,
 		description: 'on Noctis City',
 		evaluate: ({ game, cell }) =>
-			allCells(game).find(c => c.type === GridCellType.NoctisCity) ===
-				undefined || cell.type === GridCellType.NoctisCity
+			(allCells(game).find(c => c.type === GridCellType.NoctisCity) ===
+				undefined &&
+				cell.type === GridCellType.General) ||
+			cell.type === GridCellType.NoctisCity
 	})
 ] as const
 

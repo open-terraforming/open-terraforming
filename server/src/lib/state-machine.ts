@@ -23,7 +23,7 @@ export class StateMachine<Name extends string | number = string> {
 	}
 
 	update() {
-		this.currentState?.update()
+		const updated = this.currentState?.update()
 
 		// Keep switching states until we stop at one
 		while (true) {
@@ -35,6 +35,8 @@ export class StateMachine<Name extends string | number = string> {
 				break
 			}
 		}
+
+		return updated
 	}
 
 	setState(name: Name) {

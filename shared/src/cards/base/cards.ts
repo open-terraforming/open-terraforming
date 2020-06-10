@@ -2178,6 +2178,7 @@ export const baseCards: Card[] = [
 		type: CardType.Action,
 		cost: 13,
 		categories: [CardCategory.Animal],
+		resource: 'animals',
 		conditions: [gameProgressConditionMin('oxygen', 9)],
 		playEffects: [productionChange('plants', -1), productionChange('money', 2)],
 		actionEffects: [cardResourceChange('animals', 1)],
