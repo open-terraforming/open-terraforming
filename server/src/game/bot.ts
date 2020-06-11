@@ -91,7 +91,7 @@ export class Bot extends Player {
 						}
 					}
 				},
-				this.options.fast ? 100 : 2000 + Math.random() * 2000
+				this.options.fast ? 100 : 3000 + Math.random() * 2000
 			)
 		}
 
