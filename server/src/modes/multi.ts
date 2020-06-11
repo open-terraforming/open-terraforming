@@ -185,7 +185,8 @@ export const multiApp = (config: ServerOptions) => {
 				public: isPublic,
 				map: map,
 				spectatorsAllowed,
-				expansions: [ExpansionType.Base, ...expansions]
+				expansions: [ExpansionType.Base, ...expansions],
+				fastBots: config.fastBots
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)

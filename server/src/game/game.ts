@@ -54,6 +54,8 @@ export interface GameConfig {
 	public: boolean
 	spectatorsAllowed: boolean
 	expansions: ExpansionType[]
+
+	fastBots: boolean
 }
 export class Game {
 	get logger() {
@@ -88,6 +90,7 @@ export class Game {
 			public: false,
 			spectatorsAllowed: true,
 			expansions: [ExpansionType.Base, ExpansionType.Prelude],
+			fastBots: false,
 			...config
 		}
 
@@ -97,7 +100,7 @@ export class Game {
 		this.state.expansions = [...this.config.expansions]
 
 		range(0, this.config.bots).forEach(() => {
-			this.add(new Bot(this), false)
+			this.add(new Bot(this, { fast: config?.fastBots }), false)
 		})
 
 		this.sm.onStateChanged.on(({ old, current }) => {
@@ -157,7 +160,10 @@ export class Game {
 		this.players = []
 
 		state.players.forEach(p => {
-			const player = p.bot ? new Bot(this) : new Player(this)
+			const player = p.bot
+				? new Bot(this, { fast: this.config.fastBots })
+				: new Player(this)
+
 			player.state = p
 
 			this.logger.log(

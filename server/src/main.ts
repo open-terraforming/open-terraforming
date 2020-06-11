@@ -51,6 +51,11 @@ export async function main() {
 			type: 'number',
 			description: 'Number of server slots',
 			default: 20
+		})
+		.option('fast-bots', {
+			type: 'boolean',
+			description: 'Skip interval between bot actions',
+			default: false
 		}).argv
 
 	try {
@@ -68,7 +73,8 @@ export async function main() {
 	const serverConfig: ServerOptions = {
 		maxServers: argv.single ? 1 : argv.slots,
 		port: argv.port,
-		singleGame: argv.single
+		singleGame: argv.single,
+		fastBots: argv['fast-bots']
 	}
 
 	if (argv.picker) {
@@ -76,7 +82,8 @@ export async function main() {
 	} else if (argv.single) {
 		const { game } = await singleApp(serverConfig, {
 			bots: argv.bots,
-			mode: mode
+			mode: mode,
+			fastBots: serverConfig.fastBots
 		})
 
 		if (argv.load) {

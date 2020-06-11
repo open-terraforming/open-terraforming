@@ -41,11 +41,24 @@ import { ScoringContext } from './scoring/types'
 import { useCardScore } from './scoring/use-card-score'
 import { computeScore, getBestArgs, pickBest } from './scoring/utils'
 
+const defaultOptions = () => ({
+	fast: false
+})
+
+export type BotOptions = ReturnType<typeof defaultOptions>
+
 export class Bot extends Player {
 	doing?: ReturnType<typeof setTimeout>
 
-	constructor(game: Game) {
+	options: BotOptions
+
+	constructor(game: Game, options: Partial<BotOptions> = {}) {
 		super(game)
+
+		this.options = {
+			...defaultOptions(),
+			...options
+		}
 
 		this.state.name = game.pickBotName(this.state.id)
 		this.state.connected = true
@@ -61,22 +74,25 @@ export class Bot extends Player {
 
 	updated(broadcast = true) {
 		if (!this.doing) {
-			this.doing = setTimeout(() => {
-				this.doing = undefined
-
-				try {
-					this.doSomething()
-				} catch (e) {
-					this.logger.log('Bot failed:')
-					this.logger.error(e)
+			this.doing = setTimeout(
+				() => {
+					this.doing = undefined
 
 					try {
-						this.performAction(playerPass(true))
+						this.doSomething()
 					} catch (e) {
-						this.logger.error('Unable to pass', e)
+						this.logger.log('Bot failed:')
+						this.logger.error(e)
+
+						try {
+							this.performAction(playerPass(true))
+						} catch (e) {
+							this.logger.error('Unable to pass', e)
+						}
 					}
-				}
-			}, 100 /*2000 + Math.random() * 5000*/)
+				},
+				this.options.fast ? 100 : 2000 + Math.random() * 2000
+			)
 		}
 
 		if (broadcast) {
