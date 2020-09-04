@@ -19,6 +19,7 @@ import { flatten } from '@shared/utils'
 import { Symbols } from './components/Symbols'
 import { rgba } from 'polished'
 import { media } from '@/styles/media'
+import { useLocale } from '@/context/LocaleContext'
 
 export const CardView = ({
 	card,
@@ -43,6 +44,7 @@ export const CardView = ({
 	className?: string
 	style?: React.CSSProperties
 }) => {
+	const locale = useLocale()
 	const game = useAppStore(state => state.game.state)
 	const player = useAppStore(state => state.game.player)
 	const playerId = useAppStore(state => state.game.playerId)
@@ -138,7 +140,7 @@ export const CardView = ({
 					))}
 				</Categories>
 			</Head>
-			<Title>{card.title}</Title>
+			<Title>{locale.cards[card.code]}</Title>
 			{card.type !== CardType.Corporation ? (
 				<Image
 					style={{

@@ -339,3 +339,12 @@ export const changeResourceFromNeighbor = (res: Resource, amount: number) => ({
 		}
 	})
 })
+
+export const emptyPassiveEffect = (
+	description: string,
+	symbols: CardSymbol[] = []
+) =>
+	passiveEffect({
+		description,
+		symbols
+	})

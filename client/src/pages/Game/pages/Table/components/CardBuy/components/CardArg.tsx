@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { CardInfo } from '../../CardDisplay/CardDisplay'
 import { CardSelector } from '../../CardSelector/CardSelector'
 import { ArgContainer } from './ArgContainer'
+import { useLocale } from '@/context/LocaleContext'
 
 type Props = {
 	arg: CardEffectArgument
@@ -15,6 +16,8 @@ type Props = {
 }
 
 export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
+	const locale = useLocale()
+
 	const [picking, setPicking] = useState(false)
 	const player = useAppStore(state => state.game.player)
 	const [selected, setSelected] = useState(undefined as CardInfo | undefined)
@@ -104,7 +107,7 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 			)}
 			{enableCardPicker && (
 				<Button onClick={() => setPicking(true)}>
-					{selected ? selected.card.title : 'Pick card'}
+					{selected ? locale.cards[selected.card.code] : 'Pick card'}
 				</Button>
 			)}
 			<span>{arg.descriptionPostfix}</span>

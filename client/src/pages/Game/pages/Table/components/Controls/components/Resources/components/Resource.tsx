@@ -1,5 +1,4 @@
 import { HelpTooltip } from '@/components/HelpTooltip/HelpTooltip'
-import { en } from '@/i18n/en'
 import { colors } from '@/styles'
 import { useAnimatedNumber } from '@/utils/hooks'
 import { Resource as Res } from '@shared/cards'
@@ -8,6 +7,7 @@ import styled, { css, keyframes } from 'styled-components'
 import { ResourceIcon } from '../../../../ResourceIcon/ResourceIcon'
 import { GreeneryButton } from '../../GreeneryButton'
 import { HeatButton } from '../../HeatButton'
+import { useLocale } from '@/context/LocaleContext'
 
 export const Resource = ({
 	name,
@@ -28,8 +28,9 @@ export const Resource = ({
 	const [productionDiff, setProductionDiff] = useState(0)
 	const valueDisplay = useAnimatedNumber(value, 500)
 	const productionDisplay = useAnimatedNumber(production, 500)
+	const locale = useLocale()
 
-	const helpStr = en.help[res].replace('{0}', worth.toString())
+	const helpStr = locale.help[res].replace('{0}', worth.toString())
 
 	useEffect(() => {
 		const diff = value - lastValue

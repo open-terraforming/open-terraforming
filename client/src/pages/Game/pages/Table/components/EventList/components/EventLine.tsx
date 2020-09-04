@@ -11,6 +11,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { EventType, GameEvent } from '../types'
 import { CardModal } from './CardModal'
+import { useLocale } from '@/context/LocaleContext'
 
 type Props = {
 	event: GameEvent
@@ -25,19 +26,21 @@ const PlayerSpan = ({ player }: { player: PlayerState }) => (
 )
 
 const CardSpan = React.memo(({ card }: { card: string }) => {
+	const locale = useLocale()
 	const [shown, setShown] = useState(false)
 
 	return (
 		<>
 			{shown && <CardModal card={card} onClose={() => setShown(false)} />}
 			<CardSpanE onClick={() => setShown(true)}>
-				{CardsLookupApi.get(card).title}
+				{locale.cards[CardsLookupApi.get(card).code]}
 			</CardSpanE>
 		</>
 	)
 })
 
 export const EventLine = ({ event, animated, onDone }: Props) => {
+	const locale = useLocale()
 	const players = useAppStore(state => state.game.playerMap)
 	const doneRef = useRef(onDone)
 	doneRef.current = onDone
@@ -84,7 +87,9 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} />
-						{` picked ${CardsLookupApi.get(event.corporation).title}`}
+						{` picked ${
+							locale.cards[CardsLookupApi.get(event.corporation).code]
+						}`}
 					</>
 				)
 			case EventType.ResourceChanged:

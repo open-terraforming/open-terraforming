@@ -18,7 +18,6 @@ export const preludeCorporations = [
 	corp(
 		card({
 			code: 'cheung_shing_mars',
-			title: 'Cheung Shing MARS',
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [CardCategory.Building],
@@ -33,7 +32,6 @@ export const preludeCorporations = [
 	corp(
 		card({
 			code: 'point_luna',
-			title: 'Point Luna',
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [CardCategory.Earth, CardCategory.Space],
@@ -63,7 +61,6 @@ export const preludeCorporations = [
 	corp(
 		card({
 			code: 'robinson_industries',
-			title: 'Robinson Industries',
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [],
@@ -78,7 +75,6 @@ export const preludeCorporations = [
 	corp(
 		card({
 			code: 'valley_trust',
-			title: 'Valley Trust',
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [CardCategory.Earth],
@@ -96,7 +92,6 @@ export const preludeCorporations = [
 	corp(
 		card({
 			code: 'vitor',
-			title: 'Vitor',
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [CardCategory.Earth],

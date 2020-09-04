@@ -82,7 +82,6 @@ export interface CardVictoryPointsCallback {
 
 export interface Card {
 	code: string
-	title: string
 	description: string
 	type: CardType
 	categories: CardCategory[]

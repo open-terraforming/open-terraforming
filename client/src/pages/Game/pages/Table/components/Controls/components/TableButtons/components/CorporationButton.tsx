@@ -5,12 +5,14 @@ import { usePlayerState } from '@/utils/hooks'
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { CardsView } from '../../CardsView'
 import { media } from '@/styles/media'
+import { useLocale } from '@/context/LocaleContext'
 
 type Props = {
 	onClick: (defaultType?: CardType) => void
 }
 
 export const CorporationButton = ({ onClick }: Props) => {
+	const locale = useLocale()
 	const player = usePlayerState()
 	const [opened, setOpened] = useState(false)
 
@@ -29,7 +31,7 @@ export const CorporationButton = ({ onClick }: Props) => {
 			onMouseOver={() => setOpened(true)}
 			onMouseLeave={() => setOpened(false)}
 		>
-			{corporation?.title}
+			{locale.cards[corporation.code]}
 
 			<CardsView
 				cards={[player.usedCards[0]]}

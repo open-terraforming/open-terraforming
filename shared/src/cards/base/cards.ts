@@ -64,7 +64,8 @@ import {
 	resourceForStandardProject,
 	resourcePerCardPlayed,
 	resourcePerPlacedTile,
-	changeResourceFromNeighbor
+	changeResourceFromNeighbor,
+	emptyPassiveEffect
 } from '../passive-effects'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
 import { card, noDesc, withRightArrow } from '../utils'
@@ -81,7 +82,6 @@ import { exchangeProduction } from '../effects/exchange-production'
 export const baseCards: Card[] = [
 	card({
 		code: 'colonizer_training_camp',
-		title: 'Colonizer Training Camp',
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Building, CardCategory.Jupiter],
@@ -90,7 +90,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'asteroid_mining_consortium',
-		title: 'Asteroid Mining Consortium',
 		type: CardType.Building,
 		cost: 13,
 		categories: [CardCategory.Jupiter],
@@ -104,7 +103,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'deep_well_heating',
-		title: 'Deep Well Heating',
 		type: CardType.Building,
 		cost: 13,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -115,7 +113,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'cloud_seeding',
-		title: 'Cloud Seeding',
 		type: CardType.Building,
 		cost: 11,
 		categories: [],
@@ -128,7 +125,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'search_for_life',
-		title: 'Search For Life',
 		type: CardType.Action,
 		cost: 3,
 		categories: [CardCategory.Science],
@@ -140,7 +136,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'inventors_guild',
-		title: "INVENTORS' GUILD",
 		type: CardType.Action,
 		cost: 9,
 		categories: [CardCategory.Science],
@@ -149,7 +144,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'martian_rails',
-		title: 'Martian Rails',
 		type: CardType.Action,
 		cost: 13,
 		categories: [CardCategory.Building],
@@ -157,7 +151,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'capital',
-		title: 'Capital',
 		type: CardType.Building,
 		cost: 26,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -171,7 +164,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'asteroid',
-		title: 'Asteroid',
 		type: CardType.Event,
 		cost: 14,
 		categories: [CardCategory.Event, CardCategory.Space],
@@ -183,7 +175,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'comet',
-		title: 'Comet',
 		type: CardType.Event,
 		cost: 21,
 		categories: [CardCategory.Event, CardCategory.Space],
@@ -195,7 +186,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'big_asteroid',
-		title: 'Big Asteroid',
 		type: CardType.Event,
 		cost: 27,
 		categories: [CardCategory.Event, CardCategory.Space],
@@ -207,7 +197,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'water_import_from_europa',
-		title: 'Water Import From Europa',
 		type: CardType.Action,
 		cost: 25,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
@@ -216,7 +205,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'space_elevator',
-		title: 'Space Elevator',
 		type: CardType.Action,
 		cost: 27,
 		categories: [CardCategory.Space, CardCategory.Building],
@@ -227,7 +215,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'development_center',
-		title: 'Development Center',
 		type: CardType.Action,
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.Science],
@@ -236,7 +223,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'equatorial_magnetizer',
-		title: 'Equatorial Magnetizer',
 		type: CardType.Action,
 		cost: 11,
 		categories: [CardCategory.Building],
@@ -247,7 +233,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'domed_crater',
-		title: 'Domed Crater',
 		type: CardType.Building,
 		cost: 24,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -262,7 +247,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'noctis_city',
-		title: 'Noctis City',
 		type: CardType.Building,
 		cost: 18,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -278,7 +262,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'methane_from_titan',
-		title: 'Methane From Titan',
 		type: CardType.Building,
 		cost: 28,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
@@ -288,7 +271,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'imported_hydrogen',
-		title: 'Imported Hydrogen',
 		type: CardType.Event,
 		cost: 16,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
@@ -303,7 +285,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'research_outpost',
-		title: 'Research Outpost',
 		type: CardType.Effect,
 		cost: 18,
 		categories: [
@@ -322,7 +303,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'phobos_space_haven',
-		title: 'Phobos Space Haven',
 		type: CardType.Building,
 		cost: 25,
 		categories: [CardCategory.Space, CardCategory.City],
@@ -337,7 +317,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'black_polar_dust',
-		title: 'Black Polar Dust',
 		type: CardType.Building,
 		cost: 15,
 		categories: [],
@@ -349,7 +328,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'arctic_algae',
-		title: 'Arctic Algae',
 		type: CardType.Effect,
 		cost: 12,
 		categories: [CardCategory.Plant],
@@ -358,7 +336,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'predators',
-		title: 'Predators',
 		type: CardType.Action,
 		cost: 14,
 		categories: [CardCategory.Animal],
@@ -372,7 +349,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'space_station',
-		title: 'Space Station',
 		type: CardType.Effect,
 		cost: 10,
 		categories: [CardCategory.Space],
@@ -382,7 +358,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'eos_chasma_national_park',
-		title: 'Eos Chasma National Park',
 		type: CardType.Building,
 		cost: 16,
 		categories: [CardCategory.Building, CardCategory.Plant],
@@ -396,7 +371,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'interstellar_colony_ship',
-		title: 'Interstellar Colony Ship',
 		type: CardType.Event,
 		cost: 24,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
@@ -406,7 +380,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'security_fleet',
-		title: 'Security Fleet',
 		type: CardType.Action,
 		cost: 12,
 		categories: [CardCategory.Space],
@@ -420,7 +393,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'cupola_city',
-		title: 'Cupola City',
 		type: CardType.Building,
 		cost: 16,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -433,7 +405,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'lunar_beam',
-		title: 'Lunar Beam',
 		type: CardType.Building,
 		cost: 13,
 		categories: [CardCategory.Power, CardCategory.Earth],
@@ -445,7 +416,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'optimal_aerobraking',
-		title: 'Optimal Aerobraking',
 		type: CardType.Effect,
 		cost: 7,
 		categories: [CardCategory.Space],
@@ -460,7 +430,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'underground_city',
-		title: 'Underground city',
 		type: CardType.Building,
 		cost: 18,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -472,7 +441,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'regolith_eaters',
-		title: 'Regolith Eaters',
 		type: CardType.Action,
 		cost: 13,
 		resource: 'microbes',
@@ -489,7 +457,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ghg_producing_bacteria',
-		title: 'Ghg Producing Bacteria',
 		type: CardType.Action,
 		cost: 8,
 		resource: 'microbes',
@@ -507,7 +474,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ants',
-		title: 'Ants',
 		type: CardType.Action,
 		cost: 9,
 		categories: [CardCategory.Microbe],
@@ -521,7 +487,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'release_of_inert_gases',
-		title: 'Release of Inert Gases',
 		type: CardType.Event,
 		cost: 14,
 		categories: [CardCategory.Event],
@@ -529,7 +494,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'nitrogen_rich_asteroid',
-		title: 'Nitrogen-Rich Asteroid',
 		type: CardType.Event,
 		cost: 31,
 		categories: [CardCategory.Event, CardCategory.Space],
@@ -544,7 +508,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'rover_construction',
-		title: 'Rover Construction',
 		type: CardType.Effect,
 		cost: 8,
 		categories: [CardCategory.Building],
@@ -553,7 +516,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'deimos_down',
-		title: 'Deimos Down',
 		type: CardType.Event,
 		cost: 31,
 		categories: [CardCategory.Event, CardCategory.Space],
@@ -565,7 +527,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'asteroid_mining',
-		title: 'Asteroid Mining',
 		type: CardType.Building,
 		cost: 30,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
@@ -574,7 +535,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'food_factory',
-		title: 'Food Factory',
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Building],
@@ -583,7 +543,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'archaebacteria',
-		title: 'Archaebacteria',
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Microbe],
@@ -592,7 +551,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'carbonate_processing',
-		title: 'Carbonate Processing',
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Building],
@@ -600,7 +558,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'natural_preserve',
-		title: 'Natural Preserve',
 		type: CardType.Building,
 		cost: 9,
 		categories: [CardCategory.Building, CardCategory.Science],
@@ -617,7 +574,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'nuclear_power',
-		title: 'Nuclear Power',
 		type: CardType.Building,
 		cost: 10,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -625,7 +581,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'lightning_harvest',
-		title: 'Lightning Harvest',
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Power],
@@ -636,7 +591,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'algae',
-		title: 'Algae',
 		type: CardType.Building,
 		cost: 10,
 		categories: [CardCategory.Plant],
@@ -645,7 +599,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'adapted_lichen',
-		title: 'Adapted Lichen',
 		type: CardType.Building,
 		cost: 9,
 		categories: [CardCategory.Plant],
@@ -653,7 +606,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'tardigrades',
-		title: 'Tardigrades',
 		type: CardType.Action,
 		cost: 4,
 		categories: [CardCategory.Microbe],
@@ -664,7 +616,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'virus',
-		title: 'Virus',
 		type: CardType.Event,
 		cost: 1,
 		categories: [CardCategory.Event, CardCategory.Microbe],
@@ -678,7 +629,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'miranda_resort',
-		title: 'Miranda Resort',
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
@@ -688,7 +638,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'fish',
-		title: 'Fish',
 		type: CardType.Action,
 		cost: 9,
 		resource: 'animals',
@@ -700,7 +649,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'lake_marineris',
-		title: 'Lake Marineris',
 		type: CardType.Building,
 		cost: 18,
 		categories: [],
@@ -710,7 +658,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'small_animals',
-		title: 'Small Animals',
 		type: CardType.Action,
 		cost: 6,
 		resource: 'animals',
@@ -722,7 +669,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'kelp_farming',
-		title: 'Kelp Farming',
 		type: CardType.Building,
 		cost: 17,
 		categories: [CardCategory.Plant],
@@ -736,7 +682,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'mine',
-		title: 'Mine',
 		type: CardType.Building,
 		cost: 4,
 		categories: [CardCategory.Building],
@@ -745,7 +690,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'vesta_shipyard',
-		title: 'Vesta Shipyard',
 		type: CardType.Building,
 		cost: 15,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
@@ -755,7 +699,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'beam_from_a_thorium_asteroid',
-		title: 'Beam from a Thorium Asteroid',
 		type: CardType.Building,
 		cost: 32,
 		categories: [CardCategory.Power, CardCategory.Space, CardCategory.Jupiter],
@@ -765,7 +708,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'mangrove',
-		title: 'Mangrove',
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Plant],
@@ -780,7 +722,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'trees',
-		title: 'Trees',
 		type: CardType.Building,
 		cost: 13,
 		categories: [CardCategory.Plant],
@@ -790,7 +731,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'great_escarpment_consortium',
-		title: 'Great Escarpment Consortium',
 		type: CardType.Building,
 		cost: 6,
 		categories: [],
@@ -799,7 +739,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'mineral_deposit',
-		title: 'Mineral Deposit',
 		type: CardType.Event,
 		cost: 5,
 		categories: [CardCategory.Event],
@@ -808,7 +747,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'mining_expedition',
-		title: 'Mining Expedition',
 		type: CardType.Event,
 		cost: 12,
 		categories: [CardCategory.Event],
@@ -820,7 +758,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'mining_area',
-		title: 'Mining Area',
 		type: CardType.Building,
 		cost: 4,
 		categories: [CardCategory.Building],
@@ -836,7 +773,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'building_industries',
-		title: 'Building Industries',
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Building],
@@ -845,7 +781,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'land_claim',
-		title: 'Land Claim',
 		type: CardType.Event,
 		cost: 1,
 		categories: [CardCategory.Event],
@@ -854,7 +789,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'mining_rights',
-		title: 'Mining Rights',
 		type: CardType.Building,
 		cost: 9,
 		categories: [CardCategory.Building],
@@ -869,7 +803,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'sponsors',
-		title: 'Sponsors',
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Earth],
@@ -878,7 +811,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'electro_catapult',
-		title: 'Electro Catapult',
 		type: CardType.Action,
 		cost: 17,
 		categories: [CardCategory.Building],
@@ -895,7 +827,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'earth_catapult',
-		title: 'Earth Catapult',
 		type: CardType.Effect,
 		cost: 23,
 		categories: [CardCategory.Earth],
@@ -905,7 +836,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'advanced_alloys',
-		title: 'Advanced Alloys',
 		type: CardType.Effect,
 		cost: 9,
 		categories: [CardCategory.Science],
@@ -914,7 +844,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'birds',
-		title: 'Birds',
 		type: CardType.Action,
 		cost: 10,
 		resource: 'animals',
@@ -926,7 +855,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'mars_university',
-		title: 'Mars University',
 		type: CardType.Effect,
 		cost: 8,
 		categories: [CardCategory.Building, CardCategory.Science],
@@ -937,7 +865,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'viral_enhancers',
-		title: 'Viral Enhancers',
 		type: CardType.Effect,
 		cost: 9,
 		categories: [CardCategory.Microbe, CardCategory.Science],
@@ -955,7 +882,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'towing_a_comet',
-		title: 'Towing a Comet',
 		type: CardType.Event,
 		cost: 23,
 		categories: [CardCategory.Event, CardCategory.Space],
@@ -967,7 +893,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'space_mirrors',
-		title: 'Space Mirrors',
 		type: CardType.Action,
 		cost: 3,
 		categories: [CardCategory.Space, CardCategory.Power],
@@ -978,7 +903,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'solar_wind_power',
-		title: 'Solar Wind Power',
 		type: CardType.Building,
 		cost: 11,
 		categories: [CardCategory.Power, CardCategory.Space, CardCategory.Science],
@@ -986,7 +910,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ice_asteroid',
-		title: 'Ice Asteroid',
 		type: CardType.Event,
 		cost: 23,
 		categories: [CardCategory.Event, CardCategory.Space],
@@ -994,7 +917,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'quantum_extractor',
-		title: 'Quantum Extractor',
 		type: CardType.Effect,
 		cost: 13,
 		categories: [CardCategory.Power, CardCategory.Science],
@@ -1004,7 +926,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'giant_ice_asteroid',
-		title: 'Giant Ice Asteroid',
 		type: CardType.Event,
 		cost: 36,
 		categories: [CardCategory.Event, CardCategory.Space],
@@ -1017,7 +938,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ganymede_colony',
-		title: 'Ganymede Colony',
 		type: CardType.Building,
 		cost: 20,
 		categories: [CardCategory.City, CardCategory.Space, CardCategory.Jupiter],
@@ -1031,7 +951,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'callisto_penal_mines',
-		title: 'Callisto Penal Mines',
 		type: CardType.Building,
 		cost: 24,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
@@ -1041,7 +960,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'giant_space_mirror',
-		title: 'Giant Space Mirror',
 		type: CardType.Building,
 		cost: 17,
 		categories: [CardCategory.Space, CardCategory.Power],
@@ -1049,7 +967,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'trans_neptune_probe',
-		title: 'Trans-Neptune Probe',
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Space, CardCategory.Science],
@@ -1058,7 +975,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'commercial_district',
-		title: 'Commercial District',
 		type: CardType.Building,
 		cost: 16,
 		categories: [CardCategory.Building],
@@ -1075,7 +991,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'robotic_workforce',
-		title: 'Robotic Workforce',
 		type: CardType.Building,
 		cost: 9,
 		categories: [CardCategory.Science],
@@ -1084,7 +999,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'grass',
-		title: 'Grass',
 		type: CardType.Building,
 		cost: 11,
 		categories: [CardCategory.Plant],
@@ -1093,7 +1007,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'heather',
-		title: 'Heather',
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Plant],
@@ -1102,7 +1015,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'peroxide_power',
-		title: 'Peroxide Power',
 		type: CardType.Building,
 		cost: 7,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -1110,7 +1022,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'research',
-		title: 'Research',
 		type: CardType.Building,
 		cost: 11,
 		categories: [CardCategory.Science, CardCategory.Science],
@@ -1119,7 +1030,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'gene_repair',
-		title: 'Gene Repair',
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Science],
@@ -1130,7 +1040,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'io_mining_industries_',
-		title: 'Io Mining Industries ',
 		type: CardType.Building,
 		cost: 41,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
@@ -1140,7 +1049,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'bushes',
-		title: 'Bushes',
 		type: CardType.Building,
 		cost: 10,
 		categories: [CardCategory.Plant],
@@ -1149,7 +1057,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'mass_converter',
-		title: 'Mass Converter',
 		type: CardType.Effect,
 		cost: 8,
 		categories: [CardCategory.Power, CardCategory.Science],
@@ -1159,7 +1066,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'physics_complex',
-		title: 'Physics Complex',
 		type: CardType.Action,
 		cost: 12,
 		categories: [CardCategory.Building, CardCategory.Science],
@@ -1173,7 +1079,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'greenhouses',
-		title: 'Greenhouses',
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Building, CardCategory.Plant],
@@ -1181,7 +1086,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'nuclear_zone',
-		title: 'Nuclear Zone',
 		type: CardType.Building,
 		cost: 10,
 		categories: [CardCategory.Earth],
@@ -1196,7 +1100,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'tropical_resort',
-		title: 'Tropical Resort',
 		type: CardType.Building,
 		cost: 13,
 		categories: [CardCategory.Building],
@@ -1206,7 +1109,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'toll_station',
-		title: 'Toll Station',
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Space],
@@ -1215,7 +1117,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'fueled_generators',
-		title: 'Fueled Generators',
 		type: CardType.Building,
 		cost: 1,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -1223,7 +1124,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ironworks',
-		title: 'Ironworks',
 		type: CardType.Action,
 		cost: 11,
 		categories: [CardCategory.Building],
@@ -1235,7 +1135,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'power_grid',
-		title: 'Power Grid',
 		type: CardType.Building,
 		cost: 18,
 		categories: [CardCategory.Power],
@@ -1243,7 +1142,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'steelworks',
-		title: 'Steelworks',
 		type: CardType.Action,
 		cost: 15,
 		categories: [CardCategory.Building],
@@ -1255,7 +1153,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ore_processor',
-		title: 'Ore Processor',
 		type: CardType.Action,
 		cost: 13,
 		categories: [CardCategory.Building],
@@ -1267,7 +1164,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'earth_office',
-		title: 'Earth Office',
 		type: CardType.Effect,
 		cost: 1,
 		categories: [CardCategory.Earth],
@@ -1276,7 +1172,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'acquired_company',
-		title: 'Acquired Company',
 		type: CardType.Building,
 		cost: 10,
 		categories: [CardCategory.Earth],
@@ -1285,7 +1180,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'media_archives',
-		title: 'Media Archives',
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Earth],
@@ -1294,7 +1188,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'open_city',
-		title: 'Open City',
 		type: CardType.Building,
 		cost: 23,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -1309,7 +1202,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'media_group',
-		title: 'Media Group',
 		type: CardType.Effect,
 		cost: 6,
 		categories: [CardCategory.Earth],
@@ -1318,7 +1210,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'business_network',
-		title: 'Business Network',
 		type: CardType.Action,
 		cost: 4,
 		categories: [CardCategory.Earth],
@@ -1328,7 +1219,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'business_contacts',
-		title: 'Business Contacts',
 		type: CardType.Event,
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Earth],
@@ -1338,7 +1228,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'bribed_committee',
-		title: 'Bribed Committee',
 		type: CardType.Event,
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Earth],
@@ -1348,7 +1237,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'solar_power',
-		title: 'Solar Power',
 		type: CardType.Building,
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -1357,7 +1245,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'breathing_filters',
-		title: 'Breathing Filters',
 		type: CardType.Building,
 		cost: 11,
 		categories: [CardCategory.Science],
@@ -1366,7 +1253,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'artificial_photosynthesis',
-		title: 'Artificial Photosynthesis',
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Science],
@@ -1379,7 +1265,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'artificial_lake',
-		title: 'Artificial Lake',
 		type: CardType.Building,
 		cost: 15,
 		categories: [CardCategory.Building],
@@ -1394,7 +1279,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'geothermal_power',
-		title: 'Geothermal Power',
 		type: CardType.Building,
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -1402,7 +1286,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'farming',
-		title: 'Farming',
 		type: CardType.Building,
 		cost: 16,
 		categories: [CardCategory.Plant],
@@ -1416,7 +1299,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'dust_seals',
-		title: 'Dust Seals',
 		type: CardType.Building,
 		cost: 2,
 		categories: [],
@@ -1425,7 +1307,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'urbanized_area',
-		title: 'Urbanized Area',
 		type: CardType.Building,
 		cost: 10,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -1440,7 +1321,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'sabotage',
-		title: 'Sabotage',
 		type: CardType.Event,
 		cost: 1,
 		categories: [CardCategory.Event],
@@ -1455,7 +1335,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'moss',
-		title: 'Moss',
 		type: CardType.Building,
 		cost: 4,
 		categories: [CardCategory.Plant],
@@ -1464,7 +1343,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'industrial_center',
-		title: 'Industrial Center',
 		type: CardType.Action,
 		cost: 4,
 		categories: [CardCategory.Building],
@@ -1483,7 +1361,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'hired_raiders',
-		title: 'Hired Raiders',
 		type: CardType.Event,
 		cost: 1,
 		categories: [CardCategory.Event],
@@ -1503,7 +1380,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'hackers',
-		title: 'Hackers',
 		type: CardType.Building,
 		cost: 3,
 		categories: [],
@@ -1517,7 +1393,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ghg_factories',
-		title: 'Ghg Factories',
 		type: CardType.Building,
 		cost: 11,
 		categories: [CardCategory.Building],
@@ -1525,7 +1400,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'subterranean_reservoir',
-		title: 'Subterranean Reservoir',
 		type: CardType.Event,
 		cost: 11,
 		categories: [CardCategory.Event],
@@ -1533,7 +1407,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ecological_zone',
-		title: 'Ecological Zone',
 		type: CardType.Effect,
 		cost: 12,
 		categories: [CardCategory.Plant, CardCategory.Animal],
@@ -1557,7 +1430,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'zeppelins',
-		title: 'Zeppelins',
 		type: CardType.Building,
 		cost: 13,
 		categories: [],
@@ -1567,7 +1439,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'worms',
-		title: 'Worms',
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Microbe],
@@ -1576,7 +1447,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'decomposers',
-		title: 'Decomposers',
 		type: CardType.Effect,
 		cost: 5,
 		categories: [CardCategory.Microbe],
@@ -1593,7 +1463,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'fusion_power',
-		title: 'Fusion Power',
 		type: CardType.Building,
 		cost: 14,
 		categories: [
@@ -1606,7 +1475,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'symbiotic_fungus',
-		title: 'Symbiotic Fungus',
 		type: CardType.Action,
 		cost: 4,
 		categories: [CardCategory.Microbe],
@@ -1615,7 +1483,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'extreme_cold_fungus',
-		title: 'Extreme-Cold Fungus',
 		type: CardType.Action,
 		cost: 13,
 		categories: [CardCategory.Microbe],
@@ -1629,7 +1496,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'advanced_ecosystems',
-		title: 'Advanced Ecosystems',
 		type: CardType.Building,
 		cost: 11,
 		categories: [CardCategory.Animal, CardCategory.Microbe, CardCategory.Plant],
@@ -1644,7 +1510,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'great_dam',
-		title: 'Great Dam',
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -1654,7 +1519,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'cartel',
-		title: 'Cartel',
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Earth],
@@ -1663,7 +1527,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'strip_mine',
-		title: 'Strip Mine',
 		type: CardType.Building,
 		cost: 25,
 		categories: [CardCategory.Building],
@@ -1675,7 +1538,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'wave_power',
-		title: 'Wave Power',
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Power],
@@ -1685,7 +1547,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'lava_flows',
-		title: 'Lava Flows',
 		type: CardType.Event,
 		cost: 18,
 		categories: [CardCategory.Event],
@@ -1700,7 +1561,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'power_plant',
-		title: 'Power Plant',
 		type: CardType.Building,
 		cost: 4,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -1708,7 +1568,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'mohole_area',
-		title: 'Mohole Area',
 		type: CardType.Building,
 		cost: 20,
 		categories: [CardCategory.Building],
@@ -1723,7 +1582,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'large_convoy',
-		title: 'Large Convoy',
 		type: CardType.Event,
 		cost: 36,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
@@ -1739,7 +1597,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'titanium_mine',
-		title: 'Titanium Mine',
 		type: CardType.Building,
 		cost: 7,
 		categories: [CardCategory.Building],
@@ -1748,7 +1605,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'tectonic_stress_power',
-		title: 'Tectonic Stress Power',
 		type: CardType.Building,
 		cost: 18,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -1758,7 +1614,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'nitrophilic_moss',
-		title: 'Nitrophilic Moss',
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Plant],
@@ -1767,7 +1622,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'herbivores',
-		title: 'Herbivores',
 		type: CardType.Effect,
 		cost: 12,
 		categories: [CardCategory.Animal],
@@ -1784,7 +1638,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'insects',
-		title: 'Insects',
 		type: CardType.Building,
 		cost: 9,
 		categories: [CardCategory.Microbe],
@@ -1793,7 +1646,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ceos_favorite_project',
-		title: "CEO's Favorite Project",
 		type: CardType.Event,
 		cost: 1,
 		categories: [CardCategory.Event],
@@ -1802,7 +1654,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'anti_gravity_technology',
-		title: 'Anti-gravity Technology',
 		type: CardType.Effect,
 		cost: 14,
 		categories: [CardCategory.Science],
@@ -1813,7 +1664,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'investment_loan',
-		title: 'Investment Loan',
 		type: CardType.Event,
 		cost: 3,
 		categories: [CardCategory.Event, CardCategory.Earth],
@@ -1822,7 +1672,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'insulation',
-		title: 'Insulation',
 		type: CardType.Building,
 		cost: 2,
 		categories: [],
@@ -1830,7 +1679,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'adaptation_technology',
-		title: 'Adaptation Technology',
 		type: CardType.Effect,
 		cost: 12,
 		categories: [CardCategory.Science],
@@ -1839,7 +1687,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'caretaker_contract',
-		title: 'Caretaker Contract',
 		type: CardType.Action,
 		cost: 3,
 		categories: [],
@@ -1852,7 +1699,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'designed_microorganisms',
-		title: 'Designed Microorganisms',
 		type: CardType.Building,
 		cost: 16,
 		categories: [CardCategory.Microbe, CardCategory.Science],
@@ -1861,7 +1707,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'standard_technology',
-		title: 'Standard Technology',
 		type: CardType.Effect,
 		cost: 6,
 		categories: [CardCategory.Science],
@@ -1870,7 +1715,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'nitrite_reducing_bacteria',
-		title: 'Nitrite Reducing Bacteria',
 		type: CardType.Action,
 		cost: 11,
 		categories: [CardCategory.Microbe],
@@ -1888,7 +1732,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'industrial_microbes',
-		title: 'Industrial Microbes',
 		type: CardType.Building,
 		cost: 12,
 		categories: [CardCategory.Building, CardCategory.Microbe],
@@ -1896,7 +1739,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'lichen',
-		title: 'Lichen',
 		type: CardType.Building,
 		cost: 7,
 		categories: [CardCategory.Plant],
@@ -1905,7 +1747,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'power_supply_consortium',
-		title: 'Power Supply Consortium',
 		type: CardType.Building,
 		cost: 5,
 		categories: [CardCategory.Power],
@@ -1917,7 +1758,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'convoy_from_europa',
-		title: 'Convoy From Europa',
 		type: CardType.Event,
 		cost: 15,
 		categories: [CardCategory.Event, CardCategory.Space],
@@ -1925,7 +1765,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'imported_ghg',
-		title: 'Imported Ghg',
 		type: CardType.Event,
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
@@ -1933,7 +1772,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'imported_nitrogen',
-		title: 'Imported Nitrogen',
 		type: CardType.Event,
 		cost: 23,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
@@ -1946,7 +1784,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'micro_mills',
-		title: 'Micro-Mills',
 		type: CardType.Building,
 		cost: 3,
 		categories: [],
@@ -1954,7 +1791,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'magnetic_field_generators',
-		title: 'Magnetic Field Generators',
 		type: CardType.Building,
 		cost: 20,
 		categories: [CardCategory.Building],
@@ -1966,7 +1802,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'shuttles',
-		title: 'Shuttles',
 		type: CardType.Effect,
 		cost: 10,
 		categories: [CardCategory.Space],
@@ -1980,7 +1815,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'import_of_advanced_ghg',
-		title: 'Import of Advanced Ghg',
 		type: CardType.Event,
 		cost: 9,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
@@ -1988,7 +1822,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'windmills',
-		title: 'Windmills',
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -1998,7 +1831,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'tundra_farming',
-		title: 'Tundra Farming',
 		type: CardType.Building,
 		cost: 16,
 		categories: [CardCategory.Plant],
@@ -2012,7 +1844,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'aerobraked_ammonia_asteroid',
-		title: 'Aerobraked Ammonia Asteroid',
 		type: CardType.Event,
 		cost: 26,
 		categories: [CardCategory.Event, CardCategory.Space],
@@ -2024,7 +1855,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'magnetic_field_dome',
-		title: 'Magnetic Field Dome',
 		type: CardType.Building,
 		cost: 5,
 		categories: [CardCategory.Building],
@@ -2036,21 +1866,19 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'pets',
-		title: 'Pets',
 		type: CardType.Effect,
 		cost: 10,
-		description: 'Animals cannot be removed from this card',
 		resourceProtected: true,
 		resource: 'animals',
 		categories: [CardCategory.Animal, CardCategory.Earth],
 		passiveEffects: [
+			emptyPassiveEffect('Animals cannot be removed from this card'),
 			cardResourcePerTilePlaced(GridCellContent.City, 'animals', 1)
 		],
 		victoryPointsCallback: vpsForCardResources('animals', 1 / 3)
 	}),
 	card({
 		code: 'protected_habitats',
-		title: 'Protected Habitats',
 		type: CardType.Action,
 		cost: 5,
 		categories: [],
@@ -2059,7 +1887,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'protected_valley',
-		title: 'Protected Valley',
 		type: CardType.Building,
 		cost: 23,
 		categories: [CardCategory.Building, CardCategory.Plant],
@@ -2073,7 +1900,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'satellites',
-		title: 'Satellites',
 		type: CardType.Building,
 		cost: 10,
 		categories: [CardCategory.Space],
@@ -2082,7 +1908,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'noctis_farming',
-		title: 'Noctis Farming',
 		type: CardType.Building,
 		cost: 10,
 		categories: [CardCategory.Plant, CardCategory.Building],
@@ -2092,7 +1917,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'water_splitting_plant',
-		title: 'Water Splitting Plant',
 		type: CardType.Action,
 		cost: 12,
 		categories: [CardCategory.Building],
@@ -2104,7 +1928,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'heat_trappers',
-		title: 'Heat Trappers',
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -2116,7 +1939,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'soil_factory',
-		title: 'Soil Factory',
 		type: CardType.Building,
 		cost: 9,
 		categories: [CardCategory.Building],
@@ -2125,7 +1947,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'fuel_factory',
-		title: 'Fuel Factory',
 		type: CardType.Building,
 		cost: 6,
 		categories: [CardCategory.Building],
@@ -2138,7 +1959,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ice_cap_melting',
-		title: 'Ice Cap Melting',
 		type: CardType.Event,
 		cost: 5,
 		categories: [CardCategory.Event],
@@ -2147,7 +1967,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'corporate_stronghold',
-		title: 'Corporate Stronghold',
 		type: CardType.Building,
 		cost: 11,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -2161,7 +1980,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'biomass_combustors',
-		title: 'Biomass Combustors',
 		type: CardType.Building,
 		cost: 4,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -2174,7 +1992,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'livestock',
-		title: 'Livestock',
 		type: CardType.Action,
 		cost: 13,
 		categories: [CardCategory.Animal],
@@ -2186,7 +2003,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'olympus_conference',
-		title: 'Olympus Conference',
 		type: CardType.Effect,
 		cost: 10,
 		resource: 'science',
@@ -2210,7 +2026,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'rad_suits',
-		title: 'Rad-Suits',
 		type: CardType.Building,
 		cost: 6,
 		categories: [],
@@ -2221,7 +2036,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'aquifer_pumping',
-		title: 'Aquifer Pumping',
 		type: CardType.Action,
 		cost: 18,
 		categories: [CardCategory.Building],
@@ -2229,7 +2043,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'flooding',
-		title: 'Flooding',
 		type: CardType.Event,
 		cost: 7,
 		categories: [CardCategory.Event],
@@ -2240,7 +2053,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'energy_saving',
-		title: 'Energy Saving',
 		type: CardType.Building,
 		cost: 15,
 		categories: [CardCategory.Power],
@@ -2248,7 +2060,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'local_heat_trapping',
-		title: 'Local Heat Trapping',
 		type: CardType.Event,
 		cost: 1,
 		categories: [CardCategory.Event],
@@ -2262,7 +2073,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'permafrost_extraction',
-		title: 'Permafrost Extraction',
 		type: CardType.Event,
 		cost: 8,
 		categories: [CardCategory.Event],
@@ -2271,7 +2081,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'invention_contest',
-		title: 'Invention Contest',
 		type: CardType.Event,
 		cost: 2,
 		categories: [CardCategory.Event, CardCategory.Science],
@@ -2280,7 +2089,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'plantation',
-		title: 'Plantation',
 		type: CardType.Building,
 		cost: 15,
 		categories: [CardCategory.Plant],
@@ -2289,7 +2097,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'power_infrastructure',
-		title: 'Power Infrastructure',
 		type: CardType.Action,
 		cost: 4,
 		categories: [CardCategory.Building, CardCategory.Power],
@@ -2298,7 +2105,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'indentured_workers',
-		title: 'Indentured Workers',
 		type: CardType.Event,
 		cost: 0,
 		categories: [CardCategory.Event],
@@ -2309,7 +2115,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'lagrange_observatory',
-		title: 'Lagrange Observatory',
 		type: CardType.Building,
 		cost: 9,
 		categories: [CardCategory.Space, CardCategory.Science],
@@ -2319,7 +2124,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'terraforming_ganymede',
-		title: 'Terraforming Ganymede',
 		type: CardType.Building,
 		cost: 33,
 		categories: [CardCategory.Space, CardCategory.Jupiter],
@@ -2329,7 +2133,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'immigration_shuttles',
-		title: 'Immigration Shuttles',
 		type: CardType.Building,
 		cost: 31,
 		categories: [CardCategory.Space, CardCategory.Earth],
@@ -2338,7 +2141,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'restricted_area',
-		title: 'Restricted Area',
 		type: CardType.Action,
 		cost: 11,
 		categories: [CardCategory.Science],
@@ -2353,7 +2155,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'immigrant_city',
-		title: 'Immigrant City',
 		type: CardType.Effect,
 		cost: 13,
 		categories: [CardCategory.Building, CardCategory.City],
@@ -2366,7 +2167,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'energy_tapping',
-		title: 'Energy Tapping',
 		type: CardType.Building,
 		cost: 3,
 		categories: [CardCategory.Power],
@@ -2379,7 +2179,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'underground_detonations',
-		title: 'Underground Detonations',
 		type: CardType.Action,
 		cost: 6,
 		categories: [CardCategory.Building],
@@ -2390,7 +2189,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'soletta',
-		title: 'Soletta',
 		type: CardType.Building,
 		cost: 35,
 		categories: [CardCategory.Space],
@@ -2398,7 +2196,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'technology_demonstration',
-		title: 'Technology Demonstration',
 		type: CardType.Event,
 		cost: 5,
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Science],
@@ -2407,7 +2204,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'rad_chem_factory',
-		title: 'Rad-Chem Factory',
 		type: CardType.Building,
 		cost: 8,
 		categories: [CardCategory.Building],
@@ -2415,7 +2211,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'special_design',
-		title: 'Special Design',
 		type: CardType.Event,
 		cost: 4,
 		categories: [CardCategory.Event, CardCategory.Science],
@@ -2424,7 +2219,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'medical_lab',
-		title: 'Medical Lab',
 		type: CardType.Building,
 		cost: 13,
 		categories: [CardCategory.Building, CardCategory.Science],
@@ -2434,7 +2228,6 @@ export const baseCards: Card[] = [
 	}),
 	card({
 		code: 'ai_central',
-		title: 'Ai Central',
 		type: CardType.Action,
 		cost: 21,
 		categories: [CardCategory.Building, CardCategory.Science],

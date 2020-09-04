@@ -30,7 +30,6 @@ export const corp = (c: Card): Card => {
 export const baseCorporations = [
 	corp(
 		card({
-			title: 'Starting Corporation',
 			categories: [],
 			code: 'starting_corporation',
 			cost: 0,
@@ -52,7 +51,6 @@ export const baseCorporations = [
 	),
 	corp(
 		card({
-			title: 'Creditor',
 			categories: [],
 			code: 'creditor',
 			cost: 0,
@@ -91,7 +89,6 @@ export const baseCorporations = [
 		card({
 			code: 'ecoline',
 			categories: [CardCategory.Plant],
-			title: 'ecoline',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [
@@ -109,7 +106,6 @@ export const baseCorporations = [
 		card({
 			code: 'helion',
 			categories: [CardCategory.Space],
-			title: 'Helion',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 42), productionChange('heat', 3)],
@@ -120,7 +116,6 @@ export const baseCorporations = [
 		card({
 			code: 'mining_guild',
 			categories: [CardCategory.Building, CardCategory.Building],
-			title: 'Mining Guild',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [
@@ -145,7 +140,6 @@ export const baseCorporations = [
 		card({
 			code: 'interplanetary_cinematics',
 			categories: [CardCategory.Building],
-			title: 'Interplanetary Cinematics',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 30), resourceChange('ore', 20)],
@@ -176,7 +170,6 @@ export const baseCorporations = [
 		card({
 			code: 'phobolog',
 			categories: [CardCategory.Science],
-			title: 'Phobolog',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [
@@ -190,7 +183,6 @@ export const baseCorporations = [
 		card({
 			code: 'tharsis_republic',
 			categories: [CardCategory.Building],
-			title: 'Tharsis Republic',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [
@@ -225,7 +217,6 @@ export const baseCorporations = [
 		card({
 			code: 'thorgate',
 			categories: [CardCategory.Power],
-			title: 'Thorgate',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [
@@ -250,7 +241,6 @@ export const baseCorporations = [
 		card({
 			code: 'united_nations_mars_initiative',
 			categories: [CardCategory.Earth],
-			title: 'United Nations Mars Initiative',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 40)],
@@ -287,7 +277,6 @@ export const baseCorporations = [
 		card({
 			code: 'teractor',
 			categories: [CardCategory.Earth],
-			title: 'Teractor',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 60), earthCardPriceChange(-3)],
@@ -298,7 +287,6 @@ export const baseCorporations = [
 		card({
 			code: 'saturn_systems',
 			categories: [CardCategory.Earth],
-			title: 'Saturn Systems',
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [

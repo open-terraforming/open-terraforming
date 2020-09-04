@@ -7,19 +7,22 @@ import * as styles from '@/styles'
 import { ThemeProvider } from 'styled-components'
 import { ApiContextProvider } from './context/ApiContext'
 import { EventsContextProvider } from './context/EventsContext'
+import { LocaleContextProvider } from './context/LocaleContext'
 
 const RootComponent = () => {
 	const store = useMemo(() => buildStore(), [])
 
 	return (
 		<Provider store={store}>
-			<ApiContextProvider>
-				<EventsContextProvider>
-					<ThemeProvider theme={styles}>
-						<App />
-					</ThemeProvider>
-				</EventsContextProvider>
-			</ApiContextProvider>
+			<LocaleContextProvider language={'en'}>
+				<ApiContextProvider>
+					<EventsContextProvider>
+						<ThemeProvider theme={styles}>
+							<App />
+						</ThemeProvider>
+					</EventsContextProvider>
+				</ApiContextProvider>
+			</LocaleContextProvider>
 		</Provider>
 	)
 }

@@ -8,9 +8,7 @@ import { card } from '../utils'
 export const preludeCards: Card[] = [
 	card({
 		code: 'house_printing',
-		title: 'House Printing',
 		type: CardType.Building,
-		description: '',
 		cost: 10,
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Prelude],
@@ -19,9 +17,7 @@ export const preludeCards: Card[] = [
 	}),
 	card({
 		code: 'lava_tube_settlement',
-		title: 'Lava Tube Settlement',
 		type: CardType.Building,
-		description: '',
 		cost: 15,
 		categories: [CardCategory.Building, CardCategory.City],
 		special: [CardSpecial.Prelude],
@@ -36,9 +32,7 @@ export const preludeCards: Card[] = [
 	}),
 	card({
 		code: 'martian_survey',
-		title: 'Martian Survey',
 		type: CardType.Event,
-		description: '',
 		cost: 9,
 		categories: [CardCategory.Event, CardCategory.Science],
 		special: [CardSpecial.Prelude],
@@ -50,9 +44,7 @@ export const preludeCards: Card[] = [
 	TODO:
 	card({
 		code: 'psychrophiles',
-		title: 'PSYCHROPHILES',
 		type: CardType.Action,
-		description: '',
 		cost: 2,
 		categories: [CardCategory.Microbe],
 		special: [CardSpecial.Prelude],
@@ -62,7 +54,6 @@ export const preludeCards: Card[] = [
 	*/
 	card({
 		code: 'research_coordination',
-		title: 'Research Coordination',
 		type: CardType.Building,
 		description: 'This cards counts as any tag',
 		cost: 4,
@@ -71,9 +62,7 @@ export const preludeCards: Card[] = [
 	}),
 	card({
 		code: 'sf_memorial',
-		title: 'Sf Memorial',
 		type: CardType.Building,
-		description: '',
 		cost: 7,
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Prelude],
@@ -82,9 +71,7 @@ export const preludeCards: Card[] = [
 	}),
 	card({
 		code: 'space_hotels',
-		title: 'Space Hotels',
 		type: CardType.Building,
-		description: '',
 		cost: 12,
 		categories: [CardCategory.Space, CardCategory.Earth],
 		special: [CardSpecial.Prelude],

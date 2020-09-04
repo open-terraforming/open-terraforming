@@ -119,8 +119,8 @@ export const card = (
 		| 'passiveEffects'
 		| 'actionEffects'
 		| 'victoryPoints'
-		| 'description'
 		| 'special'
+		| 'description'
 	>
 ) =>
 	({
