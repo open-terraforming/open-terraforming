@@ -1,4 +1,4 @@
-export const helpStrings = {
+export const help = {
 	money:
 		"Money is the most used resource. It's mainly used to play cards from your hand, but you can use it to buy standard projects, milestones and competitions. You also use money to buy cards at the beginning of each generation.",
 	ore:

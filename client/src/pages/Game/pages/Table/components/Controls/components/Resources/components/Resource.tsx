@@ -1,5 +1,5 @@
 import { HelpTooltip } from '@/components/HelpTooltip/HelpTooltip'
-import { helpStrings } from '@/i18n/en'
+import { en } from '@/i18n/en'
 import { colors } from '@/styles'
 import { useAnimatedNumber } from '@/utils/hooks'
 import { Resource as Res } from '@shared/cards'
@@ -29,7 +29,7 @@ export const Resource = ({
 	const valueDisplay = useAnimatedNumber(value, 500)
 	const productionDisplay = useAnimatedNumber(production, 500)
 
-	const helpStr = helpStrings[res].replace('{0}', worth.toString())
+	const helpStr = en.help[res].replace('{0}', worth.toString())
 
 	useEffect(() => {
 		const diff = value - lastValue
