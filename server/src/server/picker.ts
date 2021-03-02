@@ -37,7 +37,7 @@ export default (serverConfig: ServerOptions) => {
 
 		const q =
 			req.query['q'] ||
-			card.title + ' ' + card.categories.map(c => CardCategory[c]).join(' ')
+			card.code + ' ' + card.categories.map(c => CardCategory[c]).join(' ')
 
 		const page = req.query['page'] ? parseInt(req.query['page'], 10) : 0
 
@@ -66,7 +66,7 @@ export default (serverConfig: ServerOptions) => {
 		</style>
 	</head>
 	<body>
-		<h2>${card.title}</h2> <a href="?page=${page + 1}&q=${attr(q)}">next</a>
+		<h2>${card.code}</h2> <a href="?page=${page + 1}&q=${attr(q)}">next</a>
 		<form method="get"><input type="text" name="q" value="${attr(
 			q
 		)}" /><button>Search</button></form>

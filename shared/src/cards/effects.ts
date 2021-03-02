@@ -487,7 +487,7 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 				const card = CardsLookupApi.get(cardState?.code)
 
 				if (card.resource !== res) {
-					throw new Error(`${card.title} doesn't accept ${res}`)
+					throw new Error(`${card.code} doesn't accept ${res}`)
 				}
 
 				cardState[res] += amount

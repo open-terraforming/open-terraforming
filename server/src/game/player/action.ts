@@ -125,7 +125,7 @@ export abstract class PlayerBaseAction<Args = {}> {
 						})
 					} catch (e) {
 						throw new Error(
-							f('{0}: Effect {1} argument {2} - {3}', card.title, i, ai, e)
+							f('{0}: Effect {1} argument {2} - {3}', card.code, i, ai, e)
 						)
 					}
 				})

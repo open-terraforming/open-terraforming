@@ -47,7 +47,7 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 			card.type !== CardType.Action &&
 			card.type !== CardType.Corporation
 		) {
-			throw new Error(`${card.title} isn't playable`)
+			throw new Error(`${card.code} isn't playable`)
 		}
 
 		const ctx = {
