@@ -6,20 +6,20 @@ import {
 	UsedCardState
 } from '../game'
 import { withUnits } from '../units'
+import { allCells, tiles } from '../utils'
+import { CardsLookupApi } from './lookup'
 import {
 	Card,
 	CardCallbackContext,
 	CardCategory,
-	CardType,
-	Resource,
-	WithOptional,
 	CardSymbol,
-	SymbolType,
+	CardType,
 	GameProgress,
-	Production
+	Production,
+	Resource,
+	SymbolType,
+	WithOptional
 } from './types'
-import { tiles, allCells, CardsCollection } from '../utils'
-import { CardsLookupApi } from './lookup'
 
 export const resources: Resource[] = [
 	'money',
@@ -227,12 +227,16 @@ export const progressSymbol: Record<GameProgress, Readonly<CardSymbol>> = {
 	temperature: { symbol: SymbolType.Temperature }
 }
 
-export const countTags = (
+/**
+ * Counts tags, excluding action cards
+ */
+export const countTagsWithoutEvents = (
 	cards: (string | UsedCardState)[],
 	tag: CardCategory
 ) => {
 	return cards
 		.map(c => CardsLookupApi.get(typeof c === 'string' ? c : c.code))
+		.filter(c => c.type !== CardType.Event)
 		.reduce(
 			(acc, c) =>
 				acc +

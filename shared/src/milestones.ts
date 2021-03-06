@@ -83,7 +83,7 @@ const MilestonesList = [
 		type: MilestoneType.Diversifier,
 		title: 'Diversifier',
 		description: 'Different tags in play',
-		limit: 6,
+		limit: 8,
 		getValue: (_game, player) =>
 			Object.keys(
 				voidReduce(
@@ -130,7 +130,7 @@ const MilestonesList = [
 		type: MilestoneType.RimSettler,
 		title: 'Rim Settler',
 		description: 'Jupiter tags',
-		limit: 6,
+		limit: 3,
 		getValue: (_game, player) =>
 			player.usedCards.reduce(
 				(acc, c) =>

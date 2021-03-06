@@ -139,6 +139,25 @@ export const cardResourcePerTilePlaced = (
 		}
 	})
 
+export const cardResourcePerAnybodyTilePlaced = (
+	tile: GridCellContent,
+	res: CardResource,
+	amount: number
+) =>
+	passiveEffect({
+		description: `When anybody places a ${GridCellContent[tile]} tile, place ${amount} of ${res} on this card`,
+		symbols: [
+			{ tile },
+			{ symbol: SymbolType.Colon },
+			{ cardResource: res, count: amount }
+		],
+		onTilePlaced: ({ card }, cell) => {
+			if (cell.content === tile) {
+				card[res] += amount
+			}
+		}
+	})
+
 export const productionChangeAfterPlace = (
 	amount: number,
 	type: GridCellOther

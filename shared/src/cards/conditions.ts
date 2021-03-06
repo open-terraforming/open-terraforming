@@ -31,7 +31,7 @@ export const cardResourceCondition = (res: CardResource, amount: number) =>
 		}
 	})
 
-export const cardHasResource = (res: CardResource) =>
+export const cardAcceptsResource = (res: CardResource) =>
 	condition({
 		description: `Card accepts ${res}`,
 		evaluate: ({ card }) => CardsLookupApi.get(card.code).resource === res

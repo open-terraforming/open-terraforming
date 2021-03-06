@@ -1,6 +1,6 @@
 import { effect } from './types'
 import { CardCategory, CardEffectType, Resource, SymbolType } from '../types'
-import { updatePlayerProduction, countTags } from '../utils'
+import { updatePlayerProduction, countTagsWithoutEvents } from '../utils'
 
 export const productionForTags = (
 	tag: CardCategory,
@@ -31,7 +31,8 @@ export const productionForTags = (
 				player,
 				res,
 				Math.floor(
-					countTags([...player.usedCards, card.code], tag) * resPerCard
+					countTagsWithoutEvents([...player.usedCards, card.code], tag) *
+						resPerCard
 				)
 			)
 		}

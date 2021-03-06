@@ -31,7 +31,7 @@ import {
 } from './args'
 import {
 	cardCountCondition,
-	cardHasResource,
+	cardAcceptsResource,
 	cardResourceCondition,
 	cellTypeCondition,
 	condition,
@@ -64,7 +64,7 @@ import {
 	resToPrice,
 	updatePlayerProduction,
 	updatePlayerResource,
-	countTags
+	countTagsWithoutEvents
 } from './utils'
 
 export const resourceChange = (res: Resource, change: number) =>
@@ -447,7 +447,7 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 				...cardArg(
 					amount < 0
 						? [cardResourceCondition(res, -amount)]
-						: [cardHasResource(res)]
+						: [cardAcceptsResource(res)]
 				),
 				descriptionPrefix:
 					amount > 0
@@ -515,7 +515,7 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 				...playerCardArg(
 					amount < 0
 						? [cardResourceCondition(res, -amount)]
-						: [cardHasResource(res)],
+						: [cardAcceptsResource(res)],
 					Math.abs(amount)
 				),
 				optional: false,
@@ -1099,7 +1099,7 @@ export const terraformRatingForTags = (tag: CardCategory, amount: number) =>
 		],
 		perform: ({ player, card }) => {
 			player.terraformRating +=
-				countTags([...player.usedCards, card.code], tag) * amount
+				countTagsWithoutEvents([...player.usedCards, card.code], tag) * amount
 		}
 	})
 

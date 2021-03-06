@@ -1,4 +1,5 @@
 import { GridCellContent, GridCellOther, GridCellSpecial } from '../../game'
+import { LavaCells } from '../../map'
 import { OtherPlacement, PlacementCode } from '../../placements'
 import {
 	cardCountCondition,
@@ -15,6 +16,7 @@ import {
 	cardResourceChange,
 	cardsForResource,
 	changeProgressConditionBonus,
+	claimCell,
 	convertResource,
 	convertTopCardToCardResource,
 	doNothing,
@@ -29,16 +31,18 @@ import {
 	orePriceChange,
 	otherCardResourceChange,
 	pickTopCards,
+	placeOcean,
 	placeTile,
 	playerCardResourceChange,
 	playerProductionChange,
 	playerResourceChange,
 	productionChange,
 	productionChangeForTags,
+	productionChangeIfTags,
 	productionForPlayersTags,
 	productionForTiles,
+	protectedHabitat,
 	resourceChange,
-	productionChangeIfTags,
 	resourceForCities,
 	resourcesForPlayersTags,
 	resourcesForTiles,
@@ -46,16 +50,17 @@ import {
 	terraformRatingChange,
 	terraformRatingForTags,
 	titanPriceChange,
-	triggerCardResourceChange,
-	claimCell,
-	placeOcean,
-	protectedHabitat
+	triggerCardResourceChange
 } from '../effects'
+import { exchangeProduction } from '../effects/exchange-production'
 import { productionForTags } from '../effects/production-for-tags'
 import {
 	cardExchangeEffect,
+	cardResourcePerAnybodyTilePlaced,
 	cardResourcePerCardPlayed,
 	cardResourcePerTilePlaced,
+	changeResourceFromNeighbor,
+	emptyPassiveEffect,
 	playWhenCard,
 	productionChangeAfterPlace,
 	productionPerPlacedTile,
@@ -63,9 +68,7 @@ import {
 	resetProgressBonus,
 	resourceForStandardProject,
 	resourcePerCardPlayed,
-	resourcePerPlacedTile,
-	changeResourceFromNeighbor,
-	emptyPassiveEffect
+	resourcePerPlacedTile
 } from '../passive-effects'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
 import { card, noDesc, withRightArrow } from '../utils'
@@ -76,8 +79,6 @@ import {
 	vpsForCards,
 	vpsForTiles
 } from '../vps'
-import { LavaCells } from '../../map'
-import { exchangeProduction } from '../effects/exchange-production'
 
 export const baseCards: Card[] = [
 	card({
@@ -766,7 +767,11 @@ export const baseCards: Card[] = [
 			placeTile({
 				type: GridCellContent.Other,
 				other: GridCellOther.Mine,
-				conditions: [...OtherPlacement, PlacementCode.TitanOreBonus]
+				conditions: [
+					...OtherPlacement,
+					PlacementCode.TitanOreBonus,
+					PlacementCode.NextToOwn
+				]
 			})
 		],
 		passiveEffects: [productionChangeAfterPlace(1, GridCellOther.Mine)]
@@ -1871,11 +1876,12 @@ export const baseCards: Card[] = [
 		resourceProtected: true,
 		resource: 'animals',
 		categories: [CardCategory.Animal, CardCategory.Earth],
+		playEffects: [cardResourceChange('animals', 1)],
 		passiveEffects: [
 			emptyPassiveEffect('Animals cannot be removed from this card'),
-			cardResourcePerTilePlaced(GridCellContent.City, 'animals', 1)
+			cardResourcePerAnybodyTilePlaced(GridCellContent.City, 'animals', 1)
 		],
-		victoryPointsCallback: vpsForCardResources('animals', 1 / 3)
+		victoryPointsCallback: vpsForCardResources('animals', 1 / 2)
 	}),
 	card({
 		code: 'protected_habitats',
