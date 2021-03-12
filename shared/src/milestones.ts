@@ -89,12 +89,17 @@ const MilestonesList = [
 				voidReduce(
 					player.usedCards,
 					{} as Record<CardCategory, boolean>,
-					(acc, c) =>
-						CardsLookupApi.get(c.code).categories.forEach(c => {
-							if (!acc[c]) {
-								acc[c] = true
-							}
-						})
+					(acc, c) => {
+						const info = CardsLookupApi.get(c.code)
+
+						if (info.type !== CardType.Event) {
+							info.categories.forEach(c => {
+								if (!acc[c]) {
+									acc[c] = true
+								}
+							})
+						}
+					}
 				)
 			).length
 	}),

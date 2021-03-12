@@ -157,7 +157,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Building, CardCategory.City],
 		conditions: [gameProgressConditionMin('oceans', 4)],
 		playEffects: [
-			placeTile({ type: GridCellContent.Other, other: GridCellOther.Capital }),
+			placeTile({ type: GridCellContent.City }),
 			productionChange('energy', -2),
 			productionChange('money', 5)
 		],
@@ -1031,7 +1031,7 @@ export const baseCards: Card[] = [
 		cost: 11,
 		categories: [CardCategory.Science, CardCategory.Science],
 		victoryPoints: 1,
-		playEffects: [pickTopCards(2)]
+		playEffects: [getTopCards(2)]
 	}),
 	card({
 		code: 'gene_repair',
