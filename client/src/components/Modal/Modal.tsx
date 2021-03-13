@@ -179,9 +179,9 @@ const PopupBackground = styled.div<{ closing?: boolean }>`
 `
 
 const popIn = keyframes`
-	0% { transform: perspective(400px) rotate3d(1, 0, 0, 70deg) scale(0.5); opacity: 0; }
+	0% { transform: scale(0.8); opacity: 0; }
 	75% { opacity: 1; }
-	100% { transform: perspective(400px) scale(1); }
+	100% { transform: scale(1); }
 `
 
 const popOut = keyframes`
