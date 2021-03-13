@@ -1,11 +1,7 @@
 import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
-import { colors } from '@/styles'
-import { media } from '@/styles/media'
 import { useAppStore } from '@/utils/hooks'
-import { faThermometerHalf, faTint } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi } from '@shared/cards'
 import { pickCards, pickPreludes } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
@@ -14,6 +10,7 @@ import styled, { keyframes } from 'styled-components'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
+import { CardPickerHeader } from './components/CardPickerHeader'
 
 type Props = {
 	prelude?: boolean
@@ -73,7 +70,13 @@ export const CardPicker = ({ prelude, closeable, onClose }: Props) => {
 			allowClose={closeable}
 			onClose={onClose}
 			headerStyle={{ justifyContent: 'center' }}
-			header={cardsLimit === 0 ? `Pick your cards` : `Pick ${cardsLimit} cards`}
+			header={
+				<CardPickerHeader
+					text={
+						cardsLimit === 0 ? `Pick your cards` : `Pick ${cardsLimit} cards`
+					}
+				/>
+			}
 			footer={
 				<Button
 					onClick={handleConfirm}
@@ -102,33 +105,6 @@ export const CardPicker = ({ prelude, closeable, onClose }: Props) => {
 			}
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
 		>
-			<GameProgress>
-				<ProgressItem>
-					<Res>
-						<FontAwesomeIcon icon={faTint} />
-					</Res>
-					<span>
-						{game.oceans} / {game.map.oceans}
-					</span>{' '}
-				</ProgressItem>
-				<ProgressItem>
-					<Res>
-						<FontAwesomeIcon icon={faThermometerHalf} />
-					</Res>
-					<span>
-						{game.temperature * 2} / {game.map.temperature * 2}
-					</span>{' '}
-				</ProgressItem>
-				<ProgressItem>
-					<Res>
-						O<sub>2</sub>
-					</Res>
-					<span>
-						{game.oxygen} / {game.map.oxygen}
-					</span>{' '}
-				</ProgressItem>
-			</GameProgress>
-
 			<CardsContainer style={{ flex: 1 }}>
 				{cardsToPick?.map(
 					(c, i) =>
@@ -175,31 +151,4 @@ const PopInContainer = styled.div`
 	animation-duration: 300ms;
 	animation-fill-mode: forwards;
 	opacity: 0;
-`
-
-const GameProgress = styled.div`
-	display: flex;
-	justify-content: center;
-	margin-bottom: 0.5rem;
-
-	${media.medium} {
-		display: none;
-	}
-`
-
-const ProgressItem = styled.div`
-	display: flex;
-	margin: 0 0.25rem;
-	background-color: ${colors.background};
-	border: 1px solid ${colors.border};
-
-	> span {
-		margin-left: 0.25rem;
-		padding: 0.5rem;
-	}
-`
-
-const Res = styled.div`
-	background-color: ${colors.border};
-	padding: 0.5rem;
 `
