@@ -61,21 +61,24 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 		[usedCards]
 	)
 
-	const handleSubmit = useCallback((cards: CardInfo[]) => {
-		setPicking(false)
+	const handleSubmit = useCallback(
+		(cards: CardInfo[]) => {
+			setPicking(false)
 
-		if (cards.length === 0) {
-			return
-		}
+			if (cards.length === 0) {
+				return
+			}
 
-		setSelected(cards[0])
+			setSelected(cards[0])
 
-		if (otherPlayer) {
-			onChange([players[selectedPlayer].player.id, cards[0]?.index])
-		} else {
-			onChange(cards[0]?.index)
-		}
-	}, [])
+			if (otherPlayer) {
+				onChange([players[selectedPlayer].player.id, cards[0]?.index])
+			} else {
+				onChange(cards[0]?.index)
+			}
+		},
+		[onChange, selectedPlayer]
+	)
 
 	const choice = !otherPlayer ? cards : players[selectedPlayer].cards
 
