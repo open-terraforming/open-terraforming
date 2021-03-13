@@ -138,7 +138,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 					>
 						{buying ? (
 							<>
-								Use card for {price}
+								Buy card for {price}
 								<ResourceIcon res="money" />
 							</>
 						) : forced ? (

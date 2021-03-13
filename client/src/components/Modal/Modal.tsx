@@ -161,6 +161,7 @@ const PopupBackground = styled.div<{ closing?: boolean }>`
 	background: rgba(0, 0, 0, 0.5);
 	display: flex;
 	z-index: 999;
+	align-items: flex-start;
 
 	${props =>
 		props.closing
@@ -178,21 +179,21 @@ const PopupBackground = styled.div<{ closing?: boolean }>`
 `
 
 const popIn = keyframes`
-	0% { transform: scale(1, 0); opacity: 0; }
+	0% { transform: perspective(400px) rotate3d(1, 0, 0, 70deg) scale(0.5); opacity: 0; }
 	75% { opacity: 1; }
-	100% { transform: scale(1, 1); }
+	100% { transform: perspective(400px) scale(1); }
 `
 
 const popOut = keyframes`
-	0% { transform: scaleY(1); opacity: 1 }
-	100% { transform: scaleY(0); opacity: 0; }
+	0% { transform: perspective(400px) scale(1); opacity: 1 }
+	100% { transform: perspective(400px) rotate3d(1, 0, 0, -70deg) scale(0.5); opacity: 0; }
 `
 
 const background = rgba(colors.background, 0.95)
 
 const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	position: relative;
-	margin: auto;
+	margin: 5% auto 5% auto;
 	border: 2px solid ${colors.border};
 	padding: 0px;
 	border-radius: 0px;

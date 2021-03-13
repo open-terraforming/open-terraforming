@@ -73,7 +73,7 @@ export const Main = ({}: Props) => {
 			<Modal
 				open={true}
 				allowClose={false}
-				contentStyle={{ minHeight: '4rem', minWidth: '10rem' }}
+				contentStyle={{ minHeight: '4rem', minWidth: '10rem', margin: 'auto' }}
 				header="Open Terraforming"
 				headerStyle={{ justifyContent: 'center', fontSize: '150%' }}
 			>

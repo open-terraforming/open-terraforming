@@ -5,6 +5,7 @@ export const Header = styled.div`
 	text-align: left;
 	font-size: 125%;
 	display: flex;
+	align-items: center;
 `
 
 export const Body = styled.div<{ hasHeader?: boolean; hasFooter?: boolean }>`
