@@ -1,6 +1,8 @@
 import { Button } from '@/components'
+import { HelpMessage } from '@/components/HelpMessage/HelpMessage'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
+import { help } from '@/i18n/en/help'
 import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { draftCard, pickCards, pickPreludes } from '@shared/index'
@@ -72,8 +74,8 @@ export const CardPicker = ({ action, closeable, onClose }: Props) => {
 		switch (action.type) {
 			case PlayerActionType.PickCards: {
 				return cardsLimit === 0
-					? `Pick your projects`
-					: `Pick ${cardsLimit} projects`
+					? `Pick projects to sponsor`
+					: `Pick ${cardsLimit} projects to sponsor`
 			}
 
 			case PlayerActionType.PickPreludes: {
@@ -82,6 +84,22 @@ export const CardPicker = ({ action, closeable, onClose }: Props) => {
 
 			case PlayerActionType.DraftCard: {
 				return `Pick a project to draft`
+			}
+		}
+	}, [action])
+
+	const helpMessage = useMemo(() => {
+		switch (action.type) {
+			case PlayerActionType.PickCards: {
+				return isFree ? undefined : help.sponsoredProjects
+			}
+
+			case PlayerActionType.PickPreludes: {
+				return help.preludes
+			}
+
+			case PlayerActionType.DraftCard: {
+				return help.draftedProjects
 			}
 		}
 	}, [action])
@@ -157,6 +175,10 @@ export const CardPicker = ({ action, closeable, onClose }: Props) => {
 						)
 				)}
 			</CardsContainer>
+
+			{helpMessage && (
+				<HelpMessage id="card-picker-help" message={helpMessage} />
+			)}
 		</Modal>
 	)
 }

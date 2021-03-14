@@ -12,7 +12,7 @@ const middleWares = [reduxThunk]
 if (process.env.NODE_ENV === 'development') {
 	middleWares.push(
 		require('redux-logger').createLogger({
-			collapsed: true,
+			collapsed: true
 		}) as any
 	)
 }

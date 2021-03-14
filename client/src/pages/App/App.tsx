@@ -1,9 +1,10 @@
 import background from '@/assets/stars.jpg'
 import { ApiState } from '@/store/modules/api'
+import { loadSettings } from '@/store/modules/settings'
 import { colors } from '@/styles'
 import { GlobalStyle } from '@/styles/global'
-import { useAppStore } from '@/utils/hooks'
-import React from 'react'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { Connect } from '../Connect/Connect'
 import { Game } from '../Game/Game'
@@ -12,6 +13,12 @@ import { ApiErrorMessage } from './components/ApiErrorMessage'
 
 export const App = () => {
 	const apiState = useAppStore(state => state.api.state)
+	const dispatch = useAppDispatch()
+
+	// Load settings from localStorage
+	useEffect(() => {
+		dispatch(loadSettings())
+	}, [])
 
 	return (
 		<AppContainer id="stars">
