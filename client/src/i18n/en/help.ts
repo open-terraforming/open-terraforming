@@ -11,7 +11,7 @@ export const help = {
 	sponsoredProjects:
 		"Sponsored projects will be put into your hand. Every project costs the same to sponsor, but you'll have to pay the project cost when you want to play it once it's in your hand and it's your turn.",
 	draftedProjects:
-		"Pick one card to draft, the rest will be passed to next player. Once there're no more cards to pass, you'll pick projects to sponsor from the cards you drafted.",
+		"Pick one card to draft, the rest will be passed to the next player. Once there're no more cards to pass, you'll pick projects to sponsor from the cards you've drafted.",
 	preludes:
 		"Prelude cards are played at the beginning of the first generations and they're free."
 }

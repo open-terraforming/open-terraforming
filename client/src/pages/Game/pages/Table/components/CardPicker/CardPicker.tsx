@@ -2,6 +2,7 @@ import { Button } from '@/components'
 import { HelpMessage } from '@/components/HelpMessage/HelpMessage'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
+import { cards } from '@/i18n/en/cards'
 import { help } from '@/i18n/en/help'
 import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
@@ -104,6 +105,39 @@ export const CardPicker = ({ action, closeable, onClose }: Props) => {
 		}
 	}, [action])
 
+	const pickMessage = useMemo(() => {
+		switch (action.type) {
+			case PlayerActionType.PickCards: {
+				return !isFree ? (
+					selected.length > 0 ? (
+						<>
+							{`Sponsor ${selected.length} projects for ${price}`}
+							<ResourceIcon res="money" />
+						</>
+					) : (
+						'Sponsor nothing'
+					)
+				) : selected.length > 0 ? (
+					`Pick ${selected.length} projects`
+				) : (
+					'Pick nothing'
+				)
+			}
+
+			case PlayerActionType.PickPreludes: {
+				return selected.length > 0
+					? `Pick ${selected.length} preludes`
+					: 'Pick nothing'
+			}
+
+			case PlayerActionType.DraftCard: {
+				return selected.length > 0
+					? `Pick ${cards[cardsToPick[selected[0]].code]}`
+					: 'Pick nothing'
+			}
+		}
+	}, [action, selected, price, isFree])
+
 	if (!game || !player) {
 		return <>No game / player</>
 	}
@@ -125,20 +159,7 @@ export const CardPicker = ({ action, closeable, onClose }: Props) => {
 					}
 					isLoading={loading}
 				>
-					{!isFree ? (
-						selected.length > 0 ? (
-							<>
-								{`Sponsor ${selected.length} projects for ${price}`}
-								<ResourceIcon res="money" />
-							</>
-						) : (
-							'Sponsor nothing'
-						)
-					) : selected.length > 0 ? (
-						`Pick ${selected.length} project`
-					) : (
-						'Pick nothing'
-					)}
+					{pickMessage}
 				</Button>
 			}
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
@@ -165,6 +186,8 @@ export const CardPicker = ({ action, closeable, onClose }: Props) => {
 															? selected.filter(s => s !== i)
 															: cardsLimit === 0 || selected.length < cardsLimit
 															? [...selected, i]
+															: cardsLimit === 1
+															? [i]
 															: selected
 													)
 											  }

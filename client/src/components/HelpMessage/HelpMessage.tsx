@@ -2,7 +2,7 @@ import { setSettings } from '@/store/modules/settings'
 import { colors } from '@/styles'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 type Props = {
 	id?: string
@@ -30,7 +30,7 @@ export const HelpMessage = ({ id, message }: Props) => {
 	return hidden ? (
 		<></>
 	) : (
-		<Help>
+		<Help hasClose={!!id}>
 			{id && (
 				<Hide onClick={handleHide} title="Hide this help message forever">
 					&times;
@@ -52,11 +52,17 @@ const Hide = styled.div`
 	cursor: pointer;
 `
 
-const Help = styled.div`
+const Help = styled.div<{ hasClose: boolean }>`
 	margin: 0.5rem auto;
 	padding: 1rem;
 	border: 0.2rem solid ${colors.border};
 	background-color: ${colors.background};
 	max-width: 30rem;
 	position: relative;
+
+	${props =>
+		props.hasClose &&
+		css`
+			padding-right: 2rem;
+		`}
 `
