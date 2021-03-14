@@ -383,3 +383,7 @@ export const isMarsTerraformed = (game: GameState) => {
 
 export const getPlayerIndex = (game: GameState, playerId: number) =>
 	game.players.findIndex(p => p.id === playerId)
+
+export const mod = (n: number, m: number) => {
+	return ((n % m) + m) % m
+}

@@ -16,6 +16,8 @@ export const PendingDisplay = ({ pending }: Props) => {
 				return 'Picking corporation'
 			case PlayerActionType.PickCards:
 				return 'Picking cards'
+			case PlayerActionType.DraftCard:
+				return 'Picking cards'
 			case PlayerActionType.PickPreludes:
 				return 'Picking preludes'
 			case PlayerActionType.PlaceTile:

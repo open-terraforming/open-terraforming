@@ -68,7 +68,7 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	state: PlayerStateValue.Connecting,
 	terraformRating: 20,
 	cards: [],
-	draftedCars: [],
+	draftedCards: [],
 	usedCards: [],
 	corporation: '',
 	tagPriceChange: {} as Record<CardCategory, number>,

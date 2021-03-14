@@ -28,6 +28,7 @@ export const obfuscateGame = (
 		if (p.id !== playerId) {
 			p.session = ''
 			p.cards = clearArray(p.cards, cards)
+			p.draftedCards = clearArray(p.draftedCards, cards)
 		}
 	})
 

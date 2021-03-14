@@ -260,7 +260,7 @@ export interface PlayerState {
 	cards: string[]
 
 	/** Cards picked during draft */
-	draftedCars: string[]
+	draftedCards: string[]
 
 	/** List of used cards */
 	usedCards: UsedCardState[]

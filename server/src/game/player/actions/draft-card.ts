@@ -1,6 +1,6 @@
 import { GameStateValue, pickCards, PlayerStateValue } from '@shared/index'
 import { draftCardAction, PlayerActionType } from '@shared/player-actions'
-import { f, getPlayerIndex, pushPendingAction } from '@shared/utils'
+import { f, getPlayerIndex, mod, pushPendingAction } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
 
 type Args = ReturnType<typeof pickCards>['data']
@@ -34,8 +34,8 @@ export class DraftCardAction extends PlayerBaseAction<Args> {
 			f('Drafted cards: {0}', cards.map(c => top.cards[c]).join(', '))
 		)
 
-		this.player.draftedCars = [
-			...this.player.draftedCars,
+		this.player.draftedCards = [
+			...this.player.draftedCards,
 			...cards.map(c => top.cards[c])
 		]
 
@@ -52,14 +52,17 @@ export class DraftCardAction extends PlayerBaseAction<Args> {
 			}
 
 			const nextPlayer = this.game.players[
-				(playerIndex + 1) % this.game.players.length
+				mod(
+					playerIndex + (this.game.generation % 2 === 0 ? 1 : -1),
+					this.game.players.length
+				)
 			]
 
 			if (theRest.length > 1) {
 				pushPendingAction(nextPlayer, draftCardAction(theRest, 1))
 				nextPlayer.state = PlayerStateValue.Picking
 			} else {
-				nextPlayer.draftedCars = [...nextPlayer.draftedCars, theRest[0]]
+				nextPlayer.draftedCards = [...nextPlayer.draftedCards, theRest[0]]
 			}
 		}
 

@@ -13,6 +13,7 @@ import {
 	ProgressMilestoneType
 } from '@shared/game'
 import {
+	draftCard,
 	pickCards,
 	pickCorporation,
 	pickPreludes,
@@ -378,6 +379,10 @@ export class Game {
 
 									if (a.type === PlayerActionType.PickPreludes) {
 										p.performAction(pickPreludes(range(0, a.limit)))
+									}
+
+									if (a.type === PlayerActionType.DraftCard) {
+										p.performAction(draftCard([0]))
 									}
 								})
 							}
