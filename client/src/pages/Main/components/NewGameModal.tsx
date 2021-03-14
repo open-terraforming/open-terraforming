@@ -189,12 +189,13 @@ export const NewGameModal = ({ onClose }: Props) => {
 						label="Enable Draft"
 					/>
 
-					<SelectItemDesc>
-						Each player will receive 4 random cards at the start of generation,
-						but instead of picking which to research, player will pick one to
-						keep and pass the rest to next player. Once there&apos;s no card
-						left to pass, players pick which cards to research from the 4 cards
-						they picked. This option is not recommended for beginners.
+					<SelectItemDesc style={{ maxWidth: '30rem' }}>
+						Each player will receive 4 random cards at the start of a
+						generation, but instead of picking which to research, each player
+						will pick one to keep and pass the rest to next player. Once
+						there&apos;s no card left to pass, players pick which cards to
+						research from the 4 cards they picked. This option is not
+						recommended for beginners.
 					</SelectItemDesc>
 				</Field>
 
