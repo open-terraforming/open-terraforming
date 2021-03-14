@@ -7,6 +7,7 @@ import { BuyCardAction } from './actions/buy-card'
 import { BuyMilestoneAction } from './actions/buy-milestone'
 import { BuyStandardProjectAction } from './actions/buy-standard-project'
 import { ClaimTileAction } from './actions/claim-tile'
+import { DraftCardAction } from './actions/draft-card'
 import { KickPlayerAction } from './actions/kick-player'
 import { PassAction } from './actions/pass'
 import { PickCardsAction } from './actions/pick-cards'
@@ -47,7 +48,8 @@ export class PlayerActions {
 			[MessageType.AdminLogin]: new AdminLoginAction(this.player),
 			[MessageType.AdminChange]: new AdminChangeAction(this.player),
 			[MessageType.StartGame]: new StartGameAction(this.player),
-			[MessageType.PlayerPass]: new PassAction(this.player)
+			[MessageType.PlayerPass]: new PassAction(this.player),
+			[MessageType.DraftCard]: new DraftCardAction(this.player)
 		}
 	}
 

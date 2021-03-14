@@ -59,7 +59,8 @@ export enum MessageType {
 	KickPlayer,
 	Kicked,
 	SpectateRequest,
-	SpectateResponse
+	SpectateResponse,
+	DraftCard
 }
 
 export const handshakeRequest = (version: string) =>
@@ -248,6 +249,12 @@ export const spectateResponse = (error?: SpectateError) =>
 		}
 	} as const)
 
+export const draftCard = (cards: number[]) =>
+	({
+		type: MessageType.DraftCard,
+		data: { cards }
+	} as const)
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -276,3 +283,4 @@ export type GameMessage =
 	| ReturnType<typeof kicked>
 	| ReturnType<typeof spectateRequest>
 	| ReturnType<typeof spectateResponse>
+	| ReturnType<typeof draftCard>

@@ -9,7 +9,7 @@ export class PickCardsAction extends PlayerBaseAction<Args> {
 	states = [PlayerStateValue.Picking, PlayerStateValue.Playing]
 	gameStates = [
 		GameStateValue.Starting,
-		GameStateValue.GenerationStart,
+		GameStateValue.ResearchPhase,
 		GameStateValue.GenerationInProgress
 	]
 

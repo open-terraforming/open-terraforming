@@ -143,7 +143,8 @@ const allowedActions: Record<number, PlayerActionType[] | undefined> = {
 	[PlayerStateValue.Picking]: [
 		PlayerActionType.PickCorporation,
 		PlayerActionType.PickCards,
-		PlayerActionType.PickPreludes
+		PlayerActionType.PickPreludes,
+		PlayerActionType.DraftCard
 	],
 	[PlayerStateValue.EndingTiles]: [PlayerActionType.PlaceTile],
 	[PlayerStateValue.Playing]: []
@@ -379,3 +380,6 @@ export const isMarsTerraformed = (game: GameState) => {
 		game.temperature >= game.map.temperature
 	)
 }
+
+export const getPlayerIndex = (game: GameState, playerId: number) =>
+	game.players.findIndex(p => p.id === playerId)

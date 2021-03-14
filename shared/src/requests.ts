@@ -10,4 +10,5 @@ export type NewGameRequest = {
 	bots?: number
 	public?: boolean
 	spectatorsAllowed?: boolean
+	draft?: boolean
 }

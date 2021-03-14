@@ -3,8 +3,8 @@ import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
-import { pickCards, pickPreludes } from '@shared/index'
-import { PlayerActionType } from '@shared/player-actions'
+import { draftCard, pickCards, pickPreludes } from '@shared/index'
+import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import React, { useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
@@ -13,36 +13,36 @@ import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { CardPickerHeader } from './components/CardPickerHeader'
 
 type Props = {
-	prelude?: boolean
+	action: PlayerAction
 	closeable?: boolean
 	onClose?: () => void
 }
 
-export const CardPicker = ({ prelude, closeable, onClose }: Props) => {
+export const CardPicker = ({ action, closeable, onClose }: Props) => {
 	const api = useApi()
 	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
 	const state = player
 
-	const pendingAction = useAppStore(state => state.game.pendingAction)
-
 	if (
-		!pendingAction ||
-		(pendingAction?.type !== PlayerActionType.PickCards &&
-			pendingAction?.type !== PlayerActionType.PickPreludes)
+		action.type !== PlayerActionType.PickCards &&
+		action.type !== PlayerActionType.PickPreludes &&
+		action.type !== PlayerActionType.DraftCard
 	) {
 		throw new Error('Not card picker')
 	}
 
 	const cardsToPick = useMemo(
-		() => pendingAction.cards.map(c => CardsLookupApi.get(c)),
-		[pendingAction.cards]
+		() => action.cards.map(c => CardsLookupApi.get(c)),
+		[action.cards]
 	)
 
-	const cardsLimit = pendingAction.limit
+	const cardsLimit = action.limit
 
 	const isFree =
-		pendingAction?.type === PlayerActionType.PickPreludes || pendingAction.free
+		action.type === PlayerActionType.PickPreludes ||
+		action.type === PlayerActionType.DraftCard ||
+		action.free
 
 	const [selected, setSelected] = useState([] as number[])
 	const [loading, setLoading] = useState(false)
@@ -53,12 +53,38 @@ export const CardPicker = ({ prelude, closeable, onClose }: Props) => {
 	const handleConfirm = () => {
 		setLoading(true)
 
-		if (prelude) {
-			api.send(pickPreludes(selected))
-		} else {
-			api.send(pickCards(selected))
+		switch (action.type) {
+			case PlayerActionType.PickCards: {
+				return api.send(pickCards(selected))
+			}
+
+			case PlayerActionType.PickPreludes: {
+				return api.send(pickPreludes(selected))
+			}
+
+			case PlayerActionType.DraftCard: {
+				return api.send(draftCard(selected))
+			}
 		}
 	}
+
+	const title = useMemo(() => {
+		switch (action.type) {
+			case PlayerActionType.PickCards: {
+				return cardsLimit === 0
+					? `Pick your projects`
+					: `Pick ${cardsLimit} projects`
+			}
+
+			case PlayerActionType.PickPreludes: {
+				return `Pick ${cardsLimit} preludes`
+			}
+
+			case PlayerActionType.DraftCard: {
+				return `Pick a project to draft`
+			}
+		}
+	}, [action])
 
 	if (!game || !player) {
 		return <>No game / player</>
@@ -70,13 +96,7 @@ export const CardPicker = ({ prelude, closeable, onClose }: Props) => {
 			allowClose={closeable}
 			onClose={onClose}
 			headerStyle={{ justifyContent: 'center' }}
-			header={
-				<CardPickerHeader
-					text={
-						cardsLimit === 0 ? `Pick your cards` : `Pick ${cardsLimit} cards`
-					}
-				/>
-			}
+			header={<CardPickerHeader text={title} />}
 			footer={
 				<Button
 					onClick={handleConfirm}
@@ -90,16 +110,16 @@ export const CardPicker = ({ prelude, closeable, onClose }: Props) => {
 					{!isFree ? (
 						selected.length > 0 ? (
 							<>
-								{`Buy ${selected.length} cards for ${price}`}
+								{`Sponsor ${selected.length} projects for ${price}`}
 								<ResourceIcon res="money" />
 							</>
 						) : (
-							'Buy nothing'
+							'Sponsor nothing'
 						)
 					) : selected.length > 0 ? (
-						`Select ${selected.length}`
+						`Pick ${selected.length} project`
 					) : (
-						'Select nothing'
+						'Pick nothing'
 					)}
 				</Button>
 			}

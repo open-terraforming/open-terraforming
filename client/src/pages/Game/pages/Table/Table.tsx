@@ -42,7 +42,8 @@ const Table = () => {
 	useEffect(() => {
 		if (
 			pending?.type !== PlayerActionType.PickCards &&
-			pending?.type !== PlayerActionType.PickPreludes
+			pending?.type !== PlayerActionType.PickPreludes &&
+			pending?.type !== PlayerActionType.DraftCard
 		) {
 			setPickerHidden(false)
 		}
@@ -63,20 +64,17 @@ const Table = () => {
 			{pending?.type === PlayerActionType.PickCorporation && (
 				<CorporationPicker />
 			)}
-			{!pickerHidden && pending?.type === PlayerActionType.PickCards && (
-				<CardPicker
-					key={pending.cards.join(',')}
-					closeable
-					onClose={() => setPickerHidden(true)}
-				/>
-			)}
-			{!pickerHidden && pending?.type === PlayerActionType.PickPreludes && (
-				<CardPicker
-					key={pending.cards.join(',')}
-					onClose={() => setPickerHidden(true)}
-					prelude
-				/>
-			)}
+			{!pickerHidden &&
+				(pending?.type === PlayerActionType.PickCards ||
+					pending?.type === PlayerActionType.PickPreludes ||
+					pending?.type === PlayerActionType.DraftCard) && (
+					<CardPicker
+						key={pending.cards.join(',')}
+						action={pending}
+						closeable
+						onClose={() => setPickerHidden(true)}
+					/>
+				)}
 			{pending?.type === PlayerActionType.SponsorCompetition && (
 				<CompetitionsModal freePick onClose={() => null} />
 			)}

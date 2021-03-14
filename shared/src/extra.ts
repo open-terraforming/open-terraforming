@@ -14,6 +14,7 @@ export interface GameInfo {
 	map: MapType
 	expansions: ExpansionType[]
 	spectatorsEnabled: boolean
+	draft: boolean
 }
 
 export interface ServerInfo {

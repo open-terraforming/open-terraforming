@@ -29,6 +29,7 @@ const pendingToStr = {
 	[PlayerActionType.PlaceTile]: 'Placing tile',
 	[PlayerActionType.ClaimTile]: 'Claiming tile',
 	[PlayerActionType.PlayCard]: 'Playing card',
+	[PlayerActionType.DraftCard]: 'Picking card',
 	[PlayerActionType.SponsorCompetition]: 'Selecting competition'
 }
 

@@ -132,6 +132,9 @@ export const multiApp = (config: ServerOptions) => {
 			body('spectatorsAllowed')
 				.isBoolean()
 				.optional(true),
+			body('draft')
+				.isBoolean()
+				.optional(false),
 			body('map')
 				.notEmpty()
 				.isInt()
@@ -155,6 +158,7 @@ export const multiApp = (config: ServerOptions) => {
 			const spectatorsAllowed = !!request.spectatorsAllowed
 			const isPublic = !!request.public
 			const expansions = Array.from(new Set(request.expansions))
+			const draft = request.draft
 
 			expansions.forEach(e => {
 				if (
@@ -186,7 +190,8 @@ export const multiApp = (config: ServerOptions) => {
 				map: map,
 				spectatorsAllowed,
 				expansions: [ExpansionType.Base, ...expansions],
-				fastBots: config.fastBots
+				fastBots: config.fastBots,
+				draft
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)

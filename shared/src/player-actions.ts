@@ -4,6 +4,7 @@ export enum PlayerActionType {
 	PickCorporation = 1,
 	PickCards,
 	PickPreludes,
+	DraftCard,
 	PlaceTile,
 	PlayCard,
 	ClaimTile,
@@ -20,6 +21,13 @@ export const pickCorporationAction = (cards: string[]) =>
 	({
 		type: PlayerActionType.PickCorporation,
 		cards
+	} as const)
+
+export const draftCardAction = (cards: string[], limit = 1) =>
+	({
+		type: PlayerActionType.DraftCard,
+		cards,
+		limit
 	} as const)
 
 export const pickCardsAction = (cards: string[], limit = 0, free = false) =>
@@ -61,3 +69,4 @@ export type PlayerAction =
 	| ReturnType<typeof playCardAction>
 	| ReturnType<typeof sponsorCompetitionAction>
 	| ReturnType<typeof claimTileAction>
+	| ReturnType<typeof draftCardAction>

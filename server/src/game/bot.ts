@@ -17,6 +17,7 @@ import {
 	buyMilestone,
 	buyStandardProject,
 	claimTile,
+	draftCard,
 	pickCards,
 	pickCorporation,
 	pickPreludes,
@@ -136,6 +137,13 @@ export class Bot extends Player {
 					  )
 
 				return this.performAction(pickCards(picked))
+			}
+
+			case PlayerActionType.DraftCard: {
+				// TODO: Add some kind of logic here
+				const picked = shuffle(a.cards.map((_c, i) => i)).slice(0, a.limit)
+
+				return this.performAction(draftCard(picked))
 			}
 
 			case PlayerActionType.PickPreludes: {

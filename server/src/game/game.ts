@@ -44,6 +44,8 @@ import {
 } from './player'
 import { ExpansionType } from '@shared/expansions/types'
 import { BotNames } from './bot-names'
+import { DraftGameState } from './game/draft-game-state'
+import { ResearchPhaseGameState } from './game/research-phase-game-state'
 
 export interface GameConfig {
 	bots: number
@@ -54,6 +56,7 @@ export interface GameConfig {
 	public: boolean
 	spectatorsAllowed: boolean
 	expansions: ExpansionType[]
+	draft: boolean
 
 	fastBots: boolean
 }
@@ -91,12 +94,14 @@ export class Game {
 			spectatorsAllowed: true,
 			expansions: [ExpansionType.Base, ExpansionType.Prelude],
 			fastBots: false,
+			draft: false,
 			...config
 		}
 
 		this.state.map = Maps[this.config.map].build()
 		this.state.name = this.config.name
 		this.state.mode = this.config.mode
+		this.state.draft = this.config.draft
 		this.state.expansions = [...this.config.expansions]
 
 		range(0, this.config.bots).forEach(() => {
@@ -125,6 +130,8 @@ export class Game {
 		this.sm.addState(new GenerationEndingState(this))
 		this.sm.addState(new EndingTilesGameState(this))
 		this.sm.addState(new EndedGameState(this))
+		this.sm.addState(new ResearchPhaseGameState(this))
+		this.sm.addState(new DraftGameState(this))
 
 		this.sm.setState(GameStateValue.WaitingForPlayers)
 	}
@@ -451,7 +458,8 @@ export class Game {
 			prelude: this.state.prelude,
 			map: this.state.map.code,
 			spectatorsEnabled: this.config.spectatorsAllowed,
-			expansions: this.state.expansions.filter(e => e !== ExpansionType.Base)
+			expansions: this.state.expansions.filter(e => e !== ExpansionType.Base),
+			draft: this.state.draft
 		}
 	}
 }

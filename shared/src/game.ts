@@ -11,7 +11,7 @@ export enum GameStateValue {
 	WaitingForPlayers = 1,
 	/** Players are picking companies / cards / preludes */
 	Starting,
-	/** Players are picking cards at the beginning of the generation */
+	/** Generation is starting */
 	GenerationStart,
 	/** Generation is in progress */
 	GenerationInProgress,
@@ -20,7 +20,11 @@ export enum GameStateValue {
 	/** Players are placing finishing greeneries */
 	EndingTiles,
 	/** Game ended */
-	Ended
+	Ended,
+	/** Players are picking cards to research */
+	ResearchPhase,
+	/** Players are picking cards to pick from to research (optional) */
+	Draft
 }
 
 export enum PlayerStateValue {
@@ -70,6 +74,8 @@ export interface GameState {
 	prelude: boolean
 	preludeCards: string[]
 	preludeDiscarded: string[]
+
+	draft: boolean
 
 	expansions: ExpansionType[]
 
@@ -252,6 +258,9 @@ export interface PlayerState {
 
 	/** Cards in player hand */
 	cards: string[]
+
+	/** Cards picked during draft */
+	draftedCars: string[]
 
 	/** List of used cards */
 	usedCards: UsedCardState[]

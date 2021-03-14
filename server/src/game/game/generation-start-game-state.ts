@@ -1,17 +1,10 @@
+import { GameStateValue } from '@shared/index'
 import { BaseGameState } from './base-game-state'
-import { GameStateValue, PlayerStateValue } from '@shared/index'
-import { pushPendingAction, drawCards } from '@shared/utils'
-import { pickCardsAction } from '@shared/player-actions'
 
 export class GenerationStartGameState extends BaseGameState {
 	name = GameStateValue.GenerationStart
 
 	onEnter() {
-		this.state.players.forEach(p => {
-			pushPendingAction(p, pickCardsAction(drawCards(this.state, 4)))
-			p.state = PlayerStateValue.Picking
-		})
-
 		this.state.generation++
 		this.game.handleNewGeneration(this.state.generation)
 
@@ -22,8 +15,10 @@ export class GenerationStartGameState extends BaseGameState {
 	}
 
 	transition() {
-		if (this.game.all(PlayerStateValue.WaitingForTurn)) {
-			return GameStateValue.GenerationInProgress
+		if (this.state.draft) {
+			return GameStateValue.Draft
+		} else {
+			return GameStateValue.ResearchPhase
 		}
 	}
 }

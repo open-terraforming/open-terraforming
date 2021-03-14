@@ -174,7 +174,9 @@ export abstract class PlayerBaseAction<Args = {}> {
 					break
 				}
 
-				case GameStateValue.GenerationStart: {
+				case GameStateValue.Draft:
+
+				case GameStateValue.ResearchPhase: {
 					this.setState(PlayerStateValue.WaitingForTurn)
 					break
 				}

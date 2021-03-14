@@ -33,6 +33,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [map, setMap] = useState(MapType.Standard)
 	const [isPublic, setPublic] = useState(true)
 	const [spectators, setSpectators] = useState(true)
+	const [draft, setDraft] = useState(false)
 	const [bots, setBots] = useState(0)
 	const [expansions, setExpansions] = useState([ExpansionType.Prelude])
 
@@ -65,7 +66,8 @@ export const NewGameModal = ({ onClose }: Props) => {
 				bots,
 				public: isPublic,
 				spectatorsAllowed: spectators,
-				expansions
+				expansions,
+				draft
 			})
 
 			if (res.id) {
@@ -178,6 +180,22 @@ export const NewGameModal = ({ onClose }: Props) => {
 							<SelectItemDesc>{item.description}</SelectItemDesc>
 						</SelectItem>
 					))}
+				</Field>
+
+				<Field>
+					<Checkbox
+						checked={draft}
+						onChange={v => setDraft(v)}
+						label="Enable Draft"
+					/>
+
+					<SelectItemDesc>
+						Each player will receive 4 random cards at the start of generation,
+						but instead of picking which to research, player will pick one to
+						keep and pass the rest to next player. Once there&apos;s no card
+						left to pass, players pick which cards to research from the 4 cards
+						they picked. This option is not recommended for beginners.
+					</SelectItemDesc>
 				</Field>
 
 				<Field>

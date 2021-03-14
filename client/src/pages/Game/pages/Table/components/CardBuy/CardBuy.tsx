@@ -138,13 +138,13 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 					>
 						{buying ? (
 							<>
-								Buy card for {price}
+								Realise project for {price}
 								<ResourceIcon res="money" />
 							</>
 						) : forced ? (
 							'Confirm'
 						) : (
-							'Use card'
+							'Play action'
 						)}
 					</Button>
 					{!forced && (
@@ -172,6 +172,9 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 									setOre(Math.min(v, maxOre))
 								}}
 							/>
+							<span>
+								as {ore * state.orePrice} <ResourceIcon res={'money'} />
+							</span>
 						</UseContainer>
 					)}
 
@@ -186,6 +189,9 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 									setTitan(Math.min(v, maxTitan))
 								}}
 							/>
+							<span>
+								as {titan * state.titanPrice} <ResourceIcon res={'money'} />
+							</span>
 						</UseContainer>
 					)}
 
