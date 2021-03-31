@@ -717,6 +717,8 @@ export const resourceForCities = (
 				: `${withUnits(res, 1)} per ${Math.ceil(1 / resPerCity)} cities on Mars`
 		}`,
 		perform: ({ player, game }) => {
+			updatePlayerResource(player, costRes, -cost)
+
 			updatePlayerResource(
 				player,
 				res,

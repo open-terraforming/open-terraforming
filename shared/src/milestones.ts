@@ -63,7 +63,7 @@ const MilestonesList = [
 		type: MilestoneType.Builder,
 		title: 'Builder',
 		description: 'Cards with Building tag played',
-		limit: 9,
+		limit: 8,
 		getValue: (_game, player) =>
 			player.usedCards
 				.map(c => CardsLookupApi.get(c.code))

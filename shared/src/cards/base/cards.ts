@@ -3,6 +3,7 @@ import { LavaCells } from '../../map'
 import { OtherPlacement, PlacementCode } from '../../placements'
 import {
 	cardCountCondition,
+	cellTypeCondition,
 	gameProgressConditionMax,
 	gameProgressConditionMin,
 	joinedCardCountCondition,
@@ -1228,7 +1229,7 @@ export const baseCards: Card[] = [
 		cost: 7,
 		categories: [CardCategory.Event, CardCategory.Earth],
 		special: [CardSpecial.CorporationsEra],
-		conditions: [gameProgressConditionMin('temperature', 4 / 2)],
+		conditions: [],
 		playEffects: [pickTopCards(4, 2, true)]
 	}),
 	card({
@@ -1538,7 +1539,8 @@ export const baseCards: Card[] = [
 		playEffects: [
 			productionChange('energy', -2),
 			productionChange('ore', 2),
-			productionChange('titan', 1)
+			productionChange('titan', 1),
+			gameProcessChange('oxygen', 2)
 		]
 	}),
 	card({
@@ -2037,7 +2039,7 @@ export const baseCards: Card[] = [
 		categories: [],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
-		conditions: [gameProgressConditionMin('temperature', 2 / 2)],
+		conditions: [cellTypeCondition(GridCellContent.City, 2)],
 		playEffects: [productionChange('money', 1)]
 	}),
 	card({
