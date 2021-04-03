@@ -119,7 +119,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						<PlayerSpan player={players[event.playerId]} />
 						{' placed '}
 						<CardSpanE>
-							{event.other !== undefined
+							{event.other !== undefined && event.other !== null
 								? otherToStr(event.other)
 								: tileToStr(event.tile)}
 						</CardSpanE>
