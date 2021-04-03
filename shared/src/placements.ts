@@ -129,11 +129,11 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 	}),
 	placement({
 		code: PlacementCode.NoctisCity,
-		description: 'on Noctis City',
+		description: 'on Noctis City or as normal city if map has no Noctis City',
 		evaluate: ({ game, cell }) => {
 			// Noctis city has special treatment only when there's a Noctis city cell
 			const hasNoctisCell =
-				allCells(game).find(c => c.type === GridCellType.NoctisCity) ===
+				allCells(game).find(c => c.type === GridCellType.NoctisCity) !==
 				undefined
 
 			if (hasNoctisCell) {
