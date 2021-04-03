@@ -9,7 +9,8 @@ import {
 	GameProgress,
 	Resource,
 	WithOptional,
-	SymbolType
+	SymbolType,
+	CardType
 } from './types'
 import { countGridContent, resourceProduction, progressSymbol } from './utils'
 
@@ -42,6 +43,7 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 		evaluate: ({ player }) =>
 			player.usedCards
 				.map(c => CardsLookupApi.get(c.code))
+				.filter(c => c.type !== CardType.Event)
 				.reduce(
 					(acc, c) =>
 						acc +
@@ -58,24 +60,23 @@ export const joinedCardCountCondition = (
 ) =>
 	condition({
 		evaluate: ({ player }) => {
-			let anyTags = player.usedCards
+			const usableCards = player.usedCards
 				.map(c => CardsLookupApi.get(c.code))
-				.reduce(
-					(acc, c) =>
-						acc + c.categories.filter(c => c === CardCategory.Any).length,
+				.filter(c => c.type !== CardType.Event)
+
+			let anyTags = usableCards.reduce(
+				(acc, c) =>
+					acc + c.categories.filter(c => c === CardCategory.Any).length,
+				0
+			)
+
+			return conditions.every(tag => {
+				const length = usableCards.reduce(
+					(acc, c) => acc + c.categories.filter(c => c === tag.category).length,
 					0
 				)
 
-			return conditions.every(cond => {
-				const length = player.usedCards
-					.map(c => CardsLookupApi.get(c.code))
-					.reduce(
-						(acc, c) =>
-							acc + c.categories.filter(c => c === cond.category).length,
-						0
-					)
-
-				const diff = cond.value - length
+				const diff = tag.value - length
 
 				if (diff <= 0) {
 					return true

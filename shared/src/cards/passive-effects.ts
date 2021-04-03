@@ -1,7 +1,7 @@
 import { GridCellContent, GridCellOther, StandardProjectType } from '../game'
 import { playCardAction } from '../player-actions'
 import { withUnits } from '../units'
-import { adjacentCells, f, pushPendingAction } from '../utils'
+import { adjacentCells, f, pushPendingAction, range } from '../utils'
 import { effectArg } from './args'
 import { CardsLookupApi } from './lookup'
 import {
@@ -87,6 +87,7 @@ export const resourcePerCardPlayed = (
 			{ resource: res, count: amount }
 		],
 		onCardPlayed: ({ player }, card, _cardIndex, playedBy) => {
+			// TODO: This is probably fine, since we're using AND and it's always about EVENT cards
 			if (
 				playedBy.id === player.id &&
 				categories.every(c => card.categories.includes(c))
@@ -111,11 +112,13 @@ export const cardResourcePerCardPlayed = (
 			{ cardResource: res, count: amount }
 		],
 		onCardPlayed: ({ card: cardState, player }, card, _cardIndex, playedBy) => {
-			if (
-				playedBy.id === player.id &&
-				categories.find(c => card.categories.includes(c))
-			) {
-				cardState[res] += amount
+			if (playedBy.id === player.id) {
+				const matchingTags = card.categories.filter(c => categories.includes(c))
+					.length
+
+				if (matchingTags > 0) {
+					cardState[res] += matchingTags * amount
+				}
 			}
 		}
 	})
@@ -183,18 +186,21 @@ export const productionChangeAfterPlace = (
 
 export const cardExchangeEffect = (tag: CardCategory) =>
 	passiveEffect({
-		description: `Action is triggered when you play a ${CardCategory[tag]} card`,
+		description: `Action is triggered when you play a ${CardCategory[tag]} tag`,
 		onCardPlayed: (
 			{ player, card },
 			playedCard,
 			_playedCardIndex,
 			playedBy
 		) => {
-			if (
-				CardsLookupApi.get(playedCard.code).categories.includes(tag) &&
-				playedBy.id === player.id
-			) {
-				pushPendingAction(player, playCardAction(card.index))
+			if (playedBy.id === player.id) {
+				const matchingTags = CardsLookupApi.get(
+					playedCard.code
+				).categories.filter(t => t === tag).length
+
+				range(0, matchingTags).forEach(() => {
+					pushPendingAction(player, playCardAction(card.index))
+				})
 			}
 		}
 	})
@@ -203,19 +209,25 @@ export const playWhenCard = (tags: CardCategory[]) =>
 	passiveEffect({
 		description: `Action triggered when you play ${tags
 			.map(t => CardCategory[t])
-			.join(' or ')} card`,
+			.join(' or ')} tag`,
 		onCardPlayed: (
 			{ player, card: cardState },
 			playedCard,
 			playedCardIndex,
 			playedBy
 		) => {
-			if (
-				player.id === playedBy.id &&
-				tags.find(t => playedCard.categories.includes(t))
-			) {
-				cardState.triggeredByCard = playedCardIndex
-				pushPendingAction(player, playCardAction(cardState.index))
+			if (player.id === playedBy.id) {
+				const matchingTags = playedCard.categories.filter(t => tags.includes(t))
+					.length
+
+				if (matchingTags > 0) {
+					// TODO: This should be fine as long as any of the triggered effects don't change this value
+					cardState.triggeredByCard = playedCardIndex
+
+					range(0, matchingTags).forEach(() => {
+						pushPendingAction(player, playCardAction(cardState.index))
+					})
+				}
 			}
 		}
 	})

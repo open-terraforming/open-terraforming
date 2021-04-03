@@ -1,11 +1,9 @@
 import { Button } from '@/components'
-import { Flex } from '@/components/Flex/Flex'
 import { useApi } from '@/context/ApiContext'
 import { setTableState } from '@/store/modules/table'
 import { colors } from '@/styles'
-import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { useAppDispatch, useAppStore, usePlayerState } from '@/utils/hooks'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
-import { CardsLookupApi } from '@shared/cards'
 import { playerPass } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { darken } from 'polished'
@@ -21,17 +19,13 @@ export const Controls = () => {
 	const api = useApi()
 	const dispatch = useAppDispatch()
 	const player = useAppStore(state => state.game.player)
-	const game = useAppStore(state => state.game.state)
 	const isPlaying = useAppStore(state => state.game.playing)
 	const pendingAction = useAppStore(state => state.game.pendingAction)
+	const pendingActionIndex = usePlayerState().pendingActions.length
 
 	const buyingCardIndex = useAppStore(state => state.table.buyingCardIndex)
 	const playingCardIndex = useAppStore(state => state.table.playingCardIndex)
 	const state = player
-
-	const corporation = state?.corporation
-		? CardsLookupApi.get(state?.corporation as string)
-		: undefined
 
 	const pending =
 		pendingAction?.type !== PlayerActionType.PickCards
@@ -47,7 +41,7 @@ export const Controls = () => {
 			{pending?.type === PlayerActionType.PlayCard && (
 				<CardBuy
 					buying={false}
-					key={pending.cardIndex}
+					key={`${pending.cardIndex}_${pendingActionIndex}`}
 					index={pending.cardIndex}
 					onClose={() => false}
 				/>

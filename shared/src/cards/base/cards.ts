@@ -1427,7 +1427,7 @@ export const baseCards: Card[] = [
 		],
 		passiveEffects: [
 			cardResourcePerCardPlayed(
-				[CardCategory.Microbe, CardCategory.Animal],
+				[CardCategory.Plant, CardCategory.Animal],
 				'animals',
 				1
 			)

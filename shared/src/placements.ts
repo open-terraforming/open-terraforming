@@ -130,11 +130,25 @@ export const PlacementConditions: Readonly<PlacementCondition[]> = [
 	placement({
 		code: PlacementCode.NoctisCity,
 		description: 'on Noctis City',
-		evaluate: ({ game, cell }) =>
-			(allCells(game).find(c => c.type === GridCellType.NoctisCity) ===
-				undefined &&
-				cell.type === GridCellType.General) ||
-			cell.type === GridCellType.NoctisCity
+		evaluate: ({ game, cell }) => {
+			// Noctis city has special treatment only when there's a Noctis city cell
+			const hasNoctisCell =
+				allCells(game).find(c => c.type === GridCellType.NoctisCity) ===
+				undefined
+
+			if (hasNoctisCell) {
+				return cell.type === GridCellType.NoctisCity
+			} else {
+				// Normal city condition (no neighboring city)
+				return (
+					adjacentCells(game, cell.x, cell.y).filter(
+						c =>
+							c.content === GridCellContent.City &&
+							c.special !== GridCellSpecial.NoctisCity
+					).length === 0
+				)
+			}
+		}
 	})
 ] as const
 
