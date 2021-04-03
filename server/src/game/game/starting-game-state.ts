@@ -80,9 +80,13 @@ export class StartingGameState extends BaseGameState {
 
 	transition() {
 		if (this.game.all(PlayerStateValue.WaitingForTurn)) {
-			this.game.handleNewGeneration(1)
+			if (this.state.prelude) {
+				return GameStateValue.Prelude
+			} else {
+				this.game.handleNewGeneration(1)
 
-			return GameStateValue.GenerationInProgress
+				return GameStateValue.GenerationInProgress
+			}
 		}
 	}
 }

@@ -6,6 +6,10 @@ import { Game } from '../game'
 export class BaseGameState extends State<GameStateValue> {
 	game: Game
 
+	get currentPlayer() {
+		return this.game.currentPlayer
+	}
+
 	get logger() {
 		return this.game.logger
 	}

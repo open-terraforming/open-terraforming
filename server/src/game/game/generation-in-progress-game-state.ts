@@ -6,6 +6,10 @@ export class GenerationInProgressGameState extends BaseGameState {
 	name = GameStateValue.GenerationInProgress
 
 	onEnter() {
+		this.game.players.forEach(p => {
+			p.state.state = PlayerStateValue.WaitingForTurn
+		})
+
 		this.selectCurrentPlayer(this.state.startingPlayer)
 	}
 

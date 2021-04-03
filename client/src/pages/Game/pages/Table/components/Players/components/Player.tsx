@@ -41,7 +41,8 @@ const stateToStr = {
 	[PlayerStateValue.Picking]: '',
 	[PlayerStateValue.Connecting]: 'Connecting',
 	[PlayerStateValue.Waiting]: null,
-	[PlayerStateValue.Ready]: null
+	[PlayerStateValue.Ready]: null,
+	[PlayerStateValue.Prelude]: 'Playing'
 } as const
 
 const stateToIcon = {
@@ -52,7 +53,8 @@ const stateToIcon = {
 	[PlayerStateValue.Picking]: faUserClock,
 	[PlayerStateValue.Connecting]: faEthernet,
 	[PlayerStateValue.Waiting]: faHourglassHalf,
-	[PlayerStateValue.Ready]: faCheck
+	[PlayerStateValue.Ready]: faCheck,
+	[PlayerStateValue.Prelude]: faArrowRight
 } as const
 
 export const Player = ({

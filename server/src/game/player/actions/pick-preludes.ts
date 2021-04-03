@@ -62,22 +62,6 @@ export class PickPreludesAction extends PlayerBaseAction<Args> {
 			...top.cards.filter((_c, i) => !cards.includes(i))
 		]
 
-		this.player.usedCards.forEach(c => {
-			if (usedCards.includes(c)) {
-				const card = CardsLookupApi.get(c.code)
-
-				this.runCardEffects(
-					card.playEffects,
-					{
-						game: this.game,
-						player: this.player,
-						card: c
-					},
-					[]
-				)
-			}
-		})
-
 		this.popAction()
 	}
 }

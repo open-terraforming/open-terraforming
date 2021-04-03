@@ -47,6 +47,7 @@ import { ExpansionType } from '@shared/expansions/types'
 import { BotNames } from './bot-names'
 import { DraftGameState } from './game/draft-game-state'
 import { ResearchPhaseGameState } from './game/research-phase-game-state'
+import { PreludeGameState } from './game/prelude-game-state'
 
 export interface GameConfig {
 	bots: number
@@ -124,15 +125,17 @@ export class Game {
 			this.updated()
 		})
 
-		this.sm.addState(new WaitingForPlayersGameState(this))
-		this.sm.addState(new StartingGameState(this))
-		this.sm.addState(new GenerationInProgressGameState(this))
-		this.sm.addState(new GenerationStartGameState(this))
-		this.sm.addState(new GenerationEndingState(this))
-		this.sm.addState(new EndingTilesGameState(this))
-		this.sm.addState(new EndedGameState(this))
-		this.sm.addState(new ResearchPhaseGameState(this))
-		this.sm.addState(new DraftGameState(this))
+		this.sm
+			.addState(new WaitingForPlayersGameState(this))
+			.addState(new StartingGameState(this))
+			.addState(new GenerationInProgressGameState(this))
+			.addState(new GenerationStartGameState(this))
+			.addState(new GenerationEndingState(this))
+			.addState(new EndingTilesGameState(this))
+			.addState(new EndedGameState(this))
+			.addState(new ResearchPhaseGameState(this))
+			.addState(new DraftGameState(this))
+			.addState(new PreludeGameState(this))
 
 		this.sm.setState(GameStateValue.WaitingForPlayers)
 	}
@@ -146,6 +149,17 @@ export class Game {
 
 		if (!player) {
 			throw new Error(`Undefined player ${this.state.currentPlayer}`)
+		}
+
+		return player
+	}
+
+	get currentPlayerInstance() {
+		const playerId = this.currentPlayer.id
+		const player = this.players.find(p => p.state.id === playerId)
+
+		if (!player) {
+			throw new Error(`Undefined player ${playerId}`)
 		}
 
 		return player

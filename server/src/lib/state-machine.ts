@@ -15,7 +15,7 @@ export class StateMachine<Name extends string | number = string> {
 			this.dictionary[state.name] = state
 		}
 
-		return this.states.length
+		return this
 	}
 
 	protected shouldSwitchState(): Name | undefined {

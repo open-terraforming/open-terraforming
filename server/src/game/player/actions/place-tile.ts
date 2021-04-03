@@ -13,8 +13,16 @@ import { PlayerBaseAction } from '../action'
 type Args = ReturnType<typeof placeTile>['data']
 
 export class PlaceTileAction extends PlayerBaseAction<Args> {
-	states = [PlayerStateValue.Playing, PlayerStateValue.EndingTiles]
-	gameStates = [GameStateValue.GenerationInProgress, GameStateValue.EndingTiles]
+	states = [
+		PlayerStateValue.Playing,
+		PlayerStateValue.EndingTiles,
+		PlayerStateValue.Prelude
+	]
+	gameStates = [
+		GameStateValue.GenerationInProgress,
+		GameStateValue.EndingTiles,
+		GameStateValue.Prelude
+	]
 
 	perform({ x, y }: Args) {
 		const top = this.pendingAction

@@ -24,7 +24,9 @@ export enum GameStateValue {
 	/** Players are picking cards to research */
 	ResearchPhase,
 	/** Players are picking cards to pick from to research (optional) */
-	Draft
+	Draft,
+	/** Players are playing their prelude cards */
+	Prelude
 }
 
 export enum PlayerStateValue {
@@ -43,7 +45,9 @@ export enum PlayerStateValue {
 	/** Placing finishing greeneries */
 	EndingTiles,
 	/** Waiting for his turn */
-	WaitingForTurn
+	WaitingForTurn,
+	/** Playing prelude cards */
+	Prelude
 }
 
 export interface GameState {
