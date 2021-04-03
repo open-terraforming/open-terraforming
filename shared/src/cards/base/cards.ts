@@ -344,7 +344,7 @@ export const baseCards: Card[] = [
 		resource: 'animals',
 		conditions: [gameProgressConditionMin('oxygen', 11)],
 		actionEffects: [
-			withRightArrow(otherCardResourceChange('animals', -1)),
+			withRightArrow(playerCardResourceChange('animals', -1)),
 			cardResourceChange('animals', 1)
 		],
 		victoryPointsCallback: vpsForCardResources('animals', 1)
