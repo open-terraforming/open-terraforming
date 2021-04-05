@@ -49,7 +49,7 @@ export class PreludeGameState extends BaseGameState {
 			const nextPlayer = this.findNextPlayer()
 
 			if (nextPlayer !== undefined) {
-				this.selectCurrentPlayer(nextPlayer)
+				this.selectCurrentPlayer(nextPlayer, PlayerStateValue.Prelude)
 
 				this.logger.log(f(`Next player: {0}`, this.currentPlayer.name))
 

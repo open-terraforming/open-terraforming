@@ -146,6 +146,7 @@ const allowedActions: Record<number, PlayerActionType[] | undefined> = {
 		PlayerActionType.PickPreludes,
 		PlayerActionType.DraftCard
 	],
+	[PlayerStateValue.Prelude]: [PlayerActionType.PlaceTile],
 	[PlayerStateValue.EndingTiles]: [PlayerActionType.PlaceTile],
 	[PlayerStateValue.Playing]: []
 }
