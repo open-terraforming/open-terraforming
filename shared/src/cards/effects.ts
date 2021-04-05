@@ -587,14 +587,16 @@ export const productionChangeForTags = (
 				player,
 				res,
 				change *
-					player.usedCards.reduce(
-						(acc, c) =>
-							acc +
-							CardsLookupApi.get(c.code).categories.filter(
-								c => c === tag || c === CardCategory.Any
-							).length,
-						0
-					)
+					player.usedCards
+						.map(c => CardsLookupApi.get(c.code))
+						.filter(c => c.type !== CardType.Event)
+						.reduce(
+							(acc, c) =>
+								acc +
+								c.categories.filter(c => c === tag || c === CardCategory.Any)
+									.length,
+							0
+						)
 			)
 		}
 	})
@@ -1075,6 +1077,7 @@ export const productionForPlayersTags = (
 							acc +
 							p.usedCards
 								.map(c => CardsLookupApi.get(c.code))
+								.filter(c => c.type !== CardType.Event)
 								.reduce(
 									(acc, c) =>
 										acc + c.categories.filter(cat => cat === tag).length,
