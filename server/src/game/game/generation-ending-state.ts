@@ -27,13 +27,13 @@ export class GenerationEndingState extends BaseGameState {
 
 	async doProduction() {
 		for (const p of this.game.players) {
-			await wait(1000)
+			await wait(this.game.config.fastProduction ? 1 : 1000)
 
 			p.endGeneration()
 			this.game.updated()
 		}
 
-		await wait(1000)
+		await wait(this.game.config.fastProduction ? 1 : 1000)
 	}
 
 	update() {

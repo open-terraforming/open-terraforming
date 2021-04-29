@@ -22,6 +22,7 @@ interface Props {
 	tooltip?: React.ReactChild
 	className?: string
 	children?: React.ReactNode
+	noClip?: boolean
 }
 
 const ButtonComponent = ({
@@ -36,7 +37,8 @@ const ButtonComponent = ({
 	onMouseOver,
 	onMouseLeave,
 	tooltip,
-	className
+	className,
+	noClip = false
 }: Props) => {
 	const hasContent = !!children
 
@@ -70,6 +72,7 @@ const ButtonComponent = ({
 
 	return (
 		<Container
+			noClip={noClip}
 			className={className}
 			isDisabled={disabled || false}
 			name={name}
@@ -89,6 +92,7 @@ const Container = styled.button<{
 	isDisabled: boolean
 	hasContent: boolean
 	schema: Schema
+	noClip: boolean
 }>`
 	transition: 0.2s;
 	border-radius: 0;
@@ -103,6 +107,19 @@ const Container = styled.button<{
 	padding: 0.4rem 0.8rem;
 	border-width: 1px;
 	border-style: solid;
+
+	${props =>
+		!props.noClip &&
+		css`
+			clip-path: polygon(
+				0 0,
+				calc(100% - 7px) 0,
+				100% 7px,
+				100% 100%,
+				7px 100%,
+				0 calc(100% - 7px)
+			);
+		`}
 
 	${props =>
 		!props.isDisabled &&

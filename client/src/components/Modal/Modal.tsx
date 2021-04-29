@@ -221,6 +221,8 @@ const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	${media.medium} {
 		max-width: 100%;
 		max-height: 100%;
+		margin-top: 0;
+		margin-bottom: 0;
 	}
 
 	${props =>

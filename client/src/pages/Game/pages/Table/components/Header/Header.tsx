@@ -20,7 +20,7 @@ export const Header = ({}: Props) => {
 			<E>
 				<DialogWrapper dialog={close => <MilestonesModal onClose={close} />}>
 					{open => (
-						<StyledButton onClick={open}>
+						<StyledButton noClip onClick={open}>
 							<Counter>
 								{milestones.length}/{game.milestonesLimit}
 							</Counter>
@@ -32,12 +32,14 @@ export const Header = ({}: Props) => {
 					dialog={close => <StandardProjectModal onClose={close} />}
 				>
 					{open => (
-						<StandardButton onClick={open}>Standard projects</StandardButton>
+						<StandardButton noClip onClick={open}>
+							Standard projects
+						</StandardButton>
 					)}
 				</DialogWrapper>
 				<DialogWrapper dialog={close => <CompetitionsModal onClose={close} />}>
 					{open => (
-						<StyledButton onClick={open}>
+						<StyledButton noClip onClick={open}>
 							<span>Competitions</span>
 							<Counter>
 								{competitions.length}/{game.competitionsLimit}

@@ -44,6 +44,7 @@ export const MilestoneDisplay = ({
 				<Title>{milestone.title}</Title>
 				{(cost !== undefined || owner) && (
 					<Button
+						noClip
 						disabled={!playing || !reached || !canAfford || !!owner}
 						onClick={() => onBuy(milestone)}
 						icon={owner ? faCheck : reached ? faMedal : faTimes}

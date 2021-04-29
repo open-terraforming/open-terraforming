@@ -28,6 +28,7 @@ export const HeatButton = ({}: Props) => {
 
 	return (
 		<Button
+			noClip
 			disabled={!usable}
 			onClick={buyTemperature}
 			tooltip={

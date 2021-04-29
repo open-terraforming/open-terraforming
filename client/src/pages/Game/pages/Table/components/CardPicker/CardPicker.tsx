@@ -1,13 +1,10 @@
 import { Button } from '@/components'
 import { HelpMessage } from '@/components/HelpMessage/HelpMessage'
 import { Modal } from '@/components/Modal/Modal'
-import { useApi } from '@/context/ApiContext'
-import { cards } from '@/i18n/en/cards'
+import { cards as cardNames } from '@/i18n/en/cards'
 import { help } from '@/i18n/en/help'
 import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
-import { draftCard, pickCards, pickPreludes } from '@shared/index'
-import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import React, { useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
@@ -15,99 +12,92 @@ import { CardView } from '../CardView/CardView'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { CardPickerHeader } from './components/CardPickerHeader'
 
+export enum PickerType {
+	Cards,
+	Preludes,
+	Draft
+}
+
 type Props = {
-	action: PlayerAction
+	type: PickerType
+	cards: string[]
+	onSelect: (cards: number[]) => void
+
+	selected?: number[]
+	moneyOverride?: number
+	loading?: boolean
+	free?: boolean
+	limit?: number
 	closeable?: boolean
 	onClose?: () => void
 }
 
-export const CardPicker = ({ action, closeable, onClose }: Props) => {
-	const api = useApi()
+export const CardPicker = ({
+	type,
+	limit: cardsLimit = 0,
+	free: isFree = false,
+	selected: preSelected = [],
+	cards,
+	onSelect,
+	closeable,
+	onClose,
+	loading,
+	moneyOverride
+}: Props) => {
 	const player = useAppStore(state => state.game.player)
 	const game = useAppStore(state => state.game.state)
 	const state = player
 
-	if (
-		action.type !== PlayerActionType.PickCards &&
-		action.type !== PlayerActionType.PickPreludes &&
-		action.type !== PlayerActionType.DraftCard
-	) {
-		throw new Error('Not card picker')
-	}
+	const cardsToPick = useMemo(() => cards.map(c => CardsLookupApi.get(c)), [
+		cards
+	])
 
-	const cardsToPick = useMemo(
-		() => action.cards.map(c => CardsLookupApi.get(c)),
-		[action.cards]
-	)
-
-	const cardsLimit = action.limit
-
-	const isFree =
-		action.type === PlayerActionType.PickPreludes ||
-		action.type === PlayerActionType.DraftCard ||
-		action.free
-
-	const [selected, setSelected] = useState([] as number[])
-	const [loading, setLoading] = useState(false)
+	const [selected, setSelected] = useState(preSelected)
 
 	const price = isFree ? 0 : selected.length * game.cardPrice
-	const canAfford = state && price <= state.money
+	const canAfford = state && price <= (moneyOverride ?? state.money)
 
 	const handleConfirm = () => {
-		setLoading(true)
-
-		switch (action.type) {
-			case PlayerActionType.PickCards: {
-				return api.send(pickCards(selected))
-			}
-
-			case PlayerActionType.PickPreludes: {
-				return api.send(pickPreludes(selected))
-			}
-
-			case PlayerActionType.DraftCard: {
-				return api.send(draftCard(selected))
-			}
-		}
+		onSelect(selected)
 	}
 
 	const title = useMemo(() => {
-		switch (action.type) {
-			case PlayerActionType.PickCards: {
+		switch (type) {
+			case PickerType.Cards: {
 				return cardsLimit === 0
 					? `Pick projects to sponsor`
 					: `Pick ${cardsLimit} projects to sponsor`
 			}
 
-			case PlayerActionType.PickPreludes: {
+			case PickerType.Preludes: {
 				return `Pick ${cardsLimit} preludes`
 			}
 
-			case PlayerActionType.DraftCard: {
+			case PickerType.Draft: {
 				return `Pick a project to draft`
 			}
 		}
-	}, [action])
+	}, [type])
 
 	const helpMessage = useMemo(() => {
-		switch (action.type) {
-			case PlayerActionType.PickCards: {
+		switch (type) {
+			case PickerType.Cards: {
 				return isFree ? undefined : help.sponsoredProjects
 			}
 
-			case PlayerActionType.PickPreludes: {
+			case PickerType.Preludes: {
 				return help.preludes
 			}
 
-			case PlayerActionType.DraftCard: {
+			case PickerType.Draft: {
 				return help.draftedProjects
 			}
 		}
-	}, [action])
+	}, [type])
 
 	const pickMessage = useMemo(() => {
-		switch (action.type) {
-			case PlayerActionType.PickCards: {
+		switch (type) {
+			case PickerType.Cards: {
 				return !isFree ? (
 					selected.length > 0 ? (
 						<>
@@ -124,19 +114,19 @@ export const CardPicker = ({ action, closeable, onClose }: Props) => {
 				)
 			}
 
-			case PlayerActionType.PickPreludes: {
+			case PickerType.Preludes: {
 				return selected.length > 0
 					? `Pick ${selected.length} preludes`
 					: 'Pick nothing'
 			}
 
-			case PlayerActionType.DraftCard: {
+			case PickerType.Draft: {
 				return selected.length > 0
-					? `Pick ${cards[cardsToPick[selected[0]].code]}`
+					? `Pick ${cardNames[cardsToPick[selected[0]].code]}`
 					: 'Pick nothing'
 			}
 		}
-	}, [action, selected, price, isFree])
+	}, [type, selected, price, isFree])
 
 	if (!game || !player) {
 		return <>No game / player</>

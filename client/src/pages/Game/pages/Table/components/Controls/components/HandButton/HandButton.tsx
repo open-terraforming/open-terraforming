@@ -81,6 +81,7 @@ export const HandButton = ({ playing }: Props) => {
 		<DialogWrapper dialog={close => <Hand playing={playing} onClose={close} />}>
 			{open => (
 				<CardButton
+					noClip
 					onClick={open}
 					disabled={count === 0}
 					onMouseOver={() => setShowCards(true)}

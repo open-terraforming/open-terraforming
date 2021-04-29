@@ -5,6 +5,7 @@ import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
 import { f } from '@/utils/string'
 import { CardsLookupApi } from '@shared/cards'
+import { ExpansionType } from '@shared/expansions/types'
 import { GameInfo } from '@shared/extra'
 import {
 	GameState,
@@ -15,7 +16,6 @@ import {
 import {
 	draftCard,
 	pickCards,
-	pickCorporation,
 	pickPreludes,
 	playerPass,
 	UpdateDeepPartial
@@ -30,11 +30,15 @@ import { initialGameState } from '@shared/states'
 import { isMarsTerraformed, shuffle } from '@shared/utils'
 import { v4 as uuidv4 } from 'uuid'
 import { Bot } from './bot'
+import { BotNames } from './bot-names'
+import { DraftGameState } from './game/draft-game-state'
 import { EndedGameState } from './game/ended-game-state'
 import { EndingTilesGameState } from './game/ending-tiles-game-state'
 import { GenerationEndingState } from './game/generation-ending-state'
 import { GenerationInProgressGameState } from './game/generation-in-progress-game-state'
 import { GenerationStartGameState } from './game/generation-start-game-state'
+import { PreludeGameState } from './game/prelude-game-state'
+import { ResearchPhaseGameState } from './game/research-phase-game-state'
 import { StartingGameState } from './game/starting-game-state'
 import { WaitingForPlayersGameState } from './game/waiting-for-players-game-state'
 import {
@@ -43,11 +47,6 @@ import {
 	ProjectBought,
 	TilePlacedEvent
 } from './player'
-import { ExpansionType } from '@shared/expansions/types'
-import { BotNames } from './bot-names'
-import { DraftGameState } from './game/draft-game-state'
-import { ResearchPhaseGameState } from './game/research-phase-game-state'
-import { PreludeGameState } from './game/prelude-game-state'
 
 export interface GameConfig {
 	bots: number
@@ -61,6 +60,7 @@ export interface GameConfig {
 	draft: boolean
 
 	fastBots: boolean
+	fastProduction: boolean
 }
 export class Game {
 	get logger() {
@@ -96,6 +96,7 @@ export class Game {
 			spectatorsAllowed: true,
 			expansions: [ExpansionType.Base, ExpansionType.Prelude],
 			fastBots: false,
+			fastProduction: false,
 			draft: false,
 			...config
 		}
@@ -383,8 +384,8 @@ export class Game {
 						if (p.state.state !== PlayerStateValue.Playing) {
 							if (p.state.pendingActions.length > 0) {
 								p.state.pendingActions.forEach(a => {
-									if (a.type === PlayerActionType.PickCorporation) {
-										p.performAction(pickCorporation(a.cards[0]))
+									if (a.type === PlayerActionType.PickStarting) {
+										// Starting pick can stall others!
 									}
 
 									if (a.type === PlayerActionType.PickCards) {

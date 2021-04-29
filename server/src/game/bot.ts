@@ -19,8 +19,8 @@ import {
 	claimTile,
 	draftCard,
 	pickCards,
-	pickCorporation,
 	pickPreludes,
+	pickStarting,
 	placeTile,
 	playCard,
 	playerPass,
@@ -32,6 +32,7 @@ import { canPlace, isClaimable } from '@shared/placements'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import { Projects } from '@shared/projects'
 import { allCells, competitionPrice, f } from '@shared/utils'
+import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { Game } from './game'
 import { Player } from './player'
 import { claimTileScore } from './scoring/claim-tile-score'
@@ -110,8 +111,47 @@ export class Bot extends Player {
 
 	performPending(a: PlayerAction) {
 		switch (a.type) {
-			case PlayerActionType.PickCorporation: {
-				return this.performAction(pickCorporation(shuffle(a.cards.slice(0))[0]))
+			case PlayerActionType.PickStarting: {
+				const pickedPreludes = shuffle(
+					a.preludes.map((c, i) => [CardsLookupApi.get(c), i] as const)
+				)
+					.filter(([c]) =>
+						isCardPlayable(c, {
+							card: emptyCardState(c.code),
+							game: this.game.state,
+							player: this.state
+						})
+					)
+					.map(([, i]) => i)
+					.slice(0, a.preludesLimit)
+
+				const corporation = shuffle(a.corporations.slice(0))[0]
+
+				const { player: simulatedPlayer } = simulateCardEffects(
+					corporation,
+					CardsLookupApi.get(corporation).playEffects
+				)
+
+				return this.performAction(
+					pickStarting(
+						shuffle(a.corporations.slice(0))[0],
+						shuffle(a.cards.map((_c, i) => i)).slice(
+							0,
+							Math.max(
+								0,
+								Math.floor(
+									((simulatedPlayer.money *
+										(this.game.state.state === GameStateValue.Starting
+											? 0.8
+											: 0.3)) /
+										this.game.state.cardPrice) *
+										(0.6 + 0.4 * Math.random())
+								)
+							)
+						),
+						pickedPreludes
+					)
+				)
 			}
 
 			case PlayerActionType.PickCards: {

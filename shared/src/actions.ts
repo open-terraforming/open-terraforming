@@ -40,7 +40,6 @@ export enum MessageType {
 	PlayerReady,
 	ServerMessage,
 	GameStateUpdate,
-	PickCorporation,
 	PickCards,
 	BuyCard,
 	SellCard,
@@ -60,7 +59,8 @@ export enum MessageType {
 	Kicked,
 	SpectateRequest,
 	SpectateResponse,
-	DraftCard
+	DraftCard,
+	PickStarting
 }
 
 export const handshakeRequest = (version: string) =>
@@ -112,10 +112,14 @@ export const serverMessage = (message: string) =>
 export const gameStateUpdate = (data: GameState) =>
 	({ type: MessageType.GameStateUpdate, data } as const)
 
-export const pickCorporation = (code: string) =>
+export const pickStarting = (
+	corporation: string,
+	cards: number[],
+	preludes: number[] = []
+) =>
 	({
-		type: MessageType.PickCorporation,
-		data: { code }
+		type: MessageType.PickStarting,
+		data: { corporation, cards, preludes }
 	} as const)
 
 export const pickCards = (cards: number[]) =>
@@ -264,7 +268,6 @@ export type GameMessage =
 	| ReturnType<typeof playerPass>
 	| ReturnType<typeof serverMessage>
 	| ReturnType<typeof gameStateUpdate>
-	| ReturnType<typeof pickCorporation>
 	| ReturnType<typeof pickCards>
 	| ReturnType<typeof buyCard>
 	| ReturnType<typeof sellCard>
@@ -284,3 +287,4 @@ export type GameMessage =
 	| ReturnType<typeof spectateRequest>
 	| ReturnType<typeof spectateResponse>
 	| ReturnType<typeof draftCard>
+	| ReturnType<typeof pickStarting>

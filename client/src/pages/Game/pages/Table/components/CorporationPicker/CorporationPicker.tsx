@@ -1,28 +1,25 @@
-import { Modal } from '@/components/Modal/Modal'
-import { useApi } from '@/context/ApiContext'
-import { cardsToCardList } from '@/utils/cards'
-import { useAppStore } from '@/utils/hooks'
-import { emptyCardState } from '@shared/cards/utils'
-import { pickCorporation } from '@shared/index'
-import React, { useMemo, useState } from 'react'
-import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
-import { PlayerActionType } from '@shared/player-actions'
 import { HelpMessage } from '@/components/HelpMessage/HelpMessage'
+import { Modal } from '@/components/Modal/Modal'
+import { cardsToCardList } from '@/utils/cards'
+import { emptyCardState } from '@shared/cards/utils'
+import React, { useMemo } from 'react'
+import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
 
-export const CorporationPicker = () => {
-	const api = useApi()
-	const player = useAppStore(state => state.game.player)
-	const pendingAction = useAppStore(state => state.game.pendingAction)
+interface Props {
+	corporations: string[]
+	onSelect: (corporation: string) => void
+	onClose: () => void
+}
 
+export const CorporationPicker = ({
+	corporations,
+	onSelect,
+	onClose
+}: Props) => {
 	const cards = useMemo(
-		() =>
-			pendingAction && pendingAction.type === PlayerActionType.PickCorporation
-				? cardsToCardList(pendingAction.cards.map(p => emptyCardState(p)))
-				: [],
-		[player]
+		() => cardsToCardList(corporations.map(p => emptyCardState(p))),
+		[corporations]
 	)
-
-	const [loading, setLoading] = useState(false)
 
 	const handlePick = (c: CardInfo[]) => {
 		const corp = c[0]
@@ -31,16 +28,14 @@ export const CorporationPicker = () => {
 			return
 		}
 
-		if (!loading) {
-			setLoading(true)
-			api.send(pickCorporation(corp.card.code))
-		}
+		onSelect(corp.card.code)
 	}
 
 	return (
 		<Modal
 			open={true}
-			allowClose={false}
+			allowClose={true}
+			onClose={onClose}
 			headerStyle={{ justifyContent: 'center' }}
 			header={'Pick your corporation'}
 		>
@@ -53,6 +48,7 @@ export const CorporationPicker = () => {
 			/>
 
 			<HelpMessage
+				id="corporation-picker-message"
 				message={
 					'Corporation provides initial funds, production and effects which can help you during the game.'
 				}

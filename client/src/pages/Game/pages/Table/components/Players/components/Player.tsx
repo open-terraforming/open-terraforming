@@ -24,7 +24,7 @@ import { Tooltip } from '@/components'
 
 const pendingToStr = {
 	[PlayerActionType.PickCards]: 'Picking cards',
-	[PlayerActionType.PickCorporation]: 'Picking corporation',
+	[PlayerActionType.PickStarting]: 'Picking',
 	[PlayerActionType.PickPreludes]: 'Picking preludes',
 	[PlayerActionType.PlaceTile]: 'Placing tile',
 	[PlayerActionType.ClaimTile]: 'Claiming tile',

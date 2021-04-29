@@ -12,8 +12,8 @@ type Props = {
 export const PendingDisplay = ({ pending }: Props) => {
 	const text = useMemo(() => {
 		switch (pending.type) {
-			case PlayerActionType.PickCorporation:
-				return 'Picking corporation'
+			case PlayerActionType.PickStarting:
+				return 'Picking cards'
 			case PlayerActionType.PickCards:
 				return 'Picking cards'
 			case PlayerActionType.DraftCard:

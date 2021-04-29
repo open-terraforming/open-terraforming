@@ -30,6 +30,7 @@ export const GreeneryButton = ({ className }: Props) => {
 
 	return (
 		<Button
+			noClip
 			className={className}
 			disabled={!usable}
 			onClick={buyForest}

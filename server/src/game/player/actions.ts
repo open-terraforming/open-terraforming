@@ -12,7 +12,7 @@ import { KickPlayerAction } from './actions/kick-player'
 import { PassAction } from './actions/pass'
 import { PickCardsAction } from './actions/pick-cards'
 import { PickColorAction } from './actions/pick-color'
-import { PickCorporationAction } from './actions/pick-corporation'
+import { PickStartingAction } from './actions/pick-starting'
 import { PickPreludesAction } from './actions/pick-preludes'
 import { PlaceTileAction } from './actions/place-tile'
 import { PlayCardAction } from './actions/play-card'
@@ -29,7 +29,7 @@ export class PlayerActions {
 
 		this.actions = {
 			[MessageType.PlayerReady]: new ToggleReadyAction(this.player),
-			[MessageType.PickCorporation]: new PickCorporationAction(this.player),
+			[MessageType.PickStarting]: new PickStartingAction(this.player),
 			[MessageType.PickCards]: new PickCardsAction(this.player),
 			[MessageType.PickPreludes]: new PickPreludesAction(this.player),
 			[MessageType.PickColor]: new PickColorAction(this.player),

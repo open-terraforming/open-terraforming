@@ -1,3 +1,4 @@
+import { CardType } from '@shared/cards'
 import { lighten, darken, rgba } from 'polished'
 
 const application = '#182541'
@@ -86,5 +87,14 @@ export default {
 			background: success,
 			color: '#fff'
 		}
+	},
+
+	cards: {
+		[CardType.Action]: '#0F87E2',
+		[CardType.Building]: '#56BA1B',
+		[CardType.Effect]: '#0F87E2 ',
+		[CardType.Event]: '#FF6868',
+		[CardType.Corporation]: '#BAC404',
+		[CardType.Prelude]: '#FF86C2'
 	}
 }

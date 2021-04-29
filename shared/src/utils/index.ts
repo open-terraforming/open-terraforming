@@ -141,7 +141,7 @@ export const pushPendingAction = (
 
 const allowedActions: Record<number, PlayerActionType[] | undefined> = {
 	[PlayerStateValue.Picking]: [
-		PlayerActionType.PickCorporation,
+		PlayerActionType.PickStarting,
 		PlayerActionType.PickCards,
 		PlayerActionType.PickPreludes,
 		PlayerActionType.DraftCard

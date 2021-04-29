@@ -1,10 +1,6 @@
 import { CardsLookupApi, CardSpecial } from '../cards'
 import { GameState, PlayerStateValue } from '../game'
-import {
-	pickCardsAction,
-	pickCorporationAction,
-	pickPreludesAction
-} from '../player-actions'
+import { pickStartingAction } from '../player-actions'
 import {
 	drawCards,
 	drawCorporation,
@@ -16,7 +12,20 @@ import { GameMode, GameModeType } from './types'
 
 export const gameMode = (m: GameMode) => m
 
-export const prepareCorporations = (game: GameState, amount = 2) => {
+export const prepareStartingPick = (
+	game: GameState,
+	{
+		corporations = 2,
+		cards = 10,
+		preludes = 4,
+		preludesLimit = 2
+	}: {
+		corporations?: number
+		cards?: number
+		preludes?: number
+		preludesLimit?: number
+	} = {}
+) => {
 	const startingCorp = Object.values(CardsLookupApi.data()).find(c =>
 		c.special.includes(CardSpecial.StartingCorporation)
 	)
@@ -28,21 +37,28 @@ export const prepareCorporations = (game: GameState, amount = 2) => {
 	game.corporations = game.corporations.filter(c => c !== startingCorp.code)
 
 	game.players.forEach(p => {
-		const cards: string[] = []
+		const corpCards: string[] = []
 
 		try {
-			range(0, amount).forEach(() => {
-				cards.push(drawCorporation(game))
+			range(0, corporations).forEach(() => {
+				corpCards.push(drawCorporation(game))
 			})
 		} catch (e) {
-			if (cards.length === 0) {
-				cards.push(startingCorp.code)
+			if (corpCards.length === 0) {
+				corpCards.push(startingCorp.code)
 			}
 		}
 
-		// cards.push(...game.corporations)
+		pushPendingAction(
+			p,
+			pickStartingAction(
+				corpCards,
+				drawCards(game, cards),
+				game.prelude ? drawPreludeCards(game, preludes) : [],
+				game.prelude ? preludesLimit : 0
+			)
+		)
 
-		pushPendingAction(p, pickCorporationAction(cards))
 		p.state = PlayerStateValue.Picking
 	})
 }
@@ -51,20 +67,3 @@ export const strToMode = {
 	standard: GameModeType.Standard,
 	beginner: GameModeType.Beginner
 } as const
-
-export const prepareCards = (game: GameState, count = 10) => {
-	game.players.forEach(p => {
-		pushPendingAction(p, pickCardsAction(drawCards(game, count)))
-	})
-}
-
-export const preparePreludes = (game: GameState, count = 4, limit = 2) => {
-	if (game.prelude) {
-		game.players.forEach(p => {
-			pushPendingAction(
-				p,
-				pickPreludesAction(drawPreludeCards(game, count), limit)
-			)
-		})
-	}
-}

@@ -1,11 +1,6 @@
 import { CardsLookupApi, CardSpecial } from '../../cards'
 import { GameModeType } from '../types'
-import {
-	gameMode,
-	prepareCorporations,
-	prepareCards,
-	preparePreludes
-} from '../utils'
+import { gameMode, prepareStartingPick } from '../utils'
 import { PlayerActionType } from '../../player-actions'
 
 export const BeginnerMode = gameMode({
@@ -22,9 +17,7 @@ export const BeginnerMode = gameMode({
 			throw new Error('Failed to find starting corporation')
 		}
 
-		prepareCorporations(game)
-		prepareCards(game)
-		preparePreludes(game)
+		prepareStartingPick(game)
 
 		game.players.forEach(p => {
 			p.moneyProduction = 1
@@ -35,8 +28,8 @@ export const BeginnerMode = gameMode({
 			p.heatProduction = 1
 
 			p.pendingActions.forEach(a => {
-				if (a.type === PlayerActionType.PickCorporation) {
-					a.cards.push(startingCorp.code)
+				if (a.type === PlayerActionType.PickStarting) {
+					a.corporations.push(startingCorp.code)
 				}
 			})
 		})

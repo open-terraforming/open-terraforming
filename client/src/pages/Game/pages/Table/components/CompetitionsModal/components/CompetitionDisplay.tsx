@@ -57,6 +57,7 @@ export const CompetitionDisplay = ({
 				<Title>{competition.title}</Title>
 				{(cost !== undefined || sponsored) && (
 					<Button
+						noClip
 						disabled={!playing || !canAfford || !!sponsored}
 						onClick={() => onBuy(competition)}
 						icon={sponsored ? faCheck : faAward}

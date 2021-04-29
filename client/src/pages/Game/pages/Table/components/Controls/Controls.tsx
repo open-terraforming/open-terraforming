@@ -83,6 +83,7 @@ export const Controls = () => {
 				<TableButtons />
 
 				<PassButton
+					noClip
 					disabled={!isPlaying}
 					onClick={handlePass}
 					icon={faArrowRight}

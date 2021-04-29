@@ -7,14 +7,15 @@ import styled from 'styled-components'
 import { CardPicker } from './components/CardPicker/CardPicker'
 import { CompetitionsModal } from './components/CompetitionsModal/CompetitionsModal'
 import { Controls } from './components/Controls/Controls'
-import { CorporationPicker } from './components/CorporationPicker/CorporationPicker'
+import { EventList } from './components/EventList/EventList'
 import { GameMap } from './components/GameMap/GameMap'
 import { GlobalState } from './components/GlobalState/GlobalState'
 import { Header } from './components/Header/Header'
 import { Mouses } from './components/Mouses/Mouses'
+import { PendingCardPicker } from './components/PendingCardPicker/PendingCardPicker'
 import { Players } from './components/Players/Players'
 import { Spectator } from './components/Spectator/Spectator'
-import { EventList } from './components/EventList/EventList'
+import { StartPicker } from './components/StartPicker/StartPicker'
 
 const Table = () => {
 	const pending = useAppStore(state => state.game.pendingAction)
@@ -61,14 +62,12 @@ const Table = () => {
 	return (
 		<TableContainer>
 			<Mouses />
-			{pending?.type === PlayerActionType.PickCorporation && (
-				<CorporationPicker />
-			)}
+			{pending?.type === PlayerActionType.PickStarting && <StartPicker />}
 			{!pickerHidden &&
 				(pending?.type === PlayerActionType.PickCards ||
 					pending?.type === PlayerActionType.PickPreludes ||
 					pending?.type === PlayerActionType.DraftCard) && (
-					<CardPicker
+					<PendingCardPicker
 						key={pending.cards.join(',')}
 						action={pending}
 						closeable

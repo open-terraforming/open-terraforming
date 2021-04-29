@@ -38,9 +38,9 @@ export const pickBestScore = <T>(values: T[], scoring: (v: T) => number) => {
 }
 
 const resScore = (g: GameState) => ({
-	money: 0.7,
-	ore: 0.8,
-	titan: 0.8,
+	money: 0.9,
+	ore: 0.7,
+	titan: 0.7,
 	heat: g.temperature < g.map.temperature ? 1 : 0,
 	energy: g.temperature < g.map.temperature ? 0.8 : 0.2,
 	plants: 1
@@ -68,9 +68,9 @@ const computePendingActionScore = (
 
 export const computeScore = (g: GameState, p: PlayerState) => {
 	return (
-		p.terraformRating +
-		p.titanPrice +
-		p.orePrice +
+		p.terraformRating * 5 +
+		p.titanPrice * 3 +
+		p.orePrice * 3 +
 		-p.cardPriceChange +
 		(Object.values(p.tagPriceChange).reduce(
 			(acc, p) => (acc ?? 0) + (p ?? 0),
@@ -81,7 +81,7 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 			(acc, r) =>
 				acc +
 				p[r] * resScore(g)[r] +
-				p[resourceProduction[r]] * resScore(g)[r] * 1.2,
+				p[resourceProduction[r]] * resScore(g)[r] * 1.4,
 			0
 		) +
 		p.usedCards
@@ -112,7 +112,8 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 				}
 
 				return acc
-			}, 0) +
+			}, 0) *
+			5 +
 		p.pendingActions.reduce(
 			(acc, a) => acc + computePendingActionScore(g, p, a),
 			0

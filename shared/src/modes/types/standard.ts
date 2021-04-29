@@ -1,10 +1,5 @@
 import { GameModeType } from '../types'
-import {
-	gameMode,
-	prepareCorporations,
-	prepareCards,
-	preparePreludes
-} from '../utils'
+import { gameMode, prepareStartingPick } from '../utils'
 
 export const StandardMode = gameMode({
 	type: GameModeType.Standard,
@@ -12,8 +7,6 @@ export const StandardMode = gameMode({
 		'Everybody starts with 0 production of everything, extended set of cards is available.',
 	name: 'Standard rules',
 	onGameStart: game => {
-		prepareCorporations(game)
-		prepareCards(game)
-		preparePreludes(game)
+		prepareStartingPick(game)
 	}
 })
