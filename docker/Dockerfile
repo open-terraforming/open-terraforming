@@ -18,6 +18,18 @@ COPY shared/src ../shared/src
 # Application build
 RUN npm run build
 
+FROM node:20.9.0-alpine as build-server-depts
+
+# Initialization
+RUN mkdir -p /app/server
+WORKDIR /app/server
+
+# Dependencies
+COPY server/package.json .
+COPY server/package-lock.json .
+COPY docker/removeDevDependencies.js .
+RUN npm install
+
 FROM node:20.9.0-alpine as build-client
 
 # Initialization
@@ -53,7 +65,7 @@ ENV METRICS_PASSWORD=metrics
 
 # Copy build results
 WORKDIR /app
-COPY --from=build-server /app/server/node_modules ./node_modules
+COPY --from=build-server-depts /app/server/node_modules ./node_modules
 COPY --from=build-server /app/server/dist ./dist
 COPY --from=build-client /app/client/dist ./client
 COPY --from=build-server /app/server/package.json .
