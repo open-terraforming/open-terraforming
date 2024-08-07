@@ -11,6 +11,7 @@ import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { TileIcon } from '../../TileIcon/TileIcon'
 import { Tag } from './Tag'
+import { venusIcon } from '@/icons/venus'
 
 type Props = {
 	symbols: CardSymbol[]
@@ -30,6 +31,8 @@ const symbolToIcon = (s: CardSymbol) => {
 				return '/'
 			case SymbolType.Colon:
 				return ':'
+			case SymbolType.Equal:
+				return '='
 			case SymbolType.X:
 				return <XSymbol>X</XSymbol>
 			case SymbolType.RightArrow:
@@ -44,6 +47,10 @@ const symbolToIcon = (s: CardSymbol) => {
 				return '\u2265'
 			case SymbolType.LessOrEqual:
 				return '\u2264'
+			case SymbolType.Venus:
+				return <FontAwesomeIcon icon={venusIcon} />
+			case SymbolType.AnyResource:
+				return <ResourceContainer>?</ResourceContainer>
 		}
 	}
 
@@ -142,4 +149,15 @@ const XSymbol = styled.div`
 const Count = styled.div`
 	font-weight: bold;
 	margin-right: 0.2rem;
+`
+
+const ResourceContainer = styled.div`
+	background-color: #fff;
+	border-radius: 0.1rem;
+	width: 1.1rem;
+	height: 1.1rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #000;
 `

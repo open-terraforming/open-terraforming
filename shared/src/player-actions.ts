@@ -9,13 +9,15 @@ export enum PlayerActionType {
 	PlayCard,
 	ClaimTile,
 	SponsorCompetition,
-	PickStarting
+	PickStarting,
+	SolarPhaseTerraform
 }
 
-export const placeTileAction = (state: PlacementState) =>
+export const placeTileAction = (state: PlacementState, anonymous = false) =>
 	({
 		type: PlayerActionType.PlaceTile,
-		state
+		state,
+		anonymous
 	} as const)
 
 /*
@@ -78,6 +80,11 @@ export const pickStartingAction = (
 		preludesLimit
 	} as const)
 
+export const solarPhaseTerraformAction = () =>
+	({
+		type: PlayerActionType.SolarPhaseTerraform
+	} as const)
+
 export type PlayerAction =
 	| ReturnType<typeof placeTileAction>
 	| ReturnType<typeof pickCardsAction>
@@ -87,3 +94,4 @@ export type PlayerAction =
 	| ReturnType<typeof claimTileAction>
 	| ReturnType<typeof draftCardAction>
 	| ReturnType<typeof pickStartingAction>
+	| ReturnType<typeof solarPhaseTerraformAction>

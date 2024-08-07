@@ -204,7 +204,7 @@ export const Container = styled.div<ContainerCtx>`
 
 					&:hover {
 						/*box-shadow: 0px 0px 3px 3px ${colors.border};*/
-						transform: scale(1.07);
+						transform: scale(1.03);
 					}
 			  `}
 

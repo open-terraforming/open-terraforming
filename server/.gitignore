@@ -4,4 +4,4 @@ static
 storage
 .cache
 
-config.ts
+.env

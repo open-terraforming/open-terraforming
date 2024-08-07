@@ -1,8 +1,8 @@
 import { MyEvent } from '@/utils/events'
 import { Logger } from '@/utils/log'
-import { Card, CardsLookupApi } from '@shared/cards'
+import { Card, CardsLookupApi, Production } from '@shared/cards'
 import { GridCell, GridCellContent, PlayerState } from '@shared/game'
-import { GameMessage } from '@shared/index'
+import { GameMessage, PLAYER_PRODUCTION_FIELDS } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import {
 	placeTileAction,
@@ -22,6 +22,8 @@ import Hashids from 'hashids/cjs'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
 import { PlayerActions } from './player/actions'
+import { globalConfig } from '@/config'
+import { deepCopy } from '@/utils/collections'
 
 export interface CardPlayedEvent {
 	player: Player
@@ -31,6 +33,12 @@ export interface CardPlayedEvent {
 export interface TilePlacedEvent {
 	player: Player
 	cell: GridCell
+}
+
+export interface ProductionChangedEvent {
+	player: Player
+	production: Production
+	change: number
 }
 
 export interface ProjectBought {
@@ -51,6 +59,9 @@ export class Player {
 	onCardPlayed = new MyEvent<Readonly<CardPlayedEvent>>()
 	onTilePlaced = new MyEvent<Readonly<TilePlacedEvent>>()
 	onProjectBought = new MyEvent<Readonly<ProjectBought>>()
+	onProductionChanged = new MyEvent<Readonly<ProductionChangedEvent>>()
+
+	previousState: PlayerState | undefined
 
 	disconnectTimeout?: NodeJS.Timeout
 
@@ -93,6 +104,8 @@ export class Player {
 			this.state.id
 		)
 
+		this.state.admin = globalConfig.everybodyIsAdmin
+
 		this.actions = new PlayerActions(this)
 	}
 
@@ -117,6 +130,22 @@ export class Player {
 	updated() {
 		this.logger.category = this.state.name
 		this.onStateChanged.emit(this.state)
+
+		if (this.previousState !== undefined) {
+			for (const production of PLAYER_PRODUCTION_FIELDS) {
+				const change = this.state[production] - this.previousState[production]
+
+				if (change !== 0) {
+					this.onProductionChanged.emit({
+						player: this,
+						production,
+						change
+					})
+				}
+			}
+		}
+
+		this.previousState = deepCopy(this.state)
 	}
 
 	endGeneration() {

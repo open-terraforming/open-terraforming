@@ -21,9 +21,15 @@ export type Production =
 	| 'energyProduction'
 	| 'heatProduction'
 
-export type CardResource = 'microbes' | 'animals' | 'science' | 'fighters'
+export type CardResource =
+	| 'microbes'
+	| 'animals'
+	| 'science'
+	| 'fighters'
+	| 'floaters'
+	| 'asteroids'
 
-export type GameProgress = 'oxygen' | 'temperature' | 'oceans'
+export type GameProgress = 'oxygen' | 'temperature' | 'oceans' | 'venus'
 
 export type CardEffectArgumentType = number | string | CardEffectArgumentType[]
 
@@ -31,6 +37,8 @@ export interface CardCallbackContext {
 	game: GameState
 	player: PlayerGameState
 	card: UsedCardState
+	/** used by joinedEffects, includes all args sent to the action */
+	allArgs?: unknown[]
 }
 
 export interface PlayerCallbackContext {
@@ -57,6 +65,7 @@ export enum CardCategory {
 	Earth,
 	City,
 	Event,
+	Venus,
 	Any
 }
 
@@ -72,7 +81,8 @@ export enum CardType {
 export enum CardSpecial {
 	CorporationsEra = 1,
 	StartingCorporation,
-	Prelude
+	Prelude,
+	Venus
 }
 
 export interface CardVictoryPointsCallback {
@@ -98,6 +108,11 @@ export interface Card {
 	passiveEffects: CardPassiveEffect[]
 
 	victoryPointsCallback?: CardVictoryPointsCallback
+
+	resourcesUsableAsMoney?: {
+		amount: number
+		categories?: CardCategory[]
+	}
 }
 
 export type CardCondition<
@@ -157,7 +172,9 @@ export enum CardEffectTarget {
 	// Type - [choice: number, choiceParams: any[]]
 	EffectChoice,
 	// Type - [x: number, y: number]
-	Cell
+	Cell,
+	// Type - amount: number
+	CardResourceCount
 }
 
 export interface CardEffectArgument {
@@ -176,6 +193,7 @@ export interface CardEffectArgument {
 	production?: Production
 	fromHand?: boolean
 	effects?: CardEffect[]
+	minAmount?: number
 }
 
 export type ResourceCondition = (
@@ -203,7 +221,14 @@ export interface CardPassiveEffect {
 		project: StandardProject,
 		playedBy: PlayerState
 	) => void
+	onProgress?: (ctx: CardCallbackContext, progress: GameProgress) => void
 	onGenerationEnd?: (ctx: CardCallbackContext) => void
+	onPlayerProductionChanged?: (
+		ctx: CardCallbackContext,
+		player: PlayerState,
+		production: Production,
+		change: number
+	) => void
 }
 
 export enum SymbolType {
@@ -218,7 +243,10 @@ export enum SymbolType {
 	X,
 	Colon,
 	LessOrEqual,
-	MoreOrEqual
+	MoreOrEqual,
+	Venus,
+	AnyResource,
+	Equal
 }
 
 export interface CardSymbol {

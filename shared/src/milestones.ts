@@ -18,7 +18,8 @@ export enum MilestoneType {
 	Specialist,
 	Ecologist,
 	Tycoon,
-	Legend
+	Legend,
+	Hoverlord
 }
 
 export interface Milestone {
@@ -203,6 +204,14 @@ const MilestonesList = [
 			player.usedCards.filter(
 				c => CardsLookupApi.get(c.code).type === CardType.Event
 			).length
+	}),
+	milestone({
+		type: MilestoneType.Hoverlord,
+		title: 'Hoverlord',
+		description: 'Number of floaters on cards',
+		limit: 7,
+		getValue: (_game, player) =>
+			player.usedCards.reduce((acc, c) => acc + c.floaters, 0)
 	})
 ]
 

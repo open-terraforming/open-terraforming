@@ -71,7 +71,7 @@ export const GlobalState = () => {
 }
 
 const E = styled.div`
-	width: 208px;
+	width: 185px;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;

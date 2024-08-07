@@ -4,7 +4,6 @@ import { faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { PlayerActionType } from '@shared/player-actions'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { CardPicker } from './components/CardPicker/CardPicker'
 import { CompetitionsModal } from './components/CompetitionsModal/CompetitionsModal'
 import { Controls } from './components/Controls/Controls'
 import { EventList } from './components/EventList/EventList'
@@ -16,6 +15,7 @@ import { PendingCardPicker } from './components/PendingCardPicker/PendingCardPic
 import { Players } from './components/Players/Players'
 import { Spectator } from './components/Spectator/Spectator'
 import { StartPicker } from './components/StartPicker/StartPicker'
+import { SolarPhaseTerraformPicker } from './components/SolarPhaseTerraformPicker/SolarPhaseTerraformPicker'
 
 const Table = () => {
 	const pending = useAppStore(state => state.game.pendingAction)
@@ -74,6 +74,9 @@ const Table = () => {
 						onClose={() => setPickerHidden(true)}
 					/>
 				)}
+			{pending?.type === PlayerActionType.SolarPhaseTerraform && (
+				<SolarPhaseTerraformPicker action={pending} />
+			)}
 			{pending?.type === PlayerActionType.SponsorCompetition && (
 				<CompetitionsModal freePick onClose={() => null} />
 			)}

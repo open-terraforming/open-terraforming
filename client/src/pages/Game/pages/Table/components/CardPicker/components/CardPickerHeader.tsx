@@ -3,6 +3,7 @@ import { media } from '@/styles/media'
 import { useAppStore } from '@/utils/hooks'
 import { faTint, faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ExpansionType } from '@shared/expansions/types'
 import React from 'react'
 import styled from 'styled-components'
 
@@ -41,6 +42,14 @@ export const CardPickerHeader = ({ text }: Props) => {
 						{game.oxygen} / {game.map.oxygen}
 					</span>{' '}
 				</ProgressItem>
+				{game.expansions.includes(ExpansionType.Venus) && (
+					<ProgressItem>
+						<Res>V</Res>
+						<span>
+							{game.venus * 2} / {game.map.venus * 2}
+						</span>{' '}
+					</ProgressItem>
+				)}
 			</GameProgress>
 		</PickerHeader>
 	)

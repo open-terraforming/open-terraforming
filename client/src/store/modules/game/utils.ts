@@ -16,7 +16,7 @@ const resources: Resource[] = [
 	'heat'
 ]
 
-const progress: GameProgress[] = ['oxygen', 'temperature']
+const progress: GameProgress[] = ['oxygen', 'temperature', 'venus']
 
 export const getEvents = (lastGame: GameState, game: GameState) => {
 	const diff = objDiff(lastGame, game) as GameState

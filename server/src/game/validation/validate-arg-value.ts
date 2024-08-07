@@ -4,6 +4,7 @@ import { cardArgValidator } from './args/card-arg-validator'
 import { playerArgValidator } from './args/player-arg-validator'
 import { productionTypeArgValidator } from './args/production-type-arg-validator'
 import { productionArgValidator } from './args/production-arg-validator'
+import { cardResourceAmountArgValidator } from './args/card-resource-amount-arg-validator'
 
 const validators: Record<CardEffectTarget, ArgValidator | null> = {
 	[CardEffectTarget.Card]: cardArgValidator,
@@ -14,7 +15,8 @@ const validators: Record<CardEffectTarget, ArgValidator | null> = {
 	[CardEffectTarget.PlayerCardResource]: null,
 	[CardEffectTarget.PlayerResource]: null,
 	[CardEffectTarget.Resource]: null,
-	[CardEffectTarget.Production]: productionArgValidator
+	[CardEffectTarget.Production]: productionArgValidator,
+	[CardEffectTarget.CardResourceCount]: cardResourceAmountArgValidator
 }
 
 export const validateArgValue = (ctx: ValidatorContext) => {

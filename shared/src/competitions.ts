@@ -17,7 +17,8 @@ export enum CompetitionType {
 	Industrialist,
 	DesertSettler,
 	EstateDealer,
-	Benefactor
+	Benefactor,
+	Venuphile
 }
 
 export interface Competition {
@@ -170,6 +171,20 @@ const CompetitionsList = [
 		title: 'Benefactor',
 		description: 'Highest terraforming rating',
 		getScore: (_game, player) => player.terraformRating
+	}),
+	competition({
+		type: CompetitionType.Venuphile,
+		title: 'Venuphile',
+		description: 'Most Venus tags in play',
+		getScore: (_game, player) =>
+			player.usedCards.reduce(
+				(acc, c) =>
+					acc +
+					CardsLookupApi.get(c.code).categories.filter(
+						c => c === CardCategory.Venus
+					).length,
+				0
+			)
 	})
 ]
 

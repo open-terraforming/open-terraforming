@@ -56,7 +56,8 @@ export const CardDisplay = <T extends CardInfo>({
 				CardCategory.Plant,
 				CardCategory.Animal,
 				CardCategory.Event,
-				CardCategory.Science
+				CardCategory.Science,
+				CardCategory.Venus
 			]
 				.map(cat => ({
 					category: cat,

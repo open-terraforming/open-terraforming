@@ -96,5 +96,13 @@ export const specialToStr = (special: GridCellSpecial) => {
 			return 'Elysium Mons'
 		case GridCellSpecial.OlympusMons:
 			return 'Olympus Mons'
+		case GridCellSpecial.MaxwellBase:
+			return 'Maxwell Base'
+		case GridCellSpecial.Stratopolis:
+			return 'Stratopolis'
+		case GridCellSpecial.DawnCity:
+			return 'Dawn City'
+		case GridCellSpecial.LunaMetropolis:
+			return 'Luna Metropolis'
 	}
 }

@@ -105,6 +105,7 @@ const Res = styled.div`
 	border: 1px solid #fff;
 `
 
+// @ts-expect-error WTF IS HAPPENING HERE
 const PlantRes = styled(Res)`
 	background: #54a800;
 	border-color: #356a00;

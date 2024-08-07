@@ -15,8 +15,13 @@ import express, { Request, Response } from 'express'
 import { body, validationResult } from 'express-validator'
 import { createServer, IncomingMessage, Server } from 'http'
 import { Socket } from 'net'
-import { join } from 'path'
 import { GameServer } from '../server/game-server'
+import { venusExpansion } from '@shared/expansions/venusExpansion'
+import { globalConfig } from '@/config'
+import { register } from 'prom-client'
+import { expressMetricsMiddleware } from '@/middleware/expressMetricsMiddleware'
+import { runningGamesGauge } from '@/utils/metrics'
+import { basicAuthMiddleware } from '@/middleware/basicAuthMiddleware'
 
 type MultiAppContext = {
 	app: express.Application
@@ -32,7 +37,8 @@ export const multiApp = (config: ServerOptions) => {
 	const server = createServer(app)
 
 	app.use(corsMiddleware())
-	app.use(express.static(join(__dirname, '..', '..', 'static')))
+	app.use(express.static(globalConfig.staticPath))
+	app.use(expressMetricsMiddleware)
 	app.use(bodyParser.urlencoded({ extended: true }))
 	app.use(bodyParser.json())
 	app.use(bodyParser.raw())
@@ -43,14 +49,19 @@ export const multiApp = (config: ServerOptions) => {
 		gameServer.onEnded.on(() => {
 			logger.log(`Server ${gameServer.id} removed - game ended`)
 			servers = servers.filter(s => s !== gameServer)
+
+			runningGamesGauge.set(servers.length)
 		})
 
 		gameServer.onEmpty.on(() => {
 			logger.log(`Server ${gameServer.id} removed - no active players`)
 			servers = servers.filter(s => s !== gameServer)
+
+			runningGamesGauge.set(servers.length)
 		})
 
 		servers.push(gameServer)
+		runningGamesGauge.set(servers.length)
 
 		return gameServer
 	}
@@ -137,7 +148,10 @@ export const multiApp = (config: ServerOptions) => {
 				.optional(false),
 			body('map')
 				.notEmpty()
-				.isInt()
+				.isInt(),
+			body('solarPhase')
+				.isBoolean()
+				.optional(true)
 		],
 		(req: Request, res: Response) => {
 			if (servers.length >= config.maxServers) {
@@ -159,6 +173,7 @@ export const multiApp = (config: ServerOptions) => {
 			const isPublic = !!request.public
 			const expansions = Array.from(new Set(request.expansions))
 			const draft = request.draft
+			const solarPhase = request.solarPhase
 
 			expansions.forEach(e => {
 				if (
@@ -166,6 +181,8 @@ export const multiApp = (config: ServerOptions) => {
 					!Expansions[e] ||
 					e === ExpansionType.Base
 				) {
+					console.log(Object.keys(Expansions), venusExpansion.type)
+
 					throw new Error(`Invalid expansion ${e}`)
 				}
 			})
@@ -191,12 +208,31 @@ export const multiApp = (config: ServerOptions) => {
 				spectatorsAllowed,
 				expansions: [ExpansionType.Base, ...expansions],
 				fastBots: config.fastBots,
-				draft
+				draft,
+				solarPhase
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)
 
 			res.json(gameServer.info())
+		}
+	)
+
+	app.get(
+		globalConfig.metrics.endpoint,
+		basicAuthMiddleware({
+			username: globalConfig.metrics.username,
+			password: globalConfig.metrics.password
+		}),
+		(_req, res) => {
+			res.contentType(register.contentType)
+
+			register
+				.metrics()
+				.then(r => res.end(r))
+				.catch(err => {
+					res.status(500).end(String(err))
+				})
 		}
 	)
 

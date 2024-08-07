@@ -233,7 +233,7 @@ export class Client {
 		} catch (e) {
 			this.logger.error(e)
 
-			return serverMessage(e.toString())
+			return serverMessage((e as Error).toString())
 		}
 	}
 

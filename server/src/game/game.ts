@@ -4,7 +4,7 @@ import { MyEvent } from '@/utils/events'
 import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
 import { f } from '@/utils/string'
-import { CardsLookupApi } from '@shared/cards'
+import { CardsLookupApi, GameProgress } from '@shared/cards'
 import { ExpansionType } from '@shared/expansions/types'
 import { GameInfo } from '@shared/extra'
 import {
@@ -44,9 +44,11 @@ import { WaitingForPlayersGameState } from './game/waiting-for-players-game-stat
 import {
 	CardPlayedEvent,
 	Player,
+	ProductionChangedEvent,
 	ProjectBought,
 	TilePlacedEvent
 } from './player'
+import { SolarPhaseGameState } from './game/solar-phase-game-state'
 
 export interface GameConfig {
 	bots: number
@@ -58,6 +60,7 @@ export interface GameConfig {
 	spectatorsAllowed: boolean
 	expansions: ExpansionType[]
 	draft: boolean
+	solarPhase: boolean
 
 	fastBots: boolean
 	fastProduction: boolean
@@ -75,6 +78,8 @@ export class Game {
 	config: GameConfig
 
 	state = initialGameState(uuidv4())
+
+	currentProgress = {} as Record<GameProgress, number | undefined>
 
 	players: Player[] = []
 
@@ -98,6 +103,7 @@ export class Game {
 			fastBots: false,
 			fastProduction: false,
 			draft: false,
+			solarPhase: false,
 			...config
 		}
 
@@ -105,6 +111,7 @@ export class Game {
 		this.state.name = this.config.name
 		this.state.mode = this.config.mode
 		this.state.draft = this.config.draft
+		this.state.solarPhase = this.config.solarPhase
 		this.state.expansions = [...this.config.expansions]
 
 		range(0, this.config.bots).forEach(() => {
@@ -137,6 +144,7 @@ export class Game {
 			.addState(new ResearchPhaseGameState(this))
 			.addState(new DraftGameState(this))
 			.addState(new PreludeGameState(this))
+			.addState(new SolarPhaseGameState(this))
 
 		this.sm.setState(GameStateValue.WaitingForPlayers)
 	}
@@ -197,6 +205,7 @@ export class Game {
 		})
 
 		this.sm.currentState = this.sm.findState(this.state.state)
+		this.currentProgress = {} as Record<GameProgress, number | undefined>
 	}
 
 	updated = () => {
@@ -234,6 +243,7 @@ export class Game {
 		player.onCardPlayed.on(this.handleCardPlayed)
 		player.onTilePlaced.on(this.handleTilePlaced)
 		player.onProjectBought.on(this.handleProjectBought)
+		player.onProductionChanged.on(this.handlePlayerProductionChanged)
 
 		this.logger.log(`Player ${player.name} (${player.id}) added to the game`)
 
@@ -364,12 +374,79 @@ export class Game {
 		})
 	}
 
+	handlePlayerProductionChanged = ({
+		player: playedBy,
+		production,
+		change
+	}: ProductionChangedEvent) => {
+		this.state.players.forEach(player => {
+			player.usedCards
+				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
+					c.passiveEffects.forEach(
+						e =>
+							e.onPlayerProductionChanged &&
+							e.onPlayerProductionChanged(
+								{
+									card: s,
+									game: this.state,
+									player: player
+								},
+								playedBy.state,
+								production,
+								change
+							)
+					)
+				})
+		})
+	}
+
 	all(state: PlayerStateValue) {
 		return this.state.players.every(p => p.state === state)
 	}
 
 	checkState() {
 		this.checkDisconnected()
+		this.checkGameEvents()
+	}
+
+	checkGameEvents() {
+		for (const progress of [
+			'oxygen',
+			'temperature',
+			'oceans',
+			'venus'
+		] as const) {
+			const value = this.state[progress]
+			const lastValue = this.currentProgress[progress]
+
+			if (lastValue !== undefined && lastValue !== value) {
+				this.handleProgressChanged(progress)
+			}
+
+			this.currentProgress[progress] = value
+		}
+	}
+
+	handleProgressChanged(progress: GameProgress) {
+		this.state.players.forEach(player => {
+			player.usedCards
+				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
+					c.passiveEffects.forEach(
+						e =>
+							e.onProgress &&
+							e.onProgress(
+								{
+									card: s,
+									game: this.state,
+									player: player
+								},
+								progress
+							)
+					)
+				})
+		})
 	}
 
 	/**
@@ -443,6 +520,22 @@ export class Game {
 			if (!m.used && m.value <= this.state.temperature) {
 				this.logger.log(
 					`Temperature milestone ${ProgressMilestoneType[m.type]} (at ${
+						m.value
+					}) reached`
+				)
+
+				m.used = true
+
+				ProgressMilestones[m.type].effects.forEach(e =>
+					e(this.state, this.currentPlayer)
+				)
+			}
+		})
+
+		this.state.map.venusMilestones.forEach(m => {
+			if (!m.used && m.value <= this.state.venus) {
+				this.logger.log(
+					`Venus milestone ${ProgressMilestoneType[m.type]} (at ${
 						m.value
 					}) reached`
 				)

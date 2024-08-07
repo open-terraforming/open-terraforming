@@ -21,6 +21,8 @@ export const withUnits = (
 			return `${(amount as number) * 2}°C`
 		case 'oxygen':
 			return `${amount} %`
+		case 'venus':
+			return `${(amount as number) * 2} steps`
 		default:
 			return amount.toString()
 	}
@@ -34,5 +36,7 @@ export const progressResToStr = (res: GameProgress) => {
 			return 'Oxygen'
 		case 'temperature':
 			return 'Temperature'
+		case 'venus':
+			return 'Venus'
 	}
 }

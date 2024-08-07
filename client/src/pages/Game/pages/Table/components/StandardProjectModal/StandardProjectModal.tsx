@@ -17,13 +17,9 @@ type Props = {
 	onClose: () => void
 }
 
-const projects = [
-	Projects[StandardProjectType.SellPatents],
-	Projects[StandardProjectType.PowerPlant],
-	Projects[StandardProjectType.Asteroid],
-	Projects[StandardProjectType.Aquifer],
-	Projects[StandardProjectType.Greenery],
-	Projects[StandardProjectType.City]
+const HIDDEN_PROJECTS = [
+	StandardProjectType.GreeneryForPlants,
+	StandardProjectType.TemperatureForHeat
 ]
 
 export const StandardProjectModal = ({ onClose }: Props) => {
@@ -32,6 +28,10 @@ export const StandardProjectModal = ({ onClose }: Props) => {
 	const player = useAppStore(state => state.game.player)
 	const playing = useAppStore(state => state.game.playing)
 	const [selling, setSelling] = useState(false)
+
+	const projects = game.standardProjects
+		.filter(p => !HIDDEN_PROJECTS.includes(p))
+		.map(p => Projects[p])
 
 	const ctx = useMemo(
 		() =>

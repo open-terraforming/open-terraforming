@@ -1,7 +1,7 @@
 import { strToMode } from '@shared/modes/utils'
 import { promises as fs } from 'fs'
 import yargs from 'yargs'
-import { cachePath } from './config'
+import { globalConfig } from './config'
 import { multiApp } from './modes/multi'
 import { singleApp } from './modes/single'
 import picker from './server/picker'
@@ -28,7 +28,17 @@ export async function main() {
 		.option('port', {
 			type: 'number',
 			alias: 'p',
-			default: 8090
+			default: globalConfig.port
+		})
+		.option('slots', {
+			type: 'number',
+			description: 'Number of server slots',
+			default: globalConfig.slots
+		})
+		.option('fast-bots', {
+			type: 'boolean',
+			description: 'Skip interval between bot actions',
+			default: globalConfig.fastBots
 		})
 		.option('mode', {
 			type: 'string',
@@ -46,20 +56,10 @@ export async function main() {
 			description: 'Number of bots',
 			alias: 'b',
 			default: 0
-		})
-		.option('slots', {
-			type: 'number',
-			description: 'Number of server slots',
-			default: 20
-		})
-		.option('fast-bots', {
-			type: 'boolean',
-			description: 'Skip interval between bot actions',
-			default: false
 		}).argv
 
 	try {
-		fs.mkdir(cachePath, { recursive: true })
+		fs.mkdir(globalConfig.cachePath, { recursive: true })
 	} catch (e) {
 		logger.error('Failed to create cache path', e)
 	}

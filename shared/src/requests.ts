@@ -11,4 +11,5 @@ export type NewGameRequest = {
 	public?: boolean
 	spectatorsAllowed?: boolean
 	draft?: boolean
+	solarPhase?: boolean
 }

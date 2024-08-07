@@ -11,6 +11,8 @@ import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { CardPickerHeader } from './components/CardPickerHeader'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 
 export enum PickerType {
 	Cards,
@@ -29,6 +31,7 @@ type Props = {
 	free?: boolean
 	limit?: number
 	closeable?: boolean
+	closeAsMinimize?: boolean
 	onClose?: () => void
 }
 
@@ -40,6 +43,7 @@ export const CardPicker = ({
 	cards,
 	onSelect,
 	closeable,
+	closeAsMinimize,
 	onClose,
 	loading,
 	moneyOverride
@@ -153,6 +157,9 @@ export const CardPicker = ({
 				</Button>
 			}
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
+			closeIcon={
+				closeAsMinimize ? <FontAwesomeIcon icon={faChevronDown} /> : undefined
+			}
 		>
 			<CardsContainer style={{ flex: 1 }}>
 				{cardsToPick?.map(

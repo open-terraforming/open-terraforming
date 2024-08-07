@@ -3,7 +3,7 @@ import { StandardProject } from '@shared/projects'
 import { StandardProjectType } from '@shared/index'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { cardIcon, Card } from '@/icons/card'
+import { Card } from '@/icons/card'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 
@@ -69,6 +69,17 @@ const typeToContent = (project: StandardProject, cost: number) => {
 					<div>
 						<div>place a City</div>
 						<div>+ 1 money production</div>
+					</div>
+				</>
+			)
+		case StandardProjectType.AirScrapping:
+			return (
+				<>
+					<span>{cost}</span>
+					<ResourceIcon res={project.resource} size="lg" />
+					<FontAwesomeIcon icon={faArrowRight} />
+					<div>
+						<div>+ 1 Venus</div>
 					</div>
 				</>
 			)

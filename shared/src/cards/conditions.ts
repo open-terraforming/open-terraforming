@@ -24,6 +24,12 @@ export const gameCardsCondition = (amount: number) =>
 		evaluate: ({ game }) => game.cards.length + game.discarded.length >= amount
 	})
 
+export const playerCardsInHandCondition = (amount: number) =>
+	condition({
+		description: `Player has to have at least ${amount} of cards in hand`,
+		evaluate: ({ player }) => player.cards.length >= amount
+	})
+
 export const cardResourceCondition = (res: CardResource, amount: number) =>
 	condition({
 		description: `Card has to have at least ${amount} of ${res} units`,
@@ -32,10 +38,33 @@ export const cardResourceCondition = (res: CardResource, amount: number) =>
 		}
 	})
 
+export const cardAnyResourceCondition = (amount: number) =>
+	condition({
+		description: `Card has to have at least ${amount} of any resource`,
+		evaluate: ({ card }) => {
+			const res = CardsLookupApi.get(card.code).resource
+
+			return !!res && card[res] >= amount
+		}
+	})
+
+export const cardHasCategory = (res: CardCategory) =>
+	condition({
+		description: `Card has to have ${res} tag`,
+		evaluate: ({ card }) =>
+			CardsLookupApi.get(card.code).categories.includes(res)
+	})
+
 export const cardAcceptsResource = (res: CardResource) =>
 	condition({
 		description: `Card accepts ${res}`,
 		evaluate: ({ card }) => CardsLookupApi.get(card.code).resource === res
+	})
+
+export const cardAcceptsAnyResource = () =>
+	condition({
+		description: `Card accepts any resource`,
+		evaluate: ({ card }) => !!CardsLookupApi.get(card.code).resource
 	})
 
 export const cardCountCondition = (category: CardCategory, value: number) =>
@@ -53,6 +82,17 @@ export const cardCountCondition = (category: CardCategory, value: number) =>
 				) >= value,
 		symbols: [{ tag: category, count: value }],
 		description: `Requires ${value} ${CardCategory[category]} tag(s)`
+	})
+
+export const cardResourcesAnywhereCondition = (
+	res: CardResource,
+	amount: number
+) =>
+	condition({
+		description: `Has to have at least ${amount} of ${res} units anywhere`,
+		evaluate: ({ player }) => {
+			return player.usedCards.reduce((acc, c) => acc + c[res], 0) >= amount
+		}
 	})
 
 export const joinedCardCountCondition = (
@@ -99,8 +139,15 @@ export const joinedCardCountCondition = (
 
 export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 	condition({
-		evaluate: ({ game, player }) =>
-			game[res] >= value - player.progressConditionBonus,
+		evaluate: ({ game, player, card }) =>
+			game[res] >=
+			value -
+				player.progressConditionBonus -
+				CardsLookupApi.get(card.code).categories.reduce(
+					(acc, category) =>
+						acc + (player.progressConditionBonusByTag[category] ?? 0),
+					0
+				),
 		symbols: [
 			{ ...progressSymbol[res] },
 			{ symbol: SymbolType.MoreOrEqual },
@@ -114,8 +161,15 @@ export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 
 export const gameProgressConditionMax = (res: GameProgress, value: number) =>
 	condition({
-		evaluate: ({ game, player }) =>
-			game[res] <= value + player.progressConditionBonus,
+		evaluate: ({ game, player, card }) =>
+			game[res] <=
+			value +
+				player.progressConditionBonus +
+				CardsLookupApi.get(card.code).categories.reduce(
+					(acc, category) =>
+						acc + (player.progressConditionBonusByTag[category] ?? 0),
+					0
+				),
 		symbols: [
 			{ ...progressSymbol[res] },
 			{ symbol: SymbolType.LessOrEqual },
@@ -175,4 +229,11 @@ export const unprotectedCard = () =>
 export const unprotectedPlayerResource = (res: Resource) =>
 	condition({
 		evaluate: ({ player }) => res !== 'plants' || !player.protectedHabitat
+	})
+
+export const terraformRatingMin = (value: number) =>
+	condition({
+		evaluate: ({ player }) => player.terraformRating >= value,
+		symbols: [{ symbol: SymbolType.TerraformingRating, count: value }],
+		description: `Requires ${value} TR`
 	})

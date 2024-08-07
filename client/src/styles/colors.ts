@@ -5,7 +5,7 @@ const application = '#182541'
 const text = '#BDCBEE'
 const primary = lighten(0.1, application)
 const secondary = '#265560'
-const info = '#265560'
+const info = '#3d5969'
 const success = '#37B479'
 const danger = '#DB433A'
 const warn = '#FAA94B'
@@ -72,20 +72,24 @@ export default {
 
 	message: {
 		info: {
-			background: info,
-			color: '#fff'
+			background: 'transparent',
+			color: text,
+			border: `2px solid ${info}`
 		},
 		warn: {
-			background: warn,
-			color: '#fff'
+			background: 'transparent',
+			color: text,
+			border: `2px solid ${warn}`
 		},
 		error: {
-			background: danger,
-			color: '#fff'
+			background: 'transparent',
+			color: text,
+			border: `2px solid ${danger}`
 		},
 		success: {
-			background: success,
-			color: '#fff'
+			background: 'transparent',
+			color: text,
+			border: `2px solid ${success}`
 		}
 	},
 

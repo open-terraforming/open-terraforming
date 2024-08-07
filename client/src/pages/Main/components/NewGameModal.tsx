@@ -23,7 +23,7 @@ type Props = {
 	onClose: () => void
 }
 
-const availableExpansions = [ExpansionType.Prelude]
+const availableExpansions = [ExpansionType.Prelude, ExpansionType.Venus]
 
 export const NewGameModal = ({ onClose }: Props) => {
 	const dispatch = useAppDispatch()
@@ -35,7 +35,12 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [spectators, setSpectators] = useState(true)
 	const [draft, setDraft] = useState(false)
 	const [bots, setBots] = useState(0)
-	const [expansions, setExpansions] = useState([ExpansionType.Prelude])
+	const [solarPhase, setSolarPhase] = useState(true)
+
+	const [expansions, setExpansions] = useState([
+		ExpansionType.Prelude,
+		ExpansionType.Venus
+	])
 
 	const [loading, setLoading] = useState(false)
 
@@ -67,7 +72,8 @@ export const NewGameModal = ({ onClose }: Props) => {
 				public: isPublic,
 				spectatorsAllowed: spectators,
 				expansions,
-				draft
+				draft,
+				solarPhase
 			})
 
 			if (res.id) {
@@ -93,7 +99,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 				}
 			}
 		} catch (e) {
-			setError(e.message)
+			setError((e as Error).message)
 		}
 
 		setLoading(false)
@@ -196,6 +202,22 @@ export const NewGameModal = ({ onClose }: Props) => {
 						there&apos;s no card left to pass, players pick which cards to
 						research from the 4 cards they picked. This option is not
 						recommended for beginners.
+					</SelectItemDesc>
+				</Field>
+
+				<Field>
+					<Checkbox
+						checked={solarPhase}
+						onChange={v => setSolarPhase(v)}
+						label="Enable Solar Phase"
+					/>
+
+					<SelectItemDesc style={{ maxWidth: '30rem' }}>
+						Adds a new game phase after the production phase. In this phase, the
+						current player will be able to increase one global terraforming
+						parameter. The player is acting on WG behalf so they won&apos;t
+						receive any TR nor resources for the action. This option speeds up
+						the game a little and is recommended with Venus expansion.
 					</SelectItemDesc>
 				</Field>
 

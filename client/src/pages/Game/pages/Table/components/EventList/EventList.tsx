@@ -1,5 +1,5 @@
 import mars from '@/assets/mars-icon.png'
-import { Button, Portal } from '@/components'
+import { Button, DialogWrapper, Portal } from '@/components'
 import { useAppStore } from '@/utils/hooks'
 import { faExpand } from '@fortawesome/free-solid-svg-icons'
 import { PlayerStateValue } from '@shared/index'
@@ -11,12 +11,14 @@ import { EventSounds } from './components/EventSounds'
 import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
 import { TimeDisplay } from './components/TimeDisplay'
+import { CheatsModal } from '../CheatsModal/CheatsModal'
 
 type Props = {}
 
 export const EventList = ({}: Props) => {
 	const player = useAppStore(state => state.game.player)
 	const events = useAppStore(state => state.game.events)
+	const isAdmin = player.admin
 
 	const [displayModal, setDisplayModal] = useState(false)
 
@@ -61,6 +63,13 @@ export const EventList = ({}: Props) => {
 				<TopButtons>
 					<Button onClick={handleFullscreen} icon={faExpand} />
 					<EventLog onClick={() => setDisplayModal(true)}>Event log</EventLog>
+					{isAdmin && (
+						<DialogWrapper
+							dialog={close => <CheatsModal open onClose={close} />}
+						>
+							{open => <Button onClick={open}>Cheats</Button>}
+						</DialogWrapper>
+					)}
 					<TimeDisplay />
 				</TopButtons>
 			</Portal>

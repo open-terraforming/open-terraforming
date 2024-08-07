@@ -13,7 +13,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
-	perform({ card: cardCode, index, args, useOre, useTitan }: Args) {
+	perform({ card: cardCode, index, args, useOre, useTitan, useCards }: Args) {
 		if (this.pendingAction) {
 			throw new Error("You've got pending actions to attend to")
 		}
@@ -56,6 +56,43 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 
 			useTitan = Math.min(useTitan, Math.ceil(cost / this.player.titanPrice))
 			cost -= useTitan * this.player.titanPrice
+		}
+
+		if (useCards) {
+			for (const [code, amount] of Object.entries(useCards)) {
+				const usedCard = this.player.usedCards.find(c => c.code === code)
+
+				if (!usedCard) {
+					throw new Error(`You don't have card ${code} on table`)
+				}
+
+				const data = CardsLookupApi.get(code)
+				const { resource, resourcesUsableAsMoney } = data
+
+				if (!resource) {
+					throw new Error(`Card ${code} doesn't have resource`)
+				}
+
+				if (!resourcesUsableAsMoney) {
+					throw new Error(`Card ${code} can't be used for payments`)
+				}
+
+				if (
+					resourcesUsableAsMoney.categories &&
+					!resourcesUsableAsMoney.categories.some(cat =>
+						card.categories.includes(cat)
+					)
+				) {
+					throw new Error(`Card ${code} can't be used for payment of this card`)
+				}
+
+				if (amount > usedCard[resource]) {
+					throw new Error(`You don't have ${amount} of card ${code}`)
+				}
+
+				cost -= amount * usedCard[resource] * resourcesUsableAsMoney.amount
+				usedCard[resource] -= amount
+			}
 		}
 
 		if (this.player.money < cost) {

@@ -216,7 +216,7 @@ export class Bot extends Player {
 				)
 
 				if (tile) {
-					return this.performAction(placeTile(tile.x, tile.y))
+					return this.performAction(placeTile(tile.x, tile.y, tile.location))
 				} else {
 					return this.performAction(playerPass(true))
 				}
@@ -229,7 +229,7 @@ export class Bot extends Player {
 				)
 
 				if (tile) {
-					return this.performAction(claimTile(tile.x, tile.y))
+					return this.performAction(claimTile(tile.x, tile.y, tile.location))
 				} else {
 					return this.performAction(playerPass(true))
 				}
@@ -301,7 +301,7 @@ export class Bot extends Player {
 					if (tile) {
 						actions.push([
 							0,
-							() => this.performAction(placeTile(tile.x, tile.y))
+							() => this.performAction(placeTile(tile.x, tile.y, tile.location))
 						])
 					}
 				}
@@ -431,6 +431,7 @@ export class Bot extends Player {
 												c.categories.includes(CardCategory.Space)
 													? this.state.titan
 													: 0,
+												{},
 												score.args
 											)
 										)

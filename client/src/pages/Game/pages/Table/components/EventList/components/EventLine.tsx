@@ -114,9 +114,12 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					</>
 				)
 			case EventType.TilePlaced:
+				const player = players[event.playerId]
+
 				return (
 					<>
-						<PlayerSpan player={players[event.playerId]} />
+						{player && <PlayerSpan player={players[event.playerId]} />}
+						{!player && 'World government'}
 						{' placed '}
 						<CardSpanE>
 							{event.other !== undefined && event.other !== null

@@ -11,14 +11,14 @@ export class ClaimTileAction extends PlayerBaseAction<Args> {
 	states = [PlayerStateValue.Playing, PlayerStateValue.EndingTiles]
 	gameStates = [GameStateValue.GenerationInProgress, GameStateValue.EndingTiles]
 
-	perform({ x, y }: Args) {
+	perform({ x, y, location }: Args) {
 		const top = this.pendingAction
 
 		if (top?.type !== PlayerActionType.ClaimTile) {
 			throw new Error("You're not claiming now")
 		}
 
-		const cell = cellByCoords(this.game, x, y)
+		const cell = cellByCoords(this.game, x, y, location)
 
 		if (!cell) {
 			throw new Error('Cell not found')

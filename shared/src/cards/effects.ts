@@ -38,7 +38,11 @@ import {
 	gameCardsCondition,
 	productionCondition,
 	resourceCondition,
-	unprotectedPlayerResource
+	unprotectedPlayerResource,
+	cardHasCategory,
+	cardAcceptsAnyResource,
+	cardAnyResourceCondition,
+	playerCardsInHandCondition
 } from './conditions'
 import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
@@ -182,6 +186,141 @@ export const playerResourceChange = (
 						res,
 						-change
 				  )} from any player`,
+		perform: ({ game }, arg: number | [number, number] = [-1, 0]) => {
+			const [playerId, amount] = Array.isArray(arg) ? arg : [arg, 0]
+
+			if (playerId === null || playerId < 0) {
+				if (!optional) {
+					throw new Error('You have to select a player to do this')
+				} else {
+					return
+				}
+			}
+
+			const player = gamePlayer(game, playerId)
+
+			const actualChange = !optional
+				? change
+				: change < 0
+				? Math.max(change, -amount)
+				: Math.min(change, amount)
+
+			updatePlayerResource(player, res, actualChange)
+		}
+	})
+}
+
+export const resourceChangeByArg = (
+	res: Resource,
+	change: number,
+	argIndex: number
+) => {
+	return effect({
+		symbols: [{ symbol: SymbolType.X }, { resource: res, count: change }],
+		description: `Receive ${change > 1 ? change : ''}X of ${res}`,
+		perform: ({ player, allArgs }) => {
+			const amount = allArgs?.[argIndex]
+
+			if (typeof amount !== 'number') {
+				throw new Error(
+					`Invalid argument supplied, expected amount of type number, got "${amount}"`
+				)
+			}
+
+			updatePlayerResource(player, res, amount * change)
+		}
+	})
+}
+
+export const playerResourceChangeWithTagCondition = (
+	res: Resource,
+	change: number,
+	tag: CardCategory,
+	tagCount: number,
+	optional = true
+) => {
+	return effect({
+		args: [
+			!optional
+				? effectArg({
+						descriptionPrefix:
+							change > 0
+								? `Give ${withUnits(res, change)} to`
+								: `Remove ${withUnits(res, -change)} from`,
+						type: CardEffectTarget.Player,
+						optional: false,
+						resource: res,
+						playerConditions:
+							change < 0
+								? [
+										resourceCondition(
+											res,
+											optional ? 1 : -change
+										) as PlayerCondition,
+										unprotectedPlayerResource(res) as PlayerCondition,
+										cardCountCondition(tag, tagCount)
+								  ]
+								: [cardCountCondition(tag, tagCount)]
+				  })
+				: effectArg({
+						descriptionPrefix: change > 0 ? 'Give to' : `Remove from`,
+						type: CardEffectTarget.PlayerResource,
+						maxAmount: Math.abs(change),
+						resource: res,
+						optional,
+						playerConditions:
+							change < 0
+								? [
+										resourceCondition(
+											res,
+											optional ? 1 : -change
+										) as PlayerCondition,
+										unprotectedPlayerResource(res) as PlayerCondition,
+										cardCountCondition(tag, tagCount)
+								  ]
+								: [cardCountCondition(tag, tagCount)]
+				  })
+		],
+		conditions:
+			!optional && change < 0
+				? [
+						condition({
+							description: `There has to be player with at least ${withUnits(
+								res,
+								-change
+							)} and ${tagCount} ${CardCategory[tag]} tag(s)`,
+							evaluate: ({ game, player }) =>
+								!!game.players.find(
+									p =>
+										p.id !== player.id &&
+										p[res] >= -change &&
+										p.usedCards.reduce(
+											(acc, c) =>
+												acc +
+												CardsLookupApi.get(c.code).categories.filter(
+													c => c === tag
+												).length,
+											0
+										) >= tagCount
+								)
+						})
+				  ]
+				: [],
+		symbols: [{ resource: res, count: change, other: true }],
+		description:
+			change > 0
+				? `Give ${optional ? ' up to' : ''} ${withUnits(
+						res,
+						change
+				  )} to any player with at least ${tagCount} ${
+						CardCategory[tag]
+				  } tag(s)`
+				: `Remove ${optional ? ' up to' : ''} ${withUnits(
+						res,
+						-change
+				  )} from any player with at least  ${tagCount} ${
+						CardCategory[tag]
+				  } tag(s)`,
 		perform: ({ game }, arg: number | [number, number] = [-1, 0]) => {
 			const [playerId, amount] = Array.isArray(arg) ? arg : [arg, 0]
 
@@ -431,24 +570,31 @@ export const joinedEffects = (effects: CardEffect[]) =>
 		conditions: flatten(effects.map(e => e.conditions)),
 		symbols: flatten(effects.map(e => e.symbols)),
 		perform: (ctx, ...args) => {
+			const allArgs = [...args]
+
 			effects.forEach(e => {
 				e.perform(
-					ctx,
+					{ ...ctx, allArgs },
 					...(e.args.length > 0 ? args.splice(0, e.args.length) : [])
 				)
 			})
 		}
 	})
 
-export const otherCardResourceChange = (res: CardResource, amount: number) =>
+export const otherCardResourceChange = (
+	res: CardResource,
+	amount: number,
+	requiredCategory?: CardCategory
+) =>
 	effect({
 		args: [
 			{
-				...cardArg(
-					amount < 0
+				...cardArg([
+					...(requiredCategory ? [cardHasCategory(requiredCategory)] : []),
+					...(amount < 0
 						? [cardResourceCondition(res, -amount)]
-						: [cardAcceptsResource(res)]
-				),
+						: [cardAcceptsResource(res)])
+				]),
 				descriptionPrefix:
 					amount > 0
 						? `Add ${amount} ${res} to`
@@ -470,11 +616,166 @@ export const otherCardResourceChange = (res: CardResource, amount: number) =>
 									)
 						})
 				  ]
-				: [],
+				: // TODO: Add condition that requires player to own card with that resource?
+				  [],
 		description:
 			amount < 0
-				? `Remove ${-amount} ${res} from any other card`
-				: `Add ${amount} ${res} to any other card`,
+				? `Remove ${-amount} ${res} from any other card${
+						requiredCategory
+							? ' with ' + CardCategory[requiredCategory] + ' tag'
+							: ''
+				  }`
+				: `Add ${amount} ${res} to any other card${
+						requiredCategory
+							? ' with ' + CardCategory[requiredCategory] + ' tag'
+							: ''
+				  }`,
+		symbols: [{ cardResource: res, count: amount }],
+		perform: ({ player }, cardIndex: number) => {
+			if (typeof cardIndex === 'number' && cardIndex >= 0) {
+				const cardState = player.usedCards[cardIndex]
+
+				if (!cardState) {
+					throw new Error(`Invalid card target ${cardIndex}`)
+				}
+
+				const card = CardsLookupApi.get(cardState?.code)
+
+				if (card.resource !== res) {
+					throw new Error(`${card.code} doesn't accept ${res}`)
+				}
+
+				cardState[res] += amount
+			}
+		}
+	})
+
+export const otherCardAnyResourceChange = (
+	amount: number,
+	requiredCategory?: CardCategory
+) =>
+	effect({
+		args: [
+			{
+				...cardArg([
+					...(requiredCategory ? [cardHasCategory(requiredCategory)] : []),
+					...(amount < 0
+						? [cardAnyResourceCondition(-amount)]
+						: [cardAcceptsAnyResource()])
+				]),
+				descriptionPrefix:
+					amount > 0
+						? `Add ${amount} of any resource to`
+						: `Remove ${-amount} of any resource from`
+			}
+		],
+		conditions:
+			amount < 0
+				? [
+						condition({
+							description: `Player has to have a card that accepts resources`,
+							evaluate: ({ player }) =>
+								!!player.usedCards
+									.map(c => ({ card: CardsLookupApi.get(c.code), state: c }))
+									.find(
+										({ card, state }) =>
+											!!card.resource &&
+											(amount > 0 || state[card.resource] >= -amount)
+									)
+						})
+				  ]
+				: // TODO: Add condition that requires player to own card with that resource?
+				  [],
+		description:
+			amount < 0
+				? `Remove ${-amount} of any resource from any other card${
+						requiredCategory
+							? ' with ' + CardCategory[requiredCategory] + ' tag'
+							: ''
+				  }`
+				: `Add ${amount} of any resource to any other card${
+						requiredCategory
+							? ' with ' + CardCategory[requiredCategory] + ' tag'
+							: ''
+				  }`,
+		symbols: [{ symbol: SymbolType.AnyResource, count: amount }],
+		perform: ({ player }, cardIndex: number) => {
+			if (typeof cardIndex === 'number' && cardIndex >= 0) {
+				const cardState = player.usedCards[cardIndex]
+
+				if (!cardState) {
+					throw new Error(`Invalid card target ${cardIndex}`)
+				}
+
+				const card = CardsLookupApi.get(cardState?.code)
+
+				if (!card.resource) {
+					throw new Error(`${card.code} doesn't accept resources`)
+				}
+
+				cardState[card.resource] += amount
+			}
+		}
+	})
+
+export const otherCardResourceChangePerTag = (
+	res: CardResource,
+	amount: number,
+	tag: CardCategory,
+	requiredCategory?: CardCategory
+) =>
+	effect({
+		args: [
+			{
+				...cardArg([
+					...(requiredCategory ? [cardHasCategory(requiredCategory)] : []),
+					...(amount < 0
+						? [cardResourceCondition(res, -amount)]
+						: [cardAcceptsResource(res)])
+				]),
+				descriptionPrefix:
+					amount > 0
+						? `Add 1 per ${tag} of ${res} to`
+						: `Remove 1 per ${tag} of ${res} from`
+			}
+		],
+		conditions:
+			amount < 0
+				? [
+						condition({
+							description: `Player has to have a card that accepts ${res} and has >= ${amount}`,
+							evaluate: ({ player }) =>
+								!!player.usedCards
+									.map(c => ({ card: CardsLookupApi.get(c.code), state: c }))
+									.find(
+										({ card, state }) =>
+											card.resource === res &&
+											(amount > 0 || state[card.resource] >= -amount)
+									)
+						})
+				  ]
+				: [
+						condition({
+							description: `Player has to have a card that accepts ${res}`,
+							evaluate: ({ player, card }) =>
+								CardsLookupApi.get(card.code).resource === res ||
+								!!player.usedCards
+									.map(c => ({ card: CardsLookupApi.get(c.code), state: c }))
+									.find(({ card }) => card.resource === res)
+						})
+				  ],
+		description:
+			amount < 0
+				? `Remove 1 of ${res} per ${CardCategory[tag]} tag from any other card${
+						requiredCategory
+							? ' with ' + CardCategory[requiredCategory] + ' tag'
+							: ''
+				  }`
+				: `Add 1 of ${res} per ${CardCategory[tag]} tag to any other card${
+						requiredCategory
+							? ' with ' + CardCategory[requiredCategory] + ' tag'
+							: ''
+				  }`,
 		symbols: [{ cardResource: res, count: amount }],
 		perform: ({ player }, cardIndex: number) => {
 			if (typeof cardIndex === 'number' && cardIndex >= 0) {
@@ -505,6 +806,29 @@ export const cardResourceChange = (res: CardResource, amount: number) =>
 		conditions: amount < 0 ? [cardResourceCondition(res, -amount)] : [],
 		perform: ({ card }) => {
 			card[res] += amount
+		}
+	})
+
+export const cardResourceAnyAmountChange = (
+	res: CardResource,
+	descriptionPostfix?: string,
+	removeResources = true
+) =>
+	effect({
+		args: [
+			// TODO: This wasn't properly validated
+			effectArg({
+				type: CardEffectTarget.CardResourceCount,
+				minAmount: 1,
+				descriptionPostfix
+			})
+		],
+		description: !removeResources
+			? `Add X of ${res} units to this card`
+			: `Remove X of ${res} units from this card`,
+		symbols: [{ symbol: SymbolType.X }, { cardResource: res }],
+		perform: ({ card }, amount: number) => {
+			card[res] += removeResources ? -amount : amount
 		}
 	})
 
@@ -674,6 +998,32 @@ export const getTopCards = (count: number) =>
 		}
 	})
 
+export const discardCard = () =>
+	effect({
+		args: [
+			// TODO: This allows player to pick the card that's being played
+			effectArg({
+				type: CardEffectTarget.Card,
+				fromHand: true
+			})
+		],
+		description: `Discard ${1} card(s)`,
+		conditions: [playerCardsInHandCondition(1)],
+		symbols: [{ symbol: SymbolType.Card, count: 1 }],
+		perform: ({ player, game }, cardIndex: number) => {
+			const [pickedCard] = player.cards.splice(cardIndex, 1)
+			game.discarded.push(pickedCard)
+		}
+	})
+
+export const hasCardTagsVoidEffect = (category: CardCategory, count: number) =>
+	effect({
+		description: f('Have {0} {1} tags', count, CardCategory[category]),
+		conditions: [cardCountCondition(category, count)],
+		// eslint-disable-next-line @typescript-eslint/no-empty-function
+		perform: () => {}
+	})
+
 export const getTopCardsWithTag = (count: number, tag: CardCategory) =>
 	effect({
 		description: `Draw cards until you have ${count} card(s) with ${CardCategory[tag]} tag, discard the rest`,
@@ -696,6 +1046,24 @@ export const getTopCardsWithTag = (count: number, tag: CardCategory) =>
 			}
 
 			player.cards.push(...picked)
+		}
+	})
+
+export const otherPlayersGetTopCards = (count: number) =>
+	effect({
+		description: `All opponents draw ${count} card(s)`,
+		// TODO: This is wrong, it should be players * count
+		conditions: [gameCardsCondition(count)],
+		// TODO: Symbol for other?
+		symbols: [{ symbol: SymbolType.Card, count }],
+		perform: ({ player, game }) => {
+			game.players.forEach(otherPlayer => {
+				if (otherPlayer.id === player.id) {
+					return
+				}
+
+				player.cards.push(...drawCards(game, count))
+			})
 		}
 	})
 

@@ -1,7 +1,7 @@
-import { CardEffectArgumentType } from './cards'
+import { CardEffectArgumentType, GameProgress } from './cards'
 import { CompetitionType } from './competitions'
 import { GameInfo } from './extra'
-import { GameState, StandardProjectType } from './game'
+import { GameState, GridCellLocation, StandardProjectType } from './game'
 import { MilestoneType } from './milestones'
 
 /**
@@ -60,7 +60,8 @@ export enum MessageType {
 	SpectateRequest,
 	SpectateResponse,
 	DraftCard,
-	PickStarting
+	PickStarting,
+	SolarPhaseTerraform
 }
 
 export const handshakeRequest = (version: string) =>
@@ -133,11 +134,12 @@ export const buyCard = (
 	index: number,
 	useOre: number,
 	useTitan: number,
+	useCards: Record<string, number>,
 	args: CardEffectArgumentType[][]
 ) =>
 	({
 		type: MessageType.BuyCard,
-		data: { card, index, args, useOre, useTitan }
+		data: { card, index, args, useOre, useTitan, useCards }
 	} as const)
 
 export const sellCard = (card: string, index: number) =>
@@ -156,16 +158,24 @@ export const playCard = (
 		data: { card, index, args }
 	} as const)
 
-export const placeTile = (x: number, y: number) =>
+export const placeTile = (
+	x: number,
+	y: number,
+	location: GridCellLocation | undefined
+) =>
 	({
 		type: MessageType.PlaceTile,
-		data: { x, y }
+		data: { x, y, location }
 	} as const)
 
-export const claimTile = (x: number, y: number) =>
+export const claimTile = (
+	x: number,
+	y: number,
+	location: GridCellLocation | undefined
+) =>
 	({
 		type: MessageType.ClaimTile,
-		data: { x, y }
+		data: { x, y, location }
 	} as const)
 
 export const adminChange = (state: UpdateDeepPartial<GameState>) =>
@@ -259,6 +269,12 @@ export const draftCard = (cards: number[]) =>
 		data: { cards }
 	} as const)
 
+export const solarPhaseTerraform = (progress: GameProgress) =>
+	({
+		type: MessageType.SolarPhaseTerraform,
+		data: { progress }
+	} as const)
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -288,3 +304,4 @@ export type GameMessage =
 	| ReturnType<typeof spectateResponse>
 	| ReturnType<typeof draftCard>
 	| ReturnType<typeof pickStarting>
+	| ReturnType<typeof solarPhaseTerraform>

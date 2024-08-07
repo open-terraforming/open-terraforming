@@ -3,7 +3,7 @@ import { useWindowEvent } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { darken, rgba } from 'polished'
-import React, { useCallback, useState } from 'react'
+import React, { ReactNode, useCallback, useState } from 'react'
 import ReactDOM from 'react-dom'
 import styled, { css, keyframes, Keyframes } from 'styled-components'
 import { Body, Footer, Header } from './styles'
@@ -28,6 +28,7 @@ export interface ModalProps {
 	allowClose?: boolean
 	stretchFooterButtons?: boolean
 	hideClose?: boolean
+	closeIcon?: ReactNode
 }
 
 let modalPortal: HTMLDivElement | null = null
@@ -45,7 +46,8 @@ export const Modal = ({
 	bodyStyle,
 	stretchFooterButtons = true,
 	allowClose = true,
-	hideClose = false
+	hideClose = false,
+	closeIcon
 }: ModalProps) => {
 	const [isClosing, setIsClosing] = useState(false)
 
@@ -97,7 +99,7 @@ export const Modal = ({
 										: header}
 									{!hideClose && allowClose && (
 										<Close onClick={handleTameClose}>
-											<FontAwesomeIcon icon={faTimes} />
+											{closeIcon ?? <FontAwesomeIcon icon={faTimes} />}
 										</Close>
 									)}
 								</Header>

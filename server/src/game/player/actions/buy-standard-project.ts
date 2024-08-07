@@ -20,6 +20,10 @@ export class BuyStandardProjectAction extends PlayerBaseAction<Args> {
 			throw new Error("You've got pending actions to attend to")
 		}
 
+		if (!this.game.standardProjects.includes(projectType)) {
+			throw new Error('Project type not supported by current game')
+		}
+
 		const project = Projects[projectType]
 
 		const ctx = {

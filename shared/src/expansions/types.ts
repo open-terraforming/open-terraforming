@@ -3,7 +3,8 @@ import { WithOptional, Card } from '../cards'
 
 export enum ExpansionType {
 	Base = 1,
-	Prelude
+	Prelude,
+	Venus
 }
 
 export interface Expansion {

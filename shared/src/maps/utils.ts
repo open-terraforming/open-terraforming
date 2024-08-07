@@ -29,6 +29,18 @@ export const oceanAt = (value: number) =>
 		value
 	})
 
+export const cardAt = (value: number) =>
+	milestoneItem({
+		type: ProgressMilestoneType.Card,
+		value
+	})
+
+export const terraformingRatingAt = (value: number) =>
+	milestoneItem({
+		type: ProgressMilestoneType.TerraformingRating,
+		value
+	})
+
 export const mapInfo = (c: MapInfo) => c
 
 export const cell = (c: Partial<GridCell>): GridCell => ({

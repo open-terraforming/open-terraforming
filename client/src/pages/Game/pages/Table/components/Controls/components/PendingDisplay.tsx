@@ -33,6 +33,8 @@ export const PendingDisplay = ({ pending }: Props) => {
 				return 'Playing card'
 			case PlayerActionType.SponsorCompetition:
 				return 'Selecting competition'
+			case PlayerActionType.SolarPhaseTerraform:
+				return 'World Government Terraforming'
 		}
 	}, [pending])
 

@@ -5,18 +5,29 @@ import { Logger } from '@/utils/log'
 import { CardCategory, CardsLookupApi } from '@shared/cards'
 import express from 'express'
 import got from 'got'
-import config from '../../config'
 import { ServerOptions } from './types'
 import bodyParser from 'body-parser'
+import { globalConfig } from '@/config'
 
 const attr = (s: string) => s.replace(/"/g, '"')
 
 export default (serverConfig: ServerOptions) => {
 	const logger = new Logger('Picker')
 
+	if (
+		!globalConfig.cardEditor.googleCseId ||
+		!globalConfig.cardEditor.googleApiKey
+	) {
+		logger.error('Google credentials not defined, exiting')
+		process.exit(1)
+	}
+
 	const app = express()
 
-	const searchClient = new ImageSearch(config.googleCseId, config.googleApiKey)
+	const searchClient = new ImageSearch(
+		globalConfig.cardEditor.googleCseId,
+		globalConfig.cardEditor.googleApiKey
+	)
 
 	app.use(bodyParser.urlencoded({ extended: true }))
 	app.use(bodyParser.json())

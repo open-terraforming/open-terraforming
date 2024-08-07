@@ -7,10 +7,10 @@ import {
 	unlinkSync
 } from 'fs'
 import { join, dirname } from 'path'
-import { storagePath, cachePath, staticPath } from './config'
+import { globalConfig } from './config'
 
-const historyPath = join(storagePath, 'history')
-const ongoingPath = join(storagePath, 'ongoing')
+const historyPath = join(globalConfig.storagePath, 'history')
+const ongoingPath = join(globalConfig.storagePath, 'ongoing')
 
 export const saveHistory = async (game: GameState) => {
 	await fs.mkdir(historyPath, { recursive: true })
@@ -52,26 +52,29 @@ export const tryLoadLock = (id: string) => {
 }
 
 export const saveToCache = async (name: string, data: Buffer | string) => {
-	await fs.mkdir(cachePath, { recursive: true })
-	await fs.writeFile(join(cachePath, name), data)
+	await fs.mkdir(globalConfig.cachePath, { recursive: true })
+	await fs.writeFile(join(globalConfig.cachePath, name), data)
 }
 
 export const tryLoadCache = async (name: string) => {
 	try {
-		return await fs.readFile(join(cachePath, name))
+		return await fs.readFile(join(globalConfig.cachePath, name))
 	} catch (e) {
 		return null
 	}
 }
 
 export const saveStatic = async (name: string, data: Buffer | string) => {
-	await fs.mkdir(dirname(join(staticPath, name)), { recursive: true })
-	await fs.writeFile(join(staticPath, name), data)
+	await fs.mkdir(dirname(join(globalConfig.staticPath, name)), {
+		recursive: true
+	})
+
+	await fs.writeFile(join(globalConfig.staticPath, name), data)
 }
 
 export const tryLoadStatic = async (name: string) => {
 	try {
-		return await fs.readFile(join(staticPath, name))
+		return await fs.readFile(join(globalConfig.staticPath, name))
 	} catch (e) {
 		return null
 	}
@@ -79,7 +82,7 @@ export const tryLoadStatic = async (name: string) => {
 
 export const tryLoadStaticSync = (name: string) => {
 	try {
-		return readFileSync(join(staticPath, name))
+		return readFileSync(join(globalConfig.staticPath, name))
 	} catch (e) {
 		return null
 	}

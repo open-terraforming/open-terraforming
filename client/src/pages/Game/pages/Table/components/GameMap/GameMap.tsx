@@ -2,12 +2,14 @@ import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore, useInterval } from '@/utils/hooks'
 import { claimTile, placeTile } from '@shared/actions'
-import { GridCell, PlayerStateValue } from '@shared/game'
+import { GridCell, GridCellLocation, PlayerStateValue } from '@shared/game'
 import { PlayerActionType } from '@shared/player-actions'
 import React, { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Cell, delayFunctions } from './components/Cell'
 import { CellOverlay } from './components/CellOverlay'
+import { ExpansionType } from '@shared/expansions/types'
+import { VenusButton } from './components/VenusButton'
 
 type Props = {}
 
@@ -21,6 +23,11 @@ const cellPos = (x: number, y: number) => {
 
 export const GameMap = ({}: Props) => {
 	const api = useApi()
+
+	const hasVenus = useAppStore(state =>
+		state.game.state?.expansions.includes(ExpansionType.Venus)
+	)
+
 	const map = useAppStore(state => state.game.state?.map)
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [delayFunction, setDelayFunction] = useState(0)
@@ -81,9 +88,9 @@ export const GameMap = ({}: Props) => {
 
 	const handleCellClick = (cell: GridCell) => {
 		if (placing) {
-			api.send(placeTile(cell.x, cell.y))
+			api.send(placeTile(cell.x, cell.y, cell.location))
 		} else if (claiming) {
-			api.send(claimTile(cell.x, cell.y))
+			api.send(claimTile(cell.x, cell.y, cell.location))
 		}
 	}
 
@@ -104,9 +111,16 @@ export const GameMap = ({}: Props) => {
 						<img src={background} />
 					</Background>
 
+					{hasVenus && <VenusButton placing={placing} />}
+
 					{map.grid.map(col =>
 						col
-							.filter(c => c.enabled)
+							.filter(
+								c =>
+									c.enabled &&
+									(c.location === undefined ||
+										c.location === GridCellLocation.Main)
+							)
 							.map(cell => (
 								<CellOverlay
 									placing={placing}
@@ -136,7 +150,12 @@ export const GameMap = ({}: Props) => {
 						<g>
 							{map.grid.map(col =>
 								col
-									.filter(c => c.enabled)
+									.filter(
+										c =>
+											c.enabled &&
+											(c.location === undefined ||
+												c.location === GridCellLocation.Main)
+									)
 									.map(cell => (
 										<Cell
 											cell={cell}

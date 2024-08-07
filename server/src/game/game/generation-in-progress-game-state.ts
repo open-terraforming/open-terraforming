@@ -35,6 +35,16 @@ export class GenerationInProgressGameState extends BaseGameState {
 
 	transition() {
 		if (this.game.all(PlayerStateValue.Passed)) {
+			if (
+				this.game.state.solarPhase &&
+				(this.game.state.venus < this.game.state.map.venus ||
+					this.game.state.temperature < this.game.state.map.temperature ||
+					this.game.state.oxygen < this.game.state.map.oxygen ||
+					this.game.state.oceans < this.game.state.map.oceans)
+			) {
+				return GameStateValue.SolarPhase
+			}
+
 			return GameStateValue.GenerationEnding
 		}
 	}

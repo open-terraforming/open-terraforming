@@ -3,7 +3,6 @@ import { CardCategory } from '@shared/cards'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Tag } from '../../../../CardView/components/Tag'
-import { useMountAnim } from '@/utils/hooks'
 
 export type TagCount = { tag: CardCategory; count: number }
 

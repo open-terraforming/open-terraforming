@@ -16,6 +16,7 @@ import {
 	faQuestion
 } from '@fortawesome/free-solid-svg-icons'
 import { Jupiter } from './Jupiter'
+import { venusIcon } from '@/icons/venus'
 
 type Props = {
 	tag: CardCategory
@@ -96,6 +97,12 @@ export const Tag = ({ tag, size = 'md', className }: Props) => {
 				return (
 					<IconContainer background="#fff">
 						<FontAwesomeIcon icon={faQuestion} color="#333" />
+					</IconContainer>
+				)
+			case CardCategory.Venus:
+				return (
+					<IconContainer background="#5675ad">
+						<FontAwesomeIcon icon={venusIcon} color="#fff" />
 					</IconContainer>
 				)
 		}

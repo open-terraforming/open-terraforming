@@ -5,8 +5,9 @@ import { ProgressMilestoneType, ProgressMilestoneItem } from '@shared/index'
 import React, { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
+import { Card } from '@/icons/card'
 
-type Side = 'left' | 'right'
+type Side = 'left' | 'right' | 'bottom'
 
 type Props = {
 	milestone: ProgressMilestoneItem
@@ -31,6 +32,14 @@ export const MilestoneDisplay = ({ milestone, side }: Props) => {
 						title="Increase temperature"
 					/>
 				)
+			case ProgressMilestoneType.Card:
+				return (
+					<div title="Draw a card">
+						<Card />
+					</div>
+				)
+			case ProgressMilestoneType.TerraformingRating:
+				return <div title="Increase your rating">TR</div>
 			default:
 				return <>{ProgressMilestoneType[milestone.type]}</>
 		}
@@ -57,25 +66,42 @@ const E = styled.div<{ side: Side }>`
 	}
 
 	${props =>
-		props.side === 'left'
-			? css`
-					left: -100%;
-					justify-content: flex-end;
+		props.side === 'left' &&
+		css`
+			left: -100%;
+			justify-content: flex-end;
 
-					* {
-						border-top-left-radius: 0.5rem;
-						border-bottom-left-radius: 0.5rem;
-						border-right: 0;
-					}
-			  `
-			: css`
-					left: 100%;
-					justify-content: flex-start;
+			> * {
+				border-top-left-radius: 0.5rem;
+				border-bottom-left-radius: 0.5rem;
+				border-right: 0;
+			}
+		`}
+	${props =>
+		props.side === 'right' &&
+		css`
+			left: 100%;
+			justify-content: flex-start;
+			margin-left: 2px;
 
-					* {
-						border-top-right-radius: 0.5rem;
-						border-bottom-right-radius: 0.5rem;
-						border-left: 0;
-					}
-			  `}
+			> * {
+				border-top-right-radius: 0.5rem;
+				border-bottom-right-radius: 0.5rem;
+				border-left: 0;
+			}
+		`}
+		${props =>
+			props.side === 'bottom' &&
+			css`
+				top: 100%;
+				justify-content: flex-start;
+				margin-top: 3px;
+				margin-left: -12px;
+
+				> * {
+					border-bottom-left-radius: 0.5rem;
+					border-bottom-right-radius: 0.5rem;
+					border-top: 0;
+				}
+			`}
 `

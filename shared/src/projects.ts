@@ -1,4 +1,4 @@
-import { Resource, WithOptional } from './cards'
+import { GameProgress, Resource, WithOptional } from './cards'
 import { updatePlayerProduction, updatePlayerResource } from './cards/utils'
 import {
 	GameState,
@@ -43,6 +43,12 @@ const canPlaceTile = (type: GridCellContent) => ({
 	canPlaceAnywhere(game, player, {
 		type
 	})
+
+const canIncreaseProgress = (process: GameProgress) => ({
+	game
+}: StandardProjectContext) => {
+	return game[process] < game.map[process]
+}
 
 const ProjectsList = [
 	project({
@@ -149,6 +155,16 @@ const ProjectsList = [
 		execute: ({ game, player }) => {
 			player.terraformRating += 1
 			game.temperature += 1
+		}
+	}),
+	project({
+		type: StandardProjectType.AirScrapping,
+		description: 'Air Scrapping',
+		cost: () => 15,
+		conditions: [canIncreaseProgress('venus')],
+		execute: ({ game, player }) => {
+			player.terraformRating += 1
+			game.venus += 1
 		}
 	})
 ]

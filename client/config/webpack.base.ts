@@ -15,6 +15,21 @@ import CircularDependencyPlugin from 'circular-dependency-plugin'
 import TerserPlugin from 'terser-webpack-plugin'
 import PreloadWebpackPlugin from 'preload-webpack-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
+import crypto from 'crypto';
+
+/**
+ * md4 algorithm is not available anymore in NodeJS 17+ (because of lib SSL 3).
+ * In that case, silently replace md4 by md5 algorithm.
+ */
+try {
+  crypto.createHash('md4');
+} catch (e) {
+  console.warn('Crypto "md4" is not supported anymore by this Node version');
+  const origCreateHash = crypto.createHash;
+  crypto.createHash = (alg, opts) => {
+    return origCreateHash(alg === 'md4' ? 'md5' : alg, opts);
+  };
+}
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require(path.join(__dirname, '..', 'package.json'))

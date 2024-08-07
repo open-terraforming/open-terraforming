@@ -4,7 +4,7 @@ import {
 	PlayerState,
 	ProgressMilestoneType
 } from './game'
-import { keyMap, pushPendingAction } from './utils'
+import { drawCards, keyMap, pushPendingAction } from './utils'
 import { placeTileAction } from './player-actions'
 
 export interface ProgressMilestone {
@@ -42,6 +42,22 @@ const ProgressMilestonesList = [
 						})
 					)
 				}
+			}
+		]
+	}),
+	milestone({
+		type: ProgressMilestoneType.Card,
+		effects: [
+			(game, player) => {
+				player.cards.push(...drawCards(game, 1))
+			}
+		]
+	}),
+	milestone({
+		type: ProgressMilestoneType.TerraformingRating,
+		effects: [
+			(game, player) => {
+				player.terraformRating++
 			}
 		]
 	})

@@ -30,7 +30,8 @@ const pendingToStr = {
 	[PlayerActionType.ClaimTile]: 'Claiming tile',
 	[PlayerActionType.PlayCard]: 'Playing card',
 	[PlayerActionType.DraftCard]: 'Picking card',
-	[PlayerActionType.SponsorCompetition]: 'Selecting competition'
+	[PlayerActionType.SponsorCompetition]: 'Selecting competition',
+	[PlayerActionType.SolarPhaseTerraform]: 'World Government Terraforming'
 }
 
 const stateToStr = {

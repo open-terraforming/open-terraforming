@@ -1,4 +1,10 @@
-import { GameState, GameStateValue, PlayerState, PlayerStateValue } from '.'
+import {
+	GameState,
+	GameStateValue,
+	PlayerState,
+	PlayerStateValue,
+	StandardProjectType
+} from '.'
 import { CardCategory } from './cards'
 import { MapType } from './map'
 import { Maps } from './maps'
@@ -20,6 +26,7 @@ export const initialGameState = (
 	oceans: 0,
 	oxygen: 0,
 	temperature: 0,
+	venus: 0,
 	prelude: false,
 	draft: false,
 	map: Maps[map].build(),
@@ -41,7 +48,18 @@ export const initialGameState = (
 	competitionsLimit: 3,
 	competitionsPrices: [8, 14, 20],
 	competitionRewards: [5, 2],
-	expansions: [ExpansionType.Base]
+	expansions: [ExpansionType.Base],
+	solarPhase: true,
+	standardProjects: [
+		StandardProjectType.SellPatents,
+		StandardProjectType.PowerPlant,
+		StandardProjectType.Asteroid,
+		StandardProjectType.Aquifer,
+		StandardProjectType.Greenery,
+		StandardProjectType.City,
+		StandardProjectType.GreeneryForPlants,
+		StandardProjectType.TemperatureForHeat
+	]
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
@@ -77,6 +95,7 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	powerProjectCost: 11,
 	temperatureCost: 8,
 	progressConditionBonus: 0,
+	progressConditionBonusByTag: {},
 	name: '<unknown>',
 	color: '',
 	session,

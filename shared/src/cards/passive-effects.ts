@@ -1,8 +1,11 @@
+import { PLAYER_PRODUCTION_TO_RESOURCE } from '../constants'
 import { GridCellContent, GridCellOther, StandardProjectType } from '../game'
 import { playCardAction } from '../player-actions'
+import { tileWithArticle } from '../texts'
 import { withUnits } from '../units'
 import { adjacentCells, f, pushPendingAction, range } from '../utils'
 import { effectArg } from './args'
+import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
 import {
 	CardCategory,
@@ -10,14 +13,13 @@ import {
 	CardEffectTarget,
 	CardPassiveEffect,
 	CardResource,
+	CardSymbol,
+	GameProgress,
 	Resource,
 	SymbolType,
-	WithOptional,
-	CardSymbol
+	WithOptional
 } from './types'
 import { gamePlayer, resourceProduction, updatePlayerResource } from './utils'
-import { tileWithArticle } from '../texts'
-import { effect } from './effects/types'
 
 export const passiveEffect = (
 	e: WithOptional<CardPassiveEffect, 'symbols'>
@@ -255,6 +257,24 @@ export const resourceForStandardProject = (res: Resource, amount: number) => {
 	})
 }
 
+export const resourceForProgress = (
+	progress: GameProgress,
+	res: Resource,
+	amount: number
+) => {
+	return passiveEffect({
+		description: f(
+			`Receive {0} when ${progress} is increased`,
+			withUnits(res, amount)
+		),
+		onProgress: ({ player }, p) => {
+			if (p === progress) {
+				updatePlayerResource(player, res, amount)
+			}
+		}
+	})
+}
+
 export const resetProgressBonus = (amount: number) =>
 	passiveEffect({
 		description:
@@ -378,4 +398,23 @@ export const emptyPassiveEffect = (
 	passiveEffect({
 		description,
 		symbols
+	})
+
+export const resourceForProductionChange = (amount = 1) =>
+	passiveEffect({
+		description: `When you increase production of a resource, receive ${amount} of that resource`,
+		onPlayerProductionChanged: (
+			{ player: currentPlayer },
+			player,
+			production,
+			change
+		) => {
+			if (player.id !== currentPlayer.id) {
+				return
+			}
+
+			const resource = PLAYER_PRODUCTION_TO_RESOURCE[production]
+
+			updatePlayerResource(player, resource, amount * change)
+		}
 	})

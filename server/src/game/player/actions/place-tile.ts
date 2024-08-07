@@ -24,14 +24,14 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 		GameStateValue.Prelude
 	]
 
-	perform({ x, y }: Args) {
+	perform({ x, y, location }: Args) {
 		const top = this.pendingAction
 
 		if (top?.type !== PlayerActionType.PlaceTile) {
 			throw new Error("You're not placing tiles right now")
 		}
 
-		const cell = cellByCoords(this.game, x, y)
+		const cell = cellByCoords(this.game, x, y, location)
 
 		if (!cell) {
 			throw new Error('Cell not found')
@@ -55,22 +55,24 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 		cell.content = pendingTile.type
 		cell.other = pendingTile.other
 		cell.ownerCard = pendingTile.ownerCard
-		cell.ownerId = this.player.id
 
-		updatePlayerResource(this.player, 'ore', cell.ore)
-		updatePlayerResource(this.player, 'titan', cell.titan)
-		updatePlayerResource(this.player, 'plants', cell.plants)
-		updatePlayerResource(this.player, 'heat', cell.heat)
-		updatePlayerResource(this.player, 'money', cell.money)
+		if (!top.anonymous) {
+			cell.ownerId = this.player.id
+			updatePlayerResource(this.player, 'ore', cell.ore)
+			updatePlayerResource(this.player, 'titan', cell.titan)
+			updatePlayerResource(this.player, 'plants', cell.plants)
+			updatePlayerResource(this.player, 'heat', cell.heat)
+			updatePlayerResource(this.player, 'money', cell.money)
 
-		if (cell.cards > 0) {
-			this.player.cards.push(...drawCards(this.game, cell.cards))
+			if (cell.cards > 0) {
+				this.player.cards.push(...drawCards(this.game, cell.cards))
+			}
 		}
 
 		if (cell.oceans > 0 && this.game.oceans < this.game.map.oceans) {
 			pushPendingAction(
 				this.player,
-				placeTileAction({ type: GridCellContent.Ocean })
+				placeTileAction({ type: GridCellContent.Ocean }, top.anonymous)
 			)
 		}
 
@@ -78,23 +80,31 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 			case GridCellContent.Forest: {
 				if (this.game.oxygen < this.game.map.oxygen) {
 					this.game.oxygen++
-					this.player.terraformRating++
+
+					if (!top.anonymous) {
+						this.player.terraformRating++
+					}
 				}
 
 				break
 			}
 
 			case GridCellContent.Ocean: {
-				this.player.terraformRating++
+				if (!top.anonymous) {
+					this.player.terraformRating++
+				}
+
 				this.game.oceans++
 				break
 			}
 		}
 
-		this.player.money +=
-			adjacentCells(this.game, cell.x, cell.y).filter(
-				c => c.content === GridCellContent.Ocean
-			).length * 2
+		if (!top.anonymous) {
+			this.player.money +=
+				adjacentCells(this.game, cell.x, cell.y).filter(
+					c => c.content === GridCellContent.Ocean
+				).length * 2
+		}
 
 		this.parent.onTilePlaced.emit({
 			cell,

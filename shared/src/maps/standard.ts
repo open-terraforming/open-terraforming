@@ -1,8 +1,8 @@
-import { GridCell, GridCellType, GridCellSpecial, MapState } from '../game'
-import { MapType } from '../map'
 import { CompetitionType } from '../competitions'
+import { GridCell, GridCellSpecial, GridCellType, MapState } from '../game'
+import { MapType } from '../map'
 import { MilestoneType } from '../milestones'
-import { generateGrid, heatAt, oceanAt, temperatureAt, mapInfo } from './utils'
+import { generateGrid, heatAt, mapInfo, oceanAt, temperatureAt } from './utils'
 
 const preset: Record<number, Record<number, Partial<GridCell>>> = {
 	0: {
@@ -114,11 +114,14 @@ export const standardMap = mapInfo({
 			initialOceans: 0,
 			initialTemperature: -15,
 			initialOxygen: 0,
+			initialVenus: 0,
 			oceans: 9,
 			temperature: 4,
 			oxygen: 14,
+			venus: 15,
 			temperatureMilestones: [heatAt(-12), heatAt(-10), oceanAt(0)],
 			oxygenMilestones: [temperatureAt(8)],
+			venusMilestones: [],
 			competitions: [
 				CompetitionType.Landlord,
 				CompetitionType.Banker,

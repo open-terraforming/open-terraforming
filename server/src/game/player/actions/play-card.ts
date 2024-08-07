@@ -67,9 +67,10 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 		if (top) {
 			this.popAction()
 		} else {
-			if (card.type !== CardType.Corporation) {
-				cardState.played = true
-			}
+			// TODO: WHY?
+			//if (card.type !== CardType.Corporation) {
+			cardState.played = true
+			//}
 
 			if (!this.pendingAction) {
 				this.actionPlayed()

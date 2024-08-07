@@ -70,6 +70,7 @@ export const PendingCardPicker = ({ action, closeable, onClose }: Props) => {
 			onSelect={handleConfirm}
 			onClose={onClose}
 			closeable={closeable}
+			closeAsMinimize
 			free={isFree}
 			limit={action.limit}
 		/>

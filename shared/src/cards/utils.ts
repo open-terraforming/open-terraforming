@@ -2,6 +2,7 @@ import {
 	GameState,
 	GridCell,
 	GridCellContent,
+	GridCellLocation,
 	PlayerGameState,
 	UsedCardState
 } from '../game'
@@ -72,7 +73,26 @@ export const gamePlayer = (game: GameState, playerId: number) => {
 	return p
 }
 
-export const cellByCoords = (game: GameState, x: number, y: number) => {
+export const cellByCoords = (
+	game: GameState,
+	x: number,
+	y: number,
+	location: GridCellLocation | undefined
+) => {
+	if (location) {
+		const matchingCells = game.map.grid.flatMap(row =>
+			row.filter(c => c.location === location)
+		)
+
+		const cell = matchingCells.find(c => c.x === x && c.y === y)
+
+		if (!cell) {
+			throw new Error(`No cell at ${x},${y},${GridCellLocation[location]}`)
+		}
+
+		return cell
+	}
+
 	let cell: GridCell | undefined
 
 	if (x >= 0 && x < game.map.width) {
@@ -151,7 +171,9 @@ export const emptyCardState = (cardCode: string, index = -1) => ({
 	animals: 0,
 	fighters: 0,
 	microbes: 0,
-	science: 0
+	science: 0,
+	floaters: 0,
+	asteroids: 0
 })
 
 export const minimalCardPrice = (card: Card, player: PlayerGameState) =>
@@ -224,7 +246,8 @@ export const withRightArrow = <T extends { symbols: CardSymbol[] }>(
 export const progressSymbol: Record<GameProgress, Readonly<CardSymbol>> = {
 	oceans: { tile: GridCellContent.Ocean },
 	oxygen: { symbol: SymbolType.Oxygen },
-	temperature: { symbol: SymbolType.Temperature }
+	temperature: { symbol: SymbolType.Temperature },
+	venus: { symbol: SymbolType.Venus }
 }
 
 /**

@@ -26,7 +26,9 @@ export enum GameStateValue {
 	/** Players are picking cards to pick from to research (optional) */
 	Draft,
 	/** Players are playing their prelude cards */
-	Prelude
+	Prelude,
+	/** After production phase this phase allows the current player to increase one progress */
+	SolarPhase = 6
 }
 
 export enum PlayerStateValue {
@@ -59,7 +61,11 @@ export interface GameState {
 	oxygen: number
 	oceans: number
 	temperature: number
+	venus: number
 	map: MapState
+
+	/** Is solar phase enabled */
+	solarPhase: boolean
 
 	/**  Player index (NOT ID) currently playing round (only for GenerationInProgress) */
 	currentPlayer: number
@@ -108,6 +114,9 @@ export interface GameState {
 	competitionsPrices: number[]
 	/** Victory points received for placing in competition, index is place in competition */
 	competitionRewards: number[]
+
+	/** Available standard projects */
+	standardProjects: StandardProjectType[]
 }
 
 export interface MilestoneState {
@@ -129,15 +138,18 @@ export interface MapState {
 	oceans: number
 	temperature: number
 	oxygen: number
+	venus: number
 
 	initialOceans: number
 	initialTemperature: number
 	initialOxygen: number
+	initialVenus: number
 
 	grid: GridCell[][]
 
 	temperatureMilestones: ProgressMilestoneItem[]
 	oxygenMilestones: ProgressMilestoneItem[]
+	venusMilestones: ProgressMilestoneItem[]
 
 	milestones: MilestoneType[]
 	competitions: CompetitionType[]
@@ -148,7 +160,11 @@ export enum GridCellType {
 	General,
 	NoctisCity,
 	GanymedeColony,
-	PhobosSpaceHaven
+	PhobosSpaceHaven,
+	Stratopolis,
+	MaxwellBase,
+	DawnCity,
+	LunaMetropolis
 }
 
 export enum GridCellSpecial {
@@ -161,7 +177,11 @@ export enum GridCellSpecial {
 	PhobosSpaceHaven,
 	HecatesTholus,
 	ElysiumMons,
-	OlympusMons
+	OlympusMons,
+	MaxwellBase,
+	Stratopolis,
+	DawnCity,
+	LunaMetropolis
 }
 
 export enum GridCellContent {
@@ -184,10 +204,16 @@ export enum GridCellOther {
 	RestrictedZone
 }
 
+export enum GridCellLocation {
+	Main = 1,
+	Venus
+}
+
 export interface GridCell {
 	enabled: boolean
 	type: GridCellType
 	special?: GridCellSpecial
+	location?: GridCellLocation
 
 	ore: number
 	titan: number
@@ -272,6 +298,9 @@ export interface PlayerState {
 	/** Bonus for game progress changes */
 	progressConditionBonus: number
 
+	/** Bonus for game progress changes restricted to specific card tag */
+	progressConditionBonusByTag: Partial<Record<CardCategory, number>>
+
 	victoryPoints: VictoryPoints[]
 
 	/** Pending actions to be played by the player */
@@ -316,6 +345,10 @@ export interface UsedCardState {
 	science: number
 	/** Number of fighter points on the card */
 	fighters: number
+	/** Floaters */
+	floaters: number
+	/** Asteroids */
+	asteroids: number
 
 	/** Index of card that triggered last passive effect */
 	triggeredByCard?: number
@@ -333,13 +366,16 @@ export enum StandardProjectType {
 	Greenery,
 	City,
 	GreeneryForPlants,
-	TemperatureForHeat
+	TemperatureForHeat,
+	AirScrapping
 }
 
 export enum ProgressMilestoneType {
 	Ocean = 1,
 	Heat,
-	Temperature
+	Temperature,
+	Card,
+	TerraformingRating
 }
 
 export interface ProgressMilestoneItem {

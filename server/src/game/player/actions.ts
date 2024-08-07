@@ -19,6 +19,7 @@ import { PlayCardAction } from './actions/play-card'
 import { SponsorCompetitionAction } from './actions/sponsor-competition'
 import { StartGameAction } from './actions/start-game'
 import { ToggleReadyAction } from './actions/toggle-ready'
+import { SolarPhaseTerraform } from './actions/solar-phase-terraform'
 
 export class PlayerActions {
 	player: Player
@@ -49,7 +50,8 @@ export class PlayerActions {
 			[MessageType.AdminChange]: new AdminChangeAction(this.player),
 			[MessageType.StartGame]: new StartGameAction(this.player),
 			[MessageType.PlayerPass]: new PassAction(this.player),
-			[MessageType.DraftCard]: new DraftCardAction(this.player)
+			[MessageType.DraftCard]: new DraftCardAction(this.player),
+			[MessageType.SolarPhaseTerraform]: new SolarPhaseTerraform(this.player)
 		}
 	}
 

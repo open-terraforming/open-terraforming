@@ -9,6 +9,7 @@ import { Socket } from 'net'
 import WebSocket from 'ws'
 import { EventServer } from './event-server'
 import { Client } from './game-client'
+import { playerCountGauge } from '@/utils/metrics'
 
 export class GameServer {
 	logger = new Logger('GameServer')
@@ -87,6 +88,8 @@ export class GameServer {
 			clearTimeout(this.emptyTimeout)
 			this.emptyTimeout = undefined
 		}
+
+		playerCountGauge.set(this.clients.length)
 	}
 
 	handleDisconnect = (client: Client) => {
@@ -98,6 +101,8 @@ export class GameServer {
 				this.close()
 			}, this.closeEmptyAfter)
 		}
+
+		playerCountGauge.set(this.clients.length)
 	}
 
 	handleGameUpdate = debounce(async (s: GameState) => {

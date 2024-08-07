@@ -6,7 +6,10 @@ import {
 	faPaw,
 	faMicroscope,
 	faAtom,
-	faFighterJet
+	faFighterJet,
+	faGripLines,
+	faRocket,
+	faCloud
 } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
@@ -17,7 +20,9 @@ const resourceToColor: Record<CardResource, string> = {
 	animals: '#266020',
 	microbes: '#BCE444',
 	fighters: '#fff',
-	science: '#fff'
+	science: '#fff',
+	floaters: '#b3b149',
+	asteroids: '#fff'
 }
 
 export const CardResourceIcon = ({ res }: Props) => {
@@ -31,6 +36,11 @@ export const CardResourceIcon = ({ res }: Props) => {
 				return <FontAwesomeIcon icon={faAtom} color="#000" />
 			case 'fighters':
 				return <FontAwesomeIcon icon={faFighterJet} color="#000" />
+			case 'floaters':
+				return <FontAwesomeIcon icon={faCloud} color="#fff" size="xs" />
+			case 'asteroids':
+				// TODO: Better icon
+				return <FontAwesomeIcon icon={faRocket} color="#000" />
 		}
 	}, [res])
 
@@ -43,4 +53,5 @@ const E = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	border-radius: 0.25rem;
 `
