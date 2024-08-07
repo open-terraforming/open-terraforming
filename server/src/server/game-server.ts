@@ -5,11 +5,11 @@ import { MyEvent } from '@/utils/events'
 import { Logger } from '@/utils/log'
 import { GameState, GameStateValue } from '@shared/index'
 import { IncomingMessage } from 'http'
-import { Socket } from 'net'
 import WebSocket from 'ws'
 import { EventServer } from './event-server'
 import { Client } from './game-client'
 import { playerCountGauge } from '@/utils/metrics'
+import { Duplex } from 'stream'
 
 export class GameServer {
 	logger = new Logger('GameServer')
@@ -71,7 +71,7 @@ export class GameServer {
 
 	handleUpgrade = (
 		request: IncomingMessage,
-		socket: Socket,
+		socket: Duplex,
 		upgradeHead: Buffer
 	) => {
 		this.socket.handleUpgrade(request, socket, upgradeHead, ws => {

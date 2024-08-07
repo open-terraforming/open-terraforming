@@ -1,4 +1,4 @@
-FROM node:20.9.0-alpine as build-server
+FROM node:20.9.0-alpine AS build-server
 
 # Initialization
 RUN mkdir -p /app/server
@@ -18,7 +18,7 @@ COPY shared/src ../shared/src
 # Application build
 RUN npm run build
 
-FROM node:20.9.0-alpine as build-server-depts
+FROM node:20.9.0-alpine AS build-server-depts
 
 # Initialization
 RUN mkdir -p /app/server
@@ -30,7 +30,7 @@ COPY server/package-lock.json .
 COPY docker/removeDevDependencies.js .
 RUN npm install
 
-FROM node:20.9.0-alpine as build-client
+FROM node:20.9.0-alpine AS build-client
 
 # Initialization
 RUN mkdir -p /app/client
@@ -59,9 +59,6 @@ ENV OT_FAST_BOTS=true
 ENV OT_CACHE_PATH=/data/.cache
 ENV OT_STORAGE_PATH=/data/storage
 ENV OT_STATIC_PATH=./client
-ENV METRICS_ENDPOINT=/metrics
-ENV METRICS_USERNAME=metrics
-ENV METRICS_PASSWORD=metrics
 
 # Copy build results
 WORKDIR /app

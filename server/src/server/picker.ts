@@ -50,9 +50,11 @@ export default (serverConfig: ServerOptions) => {
 			req.query['q'] ||
 			card.code + ' ' + card.categories.map(c => CardCategory[c]).join(' ')
 
-		const page = req.query['page'] ? parseInt(req.query['page'], 10) : 0
+		const page = req.query['page']
+			? parseInt(req.query['page'] as string, 10)
+			: 0
 
-		const data = await searchClient.search(q, {
+		const data = await searchClient.search(q as string, {
 			excludeTerms: 'terraforming mars',
 			imgType: 'photo',
 			start: page * 10
@@ -77,9 +79,11 @@ export default (serverConfig: ServerOptions) => {
 		</style>
 	</head>
 	<body>
-		<h2>${card.code}</h2> <a href="?page=${page + 1}&q=${attr(q)}">next</a>
+		<h2>${card.code}</h2> <a href="?page=${page + 1}&q=${attr(
+			q as string
+		)}">next</a>
 		<form method="get"><input type="text" name="q" value="${attr(
-			q
+			q as string
 		)}" /><button>Search</button></form>
 		<div id="application">
 			${data
