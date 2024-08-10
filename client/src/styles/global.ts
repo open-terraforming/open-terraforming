@@ -1,5 +1,4 @@
 import { createGlobalStyle } from 'styled-components'
-import colors from './colors'
 import input from './components/input'
 import reset from './components/reset'
 import scrollbar from './components/scrollbar'
@@ -21,7 +20,7 @@ html, body, #application {
 
 body {
 	font-family: Oswald, Arial, Helvetica, sans-serif;
-	color: ${colors.text};
+	color: ${({ theme }) => theme.colors.text};
 }
 
 body,html {

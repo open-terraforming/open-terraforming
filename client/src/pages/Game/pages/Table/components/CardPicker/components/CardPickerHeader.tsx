@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import { media } from '@/styles/media'
 import { useAppStore } from '@/utils/hooks'
 import { faTint, faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
@@ -74,8 +73,8 @@ const GameProgress = styled.div`
 const ProgressItem = styled.div`
 	display: flex;
 	margin: 0 0.25rem;
-	background-color: ${colors.background};
-	border: 1px solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border: 1px solid ${({ theme }) => theme.colors.border};
 
 	> span {
 		margin-left: 0.25rem;
@@ -84,6 +83,6 @@ const ProgressItem = styled.div`
 `
 
 const Res = styled.div`
-	background-color: ${colors.border};
+	background-color: ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
 `

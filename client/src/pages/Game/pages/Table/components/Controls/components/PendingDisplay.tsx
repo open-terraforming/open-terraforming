@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { rgba } from 'polished'
-import { colors } from '@/styles'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import { otherToStr, tileToStr } from '@shared/texts'
 
@@ -51,7 +50,7 @@ const Fade = styled.div`
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: ${rgba(colors.background, 0.5)};
+	background: ${({ theme }) => rgba(theme.colors.background, 0.5)};
 	display: flex;
 	justify-content: center;
 	align-items: center;

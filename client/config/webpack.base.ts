@@ -1,34 +1,34 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="./preload-webpack-plugin.d.ts" />
 
-import webpack from 'webpack'
-import path, { join } from 'path'
+import CircularDependencyPlugin from 'circular-dependency-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
+import CopyWebpackPlugin from 'copy-webpack-plugin'
+import crypto from 'crypto'
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin'
-import ForkTsCheckerNotifierWebpackPlugin from 'fork-ts-checker-notifier-webpack-plugin'
+import HtmlWebpackPlugin from 'html-webpack-plugin'
+import path, { join } from 'path'
+import PreloadWebpackPlugin from 'preload-webpack-plugin'
+import TerserPlugin from 'terser-webpack-plugin'
+import webpack from 'webpack'
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
 import { argv } from 'yargs'
-import { getEnvValues, loadEnv, ENV } from './lib/env'
+import { ENV, getEnvValues, loadEnv } from './lib/env'
 import { srcPath } from './lib/paths'
-import CircularDependencyPlugin from 'circular-dependency-plugin'
-import TerserPlugin from 'terser-webpack-plugin'
-import PreloadWebpackPlugin from 'preload-webpack-plugin'
-import CopyWebpackPlugin from 'copy-webpack-plugin'
-import crypto from 'crypto';
 
 /**
  * md4 algorithm is not available anymore in NodeJS 17+ (because of lib SSL 3).
  * In that case, silently replace md4 by md5 algorithm.
  */
 try {
-  crypto.createHash('md4');
+	crypto.createHash('md4')
 } catch (e) {
-  console.warn('Crypto "md4" is not supported anymore by this Node version');
-  const origCreateHash = crypto.createHash;
-  crypto.createHash = (alg, opts) => {
-    return origCreateHash(alg === 'md4' ? 'md5' : alg, opts);
-  };
+	console.warn('Crypto "md4" is not supported anymore by this Node version')
+	const origCreateHash = crypto.createHash
+
+	crypto.createHash = (alg, opts) => {
+		return origCreateHash(alg === 'md4' ? 'md5' : alg, opts)
+	}
 }
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -170,7 +170,6 @@ const config = (env: ENV): webpack.Configuration => {
 						new ForkTsCheckerWebpackPlugin({
 							reportFiles: ['src/**/*.{ts,tsx}']
 						}),
-						new ForkTsCheckerNotifierWebpackPlugin(),
 
 						new CircularDependencyPlugin({
 							exclude: /node_modules/

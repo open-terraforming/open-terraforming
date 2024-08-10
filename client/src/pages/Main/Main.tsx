@@ -5,6 +5,7 @@ import { Modal } from '@/components/Modal/Modal'
 import { ApiState, setApiState } from '@/store/modules/api'
 import {
 	faArrowRight,
+	faCog,
 	faPlusCircle,
 	faSync
 } from '@fortawesome/free-solid-svg-icons'
@@ -14,6 +15,7 @@ import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { GamesListModal } from './components/GamesListModal'
 import { NewGameModal } from './components/NewGameModal'
+import { SettingsModal } from './components/SettingsModal'
 
 type Props = {}
 
@@ -100,6 +102,14 @@ export const Main = ({}: Props) => {
 							{open => (
 								<Button onClick={open} icon={faArrowRight}>
 									Join game
+								</Button>
+							)}
+						</DialogWrapper>
+
+						<DialogWrapper dialog={close => <SettingsModal onClose={close} />}>
+							{open => (
+								<Button onClick={open} icon={faCog}>
+									Settings
 								</Button>
 							)}
 						</DialogWrapper>

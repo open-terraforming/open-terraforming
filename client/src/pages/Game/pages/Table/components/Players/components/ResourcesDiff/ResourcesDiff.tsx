@@ -5,7 +5,6 @@ import { voidReduce } from '@/utils/collections'
 import styled, { keyframes } from 'styled-components'
 import { ResourceIcon } from '../../../ResourceIcon/ResourceIcon'
 import { Portal } from '@/components'
-import { colors } from '@/styles'
 import { rgba } from 'polished'
 import { nextFrame } from '@/utils/async'
 import { productionResource } from '@shared/cards/utils'
@@ -129,13 +128,13 @@ const PopOut = keyframes`
 const E = styled.div`
 	position: absolute;
 	display: flex;
-	background-color: ${colors.background};
+	background-color: ${({ theme }) => theme.colors.background};
 
 	background: linear-gradient(
 		to right,
-		${rgba(colors.background, 0)} 0%,
-		${colors.background} 18%,
-		${colors.background} 100%
+		${({ theme }) => rgba(theme.colors.background, 0)} 0%,
+		${({ theme }) => theme.colors.background} 18%,
+		${({ theme }) => theme.colors.background} 100%
 	);
 
 	padding: 0.8rem;

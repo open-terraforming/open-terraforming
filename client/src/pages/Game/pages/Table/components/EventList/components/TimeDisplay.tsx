@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { useGameState, useInterval } from '@/utils/hooks'
 import styled from 'styled-components'
-import { colors } from '@/styles'
 
 type Props = {}
 
@@ -35,10 +34,9 @@ export const TimeDisplay = ({}: Props) => {
 }
 
 const C = styled.div`
-	background: ${colors.background};
-	border: 0.2rem solid ${colors.border};
+	background: ${({ theme }) => theme.colors.background};
+	border: 0.2rem solid ${({ theme }) => theme.colors.border};
 	padding: 0.3rem 0;
-	margin-left: 0.2rem;
 	width: 4.3rem;
 	text-align: center;
 `

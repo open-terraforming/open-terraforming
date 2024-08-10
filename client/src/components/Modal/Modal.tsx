@@ -1,8 +1,7 @@
-import { colors } from '@/styles'
 import { useWindowEvent } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { darken, rgba } from 'polished'
+import { darken } from 'polished'
 import React, { ReactNode, useCallback, useState } from 'react'
 import ReactDOM from 'react-dom'
 import styled, { css, keyframes, Keyframes } from 'styled-components'
@@ -191,26 +190,30 @@ const popOut = keyframes`
 	100% { transform: perspective(400px) rotate3d(1, 0, 0, -70deg) scale(0.5); opacity: 0; }
 `
 
-const background = rgba(colors.background, 0.95)
-
 const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	position: relative;
 	margin: 5% auto 5% auto;
-	border: 2px solid ${colors.border};
+	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0px;
 	border-radius: 0px;
 
-	background-color: ${background};
-	background: linear-gradient(
-		45deg,
-		${darken(0.01, background)} 25%,
-		${background} 25%,
-		${background} 50%,
-		${darken(0.01, background)} 50%,
-		${darken(0.01, background)} 75%,
-		${background} 75%,
-		${background}
-	);
+	${({
+		theme: {
+			colors: { modalBackground: background }
+		}
+	}) => css`
+		background-color: ${background};
+		background: linear-gradient(
+			45deg,
+			${darken(0.01, background)} 25%,
+			${background} 25%,
+			${background} 50%,
+			${darken(0.01, background)} 50%,
+			${darken(0.01, background)} 75%,
+			${background} 75%,
+			${background}
+		);
+	`}
 	background-size: 40px 40px;
 
 	min-width: 200px;

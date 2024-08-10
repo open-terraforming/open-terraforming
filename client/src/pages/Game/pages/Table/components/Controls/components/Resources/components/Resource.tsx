@@ -1,5 +1,4 @@
 import { HelpTooltip } from '@/components/HelpTooltip/HelpTooltip'
-import { colors } from '@/styles'
 import { useAnimatedNumber } from '@/utils/hooks'
 import { Resource as Res } from '@shared/cards'
 import React, { useEffect, useState } from 'react'
@@ -131,7 +130,7 @@ const popIn = keyframes`
 `
 
 const Container = styled.div<{ diffAnim: boolean }>`
-	border-right: 0.2rem solid ${colors.border};
+	border-right: 0.2rem solid ${({ theme }) => theme.colors.border};
 	position: relative;
 	flex: 1;
 
@@ -143,7 +142,7 @@ const Container = styled.div<{ diffAnim: boolean }>`
 	flex-direction: column;
 
 	&:first-child {
-		border-left: 0.2rem solid ${colors.border};
+		border-left: 0.2rem solid ${({ theme }) => theme.colors.border};
 	}
 `
 
@@ -160,7 +159,7 @@ const Value = styled.div`
 const Production = styled.div<{ negative: boolean }>`
 	text-align: center;
 	padding: 0.2rem 0.5rem;
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 
 	${props =>
 		props.negative &&
@@ -191,7 +190,7 @@ const StyledResourceButton = styled.div`
 	bottom: 100%;
 	left: 50%;
 	transform: translate(-50%, 0);
-	border: 0.2rem solid ${colors.border};
+	border: 0.2rem solid ${({ theme }) => theme.colors.border};
 	width: auto;
 	white-space: nowrap;
 

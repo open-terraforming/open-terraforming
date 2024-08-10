@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import { useChange } from '@/utils/hooks'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -34,8 +33,8 @@ export const Checkbox = ({ label, checked, onChange }: Props) => {
 }
 
 const Custom = styled.span`
-	border: 0.1rem solid ${colors.border};
-	background-color: ${colors.background};
+	border: 0.1rem solid ${({ theme }) => theme.colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
 	margin-right: 0.3rem;
 	width: 1.2rem;
 	height: 1.2rem;

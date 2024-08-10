@@ -4,7 +4,6 @@ import { CardView } from '../../CardView/CardView'
 import { CardsLookupApi } from '@shared/cards'
 import styled, { keyframes, css } from 'styled-components'
 import { useAppStore } from '@/utils/hooks'
-import { colors } from '@/styles'
 import { rgba } from 'polished'
 
 export type CardEvent = (CardPlayed | CardUsed) & { id: number }
@@ -78,7 +77,7 @@ const PopOut = keyframes`
 `
 
 const Player = styled.span`
-	/*text-shadow: 1px 1px 2px ${colors.text};*/
+	/*text-shadow: 1px 1px 2px ${({ theme }) => theme.colors.text};*/
 `
 
 const Title = styled.div`
@@ -115,5 +114,5 @@ const Played = styled.div<{ removing: boolean; spawning: boolean }>`
 `
 
 const StyledCard = styled(CardView)`
-	background-color: ${rgba(colors.background, 1)};
+	background-color: ${({ theme }) => rgba(theme.colors.background, 1)};
 `

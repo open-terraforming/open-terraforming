@@ -9,7 +9,6 @@ import { GameModes } from '@shared/modes'
 import { GameModeType } from '@shared/modes/types'
 import React, { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { colors } from '@/styles'
 import { NumberInput } from '@/components/NumberInput/NumberInput'
 import { Flex } from '@/components/Flex/Flex'
 import { MapType } from '@shared/map'
@@ -256,7 +255,7 @@ const SelectItem = styled.div<{ selected: boolean }>`
 	${props =>
 		props.selected &&
 		css`
-			background-color: ${colors.border};
+			background-color: ${({ theme }) => theme.colors.border};
 		`}
 `
 

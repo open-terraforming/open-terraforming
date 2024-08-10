@@ -2,7 +2,6 @@ import React from 'react'
 import { Resource } from '@shared/cards'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import styled from 'styled-components'
-import { colors } from '@/styles'
 
 export const ResItem = ({
 	res,
@@ -25,8 +24,8 @@ export const ResItem = ({
 )
 
 const InfoItem = styled.div`
-	background-color: ${colors.background};
-	border: 0.2rem solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border: 0.2rem solid ${({ theme }) => theme.colors.border};
 	border-bottom: 0;
 	border-right: 0;
 
@@ -41,7 +40,7 @@ const Value = styled.div`
 `
 
 const Production = styled.div`
-	background-color: ${colors.border};
+	background-color: ${({ theme }) => theme.colors.border};
 	padding: 0.2rem 0.5rem;
 	text-align: center;
 	font-size: 85%;

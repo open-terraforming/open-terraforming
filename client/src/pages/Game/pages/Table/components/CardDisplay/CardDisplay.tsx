@@ -9,7 +9,6 @@ import { Tag } from '../CardView/components/Tag'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { media } from '@/styles/media'
 import { lighten } from 'polished'
-import { colors } from '@/styles'
 
 export type CardInfo = {
 	card: Card
@@ -246,7 +245,7 @@ const Filters = styled.div`
 
 const Count = styled.div`
 	padding: 0.35rem;
-	background-color: ${lighten(0.1, colors.border)};
+	background-color: ${({ theme }) => lighten(0.1, theme.colors.border)};
 
 	display: flex;
 	align-items: center;
@@ -262,15 +261,15 @@ const FilterItem = styled.div<{ selected: boolean }>`
 	display: flex;
 	margin-right: 0.3rem;
 
-	background-color: ${colors.border};
+	background-color: ${({ theme }) => theme.colors.border};
 
 	${props =>
 		props.selected &&
 		css`
-			background-color: ${lighten(0.2, colors.border)};
+			background-color: ${({ theme }) => lighten(0.2, theme.colors.border)};
 
 			${Count} {
-				background-color: ${lighten(0.3, colors.border)};
+				background-color: ${({ theme }) => lighten(0.3, theme.colors.border)};
 			}
 		`}
 `

@@ -1,5 +1,4 @@
 import { useLocale } from '@/context/LocaleContext'
-import { colors } from '@/styles'
 import { CardsLookupApi, CardType } from '@shared/cards'
 import React, { useMemo } from 'react'
 import styled, { css } from 'styled-components'
@@ -46,7 +45,7 @@ const Container = styled.div<{ type: CardType; extended: boolean }>`
 	${props =>
 		props.extended &&
 		css`
-			border: 0.2rem solid ${colors.cards[props.type]};
+			border: 0.2rem solid ${props.theme.colors.cards[props.type]};
 		`}
 	margin: 0.5rem 0;
 	width: 300px;
@@ -56,7 +55,7 @@ const Head = styled.div<{ type: CardType }>`
 	display: flex;
 	height: 2rem;
 	align-items: center;
-	background-color: ${props => colors.cards[props.type]};
+	background-color: ${props => props.theme.colors.cards[props.type]};
 `
 
 const Title = styled.div`
@@ -69,7 +68,7 @@ const Cost = styled.div`
 	height: 2rem;
 
 	> div {
-		background: ${colors.background};
+		background: ${({ theme }) => theme.colors.background};
 		border: 2px solid rgb(255, 255, 104);
 		color: rgb(255, 255, 104);
 		width: 2rem;

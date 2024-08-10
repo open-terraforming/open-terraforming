@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import { CardCategory } from '@shared/cards'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
@@ -59,8 +58,8 @@ const Container = styled.div`
 	left: 0;
 	min-width: 100%;
 
-	background-color: ${colors.background};
-	border: 0.2rem solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border: 0.2rem solid ${({ theme }) => theme.colors.border};
 
 	transition: all 0.2s;
 `

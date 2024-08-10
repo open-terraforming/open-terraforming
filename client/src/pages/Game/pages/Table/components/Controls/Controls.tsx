@@ -1,7 +1,6 @@
 import { Button } from '@/components'
 import { useApi } from '@/context/ApiContext'
 import { setTableState } from '@/store/modules/table'
-import { colors } from '@/styles'
 import { useAppDispatch, useAppStore, usePlayerState } from '@/utils/hooks'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { playerPass } from '@shared/index'
@@ -100,23 +99,25 @@ const Container = styled.div<{ faded: boolean }>`
 	position: relative;
 	display: flex;
 	justify-content: center;
-	background-color: ${colors.background};
-	border-top: 0.2rem solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border-top: 0.2rem solid ${({ theme }) => theme.colors.border};
 	margin: 0 auto;
 
 	width: 100%;
 	max-width: 70rem;
 
-	background: linear-gradient(
-		45deg,
-		${darken(0.01, colors.background)} 25%,
-		${colors.background} 25%,
-		${colors.background} 50%,
-		${darken(0.01, colors.background)} 50%,
-		${darken(0.01, colors.background)} 75%,
-		${colors.background} 75%,
-		${colors.background}
-	);
+	${({ theme: { colors } }) => css`
+		background: linear-gradient(
+			45deg,
+			${darken(0.01, colors.background)} 25%,
+			${colors.background} 25%,
+			${colors.background} 50%,
+			${darken(0.01, colors.background)} 50%,
+			${darken(0.01, colors.background)} 75%,
+			${colors.background} 75%,
+			${colors.background}
+		);
+	`}
 	background-size: 40px 40px;
 	z-index: 4;
 

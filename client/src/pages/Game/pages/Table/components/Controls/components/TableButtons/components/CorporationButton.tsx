@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { colors } from '@/styles'
 import { usePlayerState } from '@/utils/hooks'
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { CardsView } from '../../CardsView'
@@ -48,7 +47,7 @@ export const CorporationButton = ({ onClick }: Props) => {
 const Container = styled.div`
 	cursor: pointer;
 	padding: 0.2rem 1rem;
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 	margin: 0 1rem;
 	position: relative;
 

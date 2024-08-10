@@ -4,7 +4,6 @@ import { Modal } from '@/components/Modal/Modal'
 import { Resource, Production } from '@shared/cards'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import styled from 'styled-components'
-import { colors } from '@/styles'
 import { Button } from '@/components'
 import { lighten } from 'polished'
 import { resourceProduction } from '@shared/cards/utils'
@@ -129,9 +128,12 @@ const Info = styled.div`
 const InfoItem = styled.div<{ highlight?: boolean }>`
 	display: flex;
 	margin: 0 0.25rem;
-	background-color: ${colors.background};
+	background-color: ${({ theme }) => theme.colors.background};
 	border: 1px solid
-		${props => (props.highlight ? lighten(0.3, colors.border) : colors.border)};
+		${props =>
+			props.highlight
+				? lighten(0.3, props.theme.colors.border)
+				: props.theme.colors.border};
 `
 
 const Value = styled.div`
@@ -140,13 +142,13 @@ const Value = styled.div`
 `
 
 const Production = styled.div`
-	background-color: ${colors.border};
+	background-color: ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
 `
 
 const Player = styled.button`
-	color: ${colors.text};
-	background-color: ${colors.background};
+	color: ${({ theme }) => theme.colors.text};
+	background-color: ${({ theme }) => theme.colors.background};
 	display: flex;
 	align-items: center;
 	padding: 0.5rem 1rem;
@@ -155,6 +157,6 @@ const Player = styled.button`
 	margin-bottom: 0.5rem;
 
 	&:hover {
-		background-color: ${lighten(0.05, colors.background)};
+		background-color: ${({ theme }) => lighten(0.05, theme.colors.background)};
 	}
 `

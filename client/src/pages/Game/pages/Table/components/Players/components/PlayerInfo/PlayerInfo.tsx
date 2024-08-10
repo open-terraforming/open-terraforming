@@ -5,7 +5,6 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { CardDisplay } from '../../../CardDisplay/CardDisplay'
 import { ResourceIcon } from '../../../ResourceIcon/ResourceIcon'
-import { colors } from '@/styles'
 import { Resource } from '@shared/cards'
 
 type Props = {
@@ -117,8 +116,8 @@ const Info = styled.div`
 const InfoItem = styled.div`
 	display: flex;
 	margin: 0 0.25rem;
-	background-color: ${colors.background};
-	border: 1px solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border: 1px solid ${({ theme }) => theme.colors.border};
 `
 
 const Value = styled.div`
@@ -127,6 +126,6 @@ const Value = styled.div`
 `
 
 const Production = styled.div`
-	background-color: ${colors.border};
+	background-color: ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
 `

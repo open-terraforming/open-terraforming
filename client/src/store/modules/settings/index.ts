@@ -2,7 +2,9 @@ type State = Readonly<typeof initialState>
 type Actions = ReturnType<typeof setSettings> | ReturnType<typeof loadSettings>
 
 const initialData = {
-	hiddenHelp: {} as Record<string, boolean>
+	hiddenHelp: {} as Record<string, boolean>,
+	theme: 'default' as undefined | 'default' | 'green' | 'red',
+	enableBrowserNotifications: true
 }
 
 const initialState = {

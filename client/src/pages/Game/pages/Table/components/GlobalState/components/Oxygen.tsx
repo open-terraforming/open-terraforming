@@ -4,7 +4,6 @@ import { range, keyMap } from '@/utils/collections'
 import { DiffAnim } from './DiffAnim'
 import { ProgressMilestoneItem } from '@shared/index'
 import { MilestoneDisplay } from './MilestoneDisplay'
-import { colors } from '@/styles'
 import { darken } from 'polished'
 
 type Props = {
@@ -53,8 +52,8 @@ export const Oxygen = ({ current, target, start, milestones }: Props) => {
 
 const Container = styled.div`
 	width: 3rem;
-	border: 2px solid ${colors.border};
-	background-color: ${colors.background};
+	border: 2px solid ${({ theme }) => theme.colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
 	margin: 0 1rem;
 	position: relative;
 	margin-right: 2rem;
@@ -72,10 +71,10 @@ const Step = styled.div<{ passed: boolean; active: boolean }>`
 	${props =>
 		props.passed || props.active
 			? css`
-					background-color: ${colors.border};
+					background-color: ${props.theme.colors.border};
 			  `
 			: css`
-					color: ${darken(0.3, colors.text)};
+					color: ${darken(0.3, props.theme.colors.text)};
 			  `}
 `
 

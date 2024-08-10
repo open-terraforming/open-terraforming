@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import { colors } from '@/styles'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTint } from '@fortawesome/free-solid-svg-icons'
 
@@ -33,13 +32,13 @@ const Icon = styled.div`
 	padding: 0 1rem;
 	display: flex;
 	align-items: center;
-	border: 2px solid ${colors.border};
+	border: 2px solid ${({ theme }) => theme.colors.border};
 	border-right: 0;
-	background-color: ${colors.background};
+	background-color: ${({ theme }) => theme.colors.background};
 `
 
 const Value = styled.div`
-	background-color: ${colors.border};
+	background-color: ${({ theme }) => theme.colors.border};
 	border-left: 0;
 
 	padding: 0.5rem;

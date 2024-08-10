@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import { faTint, faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ProgressMilestoneType, ProgressMilestoneItem } from '@shared/index'
@@ -61,8 +60,8 @@ const E = styled.div<{ side: Side }>`
 
 	> * {
 		padding: 0.5rem;
-		border: 2px solid ${colors.background};
-		background: ${colors.background};
+		border: 2px solid ${({ theme }) => theme.colors.background};
+		background: ${({ theme }) => theme.colors.background};
 	}
 
 	${props =>

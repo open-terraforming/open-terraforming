@@ -3,7 +3,7 @@ import { Button, DialogWrapper, Portal } from '@/components'
 import { useAppStore } from '@/utils/hooks'
 import { faExpand } from '@fortawesome/free-solid-svg-icons'
 import { PlayerStateValue } from '@shared/index'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { CardsPlayedDisplay } from './components/CardsPlayedDisplay'
 import { EventsModal } from './components/EventsModal'
@@ -12,18 +12,19 @@ import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
 import { TimeDisplay } from './components/TimeDisplay'
 import { CheatsModal } from '../CheatsModal/CheatsModal'
+import { SettingsModal } from '@/pages/Main/components/SettingsModal'
 
 type Props = {}
 
 export const EventList = ({}: Props) => {
 	const player = useAppStore(state => state.game.player)
 	const events = useAppStore(state => state.game.events)
+	const settings = useAppStore(state => state.settings.data)
 	const isAdmin = player.admin
-
-	const [displayModal, setDisplayModal] = useState(false)
 
 	useEffect(() => {
 		if (
+			settings.enableBrowserNotifications &&
 			document.hidden &&
 			(player?.state === PlayerStateValue.Playing ||
 				player?.state === PlayerStateValue.Picking)
@@ -52,9 +53,6 @@ export const EventList = ({}: Props) => {
 
 	return (
 		<Centered>
-			{displayModal && (
-				<EventsModal events={events} onClose={() => setDisplayModal(false)} />
-			)}
 			<EventSounds events={events} />
 			<CardsPlayedDisplay events={events} />
 			<LastEventsDisplay events={events} />
@@ -62,7 +60,14 @@ export const EventList = ({}: Props) => {
 			<Portal>
 				<TopButtons>
 					<Button onClick={handleFullscreen} icon={faExpand} />
-					<EventLog onClick={() => setDisplayModal(true)}>Event log</EventLog>
+					<DialogWrapper dialog={close => <SettingsModal onClose={close} />}>
+						{open => <Button onClick={open}>Settings</Button>}
+					</DialogWrapper>
+					<DialogWrapper
+						dialog={close => <EventsModal events={events} onClose={close} />}
+					>
+						{open => <Button onClick={open}>Event log</Button>}
+					</DialogWrapper>
 					{isAdmin && (
 						<DialogWrapper
 							dialog={close => <CheatsModal open onClose={close} />}
@@ -101,8 +106,9 @@ const TopButtons = styled.div`
 	top: 0.2rem;
 	left: 0.2rem;
 	display: flex;
-`
+	gap: 0.2rem;
 
-const EventLog = styled(Button)`
-	margin-left: 0.2rem;
+	> button {
+		clip-path: none;
+	}
 `

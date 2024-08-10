@@ -1,5 +1,4 @@
 import { setTableState } from '@/store/modules/table'
-import { colors } from '@/styles'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
@@ -131,5 +130,5 @@ const E = styled.div`
 `
 
 const Card = styled(CardView)`
-	background-color: ${rgba(colors.background, 1)};
+	background-color: ${({ theme }) => rgba(theme.colors.background, 1)};
 `

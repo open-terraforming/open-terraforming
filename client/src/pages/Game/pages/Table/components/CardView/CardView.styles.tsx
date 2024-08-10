@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import { media } from '@/styles/media'
 import { CardType } from '@shared/cards'
 import { rgba, lighten } from 'polished'
@@ -24,9 +23,9 @@ export const HeadSymbols = styled(Symbols)`
 `
 
 export const Action = styled.div`
-	background: ${colors.background};
+	background: ${({ theme }) => theme.colors.background};
 	padding: 0.5rem;
-	border: 0.1rem solid ${colors.border};
+	border: 0.1rem solid ${({ theme }) => theme.colors.border};
 	&& {
 		margin-bottom: 1rem;
 	}
@@ -37,8 +36,8 @@ export const ActionTitle = styled.div`
 	margin-right: auto;
 	width: 5rem;
 	margin-top: -1rem;
-	background: ${colors.background};
-	border: 0.1rem solid ${colors.border};
+	background: ${({ theme }) => theme.colors.background};
+	border: 0.1rem solid ${({ theme }) => theme.colors.border};
 	text-align: center;
 	padding: 0.1rem 0;
 	margin-bottom: 0.2rem;
@@ -48,7 +47,7 @@ export const Cost = styled.div<{ affordable: boolean }>`
 	height: 2rem;
 
 	> div {
-		background: ${colors.background};
+		background: ${({ theme }) => theme.colors.background};
 
 		position: absolute;
 
@@ -147,8 +146,8 @@ type ContainerCtx = {
 }
 
 export const Container = styled.div<ContainerCtx>`
-	border: 0.2rem solid ${props => colors.cards[props.type]};
-	background: ${rgba(colors.background, 1)};
+	border: 0.2rem solid ${props => props.theme.colors.cards[props.type]};
+	background: ${({ theme }) => rgba(theme.colors.background, 1)};
 	width: 240px;
 	flex-shrink: 0;
 	min-width: 0;
@@ -162,7 +161,7 @@ export const Container = styled.div<ContainerCtx>`
 	overflow: visible;
 
 	${Title} {
-		background: ${props => colors.cards[props.type]};
+		background: ${props => props.theme.colors.cards[props.type]};
 	}
 
 	${media.medium} {
@@ -203,7 +202,7 @@ export const Container = styled.div<ContainerCtx>`
 					transition: all 0.1s;
 
 					&:hover {
-						/*box-shadow: 0px 0px 3px 3px ${colors.border};*/
+						/*box-shadow: 0px 0px 3px 3px ${props.theme.colors.border};*/
 						transform: scale(1.03);
 					}
 			  `}
@@ -211,7 +210,7 @@ export const Container = styled.div<ContainerCtx>`
 	${props =>
 		props.selected &&
 		css`
-			background: ${rgba(lighten(0.1)(colors.background), 1)};
+			background: ${rgba(lighten(0.1)(props.theme.colors.background), 1)};
 			box-shadow: 0px 0px 0px 4px #ffffa6;
 			transform: scale(1.01);
 		`}

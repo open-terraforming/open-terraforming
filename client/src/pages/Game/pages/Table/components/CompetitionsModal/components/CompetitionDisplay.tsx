@@ -1,5 +1,4 @@
 import { Button } from '@/components'
-import { colors } from '@/styles'
 import { useAppStore } from '@/utils/hooks'
 import { Competition } from '@shared/competitions'
 import { PlayerState } from '@shared/index'
@@ -92,7 +91,7 @@ const Head = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 
 	> button {
 		margin: 0;
@@ -105,7 +104,7 @@ const Title = styled.div`
 `
 
 const Info = styled.div`
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 	padding: 0.5rem 0.5rem;
 `
 
@@ -113,8 +112,8 @@ const ScoreList = styled.div`
 	padding: 0.25rem 0.5rem;
 	max-height: 4rem;
 	overflow: auto;
-	border-left: 2px solid ${colors.border};
-	border-right: 2px solid ${colors.border};
+	border-left: 2px solid ${({ theme }) => theme.colors.border};
+	border-right: 2px solid ${({ theme }) => theme.colors.border};
 `
 
 const Position = styled.div`

@@ -1,5 +1,4 @@
 import { setSettings } from '@/store/modules/settings'
-import { colors } from '@/styles'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import React from 'react'
 import styled, { css } from 'styled-components'
@@ -46,7 +45,7 @@ const Hide = styled.div`
 	position: absolute;
 	right: 0;
 	top: 0;
-	border: 0.2rem solid ${colors.border};
+	border: 0.2rem solid ${({ theme }) => theme.colors.border};
 	border-top: 0;
 	border-right: 0;
 	cursor: pointer;
@@ -55,8 +54,8 @@ const Hide = styled.div`
 const Help = styled.div<{ hasClose: boolean }>`
 	margin: 0.5rem auto;
 	padding: 1rem;
-	border: 0.2rem solid ${colors.border};
-	background-color: ${colors.background};
+	border: 0.2rem solid ${({ theme }) => theme.colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
 	max-width: 30rem;
 	position: relative;
 

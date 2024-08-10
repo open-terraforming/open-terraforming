@@ -1,7 +1,6 @@
 import { getGames } from '@/api/rest'
 import { Button, Loader } from '@/components'
 import { ApiState, setApiState } from '@/store/modules/api'
-import { colors } from '@/styles'
 import { useAppDispatch } from '@/utils/hooks'
 import { faArrowRight, faSync } from '@fortawesome/free-solid-svg-icons'
 import { GameInfo } from '@shared/extra'
@@ -110,7 +109,7 @@ const GameLine = styled.div`
 
 const GameHeader = styled(GameLine)`
 	margin-top: 2rem;
-	color: ${darken(0.1, colors.text)};
+	color: ${({ theme }) => darken(0.1, theme.colors.text)};
 `
 
 const GameName = styled.div`

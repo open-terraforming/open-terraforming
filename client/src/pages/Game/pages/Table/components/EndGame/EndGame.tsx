@@ -1,6 +1,5 @@
 import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
-import { colors } from '@/styles'
 import { useAppStore, useInterval } from '@/utils/hooks'
 import { VictoryPointsSource, VictoryPoints } from '@shared/index'
 import { rgba } from 'polished'
@@ -176,7 +175,7 @@ const Place = styled.div`
 
 const Bar = styled.div`
 	transition: height 3s;
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 `
 
 const Current = styled.div`

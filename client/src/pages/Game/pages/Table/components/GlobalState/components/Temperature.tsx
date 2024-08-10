@@ -6,7 +6,6 @@ import React, { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { DiffAnim } from './DiffAnim'
 import { MilestoneDisplay } from './MilestoneDisplay'
-import { colors } from '@/styles'
 import { darken } from 'polished'
 
 type Props = {
@@ -55,8 +54,8 @@ export const Temperature = ({ start, current, target, milestones }: Props) => {
 
 const Container = styled.div`
 	width: 3rem;
-	border: 2px solid ${colors.border};
-	background-color: ${colors.background};
+	border: 2px solid ${({ theme }) => theme.colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
 	position: relative;
 `
 
@@ -69,10 +68,10 @@ const Step = styled.div<{ passed: boolean; active: boolean }>`
 	${props =>
 		props.passed || props.active
 			? css`
-					background-color: ${colors.border};
+					background-color: ${props.theme.colors.border};
 			  `
 			: css`
-					color: ${darken(0.3, colors.text)};
+					color: ${darken(0.3, props.theme.colors.text)};
 			  `}
 `
 

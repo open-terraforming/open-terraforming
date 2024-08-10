@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import { useAppStore, useElementPosition } from '@/utils/hooks'
 import {
 	faArrowRight,
@@ -169,11 +168,11 @@ const Container = styled.div<{ isPlaying: boolean }>`
 
 const InfoContainer = styled.div`
 	width: 10rem;
-	background-color: ${colors.background};
+	background-color: ${({ theme }) => theme.colors.background};
 `
 
 const Name = styled.div`
-	background-color: ${colors.background};
+	background-color: ${({ theme }) => theme.colors.background};
 	padding: 0.2rem 0.5rem;
 	flex-grow: 1;
 	text-overflow: ellipsis;
@@ -181,7 +180,7 @@ const Name = styled.div`
 `
 
 const Rating = styled.div`
-	background-color: ${colors.background};
+	background-color: ${({ theme }) => theme.colors.background};
 	padding: 0.2rem 0rem;
 	width: 2.5rem;
 	display: flex;
@@ -199,11 +198,11 @@ const Color = styled.div`
 `
 
 const Starting = styled.div`
-	background: ${colors.background};
+	background: ${({ theme }) => theme.colors.background};
 	width: 2rem;
 	height: 2rem;
 	line-height: 2rem;
 	text-align: center;
 	align-self: center;
-	color: ${lighten(0.1, colors.text)};
+	color: ${({ theme }) => lighten(0.1, theme.colors.text)};
 `

@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import React from 'react'
 import styled, { css } from 'styled-components'
 
@@ -38,17 +37,17 @@ export const CardsCounter = ({
 const D = styled.button<{ disabled?: boolean }>`
 	display: flex;
 	flex-direction: column;
-	border-right: 0.2rem solid ${colors.border};
+	border-right: 0.2rem solid ${({ theme }) => theme.colors.border};
 	min-width: 3.5rem;
 	align-items: stretch;
-	color: ${colors.text};
+	color: ${({ theme }) => theme.colors.text};
 	flex: 1;
 	position: relative;
 
 	z-index: 2;
 
 	&:first-child {
-		border-left: 0.2rem solid ${colors.border};
+		border-left: 0.2rem solid ${({ theme }) => theme.colors.border};
 	}
 
 	${props =>
@@ -70,7 +69,7 @@ const Count = styled.div`
 `
 
 const Text = styled.div`
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 	text-align: center;
 	padding: 0.2rem 0.5rem;
 	text-transform: uppercase;

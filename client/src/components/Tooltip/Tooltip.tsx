@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import { useWindowEvent } from '@/utils/hooks'
 import { rgba } from 'polished'
 import React, { useEffect, useRef, useState } from 'react'
@@ -144,7 +143,7 @@ const Container = styled.div<{ disableStyle?: boolean }>`
 	${props =>
 		!props.disableStyle &&
 		css`
-			background: ${rgba(colors.background, 1)};
+			background: ${rgba(props.theme.colors.background, 1)};
 			color: #ddd;
 			padding: 10px;
 
@@ -155,7 +154,7 @@ const Container = styled.div<{ disableStyle?: boolean }>`
 				left: 50%;
 				margin-left: -5px;
 				border: 5px solid transparent;
-				border-top-color: ${colors.background};
+				border-top-color: ${props.theme.colors.background};
 			}
 		`}
 `

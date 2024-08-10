@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import { Card } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import React from 'react'
@@ -27,7 +26,7 @@ const Container = styled.div`
 	float: left;
 	margin-top: 1rem;
 	margin-left: 1rem;
-	background: ${colors.background};
+	background: ${({ theme }) => theme.colors.background};
 	padding: 0.5rem;
 	color: #fff;
 	display: flex;

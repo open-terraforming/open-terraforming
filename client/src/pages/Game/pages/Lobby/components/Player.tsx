@@ -4,10 +4,9 @@ import { faRobot, faBan } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { pickColor, kickPlayer } from '@shared/index'
 import { PlayerColors } from '@shared/player-colors'
-import React from 'react'
-import styled, { css } from 'styled-components'
+import React, { useContext } from 'react'
+import styled, { css, ThemeContext } from 'styled-components'
 import { ColorPicker } from './ColorPicker'
-import { colors as themeColors } from '@/styles'
 import { Button } from '@/components'
 
 type Props = {
@@ -21,6 +20,7 @@ type Props = {
 
 export const Player = ({ id, name, ready, color, current, bot }: Props) => {
 	const api = useApi()
+	const theme = useContext(ThemeContext)
 
 	const currentPlayer = useAppStore(state => state.game.player)
 
@@ -68,7 +68,7 @@ export const Player = ({ id, name, ready, color, current, bot }: Props) => {
 			)}
 			{bot && (
 				<PlayerState ready>
-					<FontAwesomeIcon icon={faRobot} color={themeColors.text} />
+					<FontAwesomeIcon icon={faRobot} color={theme.colors.text} />
 				</PlayerState>
 			)}
 		</PlayerContainer>

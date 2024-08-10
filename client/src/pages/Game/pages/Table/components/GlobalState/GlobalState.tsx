@@ -1,5 +1,4 @@
 import { Button } from '@/components'
-import { colors } from '@/styles'
 import { useAppStore } from '@/utils/hooks'
 import { faPoll } from '@fortawesome/free-solid-svg-icons'
 import { GameStateValue } from '@shared/index'
@@ -85,8 +84,8 @@ const E = styled.div`
 `
 
 const Container = styled.div`
-	background-color: ${colors.background};
-	border: 2px solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0.25rem 0.5rem;
 	margin-bottom: 1rem;
 	margin-right: 2rem;

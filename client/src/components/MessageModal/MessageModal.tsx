@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Modal } from '../Modal/Modal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
@@ -8,8 +8,7 @@ import {
 	faCheck
 } from '@fortawesome/free-solid-svg-icons'
 import { Button } from '../Button/Button'
-import styled from 'styled-components'
-import { colors } from '@/styles'
+import styled, { ThemeContext } from 'styled-components'
 
 type MessageModalType = 'info' | 'warn' | 'error'
 
@@ -35,6 +34,7 @@ export const MessageModal = ({
 }) => {
 	const [open, setOpen] = useState(true)
 	const handleClose = () => setOpen(false)
+	const { colors } = useContext(ThemeContext)
 
 	return (
 		<Modal

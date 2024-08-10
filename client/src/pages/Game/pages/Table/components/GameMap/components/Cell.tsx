@@ -1,5 +1,4 @@
 import { Portal } from '@/components'
-import { colors } from '@/styles'
 import { useAppStore, useElementPosition } from '@/utils/hooks'
 import { GridCell, GridCellContent, GridCellType } from '@shared/index'
 import { canPlace, isClaimable, PlacementState } from '@shared/placements'
@@ -340,5 +339,5 @@ const StyledHex = styled.g<{
 const Tooltip = styled.div`
 	position: absolute;
 	padding: 1rem;
-	background: ${colors.background};
+	background: ${({ theme }) => theme.colors.background};
 `

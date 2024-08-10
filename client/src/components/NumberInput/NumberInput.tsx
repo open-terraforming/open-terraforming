@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import {
 	faChevronLeft,
@@ -90,7 +89,8 @@ const Icon = styled.div`
 
 const Value = styled.div<{ hasIcon: boolean }>`
 	padding: 0.3rem;
-	background-color: ${rgba(darken(0.2, colors.application), 0.5)};
+	background-color: ${({ theme }) =>
+		rgba(darken(0.2, theme.colors.application), 0.5)};
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -101,8 +101,8 @@ const ChangeButton = styled.button<{ disabled: boolean }>`
 	padding: 0.3rem;
 	display: flex;
 	align-items: center;
-	background-color: ${colors.border};
-	color: ${colors.text};
+	background-color: ${({ theme }) => theme.colors.border};
+	color: ${({ theme }) => theme.colors.text};
 
 	&& {
 		margin-left: 0;
@@ -112,8 +112,8 @@ const ChangeButton = styled.button<{ disabled: boolean }>`
 	${props =>
 		props.disabled
 			? css`
-					color: ${darken(0.2, colors.text)};
-					background-color: ${darken(0.1, colors.border)};
+					color: ${darken(0.2, props.theme.colors.text)};
+					background-color: ${darken(0.1, props.theme.colors.border)};
 			  `
 			: css`
 					cursor: pointer;

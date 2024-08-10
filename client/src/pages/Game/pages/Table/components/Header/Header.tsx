@@ -1,5 +1,4 @@
 import { Button, DialogWrapper } from '@/components'
-import { colors } from '@/styles'
 import { useGameState } from '@/utils/hooks'
 import React from 'react'
 import styled from 'styled-components'
@@ -65,8 +64,8 @@ const E = styled.div`
 `
 
 const StyledButton = styled(Button)`
-	background-color: ${colors.background};
-	border: 2px solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0 0.8rem;
 	> span {
 		padding: 0.5rem 0.2rem;

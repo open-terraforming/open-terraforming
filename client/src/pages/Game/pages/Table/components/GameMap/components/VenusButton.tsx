@@ -6,7 +6,6 @@ import { useAppStore } from '@/utils/hooks'
 import { GridCellContent, GridCellLocation } from '@shared/game'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCity } from '@fortawesome/free-solid-svg-icons'
-import { colors } from '@/styles'
 import { venusIcon } from '@/icons/venus'
 import { PlacementState } from '@shared/placements'
 
@@ -111,8 +110,8 @@ const Label = styled.div`
 
 const CitiesContainer = styled.div`
 	padding: 0.5rem;
-	border: 2px solid ${colors.border};
-	background-color: ${colors.background};
+	border: 2px solid ${({ theme }) => theme.colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
 `
 
 const ProgressContainer = styled.div`
@@ -124,13 +123,13 @@ const ProgressIcon = styled.div`
 	padding: 0 1rem;
 	display: flex;
 	align-items: center;
-	border: 2px solid ${colors.border};
+	border: 2px solid ${({ theme }) => theme.colors.border};
 	border-right: 0;
-	background-color: ${colors.background};
+	background-color: ${({ theme }) => theme.colors.background};
 `
 
 const ProgressValue = styled.div`
-	background-color: ${colors.border};
+	background-color: ${({ theme }) => theme.colors.border};
 	border-left: 0;
 
 	padding: 0.5rem;
