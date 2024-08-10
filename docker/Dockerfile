@@ -43,7 +43,7 @@ COPY client/package-lock.json .
 RUN npm ci
 
 COPY client/tsconfig.json .
-COPY client/config ./config
+COPY client/vite.config.mjs .
 COPY client/src ./src
 COPY shared/src ../shared/src
 
