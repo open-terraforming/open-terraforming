@@ -29,6 +29,7 @@ import { PlayEffect } from './components/PlayEffect'
 import { Resource } from './components/Resource'
 import { Symbols } from './components/Symbols'
 import { Tag } from './components/Tag'
+import { API_URL } from '@/constants'
 
 export const CardView = ({
 	card,
@@ -154,9 +155,7 @@ export const CardView = ({
 				<Image
 					style={{
 						backgroundImage: `url('${
-							process.env.APP_API_URL
-								? `${location.protocol}//${process.env.APP_API_URL}`
-								: ''
+							API_URL ? `${location.protocol}//${API_URL}` : ''
 						}/card/${card.code.replace(/'/g, "\\'")}.jpg')`
 					}}
 				>

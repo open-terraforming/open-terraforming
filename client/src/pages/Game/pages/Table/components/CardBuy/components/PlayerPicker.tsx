@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from 'react'
-import { PlayerState } from '@shared/index'
-import { Modal } from '@/components/Modal/Modal'
-import { Resource, Production } from '@shared/cards'
-import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
-import styled from 'styled-components'
 import { Button } from '@/components'
-import { lighten } from 'polished'
+import { Modal } from '@/components/Modal/Modal'
+import { Production, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
+import { PlayerState } from '@shared/index'
+import { lighten } from 'polished'
+import { useMemo, useState } from 'react'
+import styled from 'styled-components'
+import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 
 type Props = {
 	players: PlayerState[]
@@ -40,10 +40,10 @@ const ResItem = ({
 		<Value>
 			{value} <ResourceIcon res={res} />
 		</Value>
-		<Production>
+		<ProductionE>
 			{production > 0 && '+'}
 			{production}
-		</Production>
+		</ProductionE>
 	</InfoItem>
 )
 
@@ -141,7 +141,7 @@ const Value = styled.div`
 	width: 100%;
 `
 
-const Production = styled.div`
+const ProductionE = styled.div`
 	background-color: ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
 `

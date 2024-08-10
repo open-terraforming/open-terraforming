@@ -3,8 +3,9 @@ module.exports = {
     parser: '@typescript-eslint/parser',
     extends: [
         'plugin:react/recommended',
+        'plugin:react/jsx-runtime',
         'plugin:@typescript-eslint/recommended',
-        'plugin:prettier/recommended'
+        'plugin:prettier/recommended',
     ],
     plugins: [],
     parserOptions: {

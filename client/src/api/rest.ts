@@ -1,8 +1,8 @@
+import { API_URL } from '@/constants'
 import { GameInfo, ServerInfo } from '@shared/extra'
 import { NewGameRequest } from '@shared/requests'
 
-const basePath =
-	location.protocol + '//' + (process.env.APP_API_URL || location.host)
+const basePath = location.protocol + '//' + (API_URL || location.host)
 
 export const getServerInfo = (): Promise<ServerInfo> =>
 	fetch(basePath + '/api/info').then(res => res.json())
