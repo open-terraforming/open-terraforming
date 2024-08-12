@@ -4,13 +4,13 @@ import styled, { css } from 'styled-components'
 
 type Props = {
 	cond: CardCondition
-	ctx: CardCallbackContext
+	ctx: CardCallbackContext | undefined
 	evaluate?: boolean
 }
 
 export const Condition = ({ cond, ctx, evaluate = true }: Props) => {
 	return (
-		<Container fine={!evaluate || cond.evaluate(ctx)}>
+		<Container fine={!ctx || !evaluate || cond.evaluate(ctx)}>
 			{cond.description}
 		</Container>
 	)

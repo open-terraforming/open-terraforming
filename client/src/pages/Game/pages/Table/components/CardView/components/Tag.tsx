@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { CardCategory } from '@shared/cards'
 import styled, { css } from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -22,9 +22,10 @@ type Props = {
 	tag: CardCategory
 	size?: 'md' | 'sm'
 	className?: string
+	onClick?: () => void
 }
 
-export const Tag = ({ tag, size = 'md', className }: Props) => {
+export const Tag = ({ tag, size = 'md', className, onClick }: Props) => {
 	const image = useMemo(() => {
 		switch (tag) {
 			case CardCategory.Animal:
@@ -109,7 +110,12 @@ export const Tag = ({ tag, size = 'md', className }: Props) => {
 	}, [tag])
 
 	return (
-		<Category title={CardCategory[tag]} size={size} className={className}>
+		<Category
+			title={CardCategory[tag]}
+			size={size}
+			className={className}
+			onClick={onClick}
+		>
 			{image || CardCategory[tag]}
 		</Category>
 	)

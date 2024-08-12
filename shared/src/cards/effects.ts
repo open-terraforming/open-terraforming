@@ -22,6 +22,7 @@ import {
 	flatten,
 	pushPendingAction
 } from '../utils'
+import { progressToSymbol } from '../utils/progressToSymbol'
 import {
 	cardArg,
 	effectArg,
@@ -394,8 +395,7 @@ export const gameProcessChange = (res: GameProgress, change: number) => {
 				: `Decrease ${res} by ${-change} step`,
 		symbols: [
 			{
-				symbol:
-					res === 'temperature' ? SymbolType.Temperature : SymbolType.Oxygen,
+				symbol: progressToSymbol(res),
 				count: change
 			}
 		],

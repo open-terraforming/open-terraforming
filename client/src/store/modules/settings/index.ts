@@ -4,7 +4,8 @@ type Actions = ReturnType<typeof setSettings> | ReturnType<typeof loadSettings>
 const initialData = {
 	hiddenHelp: {} as Record<string, boolean>,
 	theme: 'default' as undefined | 'default' | 'green' | 'red',
-	enableBrowserNotifications: true
+	enableBrowserNotifications: true,
+	cardImagesUrl: undefined as string | undefined
 }
 
 const initialState = {

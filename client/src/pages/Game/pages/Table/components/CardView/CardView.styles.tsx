@@ -105,11 +105,20 @@ export const Played = styled.div`
 	color: #f12e41;
 `
 
-export const VP = styled.div`
-	clear: both;
-	float: right;
-	margin-right: 0.1rem;
-	margin-top: 0.5rem;
+export const VP = styled.div<{ $corporation?: boolean }>`
+	${props =>
+		props.$corporation
+			? css`
+					position: absolute;
+					top: 2.5rem;
+					right: 0.5rem;
+			  `
+			: css`
+					clear: both;
+					float: right;
+					margin-right: 0.1rem;
+					margin-top: 0.5rem;
+			  `}
 
 	border-radius: 50%;
 	width: 3rem;
@@ -188,6 +197,7 @@ export const Container = styled.div<ContainerCtx>`
 
 			${Description} {
 				clear: both;
+				max-height: 150px;
 			}
 		`}
 

@@ -1,5 +1,6 @@
 import { getServerInfo } from '@/api/rest'
 import { Button, DialogWrapper, Loader, Message } from '@/components'
+import { CardsViewer } from '@/components/CardsViewer/CardsViewer'
 import { Mars } from '@/components/Mars/Mars'
 import { Modal } from '@/components/Modal/Modal'
 import { ApiState, setApiState } from '@/store/modules/api'
@@ -7,10 +8,11 @@ import {
 	faArrowRight,
 	faCog,
 	faPlusCircle,
+	faSearch,
 	faSync
 } from '@fortawesome/free-solid-svg-icons'
 import { ServerInfo } from '@shared/extra'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
 import { GamesListModal } from './components/GamesListModal'
@@ -110,6 +112,14 @@ export const Main = ({}: Props) => {
 							{open => (
 								<Button onClick={open} icon={faCog}>
 									Settings
+								</Button>
+							)}
+						</DialogWrapper>
+
+						<DialogWrapper dialog={close => <CardsViewer onClose={close} />}>
+							{open => (
+								<Button onClick={open} icon={faSearch}>
+									Cards viewer
 								</Button>
 							)}
 						</DialogWrapper>
