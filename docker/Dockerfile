@@ -1,3 +1,5 @@
+ARG OT_VERSION
+
 FROM node:20.9.0-alpine AS build-server
 
 # Initialization
@@ -17,6 +19,7 @@ COPY shared/src ../shared/src
 
 # Application build
 RUN npm run build
+RUN echo "$OT_VERSION" > /app/server/dist/version.txt
 
 FROM node:20.9.0-alpine AS build-server-depts
 
@@ -48,6 +51,7 @@ COPY client/src ./src
 COPY shared/src ../shared/src
 
 # Application build
+RUN echo "VITE_APP_OT_VERSION=$OT_VERSION" > .env.local
 RUN npm run build
 
 FROM node:20.9.0-alpine

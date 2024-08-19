@@ -18,6 +18,7 @@ import styled from 'styled-components'
 import { GamesListModal } from './components/GamesListModal'
 import { NewGameModal } from './components/NewGameModal'
 import { SettingsModal } from './components/SettingsModal'
+import { Footer } from './components/Footer'
 
 type Props = {}
 
@@ -135,6 +136,7 @@ export const Main = ({}: Props) => {
 					</>
 				)}
 			</Modal>
+			<Footer />
 		</>
 	)
 }
