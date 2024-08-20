@@ -1,6 +1,5 @@
-ARG OT_VERSION
-
 FROM node:20.9.0-alpine AS build-server
+ARG OT_VERSION
 
 # Initialization
 RUN mkdir -p /app/server
@@ -19,9 +18,10 @@ COPY shared/src ../shared/src
 
 # Application build
 RUN npm run build
-RUN echo "$OT_VERSION" > /app/server/dist/version.txt
+RUN echo "${OT_VERSION}" > /app/server/dist/version.txt
 
 FROM node:20.9.0-alpine AS build-server-depts
+ARG OT_VERSION
 
 # Initialization
 RUN mkdir -p /app/server
@@ -34,6 +34,7 @@ COPY docker/removeDevDependencies.js .
 RUN npm install
 
 FROM node:20.9.0-alpine AS build-client
+ARG OT_VERSION
 
 # Initialization
 RUN mkdir -p /app/client
@@ -48,13 +49,15 @@ RUN npm ci
 COPY client/tsconfig.json .
 COPY client/vite.config.mjs .
 COPY client/src ./src
+COPY client/.env ./.env
 COPY shared/src ../shared/src
 
 # Application build
-RUN echo "VITE_APP_OT_VERSION=$OT_VERSION" > .env.local
+RUN echo "VITE_APP_OT_VERSION=${OT_VERSION}" > .env.local
 RUN npm run build
 
 FROM node:20.9.0-alpine
+ARG OT_VERSION
 
 # Options
 ENV PORT=80
