@@ -38,6 +38,6 @@ jobs:
             ghcr.io/open-terraforming/open-terraforming:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          buld-args: OT_VERSION=${{  github.ref_name }}
+          build-args: OT_VERSION=${{  github.ref_name }}
           platforms: linux/amd64,linux/arm64
 
