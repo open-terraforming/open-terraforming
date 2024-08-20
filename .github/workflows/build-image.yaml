@@ -31,11 +31,11 @@ jobs:
         with:
           push: true
           file: docker/Dockerfile
-          tags:
-            - "containers.zipek.cz/kamen/open-terraforming:latest"
-            - "containers.zipek.cz/kamen/open-terraforming:${{ github.ref_name }}"
-            - "ghcr.io/open-terraforming/open-terraforming:latest"
-            - "ghcr.io/open-terraforming/open-terraforming:${{ github.ref_name }}"
+          tags: |
+            containers.zipek.cz/kamen/open-terraforming:latest,
+            containers.zipek.cz/kamen/open-terraforming:${{ github.ref_name }},
+            ghcr.io/open-terraforming/open-terraforming:latest,
+            ghcr.io/open-terraforming/open-terraforming:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           buld-args: OT_VERSION=${{  github.ref_name }}
