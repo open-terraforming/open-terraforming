@@ -49,6 +49,7 @@ RUN npm ci
 COPY client/tsconfig.json .
 COPY client/vite.config.mjs .
 COPY client/src ./src
+COPY client/static ./static
 COPY client/.env ./.env
 COPY shared/src ../shared/src
 
