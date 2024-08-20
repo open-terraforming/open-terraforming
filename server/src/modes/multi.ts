@@ -10,7 +10,6 @@ import { Maps } from '@shared/maps'
 import { GameModes } from '@shared/modes'
 import { NewGameRequest } from '@shared/requests'
 import { nonEmptyStringLength } from '@shared/utils'
-import bodyParser from 'body-parser'
 import express, { Request, Response } from 'express'
 import { body, validationResult } from 'express-validator'
 import { createServer, IncomingMessage, Server } from 'http'
@@ -39,9 +38,9 @@ export const multiApp = (config: ServerOptions) => {
 	app.use(corsMiddleware())
 	app.use(express.static(globalConfig.staticPath))
 	app.use(expressMetricsMiddleware)
-	app.use(bodyParser.urlencoded({ extended: true }))
-	app.use(bodyParser.json())
-	app.use(bodyParser.raw())
+	app.use(express.urlencoded({ extended: true }))
+	app.use(express.json())
+	app.use(express.raw())
 
 	const createGameServer = (config?: Partial<GameConfig>) => {
 		const gameServer = new GameServer(config)

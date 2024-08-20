@@ -3,7 +3,6 @@ import { corsMiddleware } from '@/server/cors'
 import { ServerOptions } from '@/server/types'
 import { Logger } from '@/utils/log'
 import { ServerInfo } from '@shared/extra'
-import bodyParser from 'body-parser'
 import express from 'express'
 import { createServer, IncomingMessage, Server } from 'http'
 import { join } from 'path'
@@ -27,9 +26,9 @@ export const singleApp = (
 
 	app.use(corsMiddleware())
 	app.use(express.static(join(__dirname, '..', '..', 'static')))
-	app.use(bodyParser.urlencoded({ extended: true }))
-	app.use(bodyParser.json())
-	app.use(bodyParser.raw())
+	app.use(express.urlencoded({ extended: true }))
+	app.use(express.json())
+	app.use(express.raw())
 
 	const game = new GameServer(gameConfig)
 
