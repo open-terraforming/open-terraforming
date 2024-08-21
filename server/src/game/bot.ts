@@ -25,6 +25,7 @@ import {
 	playCard,
 	playerPass,
 	playerReady,
+	solarPhaseTerraform,
 	sponsorCompetition,
 } from '@shared/index'
 import { Milestones } from '@shared/milestones'
@@ -263,6 +264,20 @@ export class Bot extends Player {
 				} else {
 					return this.performAction(playerPass(true))
 				}
+			}
+
+			case PlayerActionType.SolarPhaseTerraform: {
+				// TODO: Scoring?
+				const availableProgressValues = (
+					['oceans', 'temperature', 'oxygen'] as const
+				).filter(
+					(progress) =>
+						this.game.state[progress] < this.game.state.map[progress],
+				)
+
+				const progress = shuffle(availableProgressValues)[0]
+
+				return this.performAction(solarPhaseTerraform(progress))
 			}
 		}
 	}
