@@ -80,4 +80,5 @@ RUN mkdir -p /data && chown node:node /data
 VOLUME [ "/data" ]
 
 # Start the application
+EXPOSE $PORT
 CMD [ "node", "./dist/server/src/index.js" ]
