@@ -78,8 +78,8 @@ jobs:
             containers.zipek.cz/kamen/open-terraforming:${{ steps.tag.outputs.result }},
             ghcr.io/open-terraforming/open-terraforming:latest,
             ghcr.io/open-terraforming/open-terraforming:${{ steps.tag.outputs.result }}
-            open-terraforming/open-terraforming:latest,
-            open-terraforming/open-terraforming:${{ steps.tag.outputs.result }}
+            openterraforming/open-terraforming:latest,
+            openterraforming/open-terraforming:${{ steps.tag.outputs.result }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: OT_VERSION=${{ steps.tag.outputs.result }}
