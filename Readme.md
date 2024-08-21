@@ -1,4 +1,4 @@
-# OPEN TERRAFORMING
+![Open Terraforming](./presentation/open-terraforming-logo.png)
 
 Open source implementation of terraforming focused board game.
 
