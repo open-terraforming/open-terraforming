@@ -1,4 +1,4 @@
-name: Server PR checks
+name: Server PR checks - Build
 
 on:
   pull_request:
@@ -15,5 +15,5 @@ jobs:
           cache-dependency-path: server/package-lock.json
       - run: npm install
         working-directory: server
-      - run: npm run lint
+      - run: npm run build
         working-directory: server
