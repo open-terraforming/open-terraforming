@@ -17,7 +17,7 @@ type SingleAppContext = {
 
 export const singleApp = (
 	config: ServerOptions,
-	gameConfig: Partial<GameConfig>
+	gameConfig: Partial<GameConfig>,
 ) => {
 	const logger = new Logger('Master')
 
@@ -36,13 +36,13 @@ export const singleApp = (
 		res.json({
 			maxServers: config.maxServers,
 			servers: 1,
-			singleGame: config.singleGame
+			singleGame: config.singleGame,
 		} as ServerInfo)
 	})
 
 	server.on('upgrade', (request: IncomingMessage, socket, head) => {
 		if (request.url?.endsWith('events')) {
-			game.events.socket.handleUpgrade(request, socket, head, ws => {
+			game.events.socket.handleUpgrade(request, socket, head, (ws) => {
 				game.events.socket.emit('connection', ws, request)
 			})
 		} else {
@@ -50,7 +50,7 @@ export const singleApp = (
 		}
 	})
 
-	return new Promise<SingleAppContext>(resolve => {
+	return new Promise<SingleAppContext>((resolve) => {
 		server.listen(config.port, () => {
 			logger.log('Listening on', config.port)
 			resolve({ app, game, server, port: config.port })

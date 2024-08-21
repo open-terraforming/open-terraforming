@@ -8,7 +8,7 @@ async function main() {
 	const game = new Game({
 		bots: 4,
 		fastBots: true,
-		fastProduction: true
+		fastProduction: true,
 	})
 
 	game.players[0].state.owner = true

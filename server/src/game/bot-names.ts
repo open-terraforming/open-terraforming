@@ -20,5 +20,5 @@ export const BotNames = [
 	'China',
 	'Europe',
 	'Fredrick',
-	'Harry'
+	'Harry',
 ]

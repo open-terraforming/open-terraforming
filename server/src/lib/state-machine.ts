@@ -57,7 +57,7 @@ export class StateMachine<Name extends string | number = string> {
 
 		this.onStateChanged.emit({
 			old,
-			current: this.currentState
+			current: this.currentState,
 		})
 	}
 
@@ -77,7 +77,7 @@ export class StateMachine<Name extends string | number = string> {
 
 	protected onStateEnter(
 		prevState: State<Name> | undefined,
-		newState: State<Name>
+		newState: State<Name>,
 	) {
 		newState.onEnter(prevState)
 	}

@@ -4,7 +4,7 @@ import { ValidatorContext } from './types'
 export const cardResourceAmountArgValidator = ({
 	a,
 	value,
-	ctx: { card }
+	ctx: { card },
 }: ValidatorContext) => {
 	if (typeof value !== 'number') {
 		throw new Error(`${value} is not a number`)

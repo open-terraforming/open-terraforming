@@ -3,14 +3,14 @@ import {
 	CardCallbackContext,
 	CardCondition,
 	CardEffect,
-	CardEffectArgumentType
+	CardEffectArgumentType,
 } from '@shared/cards'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { f } from '@shared/utils'
 import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
 
-export abstract class PlayerBaseAction<Args = {}> {
+export abstract class PlayerBaseAction<Args = unknown> {
 	abstract states: PlayerStateValue[]
 	abstract gameStates: GameStateValue[]
 
@@ -48,7 +48,7 @@ export abstract class PlayerBaseAction<Args = {}> {
 			!this.gameStates.includes(this.game.state)
 		) {
 			throw new Error(
-				`${name} not allowed when game is ${GameStateValue[this.game.state]}`
+				`${name} not allowed when game is ${GameStateValue[this.game.state]}`,
 			)
 		}
 
@@ -56,7 +56,7 @@ export abstract class PlayerBaseAction<Args = {}> {
 			throw new Error(
 				`${name} not allowed when player is ${
 					PlayerStateValue[this.player.state]
-				}`
+				}`,
 			)
 		}
 
@@ -65,7 +65,7 @@ export abstract class PlayerBaseAction<Args = {}> {
 
 	setState(state: PlayerStateValue) {
 		this.logger.log(
-			`${PlayerStateValue[this.player.state]} -> ${PlayerStateValue[state]}`
+			`${PlayerStateValue[this.player.state]} -> ${PlayerStateValue[state]}`,
 		)
 
 		this.player.state = state
@@ -75,26 +75,26 @@ export abstract class PlayerBaseAction<Args = {}> {
 		card: Card,
 		ctx: CardCallbackContext,
 		playArguments: CardEffectArgumentType[][],
-		action = false
+		action = false,
 	) {
 		const errorConditions = [
-			...(action ? [] : card.conditions.filter(c => !c.evaluate(ctx))),
+			...(action ? [] : card.conditions.filter((c) => !c.evaluate(ctx))),
 			...(action ? card.actionEffects : card.playEffects).reduce(
 				(acc, p, ei) => [
 					...acc,
 					...p.conditions.filter(
-						c => !c.evaluate(ctx, ...(playArguments[ei] || []))
-					)
+						(c) => !c.evaluate(ctx, ...(playArguments[ei] || [])),
+					),
 				],
-				[] as CardCondition[]
-			)
+				[] as CardCondition[],
+			),
 		]
 
 		if (errorConditions.length > 0) {
 			throw new Error(
 				`Card conditions not met! ${errorConditions
 					.map((c, i) => c.description || i.toString())
-					.join('. ')}`
+					.join('. ')}`,
 			)
 		}
 
@@ -121,11 +121,11 @@ export abstract class PlayerBaseAction<Args = {}> {
 							a,
 							card,
 							ctx,
-							value
+							value,
 						})
 					} catch (e) {
 						throw new Error(
-							f('{0}: Effect {1} argument {2} - {3}', card.code, i, ai, e)
+							f('{0}: Effect {1} argument {2} - {3}', card.code, i, ai, e),
 						)
 					}
 				})
@@ -136,7 +136,7 @@ export abstract class PlayerBaseAction<Args = {}> {
 	runCardEffects(
 		effects: CardEffect[],
 		ctx: CardCallbackContext,
-		playArguments: CardEffectArgumentType[][]
+		playArguments: CardEffectArgumentType[][],
 	) {
 		effects.forEach((e, i) => {
 			e.perform(ctx, ...(playArguments[i] || []))
@@ -151,7 +151,7 @@ export abstract class PlayerBaseAction<Args = {}> {
 		}
 
 		this.player.pendingActions = this.player.pendingActions.filter(
-			a => a !== this.pendingAction
+			(a) => a !== this.pendingAction,
 		)
 
 		this.parent.game.filterPendingActions()

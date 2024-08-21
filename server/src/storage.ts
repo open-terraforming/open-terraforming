@@ -4,7 +4,7 @@ import {
 	readFileSync,
 	mkdirSync,
 	writeFileSync,
-	unlinkSync
+	unlinkSync,
 } from 'fs'
 import { join, dirname } from 'path'
 import { globalConfig } from './config'
@@ -27,7 +27,7 @@ export const tryLoadOngoing = async (id: string) => {
 		const contents = await fs.readFile(join(ongoingPath, `${id}.json`))
 
 		return JSON.parse(contents.toString()) as GameState
-	} catch (e) {
+	} catch {
 		return null
 	}
 }
@@ -46,7 +46,7 @@ export const tryLoadLock = (id: string) => {
 		const contents = readFileSync(join(ongoingPath, `${id}-lock.json`))
 
 		return JSON.parse(contents.toString()) as GameState
-	} catch (e) {
+	} catch {
 		return null
 	}
 }
@@ -59,14 +59,14 @@ export const saveToCache = async (name: string, data: Buffer | string) => {
 export const tryLoadCache = async (name: string) => {
 	try {
 		return await fs.readFile(join(globalConfig.cachePath, name))
-	} catch (e) {
+	} catch {
 		return null
 	}
 }
 
 export const saveStatic = async (name: string, data: Buffer | string) => {
 	await fs.mkdir(dirname(join(globalConfig.staticPath, name)), {
-		recursive: true
+		recursive: true,
 	})
 
 	await fs.writeFile(join(globalConfig.staticPath, name), data)
@@ -75,7 +75,7 @@ export const saveStatic = async (name: string, data: Buffer | string) => {
 export const tryLoadStatic = async (name: string) => {
 	try {
 		return await fs.readFile(join(globalConfig.staticPath, name))
-	} catch (e) {
+	} catch {
 		return null
 	}
 }
@@ -83,7 +83,7 @@ export const tryLoadStatic = async (name: string) => {
 export const tryLoadStaticSync = (name: string) => {
 	try {
 		return readFileSync(join(globalConfig.staticPath, name))
-	} catch (e) {
+	} catch {
 		return null
 	}
 }

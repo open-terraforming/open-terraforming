@@ -22,7 +22,7 @@ function onRequestEnd(this: AppResponse) {
 		const labels = {
 			route,
 			method: this.req?.method,
-			status
+			status,
 		}
 
 		httpRequestCount.inc(labels)
@@ -35,7 +35,7 @@ function onRequestEnd(this: AppResponse) {
 export const expressMetricsMiddleware = (
 	_req: Request,
 	res: AppResponse,
-	next: NextFunction
+	next: NextFunction,
 ) => {
 	res[START_TIME_SYMBOL] = Date.now()
 

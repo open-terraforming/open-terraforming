@@ -14,7 +14,7 @@ export class SolarPhaseGameState extends BaseGameState {
 	}
 
 	transition() {
-		if (this.game.players.every(p => p.state.pendingActions.length === 0)) {
+		if (this.game.players.every((p) => p.state.pendingActions.length === 0)) {
 			return GameStateValue.GenerationEnding
 		}
 	}

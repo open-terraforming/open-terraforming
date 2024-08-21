@@ -3,7 +3,7 @@ import {
 	buyStandardProject,
 	GameStateValue,
 	PlayerStateValue,
-	StandardProjectType
+	StandardProjectType,
 } from '@shared/index'
 import { Projects } from '@shared/projects'
 import { f } from '@shared/utils'
@@ -28,10 +28,10 @@ export class BuyStandardProjectAction extends PlayerBaseAction<Args> {
 
 		const ctx = {
 			game: this.game,
-			player: this.player
+			player: this.player,
 		}
 
-		if (!project.conditions.every(c => c(ctx))) {
+		if (!project.conditions.every((c) => c(ctx))) {
 			throw new Error(`You cannot execute ${StandardProjectType[projectType]}`)
 		}
 
@@ -39,12 +39,12 @@ export class BuyStandardProjectAction extends PlayerBaseAction<Args> {
 		project.execute(ctx, cards)
 
 		this.logger.log(
-			f('Bought standard project {0}', StandardProjectType[projectType])
+			f('Bought standard project {0}', StandardProjectType[projectType]),
 		)
 
 		this.parent.onProjectBought.emit({
 			player: this.parent,
-			project
+			project,
 		})
 
 		this.parent.game.checkMilestones()

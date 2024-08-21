@@ -7,17 +7,17 @@ export const cardArgValidator = ({ a, ctx, value }: ValidatorContext) => {
 		: ctx.player.usedCards[value as number]
 
 	const errors = a.cardConditions.filter(
-		c =>
+		(c) =>
 			!c.evaluate({
 				...ctx,
-				card: selected
-			})
+				card: selected,
+			}),
 	)
 
 	if (errors.length > 0) {
 		throw new Error(
 			'Conditions not met: ' +
-				errors.map((e, i) => e.description || i.toString()).join(', ')
+				errors.map((e, i) => e.description || i.toString()).join(', '),
 		)
 	}
 }

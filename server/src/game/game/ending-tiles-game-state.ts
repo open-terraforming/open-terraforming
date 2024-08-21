@@ -6,7 +6,7 @@ export class EndingTilesGameState extends BaseGameState {
 	name = GameStateValue.EndingTiles
 
 	onEnter() {
-		this.game.players.forEach(p => {
+		this.game.players.forEach((p) => {
 			p.state.pendingActions = []
 
 			p.buyAllGreeneries()
@@ -20,7 +20,7 @@ export class EndingTilesGameState extends BaseGameState {
 
 		this.selectCurrentPlayer(
 			this.state.startingPlayer,
-			PlayerStateValue.EndingTiles
+			PlayerStateValue.EndingTiles,
 		)
 	}
 

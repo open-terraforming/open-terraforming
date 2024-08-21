@@ -33,7 +33,7 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 			throw new Error('You cant pick one card twice')
 		}
 
-		if (cards.find(c => c >= top.cards.length || c < 0)) {
+		if (cards.find((c) => c >= top.cards.length || c < 0)) {
 			throw new Error('Invalid list of cards to pick')
 		}
 
@@ -41,7 +41,7 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 			throw new Error('You cant pick one card twice')
 		}
 
-		if (preludes.find(c => c >= top.preludes.length || c < 0)) {
+		if (preludes.find((c) => c >= top.preludes.length || c < 0)) {
 			throw new Error('Invalid list of cards to pick')
 		}
 
@@ -54,7 +54,7 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 		// We have to see what effects corporation has to properly evaluate if player can afford projects and preludes
 		const { player: simulated } = simulateCardEffects(
 			corporation,
-			corp.playEffects
+			corp.playEffects,
 		)
 
 		const cost = cards.length * this.game.cardPrice
@@ -68,17 +68,17 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 
 		// Preludes can actually be unplayable under certain conditions
 		preludes
-			.map(c => CardsLookupApi.get(top.preludes[c]))
-			.forEach(c =>
+			.map((c) => CardsLookupApi.get(top.preludes[c]))
+			.forEach((c) =>
 				this.checkCardConditions(
 					c,
 					{
 						card: emptyCardState(c.code),
 						game: this.game,
-						player: simulated
+						player: simulated,
 					},
-					[]
-				)
+					[],
+				),
 			)
 
 		this.pickCorporation(corporation)
@@ -89,13 +89,13 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 	}
 
 	pickPreludes(choices: string[], picked: number[]) {
-		const pickedCards = picked.map(c => choices[c])
+		const pickedCards = picked.map((c) => choices[c])
 
 		this.logger.log(f('Picked preludes: {0}', pickedCards.join(', ')))
 
 		// Put preludes into "played" cards without playing them, the preludes are then later played in "Prelude" game state
 		const usedCards = picked.map((c, i) =>
-			emptyCardState(choices[c], this.player.usedCards.length + i)
+			emptyCardState(choices[c], this.player.usedCards.length + i),
 		)
 
 		this.player.usedCards = [...this.player.usedCards, ...usedCards]
@@ -103,12 +103,12 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 		// Put the rest into discarded pile
 		this.game.preludeDiscarded = [
 			...this.game.preludeDiscarded,
-			...choices.filter((_c, i) => !picked.includes(i))
+			...choices.filter((_c, i) => !picked.includes(i)),
 		]
 	}
 
 	pickCards(choices: string[], picked: number[]) {
-		const pickedCards = picked.map(c => choices[c])
+		const pickedCards = picked.map((c) => choices[c])
 
 		this.logger.log(f('Picked cards: {0}', pickedCards.join(', ')))
 
@@ -135,15 +135,15 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 			{
 				card,
 				game: this.game,
-				player: this.player
+				player: this.player,
 			},
-			[]
+			[],
 		)
 
 		this.parent.onCardPlayed.emit({
 			card: corp,
 			cardIndex: -1,
-			player: this.parent
+			player: this.parent,
 		})
 	}
 }

@@ -13,7 +13,7 @@ export class PassAction extends PlayerBaseAction<Args> {
 		// Force pass if everybody else passed
 		if (
 			this.game.players.every(
-				p => p.id === this.player.id || p.state === PlayerStateValue.Passed
+				(p) => p.id === this.player.id || p.state === PlayerStateValue.Passed,
 			)
 		) {
 			force = true
@@ -22,7 +22,7 @@ export class PassAction extends PlayerBaseAction<Args> {
 		this.setState(
 			this.player.actionsPlayed === 0 || force
 				? PlayerStateValue.Passed
-				: PlayerStateValue.WaitingForTurn
+				: PlayerStateValue.WaitingForTurn,
 		)
 	}
 }

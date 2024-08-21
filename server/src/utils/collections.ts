@@ -6,8 +6,10 @@
 export function shuffle<T>(a: T[]) {
 	for (let i = a.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1))
+
 		;[a[i], a[j]] = [a[j], a[i]]
 	}
+
 	return a
 }
 
@@ -23,7 +25,7 @@ export interface NativeMap<T> {
 export function keyMap<T, K extends keyof T>(
 	collection: T[],
 	key: K,
-	source = {} as NativeMap<T>
+	source = {} as NativeMap<T>,
 ): NativeMap<T> {
 	return collection.reduce((acc, item) => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,7 +45,7 @@ export function keyValueMap<T, K1 extends keyof T, K2 extends keyof T>(
 	collection: T[],
 	key: K1,
 	valueKey: K2,
-	source = {} as NativeMap<T[K2]>
+	source = {} as NativeMap<T[K2]>,
 ): NativeMap<T[K2]> {
 	return collection.reduce((acc, item) => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -60,13 +62,13 @@ export function keyValueMap<T, K1 extends keyof T, K2 extends keyof T>(
 export function uniqueMerge<T>(...arrays: T[][]) {
 	const items: NativeMap<T> = {}
 
-	arrays.forEach(array => {
-		array.forEach(item => {
+	arrays.forEach((array) => {
+		array.forEach((item) => {
 			items[JSON.stringify(item)] = item
 		})
 	})
 
-	return Object.keys(items).map(key => items[key])
+	return Object.keys(items).map((key) => items[key])
 }
 
 export const ucFirst = (value: string) =>
@@ -99,7 +101,7 @@ export function firstKeyMatch<T, K extends keyof T>(
 	items: T[],
 	key: K,
 	value: T[K],
-	notFound?: T
+	notFound?: T,
 ): T | undefined {
 	if (!items) {
 		return notFound
@@ -122,7 +124,7 @@ export function firstKeyMatch<T, K extends keyof T>(
  */
 export function splitProps<T, K extends (keyof T)[]>(
 	original: T,
-	splitKeys: K
+	splitKeys: K,
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any {
 	return splitKeys.reduce((props, key) => {
@@ -163,7 +165,7 @@ export function shallowEqual(a: any, b: any) {
 
 export function compareFlatArrays<T>(
 	a: T[] | null | undefined,
-	b: T[] | null | undefined
+	b: T[] | null | undefined,
 ) {
 	if (a === b) {
 		return true
@@ -190,7 +192,7 @@ export const detectChanges = (
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	a: { [key: string]: any },
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	b: { [key: string]: any }
+	b: { [key: string]: any },
 ) => {
 	const messages = [] as string[]
 
@@ -232,9 +234,9 @@ export function enumToValueLabelCollection(enumeration: {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	[key: string]: any
 }): { value: string; label: string }[] {
-	return Object.keys(enumeration).map(entry => ({
+	return Object.keys(enumeration).map((entry) => ({
 		value: entry,
-		label: enumeration[entry]
+		label: enumeration[entry],
 	}))
 }
 
@@ -309,10 +311,11 @@ export const deepCopy = <T>(s: T): T => {
 		}
 
 		if (Array.isArray(s)) {
-			return (s.map(i => deepCopy(i)) as unknown) as T
+			return s.map((i) => deepCopy(i)) as unknown as T
 		}
 
 		const res = {} as any
+
 		Object.entries(s).forEach(([key, value]) => {
 			res[key] = deepCopy(value)
 		})

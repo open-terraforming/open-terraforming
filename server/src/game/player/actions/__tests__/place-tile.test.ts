@@ -2,7 +2,7 @@ import { PlaceTileAction } from '../place-tile'
 import {
 	PlayerStateValue,
 	GameStateValue,
-	GridCellContent
+	GridCellContent,
 } from '@shared/index'
 import { prepareGame } from '@/utils/tests'
 import { pushPendingAction } from '@shared/utils'
@@ -10,7 +10,7 @@ import { placeTileAction } from '@shared/player-actions'
 
 test('should crash when player is in wrong state', () => {
 	const { player, game, action } = prepareGame(
-		player => new PlaceTileAction(player)
+		(player) => new PlaceTileAction(player),
 	)
 
 	game.state = GameStateValue.GenerationInProgress
@@ -21,10 +21,10 @@ test('should crash when player is in wrong state', () => {
 		PlayerStateValue.Picking,
 		PlayerStateValue.Ready,
 		PlayerStateValue.Waiting,
-		PlayerStateValue.WaitingForTurn
+		PlayerStateValue.WaitingForTurn,
 	]
 
-	invalidStates.forEach(invalid => {
+	invalidStates.forEach((invalid) => {
 		player.state = invalid
 		expect(() => action.tryPerform({ x: 5, y: 5 })).toThrowError()
 	})
@@ -32,7 +32,7 @@ test('should crash when player is in wrong state', () => {
 
 test('should crash when game is in wrong state', () => {
 	const { player, game, action } = prepareGame(
-		player => new PlaceTileAction(player)
+		(player) => new PlaceTileAction(player),
 	)
 
 	player.state = PlayerStateValue.Playing
@@ -42,10 +42,10 @@ test('should crash when game is in wrong state', () => {
 		GameStateValue.GenerationStart,
 		GameStateValue.Ended,
 		GameStateValue.Starting,
-		GameStateValue.WaitingForPlayers
+		GameStateValue.WaitingForPlayers,
 	]
 
-	invalidStates.forEach(invalid => {
+	invalidStates.forEach((invalid) => {
 		game.state = invalid
 		expect(() => action.tryPerform({ x: 5, y: 5 })).toThrowError()
 	})
@@ -53,7 +53,7 @@ test('should crash when game is in wrong state', () => {
 
 test('should work for proper placements', () => {
 	const { player, game, action } = prepareGame(
-		player => new PlaceTileAction(player)
+		(player) => new PlaceTileAction(player),
 	)
 
 	game.state = GameStateValue.GenerationInProgress

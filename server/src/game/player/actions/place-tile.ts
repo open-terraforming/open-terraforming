@@ -3,7 +3,7 @@ import {
 	GameStateValue,
 	GridCellContent,
 	placeTile,
-	PlayerStateValue
+	PlayerStateValue,
 } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import { placeTileAction, PlayerActionType } from '@shared/player-actions'
@@ -16,12 +16,12 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 	states = [
 		PlayerStateValue.Playing,
 		PlayerStateValue.EndingTiles,
-		PlayerStateValue.Prelude
+		PlayerStateValue.Prelude,
 	]
 	gameStates = [
 		GameStateValue.GenerationInProgress,
 		GameStateValue.EndingTiles,
-		GameStateValue.Prelude
+		GameStateValue.Prelude,
 	]
 
 	perform({ x, y, location }: Args) {
@@ -48,8 +48,8 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 				'Placed {0} at {1},{2}',
 				GridCellContent[pendingTile.type],
 				cell.x,
-				cell.y
-			)
+				cell.y,
+			),
 		)
 
 		cell.content = pendingTile.type
@@ -72,7 +72,7 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 		if (cell.oceans > 0 && this.game.oceans < this.game.map.oceans) {
 			pushPendingAction(
 				this.player,
-				placeTileAction({ type: GridCellContent.Ocean }, top.anonymous)
+				placeTileAction({ type: GridCellContent.Ocean }, top.anonymous),
 			)
 		}
 
@@ -102,13 +102,13 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 		if (!top.anonymous) {
 			this.player.money +=
 				adjacentCells(this.game, cell.x, cell.y).filter(
-					c => c.content === GridCellContent.Ocean
+					(c) => c.content === GridCellContent.Ocean,
 				).length * 2
 		}
 
 		this.parent.onTilePlaced.emit({
 			cell,
-			player: this.parent
+			player: this.parent,
 		})
 
 		this.parent.game.checkMilestones()

@@ -5,7 +5,7 @@ import { getBestArgs } from './utils'
 
 export const useCardScore = (
 	{ player, game }: ScoringContext,
-	cardState: UsedCardState
+	cardState: UsedCardState,
 ) => {
 	const card = CardsLookupApi.get(cardState.code)
 

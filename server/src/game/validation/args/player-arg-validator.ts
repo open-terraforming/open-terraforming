@@ -4,7 +4,7 @@ import { gamePlayer } from '@shared/cards/utils'
 export const playerArgValidator = ({
 	a,
 	value,
-	ctx: { game, card }
+	ctx: { game, card },
 }: ValidatorContext) => {
 	if (typeof value !== 'number') {
 		throw new Error('Has to be number')
@@ -21,18 +21,18 @@ export const playerArgValidator = ({
 	const selectedPlayer = gamePlayer(game, value)
 
 	const errors = a.playerConditions.filter(
-		c =>
+		(c) =>
 			!c.evaluate({
 				game,
 				player: selectedPlayer,
-				card
-			})
+				card,
+			}),
 	)
 
 	if (errors.length > 0) {
 		throw new Error(
 			'Conditions not met: ' +
-				errors.map((e, i) => e.description || i.toString()).join(', ')
+				errors.map((e, i) => e.description || i.toString()).join(', '),
 		)
 	}
 }

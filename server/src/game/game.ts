@@ -11,14 +11,14 @@ import {
 	GameState,
 	GameStateValue,
 	PlayerStateValue,
-	ProgressMilestoneType
+	ProgressMilestoneType,
 } from '@shared/game'
 import {
 	draftCard,
 	pickCards,
 	pickPreludes,
 	playerPass,
-	UpdateDeepPartial
+	UpdateDeepPartial,
 } from '@shared/index'
 import { MapType } from '@shared/map'
 import { Maps } from '@shared/maps'
@@ -46,7 +46,7 @@ import {
 	Player,
 	ProductionChangedEvent,
 	ProjectBought,
-	TilePlacedEvent
+	TilePlacedEvent,
 } from './player'
 import { SolarPhaseGameState } from './game/solar-phase-game-state'
 
@@ -104,7 +104,7 @@ export class Game {
 			fastProduction: false,
 			draft: false,
 			solarPhase: false,
-			...config
+			...config,
 		}
 
 		this.state.map = Maps[this.config.map].build()
@@ -126,7 +126,7 @@ export class Game {
 			this.logger.log(
 				`${old && old.name ? GameStateValue[old.name] : 'NONE'} -> ${
 					GameStateValue[current.name]
-				}`
+				}`,
 			)
 
 			this.state.state = current.name
@@ -165,7 +165,7 @@ export class Game {
 
 	get currentPlayerInstance() {
 		const playerId = this.currentPlayer.id
-		const player = this.players.find(p => p.state.id === playerId)
+		const player = this.players.find((p) => p.state.id === playerId)
 
 		if (!player) {
 			throw new Error(`Undefined player ${playerId}`)
@@ -190,7 +190,7 @@ export class Game {
 		this.state = state
 		this.players = []
 
-		state.players.forEach(p => {
+		state.players.forEach((p) => {
 			const player = p.bot
 				? new Bot(this, { fast: this.config.fastBots })
 				: new Player(this)
@@ -198,7 +198,7 @@ export class Game {
 			player.state = p
 
 			this.logger.log(
-				f('Player {0} session: {1}', player.name, player.state.session)
+				f('Player {0} session: {1}', player.name, player.state.session),
 			)
 
 			this.add(player, false)
@@ -219,13 +219,13 @@ export class Game {
 	}
 
 	add(player: Player, triggerUpdate = true) {
-		if (this.players.find(p => p.id === player.id)) {
+		if (this.players.find((p) => p.id === player.id)) {
 			throw new Error(`ID ${player.id} is not unique player id`)
 		}
 
 		if (
 			!player.state.bot &&
-			this.state.players.find(p => p.owner) === undefined
+			this.state.players.find((p) => p.owner) === undefined
 		) {
 			player.state.owner = true
 		}
@@ -233,7 +233,7 @@ export class Game {
 		this.players.push(player)
 
 		// Only add to state if not already present (eg - joining to saved game)
-		if (!this.state.players.find(p => p.id === player.state.id)) {
+		if (!this.state.players.find((p) => p.id === player.state.id)) {
 			this.state.players.push(player.state)
 		}
 
@@ -253,11 +253,11 @@ export class Game {
 	}
 
 	remove(player: Player) {
-		this.players = this.players.filter(p => p !== player)
-		this.state.players = this.state.players.filter(p => p !== player.state)
+		this.players = this.players.filter((p) => p !== player)
+		this.state.players = this.state.players.filter((p) => p !== player.state)
 
 		this.logger.log(
-			`Player ${player.name} (${player.id}) removed from the game`
+			`Player ${player.name} (${player.id}) removed from the game`,
 		)
 
 		player.onStateChanged.off(this.updated)
@@ -265,40 +265,40 @@ export class Game {
 	}
 
 	handleGenerationEnd = () => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onGenerationEnd &&
 							e.onGenerationEnd({
 								card: s,
 								game: this.state,
-								player: player
-							})
+								player: player,
+							}),
 					)
 				})
 		})
 	}
 
 	handleProjectBought = ({ player: playedBy, project }: ProjectBought) => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onStandardProject &&
 							e.onStandardProject(
 								{
 									card: s,
 									game: this.state,
-									player: player
+									player: player,
 								},
 								project,
-								playedBy.state
-							)
+								playedBy.state,
+							),
 					)
 				})
 		})
@@ -307,68 +307,68 @@ export class Game {
 	handleCardPlayed = ({
 		player: playedBy,
 		card,
-		cardIndex: playedCardIndex
+		cardIndex: playedCardIndex,
 	}: CardPlayedEvent) => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onCardPlayed &&
 							e.onCardPlayed(
 								{
 									card: s,
 									game: this.state,
-									player: player
+									player: player,
 								},
 								card,
 								playedCardIndex,
-								playedBy.state
-							)
+								playedBy.state,
+							),
 					)
 				})
 		})
 	}
 
 	handleNewGeneration = (generation: number) => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onGenerationStarted &&
 							e.onGenerationStarted(
 								{
 									card: s,
 									game: this.state,
-									player: player
+									player: player,
 								},
-								generation
-							)
+								generation,
+							),
 					)
 				})
 		})
 	}
 
 	handleTilePlaced = ({ player: playedBy, cell }: TilePlacedEvent) => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onTilePlaced &&
 							e.onTilePlaced(
 								{
 									card: s,
 									game: this.state,
-									player: player
+									player: player,
 								},
 								cell,
-								playedBy.state
-							)
+								playedBy.state,
+							),
 					)
 				})
 		})
@@ -377,32 +377,32 @@ export class Game {
 	handlePlayerProductionChanged = ({
 		player: playedBy,
 		production,
-		change
+		change,
 	}: ProductionChangedEvent) => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onPlayerProductionChanged &&
 							e.onPlayerProductionChanged(
 								{
 									card: s,
 									game: this.state,
-									player: player
+									player: player,
 								},
 								playedBy.state,
 								production,
-								change
-							)
+								change,
+							),
 					)
 				})
 		})
 	}
 
 	all(state: PlayerStateValue) {
-		return this.state.players.every(p => p.state === state)
+		return this.state.players.every((p) => p.state === state)
 	}
 
 	checkState() {
@@ -415,7 +415,7 @@ export class Game {
 			'oxygen',
 			'temperature',
 			'oceans',
-			'venus'
+			'venus',
 		] as const) {
 			const value = this.state[progress]
 			const lastValue = this.currentProgress[progress]
@@ -429,21 +429,21 @@ export class Game {
 	}
 
 	handleProgressChanged(progress: GameProgress) {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onProgress &&
 							e.onProgress(
 								{
 									card: s,
 									game: this.state,
-									player: player
+									player: player,
 								},
-								progress
-							)
+								progress,
+							),
 					)
 				})
 		})
@@ -453,14 +453,14 @@ export class Game {
 	 * Checks disconnected players and skips them if they're playing right now
 	 */
 	checkDisconnected() {
-		if (!this.players.every(p => !p.state.connected || p.state.bot)) {
+		if (!this.players.every((p) => !p.state.connected || p.state.bot)) {
 			// Make sure disconnected players are not stalling others
-			this.players.forEach(p => {
+			this.players.forEach((p) => {
 				try {
 					if (!p.state.connected) {
 						if (p.state.state !== PlayerStateValue.Playing) {
 							if (p.state.pendingActions.length > 0) {
-								p.state.pendingActions.forEach(a => {
+								p.state.pendingActions.forEach((a) => {
 									if (a.type === PlayerActionType.PickStarting) {
 										// Starting pick can stall others!
 									}
@@ -500,57 +500,57 @@ export class Game {
 	 * Checks if game passed any milestone
 	 */
 	checkMilestones() {
-		this.state.map.oxygenMilestones.forEach(m => {
+		this.state.map.oxygenMilestones.forEach((m) => {
 			if (!m.used && m.value <= this.state.oxygen) {
 				this.logger.log(
 					`Oxygen milestone ${ProgressMilestoneType[m.type]} (at ${
 						m.value
-					}) reached`
+					}) reached`,
 				)
 
 				m.used = true
 
-				ProgressMilestones[m.type].effects.forEach(e =>
-					e(this.state, this.currentPlayer)
+				ProgressMilestones[m.type].effects.forEach((e) =>
+					e(this.state, this.currentPlayer),
 				)
 			}
 		})
 
-		this.state.map.temperatureMilestones.forEach(m => {
+		this.state.map.temperatureMilestones.forEach((m) => {
 			if (!m.used && m.value <= this.state.temperature) {
 				this.logger.log(
 					`Temperature milestone ${ProgressMilestoneType[m.type]} (at ${
 						m.value
-					}) reached`
+					}) reached`,
 				)
 
 				m.used = true
 
-				ProgressMilestones[m.type].effects.forEach(e =>
-					e(this.state, this.currentPlayer)
+				ProgressMilestones[m.type].effects.forEach((e) =>
+					e(this.state, this.currentPlayer),
 				)
 			}
 		})
 
-		this.state.map.venusMilestones.forEach(m => {
+		this.state.map.venusMilestones.forEach((m) => {
 			if (!m.used && m.value <= this.state.venus) {
 				this.logger.log(
 					`Venus milestone ${ProgressMilestoneType[m.type]} (at ${
 						m.value
-					}) reached`
+					}) reached`,
 				)
 
 				m.used = true
 
-				ProgressMilestones[m.type].effects.forEach(e =>
-					e(this.state, this.currentPlayer)
+				ProgressMilestones[m.type].effects.forEach((e) =>
+					e(this.state, this.currentPlayer),
 				)
 			}
 		})
 	}
 
 	filterPendingActions() {
-		this.players.forEach(p => {
+		this.players.forEach((p) => {
 			p.filterPendingActions()
 		})
 	}
@@ -571,8 +571,8 @@ export class Game {
 			prelude: this.state.prelude,
 			map: this.state.map.code,
 			spectatorsEnabled: this.config.spectatorsAllowed,
-			expansions: this.state.expansions.filter(e => e !== ExpansionType.Base),
-			draft: this.state.draft
+			expansions: this.state.expansions.filter((e) => e !== ExpansionType.Base),
+			draft: this.state.draft,
 		}
 	}
 }

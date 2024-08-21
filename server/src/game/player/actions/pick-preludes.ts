@@ -22,7 +22,7 @@ export class PickPreludesAction extends PlayerBaseAction<Args> {
 			throw new Error('You cant pick one card twice')
 		}
 
-		if (cards.find(c => c >= top.cards.length || c < 0)) {
+		if (cards.find((c) => c >= top.cards.length || c < 0)) {
 			throw new Error('Invalid list of cards to pick')
 		}
 
@@ -34,37 +34,37 @@ export class PickPreludesAction extends PlayerBaseAction<Args> {
 
 		// Preludes can actually be unplayable under certain conditions
 		cards
-			.map(c => CardsLookupApi.get(top.cards[c]))
-			.forEach(c =>
+			.map((c) => CardsLookupApi.get(top.cards[c]))
+			.forEach((c) =>
 				this.checkCardConditions(
 					c,
 					{
 						card: emptyCardState(c.code),
 						game: this.game,
-						player: this.player
+						player: this.player,
 					},
-					[]
-				)
+					[],
+				),
 			)
 
 		this.logger.log(
-			f('Picked preludes: {0}', cards.map(c => top.cards[c]).join(', '))
+			f('Picked preludes: {0}', cards.map((c) => top.cards[c]).join(', ')),
 		)
 
 		const usedCards = cards.map((c, i) =>
-			emptyCardState(top.cards[c], this.player.usedCards.length + i)
+			emptyCardState(top.cards[c], this.player.usedCards.length + i),
 		)
 
 		this.player.usedCards = [...this.player.usedCards, ...usedCards]
 
 		this.game.preludeDiscarded = [
 			...this.game.preludeDiscarded,
-			...top.cards.filter((_c, i) => !cards.includes(i))
+			...top.cards.filter((_c, i) => !cards.includes(i)),
 		]
 
 		// Preludes can also be played during generation - in that case we have to run the effect
 		if (this.game.state === GameStateValue.GenerationInProgress) {
-			this.player.usedCards.forEach(c => {
+			this.player.usedCards.forEach((c) => {
 				if (usedCards.includes(c)) {
 					const card = CardsLookupApi.get(c.code)
 
@@ -73,9 +73,9 @@ export class PickPreludesAction extends PlayerBaseAction<Args> {
 						{
 							game: this.game,
 							player: this.player,
-							card: c
+							card: c,
 						},
-						[]
+						[],
 					)
 				}
 			})

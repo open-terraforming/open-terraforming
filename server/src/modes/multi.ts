@@ -47,14 +47,14 @@ export const multiApp = (config: ServerOptions) => {
 
 		gameServer.onEnded.on(() => {
 			logger.log(`Server ${gameServer.id} removed - game ended`)
-			servers = servers.filter(s => s !== gameServer)
+			servers = servers.filter((s) => s !== gameServer)
 
 			runningGamesGauge.set(servers.length)
 		})
 
 		gameServer.onEmpty.on(() => {
 			logger.log(`Server ${gameServer.id} removed - no active players`)
-			servers = servers.filter(s => s !== gameServer)
+			servers = servers.filter((s) => s !== gameServer)
 
 			runningGamesGauge.set(servers.length)
 		})
@@ -70,7 +70,7 @@ export const multiApp = (config: ServerOptions) => {
 		async (request: IncomingMessage, socket: Socket, head: Buffer) => {
 			try {
 				const gameMatch = /api\/ws\/game\/([a-z0-9-]+)\//.exec(
-					request.url as string
+					request.url as string,
 				)
 
 				if (!gameMatch) {
@@ -78,7 +78,7 @@ export const multiApp = (config: ServerOptions) => {
 				}
 
 				let game = servers.find(
-					s => s.acceptsConnections && s.id === gameMatch[1]
+					(s) => s.acceptsConnections && s.id === gameMatch[1],
 				)
 
 				if (!game) {
@@ -96,7 +96,7 @@ export const multiApp = (config: ServerOptions) => {
 				}
 
 				if (request.url?.endsWith('/events')) {
-					game.events.socket.handleUpgrade(request, socket, head, ws => {
+					game.events.socket.handleUpgrade(request, socket, head, (ws) => {
 						game?.events.socket.emit('connection', ws, request)
 					})
 				} else {
@@ -108,49 +108,33 @@ export const multiApp = (config: ServerOptions) => {
 				logger.error(e)
 				socket.end()
 			}
-		}
+		},
 	)
 
 	app.get('/api/info', (_req, res) => {
 		res.json({
 			maxServers: config.maxServers,
 			servers: servers.length,
-			singleGame: config.singleGame
+			singleGame: config.singleGame,
 		} as ServerInfo)
 	})
 
 	app.get('/api/games', (_req, res) => {
-		res.json(servers.filter(s => s.listable).map(s => s.info()))
+		res.json(servers.filter((s) => s.listable).map((s) => s.info()))
 	})
 
 	app.post(
 		'/api/games',
 		[
-			body('name')
-				.isLength({ min: 3, max: 20 })
-				.trim(),
-			body('mode')
-				.notEmpty()
-				.isInt(),
+			body('name').isLength({ min: 3, max: 20 }).trim(),
+			body('mode').notEmpty().isInt(),
 			body('expansions').isArray(),
-			body('bots')
-				.isInt({ min: 0, max: 4 })
-				.optional(true),
-			body('public')
-				.isBoolean()
-				.optional(true),
-			body('spectatorsAllowed')
-				.isBoolean()
-				.optional(true),
-			body('draft')
-				.isBoolean()
-				.optional(false),
-			body('map')
-				.notEmpty()
-				.isInt(),
-			body('solarPhase')
-				.isBoolean()
-				.optional(true)
+			body('bots').isInt({ min: 0, max: 4 }).optional(true),
+			body('public').isBoolean().optional(true),
+			body('spectatorsAllowed').isBoolean().optional(true),
+			body('draft').isBoolean().optional(false),
+			body('map').notEmpty().isInt(),
+			body('solarPhase').isBoolean().optional(true),
 		],
 		(req: Request, res: Response) => {
 			if (servers.length >= config.maxServers) {
@@ -174,7 +158,7 @@ export const multiApp = (config: ServerOptions) => {
 			const draft = request.draft
 			const solarPhase = request.solarPhase
 
-			expansions.forEach(e => {
+			expansions.forEach((e) => {
 				if (
 					typeof e !== 'number' ||
 					!Expansions[e] ||
@@ -208,31 +192,31 @@ export const multiApp = (config: ServerOptions) => {
 				expansions: [ExpansionType.Base, ...expansions],
 				fastBots: config.fastBots,
 				draft,
-				solarPhase
+				solarPhase,
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)
 
 			res.json(gameServer.info())
-		}
+		},
 	)
 
 	app.get(
 		globalConfig.metrics.endpoint,
 		basicAuthMiddleware({
 			username: globalConfig.metrics.username,
-			password: globalConfig.metrics.password
+			password: globalConfig.metrics.password,
 		}),
 		(_req, res) => {
 			res.contentType(register.contentType)
 
 			register
 				.metrics()
-				.then(r => res.end(r))
-				.catch(err => {
+				.then((r) => res.end(r))
+				.catch((err) => {
 					res.status(500).end(String(err))
 				})
-		}
+		},
 	)
 
 	app.use(
@@ -241,17 +225,17 @@ export const multiApp = (config: ServerOptions) => {
 			_req: express.Request,
 			res: express.Response,
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			next: () => void
+			next: () => void,
 		) => {
 			logger.error(err)
 
 			res.status(500).json({
-				error: err.message
+				error: err.message,
 			})
-		}
+		},
 	)
 
-	return new Promise<MultiAppContext>(resolve => {
+	return new Promise<MultiAppContext>((resolve) => {
 		server.listen(config.port, () => {
 			logger.log('Listening on', config.port)
 			resolve({ app, server, port: config.port })

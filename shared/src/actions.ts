@@ -236,7 +236,8 @@ export const pickPreludes = (cards: number[]) =>
 
 export const startGame = () =>
 	({
-		type: MessageType.StartGame
+		type: MessageType.StartGame,
+		data: {}
 	} as const)
 
 export const kickPlayer = (playerId: number) =>

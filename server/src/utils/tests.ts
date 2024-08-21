@@ -4,7 +4,7 @@ import { PlayerBaseAction } from '@/game/player/action'
 import { StartGameAction } from '@/game/player/actions/start-game'
 
 export const prepareGame = (
-	actionBuilder?: (p: Player) => PlayerBaseAction
+	actionBuilder?: (p: Player) => PlayerBaseAction,
 ) => {
 	const game = new Game()
 	const player = new Player(game)
@@ -19,6 +19,6 @@ export const prepareGame = (
 		player: player.state,
 		gameObj: game,
 		playerObj: player,
-		action
+		action,
 	}
 }

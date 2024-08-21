@@ -7,12 +7,12 @@ export class ResearchPhaseGameState extends BaseGameState {
 	name = GameStateValue.ResearchPhase
 
 	onEnter() {
-		this.state.players.forEach(p => {
+		this.state.players.forEach((p) => {
 			pushPendingAction(
 				p,
 				pickCardsAction(
-					this.state.draft ? p.draftedCards : drawCards(this.state, 4)
-				)
+					this.state.draft ? p.draftedCards : drawCards(this.state, 4),
+				),
 			)
 
 			p.state = PlayerStateValue.Picking
@@ -20,7 +20,7 @@ export class ResearchPhaseGameState extends BaseGameState {
 	}
 
 	onLeave() {
-		this.state.players.forEach(p => {
+		this.state.players.forEach((p) => {
 			p.draftedCards = []
 		})
 	}

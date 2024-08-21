@@ -5,11 +5,11 @@ export const randomPlayerColor = (usedColors: string[] = []) => {
 		const color = range(0, 3).map(() => Math.round(Math.random() * 255)) as RGB
 
 		const similar = usedColors.find(
-			c => deltaE(hexToRgb(c) || [0, 0, 0], color) < 11
+			(c) => deltaE(hexToRgb(c) || [0, 0, 0], color) < 11,
 		)
 
 		if (!similar) {
-			return '#' + color.map(c => c.toString(16).padStart(2, '0')).join('')
+			return '#' + color.map((c) => c.toString(16).padStart(2, '0')).join('')
 		}
 	}
 }
@@ -67,7 +67,7 @@ function hexToRgb(hex: string): RGB | null {
 		? [
 				parseInt(result[1], 16),
 				parseInt(result[2], 16),
-				parseInt(result[3], 16)
-		  ]
+				parseInt(result[3], 16),
+			]
 		: null
 }
