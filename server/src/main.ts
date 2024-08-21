@@ -11,7 +11,7 @@ import { Logger } from './utils/log'
 export async function main() {
 	const logger = new Logger('Main')
 
-	const argv = yargs
+	const argv = await yargs
 		.scriptName('card-game-server')
 		.command('', 'Starts the server')
 		.option('single', {
