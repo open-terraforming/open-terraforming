@@ -5,7 +5,7 @@ import { ValidatorContext } from './types'
 export const productionArgValidator = ({
 	a,
 	value,
-	ctx: { player }
+	ctx: { player },
 }: ValidatorContext) => {
 	if (typeof value !== 'number') {
 		throw new Error(`${value} is not a number`)

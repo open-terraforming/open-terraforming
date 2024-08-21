@@ -16,7 +16,7 @@ const validators: Record<CardEffectTarget, ArgValidator | null> = {
 	[CardEffectTarget.PlayerResource]: null,
 	[CardEffectTarget.Resource]: null,
 	[CardEffectTarget.Production]: productionArgValidator,
-	[CardEffectTarget.CardResourceCount]: cardResourceAmountArgValidator
+	[CardEffectTarget.CardResourceCount]: cardResourceAmountArgValidator,
 }
 
 export const validateArgValue = (ctx: ValidatorContext) => {

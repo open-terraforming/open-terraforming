@@ -1,7 +1,7 @@
-import { GameStateValue, PlayerStateValue } from '@shared/index'
+import { GameStateValue, PlayerStateValue, startGame } from '@shared/index'
 import { PlayerBaseAction } from '../action'
 
-type Args = {} // ReturnType<typeof startGame>['data']
+type Args = ReturnType<typeof startGame>['data']
 
 export class StartGameAction extends PlayerBaseAction<Args> {
 	states = [PlayerStateValue.Ready]

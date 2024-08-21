@@ -30,18 +30,19 @@ export class EventServer {
 	}
 
 	handleDisconnect = (client: EventClient) => {
-		this.clients = this.clients.filter(i => i !== client)
+		this.clients = this.clients.filter((i) => i !== client)
 	}
 
 	close() {
-		this.clients.forEach(c => {
+		this.clients.forEach((c) => {
 			c.socket.close()
 		})
+
 		this.socket.close()
 	}
 
 	emit(event: RealtimeEvent) {
-		this.clients.forEach(c => {
+		this.clients.forEach((c) => {
 			if (event.playerId !== c.playerId) {
 				c.send(event)
 			}

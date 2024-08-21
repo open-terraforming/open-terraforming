@@ -6,7 +6,7 @@ export const f = (s: string, ...args: any[]) =>
 				`{${i}}`,
 				typeof a === 'object' && typeof a.toString === 'function'
 					? a.toString()
-					: a
+					: a,
 			),
-		s
+		s,
 	)

@@ -20,7 +20,7 @@ export class DraftCardAction extends PlayerBaseAction<Args> {
 			throw new Error('You cant pick one card twice')
 		}
 
-		if (cards.find(c => c >= top.cards.length || c < 0)) {
+		if (cards.find((c) => c >= top.cards.length || c < 0)) {
 			throw new Error('Invalid list of cards to pick')
 		}
 
@@ -31,12 +31,12 @@ export class DraftCardAction extends PlayerBaseAction<Args> {
 		}
 
 		this.logger.log(
-			f('Drafted cards: {0}', cards.map(c => top.cards[c]).join(', '))
+			f('Drafted cards: {0}', cards.map((c) => top.cards[c]).join(', ')),
 		)
 
 		this.player.draftedCards = [
 			...this.player.draftedCards,
-			...cards.map(c => top.cards[c])
+			...cards.map((c) => top.cards[c]),
 		]
 
 		// Pass the rest to next player
@@ -47,16 +47,17 @@ export class DraftCardAction extends PlayerBaseAction<Args> {
 
 			if (playerIndex < 0) {
 				throw new Error(
-					`Failed to locate player #${this.player.id} in game array!`
+					`Failed to locate player #${this.player.id} in game array!`,
 				)
 			}
 
-			const nextPlayer = this.game.players[
-				mod(
-					playerIndex + (this.game.generation % 2 === 0 ? 1 : -1),
-					this.game.players.length
-				)
-			]
+			const nextPlayer =
+				this.game.players[
+					mod(
+						playerIndex + (this.game.generation % 2 === 0 ? 1 : -1),
+						this.game.players.length,
+					)
+				]
 
 			if (theRest.length > 1) {
 				pushPendingAction(nextPlayer, draftCardAction(theRest, 1))

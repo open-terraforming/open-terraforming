@@ -3,7 +3,7 @@ import { initialGameState, initialPlayerState } from '@shared/states'
 import { range } from '@shared/utils'
 import { CardsLookupApi, CardEffectTarget } from '@shared/cards'
 import { getPossibleArgs } from '../args/get-possible-args'
-import { emptyCardState, isCardActionable } from '@shared/cards/utils'
+import { emptyCardState } from '@shared/cards/utils'
 import { getBestArgs } from '../utils'
 import { inspect } from 'util'
 
@@ -11,7 +11,7 @@ const prepareGame = () => {
 	const game = initialGameState()
 	game.generation = 1
 
-	game.players = range(0, 3).map(i => {
+	game.players = range(0, 3).map((i) => {
 		const player = initialPlayerState(i + 1)
 		player.money = 30
 		player.ore = 2
@@ -43,7 +43,7 @@ it('should prepare arguments correctly', () => {
 		player,
 		game,
 		card.actionEffects,
-		cardState
+		cardState,
 	)
 
 	effectsArgs.forEach((e, ei) => {
@@ -51,7 +51,7 @@ it('should prepare arguments correctly', () => {
 			console.log(
 				`Possible args for ${ei} -> ${ai} (${CardEffectTarget[a.type]})`,
 
-				pretty(e[ai])
+				pretty(e[ai]),
 			)
 		})
 	})

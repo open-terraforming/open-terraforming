@@ -27,7 +27,7 @@ export class BuyMilestoneAction extends PlayerBaseAction<Args> {
 			throw new Error("You can't afford a milestone")
 		}
 
-		if (this.game.milestones.find(c => c.type === type)) {
+		if (this.game.milestones.find((c) => c.type === type)) {
 			throw new Error('This milestone is already owned')
 		}
 
@@ -43,7 +43,7 @@ export class BuyMilestoneAction extends PlayerBaseAction<Args> {
 
 		this.game.milestones.push({
 			playerId: this.player.id,
-			type
+			type,
 		})
 
 		this.actionPlayed()

@@ -7,7 +7,7 @@ import { canPlace } from '@shared/placements'
 import {
 	placeTileAction,
 	PlayerActionType,
-	PlayerAction
+	PlayerAction,
 } from '@shared/player-actions'
 import { StandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
@@ -15,7 +15,7 @@ import {
 	allCells,
 	pushPendingAction,
 	range,
-	pendingActions
+	pendingActions,
 } from '@shared/utils'
 import { getVictoryPoints } from '@shared/vps'
 import Hashids from 'hashids/cjs'
@@ -101,7 +101,7 @@ export class Player {
 		this.game = game
 
 		this.state.session = new Hashids(this.game.config.adminPassword, 5).encode(
-			this.state.id
+			this.state.id,
 		)
 
 		this.state.admin = globalConfig.everybodyIsAdmin
@@ -119,11 +119,11 @@ export class Player {
 			() => {
 				pushPendingAction(
 					this.state,
-					placeTileAction({ type: GridCellContent.Forest })
+					placeTileAction({ type: GridCellContent.Forest }),
 				)
 
 				this.state.plants -= this.state.greeneryCost
-			}
+			},
 		)
 	}
 
@@ -139,7 +139,7 @@ export class Player {
 					this.onProductionChanged.emit({
 						player: this,
 						production,
-						change
+						change,
 					})
 				}
 			}
@@ -160,11 +160,11 @@ export class Player {
 		state.money += state.terraformRating + state.moneyProduction
 
 		// Reset playable cards
-		state.usedCards.forEach(c => (c.played = false))
+		state.usedCards.forEach((c) => (c.played = false))
 	}
 
 	filterPendingActions() {
-		this.state.pendingActions = this.state.pendingActions.filter(p => {
+		this.state.pendingActions = this.state.pendingActions.filter((p) => {
 			if (p.type !== PlayerActionType.PlaceTile) {
 				return true
 			}
@@ -174,8 +174,8 @@ export class Player {
 			}
 
 			return (
-				allCells(this.game.state).find(c =>
-					canPlace(this.game.state, this.state, c, p.state)
+				allCells(this.game.state).find((c) =>
+					canPlace(this.game.state, this.state, c, p.state),
 				) !== undefined
 			)
 		})

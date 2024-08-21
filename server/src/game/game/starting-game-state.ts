@@ -20,31 +20,31 @@ export class StartingGameState extends BaseGameState {
 
 		// Pick first starting player
 		this.state.startingPlayer = Math.round(
-			Math.random() * (this.state.players.length - 1)
+			Math.random() * (this.state.players.length - 1),
 		)
 
 		// Assign random colors to players
-		const usedColors = this.state.players.map(p => p.color)
+		const usedColors = this.state.players.map((p) => p.color)
 
 		const availableColors = shuffle(
-			PlayerColors.filter(c => !usedColors.includes(c))
+			PlayerColors.filter((c) => !usedColors.includes(c)),
 		)
 
 		this.state.players
-			.filter(p => !p.color || p.color === '')
-			.forEach(p => {
+			.filter((p) => !p.color || p.color === '')
+			.forEach((p) => {
 				p.color =
 					availableColors.length > 0
 						? (availableColors.pop() as string)
 						: randomPlayerColor(
-								this.state.players.map(p => p.color).filter(c => c !== '')
-						  )
+								this.state.players.map((p) => p.color).filter((c) => c !== ''),
+							)
 			})
 
 		// Create card pool
 		let cards = [] as Card[]
 
-		this.state.expansions.forEach(e => {
+		this.state.expansions.forEach((e) => {
 			cards = cards.concat(Expansions[e].getCards(this.state))
 		})
 
@@ -55,20 +55,20 @@ export class StartingGameState extends BaseGameState {
 
 		// Pick corporations
 		this.state.corporations = shuffle(
-			cards.filter(c => c.type === CardType.Corporation).map(c => c.code)
+			cards.filter((c) => c.type === CardType.Corporation).map((c) => c.code),
 		)
 
 		// Pick projects
 		this.state.cards = shuffle(
 			cards
 				.filter(
-					c => c.type !== CardType.Corporation && c.type !== CardType.Prelude
+					(c) => c.type !== CardType.Corporation && c.type !== CardType.Prelude,
 				)
-				.map(c => c.code)
+				.map((c) => c.code),
 		)
 
 		// Initialize expansions
-		this.state.expansions.forEach(e => {
+		this.state.expansions.forEach((e) => {
 			Expansions[e].initialize(this.state)
 		})
 

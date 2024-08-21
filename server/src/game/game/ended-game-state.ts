@@ -7,7 +7,7 @@ export class EndedGameState extends BaseGameState {
 	onEnter() {
 		this.state.ended = new Date().toISOString()
 
-		this.game.players.forEach(p => {
+		this.game.players.forEach((p) => {
 			p.finishGame()
 		})
 	}

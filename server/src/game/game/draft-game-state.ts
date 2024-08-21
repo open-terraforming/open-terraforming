@@ -7,7 +7,7 @@ export class DraftGameState extends BaseGameState {
 	name = GameStateValue.Draft
 
 	onEnter() {
-		this.state.players.forEach(p => {
+		this.state.players.forEach((p) => {
 			pushPendingAction(p, draftCardAction(drawCards(this.state, 4)))
 			p.state = PlayerStateValue.Picking
 		})

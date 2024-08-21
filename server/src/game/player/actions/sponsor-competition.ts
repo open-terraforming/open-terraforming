@@ -3,7 +3,7 @@ import { CompetitionType } from '@shared/competitions'
 import {
 	GameStateValue,
 	PlayerStateValue,
-	sponsorCompetition
+	sponsorCompetition,
 } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { competitionPrice, f } from '@shared/utils'
@@ -39,7 +39,7 @@ export class SponsorCompetitionAction extends PlayerBaseAction<Args> {
 				throw new Error("You can't afford a competition")
 			}
 
-			if (this.game.competitions.find(c => c.type === type)) {
+			if (this.game.competitions.find((c) => c.type === type)) {
 				throw new Error('This competition is already sponsored')
 			}
 
@@ -50,7 +50,7 @@ export class SponsorCompetitionAction extends PlayerBaseAction<Args> {
 
 		this.game.competitions.push({
 			playerId: this.player.id,
-			type
+			type,
 		})
 
 		if (top) {

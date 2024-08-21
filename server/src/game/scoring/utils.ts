@@ -2,14 +2,14 @@ import { deepCopy } from '@/utils/collections'
 import {
 	CardEffect,
 	CardEffectArgumentType,
-	CardsLookupApi
+	CardsLookupApi,
 } from '@shared/cards'
 import { resourceProduction, resources } from '@shared/cards/utils'
 import {
 	GameState,
 	GridCellContent,
 	PlayerState,
-	UsedCardState
+	UsedCardState,
 } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
@@ -23,7 +23,7 @@ export const pickBest = <T>(values: T[], scoring: (v: T) => number) => {
 	}
 
 	return shuffle(values)
-		.map(v => [scoring(v), v] as const)
+		.map((v) => [scoring(v), v] as const)
 		.sort(([a], [b]) => b - a)[0][1]
 }
 
@@ -33,7 +33,7 @@ export const pickBestScore = <T>(values: T[], scoring: (v: T) => number) => {
 	}
 
 	return shuffle(values)
-		.map(v => [scoring(v), v] as const)
+		.map((v) => [scoring(v), v] as const)
 		.sort(([a], [b]) => b - a)[0][0]
 }
 
@@ -43,13 +43,13 @@ const resScore = (g: GameState) => ({
 	titan: 0.7,
 	heat: g.temperature < g.map.temperature ? 1 : 0,
 	energy: g.temperature < g.map.temperature ? 0.8 : 0.2,
-	plants: 1
+	plants: 1,
 })
 
 const computePendingActionScore = (
 	g: GameState,
 	p: PlayerState,
-	a: PlayerAction
+	a: PlayerAction,
 ) => {
 	switch (a.type) {
 		case PlayerActionType.ClaimTile:
@@ -58,8 +58,8 @@ const computePendingActionScore = (
 			return a.free ? a.limit : 0.5
 		case PlayerActionType.PlaceTile:
 			return pickBestScore(
-				allCells(g).filter(c => canPlace(g, p, c, a.state)),
-				c => placeTileScore({ player: p, game: g }, a.state, c)
+				allCells(g).filter((c) => canPlace(g, p, c, a.state)),
+				(c) => placeTileScore({ player: p, game: g }, a.state, c),
 			)
 		default:
 			return 0
@@ -74,7 +74,7 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 		-p.cardPriceChange +
 		(Object.values(p.tagPriceChange).reduce(
 			(acc, p) => (acc ?? 0) + (p ?? 0),
-			0
+			0,
 		) ?? 0) +
 		p.cards.length * 0.5 +
 		resources.reduce(
@@ -82,10 +82,10 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 				acc +
 				p[r] * resScore(g)[r] +
 				p[resourceProduction[r]] * resScore(g)[r] * 1.4,
-			0
+			0,
 		) +
 		p.usedCards
-			.map(c => ({ state: c, info: CardsLookupApi.get(c.code) }))
+			.map((c) => ({ state: c, info: CardsLookupApi.get(c.code) }))
 			.reduce(
 				(acc, { info, state }) =>
 					acc +
@@ -94,10 +94,10 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 						? info.victoryPointsCallback.compute({
 								player: p,
 								game: g,
-								card: state
-						  })
+								card: state,
+							})
 						: 0),
-				0
+				0,
 			) +
 		tiles(allCells(g))
 			.ownedBy(p.id)
@@ -116,7 +116,7 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 			5 +
 		p.pendingActions.reduce(
 			(acc, a) => acc + computePendingActionScore(g, p, a),
-			0
+			0,
 		)
 	)
 }
@@ -125,17 +125,17 @@ export const getBestArgs = (
 	game: GameState,
 	player: PlayerState,
 	cardState: UsedCardState,
-	effects: CardEffect[]
+	effects: CardEffect[],
 ) => {
 	const possibleArguments = getPossibleArgs(player, game, effects, cardState)
 
 	const evalEffect = (
 		effectIndex: number,
-		effectArgs: CardEffectArgumentType[][]
+		effectArgs: CardEffectArgumentType[][],
 	): { score: number; args: CardEffectArgumentType[][] } => {
 		if (effectIndex === effects.length) {
 			const copyGame = deepCopy(game)
-			const copyPlayer = copyGame.players.find(p => p.id === player.id)
+			const copyPlayer = copyGame.players.find((p) => p.id === player.id)
 			const copyState = deepCopy(cardState)
 
 			if (!copyPlayer) {
@@ -148,9 +148,9 @@ export const getBestArgs = (
 						{
 							player: copyPlayer,
 							game: copyGame,
-							card: copyState
+							card: copyState,
 						},
-						...effectArgs[ei]
+						...effectArgs[ei],
 					)
 				})
 			} catch (e) {
@@ -160,14 +160,14 @@ export const getBestArgs = (
 
 			return {
 				score: computeScore(copyGame, copyPlayer),
-				args: [...effectArgs]
+				args: [...effectArgs],
 			}
 		} else {
 			const combinations = [] as CardEffectArgumentType[][]
 
 			argCombinations(0, possibleArguments[effectIndex], [], combinations)
 
-			const values = combinations.map(a => {
+			const values = combinations.map((a) => {
 				effectArgs[effectIndex] = a
 
 				return evalEffect(effectIndex + 1, effectArgs)
@@ -179,7 +179,7 @@ export const getBestArgs = (
 				return evalEffect(effectIndex + 1, effectArgs)
 			}
 
-			return sortBy(values, v => -v.score)[0]
+			return sortBy(values, (v) => -v.score)[0]
 		}
 	}
 
@@ -187,12 +187,12 @@ export const getBestArgs = (
 		argIndex: number,
 		choices: CardEffectArgumentType[][],
 		result: CardEffectArgumentType[],
-		results: CardEffectArgumentType[][]
+		results: CardEffectArgumentType[][],
 	) => {
 		if (argIndex === choices.length) {
 			results.push(result)
 		} else {
-			choices[argIndex].map(c => {
+			choices[argIndex].map((c) => {
 				argCombinations(argIndex + 1, choices, [...result, c], results)
 			})
 		}
@@ -206,7 +206,7 @@ export const moneyCostScore = (player: PlayerState, cost: number) =>
 
 export const copyGame = (game: GameState, player: PlayerState) => {
 	const gameCopy = deepCopy(game)
-	const playerCopy = gameCopy.players.find(p => p.id === player.id)
+	const playerCopy = gameCopy.players.find((p) => p.id === player.id)
 
 	if (!playerCopy) {
 		throw new Error('failed to find player copy')

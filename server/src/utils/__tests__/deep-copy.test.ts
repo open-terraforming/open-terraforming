@@ -3,9 +3,9 @@ import { deepCopy } from '../collections'
 test('deepCopy actually makes a copy', () => {
 	const testObject = {
 		v: {
-			i: 0
+			i: 0,
 		},
-		a: [{ i: 10, k: null }, { i: 5 }]
+		a: [{ i: 10, k: null }, { i: 5 }],
 	}
 
 	const d = deepCopy(testObject)

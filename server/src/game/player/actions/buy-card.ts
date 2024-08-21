@@ -2,7 +2,7 @@ import { CardCategory, CardsLookupApi } from '@shared/cards'
 import {
 	adjustedCardPrice,
 	emptyCardState,
-	updatePlayerResource
+	updatePlayerResource,
 } from '@shared/cards/utils'
 import { buyCard, GameStateValue, PlayerStateValue } from '@shared/index'
 import { PlayerBaseAction } from '../action'
@@ -20,7 +20,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 
 		if (this.player.cards[index] !== cardCode) {
 			throw new Error(
-				'Something is wrong, incorrect card index and card type combination'
+				'Something is wrong, incorrect card index and card type combination',
 			)
 		}
 
@@ -60,7 +60,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 
 		if (useCards) {
 			for (const [code, amount] of Object.entries(useCards)) {
-				const usedCard = this.player.usedCards.find(c => c.code === code)
+				const usedCard = this.player.usedCards.find((c) => c.code === code)
 
 				if (!usedCard) {
 					throw new Error(`You don't have card ${code} on table`)
@@ -79,8 +79,8 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 
 				if (
 					resourcesUsableAsMoney.categories &&
-					!resourcesUsableAsMoney.categories.some(cat =>
-						card.categories.includes(cat)
+					!resourcesUsableAsMoney.categories.some((cat) =>
+						card.categories.includes(cat),
 					)
 				) {
 					throw new Error(`Card ${code} can't be used for payment of this card`)
@@ -97,7 +97,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 
 		if (this.player.money < cost) {
 			throw new Error(
-				`You don't have money for that, adjusted price was ${cost}.`
+				`You don't have money for that, adjusted price was ${cost}.`,
 			)
 		}
 
@@ -106,7 +106,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 		const ctx = {
 			player: this.player,
 			game: this.game,
-			card: cardState
+			card: cardState,
 		}
 
 		this.checkCardConditions(card, ctx, args)
@@ -125,7 +125,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 		this.parent.onCardPlayed.emit({
 			card,
 			cardIndex: ctx.card.index,
-			player: this.parent
+			player: this.parent,
 		})
 
 		this.parent.game.checkMilestones()

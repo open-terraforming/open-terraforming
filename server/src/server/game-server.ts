@@ -72,9 +72,9 @@ export class GameServer {
 	handleUpgrade = (
 		request: IncomingMessage,
 		socket: Duplex,
-		upgradeHead: Buffer
+		upgradeHead: Buffer,
 	) => {
-		this.socket.handleUpgrade(request, socket, upgradeHead, ws => {
+		this.socket.handleUpgrade(request, socket, upgradeHead, (ws) => {
 			this.socket.emit('connection', ws)
 		})
 	}
@@ -93,7 +93,7 @@ export class GameServer {
 	}
 
 	handleDisconnect = (client: Client) => {
-		this.clients = this.clients.filter(i => i !== client)
+		this.clients = this.clients.filter((i) => i !== client)
 
 		if (this.clients.length === 0 && this.emptyTimeout === undefined) {
 			this.emptyTimeout = setTimeout(() => {
@@ -106,7 +106,7 @@ export class GameServer {
 	}
 
 	handleGameUpdate = debounce(async (s: GameState) => {
-		this.clients.forEach(c => {
+		this.clients.forEach((c) => {
 			c.sendUpdate(s)
 		})
 
@@ -130,7 +130,7 @@ export class GameServer {
 	close() {
 		this.socket.close()
 
-		this.clients.forEach(c => {
+		this.clients.forEach((c) => {
 			c.socket.close()
 		})
 

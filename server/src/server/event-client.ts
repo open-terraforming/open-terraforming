@@ -4,7 +4,7 @@ import WebSocket from 'ws'
 import {
 	RealtimeEventEmit,
 	RealtimeEventType,
-	RealtimeEvent
+	RealtimeEvent,
 } from '@shared/events'
 import { encode, decode } from 'msgpack-lite'
 import { Logger } from '@/utils/log'
@@ -12,7 +12,7 @@ import { Logger } from '@/utils/log'
 export class EventClient {
 	get logger() {
 		return new Logger(
-			'EventClient' + (this.playerId ? `(${this.playerId})` : '')
+			'EventClient' + (this.playerId ? `(${this.playerId})` : ''),
 		)
 	}
 
@@ -61,7 +61,7 @@ export class EventClient {
 					const session = parsed.session
 
 					this.playerId = this.server.master.game.state.players.find(
-						p => p.session === session
+						(p) => p.session === session,
 					)?.id
 
 					this.logger.info('Auth request')
@@ -69,10 +69,10 @@ export class EventClient {
 			} else {
 				this.server.emit({
 					...parsed,
-					playerId: this.playerId
+					playerId: this.playerId,
 				})
 			}
-		} catch (e) {
+		} catch {
 			this.logger.error('Failed to parse', data)
 
 			return

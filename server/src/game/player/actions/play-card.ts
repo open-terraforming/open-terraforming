@@ -27,8 +27,8 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 				f(
 					'Something is wrong, incorrect card index and card type combination {0}/{1}',
 					cardCode,
-					index
-				)
+					index,
+				),
 			)
 		}
 
@@ -53,7 +53,7 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 		const ctx = {
 			player: this.player,
 			game: this.game,
-			card: cardState
+			card: cardState,
 		}
 
 		this.checkCardConditions(card, ctx, args, true)

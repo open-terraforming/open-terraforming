@@ -4,13 +4,13 @@ import {
 	emptyCardState,
 	isCardActionable,
 	isCardPlayable,
-	minimalCardPrice
+	minimalCardPrice,
 } from '@shared/cards/utils'
 import { Competitions } from '@shared/competitions'
 import {
 	GameStateValue,
 	PlayerStateValue,
-	StandardProjectType
+	StandardProjectType,
 } from '@shared/game'
 import {
 	buyCard,
@@ -25,7 +25,7 @@ import {
 	playCard,
 	playerPass,
 	playerReady,
-	sponsorCompetition
+	sponsorCompetition,
 } from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { canPlace, isClaimable } from '@shared/placements'
@@ -44,7 +44,7 @@ import { useCardScore } from './scoring/use-card-score'
 import { computeScore, getBestArgs, pickBest } from './scoring/utils'
 
 const defaultOptions = () => ({
-	fast: false
+	fast: false,
 })
 
 export type BotOptions = ReturnType<typeof defaultOptions>
@@ -59,7 +59,7 @@ export class Bot extends Player {
 
 		this.options = {
 			...defaultOptions(),
-			...options
+			...options,
 		}
 
 		this.state.name = game.pickBotName(this.state.id)
@@ -71,7 +71,7 @@ export class Bot extends Player {
 	}
 
 	get cards() {
-		return this.state.cards.map(c => CardsLookupApi.get(c))
+		return this.state.cards.map((c) => CardsLookupApi.get(c))
 	}
 
 	updated(broadcast = true) {
@@ -93,7 +93,7 @@ export class Bot extends Player {
 						}
 					}
 				},
-				this.options.fast ? 100 : 3000 + Math.random() * 2000
+				this.options.fast ? 100 : 3000 + Math.random() * 2000,
 			)
 		}
 
@@ -105,7 +105,7 @@ export class Bot extends Player {
 	get scoringContext(): ScoringContext {
 		return {
 			game: this.game.state,
-			player: this.state
+			player: this.state,
 		}
 	}
 
@@ -113,14 +113,14 @@ export class Bot extends Player {
 		switch (a.type) {
 			case PlayerActionType.PickStarting: {
 				const pickedPreludes = shuffle(
-					a.preludes.map((c, i) => [CardsLookupApi.get(c), i] as const)
+					a.preludes.map((c, i) => [CardsLookupApi.get(c), i] as const),
 				)
 					.filter(([c]) =>
 						isCardPlayable(c, {
 							card: emptyCardState(c.code),
 							game: this.game.state,
-							player: this.state
-						})
+							player: this.state,
+						}),
 					)
 					.map(([, i]) => i)
 					.slice(0, a.preludesLimit)
@@ -129,7 +129,7 @@ export class Bot extends Player {
 
 				const { player: simulatedPlayer } = simulateCardEffects(
 					corporation,
-					CardsLookupApi.get(corporation).playEffects
+					CardsLookupApi.get(corporation).playEffects,
 				)
 
 				return this.performAction(
@@ -145,12 +145,12 @@ export class Bot extends Player {
 											? 0.8
 											: 0.3)) /
 										this.game.state.cardPrice) *
-										(0.6 + 0.4 * Math.random())
-								)
-							)
+										(0.6 + 0.4 * Math.random()),
+								),
+							),
 						),
-						pickedPreludes
-					)
+						pickedPreludes,
+					),
 				)
 			}
 
@@ -159,8 +159,8 @@ export class Bot extends Player {
 				const picked = a.free
 					? shuffle(a.cards.map((_c, i) => i)).slice(
 							0,
-							a.limit || a.cards.length
-					  )
+							a.limit || a.cards.length,
+						)
 					: shuffle(a.cards.map((_c, i) => i)).slice(
 							0,
 							Math.max(
@@ -171,10 +171,10 @@ export class Bot extends Player {
 											? 0.8
 											: 0.3)) /
 										this.game.state.cardPrice) *
-										(0.6 + 0.4 * Math.random())
-								)
-							)
-					  )
+										(0.6 + 0.4 * Math.random()),
+								),
+							),
+						)
 
 				return this.performAction(pickCards(picked))
 			}
@@ -190,14 +190,14 @@ export class Bot extends Player {
 				// TODO: Add some kind of logic here
 
 				const picked = shuffle(
-					a.cards.map((c, i) => [CardsLookupApi.get(c), i] as const)
+					a.cards.map((c, i) => [CardsLookupApi.get(c), i] as const),
 				)
 					.filter(([c]) =>
 						isCardPlayable(c, {
 							card: emptyCardState(c.code),
 							game: this.game.state,
-							player: this.state
-						})
+							player: this.state,
+						}),
 					)
 					.map(([, i]) => i)
 					.slice(0, a.limit)
@@ -209,10 +209,10 @@ export class Bot extends Player {
 				const placed = a.state
 
 				const tile = pickBest(
-					allCells(this.game.state).filter(c =>
-						canPlace(this.game.state, this.state, c, placed)
+					allCells(this.game.state).filter((c) =>
+						canPlace(this.game.state, this.state, c, placed),
 					),
-					c => placeTileScore(this.scoringContext, placed, c)
+					(c) => placeTileScore(this.scoringContext, placed, c),
 				)
 
 				if (tile) {
@@ -224,8 +224,8 @@ export class Bot extends Player {
 
 			case PlayerActionType.ClaimTile: {
 				const tile = pickBest(
-					allCells(this.game.state).filter(c => isClaimable(c)),
-					c => claimTileScore(this.scoringContext, c)
+					allCells(this.game.state).filter((c) => isClaimable(c)),
+					(c) => claimTileScore(this.scoringContext, c),
 				)
 
 				if (tile) {
@@ -242,7 +242,7 @@ export class Bot extends Player {
 					this.game.state,
 					this.state,
 					card,
-					CardsLookupApi.get(card.code).actionEffects
+					CardsLookupApi.get(card.code).actionEffects,
 				)
 
 				return this.performAction(playCard(card.code, a.cardIndex, args.args))
@@ -251,10 +251,11 @@ export class Bot extends Player {
 			case PlayerActionType.SponsorCompetition: {
 				const comp = shuffle(
 					this.game.state.map.competitions
-						.map(c => Competitions[c])
+						.map((c) => Competitions[c])
 						.filter(
-							c => !this.game.state.competitions.find(b => b.type === c.type)
-						)
+							(c) =>
+								!this.game.state.competitions.find((b) => b.type === c.type),
+						),
 				)[0]
 
 				if (comp) {
@@ -292,16 +293,17 @@ export class Bot extends Player {
 
 				if (placed && placed.type === PlayerActionType.PlaceTile) {
 					const tile = pickBest(
-						allCells(this.game.state).filter(c =>
-							canPlace(this.game.state, this.state, c, placed.state)
+						allCells(this.game.state).filter((c) =>
+							canPlace(this.game.state, this.state, c, placed.state),
 						),
-						c => placeTileScore(this.scoringContext, placed.state, c)
+						(c) => placeTileScore(this.scoringContext, placed.state, c),
 					)
 
 					if (tile) {
 						actions.push([
 							0,
-							() => this.performAction(placeTile(tile.x, tile.y, tile.location))
+							() =>
+								this.performAction(placeTile(tile.x, tile.y, tile.location)),
 						])
 					}
 				}
@@ -329,11 +331,12 @@ export class Bot extends Player {
 						this.game.state.milestones.length < this.game.state.milestonesLimit
 					) {
 						this.game.state.map.milestones
-							.map(m => Milestones[m])
+							.map((m) => Milestones[m])
 							.filter(
-								m => !this.game.state.milestones.find(s => s.type === m.type)
+								(m) =>
+									!this.game.state.milestones.find((s) => s.type === m.type),
 							)
-							.forEach(m => {
+							.forEach((m) => {
 								if (
 									this.state.money >= this.game.state.milestonePrice &&
 									m.getValue(this.game.state, this.state) >= m.limit
@@ -342,7 +345,7 @@ export class Bot extends Player {
 										computeScore(this.game.state, this.state) + 5,
 										() => {
 											this.performAction(buyMilestone(m.type))
-										}
+										},
 									])
 								}
 							})
@@ -353,16 +356,17 @@ export class Bot extends Player {
 						this.game.state.competitionsLimit
 					) {
 						this.game.state.map.competitions
-							.map(c => Competitions[c])
+							.map((c) => Competitions[c])
 							.filter(
-								m => !this.game.state.competitions.find(s => s.type === m.type)
+								(m) =>
+									!this.game.state.competitions.find((s) => s.type === m.type),
 							)
-							.forEach(c => {
+							.forEach((c) => {
 								if (
 									this.state.money >= competitionPrice(this.game.state) &&
 									c.getScore(this.game.state, this.state) >
 										this.game.state.players
-											.filter(p => p.id !== this.id)
+											.filter((p) => p.id !== this.id)
 											.reduce((m, p) => {
 												const s = c.getScore(this.game.state, p)
 
@@ -374,16 +378,16 @@ export class Bot extends Player {
 										0,
 										() => {
 											this.performAction(sponsorCompetition(c.type))
-										}
+										},
 									])
 								}
 							})
 					}
 
-					Object.values(Projects).forEach(p => {
+					Object.values(Projects).forEach((p) => {
 						if (
-							p.conditions.every(c =>
-								c({ game: this.game.state, player: this.state })
+							p.conditions.every((c) =>
+								c({ game: this.game.state, player: this.state }),
 							)
 						) {
 							if (p.type !== StandardProjectType.SellPatents) {
@@ -391,7 +395,7 @@ export class Bot extends Player {
 									standardProjectScore(this.scoringContext, p),
 									() => {
 										this.performAction(buyStandardProject(p.type, []))
-									}
+									},
 								])
 							}
 						}
@@ -399,14 +403,14 @@ export class Bot extends Player {
 
 					this.cards
 						.filter(
-							c =>
+							(c) =>
 								isCardPlayable(c, {
 									card: emptyCardState(c.code),
 									game: this.game.state,
-									player: this.state
-								}) && minimalCardPrice(c, this.state) <= this.state.money
+									player: this.state,
+								}) && minimalCardPrice(c, this.state) <= this.state.money,
 						)
-						.forEach(c => {
+						.forEach((c) => {
 							const score = playCardScore(this.scoringContext, c)
 
 							this.logger.log(
@@ -414,7 +418,7 @@ export class Bot extends Player {
 								'score',
 								score.score,
 								'with',
-								JSON.stringify(score.args)
+								JSON.stringify(score.args),
 							)
 
 							actions.push([
@@ -432,31 +436,31 @@ export class Bot extends Player {
 													? this.state.titan
 													: 0,
 												{},
-												score.args
-											)
+												score.args,
+											),
 										)
 									} catch (e) {
 										this.logger.log(
-											`Failed to play ${c.code} with ${score.args}`
+											`Failed to play ${c.code} with ${score.args}`,
 										)
 
 										throw e
 									}
-								}
+								},
 							])
 						})
 
 					this.state.usedCards
 						.filter(
-							c =>
+							(c) =>
 								CardsLookupApi.get(c.code).actionEffects.length > 0 &&
 								isCardActionable(CardsLookupApi.get(c.code), {
 									card: c,
 									game: this.game.state,
-									player: this.state
-								})
+									player: this.state,
+								}),
 						)
-						.forEach(c => {
+						.forEach((c) => {
 							const score = useCardScore(this.scoringContext, c)
 
 							actions.push([
@@ -466,12 +470,12 @@ export class Bot extends Player {
 										this.performAction(playCard(c.code, c.index, score.args))
 									} catch (e) {
 										this.logger.log(
-											`Failed to use ${c.code} with ${score.args}`
+											`Failed to use ${c.code} with ${score.args}`,
 										)
 
 										throw e
 									}
-								}
+								},
 							])
 						})
 				}
@@ -487,7 +491,7 @@ export class Bot extends Player {
 		if (actions.length === 0) {
 			if (
 				[PlayerStateValue.Playing, PlayerStateValue.EndingTiles].includes(
-					this.state.state
+					this.state.state,
 				)
 			) {
 				this.performAction(playerPass(false))
@@ -495,7 +499,7 @@ export class Bot extends Player {
 		} else {
 			const sorted = actions.sort(([a], [b]) => b - a)
 
-			shuffle(sorted.filter(s => s[0] === sorted[0][0]))[0][1]()
+			shuffle(sorted.filter((s) => s[0] === sorted[0][0]))[0][1]()
 		}
 	}
 }

@@ -18,44 +18,44 @@ export async function main() {
 			type: 'boolean',
 			alias: 's',
 			default: false,
-			description: 'Start server in single-game mode'
+			description: 'Start server in single-game mode',
 		})
 		.option('picker', {
 			type: 'boolean',
 			default: false,
-			description: 'Start card image picker instead'
+			description: 'Start card image picker instead',
 		})
 		.option('port', {
 			type: 'number',
 			alias: 'p',
-			default: globalConfig.port
+			default: globalConfig.port,
 		})
 		.option('slots', {
 			type: 'number',
 			description: 'Number of server slots',
-			default: globalConfig.slots
+			default: globalConfig.slots,
 		})
 		.option('fast-bots', {
 			type: 'boolean',
 			description: 'Skip interval between bot actions',
-			default: globalConfig.fastBots
+			default: globalConfig.fastBots,
 		})
 		.option('mode', {
 			type: 'string',
 			enum: Object.keys(strToMode),
 			alias: 'm',
-			default: 'standard'
+			default: 'standard',
 		})
 		.option('load', {
 			type: 'string',
 			description: 'Load game saved state from file',
-			alias: 'l'
+			alias: 'l',
 		})
 		.option('bots', {
 			type: 'number',
 			description: 'Number of bots',
 			alias: 'b',
-			default: 0
+			default: 0,
 		}).argv
 
 	try {
@@ -74,7 +74,7 @@ export async function main() {
 		maxServers: argv.single ? 1 : argv.slots,
 		port: argv.port,
 		singleGame: argv.single,
-		fastBots: argv['fast-bots']
+		fastBots: argv['fast-bots'],
 	}
 
 	if (argv.picker) {
@@ -83,7 +83,7 @@ export async function main() {
 		const { game } = await singleApp(serverConfig, {
 			bots: argv.bots,
 			mode: mode,
-			fastBots: serverConfig.fastBots
+			fastBots: serverConfig.fastBots,
 		})
 
 		if (argv.load) {
@@ -91,7 +91,7 @@ export async function main() {
 				game.load(JSON.parse((await fs.readFile(argv.load)).toString()))
 				logger.log(`Loaded game state from ${argv.load}`)
 			} catch (e) {
-				throw new Error('Failed to load game state from file')
+				throw new Error(`Failed to load game state from file: ${e}`)
 			}
 		}
 	} else {

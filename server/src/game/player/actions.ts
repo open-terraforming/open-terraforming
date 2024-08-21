@@ -36,11 +36,11 @@ export class PlayerActions {
 			[MessageType.PickColor]: new PickColorAction(this.player),
 			[MessageType.BuyCard]: new BuyCardAction(this.player),
 			[MessageType.BuyStandardProject]: new BuyStandardProjectAction(
-				this.player
+				this.player,
 			),
 			[MessageType.BuyMilestone]: new BuyMilestoneAction(this.player),
 			[MessageType.SponsorCompetition]: new SponsorCompetitionAction(
-				this.player
+				this.player,
 			),
 			[MessageType.PlayCard]: new PlayCardAction(this.player),
 			[MessageType.PlaceTile]: new PlaceTileAction(this.player),
@@ -51,7 +51,7 @@ export class PlayerActions {
 			[MessageType.StartGame]: new StartGameAction(this.player),
 			[MessageType.PlayerPass]: new PassAction(this.player),
 			[MessageType.DraftCard]: new DraftCardAction(this.player),
-			[MessageType.SolarPhaseTerraform]: new SolarPhaseTerraform(this.player)
+			[MessageType.SolarPhaseTerraform]: new SolarPhaseTerraform(this.player),
 		}
 	}
 

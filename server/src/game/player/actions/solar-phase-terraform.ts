@@ -2,7 +2,7 @@ import {
 	GameStateValue,
 	GridCellContent,
 	PlayerStateValue,
-	solarPhaseTerraform
+	solarPhaseTerraform,
 } from '@shared/index'
 import { placeTileAction, PlayerActionType } from '@shared/player-actions'
 import { f, pushPendingAction } from '@shared/utils'
@@ -27,7 +27,7 @@ export class SolarPhaseTerraform extends PlayerBaseAction<Args> {
 			progress !== 'oceans'
 		) {
 			throw new Error(
-				'Invalid progress, only global mars terraforming is allowed'
+				'Invalid progress, only global mars terraforming is allowed',
 			)
 		}
 
@@ -43,10 +43,10 @@ export class SolarPhaseTerraform extends PlayerBaseAction<Args> {
 				this.player,
 				placeTileAction(
 					{
-						type: GridCellContent.Ocean
+						type: GridCellContent.Ocean,
 					},
-					true
-				)
+					true,
+				),
 			)
 		} else {
 			this.game[progress]++

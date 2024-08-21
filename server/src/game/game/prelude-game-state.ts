@@ -7,7 +7,7 @@ export class PreludeGameState extends BaseGameState {
 	name = GameStateValue.Prelude
 
 	onEnter() {
-		this.game.players.forEach(p => {
+		this.game.players.forEach((p) => {
 			p.state.state = PlayerStateValue.WaitingForTurn
 		})
 
@@ -16,7 +16,7 @@ export class PreludeGameState extends BaseGameState {
 	}
 
 	playCurrentPlayerPreludes() {
-		this.currentPlayer.usedCards.forEach(c => {
+		this.currentPlayer.usedCards.forEach((c) => {
 			const card = CardsLookupApi.get(c.code)
 
 			if (card.type === CardType.Prelude) {
@@ -24,10 +24,10 @@ export class PreludeGameState extends BaseGameState {
 				const ctx = {
 					game: this.game.state,
 					player: this.currentPlayer,
-					card: c
+					card: c,
 				}
 
-				card.playEffects.forEach(e => {
+				card.playEffects.forEach((e) => {
 					e.perform(ctx)
 				})
 

@@ -16,7 +16,7 @@ export class KickPlayerAction extends PlayerBaseAction<Args> {
 			throw new Error('Only owner can start the game')
 		}
 
-		const player = this.parent.game.players.find(p => p.id === playerId)
+		const player = this.parent.game.players.find((p) => p.id === playerId)
 
 		if (!player) {
 			throw new Error(`Unknown player ${playerId}`)

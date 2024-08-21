@@ -10,7 +10,7 @@ export class PickCardsAction extends PlayerBaseAction<Args> {
 	gameStates = [
 		GameStateValue.Starting,
 		GameStateValue.ResearchPhase,
-		GameStateValue.GenerationInProgress
+		GameStateValue.GenerationInProgress,
 	]
 
 	perform({ cards }: Args) {
@@ -24,7 +24,7 @@ export class PickCardsAction extends PlayerBaseAction<Args> {
 			throw new Error('You cant pick one card twice')
 		}
 
-		if (cards.find(c => c >= top.cards.length || c < 0)) {
+		if (cards.find((c) => c >= top.cards.length || c < 0)) {
 			throw new Error('Invalid list of cards to pick')
 		}
 
@@ -45,10 +45,13 @@ export class PickCardsAction extends PlayerBaseAction<Args> {
 		}
 
 		this.logger.log(
-			f('Picked cards: {0}', cards.map(c => top.cards[c]).join(', '))
+			f('Picked cards: {0}', cards.map((c) => top.cards[c]).join(', ')),
 		)
 
-		this.player.cards = [...this.player.cards, ...cards.map(c => top.cards[c])]
+		this.player.cards = [
+			...this.player.cards,
+			...cards.map((c) => top.cards[c]),
+		]
 
 		this.game.discarded.push(...top.cards.filter((_c, i) => !cards.includes(i)))
 

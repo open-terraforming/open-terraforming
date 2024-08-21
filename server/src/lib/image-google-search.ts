@@ -40,13 +40,13 @@ export default class ImageSearch {
 					searchType: 'image',
 					cx: this.cseId,
 					key: this.apiKey,
-					...options
+					...options,
 				}),
 			{
-				responseType: 'json'
-			}
+				responseType: 'json',
+			},
 		)
 
-		return (res.body?.items || []).map(i => i.link)
+		return (res.body?.items || []).map((i) => i.link)
 	}
 }

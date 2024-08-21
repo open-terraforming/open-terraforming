@@ -17,7 +17,7 @@ import {
 	VERSION,
 	kicked,
 	spectateResponse,
-	SpectateError
+	SpectateError,
 } from '@shared/index'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
@@ -27,13 +27,13 @@ import { decode, encode } from 'msgpack-lite'
 
 enum ClientState {
 	Initializing,
-	Connected
+	Connected,
 }
 
 export class Client {
 	get logger() {
 		return new Logger(
-			this.player ? `GameClient(${this.player.name})` : 'GameClient'
+			this.player ? `GameClient(${this.player.name})` : 'GameClient',
 		)
 	}
 
@@ -87,14 +87,14 @@ export class Client {
 			// Remove player when in lobby, mark as disconnected otherwise
 			if (this.game.state.state === GameStateValue.WaitingForPlayers) {
 				this.logger.log(
-					'Client disconnected in lobby - removing player from game'
+					'Client disconnected in lobby - removing player from game',
 				)
 
 				this.game.remove(player)
 			} else {
 				if (
 					this.server.clients.find(
-						p => p !== this && p.player?.id === player.id
+						(p) => p !== this && p.player?.id === player.id,
 					) === undefined
 				) {
 					this.logger.log('Client disconnected - starting disconnect timer')
@@ -102,7 +102,7 @@ export class Client {
 					player.handleDisconnect()
 				} else {
 					this.logger.log(
-						'Client disconnected - but other clients are connected to its player'
+						'Client disconnected - but other clients are connected to its player',
 					)
 				}
 			}
@@ -170,7 +170,9 @@ export class Client {
 						const { session } = message.data
 
 						if (session) {
-							const p = this.game.players.find(p => p.state.session === session)
+							const p = this.game.players.find(
+								(p) => p.state.session === session,
+							)
 
 							if (p) {
 								this.logger.log('Session matched, joining as existing player')
@@ -181,7 +183,7 @@ export class Client {
 								return joinResponse(
 									undefined,
 									this.player.state.session,
-									this.player.state.id
+									this.player.state.id,
 								)
 							} else {
 								return joinResponse(JoinError.InvalidSession)
@@ -202,7 +204,7 @@ export class Client {
 
 						if (
 							this.game.players.find(
-								p => p.name.replace(/\s/g, '') === name?.replace(/\s/g, '')
+								(p) => p.name.replace(/\s/g, '') === name?.replace(/\s/g, ''),
 							)
 						) {
 							return joinResponse(JoinError.DuplicateName)
@@ -219,7 +221,7 @@ export class Client {
 						return joinResponse(
 							undefined,
 							this.player.state.session,
-							this.player.state.id
+							this.player.state.id,
 						)
 					}
 
@@ -249,15 +251,15 @@ export class Client {
 
 					return acc
 				},
-				{} as Record<string, string>
+				{} as Record<string, string>,
 			)
 		}
 
 		if (this.player || this.spectator) {
 			this.send(
 				gameStateUpdate(
-					obfuscateGame(game, this.player?.id ?? -1, this.cardDictionary)
-				)
+					obfuscateGame(game, this.player?.id ?? -1, this.cardDictionary),
+				),
 			)
 		}
 	}

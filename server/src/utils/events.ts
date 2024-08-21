@@ -31,7 +31,7 @@ export class MyEvent<T = void> {
 	}
 
 	emit(e: T) {
-		this.listeners.forEach(l => {
+		this.listeners.forEach((l) => {
 			l(e)
 		})
 	}

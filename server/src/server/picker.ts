@@ -26,7 +26,7 @@ export default (serverConfig: ServerOptions) => {
 
 	const searchClient = new ImageSearch(
 		globalConfig.cardEditor.googleCseId,
-		globalConfig.cardEditor.googleApiKey
+		globalConfig.cardEditor.googleApiKey,
 	)
 
 	app.use(bodyParser.urlencoded({ extended: true }))
@@ -34,7 +34,7 @@ export default (serverConfig: ServerOptions) => {
 	app.use(bodyParser.raw())
 
 	app.get('/picker', async (req, res) => {
-		const card = Object.values(CardsLookupApi.data()).find(c => {
+		const card = Object.values(CardsLookupApi.data()).find((c) => {
 			return !tryLoadStaticSync(`card/${c.code}.jpg`)
 		})
 
@@ -42,13 +42,13 @@ export default (serverConfig: ServerOptions) => {
 			return res.send(
 				'No card to fill (out of ' +
 					Object.values(CardsLookupApi.data()).length +
-					')'
+					')',
 			)
 		}
 
 		const q =
 			req.query['q'] ||
-			card.code + ' ' + card.categories.map(c => CardCategory[c]).join(' ')
+			card.code + ' ' + card.categories.map((c) => CardCategory[c]).join(' ')
 
 		const page = req.query['page']
 			? parseInt(req.query['page'] as string, 10)
@@ -57,7 +57,7 @@ export default (serverConfig: ServerOptions) => {
 		const data = await searchClient.search(q as string, {
 			excludeTerms: 'terraforming mars',
 			imgType: 'photo',
-			start: page * 10
+			start: page * 10,
 		})
 
 		res.type('html').send(`
@@ -80,22 +80,22 @@ export default (serverConfig: ServerOptions) => {
 	</head>
 	<body>
 		<h2>${card.code}</h2> <a href="?page=${page + 1}&q=${attr(
-			q as string
+			q as string,
 		)}">next</a>
 		<form method="get"><input type="text" name="q" value="${attr(
-			q as string
+			q as string,
 		)}" /><button>Search</button></form>
 		<div id="application">
 			${data
 				.map(
-					d =>
+					(d) =>
 						`<form method="post" action="/picker/${
 							card.code
 						}"><input type="hidden" name="url" value="${attr(
-							d
+							d,
 						)}" /><button style="background-image: url('${attr(
-							d
-						)}')"></button></form>`
+							d,
+						)}')"></button></form>`,
 				)
 				.join('')}
 		</div>
@@ -110,7 +110,7 @@ export default (serverConfig: ServerOptions) => {
 
 		try {
 			const image = await got(url, {
-				responseType: 'buffer'
+				responseType: 'buffer',
 			})
 
 			if (image.body && image.headers['content-type']?.includes('image')) {
@@ -124,7 +124,7 @@ export default (serverConfig: ServerOptions) => {
 						image.headers['content-type'] +
 						',' +
 						typeof image.body +
-						')'
+						')',
 				)
 			}
 		} catch (e) {

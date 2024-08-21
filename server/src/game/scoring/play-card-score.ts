@@ -10,6 +10,6 @@ export const playCardScore = ({ player, game }: ScoringContext, card: Card) => {
 
 	return {
 		score: best.score - moneyCostScore(player, card.cost),
-		args: best.args
+		args: best.args,
 	}
 }
