@@ -11,6 +11,7 @@ jobs:
 			- uses: actions/setup-node@v4
 			  with:
 					node-version: '20.9.0'
+					cache: npm
 			- run: npm install
 			  working-directory: server
 			- run: npm run lint
