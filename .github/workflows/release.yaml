@@ -55,6 +55,12 @@ jobs:
           username: ${{ secrets.REPOSITORY_USERNAME }}
           password: ${{ secrets.REPOSITORY_PASSWORD }}
 
+      - name: Login to DockerHub registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
       - name: Login to GH registry
         uses: docker/login-action@v3
         with:
@@ -72,6 +78,8 @@ jobs:
             containers.zipek.cz/kamen/open-terraforming:${{ steps.tag.outputs.result }},
             ghcr.io/open-terraforming/open-terraforming:latest,
             ghcr.io/open-terraforming/open-terraforming:${{ steps.tag.outputs.result }}
+            open-terraforming/open-terraforming:latest,
+            open-terraforming/open-terraforming:${{ steps.tag.outputs.result }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: OT_VERSION=${{ steps.tag.outputs.result }}
