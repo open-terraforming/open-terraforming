@@ -408,22 +408,24 @@ export class Bot extends Player {
 							})
 					}
 
-					Object.values(Projects).forEach((p) => {
-						if (
-							p.conditions.every((c) =>
-								c({ game: this.game.state, player: this.state }),
-							)
-						) {
-							if (p.type !== StandardProjectType.SellPatents) {
-								actions.push([
-									standardProjectScore(this.scoringContext, p),
-									() => {
-										this.performAction(buyStandardProject(p.type, []))
-									},
-								])
+					this.game.state.standardProjects
+						.map((p) => Projects[p])
+						.forEach((p) => {
+							if (
+								p.conditions.every((c) =>
+									c({ game: this.game.state, player: this.state }),
+								)
+							) {
+								if (p.type !== StandardProjectType.SellPatents) {
+									actions.push([
+										standardProjectScore(this.scoringContext, p),
+										() => {
+											this.performAction(buyStandardProject(p.type, []))
+										},
+									])
+								}
 							}
-						}
-					})
+						})
 
 					this.cards
 						.filter(
