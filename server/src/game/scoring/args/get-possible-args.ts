@@ -10,6 +10,7 @@ import { GameState, PlayerState, UsedCardState } from '@shared/index'
 import { range, shuffle, CardsCollection, flatten } from '@shared/utils'
 import { emptyCardState, resources } from '@shared/cards/utils'
 import { getBestArgs } from '../utils'
+import { assertNever } from '@/utils/assertNever'
 
 export const cardsList = (list: (string | UsedCardState)[]) => {
 	return new CardsCollection(
@@ -151,9 +152,31 @@ const getPossibleOptions = (
 				])
 		}
 
-		default:
+		case CardEffectTarget.Cell: {
+			// TODO: Seems to be unused
 			return [-1]
+		}
+
+		case CardEffectTarget.CardResourceCount: {
+			const cardResource = CardsLookupApi.get(card.code).resource
+
+			if (!cardResource) {
+				throw new Error('CardResourceCount arg requires resource prop')
+			}
+
+			const maximumCount = card[cardResource] ?? 0
+
+			return [range(0, maximumCount + 1)]
+		}
+
+		case CardEffectTarget.Production: {
+			// TODO: We need to find out what the maximum amount is and then pick the best value
+			//    This is used for "exchange production" effect so we somehow need to know how much source production we have
+			return [1]
+		}
 	}
+
+	return assertNever(a.type)
 }
 
 export const getPossibleArgs = (

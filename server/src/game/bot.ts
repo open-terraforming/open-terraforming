@@ -51,6 +51,7 @@ const defaultOptions = () => ({
 export type BotOptions = ReturnType<typeof defaultOptions>
 
 export class Bot extends Player {
+	stopped = false
 	doing?: ReturnType<typeof setTimeout>
 
 	options: BotOptions
@@ -75,7 +76,15 @@ export class Bot extends Player {
 		return this.state.cards.map((c) => CardsLookupApi.get(c))
 	}
 
+	stop() {
+		this.stopped = true
+	}
+
 	updated(broadcast = true) {
+		if (this.stopped) {
+			return
+		}
+
 		if (!this.doing) {
 			this.doing = setTimeout(
 				() => {
@@ -94,7 +103,7 @@ export class Bot extends Player {
 						}
 					}
 				},
-				this.options.fast ? 100 : 3000 + Math.random() * 2000,
+				this.options.fast ? 10 : 3000 + Math.random() * 2000,
 			)
 		}
 

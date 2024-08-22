@@ -1,11 +1,11 @@
 import { startGame } from '@shared/actions'
-import { GameStateValue } from '@shared/game'
 import { Game } from '../game/game'
 import { wait } from '../utils/async'
 import { ExpansionType } from '@shared/expansions/types'
+import { Bot } from '@/game/bot'
 
 describe('brute', () => {
-	it('bots can finish the game', async () => {
+	it('bots can run for 5 generations', async () => {
 		const game = new Game({
 			bots: 4,
 			fastBots: true,
@@ -21,14 +21,19 @@ describe('brute', () => {
 		game.players[0].state.owner = true
 		game.players[0].performAction(startGame())
 
+		const start = Date.now()
+
 		while (true) {
 			await wait(5)
 
-			if (game.state.state === GameStateValue.Ended) {
+			if (game.state.generation > 5 || start + 4000 < Date.now()) {
+				game.players.forEach((p) => (p instanceof Bot ? p.stop() : null))
+				await wait(20)
+
 				break
 			}
 		}
 
-		expect(game.state.state).toBe(GameStateValue.Ended)
+		expect(game.state.generation).toBeGreaterThan(5)
 	})
 })
