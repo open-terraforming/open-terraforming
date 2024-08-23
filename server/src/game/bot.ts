@@ -25,6 +25,7 @@ import {
 	playCard,
 	playerPass,
 	playerReady,
+	solarPhaseTerraform,
 	sponsorCompetition,
 } from '@shared/index'
 import { Milestones } from '@shared/milestones'
@@ -50,6 +51,7 @@ const defaultOptions = () => ({
 export type BotOptions = ReturnType<typeof defaultOptions>
 
 export class Bot extends Player {
+	stopped = false
 	doing?: ReturnType<typeof setTimeout>
 
 	options: BotOptions
@@ -74,7 +76,15 @@ export class Bot extends Player {
 		return this.state.cards.map((c) => CardsLookupApi.get(c))
 	}
 
+	stop() {
+		this.stopped = true
+	}
+
 	updated(broadcast = true) {
+		if (this.stopped) {
+			return
+		}
+
 		if (!this.doing) {
 			this.doing = setTimeout(
 				() => {
@@ -93,7 +103,7 @@ export class Bot extends Player {
 						}
 					}
 				},
-				this.options.fast ? 100 : 3000 + Math.random() * 2000,
+				this.options.fast ? 10 : 3000 + Math.random() * 2000,
 			)
 		}
 
@@ -264,6 +274,20 @@ export class Bot extends Player {
 					return this.performAction(playerPass(true))
 				}
 			}
+
+			case PlayerActionType.SolarPhaseTerraform: {
+				// TODO: Scoring?
+				const availableProgressValues = (
+					['oceans', 'temperature', 'oxygen'] as const
+				).filter(
+					(progress) =>
+						this.game.state[progress] < this.game.state.map[progress],
+				)
+
+				const progress = shuffle(availableProgressValues)[0]
+
+				return this.performAction(solarPhaseTerraform(progress))
+			}
 		}
 	}
 
@@ -384,22 +408,24 @@ export class Bot extends Player {
 							})
 					}
 
-					Object.values(Projects).forEach((p) => {
-						if (
-							p.conditions.every((c) =>
-								c({ game: this.game.state, player: this.state }),
-							)
-						) {
-							if (p.type !== StandardProjectType.SellPatents) {
-								actions.push([
-									standardProjectScore(this.scoringContext, p),
-									() => {
-										this.performAction(buyStandardProject(p.type, []))
-									},
-								])
+					this.game.state.standardProjects
+						.map((p) => Projects[p])
+						.forEach((p) => {
+							if (
+								p.conditions.every((c) =>
+									c({ game: this.game.state, player: this.state }),
+								)
+							) {
+								if (p.type !== StandardProjectType.SellPatents) {
+									actions.push([
+										standardProjectScore(this.scoringContext, p),
+										() => {
+											this.performAction(buyStandardProject(p.type, []))
+										},
+									])
+								}
 							}
-						}
-					})
+						})
 
 					this.cards
 						.filter(

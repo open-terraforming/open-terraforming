@@ -1,7 +1,7 @@
 import { Modal } from '@/components/Modal/Modal'
 import { cardsToCardList } from '@/utils/cards'
 import { useAppStore } from '@/utils/hooks'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import { CardDisplay } from '../../../CardDisplay/CardDisplay'
 import { ResourceIcon } from '../../../ResourceIcon/ResourceIcon'

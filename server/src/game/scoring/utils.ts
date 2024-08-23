@@ -16,6 +16,7 @@ import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import { adjTilesList, allCells, shuffle, sortBy, tiles } from '@shared/utils'
 import { getPossibleArgs } from './args/get-possible-args'
 import { placeTileScore } from './place-tile-score'
+import { Logger } from '@/utils/log'
 
 export const pickBest = <T>(values: T[], scoring: (v: T) => number) => {
 	if (values.length === 0) {
@@ -127,6 +128,8 @@ export const getBestArgs = (
 	cardState: UsedCardState,
 	effects: CardEffect[],
 ) => {
+	const logger = new Logger('getBestArgs')
+
 	const possibleArguments = getPossibleArgs(player, game, effects, cardState)
 
 	const evalEffect = (
@@ -154,7 +157,15 @@ export const getBestArgs = (
 					)
 				})
 			} catch (e) {
-				console.log('Failed to score', cardState.code, 'with', effectArgs)
+				logger.error(
+					'Failed to score',
+					cardState.code,
+					'with',
+					effectArgs,
+					'due to',
+					e,
+				)
+
 				throw e
 			}
 

@@ -26,3 +26,10 @@ export const PLAYER_RESOURCE_TO_PRODUCTION: Record<Resource, Production> = {
 	energy: 'energyProduction',
 	heat: 'heatProduction'
 }
+
+export const GAME_PROGRESS_VALUES = [
+	'temperature',
+	'oxygen',
+	'oceans',
+	'venus'
+] as const

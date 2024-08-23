@@ -28,7 +28,7 @@ export enum GameStateValue {
 	/** Players are playing their prelude cards */
 	Prelude,
 	/** After production phase this phase allows the current player to increase one progress */
-	SolarPhase = 6
+	SolarPhase
 }
 
 export enum PlayerStateValue {
