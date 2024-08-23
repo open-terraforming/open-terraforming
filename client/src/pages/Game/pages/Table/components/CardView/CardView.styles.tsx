@@ -47,7 +47,7 @@ export const Cost = styled.div<{ affordable: boolean }>`
 	height: 2rem;
 
 	> div {
-		background: ${({ theme }) => theme.colors.background};
+		background: ${({ theme }) => rgba(theme.colors.background, 1)};
 
 		position: absolute;
 
