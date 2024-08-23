@@ -14,6 +14,7 @@ type LoaderItem<T = any> = {
 	onResult?: ResultCallback<T>
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export class ResourcesLoader<Items extends Record<string, LoaderItem> = {}> {
 	loaded = false
 
@@ -22,7 +23,7 @@ export class ResourcesLoader<Items extends Record<string, LoaderItem> = {}> {
 	add<Name extends string, Target = Object3D>(
 		name: Name,
 		path: string,
-		onResult?: ResultCallback<Target>
+		onResult?: ResultCallback<Target>,
 	): ResourcesLoader<Items & { [key in Name]: LoaderItem<Target> }> {
 		// eslint-disable-next-line padding-line-between-statements
 		;(this.items as Record<string, LoaderItem>)[name] = {
@@ -30,7 +31,7 @@ export class ResourcesLoader<Items extends Record<string, LoaderItem> = {}> {
 			path,
 			loaded: false,
 			loading: false,
-			onResult
+			onResult,
 		}
 
 		return this
@@ -39,17 +40,17 @@ export class ResourcesLoader<Items extends Record<string, LoaderItem> = {}> {
 	async load() {
 		await Promise.all(
 			Object.values(this.items)
-				.filter(p => !p.loading && !p.loaded)
-				.map(p => {
+				.filter((p) => !p.loading && !p.loaded)
+				.map((p) => {
 					p.loading = true
 
 					return p
 				})
-				.map(p => {
+				.map((p) => {
 					return new Promise((resolve, reject) => {
 						modelLoader.load(
 							p.path,
-							gltf => {
+							(gltf) => {
 								p.loaded = true
 								p.loading = false
 
@@ -62,10 +63,13 @@ export class ResourcesLoader<Items extends Record<string, LoaderItem> = {}> {
 								resolve(gltf)
 							},
 							undefined,
-							err => reject(err)
+							(err) => {
+								console.log('Error trying to load', p)
+								reject(err)
+							},
 						)
 					})
-				})
+				}),
 		)
 
 		this.loaded = true
@@ -84,35 +88,36 @@ export class ResourcesLoader<Items extends Record<string, LoaderItem> = {}> {
 	}
 }
 
-export const extractMesh = (): ResultCallback<Mesh> => (g, { path }) => {
-	const mesh = findMesh(g.scene, i => i instanceof Mesh)
+export const extractMesh =
+	(): ResultCallback<Mesh> =>
+	(g, { path }) => {
+		const mesh = findMesh(g.scene, (i) => i instanceof Mesh)
 
-	if (!mesh) {
-		throw new Error(`${path}: Failed to extract mesh`)
+		if (!mesh) {
+			throw new Error(`${path}: Failed to extract mesh`)
+		}
+
+		console.log(mesh)
+
+		return mesh as Mesh
 	}
 
-	console.log(mesh)
+export const extractByName =
+	(name: string): ResultCallback =>
+	(g, { path }) => {
+		const mesh = findMesh(g.scene, (i) => i.name === name)
 
-	return mesh as Mesh
-}
+		if (!mesh) {
+			throw new Error(`${path}: Failed to extract object ${name}`)
+		}
 
-export const extractByName = (name: string): ResultCallback => (
-	g,
-	{ path }
-) => {
-	const mesh = findMesh(g.scene, i => i.name === name)
-
-	if (!mesh) {
-		throw new Error(`${path}: Failed to extract object ${name}`)
+		return mesh
 	}
-
-	return mesh
-}
 
 export const findMesh = (s: Object3D, condition: (i: Object3D) => boolean) => {
 	let found = undefined as Object3D | undefined
 
-	s.traverse(i => {
+	s.traverse((i) => {
 		if (condition(i)) {
 			found = i
 		}
@@ -135,6 +140,6 @@ export const resources = new ResourcesLoader()
 	.add('titan', 'models/Titan.glb')
 	.add('card', 'models/Card.glb')
 	.add('volcano', 'models/Volcano.glb')
-	.add('mars-4k', 'models/Mars4K.glb')
+	.add('mars-4k', 'models/Mars4k.glb')
 
 resources.load()
