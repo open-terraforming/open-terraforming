@@ -5,8 +5,8 @@
   "scripts": {
     "build": "node src/build.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Jan Zípek",
+  "license": "AGPL-3.0-or-later",
   "dependencies": {
     "fs-extra": "^9.1.0",
     "nexe": "^4.0.0-beta.18",

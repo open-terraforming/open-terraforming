@@ -6,8 +6,8 @@
   "scripts": {
     "test": "jest"
   },
-  "author": "Kamen",
-  "license": "ISC",
+  "author": "Jan Zípek",
+  "license": "AGPL-3.0-or-later",
   "devDependencies": {
     "@types/jest": "^25.1.4",
     "@types/node": "20.9.0",
