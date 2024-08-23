@@ -131,7 +131,8 @@ export const Player = ({
 									size="sm"
 								/>
 							)}{' '}
-							{stateToStr[state.state]}
+							{gameState !== GameStateValue.SolarPhase &&
+								stateToStr[state.state]}
 							{pending && ` ${pendingToStr[pending.type]}`}
 						</>
 					)}
