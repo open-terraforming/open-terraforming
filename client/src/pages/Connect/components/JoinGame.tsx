@@ -5,7 +5,7 @@ import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { joinRequest } from '@shared/actions'
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { BackButton } from './BackButton'
 
@@ -28,14 +28,22 @@ export const JoinGame = () => {
 		api.send(joinRequest(name))
 	}
 
+	const handleSubmit = (e: FormEvent) => {
+		e.stopPropagation()
+		e.preventDefault()
+
+		handleConnect()
+	}
+
 	return (
-		<>
+		<form onSubmit={handleSubmit}>
 			<Input
 				value={name}
 				onChange={(v) => setName(v)}
 				placeholder="Enter your name"
 				minLength={3}
 				maxLength={10}
+				autoFocus
 			/>
 
 			<ConnectButtons justify="space-between">
@@ -43,14 +51,13 @@ export const JoinGame = () => {
 
 				<Button
 					disabled={name.length < 3 || name.length > 10 || joining}
-					onClick={handleConnect}
 					isLoading={joining}
 					icon={faArrowRight}
 				>
 					Connect
 				</Button>
 			</ConnectButtons>
-		</>
+		</form>
 	)
 }
 
