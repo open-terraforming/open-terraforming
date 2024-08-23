@@ -1,6 +1,6 @@
 import { NumberInput } from '@/components/NumberInput/NumberInput'
 import { Resource } from '@shared/cards'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 
@@ -19,7 +19,7 @@ export const ResourceInput = ({
 	min = 0,
 	max,
 	production,
-	initialValue = 0
+	initialValue = 0,
 }: Props) => {
 	const [value, setValue] = useState(initialValue)
 
@@ -32,7 +32,7 @@ export const ResourceInput = ({
 			<NumberInput
 				min={min}
 				max={max}
-				onChange={v => setValue(v)}
+				onChange={(v) => setValue(v)}
 				value={value}
 				iconComponent={<ResourceIcon res={res} production={production} />}
 			/>

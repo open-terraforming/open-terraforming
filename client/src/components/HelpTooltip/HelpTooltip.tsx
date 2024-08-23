@@ -1,11 +1,11 @@
-import React from 'react'
 import styled from 'styled-components'
 import { Tooltip } from '../Tooltip/Tooltip'
+import { ReactNode } from 'react'
 
 type Props = {
-	title?: React.ReactNode
-	content: React.ReactNode
-	children: React.ReactNode
+	title?: ReactNode
+	content: ReactNode
+	children: ReactNode
 }
 
 export const HelpTooltip = ({ title, content, children }: Props) => {

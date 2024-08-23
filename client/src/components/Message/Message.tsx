@@ -1,27 +1,27 @@
-import React from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, CSSProperties } from 'styled-components'
 import {
 	faInfoCircle,
 	faExclamationTriangle,
 	faExclamationCircle,
-	faCheck
+	faCheck,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { ReactNode } from 'react'
 
 export type MessageType = 'info' | 'warn' | 'error' | 'success'
 
 type Props = {
-	message: React.ReactNode
+	message: ReactNode
 	type?: MessageType
-	header?: React.ReactNode
-	style?: React.CSSProperties
+	header?: ReactNode
+	style?: CSSProperties
 }
 
 const typeToIcon = {
 	info: faInfoCircle,
 	warn: faExclamationTriangle,
 	error: faExclamationCircle,
-	success: faCheck
+	success: faCheck,
 } as const
 
 export const Message = ({ type = 'info', message, header, style }: Props) => {
@@ -54,7 +54,7 @@ const MessageContainer = styled.div`
 `
 
 const MessageTitle = styled.div<{ type: MessageType; header: boolean }>`
-	${props => css`
+	${(props) => css`
 		display: flex;
 		align-items: center;
 		justify-content: center;

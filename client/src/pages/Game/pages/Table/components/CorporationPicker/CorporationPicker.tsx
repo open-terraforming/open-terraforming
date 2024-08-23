@@ -2,7 +2,7 @@ import { HelpMessage } from '@/components/HelpMessage/HelpMessage'
 import { Modal } from '@/components/Modal/Modal'
 import { cardsToCardList } from '@/utils/cards'
 import { emptyCardState } from '@shared/cards/utils'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
 
 interface Props {
@@ -14,11 +14,11 @@ interface Props {
 export const CorporationPicker = ({
 	corporations,
 	onSelect,
-	onClose
+	onClose,
 }: Props) => {
 	const cards = useMemo(
-		() => cardsToCardList(corporations.map(p => emptyCardState(p))),
-		[corporations]
+		() => cardsToCardList(corporations.map((p) => emptyCardState(p))),
+		[corporations],
 	)
 
 	const handlePick = (c: CardInfo[]) => {

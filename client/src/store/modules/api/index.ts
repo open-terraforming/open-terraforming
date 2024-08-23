@@ -5,13 +5,13 @@ export enum ApiState {
 	Connecting,
 	Connected,
 	Joined,
-	Error
+	Error,
 }
 
 const initialState = {
 	error: null as string | null,
 	gameId: null as string | null,
-	state: ApiState.Ready
+	state: ApiState.Ready,
 }
 
 export default (state = initialState, action: Actions): State => {
@@ -21,13 +21,13 @@ export default (state = initialState, action: Actions): State => {
 				window.history.pushState(
 					null,
 					'',
-					action.state.gameId === null ? '#' : '#' + action.state.gameId
+					action.state.gameId === null ? '#' : '#' + action.state.gameId,
 				)
 			}
 
 			return {
 				...state,
-				...action.state
+				...action.state,
 			}
 		}
 
@@ -48,29 +48,29 @@ type Actions = ApiSetState
 export const setApiError = (error: string | null) =>
 	({
 		type: API_SET_STATE,
-		state: { error }
-	} as ApiSetState)
+		state: { error },
+	}) as ApiSetState
 
 export const setApiConnected = (connected: boolean) =>
 	({
 		type: API_SET_STATE,
-		state: { connected }
-	} as ApiSetState)
+		state: { connected },
+	}) as ApiSetState
 
 export const setApiReconnecting = (reconnecting: boolean) =>
 	({
 		type: API_SET_STATE,
-		state: { reconnecting }
-	} as ApiSetState)
+		state: { reconnecting },
+	}) as ApiSetState
 
 export const setApiFailed = (failed: boolean) =>
 	({
 		type: API_SET_STATE,
-		state: { failed }
-	} as ApiSetState)
+		state: { failed },
+	}) as ApiSetState
 
 export const setApiState = (state: Partial<State>) =>
 	({
 		type: API_SET_STATE,
-		state
-	} as ApiSetState)
+		state,
+	}) as ApiSetState

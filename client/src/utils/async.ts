@@ -1,1 +1,1 @@
-export const nextFrame = () => new Promise(resolve => setTimeout(resolve))
+export const nextFrame = () => new Promise((resolve) => setTimeout(resolve))

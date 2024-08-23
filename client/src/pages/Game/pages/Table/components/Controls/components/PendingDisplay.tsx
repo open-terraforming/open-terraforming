@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import { rgba } from 'polished'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'

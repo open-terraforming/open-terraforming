@@ -7,7 +7,7 @@ import {
 	faUserClock,
 	faChevronRight,
 	faUserSlash,
-	faRobot
+	faRobot,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GameStateValue, PlayerState, PlayerStateValue } from '@shared/index'
@@ -30,7 +30,7 @@ const pendingToStr = {
 	[PlayerActionType.PlayCard]: 'Playing card',
 	[PlayerActionType.DraftCard]: 'Picking card',
 	[PlayerActionType.SponsorCompetition]: 'Selecting competition',
-	[PlayerActionType.SolarPhaseTerraform]: 'World Government Terraforming'
+	[PlayerActionType.SolarPhaseTerraform]: 'World Government Terraforming',
 }
 
 const stateToStr = {
@@ -42,7 +42,7 @@ const stateToStr = {
 	[PlayerStateValue.Connecting]: 'Connecting',
 	[PlayerStateValue.Waiting]: null,
 	[PlayerStateValue.Ready]: null,
-	[PlayerStateValue.Prelude]: 'Playing'
+	[PlayerStateValue.Prelude]: 'Playing',
 } as const
 
 const stateToIcon = {
@@ -54,13 +54,13 @@ const stateToIcon = {
 	[PlayerStateValue.Connecting]: faEthernet,
 	[PlayerStateValue.Waiting]: faHourglassHalf,
 	[PlayerStateValue.Ready]: faCheck,
-	[PlayerStateValue.Prelude]: faArrowRight
+	[PlayerStateValue.Prelude]: faArrowRight,
 } as const
 
 export const Player = ({
 	player,
 	starting,
-	onClick
+	onClick,
 }: {
 	player: PlayerState
 	starting: boolean
@@ -70,9 +70,9 @@ export const Player = ({
 	const position = useElementPosition(container)
 	const state = player
 	const isPlaying = state.state === PlayerStateValue.Playing
-	const isPlayer = player.id === useAppStore(state => state.game.playerId)
+	const isPlayer = player.id === useAppStore((state) => state.game.playerId)
 	const pending = pendingActions(player)[0]
-	const gameState = useAppStore(state => state.game.state.state)
+	const gameState = useAppStore((state) => state.game.state.state)
 
 	const isActionBased =
 		gameState === GameStateValue.GenerationInProgress ||
@@ -82,7 +82,7 @@ export const Player = ({
 		<Container
 			onClick={onClick}
 			isPlaying={isPlaying}
-			ref={e => setContainer(e)}
+			ref={(e) => setContainer(e)}
 		>
 			<Rating>{state.terraformRating}</Rating>
 			<InfoContainer>
@@ -165,7 +165,7 @@ const Container = styled.div<{ isPlaying: boolean }>`
 	cursor: pointer;
 	position: relative;
 
-	${props =>
+	${(props) =>
 		props.isPlaying &&
 		css`
 			opacity: 1;

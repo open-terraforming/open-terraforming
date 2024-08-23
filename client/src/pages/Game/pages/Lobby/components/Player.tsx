@@ -4,7 +4,7 @@ import { faRobot, faBan } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { pickColor, kickPlayer } from '@shared/index'
 import { PlayerColors } from '@shared/player-colors'
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import styled, { css, ThemeContext } from 'styled-components'
 import { ColorPicker } from './ColorPicker'
 import { Button } from '@/components'
@@ -22,13 +22,13 @@ export const Player = ({ id, name, ready, color, current, bot }: Props) => {
 	const api = useApi()
 	const theme = useContext(ThemeContext)
 
-	const currentPlayer = useAppStore(state => state.game.player)
+	const currentPlayer = useAppStore((state) => state.game.player)
 
 	const pickedColors =
-		useAppStore(state =>
+		useAppStore((state) =>
 			state.game.state.players
-				.filter(p => p.id !== currentPlayer.id)
-				.map(p => p.color)
+				.filter((p) => p.id !== currentPlayer.id)
+				.map((p) => p.color),
 		) || []
 
 	const colors = PlayerColors.map((c, i) => [i, c] as const)
@@ -52,7 +52,7 @@ export const Player = ({ id, name, ready, color, current, bot }: Props) => {
 					value={colorIndex}
 					colors={colors}
 					readOnly={!current || ready}
-					onChange={v => {
+					onChange={(v) => {
 						changeColor(v)
 					}}
 				/>
@@ -68,7 +68,7 @@ export const Player = ({ id, name, ready, color, current, bot }: Props) => {
 			)}
 			{bot && (
 				<PlayerState ready>
-					<FontAwesomeIcon icon={faRobot} color={theme.colors.text} />
+					<FontAwesomeIcon icon={faRobot} color={theme?.colors.text} />
 				</PlayerState>
 			)}
 		</PlayerContainer>
@@ -84,7 +84,7 @@ const PlayerState = styled.div<{ ready: boolean }>`
 	padding: 0.25rem;
 	margin-left: auto;
 
-	${props => css`
+	${(props) => css`
 		color: ${props.ready ? '#33ff33' : '#999'};
 	`}
 `

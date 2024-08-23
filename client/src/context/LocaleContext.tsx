@@ -1,18 +1,18 @@
-import React from 'react'
 import { en } from '@/i18n/en'
+import { createContext, ReactNode, useContext } from 'react'
 
 export type LocaleValue = typeof en
 export type LocaleLanguage = 'en'
 
-export const LocaleContext = React.createContext(en)
+export const LocaleContext = createContext(en)
 
 type Props = {
-	children: React.ReactNode
+	children: ReactNode
 	language: LocaleLanguage
 }
 
 const languages = {
-	en
+	en,
 }
 
 export const LocaleContextProvider = ({ language, children }: Props) => {
@@ -23,4 +23,4 @@ export const LocaleContextProvider = ({ language, children }: Props) => {
 	)
 }
 
-export const useLocale = () => React.useContext(LocaleContext)
+export const useLocale = () => useContext(LocaleContext)

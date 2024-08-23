@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { GameEvent, EventType } from '../types'
 import { Sounds } from '@/sounds/sounds'
 import { GridCellContent } from '@shared/index'
@@ -15,7 +15,7 @@ export const EventSounds = ({ events }: Props) => {
 		if (events.length > processed) {
 			const toPlay = events
 				.slice(processed)
-				.map(e => {
+				.map((e) => {
 					switch (e.type) {
 						case EventType.NewGeneration:
 							return Sounds.nextGeneration
@@ -46,7 +46,7 @@ export const EventSounds = ({ events }: Props) => {
 				.slice(0, 4)
 
 			if (toPlay) {
-				toPlay.forEach(s => s.play())
+				toPlay.forEach((s) => s.play())
 			}
 
 			setProcessed(events.length)

@@ -7,12 +7,10 @@ import { GameInfo } from '@shared/extra'
 import { Maps } from '@shared/maps'
 import { GameModes } from '@shared/modes'
 import { darken } from 'polished'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
-type Props = {}
-
-export const GamesList = ({}: Props) => {
+export const GamesList = () => {
 	const dispatch = useAppDispatch()
 	const [loading, setLoading] = useState(false)
 	const [games, setGames] = useState([] as GameInfo[])
@@ -21,8 +19,8 @@ export const GamesList = ({}: Props) => {
 		dispatch(
 			setApiState({
 				state: ApiState.Connecting,
-				gameId: game.id
-			})
+				gameId: game.id,
+			}),
 		)
 	}
 
@@ -31,11 +29,11 @@ export const GamesList = ({}: Props) => {
 			setLoading(true)
 
 			getGames()
-				.then(games => {
+				.then((games) => {
 					setGames(games)
 					setLoading(false)
 				})
-				.catch(e => {
+				.catch((e) => {
 					console.error(e)
 					setLoading(false)
 				})
@@ -66,7 +64,7 @@ export const GamesList = ({}: Props) => {
 				</GameHeader>
 			)}
 
-			{games.map(game => (
+			{games.map((game) => (
 				<GameLine key={game.id}>
 					<GameName>{game.name}</GameName>
 					<GameMode>{GameModes[game.mode]?.name}</GameMode>

@@ -1,15 +1,12 @@
 import { Button, DialogWrapper } from '@/components'
 import { useGameState } from '@/utils/hooks'
-import React from 'react'
 import styled from 'styled-components'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
 
-type Props = {}
-
-export const Header = ({}: Props) => {
+export const Header = () => {
 	const game = useGameState()
 	const milestones = game.milestones
 	const competitions = game.competitions
@@ -17,8 +14,8 @@ export const Header = ({}: Props) => {
 	return (
 		<>
 			<E>
-				<DialogWrapper dialog={close => <MilestonesModal onClose={close} />}>
-					{open => (
+				<DialogWrapper dialog={(close) => <MilestonesModal onClose={close} />}>
+					{(open) => (
 						<StyledButton noClip onClick={open}>
 							<Counter>
 								{milestones.length}/{game.milestonesLimit}
@@ -28,16 +25,18 @@ export const Header = ({}: Props) => {
 					)}
 				</DialogWrapper>
 				<DialogWrapper
-					dialog={close => <StandardProjectModal onClose={close} />}
+					dialog={(close) => <StandardProjectModal onClose={close} />}
 				>
-					{open => (
+					{(open) => (
 						<StandardButton noClip onClick={open}>
 							Standard projects
 						</StandardButton>
 					)}
 				</DialogWrapper>
-				<DialogWrapper dialog={close => <CompetitionsModal onClose={close} />}>
-					{open => (
+				<DialogWrapper
+					dialog={(close) => <CompetitionsModal onClose={close} />}
+				>
+					{(open) => (
 						<StyledButton noClip onClick={open}>
 							<span>Competitions</span>
 							<Counter>

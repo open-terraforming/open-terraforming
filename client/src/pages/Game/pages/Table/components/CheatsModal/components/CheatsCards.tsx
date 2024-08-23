@@ -4,11 +4,11 @@ import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { adminChange } from '@shared/actions'
 import { CardsLookupApi } from '@shared/cards'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 export const CheatsCards = () => {
 	const api = useApi()
-	const game = useAppStore(state => state.game.state)
+	const game = useAppStore((state) => state.game.state)
 
 	const [playerIndex, setPlayerIndex] = useState(0)
 	const [card, setCard] = useState('')
@@ -29,11 +29,11 @@ export const CheatsCards = () => {
 				players: {
 					[playerIndex]: {
 						cards: {
-							[player.cards.length]: card
-						}
-					}
-				}
-			})
+							[player.cards.length]: card,
+						},
+					},
+				},
+			}),
 		)
 
 		setCard('')
@@ -41,7 +41,7 @@ export const CheatsCards = () => {
 
 	return (
 		<Flex>
-			<select onChange={e => setPlayerIndex(parseInt(e.target.value))}>
+			<select onChange={(e) => setPlayerIndex(parseInt(e.target.value))}>
 				{game.players.map((player, i) => (
 					<option key={i} value={i}>
 						{player.name}
@@ -51,7 +51,7 @@ export const CheatsCards = () => {
 			<input
 				type="text"
 				value={card}
-				onChange={e => setCard(e.target.value)}
+				onChange={(e) => setCard(e.target.value)}
 				placeholder="Card id"
 			/>
 			<Button onClick={handleSet}>Add card</Button>

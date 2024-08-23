@@ -19,13 +19,13 @@ const colors = buildColors({
 	info,
 	success,
 	danger,
-	warn
+	warn,
 })
 
 export const redTheme: Theme = {
 	...defaultTheme,
 	colors: {
 		...defaultTheme.colors,
-		...colors
-	}
+		...colors,
+	},
 }

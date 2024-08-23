@@ -1,8 +1,7 @@
-import React from 'react'
 import {
 	CardEffectArgument,
 	CardEffectTarget,
-	CardEffectArgumentType
+	CardEffectArgumentType,
 } from '@shared/cards'
 import { PlayerArg } from './PlayerArg'
 import { UsedCardState } from '@shared/index'

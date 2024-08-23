@@ -1,16 +1,14 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useAppStore } from '@/utils/hooks'
 import styled from 'styled-components'
 import { Player } from './components/Player'
 import { PlayerInfo } from '../Players/components/PlayerInfo/PlayerInfo'
 
-type Props = {}
-
-export const Spectator = ({}: Props) => {
-	const players = useAppStore(state => state.game.state.players)
+export const Spectator = () => {
+	const players = useAppStore((state) => state.game.state.players)
 
 	const [showingPlayerId, setShowingPlayerId] = useState(
-		undefined as number | undefined
+		undefined as number | undefined,
 	)
 
 	return (
@@ -22,7 +20,7 @@ export const Spectator = ({}: Props) => {
 				/>
 			)}
 
-			{players.map(p => (
+			{players.map((p) => (
 				<Player
 					onClick={() => setShowingPlayerId(p.id)}
 					key={p.id}

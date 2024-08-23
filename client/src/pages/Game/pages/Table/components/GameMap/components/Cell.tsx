@@ -3,7 +3,7 @@ import { useAppStore, useElementPosition } from '@/utils/hooks'
 import { GridCell, GridCellContent, GridCellType } from '@shared/index'
 import { canPlace, isClaimable, PlacementState } from '@shared/placements'
 import { otherToStr, tileToStr } from '@shared/texts'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { OtherIcons } from '../icons/other'
@@ -48,7 +48,7 @@ export const delayFunctions = [
 		width + (y - height - x),
 	(width: number, height: number, x: number, y: number) =>
 		hexDistance(x, y, (width - 1) / 2, (height - 1) / 2) * 2,
-	(_width: number, height: number, x: number, y: number) => y - height - x
+	(_width: number, height: number, x: number, y: number) => y - height - x,
 ]
 
 export const Cell = ({
@@ -57,26 +57,26 @@ export const Cell = ({
 	placing,
 	onClick,
 	claiming,
-	delayFunction
+	delayFunction,
 }: Props) => {
 	const [hover, setHover] = useState(false)
 	const [container, setContainer] = useState(null as SVGElement | null)
 
 	const position = useElementPosition(hover ? container : null)
 
-	const game = useAppStore(state => state.game.state)
+	const game = useAppStore((state) => state.game.state)
 
-	const owner = useAppStore(state =>
+	const owner = useAppStore((state) =>
 		state.game.state.players.find(
-			p => p.id === cell.ownerId || p.id === cell.claimantId
-		)
+			(p) => p.id === cell.ownerId || p.id === cell.claimantId,
+		),
 	)
 
-	const player = useAppStore(state => state.game.player)
-	const playerMap = useAppStore(state => state.game.playerMap)
+	const player = useAppStore((state) => state.game.player)
+	const playerMap = useAppStore((state) => state.game.playerMap)
 
 	const [lastContent, setLastContent] = useState(
-		undefined as GridCellContent | undefined
+		undefined as GridCellContent | undefined,
 	)
 
 	const [diffAnim, setDiffAnim] = useState(false)
@@ -105,9 +105,9 @@ export const Cell = ({
 		cell.ownerId !== undefined && cell.content !== GridCellContent.Ocean
 			? ` placed by ${playerMap[cell.ownerId].name}`
 			: cell.claimantId !== undefined
-			? `Claimed by ${playerMap[cell.claimantId].name}`
-			: undefined
-	].filter(i => i !== undefined)
+				? `Claimed by ${playerMap[cell.claimantId].name}`
+				: undefined,
+	].filter((i) => i !== undefined)
 
 	const tooltip = useMemo(() => {
 		const rewards =
@@ -128,7 +128,7 @@ export const Cell = ({
 						)}
 						{` ${r.description}`}
 					</div>
-			  ))
+				))
 			: undefined
 	}, [placing, active])
 
@@ -150,7 +150,7 @@ export const Cell = ({
 			gridActive={placing || claiming ? active : undefined}
 			transform={`translate(${pos.x},${pos.y})`}
 			onClick={active ? onClick : undefined}
-			ref={e => setContainer(e)}
+			ref={(e) => setContainer(e)}
 		>
 			<polygon
 				style={{
@@ -159,10 +159,10 @@ export const Cell = ({
 							game.map.width,
 							game.map.height,
 							cell.x,
-							cell.y
+							cell.y,
 						) *
 							50 +
-						'ms'
+						'ms',
 				}}
 				stroke={'rgba(255,255,255,0.3)'}
 				fill="transparent"
@@ -182,13 +182,13 @@ export const Cell = ({
 										...(cell.x >= game.map.width / 2
 											? {
 													left: position.left - 20,
-													transform: 'translate(-100%, -50%)'
-											  }
+													transform: 'translate(-100%, -50%)',
+												}
 											: {
 													left: position.left + position.width + 20,
-													transform: 'translate(0, -50%)'
-											  })
-								  }
+													transform: 'translate(0, -50%)',
+												}),
+									}
 								: {}
 						}
 					>
@@ -272,67 +272,69 @@ const StyledHex = styled.g<{
 	gridActive?: boolean
 	gridHover?: boolean
 }>`
-	${props =>
+	${(props) =>
 		props.gridActive === false &&
 		css`
 			opacity: 0.5;
 		`}
 
 	polygon:first-child {
-
 		animation-name: ${highlightAnimation};
 		animation-duration: 15000ms;
 		animation-iteration-count: infinite;
 
-		transition: stroke 0.2s, fill 0.2s, stroke-width 0.2s;
+		transition:
+			stroke 0.2s,
+			fill 0.2s,
+			stroke-width 0.2s;
 
-		${props =>
+		${(props) =>
 			props.gridType === GridCellType.Ocean &&
 			!props.gridContent &&
 			css`
 				fill: url(#Ocean);
 			`}
-		${props =>
+		${(props) =>
 			props.gridContent === GridCellContent.Ocean &&
 			css`
 				fill: rgba(15, 135, 226, 0.8);
 			`}
 
-		${props =>
+		${(props) =>
 			props.gridContent === GridCellContent.City &&
 			css`
 				fill: rgba(128, 128, 128, 0.5);
 			`}
 
-		${props =>
+		${(props) =>
 			props.gridContent === GridCellContent.Forest &&
 			css`
 				fill: rgba(19, 155, 47, 0.5);
 			`}
 
-		${props =>
+		${(props) =>
 			props.gridContent === GridCellContent.Other &&
 			css`
 				fill: rgba(128, 64, 0, 0.5);
 			`}
 
-		${props =>
+		${(props) =>
 			props.gridHover &&
 			css`
 				stroke: rgba(255, 255, 255, 0.9);
 				stroke-width: 1;
 			`}
 
-		${props =>
+		${(props) =>
 			props.gridActive
 				? css`
 						fill: rgba(36, 187, 23, 0.5);
 						cursor: pointer;
-				  `
+					`
 				: props.gridActive === false &&
-				  css`
+					css`
 						stroke: rgba(255, 66, 66, 0.8);
-				  `}
+					`}
 	}
 `
 

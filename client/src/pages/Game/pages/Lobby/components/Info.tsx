@@ -1,6 +1,6 @@
 import { GameInfo } from '@shared/extra'
 import { GameModes } from '@shared/modes'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import { Maps } from '@shared/maps'
 import { Expansions } from '@shared/expansions'
@@ -12,8 +12,8 @@ type Props = {
 export const Info = ({ info }: Props) => {
 	const expansions = useMemo(
 		() =>
-			info.expansions ? info.expansions.map(e => Expansions[e]?.name) : [],
-		[info]
+			info.expansions ? info.expansions.map((e) => Expansions[e]?.name) : [],
+		[info],
 	)
 
 	return (

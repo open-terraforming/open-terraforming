@@ -4,11 +4,11 @@ import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { adminChange } from '@shared/actions'
 import { GameProgress } from '@shared/cards'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const CheatsProgress = () => {
 	const api = useApi()
-	const game = useAppStore(state => state.game.state)
+	const game = useAppStore((state) => state.game.state)
 
 	const [progress, setProgress] = useState<GameProgress>('oxygen')
 	const [value, setValue] = useState(0)
@@ -16,8 +16,8 @@ export const CheatsProgress = () => {
 	const handleSet = () => {
 		api.send(
 			adminChange({
-				[progress]: value
-			})
+				[progress]: value,
+			}),
 		)
 	}
 
@@ -28,7 +28,7 @@ export const CheatsProgress = () => {
 	return (
 		<Flex>
 			TER:
-			<select onChange={e => setProgress(e.target.value as GameProgress)}>
+			<select onChange={(e) => setProgress(e.target.value as GameProgress)}>
 				<option value="oxygen">Oxygen</option>
 				<option value="temperature">Temperature</option>
 				<option value="oceans">Oceans</option>
@@ -37,7 +37,7 @@ export const CheatsProgress = () => {
 			<input
 				type="number"
 				value={value}
-				onChange={e => setValue(parseFloat(e.target.value))}
+				onChange={(e) => setValue(parseFloat(e.target.value))}
 			/>
 			<Button onClick={handleSet}>Set</Button>
 		</Flex>

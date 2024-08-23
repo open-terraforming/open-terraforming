@@ -12,7 +12,7 @@ export const Flex = styled.div<{
 }>`
 	display: flex;
 	min-height: 0;
-	${props => css`
+	${(props) => css`
 		align-items: ${props.align || 'center'};
 		justify-content: ${props.justify || 'flex-start'};
 		flex-direction: ${props.direction || 'row'};

@@ -1,11 +1,11 @@
-import React, { useState, useCallback } from 'react'
+import { useState, useCallback, ReactNode } from 'react'
 
 interface Props {
 	className?: string
 	/** Dialog renderer callback */
-	dialog: (onClose: () => void) => React.ReactNode
+	dialog: (onClose: () => void) => ReactNode
 	/** Children renderer, callback can be used to use custom clickable element */
-	children: React.ReactNode | ((onClick: () => void) => React.ReactNode)
+	children: ReactNode | ((onClick: () => void) => ReactNode)
 }
 
 /**

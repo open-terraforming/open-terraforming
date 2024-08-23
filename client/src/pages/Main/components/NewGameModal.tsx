@@ -7,7 +7,7 @@ import { useAppDispatch } from '@/utils/hooks'
 import { faTimes, faRobot } from '@fortawesome/free-solid-svg-icons'
 import { GameModes } from '@shared/modes'
 import { GameModeType } from '@shared/modes/types'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { NumberInput } from '@/components/NumberInput/NumberInput'
 import { Flex } from '@/components/Flex/Flex'
@@ -38,7 +38,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 
 	const [expansions, setExpansions] = useState([
 		ExpansionType.Prelude,
-		ExpansionType.Venus
+		ExpansionType.Venus,
 	])
 
 	const [loading, setLoading] = useState(false)
@@ -72,15 +72,15 @@ export const NewGameModal = ({ onClose }: Props) => {
 				spectatorsAllowed: spectators,
 				expansions,
 				draft,
-				solarPhase
+				solarPhase,
 			})
 
 			if (res.id) {
 				dispatch(
 					setApiState({
 						state: ApiState.Connecting,
-						gameId: res.id
-					})
+						gameId: res.id,
+					}),
 				)
 			} else {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,7 +89,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 				if (errors.errors) {
 					throw new Error(
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-						errors.errors.map((e: any) => `${e.param}: ${e.msg}`).join(', ')
+						errors.errors.map((e: any) => `${e.param}: ${e.msg}`).join(', '),
 					)
 				} else if (errors.error) {
 					throw new Error(errors.error)
@@ -110,7 +110,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 				open={true}
 				onClose={onClose}
 				header="Start a new game"
-				footer={close => (
+				footer={(close) => (
 					<>
 						<Button
 							disabled={!valid}
@@ -128,15 +128,15 @@ export const NewGameModal = ({ onClose }: Props) => {
 				<Flex>
 					<Field>
 						<label>Game name</label>
-						<Input value={name} onChange={v => setName(v)} autoFocus />
+						<Input value={name} onChange={(v) => setName(v)} autoFocus />
 					</Field>
 
 					<Field>
 						<label>Board</label>
 						<select
-							onChange={e => setMap((e.target.value as unknown) as MapType)}
+							onChange={(e) => setMap(e.target.value as unknown as MapType)}
 						>
-							{MapsList.map(item => (
+							{MapsList.map((item) => (
 								<option key={item.type} value={item.type}>
 									{item.name}
 								</option>
@@ -150,7 +150,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 							min={0}
 							max={4}
 							value={bots}
-							onChange={v => setBots(v)}
+							onChange={(v) => setBots(v)}
 							icon={faRobot}
 						/>
 					</Field>
@@ -159,20 +159,20 @@ export const NewGameModal = ({ onClose }: Props) => {
 				<Field>
 					<Checkbox
 						checked={isPublic}
-						onChange={v => setPublic(v)}
+						onChange={(v) => setPublic(v)}
 						label="Public (Allow players to join using server browser)"
 					/>
 
 					<Checkbox
 						checked={spectators}
-						onChange={v => setSpectators(v)}
+						onChange={(v) => setSpectators(v)}
 						label="Allow spectators"
 					/>
 				</Field>
 
 				<Field>
 					<label>Mode</label>
-					{Object.values(GameModes).map(item => (
+					{Object.values(GameModes).map((item) => (
 						<SelectItem
 							key={item.type}
 							onClick={() => setMode(item.type)}
@@ -190,7 +190,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 				<Field>
 					<Checkbox
 						checked={draft}
-						onChange={v => setDraft(v)}
+						onChange={(v) => setDraft(v)}
 						label="Enable Draft"
 					/>
 
@@ -207,7 +207,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 				<Field>
 					<Checkbox
 						checked={solarPhase}
-						onChange={v => setSolarPhase(v)}
+						onChange={(v) => setSolarPhase(v)}
 						label="Enable Solar Phase"
 					/>
 
@@ -224,11 +224,11 @@ export const NewGameModal = ({ onClose }: Props) => {
 					<label>Expansions</label>
 					<MultiSelect
 						value={expansions}
-						options={availableExpansions.map(e => ({
+						options={availableExpansions.map((e) => ({
 							value: e,
-							label: Expansions[e].name
+							label: Expansions[e].name,
 						}))}
-						onChange={v => setExpansions(v)}
+						onChange={(v) => setExpansions(v)}
 					/>
 				</Field>
 			</Modal>
@@ -252,7 +252,7 @@ const SelectItem = styled.div<{ selected: boolean }>`
 	max-width: 30rem;
 	transition: background-color 0.2s;
 
-	${props =>
+	${(props) =>
 		props.selected &&
 		css`
 			background-color: ${({ theme }) => theme.colors.border};

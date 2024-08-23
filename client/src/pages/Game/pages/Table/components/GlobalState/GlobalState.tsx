@@ -2,7 +2,7 @@ import { Button } from '@/components'
 import { useAppStore } from '@/utils/hooks'
 import { faPoll } from '@fortawesome/free-solid-svg-icons'
 import { GameStateValue } from '@shared/index'
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { EndGame } from '../EndGame/EndGame'
 import { Oceans } from './components/Oceans'
@@ -10,8 +10,8 @@ import { Oxygen } from './components/Oxygen'
 import { Temperature } from './components/Temperature'
 
 export const GlobalState = () => {
-	const game = useAppStore(state => state.game.state)
-	const player = useAppStore(state => state.game.player)
+	const game = useAppStore((state) => state.game.state)
+	const player = useAppStore((state) => state.game.player)
 	const [showEnd, setShowEnd] = useState(true)
 
 	const handleShow = useCallback(() => {
@@ -44,7 +44,7 @@ export const GlobalState = () => {
 					style={{
 						display: 'flex',
 						justifyContent: 'flex-end',
-						alignItems: 'stretch'
+						alignItems: 'stretch',
 					}}
 				>
 					<Temperature

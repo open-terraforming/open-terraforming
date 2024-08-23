@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/camelcase */
-
 export const cards = {
 	starting_corporation: 'Starting Corporation',
 	creditor: 'Creditor',
@@ -320,5 +318,5 @@ export const cards = {
 	celestic: 'Celestic',
 	manutech: 'Manutech',
 	mining_star_inc: 'Mining Star Inc',
-	viron: 'Viron'
+	viron: 'Viron',
 } as Record<string, string>

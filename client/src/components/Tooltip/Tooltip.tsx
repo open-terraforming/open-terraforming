@@ -1,6 +1,6 @@
 import { useWindowEvent } from '@/utils/hooks'
 import { rgba } from 'polished'
-import React, { useEffect, useRef, useState } from 'react'
+import { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { Portal } from '../Portal/Portal'
 
@@ -8,18 +8,18 @@ export enum Position {
 	Top,
 	Left,
 	Bottom,
-	BottomLeft
+	BottomLeft,
 }
 
 interface Props {
-	content?: React.ReactNode
+	content?: ReactNode
 	showOnHover?: boolean
 	shown?: boolean
 	disableStyle?: boolean
 	position?: Position
-	children?: React.ReactNode
+	children?: ReactNode
 	className?: string
-	styleTrigger?: React.CSSProperties
+	styleTrigger?: CSSProperties
 }
 
 export const Tooltip = ({
@@ -30,14 +30,14 @@ export const Tooltip = ({
 	content,
 	children,
 	className,
-	styleTrigger
+	styleTrigger,
 }: Props) => {
 	const [opened, setOpened] = useState(showOnHover ? false : shown)
 
 	const [calculatedPosition, setCalculatedPosition] = useState({
 		left: -1000 as number | undefined,
 		top: -1000 as number | undefined,
-		maxHeight: undefined as number | undefined
+		maxHeight: undefined as number | undefined,
 	})
 
 	const triggerRef = useRef<HTMLDivElement>(null)
@@ -58,7 +58,7 @@ export const Tooltip = ({
 
 		const viewHeight = Math.max(
 			document.documentElement.clientHeight,
-			window.innerHeight || 0
+			window.innerHeight || 0,
 		)
 
 		if (triggerRef.current && contentRef.current) {
@@ -124,7 +124,7 @@ export const Tooltip = ({
 						style={{
 							top: calculatedPosition.top,
 							left: calculatedPosition.left,
-							maxHeight: calculatedPosition.maxHeight
+							maxHeight: calculatedPosition.maxHeight,
 						}}
 					>
 						{content}
@@ -140,7 +140,7 @@ const Trigger = styled.span``
 const Container = styled.div<{ disableStyle?: boolean }>`
 	position: absolute;
 
-	${props =>
+	${(props) =>
 		!props.disableStyle &&
 		css`
 			background: ${rgba(props.theme.colors.background, 1)};

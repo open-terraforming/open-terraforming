@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { PopEvent, EventType, GameEvent } from '../../types'
 import { PlayingChanged } from './components/PlayingChanged'
 import { GenerationChanged } from './components/GenerationChanged'
@@ -14,12 +14,12 @@ export const PopEventDisplay = ({ events }: Props) => {
 	const [popEvents, setPopEvents] = useState([] as PopEvent[])
 
 	const handleDone = useCallback(() => {
-		setPopEvents(d => d.slice(1))
+		setPopEvents((d) => d.slice(1))
 	}, [])
 
 	useEffect(() => {
 		if (events.length > processed) {
-			setPopEvents(e =>
+			setPopEvents((e) =>
 				[
 					...e,
 					...(filterEvents(
@@ -27,13 +27,13 @@ export const PopEventDisplay = ({ events }: Props) => {
 						[
 							EventType.NewGeneration,
 							EventType.PlayingChanged,
-							EventType.ProductionPhase
-						]
-					) as PopEvent[])
+							EventType.ProductionPhase,
+						],
+					) as PopEvent[]),
 				]
 					.reverse()
 					.slice(0, 3)
-					.reverse()
+					.reverse(),
 			)
 
 			setProcessed(events.length)

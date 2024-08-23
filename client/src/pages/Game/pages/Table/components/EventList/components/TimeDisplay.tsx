@@ -1,10 +1,8 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useGameState, useInterval } from '@/utils/hooks'
 import styled from 'styled-components'
 
-type Props = {}
-
-export const TimeDisplay = ({}: Props) => {
+export const TimeDisplay = () => {
 	const game = useGameState()
 	const [time, setTime] = useState('')
 

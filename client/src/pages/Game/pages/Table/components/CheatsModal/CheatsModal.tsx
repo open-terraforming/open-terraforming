@@ -1,5 +1,4 @@
 import { Modal } from '@/components/Modal/Modal'
-import React from 'react'
 import { CheatsResources } from './components/CheatsResources'
 import { CheatsProduction } from './components/CheatsProduction'
 import { CheatsProgress } from './components/CheatsProgress'

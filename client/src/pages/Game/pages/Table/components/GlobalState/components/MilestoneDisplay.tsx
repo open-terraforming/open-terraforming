@@ -1,7 +1,7 @@
 import { faTint, faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ProgressMilestoneType, ProgressMilestoneItem } from '@shared/index'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { Card } from '@/icons/card'
@@ -64,7 +64,7 @@ const E = styled.div<{ side: Side }>`
 		background: ${({ theme }) => theme.colors.background};
 	}
 
-	${props =>
+	${(props) =>
 		props.side === 'left' &&
 		css`
 			left: -100%;
@@ -76,7 +76,7 @@ const E = styled.div<{ side: Side }>`
 				border-right: 0;
 			}
 		`}
-	${props =>
+	${(props) =>
 		props.side === 'right' &&
 		css`
 			left: 100%;
@@ -89,18 +89,18 @@ const E = styled.div<{ side: Side }>`
 				border-left: 0;
 			}
 		`}
-		${props =>
-			props.side === 'bottom' &&
-			css`
-				top: 100%;
-				justify-content: flex-start;
-				margin-top: 3px;
-				margin-left: -12px;
+		${(props) =>
+		props.side === 'bottom' &&
+		css`
+			top: 100%;
+			justify-content: flex-start;
+			margin-top: 3px;
+			margin-left: -12px;
 
-				> * {
-					border-bottom-left-radius: 0.5rem;
-					border-bottom-right-radius: 0.5rem;
-					border-top: 0;
-				}
-			`}
+			> * {
+				border-bottom-left-radius: 0.5rem;
+				border-bottom-right-radius: 0.5rem;
+				border-top: 0;
+			}
+		`}
 `

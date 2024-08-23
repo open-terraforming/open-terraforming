@@ -1,18 +1,17 @@
 import background from '@/assets/mars-background.jpg'
-import React from 'react'
 import styled from 'styled-components'
 
 /*
-const ThreeMars = React.lazy(() => import('./components/ThreeMars'))
+const ThreeMars = lazy(() => import('./components/ThreeMars'))
 */
 
 export const Mars = () => {
 	return (
 		<Background>
 			{/*
-			<React.Suspense fallback={<img src={background} />}>
+			<Suspense fallback={<img src={background} />}>
 				<ThreeMars />
-			</React.Suspense>
+			</Suspense>
 			*/}
 			<img src={background} />
 		</Background>

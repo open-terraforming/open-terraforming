@@ -20,7 +20,7 @@ export const buildColors = ({
 	info,
 	success,
 	danger,
-	warn
+	warn,
 }: Props) => {
 	return {
 		application,
@@ -41,8 +41,8 @@ export const buildColors = ({
 				hover: {
 					background: lighten(0.1, primary),
 					borderColor: lighten(0.1, primary),
-					color: text
-				}
+					color: text,
+				},
 			},
 			transparent: {
 				background: 'none',
@@ -51,59 +51,59 @@ export const buildColors = ({
 				hover: {
 					background: 'none',
 					borderColor: 'transparent',
-					color: darken(0.2, text)
-				}
-			}
+					color: darken(0.2, text),
+				},
+			},
 		},
 
 		success: {
 			light: lighten(0.52, success),
-			base: success
+			base: success,
 		},
 
 		primary: {
 			base: primary,
 			light: lighten(0.52, primary),
-			shadowColor: 'rgba(0,123,255,.4)'
+			shadowColor: 'rgba(0,123,255,.4)',
 		},
 
 		secondary: {
 			base: secondary,
 			light: lighten(0.52, secondary),
-			shadowColor: 'rgba(0,123,255,.4)'
+			shadowColor: 'rgba(0,123,255,.4)',
 		},
 
 		warn: {
 			base: warn,
-			light: lighten(0.52, warn)
+			light: lighten(0.52, warn),
 		},
 
 		danger: {
 			base: danger,
-			light: lighten(0.15, danger)
+			light: lighten(0.15, danger),
 		},
 
 		message: {
 			info: {
 				background: 'transparent',
 				color: text,
-				border: `2px solid ${info}`
+				border: `2px solid ${info}`,
 			},
 			warn: {
 				background: 'transparent',
 				color: text,
-				border: `2px solid ${warn}`
+				border: `2px solid ${warn}`,
 			},
 			error: {
 				background: 'transparent',
 				color: text,
-				border: `2px solid ${danger}`
+				border: `2px solid ${danger}`,
 			},
 			success: {
 				background: 'transparent',
 				color: text,
-				border: `2px solid ${success}`
-			}
+				border: `2px solid ${success}`,
+			},
 		},
 
 		cards: {
@@ -112,8 +112,8 @@ export const buildColors = ({
 			[CardType.Effect]: '#0F87E2 ',
 			[CardType.Event]: '#FF6868',
 			[CardType.Corporation]: '#BAC404',
-			[CardType.Prelude]: '#FF86C2'
-		}
+			[CardType.Prelude]: '#FF86C2',
+		},
 	}
 }
 
@@ -134,5 +134,5 @@ export default buildColors({
 	info,
 	success,
 	danger,
-	warn
+	warn,
 })

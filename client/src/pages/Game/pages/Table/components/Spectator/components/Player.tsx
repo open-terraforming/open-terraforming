@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import { PlayerState } from '@shared/index'
 import { resources, resourceProduction } from '@shared/cards/utils'
@@ -24,7 +23,7 @@ export const Player = ({ player, onClick }: Props) => {
 				</Cards>
 			</Head>
 			<Info>
-				{resources.map(r => (
+				{resources.map((r) => (
 					<ResItem
 						key={r}
 						res={r}

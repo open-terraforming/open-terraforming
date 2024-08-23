@@ -3,7 +3,7 @@ import { ApiState } from '@/store/modules/api'
 import { loadSettings } from '@/store/modules/settings'
 import { GlobalStyle } from '@/styles/global'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
-import React, { useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import { Connect } from '../Connect/Connect'
 import { Game } from '../Game/Game'
@@ -14,9 +14,9 @@ import { greenTheme } from '@/themes/greenTheme'
 import { redTheme } from '@/themes/redTheme'
 
 export const App = () => {
-	const apiState = useAppStore(state => state.api.state)
+	const apiState = useAppStore((state) => state.api.state)
 	const dispatch = useAppDispatch()
-	const theme = useAppStore(state => state.settings.data.theme)
+	const theme = useAppStore((state) => state.settings.data.theme)
 
 	const themeData = useMemo(() => {
 		switch (theme) {

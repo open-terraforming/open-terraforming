@@ -19,7 +19,7 @@ const initialState = {
 	playing: false,
 	interrupted: false,
 	spectating: false,
-	events: [] as GameEvent[]
+	events: [] as GameEvent[],
 }
 
 export default (state = initialState, action: Action): State => {
@@ -27,7 +27,7 @@ export default (state = initialState, action: Action): State => {
 		case SET_GAME_STATE: {
 			const player = state.spectating
 				? undefined
-				: action.state.players.find(p => p.id === state.playerId)
+				: action.state.players.find((p) => p.id === state.playerId)
 
 			const events =
 				state.state.id === action.state.id
@@ -49,13 +49,14 @@ export default (state = initialState, action: Action): State => {
 				pendingAction,
 				playing: player?.state === PlayerStateValue.Playing && !pendingAction,
 				interrupted: !!pendingAction,
-				events: events.length > 0 ? [...state.events, ...events] : state.events
+				events: events.length > 0 ? [...state.events, ...events] : state.events,
 			}
 		}
 
 		case SET_GAME_PLAYER: {
 			let player =
-				state.state?.players.find(p => p.id === action.playerId) ?? state.player
+				state.state?.players.find((p) => p.id === action.playerId) ??
+				state.player
 
 			if (action.spectating) {
 				player = { ...player, id: -1 }
@@ -65,14 +66,14 @@ export default (state = initialState, action: Action): State => {
 				...state,
 				spectating: action.spectating,
 				playerId: action.playerId,
-				player
+				player,
 			}
 		}
 
 		case SET_GAME_INFO: {
 			return {
 				...state,
-				info: action.info
+				info: action.info,
 			}
 		}
 
@@ -88,21 +89,21 @@ const SET_GAME_INFO = 'SET_GAME_INFO'
 export const setGameState = (state: GameState) =>
 	({
 		type: SET_GAME_STATE,
-		state
-	} as const)
+		state,
+	}) as const
 
 export const setGamePlayer = (playerId: number, spectating: boolean) =>
 	({
 		type: SET_GAME_PLAYER,
 		playerId,
-		spectating
-	} as const)
+		spectating,
+	}) as const
 
 export const setGameInfo = (info: GameInfo) =>
 	({
 		type: SET_GAME_INFO,
-		info
-	} as const)
+		info,
+	}) as const
 
 type Action =
 	| ReturnType<typeof setGameState>

@@ -7,7 +7,7 @@ import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
 import { ucFirst } from '@shared/utils'
 import { lighten } from 'polished'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { EventType, GameEvent } from '../types'
 import { CardModal } from './CardModal'
@@ -25,7 +25,7 @@ const PlayerSpan = ({ player }: { player: PlayerState }) => (
 	</span>
 )
 
-const CardSpan = React.memo(({ card }: { card: string }) => {
+const CardSpan = memo(({ card }: { card: string }) => {
 	const locale = useLocale()
 	const [shown, setShown] = useState(false)
 
@@ -41,14 +41,14 @@ const CardSpan = React.memo(({ card }: { card: string }) => {
 
 export const EventLine = ({ event, animated, onDone }: Props) => {
 	const locale = useLocale()
-	const players = useAppStore(state => state.game.playerMap)
+	const players = useAppStore((state) => state.game.playerMap)
 	const doneRef = useRef(onDone)
 	doneRef.current = onDone
 
 	useEffect(() => {
 		if (animated) {
 			setTimeout(() => {
-				doneRef.current && doneRef.current()
+				doneRef.current?.()
 			}, 7000)
 		}
 	}, [])
@@ -171,7 +171,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 const E = styled.div<{ animation: boolean }>`
 	overflow: hidden;
 
-	${props =>
+	${(props) =>
 		props.animation &&
 		css`
 			animation-name: ${Animation};
@@ -197,5 +197,5 @@ const CardSpanE = styled.span`
 `
 
 const ResourceE = styled.span<{ positive: boolean }>`
-	color: ${props => (props.positive ? '#86F09B' : '#F5AF7C')};
+	color: ${(props) => (props.positive ? '#86F09B' : '#F5AF7C')};
 `

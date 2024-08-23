@@ -1,7 +1,7 @@
 import { usePlayerState } from '@/utils/hooks'
 import { CardEffectArgument, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArgContainer } from './ArgContainer'
 import { ResourceInput } from './ResourceInput'
 
@@ -28,7 +28,7 @@ export const ProductionArg = ({ arg, onChange }: Props) => {
 				min={1}
 				res={arg.resource as Resource}
 				max={Math.max(arg.maxAmount || player[resourceProduction[res]])}
-				onChange={v => setAmount(v)}
+				onChange={(v) => setAmount(v)}
 			/>
 			<span>{arg.descriptionPostfix}</span>
 		</ArgContainer>

@@ -2,25 +2,33 @@ import { useWindowEvent } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { darken } from 'polished'
-import React, { ReactNode, useCallback, useState } from 'react'
+import {
+	CSSProperties,
+	MouseEvent,
+	ReactNode,
+	useCallback,
+	useState,
+} from 'react'
 import ReactDOM from 'react-dom'
-import styled, { css, keyframes, Keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { Body, Footer, Header } from './styles'
 import { media } from '@/styles/media'
 
+type Keyframes = ReturnType<typeof keyframes>
+
 type RenderCallback = (
 	close: () => void,
-	animate: (animation?: Keyframes) => void
-) => React.ReactNode
+	animate: (animation?: Keyframes) => void,
+) => ReactNode
 
 export interface ModalProps {
-	children: React.ReactNode | RenderCallback
-	contentStyle?: React.CSSProperties
-	headerStyle?: React.CSSProperties
-	bodyStyle?: React.CSSProperties
-	footerStyle?: React.CSSProperties
-	header?: React.ReactNode | RenderCallback
-	footer?: React.ReactNode | RenderCallback
+	children: ReactNode | RenderCallback
+	contentStyle?: CSSProperties
+	headerStyle?: CSSProperties
+	bodyStyle?: CSSProperties
+	footerStyle?: CSSProperties
+	header?: ReactNode | RenderCallback
+	footer?: ReactNode | RenderCallback
 	open?: boolean
 	onClose?: () => void
 	disablePortal?: boolean
@@ -46,15 +54,15 @@ export const Modal = ({
 	stretchFooterButtons = true,
 	allowClose = true,
 	hideClose = false,
-	closeIcon
+	closeIcon,
 }: ModalProps) => {
 	const [isClosing, setIsClosing] = useState(false)
 
 	const [closingAnimation, setClosingAnimation] = useState(
-		undefined as Keyframes | undefined
+		undefined as Keyframes | undefined,
 	)
 
-	const stopEvent = useCallback((e: React.MouseEvent) => {
+	const stopEvent = useCallback((e: MouseEvent) => {
 		e.stopPropagation()
 		e.nativeEvent.stopImmediatePropagation()
 	}, [])
@@ -67,7 +75,7 @@ export const Modal = ({
 			setIsClosing(true)
 
 			setTimeout(() => {
-				onClose && onClose()
+				onClose?.()
 			}, 150)
 		}
 	}
@@ -164,19 +172,19 @@ const PopupBackground = styled.div<{ closing?: boolean }>`
 	z-index: 999;
 	align-items: flex-start;
 
-	${props =>
+	${(props) =>
 		props.closing
 			? css`
 					animation-name: ${bgOut};
 					animation-duration: 150ms;
 					animation-timing-function: ease-in;
 					animation-fill-mode: forwards;
-			  `
+				`
 			: css`
 					animation-name: ${bgIn};
 					animation-duration: 150ms;
 					animation-timing-function: ease-out;
-			  `}
+				`}
 `
 
 const popIn = keyframes`
@@ -199,8 +207,8 @@ const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 
 	${({
 		theme: {
-			colors: { modalBackground: background }
-		}
+			colors: { modalBackground: background },
+		},
 	}) => css`
 		background-color: ${background};
 		background: linear-gradient(
@@ -230,19 +238,19 @@ const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 		margin-bottom: 0;
 	}
 
-	${props =>
+	${(props) =>
 		props.closing
 			? css`
 					animation-name: ${props.closeAnimation || popOut};
 					animation-duration: 150ms;
 					animation-timing-function: ease-out;
 					animation-fill-mode: forwards;
-			  `
+				`
 			: css`
 					animation-name: ${popIn};
 					animation-duration: 150ms;
 					animation-timing-function: ease-out;
-			  `}
+				`}
 `
 
 const Dialog = styled.div`

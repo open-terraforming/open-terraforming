@@ -2,7 +2,7 @@ import { Button } from '@/components'
 import { useAppStore } from '@/utils/hooks'
 import { Competition } from '@shared/competitions'
 import { PlayerState } from '@shared/index'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import { faCheck, faAward } from '@fortawesome/free-solid-svg-icons'
 
@@ -23,27 +23,30 @@ export const CompetitionDisplay = ({
 	sponsored,
 	playing,
 	cost,
-	freePick: pendingAction
+	freePick: pendingAction,
 }: Props) => {
-	const game = useAppStore(state => state.game.state)
-	const playerId = useAppStore(state => state.game.playerId)
+	const game = useAppStore((state) => state.game.state)
+	const playerId = useAppStore((state) => state.game.playerId)
 
 	const score = useMemo(
 		() =>
 			game
-				? game.players.reduce((acc, p) => {
-						const s = competition.getScore(game, p)
+				? game.players.reduce(
+						(acc, p) => {
+							const s = competition.getScore(game, p)
 
-						if (!acc[s]) {
-							acc[s] = []
-						}
+							if (!acc[s]) {
+								acc[s] = []
+							}
 
-						acc[s].push(p)
+							acc[s].push(p)
 
-						return acc
-				  }, {} as Record<number, PlayerState[]>)
+							return acc
+						},
+						{} as Record<number, PlayerState[]>,
+					)
 				: ({} as Record<number, PlayerState[]>),
-		[game, competition]
+		[game, competition],
 	)
 
 	if (!game || !playerId) {
@@ -73,7 +76,7 @@ export const CompetitionDisplay = ({
 					.map(([score, players], index) => (
 						<Position key={score}>
 							<Index>{index + 1}.</Index>
-							<Name>{players.map(p => p.name).join(', ')}</Name>
+							<Name>{players.map((p) => p.name).join(', ')}</Name>
 							<Score>{score}</Score>
 						</Position>
 					))}

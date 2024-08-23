@@ -1,6 +1,5 @@
 import { setSettings } from '@/store/modules/settings'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
-import React from 'react'
 import styled, { css } from 'styled-components'
 
 type Props = {
@@ -10,20 +9,21 @@ type Props = {
 
 export const HelpMessage = ({ id, message }: Props) => {
 	const dispatch = useAppDispatch()
-	const hiddenHelp = useAppStore(state => state.settings.data.hiddenHelp)
+	const hiddenHelp = useAppStore((state) => state.settings.data.hiddenHelp)
 
 	const hidden = !!(id && hiddenHelp[id])
 
 	const handleHide = () => {
-		id &&
+		if (id) {
 			dispatch(
 				setSettings({
 					hiddenHelp: {
 						...hiddenHelp,
-						[id]: true
-					}
-				})
+						[id]: true,
+					},
+				}),
 			)
+		}
 	}
 
 	return hidden ? (
@@ -59,7 +59,7 @@ const Help = styled.div<{ hasClose: boolean }>`
 	max-width: 30rem;
 	position: relative;
 
-	${props =>
+	${(props) =>
 		props.hasClose &&
 		css`
 			padding-right: 2rem;

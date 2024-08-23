@@ -41,7 +41,7 @@ export const Loader = ({ loaded, message, absolute }: Props) => {
 }
 
 const Container = styled.div<{ absolute: boolean }>`
-	${props =>
+	${(props) =>
 		props.absolute &&
 		css`
 			position: absolute;
@@ -79,8 +79,8 @@ const spinnerKeyframes = keyframes`
 const SpinnerDiv = styled.div<{ rotate: number; delay: number }>`
 	transform-origin: 32px 32px;
 	animation: ${spinnerKeyframes} 1.2s linear infinite;
-	transform: rotate(${props => props.rotate}deg);
-	animation-delay: -${props => props.delay}s;
+	transform: rotate(${(props) => props.rotate}deg);
+	animation-delay: -${(props) => props.delay}s;
 
 	&:after {
 		content: ' ';
@@ -91,7 +91,7 @@ const SpinnerDiv = styled.div<{ rotate: number; delay: number }>`
 		width: 5px;
 		height: 14px;
 		border-radius: 20%;
-		background-color: ${props => props.theme.colors.primary.base};
+		background-color: ${(props) => props.theme.colors.primary.base};
 		box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.1);
 	}
 `

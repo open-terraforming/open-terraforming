@@ -1,5 +1,5 @@
 import { CardEffectArgument, CardResource, CardsLookupApi } from '@shared/cards'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArgContainer } from './ArgContainer'
 import { UsedCardState } from '@shared/game'
 import { CardResourceInput } from './CardResourceInput'
@@ -27,7 +27,7 @@ export const CardResourceAmountArg = ({ arg, cardState, onChange }: Props) => {
 				min={arg.minAmount ?? 1}
 				res={cardData.resource as CardResource}
 				max={cardState[res]}
-				onChange={v => setAmount(v)}
+				onChange={(v) => setAmount(v)}
 			/>
 			<span>{arg.descriptionPostfix}</span>
 		</ArgContainer>

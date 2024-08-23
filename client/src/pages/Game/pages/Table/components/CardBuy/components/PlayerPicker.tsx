@@ -22,14 +22,14 @@ const resources: Resource[] = [
 	'titan',
 	'plants',
 	'energy',
-	'heat'
+	'heat',
 ]
 
 const ResItem = ({
 	res,
 	value,
 	production,
-	highlight
+	highlight,
 }: {
 	res: Resource
 	value: number
@@ -52,13 +52,14 @@ export const PlayerPicker = ({
 	players,
 	onChange,
 	optional,
-	res
+	res,
 }: Props) => {
 	const [selecting, setSelecting] = useState(false)
 
-	const selected = useMemo(() => players.find(p => p.id === playerId), [
-		playerId
-	])
+	const selected = useMemo(
+		() => players.find((p) => p.id === playerId),
+		[playerId],
+	)
 
 	return (
 		<>
@@ -77,7 +78,7 @@ export const PlayerPicker = ({
 					onClose={() => setSelecting(false)}
 					header="Pick a player"
 				>
-					{close => (
+					{(close) => (
 						<>
 							{optional && (
 								<Player
@@ -89,7 +90,7 @@ export const PlayerPicker = ({
 									Nobody
 								</Player>
 							)}
-							{players.map(p => (
+							{players.map((p) => (
 								<Player
 									key={p.id}
 									onClick={() => {
@@ -99,7 +100,7 @@ export const PlayerPicker = ({
 								>
 									{p.name}
 									<Info>
-										{resources.map(r => (
+										{resources.map((r) => (
 											<ResItem
 												key={r}
 												res={r}
@@ -130,7 +131,7 @@ const InfoItem = styled.div<{ highlight?: boolean }>`
 	margin: 0 0.25rem;
 	background-color: ${({ theme }) => theme.colors.background};
 	border: 1px solid
-		${props =>
+		${(props) =>
 			props.highlight
 				? lighten(0.3, props.theme.colors.border)
 				: props.theme.colors.border};

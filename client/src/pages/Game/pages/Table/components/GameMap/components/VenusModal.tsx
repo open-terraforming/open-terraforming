@@ -2,7 +2,6 @@ import { Modal } from '@/components/Modal/Modal'
 import { useAppStore } from '@/utils/hooks'
 import venusBackground from '@/assets/venus-background.png'
 import styled from 'styled-components'
-import React from 'react'
 import { GridCell, GridCellLocation } from '@shared/game'
 import { CellOverlay } from './CellOverlay'
 import { PlacementState } from '@shared/placements'
@@ -26,12 +25,12 @@ const cellPos = (x: number, y: number) => {
 }
 
 export const VenusModal = ({ open, onClose, placing }: Props) => {
-	const map = useAppStore(state => state.game.state?.map)
-	const game = useAppStore(state => state.game.state)
+	const map = useAppStore((state) => state.game.state?.map)
+	const game = useAppStore((state) => state.game.state)
 	const api = useApi()
 
-	const venusMap = map.grid.map(col =>
-		col.filter(c => c.enabled && c.location === GridCellLocation.Venus)
+	const venusMap = map.grid.map((col) =>
+		col.filter((c) => c.enabled && c.location === GridCellLocation.Venus),
 	)
 
 	const handleCellClick = (cell: GridCell) => {
@@ -53,20 +52,20 @@ export const VenusModal = ({ open, onClose, placing }: Props) => {
 					<img src={venusBackground} alt="Venus" />
 				</BackgroundContainer>
 				<SuperInner>
-					{venusMap.map(col =>
-						col.map(cell => (
+					{venusMap.map((col) =>
+						col.map((cell) => (
 							<CellOverlay
 								placing={placing}
 								cell={cell}
 								key={`${cell.x},${cell.y}`}
 								pos={{
 									x: (cellPos(cell.x, cell.y).x - 9) / 128,
-									y: (cellPos(cell.x, cell.y).y - 10) / 128
+									y: (cellPos(cell.x, cell.y).y - 10) / 128,
 								}}
 								width={18 / 128}
 								height={20 / 128}
 							/>
-						))
+						)),
 					)}
 
 					<svg viewBox={`0 0 ${128} ${128}`} style={{ overflow: 'visible' }}>
@@ -78,8 +77,8 @@ export const VenusModal = ({ open, onClose, placing }: Props) => {
 						</defs>
 
 						<g>
-							{venusMap.map(col =>
-								col.map(cell => (
+							{venusMap.map((col) =>
+								col.map((cell) => (
 									<Cell
 										cell={cell}
 										placing={placing}
@@ -88,7 +87,7 @@ export const VenusModal = ({ open, onClose, placing }: Props) => {
 										onClick={() => handleCellClick(cell)}
 										pos={cellPos(cell.x, cell.y)}
 									/>
-								))
+								)),
 							)}
 						</g>
 					</svg>

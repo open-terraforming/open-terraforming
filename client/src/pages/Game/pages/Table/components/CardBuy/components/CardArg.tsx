@@ -3,7 +3,7 @@ import { cardsToCardList } from '@/utils/cards'
 import { useAppStore } from '@/utils/hooks'
 import { CardEffectArgument } from '@shared/cards'
 import { emptyCardState } from '@shared/cards/utils'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CardInfo } from '../../CardDisplay/CardDisplay'
 import { CardSelector } from '../../CardSelector/CardSelector'
 import { ArgContainer } from './ArgContainer'
@@ -19,29 +19,29 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 	const locale = useLocale()
 
 	const [picking, setPicking] = useState(false)
-	const player = useAppStore(state => state.game.player)
+	const player = useAppStore((state) => state.game.player)
 	const [selected, setSelected] = useState(undefined as CardInfo | undefined)
 
-	const game = useAppStore(state => state.game.state)
+	const game = useAppStore((state) => state.game.state)
 	const playerState = player
 	const playerId = player?.id
-	const usedCards = useAppStore(state => state.game.player?.usedCards)
-	const handCards = useAppStore(state => state.game.player?.cards)
+	const usedCards = useAppStore((state) => state.game.player?.usedCards)
+	const handCards = useAppStore((state) => state.game.player?.cards)
 
 	const players = useMemo(
 		() =>
 			otherPlayer && game
 				? game.players
-						.map(p => ({
+						.map((p) => ({
 							player: p,
 							cards: cardsToCardList(p.usedCards, arg.cardConditions, {
 								game,
-								player: p
-							})
+								player: p,
+							}),
 						}))
 						.filter(({ cards }) => cards.length > 0)
 				: [],
-		[otherPlayer, game, arg]
+		[otherPlayer, game, arg],
 	)
 
 	const [selectedPlayer, setSelectedPlayer] = useState(0)
@@ -50,15 +50,15 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 		() =>
 			usedCards && handCards && game && playerState && playerId
 				? cardsToCardList(
-						arg.fromHand ? handCards.map(c => emptyCardState(c)) : usedCards,
+						arg.fromHand ? handCards.map((c) => emptyCardState(c)) : usedCards,
 						arg.cardConditions,
 						{
 							game,
-							player: playerState
-						}
-				  )
+							player: playerState,
+						},
+					)
 				: [],
-		[usedCards]
+		[usedCards],
 	)
 
 	const handleSubmit = useCallback(
@@ -77,13 +77,13 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 				onChange(cards[0]?.index)
 			}
 		},
-		[onChange, selectedPlayer]
+		[onChange, selectedPlayer],
 	)
 
 	const choice = !otherPlayer ? cards : players[selectedPlayer].cards
 
 	useEffect(() => {
-		if (!choice.find(c => c.index === selected?.index)) {
+		if (!choice.find((c) => c.index === selected?.index)) {
 			handleSubmit(choice)
 		}
 	}, [choice, selected, handleSubmit])
@@ -97,7 +97,7 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 			{otherPlayer && (
 				<select
 					value={selectedPlayer}
-					onChange={e => {
+					onChange={(e) => {
 						setSelectedPlayer(parseInt(e.target.value, 10))
 					}}
 				>

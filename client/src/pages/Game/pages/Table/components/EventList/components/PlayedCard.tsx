@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { EventType, CardPlayed, CardUsed } from '../types'
 import { CardView } from '../../CardView/CardView'
 import { CardsLookupApi } from '@shared/cards'
@@ -16,7 +16,7 @@ type Props = {
 }
 
 export const PlayedCard = ({ index, length, event, onRemove }: Props) => {
-	const playerMap = useAppStore(state => state.game.playerMap)
+	const playerMap = useAppStore((state) => state.game.playerMap)
 	const ratio = length > 1 ? index / (length - 1) : 1
 	const [removing, setRemoving] = useState(false)
 	const [spawning, setSpawning] = useState(false)
@@ -40,7 +40,7 @@ export const PlayedCard = ({ index, length, event, onRemove }: Props) => {
 						: 100 - (length - 1 - index) * 30
 					: window.innerWidth / 2,
 				bottom: spawning ? 0 : '30vh',
-				transform: !spawning ? 'translate(-50%, 0) scale(1)' : undefined
+				transform: !spawning ? 'translate(-50%, 0) scale(1)' : undefined,
 			}}
 			onClick={() => {
 				if (!removing) {
@@ -89,7 +89,12 @@ const Played = styled.div<{ removing: boolean; spawning: boolean }>`
 	bottom: 0;
 	transform: scale(0.6);
 	transform-origin: bottom center;
-	transition: transform 0.2s, margin 0.2s, opacity 0.2s, left 0.5s, bottom 0.5s;
+	transition:
+		transform 0.2s,
+		margin 0.2s,
+		opacity 0.2s,
+		left 0.5s,
+		bottom 0.5s;
 	z-index: 0;
 	overflow: hidden;
 	opacity: 1;
@@ -104,7 +109,7 @@ const Played = styled.div<{ removing: boolean; spawning: boolean }>`
 		}
 	}
 
-	${props =>
+	${(props) =>
 		props.removing &&
 		css`
 			animation-name: ${PopOut};

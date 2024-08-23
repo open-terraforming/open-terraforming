@@ -7,7 +7,6 @@ import { useAppStore } from '@/utils/hooks'
 import { solarPhaseTerraform } from '@shared/actions'
 import { GameProgress } from '@shared/cards'
 import { PlayerAction } from '@shared/player-actions'
-import React from 'react'
 
 type Props = {
 	action: PlayerAction
@@ -15,7 +14,7 @@ type Props = {
 
 export const SolarPhaseTerraformPicker = ({}: Props) => {
 	const api = useApi()
-	const game = useAppStore(state => state.game.state)
+	const game = useAppStore((state) => state.game.state)
 
 	const confirm = (progress: GameProgress) => () => {
 		api.send(solarPhaseTerraform(progress))

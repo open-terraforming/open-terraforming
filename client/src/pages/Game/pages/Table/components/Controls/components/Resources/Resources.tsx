@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import { Resource } from './components/Resource'
 import { PlayerGameState } from '@shared/index'

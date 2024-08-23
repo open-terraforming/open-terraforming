@@ -12,15 +12,15 @@ type Props = {
 export const IngameMenuModal = ({ onClose }: Props) => {
 	return (
 		<Modal header="Menu" open onClose={onClose}>
-			<DialogWrapper dialog={close => <CardsViewer onClose={close} />}>
-				{open => (
+			<DialogWrapper dialog={(close) => <CardsViewer onClose={close} />}>
+				{(open) => (
 					<MenuButton icon={faSearch} onClick={open}>
 						Cards Viewer
 					</MenuButton>
 				)}
 			</DialogWrapper>
-			<DialogWrapper dialog={close => <SettingsModal onClose={close} />}>
-				{open => (
+			<DialogWrapper dialog={(close) => <SettingsModal onClose={close} />}>
+				{(open) => (
 					<MenuButton icon={faCog} onClick={open}>
 						Settings
 					</MenuButton>

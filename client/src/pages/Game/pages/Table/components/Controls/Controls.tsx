@@ -6,7 +6,6 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { playerPass } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { darken } from 'polished'
-import React from 'react'
 import styled, { css } from 'styled-components'
 import { CardBuy } from '../CardBuy/CardBuy'
 import { HandButton } from './components/HandButton/HandButton'
@@ -17,13 +16,13 @@ import { TableButtons } from './components/TableButtons/TableButtons'
 export const Controls = () => {
 	const api = useApi()
 	const dispatch = useAppDispatch()
-	const player = useAppStore(state => state.game.player)
-	const isPlaying = useAppStore(state => state.game.playing)
-	const pendingAction = useAppStore(state => state.game.pendingAction)
+	const player = useAppStore((state) => state.game.player)
+	const isPlaying = useAppStore((state) => state.game.playing)
+	const pendingAction = useAppStore((state) => state.game.pendingAction)
 	const pendingActionIndex = usePlayerState().pendingActions.length
 
-	const buyingCardIndex = useAppStore(state => state.table.buyingCardIndex)
-	const playingCardIndex = useAppStore(state => state.table.playingCardIndex)
+	const buyingCardIndex = useAppStore((state) => state.table.buyingCardIndex)
+	const playingCardIndex = useAppStore((state) => state.table.playingCardIndex)
 	const state = player
 
 	const pending =
@@ -53,8 +52,8 @@ export const Controls = () => {
 					onClose={() =>
 						dispatch(
 							setTableState({
-								playingCardIndex: undefined
-							})
+								playingCardIndex: undefined,
+							}),
 						)
 					}
 				/>
@@ -67,8 +66,8 @@ export const Controls = () => {
 					onClose={() =>
 						dispatch(
 							setTableState({
-								buyingCardIndex: undefined
-							})
+								buyingCardIndex: undefined,
+							}),
 						)
 					}
 				/>
@@ -121,7 +120,7 @@ const Container = styled.div<{ faded: boolean }>`
 	background-size: 40px 40px;
 	z-index: 4;
 
-	${props =>
+	${(props) =>
 		props.faded &&
 		css`
 			opacity: 0.7;

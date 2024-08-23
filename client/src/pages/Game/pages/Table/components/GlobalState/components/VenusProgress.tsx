@@ -1,6 +1,6 @@
 import { keyMap, range } from '@/utils/collections'
 import { ProgressMilestoneItem } from '@shared/index'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { DiffAnim } from './DiffAnim'
 import { MilestoneDisplay } from './MilestoneDisplay'
@@ -19,14 +19,15 @@ export const VenusProgress = ({
 	start,
 	current,
 	target,
-	milestones
+	milestones,
 }: Props) => {
 	const [lastValue, setLastValue] = useState(current)
 	const [diff, setDiff] = useState(0)
 
-	const milestoneArray = useMemo(() => keyMap(milestones, 'value'), [
-		milestones
-	])
+	const milestoneArray = useMemo(
+		() => keyMap(milestones, 'value'),
+		[milestones],
+	)
 
 	useEffect(() => {
 		const diff = current - lastValue
@@ -44,7 +45,7 @@ export const VenusProgress = ({
 			<Icon>
 				<FontAwesomeIcon icon={venusIcon} />
 			</Icon>
-			{range(start, target + 1).map(t => (
+			{range(start, target + 1).map((t) => (
 				<Step passed={current > t} active={current === t} key={t}>
 					{t >= current ? t * 2 : '\u00A0'}
 					{milestoneArray[t] && (
@@ -71,19 +72,22 @@ const Step = styled.div<{ passed: boolean; active: boolean }>`
 	text-align: center;
 	width: 1.6rem;
 	position: relative;
-	transition: background-color 500ms, opacity 500ms, color 500ms;
+	transition:
+		background-color 500ms,
+		opacity 500ms,
+		color 500ms;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 
-	${props =>
+	${(props) =>
 		props.passed || props.active
 			? css`
 					background-color: ${props.theme.colors.border};
-			  `
+				`
 			: css`
 					color: ${darken(0.3, props.theme.colors.text)};
-			  `}
+				`}
 `
 
 const Icon = styled.div`

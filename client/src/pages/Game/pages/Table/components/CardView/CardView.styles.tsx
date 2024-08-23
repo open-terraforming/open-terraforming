@@ -51,16 +51,16 @@ export const Cost = styled.div<{ affordable: boolean }>`
 
 		position: absolute;
 
-		${props =>
+		${(props) =>
 			props.affordable
 				? css`
 						border: 2px solid rgb(255, 255, 104);
 						color: rgb(255, 255, 104);
-				  `
+					`
 				: css`
 						border: 2px solid rgba(255, 135, 135, 1);
 						color: rgba(255, 135, 135, 1);
-				  `}
+					`}
 
 		width: 2.5rem;
 		height: 2.5rem;
@@ -106,19 +106,19 @@ export const Played = styled.div`
 `
 
 export const VP = styled.div<{ $corporation?: boolean }>`
-	${props =>
+	${(props) =>
 		props.$corporation
 			? css`
 					position: absolute;
 					top: 2.5rem;
 					right: 0.5rem;
-			  `
+				`
 			: css`
 					clear: both;
 					float: right;
 					margin-right: 0.1rem;
 					margin-top: 0.5rem;
-			  `}
+				`}
 
 	border-radius: 50%;
 	width: 3rem;
@@ -155,7 +155,7 @@ type ContainerCtx = {
 }
 
 export const Container = styled.div<ContainerCtx>`
-	border: 0.2rem solid ${props => props.theme.colors.cards[props.type]};
+	border: 0.2rem solid ${(props) => props.theme.colors.cards[props.type]};
 	background: ${({ theme }) => rgba(theme.colors.background, 1)};
 	width: 240px;
 	flex-shrink: 0;
@@ -170,7 +170,7 @@ export const Container = styled.div<ContainerCtx>`
 	overflow: visible;
 
 	${Title} {
-		background: ${props => props.theme.colors.cards[props.type]};
+		background: ${(props) => props.theme.colors.cards[props.type]};
 	}
 
 	${media.medium} {
@@ -178,8 +178,7 @@ export const Container = styled.div<ContainerCtx>`
 		height: 200px;
 	}
 
-
-	${props =>
+	${(props) =>
 		props.type === CardType.Corporation &&
 		css`
 			width: 300px;
@@ -201,13 +200,13 @@ export const Container = styled.div<ContainerCtx>`
 			}
 		`}
 
-	${props =>
+	${(props) =>
 		!props.playable
 			? css`
 					opacity: 0.6;
-			  `
+				`
 			: props.hover &&
-			  css`
+				css`
 					cursor: pointer;
 					transition: all 0.1s;
 
@@ -215,9 +214,9 @@ export const Container = styled.div<ContainerCtx>`
 						/*box-shadow: 0px 0px 3px 3px ${props.theme.colors.border};*/
 						transform: scale(1.03);
 					}
-			  `}
+				`}
 
-	${props =>
+	${(props) =>
 		props.selected &&
 		css`
 			background: ${rgba(lighten(0.1)(props.theme.colors.background), 1)};
@@ -225,7 +224,7 @@ export const Container = styled.div<ContainerCtx>`
 			transform: scale(1.01);
 		`}
 
-	${props =>
+	${(props) =>
 		props.played &&
 		css`
 			transform: rotate(1deg);

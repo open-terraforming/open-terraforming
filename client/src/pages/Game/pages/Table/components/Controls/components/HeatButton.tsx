@@ -1,4 +1,3 @@
-import React from 'react'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore, useGameState, usePlayerState } from '@/utils/hooks'
 import { Button } from '@/components'
@@ -8,17 +7,16 @@ import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { StandardProjectType, buyStandardProject } from '@shared/index'
 import { Projects } from '@shared/projects'
 
-type Props = {}
-
-export const HeatButton = ({}: Props) => {
+export const HeatButton = () => {
 	const api = useApi()
-	const playing = useAppStore(state => state.game.playing)
+	const playing = useAppStore((state) => state.game.playing)
 	const player = usePlayerState()
 	const game = useGameState()
 	const project = Projects[StandardProjectType.TemperatureForHeat]
 
 	const usable =
-		playing && project.conditions.find(c => !c({ game, player })) === undefined
+		playing &&
+		project.conditions.find((c) => !c({ game, player })) === undefined
 
 	const buyTemperature = () => {
 		if (player && usable) {

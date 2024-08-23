@@ -1,4 +1,3 @@
-import React from 'react'
 import { useAnimatedNumber } from '@/utils/hooks'
 
 type Props = {

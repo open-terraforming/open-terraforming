@@ -1,7 +1,7 @@
 import { isNotUndefined, mapRight } from '@/utils/collections'
 import { Card, CardCategory, CardType } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { NoCards } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
@@ -24,7 +24,7 @@ export const CardDisplay = <T extends CardInfo>({
 	buying = false,
 	evaluate = true,
 	hover = true,
-	defaultType
+	defaultType,
 }: {
 	onSelect: (cards: T[]) => void
 	cards: T[]
@@ -39,7 +39,7 @@ export const CardDisplay = <T extends CardInfo>({
 	const [playable, setPlayable] = useState(false)
 
 	const [selectedCategory, setSelectedCategory] = useState(
-		undefined as CardCategory | undefined
+		undefined as CardCategory | undefined,
 	)
 
 	const categories = useMemo(
@@ -56,18 +56,18 @@ export const CardDisplay = <T extends CardInfo>({
 				CardCategory.Animal,
 				CardCategory.Event,
 				CardCategory.Science,
-				CardCategory.Venus
+				CardCategory.Venus,
 			]
-				.map(cat => ({
+				.map((cat) => ({
 					category: cat,
 					cards: cards.filter(
-						c =>
+						(c) =>
 							(cat === CardCategory.Event || c.card.type !== CardType.Event) &&
-							c.card.categories.includes(cat)
-					).length
+							c.card.categories.includes(cat),
+					).length,
 				}))
 				.filter(({ cards }) => cards > 0),
-		[cards]
+		[cards],
 	)
 
 	const types = useMemo(
@@ -78,31 +78,32 @@ export const CardDisplay = <T extends CardInfo>({
 				[CardType.Effect, 'Effects'] as const,
 				[CardType.Building, 'Automated'] as const,
 				[CardType.Event, 'Events'] as const,
-				[CardType.Corporation, 'Corporation'] as const
+				[CardType.Corporation, 'Corporation'] as const,
 			]
 				.map(
 					([c, title]) =>
 						[
 							c,
 							title,
-							cards.filter(ci => c === undefined || ci.card.type === c).length
-						] as const
+							cards.filter((ci) => c === undefined || ci.card.type === c)
+								.length,
+						] as const,
 				)
 				.filter(([, , count]) => count > 0),
-		[cards]
+		[cards],
 	)
 
 	const filtered = useMemo(
 		() =>
 			cards.filter(
-				ci =>
+				(ci) =>
 					(type === undefined || ci.card.type === type) &&
 					(selectedCategory === undefined ||
 						((selectedCategory === CardCategory.Event ||
 							ci.card.type !== CardType.Event) &&
-							ci.card.categories.includes(selectedCategory)))
+							ci.card.categories.includes(selectedCategory))),
 			),
-		[cards, type, selectedCategory]
+		[cards, type, selectedCategory],
 	)
 
 	useEffect(() => {
@@ -115,8 +116,8 @@ export const CardDisplay = <T extends CardInfo>({
 		if (selected.length > 0) {
 			onSelect(
 				selected
-					.map(s => filtered.find(c => c.index === s.index))
-					.filter(isNotUndefined)
+					.map((s) => filtered.find((c) => c.index === s.index))
+					.filter(isNotUndefined),
 			)
 		}
 	}, [type, selectedCategory])
@@ -143,7 +144,7 @@ export const CardDisplay = <T extends CardInfo>({
 					{evaluate && (
 						<Checkbox
 							checked={playable}
-							onChange={v => setPlayable(v)}
+							onChange={(v) => setPlayable(v)}
 							label="Only playable"
 						/>
 					)}
@@ -154,7 +155,7 @@ export const CardDisplay = <T extends CardInfo>({
 								selected={selectedCategory === category}
 								onClick={() => {
 									setSelectedCategory(
-										selectedCategory === category ? undefined : category
+										selectedCategory === category ? undefined : category,
 									)
 								}}
 								key={category}
@@ -175,25 +176,25 @@ export const CardDisplay = <T extends CardInfo>({
 				{filtered.length === 0 && <NoCards>No cards</NoCards>}
 				{mapRight(
 					filtered,
-					c =>
+					(c) =>
 						c && (
 							<CardView
 								hover={hover}
 								evaluate={evaluate}
 								buying={buying}
 								card={c.card}
-								selected={selected.map(s => s.index).includes(c.index)}
+								selected={selected.map((s) => s.index).includes(c.index)}
 								key={c.index}
 								state={c.state}
 								onClick={() => {
 									onSelect(
-										selected.find(s => s.index === c.index)
-											? selected.filter(s => s.index !== c.index)
-											: [...selected, c]
+										selected.find((s) => s.index === c.index)
+											? selected.filter((s) => s.index !== c.index)
+											: [...selected, c],
 									)
 								}}
 							/>
-						)
+						),
 				)}
 			</CardsContainer>
 		</>
@@ -216,7 +217,7 @@ const CardsContainer = styled.div<{ playableOnly: boolean }>`
 
 	flex: 1;
 
-	${props =>
+	${(props) =>
 		props.playableOnly &&
 		css`
 			.unplayable {
@@ -263,7 +264,7 @@ const FilterItem = styled.div<{ selected: boolean }>`
 
 	background-color: ${({ theme }) => theme.colors.border};
 
-	${props =>
+	${(props) =>
 		props.selected &&
 		css`
 			background-color: ${({ theme }) => lighten(0.2, theme.colors.border)};

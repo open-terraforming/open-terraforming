@@ -7,7 +7,7 @@ import { pickStarting } from '@shared/actions'
 import { CardsLookupApi } from '@shared/cards'
 import { PlayerActionType } from '@shared/player-actions'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { CardPicker, PickerType } from '../CardPicker/CardPicker'
 import { CardView } from '../CardView/CardView'
@@ -17,18 +17,18 @@ import { MiniCardView } from '../MiniCardView/MiniCardView'
 enum Section {
 	Corporation,
 	Cards,
-	Preludes
+	Preludes,
 }
 
 export const StartPicker = () => {
 	const api = useApi()
-	const pendingAction = useAppStore(state => state.game.pendingAction)
+	const pendingAction = useAppStore((state) => state.game.pendingAction)
 	const game = useGameState()
 
 	const [loading, setLoading] = useState(false)
 
 	const [corporation, setCorporation] = useState(
-		undefined as string | undefined
+		undefined as string | undefined,
 	)
 
 	const [cards, setCards] = useState([] as number[])
@@ -120,7 +120,7 @@ export const StartPicker = () => {
 
 						{cards.length > 0 && (
 							<PickCardsContainer>
-								{cards.map(p => (
+								{cards.map((p) => (
 									<MiniCardView key={p} card={pendingAction.cards[p]} />
 								))}
 							</PickCardsContainer>
@@ -136,7 +136,7 @@ export const StartPicker = () => {
 						<PickItemValue>
 							{preludes.length > 0 && (
 								<PickCardsContainer>
-									{preludes.map(p => (
+									{preludes.map((p) => (
 										<MiniCardView
 											key={p}
 											card={pendingAction.preludes[p]}
@@ -158,7 +158,7 @@ export const StartPicker = () => {
 				<CorporationPicker
 					corporations={pendingAction.corporations}
 					onClose={handleModalClose}
-					onSelect={corp => {
+					onSelect={(corp) => {
 						setCorporation(corp)
 						handleModalClose()
 					}}
@@ -173,7 +173,7 @@ export const StartPicker = () => {
 					closeable
 					selected={cards}
 					onClose={handleModalClose}
-					onSelect={c => {
+					onSelect={(c) => {
 						setCards(c)
 						handleModalClose()
 					}}
@@ -188,7 +188,7 @@ export const StartPicker = () => {
 					free
 					closeable
 					onClose={handleModalClose}
-					onSelect={p => {
+					onSelect={(p) => {
 						setPreludes(p)
 						handleModalClose()
 					}}

@@ -1,11 +1,10 @@
 import { Card } from '@/icons/card'
 import {
 	faArrowRight,
-	faThermometerHalf
+	faThermometerHalf,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardSymbol, SymbolType } from '@shared/cards'
-import React from 'react'
 import styled, { css } from 'styled-components'
 import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
@@ -87,9 +86,9 @@ export const Symbols = ({ symbols, className }: Props) => {
 						: (s.count < 0
 								? '-'
 								: s.symbol === SymbolType.Oxygen ||
-								  s.symbol === SymbolType.Temperature
-								? '+'
-								: '') + (Math.abs(s.count) !== 1 ? Math.abs(s.count) : '')
+									  s.symbol === SymbolType.Temperature
+									? '+'
+									: '') + (Math.abs(s.count) !== 1 ? Math.abs(s.count) : '')
 
 				return (
 					<S
@@ -127,13 +126,13 @@ const S = styled.div<{
 }>`
 	display: flex;
 	align-items: center;
-	${props =>
+	${(props) =>
 		!props.noSpacing &&
 		css`
 			padding: 0.3rem 0.3rem;
 		`}
 
-	${props =>
+	${(props) =>
 		props.other &&
 		css`
 			border: 0.1rem solid #ff5555;

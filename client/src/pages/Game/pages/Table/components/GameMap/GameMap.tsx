@@ -1,17 +1,15 @@
 import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
-import { useAppStore, useInterval } from '@/utils/hooks'
+import { useAppStore } from '@/utils/hooks'
 import { claimTile, placeTile } from '@shared/actions'
 import { GridCell, GridCellLocation, PlayerStateValue } from '@shared/game'
 import { PlayerActionType } from '@shared/player-actions'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Cell, delayFunctions } from './components/Cell'
+import { Cell } from './components/Cell'
 import { CellOverlay } from './components/CellOverlay'
 import { ExpansionType } from '@shared/expansions/types'
 import { VenusButton } from './components/VenusButton'
-
-type Props = {}
 
 const cellPos = (x: number, y: number) => {
 	if (y % 2 === 1) {
@@ -21,16 +19,16 @@ const cellPos = (x: number, y: number) => {
 	return { x: 15 + x * 18, y: 10 + y * 20 * 0.75 }
 }
 
-export const GameMap = ({}: Props) => {
+export const GameMap = () => {
 	const api = useApi()
 
-	const hasVenus = useAppStore(state =>
-		state.game.state?.expansions.includes(ExpansionType.Venus)
+	const hasVenus = useAppStore((state) =>
+		state.game.state?.expansions.includes(ExpansionType.Venus),
 	)
 
-	const map = useAppStore(state => state.game.state?.map)
+	const map = useAppStore((state) => state.game.state?.map)
 	const containerRef = useRef<HTMLDivElement>(null)
-	const [delayFunction, setDelayFunction] = useState(0)
+	const [delayFunction] = useState(0)
 
 	/*
 	useWindowEvent('mousemove', (e: MouseEvent) => {
@@ -66,13 +64,13 @@ export const GameMap = ({}: Props) => {
 	})
 	*/
 
-	const pending = useAppStore(state => state.game.pendingAction)
+	const pending = useAppStore((state) => state.game.pendingAction)
 
 	const isPlaying = useAppStore(
-		state =>
+		(state) =>
 			state.game.player?.state === PlayerStateValue.Playing ||
 			state.game.player?.state === PlayerStateValue.EndingTiles ||
-			state.game.player?.state === PlayerStateValue.Prelude
+			state.game.player?.state === PlayerStateValue.Prelude,
 	)
 
 	const placing =
@@ -113,27 +111,27 @@ export const GameMap = ({}: Props) => {
 
 					{hasVenus && <VenusButton placing={placing} />}
 
-					{map.grid.map(col =>
+					{map.grid.map((col) =>
 						col
 							.filter(
-								c =>
+								(c) =>
 									c.enabled &&
 									(c.location === undefined ||
-										c.location === GridCellLocation.Main)
+										c.location === GridCellLocation.Main),
 							)
-							.map(cell => (
+							.map((cell) => (
 								<CellOverlay
 									placing={placing}
 									cell={cell}
 									key={`${cell.x},${cell.y}`}
 									pos={{
 										x: (cellPos(cell.x, cell.y).x - 9) / width,
-										y: (cellPos(cell.x, cell.y).y - 10) / height
+										y: (cellPos(cell.x, cell.y).y - 10) / height,
 									}}
 									width={18 / width}
 									height={20 / height}
 								/>
-							))
+							)),
 					)}
 
 					<svg
@@ -148,15 +146,15 @@ export const GameMap = ({}: Props) => {
 						</defs>
 
 						<g>
-							{map.grid.map(col =>
+							{map.grid.map((col) =>
 								col
 									.filter(
-										c =>
+										(c) =>
 											c.enabled &&
 											(c.location === undefined ||
-												c.location === GridCellLocation.Main)
+												c.location === GridCellLocation.Main),
 									)
-									.map(cell => (
+									.map((cell) => (
 										<Cell
 											cell={cell}
 											placing={placing}
@@ -166,7 +164,7 @@ export const GameMap = ({}: Props) => {
 											pos={cellPos(cell.x, cell.y)}
 											onClick={() => handleCellClick(cell)}
 										/>
-									))
+									)),
 							)}
 						</g>
 					</svg>

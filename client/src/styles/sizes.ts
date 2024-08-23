@@ -1,3 +1,3 @@
 export const sizes = {
-	medium: '900px'
+	medium: '900px',
 }

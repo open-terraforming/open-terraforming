@@ -2,7 +2,7 @@ import {
 	GameMessage,
 	adminChange,
 	adminLogin,
-	MessageType
+	MessageType,
 } from '@shared/index'
 import { encode, decode } from 'msgpack-lite'
 
@@ -40,10 +40,10 @@ export class Client {
 
 		this.socket.onopen = () => {
 			clearTimeout(timeout)
-			this.onOpen && this.onOpen()
+			this.onOpen?.()
 		}
 
-		this.socket.onmessage = async msg => {
+		this.socket.onmessage = async (msg) => {
 			if (this.onMessage) {
 				if (typeof msg.data === 'string') {
 					this.onMessage(JSON.parse(msg.data.toString()))
@@ -58,7 +58,7 @@ export class Client {
 		}
 
 		this.socket.onclose = () => {
-			this.onClose && this.onClose()
+			this.onClose?.()
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any

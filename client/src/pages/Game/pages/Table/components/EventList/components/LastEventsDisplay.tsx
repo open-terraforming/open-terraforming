@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { GameEvent } from '../types'
 import { EventLine } from './EventLine'
 import { useInterval } from '@/utils/hooks'
@@ -18,22 +18,22 @@ export const LastEventsDisplay = ({ events }: Props) => {
 
 	useInterval(() => {
 		if (lastDisplayed < events.length) {
-			setDisplayedEvents(e => [
+			setDisplayedEvents((e) => [
 				{ id: lastDisplayed, event: events[lastDisplayed] },
-				...e
+				...e,
 			])
 
-			setLastDisplayed(e => e + 1)
+			setLastDisplayed((e) => e + 1)
 		}
 	}, 250)
 
 	const handleDone = () => {
-		setDisplayedEvents(d => d.slice(0, d.length - 1))
+		setDisplayedEvents((d) => d.slice(0, d.length - 1))
 	}
 
 	return (
 		<>
-			{displayedEvents.map(e => (
+			{displayedEvents.map((e) => (
 				<EventLine
 					event={e.event}
 					key={e.id}

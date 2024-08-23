@@ -4,7 +4,7 @@ import { range } from '@/utils/collections'
 import { useAppStore, useGameState } from '@/utils/hooks'
 import { buyMilestone } from '@shared/index'
 import { Milestone, Milestones } from '@shared/milestones'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { MilestoneDisplay } from './components/MilestoneDisplay'
@@ -18,17 +18,21 @@ export const MilestonesModal = ({ onClose }: Props) => {
 	const game = useGameState()
 	const bought = game.milestones
 	const players = game.players
-	const playing = useAppStore(state => state.game.playing)
-	const milestonesTypes = useAppStore(state => state.game.state.map.milestones)
+	const playing = useAppStore((state) => state.game.playing)
 
-	const playerMoney = useAppStore(state => state.game.player.money) || 0
+	const milestonesTypes = useAppStore(
+		(state) => state.game.state.map.milestones,
+	)
+
+	const playerMoney = useAppStore((state) => state.game.player.money) || 0
 
 	const affordable =
 		bought.length < game.milestonesLimit && playerMoney >= game.milestonePrice
 
-	const milestones = useMemo(() => milestonesTypes.map(m => Milestones[m]), [
-		milestonesTypes
-	])
+	const milestones = useMemo(
+		() => milestonesTypes.map((m) => Milestones[m]),
+		[milestonesTypes],
+	)
 
 	const handleBuy = (milestone: Milestone) => {
 		if (affordable) {
@@ -46,7 +50,7 @@ export const MilestonesModal = ({ onClose }: Props) => {
 			<Info>
 				<Flexed>
 					<span>Cost:</span>
-					{range(0, 3).map(i => (
+					{range(0, 3).map((i) => (
 						<Flexed key={i}>
 							<Index>{i + 1}.</Index> {game.milestonePrice}{' '}
 							<ResourceIcon res="money" />
@@ -59,10 +63,10 @@ export const MilestonesModal = ({ onClose }: Props) => {
 					<Flexed>{game.milestoneReward} VPs</Flexed>
 				</Flexed>
 			</Info>
-			{milestones.map(c => (
+			{milestones.map((c) => (
 				<MilestoneDisplay
 					owner={players.find(
-						p => p.id === bought.find(i => i.type === c.type)?.playerId
+						(p) => p.id === bought.find((i) => i.type === c.type)?.playerId,
 					)}
 					cost={
 						bought.length < game.milestonesLimit

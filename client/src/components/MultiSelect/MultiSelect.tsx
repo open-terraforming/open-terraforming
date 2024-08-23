@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 import { Checkbox } from '../Checkbox/Checkbox'
 
@@ -11,7 +10,7 @@ type Props<T> = {
 export const MultiSelect = <T,>({ options, value, onChange }: Props<T>) => {
 	const handleChange = (v: T) => () => {
 		if (value.includes(v)) {
-			onChange(value.filter(i => i !== v))
+			onChange(value.filter((i) => i !== v))
 		} else {
 			onChange([...value, v])
 		}
@@ -19,7 +18,7 @@ export const MultiSelect = <T,>({ options, value, onChange }: Props<T>) => {
 
 	return (
 		<C>
-			{options.map(o => (
+			{options.map((o) => (
 				<Option key={JSON.stringify(o.value)}>
 					<Checkbox
 						label={o.label}

@@ -3,7 +3,7 @@ import {
 	GameState,
 	GridCell,
 	GridCellContent,
-	PlayerState
+	PlayerState,
 } from '@shared/index'
 import { PlacementState } from '@shared/placements'
 import { adjTilesList } from '@shared/utils'
@@ -18,7 +18,7 @@ export const getPlaceRewards = (
 	game: GameState,
 	player: PlayerState,
 	placing: PlacementState,
-	cell: GridCell
+	cell: GridCell,
 ) => {
 	const rewards = [] as PlacementReward[]
 
@@ -26,7 +26,7 @@ export const getPlaceRewards = (
 		rewards.push({
 			resource: 'vp',
 			count: adjTilesList(game, cell.x, cell.y).hasGreenery().length,
-			description: 'for adjacent Greeneries'
+			description: 'for adjacent Greeneries',
 		})
 	}
 
@@ -34,23 +34,22 @@ export const getPlaceRewards = (
 		rewards.push({
 			resource: 'vp',
 			count: 1,
-			description: 'for placing Greenery'
+			description: 'for placing Greenery',
 		})
 
 		rewards.push({
 			resource: 'vp',
-			count: adjTilesList(game, cell.x, cell.y)
-				.hasCity()
-				.ownedBy(player.id).length,
-			description: 'for adjacent owned Cities'
+			count: adjTilesList(game, cell.x, cell.y).hasCity().ownedBy(player.id)
+				.length,
+			description: 'for adjacent owned Cities',
 		})
 	}
 
 	rewards.push({
 		resource: 'money',
 		count: adjTilesList(game, cell.x, cell.y).hasOcean().length * 2,
-		description: 'for adjacent Oceans'
+		description: 'for adjacent Oceans',
 	})
 
-	return rewards.filter(r => r.count !== 0)
+	return rewards.filter((r) => r.count !== 0)
 }

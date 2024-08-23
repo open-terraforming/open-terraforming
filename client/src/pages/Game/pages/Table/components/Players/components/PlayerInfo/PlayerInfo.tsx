@@ -15,7 +15,7 @@ type Props = {
 const ResItem = ({
 	res,
 	value,
-	production
+	production,
 }: {
 	res: Resource
 	value: number
@@ -33,16 +33,17 @@ const ResItem = ({
 )
 
 export const PlayerInfo = ({ playerId, onClose }: Props) => {
-	const player = useAppStore(state =>
-		state.game.state?.players.find(p => p.id === playerId)
+	const player = useAppStore((state) =>
+		state.game.state?.players.find((p) => p.id === playerId),
 	)
 
 	const state = player
 	const usedCards = player?.usedCards
 
-	const cards = useMemo(() => (usedCards ? cardsToCardList(usedCards) : []), [
-		usedCards
-	])
+	const cards = useMemo(
+		() => (usedCards ? cardsToCardList(usedCards) : []),
+		[usedCards],
+	)
 
 	if (!player || !state) {
 		return <>No player</>

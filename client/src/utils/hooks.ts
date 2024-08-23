@@ -8,7 +8,7 @@ import {
 	useCallback,
 	useEffect,
 	useRef,
-	useState
+	useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -18,26 +18,26 @@ export const useAppStore = <T>(selector: (state: StoreState) => T) => {
 
 export const useAppDispatch = useDispatch as () => AppDispatch
 
-export const usePlayerState = () => useAppStore(state => state.game.player)
-export const useGameState = () => useAppStore(state => state.game.state)
+export const usePlayerState = () => useAppStore((state) => state.game.player)
+export const useGameState = () => useAppStore((state) => state.game.state)
 
 export const useWindowEvent = <E extends Event>(
 	event: string,
 	callback: (e: E) => void,
-	cancelBubble = false
+	cancelBubble = false,
 ) => useEvent(window, event, callback, cancelBubble)
 
 export const useDocumentEvent = <E extends Event>(
 	event: string,
 	callback: (e: E) => void,
-	cancelBubble = false
+	cancelBubble = false,
 ) => useEvent(document, event, callback, cancelBubble)
 
 export const useEvent = <E extends Event>(
 	target: EventTarget,
 	event: string,
 	callback: (e: E) => void,
-	cancelBubble = false
+	cancelBubble = false,
 ) => {
 	// Hold reference to callback
 	const callbackRef = useRef(callback)
@@ -104,7 +104,7 @@ export const useAnimatedNumber = (value: number, delay = 100) => {
 	}>({
 		targetValue: value,
 		startTime: 0,
-		startValue: value
+		startValue: value,
 	})
 
 	// Keeps requesting frames and updating value until we reach the target delay
@@ -178,7 +178,7 @@ export const useAnimationFrame = (callback: () => void) => {
 }
 
 export const useElementPosition = (
-	element?: Element | null
+	element?: Element | null,
 ): DOMRect | undefined => {
 	const elementRef = useRef<Element | null>()
 	const bb = element ? element.getBoundingClientRect() : undefined
@@ -213,16 +213,16 @@ export const useElementPosition = (
 }
 
 export const useProcessed = (
-	callback: (events: (GameEvent & { id: number })[], processed: number) => void
+	callback: (events: (GameEvent & { id: number })[], processed: number) => void,
 ) => {
 	const [processed, setProcessed] = useState(0)
-	const events = useAppStore(state => state.game.events)
+	const events = useAppStore((state) => state.game.events)
 
 	useEffect(() => {
 		if (events.length > processed) {
 			callback(
 				events.slice(processed).map((e, i) => ({ ...e, id: processed + i })),
-				processed
+				processed,
 			)
 
 			setProcessed(events.length)

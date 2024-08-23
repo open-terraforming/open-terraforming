@@ -19,10 +19,10 @@ export const CardsSpecialFilter = ({ specials, setSpecials }: Props) => {
 						}
 						key={key}
 						onClick={() => {
-							setSpecials(previous =>
+							setSpecials((previous) =>
 								previous.includes(value as CardSpecial)
-									? previous.filter(tag => tag !== value)
-									: [...previous, value as CardSpecial]
+									? previous.filter((tag) => tag !== value)
+									: [...previous, value as CardSpecial],
 							)
 						}}
 					>
@@ -34,7 +34,7 @@ export const CardsSpecialFilter = ({ specials, setSpecials }: Props) => {
 }
 
 const StyledTag = styled.div<{ $selected: boolean }>`
-	opacity: ${props => (props.$selected ? 1 : 0.5)};
+	opacity: ${(props) => (props.$selected ? 1 : 0.5)};
 	padding: 0.5rem;
 	margin: 0.5rem;
 	cursor: pointer;
