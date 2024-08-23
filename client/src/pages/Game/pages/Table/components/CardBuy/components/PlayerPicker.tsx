@@ -1,13 +1,12 @@
-import React, { useMemo, useState } from 'react'
-import { PlayerState } from '@shared/index'
-import { Modal } from '@/components/Modal/Modal'
-import { Resource, Production } from '@shared/cards'
-import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
-import styled from 'styled-components'
-import { colors, mainColors } from '@/styles'
 import { Button } from '@/components'
-import { lighten } from 'polished'
+import { Modal } from '@/components/Modal/Modal'
+import { Production, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
+import { PlayerState } from '@shared/index'
+import { lighten } from 'polished'
+import { useMemo, useState } from 'react'
+import styled from 'styled-components'
+import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 
 type Props = {
 	players: PlayerState[]
@@ -23,14 +22,14 @@ const resources: Resource[] = [
 	'titan',
 	'plants',
 	'energy',
-	'heat'
+	'heat',
 ]
 
 const ResItem = ({
 	res,
 	value,
 	production,
-	highlight
+	highlight,
 }: {
 	res: Resource
 	value: number
@@ -41,10 +40,10 @@ const ResItem = ({
 		<Value>
 			{value} <ResourceIcon res={res} />
 		</Value>
-		<Production>
+		<ProductionE>
 			{production > 0 && '+'}
 			{production}
-		</Production>
+		</ProductionE>
 	</InfoItem>
 )
 
@@ -53,13 +52,14 @@ export const PlayerPicker = ({
 	players,
 	onChange,
 	optional,
-	res
+	res,
 }: Props) => {
 	const [selecting, setSelecting] = useState(false)
 
-	const selected = useMemo(() => players.find(p => p.id === playerId), [
-		playerId
-	])
+	const selected = useMemo(
+		() => players.find((p) => p.id === playerId),
+		[playerId],
+	)
 
 	return (
 		<>
@@ -78,7 +78,7 @@ export const PlayerPicker = ({
 					onClose={() => setSelecting(false)}
 					header="Pick a player"
 				>
-					{close => (
+					{(close) => (
 						<>
 							{optional && (
 								<Player
@@ -90,7 +90,7 @@ export const PlayerPicker = ({
 									Nobody
 								</Player>
 							)}
-							{players.map(p => (
+							{players.map((p) => (
 								<Player
 									key={p.id}
 									onClick={() => {
@@ -100,7 +100,7 @@ export const PlayerPicker = ({
 								>
 									{p.name}
 									<Info>
-										{resources.map(r => (
+										{resources.map((r) => (
 											<ResItem
 												key={r}
 												res={r}
@@ -129,9 +129,12 @@ const Info = styled.div`
 const InfoItem = styled.div<{ highlight?: boolean }>`
 	display: flex;
 	margin: 0 0.25rem;
-	background-color: ${colors.background};
+	background-color: ${({ theme }) => theme.colors.background};
 	border: 1px solid
-		${props => (props.highlight ? lighten(0.3, colors.border) : colors.border)};
+		${(props) =>
+			props.highlight
+				? lighten(0.3, props.theme.colors.border)
+				: props.theme.colors.border};
 `
 
 const Value = styled.div`
@@ -139,14 +142,14 @@ const Value = styled.div`
 	width: 100%;
 `
 
-const Production = styled.div`
-	background-color: ${colors.border};
+const ProductionE = styled.div`
+	background-color: ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
 `
 
 const Player = styled.button`
-	color: ${mainColors.text};
-	background-color: ${colors.background};
+	color: ${({ theme }) => theme.colors.text};
+	background-color: ${({ theme }) => theme.colors.background};
 	display: flex;
 	align-items: center;
 	padding: 0.5rem 1rem;
@@ -155,6 +158,6 @@ const Player = styled.button`
 	margin-bottom: 0.5rem;
 
 	&:hover {
-		background-color: ${lighten(0.05, colors.background)};
+		background-color: ${({ theme }) => lighten(0.05, theme.colors.background)};
 	}
 `

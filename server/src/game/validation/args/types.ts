@@ -2,7 +2,7 @@ import {
 	Card,
 	CardCallbackContext,
 	CardEffectArgument,
-	CardEffectArgumentType
+	CardEffectArgumentType,
 } from '@shared/cards'
 
 export type ValidatorContext = {

@@ -7,7 +7,7 @@ import {
 	tagPriceChange,
 	emptyEffect,
 	lowestProductionChange,
-	sponsorCompetitionForFree
+	sponsorCompetitionForFree,
 } from '../effects'
 import { passiveEffect, asFirstAction } from '../passive-effects'
 import { CardCategory, CardSpecial, CardType } from '../types'
@@ -18,7 +18,6 @@ export const preludeCorporations = [
 	corp(
 		card({
 			code: 'cheung_shing_mars',
-			title: 'Cheung Shing MARS',
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [CardCategory.Building],
@@ -26,14 +25,13 @@ export const preludeCorporations = [
 			playEffects: [
 				productionChange('money', 3),
 				resourceChange('money', 44),
-				tagPriceChange(CardCategory.Building, -2)
-			]
-		})
+				tagPriceChange(CardCategory.Building, -2),
+			],
+		}),
 	),
 	corp(
 		card({
 			code: 'point_luna',
-			title: 'Point Luna',
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [CardCategory.Earth, CardCategory.Space],
@@ -47,7 +45,7 @@ export const preludeCorporations = [
 						{ player, game },
 						playedCard,
 						_cardIndex,
-						playedBy
+						playedBy,
 					) => {
 						if (
 							playedBy.id === player.id &&
@@ -55,15 +53,14 @@ export const preludeCorporations = [
 						) {
 							player.cards.push(drawCard(game))
 						}
-					}
-				})
-			]
-		})
+					},
+				}),
+			],
+		}),
 	),
 	corp(
 		card({
 			code: 'robinson_industries',
-			title: 'Robinson Industries',
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [],
@@ -71,14 +68,13 @@ export const preludeCorporations = [
 			playEffects: [resourceChange('money', 47)],
 			actionEffects: [
 				withRightArrow(resourceChange('money', -4)),
-				lowestProductionChange(1)
-			]
-		})
+				lowestProductionChange(1),
+			],
+		}),
 	),
 	corp(
 		card({
 			code: 'valley_trust',
-			title: 'Valley Trust',
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [CardCategory.Earth],
@@ -87,16 +83,15 @@ export const preludeCorporations = [
 				resourceChange('money', 37),
 				tagPriceChange(CardCategory.Science, -2),
 				emptyEffect(
-					'As your first action, draw 3 prelude cards, pick 1 and discard the rest'
-				)
+					'As your first action, draw 3 prelude cards, pick 1 and discard the rest',
+				),
 			],
-			passiveEffects: [asFirstAction(pickPreludes(3, 1))]
-		})
+			passiveEffects: [asFirstAction(pickPreludes(3, 1))],
+		}),
 	),
 	corp(
 		card({
 			code: 'vitor',
-			title: 'Vitor',
 			cost: 0,
 			type: CardType.Corporation,
 			categories: [CardCategory.Earth],
@@ -106,7 +101,7 @@ export const preludeCorporations = [
 				passiveEffect({
 					description: f(
 						'When you play a card with non-negative victory points, gain {0}',
-						withUnits('money', 3)
+						withUnits('money', 3),
 					),
 					onCardPlayed: ({ player }, playedCard, _cardIndex, playedBy) => {
 						if (
@@ -115,9 +110,9 @@ export const preludeCorporations = [
 						) {
 							updatePlayerResource(player, 'money', 3)
 						}
-					}
-				})
-			]
-		})
-	)
+					},
+				}),
+			],
+		}),
+	),
 ]

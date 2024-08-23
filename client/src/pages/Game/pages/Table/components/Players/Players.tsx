@@ -1,16 +1,18 @@
-import React, { useState } from 'react'
 import { useAppStore } from '@/utils/hooks'
-import { Player } from './components/Player'
+import { useState } from 'react'
 import styled from 'styled-components'
+import { Player } from './components/Player'
 import { PlayerInfo } from './components/PlayerInfo/PlayerInfo'
-import { EventList } from '../EventList/EventList'
 
 export const Players = () => {
-	const startingPlayer = useAppStore(state => state.game.state?.startingPlayer)
-	const players = useAppStore(state => state.game.state?.players)
+	const startingPlayer = useAppStore(
+		(state) => state.game.state?.startingPlayer,
+	)
+
+	const players = useAppStore((state) => state.game.state?.players)
 
 	const [showingPlayerId, setShowingPlayerId] = useState(
-		undefined as number | undefined
+		undefined as number | undefined,
 	)
 
 	return (
@@ -32,20 +34,24 @@ export const Players = () => {
 					/>
 				))}
 			</PlayersList>
-
-			<EventList />
 		</PlayersContainer>
 	)
 }
 
 const PlayersContainer = styled.div`
-	margin-top: 5rem;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
+	position: absolute;
+	top: 5rem;
+	left: 0;
+	width: 17rem;
+	overflow: hidden;
+	z-index: 2;
+	overflow: auto;
+	max-height: 50%;
 `
 
 const PlayersList = styled.div`
 	max-height: 50%;
-	overflow: auto;
 `

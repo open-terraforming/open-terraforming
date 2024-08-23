@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
-import { ArgContainer } from './ArgContainer'
-import { Input } from '@/components/Input/Input'
-import { CardEffectArgument, Resource } from '@shared/cards'
-import { ResourceInput } from './ResourceInput'
 import { useAppStore } from '@/utils/hooks'
+import { CardEffectArgument, Resource } from '@shared/cards'
+import { useEffect } from 'react'
+import { ArgContainer } from './ArgContainer'
+import { ResourceInput } from './ResourceInput'
 
 type Props = {
 	arg: CardEffectArgument
@@ -11,7 +10,7 @@ type Props = {
 }
 
 export const ResourceArg = ({ arg, onChange }: Props) => {
-	const player = useAppStore(state => state.game.player)
+	const player = useAppStore((state) => state.game.player)
 
 	useEffect(() => {
 		onChange(0)
@@ -26,7 +25,7 @@ export const ResourceArg = ({ arg, onChange }: Props) => {
 			{arg.descriptionPrefix}
 			<ResourceInput
 				res={arg.resource as Resource}
-				onChange={v => onChange(v)}
+				onChange={(v) => onChange(v)}
 				max={
 					arg.maxAmount !== undefined && arg.maxAmount !== 0
 						? Math.min(arg.maxAmount, player[arg.resource])

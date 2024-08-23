@@ -3,7 +3,7 @@ import { Card } from '../cards'
 
 export enum GameModeType {
 	Beginner = 1,
-	Standard
+	Standard,
 }
 
 export interface GameMode {

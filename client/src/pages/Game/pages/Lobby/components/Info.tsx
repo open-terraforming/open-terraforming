@@ -1,7 +1,9 @@
 import { GameInfo } from '@shared/extra'
 import { GameModes } from '@shared/modes'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
+import { Maps } from '@shared/maps'
+import { Expansions } from '@shared/expansions'
 
 type Props = {
 	info: GameInfo
@@ -9,8 +11,9 @@ type Props = {
 
 export const Info = ({ info }: Props) => {
 	const expansions = useMemo(
-		() => [['Prelude', info.prelude]].filter(([, e]) => e).map(([e]) => e),
-		[info]
+		() =>
+			info.expansions ? info.expansions.map((e) => Expansions[e]?.name) : [],
+		[info],
 	)
 
 	return (
@@ -20,8 +23,8 @@ export const Info = ({ info }: Props) => {
 				<InfoV>{GameModes[info.mode]?.name}</InfoV>
 			</InfoLine>
 			<InfoLine>
-				<InfoL>Max players:</InfoL>
-				<InfoV>{info.maxPlayers}</InfoV>
+				<InfoL>Board:</InfoL>
+				<InfoV>{Maps[info.map]?.name}</InfoV>
 			</InfoLine>
 			<InfoLine>
 				<InfoL>Expansions:</InfoL>
@@ -36,6 +39,7 @@ export const Info = ({ info }: Props) => {
 const E = styled.div`
 	margin-left: 1.5rem;
 	margin-bottom: 1rem;
+	flex: 0.5;
 `
 
 const InfoLine = styled.div`

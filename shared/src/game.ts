@@ -3,14 +3,16 @@ import { CompetitionType } from './competitions'
 import { MilestoneType } from './milestones'
 import { GameModeType } from './modes/types'
 import { PlayerAction } from './player-actions'
+import { MapType } from './map'
+import { ExpansionType } from './expansions/types'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
 	WaitingForPlayers = 1,
 	/** Players are picking companies / cards / preludes */
 	Starting,
-	/** Players are picking cards */
-	PickingCards,
+	/** Generation is starting */
+	GenerationStart,
 	/** Generation is in progress */
 	GenerationInProgress,
 	/** Production phase */
@@ -18,7 +20,15 @@ export enum GameStateValue {
 	/** Players are placing finishing greeneries */
 	EndingTiles,
 	/** Game ended */
-	Ended
+	Ended,
+	/** Players are picking cards to research */
+	ResearchPhase,
+	/** Players are picking cards to pick from to research (optional) */
+	Draft,
+	/** Players are playing their prelude cards */
+	Prelude,
+	/** After production phase this phase allows the current player to increase one progress */
+	SolarPhase,
 }
 
 export enum PlayerStateValue {
@@ -37,34 +47,33 @@ export enum PlayerStateValue {
 	/** Placing finishing greeneries */
 	EndingTiles,
 	/** Waiting for his turn */
-	WaitingForTurn
+	WaitingForTurn,
+	/** Playing prelude cards */
+	Prelude,
 }
 
 export interface GameState {
 	id: string
-
 	name: string
-
 	state: GameStateValue
-
 	mode: GameModeType
-
 	generation: number
 	oxygen: number
 	oceans: number
 	temperature: number
+	venus: number
+	map: MapState
+
+	/** Is solar phase enabled */
+	solarPhase: boolean
 
 	/**  Player index (NOT ID) currently playing round (only for GenerationInProgress) */
 	currentPlayer: number
-
+	/**  Player index (NOT ID) of player starting current generation */
 	startingPlayer: number
 
 	players: PlayerState[]
-
-	map: MapState
-
-	milestones: MilestoneState[]
-	competitions: CompetitionState[]
+	maxPlayers: number
 
 	corporations: string[]
 	corporationsDiscarded: string[]
@@ -76,12 +85,38 @@ export interface GameState {
 	preludeCards: string[]
 	preludeDiscarded: string[]
 
+	draft: boolean
+
+	expansions: ExpansionType[]
+
 	/** ISO Date of game start */
 	started: string
 	/** ISO Date of game end */
 	ended: string
 
-	maxPlayers: number
+	/** Basic card price, in money, for buying card to your hand */
+	cardPrice: number
+
+	/** List of bought milestones */
+	milestones: MilestoneState[]
+	/** Basic milestone price, in money */
+	milestonePrice: number
+	/** Victory points received milestone */
+	milestoneReward: number
+	/** Maximum number of milestones bought */
+	milestonesLimit: number
+
+	/** List of sponsored competitions */
+	competitions: CompetitionState[]
+	/** Maximum number of sponsored competitions */
+	competitionsLimit: number
+	/** List of competitions prices, index is number of bought competitions */
+	competitionsPrices: number[]
+	/** Victory points received for placing in competition, index is place in competition */
+	competitionRewards: number[]
+
+	/** Available standard projects */
+	standardProjects: StandardProjectType[]
 }
 
 export interface MilestoneState {
@@ -95,7 +130,7 @@ export interface CompetitionState {
 }
 
 export interface MapState {
-	name: string
+	code: MapType
 
 	width: number
 	height: number
@@ -103,16 +138,18 @@ export interface MapState {
 	oceans: number
 	temperature: number
 	oxygen: number
+	venus: number
 
 	initialOceans: number
 	initialTemperature: number
 	initialOxygen: number
+	initialVenus: number
 
-	special: GridCell[]
 	grid: GridCell[][]
 
 	temperatureMilestones: ProgressMilestoneItem[]
 	oxygenMilestones: ProgressMilestoneItem[]
+	venusMilestones: ProgressMilestoneItem[]
 
 	milestones: MilestoneType[]
 	competitions: CompetitionType[]
@@ -123,7 +160,11 @@ export enum GridCellType {
 	General,
 	NoctisCity,
 	GanymedeColony,
-	PhobosSpaceHaven
+	PhobosSpaceHaven,
+	Stratopolis,
+	MaxwellBase,
+	DawnCity,
+	LunaMetropolis,
 }
 
 export enum GridCellSpecial {
@@ -133,14 +174,21 @@ export enum GridCellSpecial {
 	PavonisMons,
 	ArsiaMons,
 	GanymedeColony,
-	PhobosSpaceHaven
+	PhobosSpaceHaven,
+	HecatesTholus,
+	ElysiumMons,
+	OlympusMons,
+	MaxwellBase,
+	Stratopolis,
+	DawnCity,
+	LunaMetropolis,
 }
 
 export enum GridCellContent {
 	City = 1,
 	Forest,
 	Ocean,
-	Other
+	Other,
 }
 
 export enum GridCellOther {
@@ -153,17 +201,28 @@ export enum GridCellOther {
 	EcologicalZone,
 	Volcano,
 	Mohole,
-	RestrictedZone
+	RestrictedZone,
+}
+
+export enum GridCellLocation {
+	Main = 1,
+	Venus,
 }
 
 export interface GridCell {
 	enabled: boolean
 	type: GridCellType
 	special?: GridCellSpecial
+	location?: GridCellLocation
+
 	ore: number
 	titan: number
 	plants: number
 	cards: number
+	heat: number
+	money: number
+	oceans: number
+
 	x: number
 	y: number
 	outside: boolean
@@ -184,6 +243,8 @@ export interface PlayerState {
 	session: string
 	connected: boolean
 	bot: boolean
+
+	owner: boolean
 	admin: boolean
 
 	state: PlayerStateValue
@@ -228,11 +289,17 @@ export interface PlayerState {
 	/** Cards in player hand */
 	cards: string[]
 
+	/** Cards picked during draft */
+	draftedCards: string[]
+
 	/** List of used cards */
 	usedCards: UsedCardState[]
 
 	/** Bonus for game progress changes */
 	progressConditionBonus: number
+
+	/** Bonus for game progress changes restricted to specific card tag */
+	progressConditionBonusByTag: Partial<Record<CardCategory, number>>
 
 	victoryPoints: VictoryPoints[]
 
@@ -249,7 +316,7 @@ export enum VictoryPointsSource {
 	Milestones,
 	Awards,
 	Forests,
-	Cities
+	Cities,
 }
 
 export type VictoryPoints = {
@@ -278,6 +345,10 @@ export interface UsedCardState {
 	science: number
 	/** Number of fighter points on the card */
 	fighters: number
+	/** Floaters */
+	floaters: number
+	/** Asteroids */
+	asteroids: number
 
 	/** Index of card that triggered last passive effect */
 	triggeredByCard?: number
@@ -295,13 +366,16 @@ export enum StandardProjectType {
 	Greenery,
 	City,
 	GreeneryForPlants,
-	TemperatureForHeat
+	TemperatureForHeat,
+	AirScrapping,
 }
 
 export enum ProgressMilestoneType {
 	Ocean = 1,
 	Heat,
-	Temperature
+	Temperature,
+	Card,
+	TerraformingRating,
 }
 
 export interface ProgressMilestoneItem {

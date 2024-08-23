@@ -1,8 +1,7 @@
-import React from 'react'
 import {
 	CardEffectArgument,
 	CardEffectTarget,
-	CardEffectArgumentType
+	CardEffectArgumentType,
 } from '@shared/cards'
 import { PlayerArg } from './PlayerArg'
 import { UsedCardState } from '@shared/index'
@@ -11,6 +10,8 @@ import { ChoiceArg } from './ChoiceArg'
 import { CardArg } from './CardArg'
 import { PlayerResourceArg } from './PlayerResourceArg'
 import { ResourceTypeArg } from './ResourceTypeArg'
+import { ProductionArg } from './ProductionArg'
+import { CardResourceAmountArg } from './CardResourceAmountArg'
 
 type Props = {
 	arg: CardEffectArgument
@@ -44,6 +45,16 @@ export const Arg = ({ arg, cardState, card, onChange }: Props) => {
 			)
 		case CardEffectTarget.ResourceType:
 			return <ResourceTypeArg arg={arg} onChange={onChange} />
+		case CardEffectTarget.Production:
+			return <ProductionArg arg={arg} onChange={onChange} />
+		case CardEffectTarget.CardResourceCount:
+			return (
+				<CardResourceAmountArg
+					cardState={cardState}
+					arg={arg}
+					onChange={onChange}
+				/>
+			)
 		default:
 			return (
 				<div style={{ color: '#FFB0B7' }}>

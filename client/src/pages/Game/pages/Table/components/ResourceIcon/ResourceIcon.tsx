@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { Resource } from '@shared/cards'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { resourceColors } from '@/styles/resourceColors'
+import { resourceColors } from '@/styles/resource-colors'
 import {
 	faHammer,
 	faStar,
 	faSeedling,
 	faBolt,
 	faFire,
-	faDollarSign
+	faDollarSign,
 } from '@fortawesome/free-solid-svg-icons'
 import { SizeProp } from '@fortawesome/fontawesome-svg-core'
 import styled, { css } from 'styled-components'
@@ -19,9 +19,16 @@ type Props = {
 	size?: SizeProp
 	production?: boolean
 	fixedWidth?: boolean
+	margin?: boolean
 }
 
-export const ResourceIcon = ({ res, size, production, fixedWidth }: Props) => {
+export const ResourceIcon = ({
+	res,
+	size,
+	production,
+	fixedWidth,
+	margin,
+}: Props) => {
 	const icon = useMemo(() => {
 		switch (res) {
 			case 'money':
@@ -69,16 +76,22 @@ export const ResourceIcon = ({ res, size, production, fixedWidth }: Props) => {
 	}, [res, size])
 
 	return (
-		<E production={production} res={res}>
+		<E production={production} res={res} margin={margin}>
 			{icon}
 		</E>
 	)
 }
 
-const E = styled.div<{ production?: boolean; res: Resource }>`
+const E = styled.div<{ production?: boolean; res: Resource; margin?: boolean }>`
 	display: inline-block;
 
-	${props =>
+	${(props) =>
+		props.margin &&
+		css`
+			margin: 0 0.3rem;
+		`}
+
+	${(props) =>
 		props.production
 			? css`
 					background: ${resourceColors[props.res]};
@@ -94,8 +107,8 @@ const E = styled.div<{ production?: boolean; res: Resource }>`
 						width: 0.8em !important;
 						height: 0.8em !important;
 					}
-			  `
+				`
 			: css`
 					color: ${resourceColors[props.res]};
-			  `}
+				`}
 `

@@ -7,19 +7,26 @@ export class CardsLookupApi {
 
 	static data() {
 		if (!this._data || this._length !== Cards.length) {
-			this._data = Cards.reduce((acc, c) => {
-				acc[c.code] = c
-				return acc
-			}, {} as Record<string, Card>)
+			this._data = Cards.reduce(
+				(acc, c) => {
+					acc[c.code] = c
+
+					return acc
+				},
+				{} as Record<string, Card>,
+			)
 		}
+
 		return this._data
 	}
 
 	static get(code: string): Card {
 		const c = this.getOptional(code)
+
 		if (c === undefined) {
 			throw new Error(`Unknown card ${code}`)
 		}
+
 		return c
 	}
 

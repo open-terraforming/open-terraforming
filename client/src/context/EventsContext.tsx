@@ -2,18 +2,25 @@ import { EventsClient } from '@/api/events'
 import { ApiState } from '@/store/modules/api'
 import { useAppStore } from '@/utils/hooks'
 import { eventsAuth } from '@shared/events'
-import React, { useContext, useEffect, useState } from 'react'
+import {
+	createContext,
+	ReactNode,
+	useContext,
+	useEffect,
+	useState,
+} from 'react'
+import { getWebsocketUrl } from '@/api/utils'
 
-export const EventsContext = React.createContext<EventsClient | null>(null)
+export const EventsContext = createContext<EventsClient | null>(null)
 
 export const EventsContextProvider = ({
-	children
+	children,
 }: {
-	children: React.ReactNode
+	children: ReactNode
 }) => {
-	const sessions = useAppStore(state => state.client.sessions)
-	const apiState = useAppStore(state => state.api.state)
-	const gameId = useAppStore(state => state.api.gameId)
+	const sessions = useAppStore((state) => state.client.sessions)
+	const apiState = useAppStore((state) => state.api.state)
+	const gameId = useAppStore((state) => state.api.gameId)
 	const sessionKey = gameId || 'single'
 	const [client, setClient] = useState(null as EventsClient | null)
 
@@ -27,11 +34,8 @@ export const EventsContextProvider = ({
 		if (apiState === ApiState.Joined && !client) {
 			setClient(
 				new EventsClient(
-					'ws://' +
-						(process.env.APP_API_URL || window.location.host) +
-						(gameId ? '/game/' + gameId : '') +
-						'/events'
-				)
+					getWebsocketUrl(gameId ? `game/${gameId}/events` : ''),
+				),
 			)
 		}
 	}, [apiState, gameId])
@@ -56,6 +60,5 @@ export const EventsContextProvider = ({
 }
 
 export const useEvents = () => {
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	return useContext(EventsContext)!
+	return useContext(EventsContext)
 }

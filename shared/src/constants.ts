@@ -1,7 +1,35 @@
-export const CARD_PRICE = 3
-export const MILESTONE_PRICE = 8
-export const MILESTONE_REWARD = 5
-export const MILESTONES_LIMIT = 3
-export const COMPETITIONS_LIMIT = 3
-export const COMPETITIONS_PRICES = [8, 14, 20]
-export const COMPETITIONS_REWARDS = [5, 2]
+import { Production, Resource } from './cards'
+
+export const PLAYER_PRODUCTION_FIELDS: Production[] = [
+	'moneyProduction',
+	'oreProduction',
+	'titanProduction',
+	'plantsProduction',
+	'energyProduction',
+	'heatProduction',
+]
+
+export const PLAYER_PRODUCTION_TO_RESOURCE: Record<Production, Resource> = {
+	moneyProduction: 'money',
+	oreProduction: 'ore',
+	titanProduction: 'titan',
+	plantsProduction: 'plants',
+	energyProduction: 'energy',
+	heatProduction: 'heat',
+}
+
+export const PLAYER_RESOURCE_TO_PRODUCTION: Record<Resource, Production> = {
+	money: 'moneyProduction',
+	ore: 'oreProduction',
+	titan: 'titanProduction',
+	plants: 'plantsProduction',
+	energy: 'energyProduction',
+	heat: 'heatProduction',
+}
+
+export const GAME_PROGRESS_VALUES = [
+	'temperature',
+	'oxygen',
+	'oceans',
+	'venus',
+] as const

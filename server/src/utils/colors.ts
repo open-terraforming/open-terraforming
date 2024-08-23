@@ -3,12 +3,13 @@ import { range } from '@shared/utils'
 export const randomPlayerColor = (usedColors: string[] = []) => {
 	while (true) {
 		const color = range(0, 3).map(() => Math.round(Math.random() * 255)) as RGB
+
 		const similar = usedColors.find(
-			c => deltaE(hexToRgb(c) || [0, 0, 0], color) < 11
+			(c) => deltaE(hexToRgb(c) || [0, 0, 0], color) < 11,
 		)
 
 		if (!similar) {
-			return '#' + color.map(c => c.toString(16).padStart(2, '0')).join('')
+			return '#' + color.map((c) => c.toString(16).padStart(2, '0')).join('')
 		}
 	}
 }
@@ -32,8 +33,10 @@ function deltaE(rgbA: RGB, rgbB: RGB) {
 	const deltaLKlsl = deltaL / 1.0
 	const deltaCkcsc = deltaC / sc
 	const deltaHkhsh = deltaH / sh
+
 	const i =
 		deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh
+
 	return i < 0 ? 0 : Math.sqrt(i)
 }
 
@@ -53,16 +56,18 @@ function rgb2lab(rgb: RGB): LAB {
 	x = x > 0.008856 ? Math.pow(x, 1 / 3) : 7.787 * x + 16 / 116
 	y = y > 0.008856 ? Math.pow(y, 1 / 3) : 7.787 * y + 16 / 116
 	z = z > 0.008856 ? Math.pow(z, 1 / 3) : 7.787 * z + 16 / 116
+
 	return [116 * y - 16, 500 * (x - y), 200 * (y - z)]
 }
 
 function hexToRgb(hex: string): RGB | null {
 	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+
 	return result
 		? [
 				parseInt(result[1], 16),
 				parseInt(result[2], 16),
-				parseInt(result[3], 16)
-		  ]
+				parseInt(result[3], 16),
+			]
 		: null
 }

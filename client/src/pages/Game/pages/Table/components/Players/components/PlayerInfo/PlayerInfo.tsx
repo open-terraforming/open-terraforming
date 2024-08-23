@@ -1,11 +1,10 @@
 import { Modal } from '@/components/Modal/Modal'
 import { cardsToCardList } from '@/utils/cards'
 import { useAppStore } from '@/utils/hooks'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import { CardDisplay } from '../../../CardDisplay/CardDisplay'
 import { ResourceIcon } from '../../../ResourceIcon/ResourceIcon'
-import { colors } from '@/styles'
 import { Resource } from '@shared/cards'
 
 type Props = {
@@ -16,7 +15,7 @@ type Props = {
 const ResItem = ({
 	res,
 	value,
-	production
+	production,
 }: {
 	res: Resource
 	value: number
@@ -34,16 +33,17 @@ const ResItem = ({
 )
 
 export const PlayerInfo = ({ playerId, onClose }: Props) => {
-	const player = useAppStore(state =>
-		state.game.state?.players.find(p => p.id === playerId)
+	const player = useAppStore((state) =>
+		state.game.state?.players.find((p) => p.id === playerId),
 	)
 
 	const state = player
 	const usedCards = player?.usedCards
 
-	const cards = useMemo(() => (usedCards ? cardsToCardList(usedCards) : []), [
-		usedCards
-	])
+	const cards = useMemo(
+		() => (usedCards ? cardsToCardList(usedCards) : []),
+		[usedCards],
+	)
 
 	if (!player || !state) {
 		return <>No player</>
@@ -54,7 +54,7 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 			open={true}
 			onClose={onClose}
 			header={`${player.name}`}
-			contentStyle={{ width: '80%' }}
+			contentStyle={{ minWidth: '80%' }}
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
 		>
 			<Info>
@@ -117,8 +117,8 @@ const Info = styled.div`
 const InfoItem = styled.div`
 	display: flex;
 	margin: 0 0.25rem;
-	background-color: ${colors.background};
-	border: 1px solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border: 1px solid ${({ theme }) => theme.colors.border};
 `
 
 const Value = styled.div`
@@ -127,6 +127,6 @@ const Value = styled.div`
 `
 
 const Production = styled.div`
-	background-color: ${colors.border};
+	background-color: ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
 `

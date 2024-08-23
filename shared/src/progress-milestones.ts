@@ -2,9 +2,9 @@ import {
 	GridCellContent,
 	GameState,
 	PlayerState,
-	ProgressMilestoneType
+	ProgressMilestoneType,
 } from './game'
-import { keyMap, pushPendingAction } from './utils'
+import { drawCards, keyMap, pushPendingAction } from './utils'
 import { placeTileAction } from './player-actions'
 
 export interface ProgressMilestone {
@@ -17,7 +17,7 @@ const milestone = (m: ProgressMilestone): ProgressMilestone => m
 const ProgressMilestonesList = [
 	milestone({
 		type: ProgressMilestoneType.Heat,
-		effects: [(_game, player) => (player.heatProduction += 1)]
+		effects: [(_game, player) => (player.heatProduction += 1)],
 	}),
 	milestone({
 		type: ProgressMilestoneType.Temperature,
@@ -27,8 +27,8 @@ const ProgressMilestonesList = [
 					player.terraformRating++
 					game.temperature++
 				}
-			}
-		]
+			},
+		],
 	}),
 	milestone({
 		type: ProgressMilestoneType.Ocean,
@@ -38,13 +38,29 @@ const ProgressMilestonesList = [
 					pushPendingAction(
 						player,
 						placeTileAction({
-							type: GridCellContent.Ocean
-						})
+							type: GridCellContent.Ocean,
+						}),
 					)
 				}
-			}
-		]
-	})
+			},
+		],
+	}),
+	milestone({
+		type: ProgressMilestoneType.Card,
+		effects: [
+			(game, player) => {
+				player.cards.push(...drawCards(game, 1))
+			},
+		],
+	}),
+	milestone({
+		type: ProgressMilestoneType.TerraformingRating,
+		effects: [
+			(game, player) => {
+				player.terraformRating++
+			},
+		],
+	}),
 ]
 
 export const ProgressMilestones = keyMap(ProgressMilestonesList, 'type')

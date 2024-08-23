@@ -1,10 +1,10 @@
-import React, { useRef, useEffect } from 'react'
+import { useRef, useEffect, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 import { rgba } from 'polished'
 import { Portal } from '@/components'
 
 type Props = {
-	children: React.ReactNode
+	children: ReactNode
 	color?: string
 	textColor?: string
 	onDone: () => void
@@ -14,7 +14,7 @@ export const CenteredText = ({
 	children,
 	onDone,
 	color = '#4267B2',
-	textColor = '#fff'
+	textColor = '#fff',
 }: Props) => {
 	const mounted = useRef(true)
 	const doneRef = useRef(onDone)
@@ -90,7 +90,7 @@ const CenteredTitle = styled.div<{ color: string; textColor: string }>`
 
 	z-index: 1000;
 
-	${props => css`
+	${(props) => css`
 		color: ${props.textColor};
 		background: linear-gradient(
 			to right,

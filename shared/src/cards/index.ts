@@ -1,14 +1,18 @@
-export * from './types'
 export { CardsLookupApi } from './lookup'
-import { Cards } from './list'
+export * from './types'
 import { baseCards } from './base/cards'
 import { baseCorporations } from './base/corporations'
-import { preludeCorporations } from './prelude/corporations'
+import { Cards } from './list'
 import { preludeCards } from './prelude/cards'
+import { preludeCorporations } from './prelude/corporations'
 import { preludePreludes } from './prelude/prelude'
+import { venusCards } from './venus/venusCards'
+import { venusCorporations } from './venus/venusCorporations'
 
 Cards.push(...baseCorporations)
 Cards.push(...preludeCorporations)
 Cards.push(...baseCards)
 Cards.push(...preludeCards)
 Cards.push(...preludePreludes)
+Cards.push(...venusCards)
+Cards.push(...venusCorporations)

@@ -1,10 +1,9 @@
 import { Button } from '@/components'
-import { colors } from '@/styles'
 import { useAppStore } from '@/utils/hooks'
 import { faCheck, faMedal, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { PlayerState } from '@shared/index'
 import { Milestone } from '@shared/milestones'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 
 type Props = {
@@ -22,14 +21,14 @@ export const MilestoneDisplay = ({
 	onBuy,
 	owner,
 	cost,
-	playing
+	playing,
 }: Props) => {
-	const game = useAppStore(state => state.game.state)
-	const player = useAppStore(state => state.game.player)
+	const game = useAppStore((state) => state.game.state)
+	const player = useAppStore((state) => state.game.player)
 
 	const value = useMemo(
 		() => (game && player ? milestone.getValue(game, player) : 0),
-		[game, player]
+		[game, player],
 	)
 
 	const reached = value >= milestone.limit
@@ -44,6 +43,7 @@ export const MilestoneDisplay = ({
 				<Title>{milestone.title}</Title>
 				{(cost !== undefined || owner) && (
 					<Button
+						noClip
 						disabled={!playing || !reached || !canAfford || !!owner}
 						onClick={() => onBuy(milestone)}
 						icon={owner ? faCheck : reached ? faMedal : faTimes}
@@ -51,8 +51,8 @@ export const MilestoneDisplay = ({
 						{owner
 							? `Owned by ${owner.name}`
 							: reached
-							? `Buy for ${cost}`
-							: 'Milestone not reached'}
+								? `Buy for ${cost}`
+								: 'Milestone not reached'}
 					</Button>
 				)}
 			</Head>
@@ -74,7 +74,7 @@ const Head = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 
 	> button {
 		margin: 0;
@@ -93,7 +93,7 @@ const Body = styled.div`
 
 const Info = styled.div`
 	padding: 0.5rem 0.5rem;
-	border: 2px solid ${colors.border};
+	border: 2px solid ${({ theme }) => theme.colors.border};
 	border-top: 0;
 	flex: 1;
 	border-right: 0;
@@ -101,5 +101,5 @@ const Info = styled.div`
 
 const Status = styled.div`
 	padding: 0.5rem 0.5rem;
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 `

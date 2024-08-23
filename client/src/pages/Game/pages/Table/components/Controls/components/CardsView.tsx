@@ -1,16 +1,15 @@
 import { setTableState } from '@/store/modules/table'
-import { colors } from '@/styles'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import { rgba } from 'polished'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { CardView } from '../../CardView/CardView'
 
 type Props = {
 	open: boolean
-	cards: { state: UsedCardState; cardIndex: number }[]
+	cards: UsedCardState[]
 	play?: boolean
 	openable?: boolean
 }
@@ -19,13 +18,13 @@ export const CardsView = ({
 	open,
 	cards,
 	play = false,
-	openable = true
+	openable = true,
 }: Props) => {
 	const dispatch = useAppDispatch()
-	const playing = useAppStore(state => state.game.playing)
+	const playing = useAppStore((state) => state.game.playing)
 	const [mounted, setMounted] = useState(false)
 	const [opening, setOpening] = useState(open)
-	const closing = useRef<number>()
+	const closing = useRef<ReturnType<typeof setTimeout>>()
 
 	useEffect(() => {
 		if (closing.current !== undefined) {
@@ -36,7 +35,7 @@ export const CardsView = ({
 		if (!open) {
 			closing.current = setTimeout(() => {
 				setMounted(false)
-			}, 500)
+			}, 100)
 		} else {
 			setMounted(true)
 			setOpening(true)
@@ -56,10 +55,10 @@ export const CardsView = ({
 			<MO
 				style={{
 					left: -width / 2,
-					width: width
+					width: width,
 				}}
 			>
-				{cards.slice(0, display).map(({ state: c, cardIndex }, i) => (
+				{cards.slice(0, display).map((c, i) => (
 					<CV
 						key={c.code}
 						rotate={
@@ -69,13 +68,13 @@ export const CardsView = ({
 							left:
 								open && !opening
 									? width / 2 +
-									  (display - i - 1 - (display - 1) / 2) * cardWidth
+										(display - i - 1 - (display - 1) / 2) * cardWidth
 									: width / 2,
-							transition: 'all 0.5s',
+							transition: open ? 'all 0.5s' : 'all 0.1s',
 							bottom: open && !opening ? 20 : -10,
-							opacity: open && !opening ? 1 : 0
+							opacity: open && !opening ? 1 : 0,
 						}}
-						onClick={e => {
+						onClick={(e) => {
 							e.stopPropagation()
 							e.nativeEvent.stopPropagation()
 
@@ -83,11 +82,11 @@ export const CardsView = ({
 								dispatch(
 									play
 										? setTableState({
-												playingCardIndex: cardIndex
-										  })
+												playingCardIndex: c.index,
+											})
 										: setTableState({
-												buyingCardIndex: cardIndex
-										  })
+												buyingCardIndex: c.index,
+											}),
 								)
 							}
 						}}
@@ -95,7 +94,6 @@ export const CardsView = ({
 						<Card
 							card={CardsLookupApi.get(c.code)}
 							state={play ? c : undefined}
-							cardIndex={play ? cardIndex : undefined}
 							fade={false}
 						/>
 					</CV>
@@ -107,7 +105,7 @@ export const CardsView = ({
 
 const CV = styled.div<{ rotate: number }>`
 	position: absolute;
-	${props => css`
+	${(props) => css`
 		transform: translate(-50%, 0) rotate(${props.rotate}deg) scale(0.75);
 		transform-origin: bottom center;
 
@@ -132,5 +130,5 @@ const E = styled.div`
 `
 
 const Card = styled(CardView)`
-	background-color: ${rgba(colors.background, 1)};
+	background-color: ${({ theme }) => rgba(theme.colors.background, 1)};
 `

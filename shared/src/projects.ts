@@ -1,14 +1,14 @@
-import { WithOptional, Resource } from './cards'
+import { GameProgress, Resource, WithOptional } from './cards'
+import { updatePlayerProduction, updatePlayerResource } from './cards/utils'
 import {
 	GameState,
 	GridCellContent,
 	PlayerState,
-	StandardProjectType
+	StandardProjectType,
 } from './game'
-import { allCells, keyMap, pushPendingAction } from './utils'
-import { canPlace } from './placements'
-import { updatePlayerProduction, updatePlayerResource } from './cards/utils'
+import { canPlaceAnywhere } from './placements'
 import { placeTileAction } from './player-actions'
+import { keyMap, pushPendingAction } from './utils'
 
 export interface StandardProjectContext {
 	player: PlayerState
@@ -25,26 +25,29 @@ export interface StandardProject {
 }
 
 const project = (
-	s: WithOptional<StandardProject, 'conditions' | 'resource'>
+	s: WithOptional<StandardProject, 'conditions' | 'resource'>,
 ): StandardProject => ({
 	resource: 'money',
 	...s,
 	conditions: [
 		...(s.conditions || []),
 		(ctx: StandardProjectContext) =>
-			ctx.player[s.resource ?? 'money'] >= s.cost(ctx)
-	]
+			ctx.player[s.resource ?? 'money'] >= s.cost(ctx),
+	],
 })
 
-const canPlaceTile = (type: GridCellContent) => ({
-	game,
-	player
-}: StandardProjectContext) =>
-	!!allCells(game).find(c =>
-		canPlace(game, player, c, {
-			type
+const canPlaceTile =
+	(type: GridCellContent) =>
+	({ game, player }: StandardProjectContext) =>
+		canPlaceAnywhere(game, player, {
+			type,
 		})
-	)
+
+const canIncreaseProgress =
+	(process: GameProgress) =>
+	({ game }: StandardProjectContext) => {
+		return game[process] < game.map[process]
+	}
 
 const ProjectsList = [
 	project({
@@ -57,13 +60,13 @@ const ProjectsList = [
 				throw new Error('Only unique cards please')
 			}
 
-			if (!cards.every(c => c >= 0 && c < player.cards.length)) {
+			if (!cards.every((c) => c >= 0 && c < player.cards.length)) {
 				throw new Error('Some card indexes are off!')
 			}
 
 			player.cards = player.cards.filter((_c, i) => !cards.includes(i))
 			updatePlayerResource(player, 'money', cards.length)
-		}
+		},
 	}),
 	project({
 		type: StandardProjectType.PowerPlant,
@@ -71,7 +74,7 @@ const ProjectsList = [
 		cost: ({ player }) => player.powerProjectCost,
 		execute: ({ player }) => {
 			updatePlayerProduction(player, 'energy', 1)
-		}
+		},
 	}),
 	project({
 		type: StandardProjectType.Asteroid,
@@ -81,7 +84,7 @@ const ProjectsList = [
 		execute: ({ game, player }) => {
 			player.terraformRating += 1
 			game.temperature += 1
-		}
+		},
 	}),
 	project({
 		type: StandardProjectType.Aquifer,
@@ -92,10 +95,10 @@ const ProjectsList = [
 			pushPendingAction(
 				player,
 				placeTileAction({
-					type: GridCellContent.Ocean
-				})
+					type: GridCellContent.Ocean,
+				}),
 			)
-		}
+		},
 	}),
 	project({
 		type: StandardProjectType.Greenery,
@@ -106,10 +109,10 @@ const ProjectsList = [
 			pushPendingAction(
 				player,
 				placeTileAction({
-					type: GridCellContent.Forest
-				})
+					type: GridCellContent.Forest,
+				}),
 			)
-		}
+		},
 	}),
 	project({
 		type: StandardProjectType.City,
@@ -118,13 +121,14 @@ const ProjectsList = [
 		conditions: [canPlaceTile(GridCellContent.City)],
 		execute: ({ player }) => {
 			updatePlayerProduction(player, 'money', 1)
+
 			pushPendingAction(
 				player,
 				placeTileAction({
-					type: GridCellContent.City
-				})
+					type: GridCellContent.City,
+				}),
 			)
-		}
+		},
 	}),
 	project({
 		type: StandardProjectType.GreeneryForPlants,
@@ -136,10 +140,10 @@ const ProjectsList = [
 			pushPendingAction(
 				player,
 				placeTileAction({
-					type: GridCellContent.Forest
-				})
+					type: GridCellContent.Forest,
+				}),
 			)
-		}
+		},
 	}),
 	project({
 		type: StandardProjectType.TemperatureForHeat,
@@ -150,8 +154,18 @@ const ProjectsList = [
 		execute: ({ game, player }) => {
 			player.terraformRating += 1
 			game.temperature += 1
-		}
-	})
+		},
+	}),
+	project({
+		type: StandardProjectType.AirScrapping,
+		description: 'Air Scrapping',
+		cost: () => 15,
+		conditions: [canIncreaseProgress('venus')],
+		execute: ({ game, player }) => {
+			player.terraformRating += 1
+			game.venus += 1
+		},
+	}),
 ]
 
 export const Projects = keyMap(ProjectsList, 'type')

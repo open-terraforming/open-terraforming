@@ -1,4 +1,3 @@
-import React from 'react'
 import { MessageModal } from '@/components/MessageModal/MessageModal'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { setApiError } from '@/store/modules/api'

@@ -1,9 +1,20 @@
-import { GameState, GameStateValue, PlayerState, PlayerStateValue } from '.'
-import { defaultMap } from './map'
-import { GameModeType } from './modes/types'
+import {
+	GameState,
+	GameStateValue,
+	PlayerState,
+	PlayerStateValue,
+	StandardProjectType,
+} from '.'
 import { CardCategory } from './cards'
+import { MapType } from './map'
+import { Maps } from './maps'
+import { GameModeType } from './modes/types'
+import { ExpansionType } from './expansions/types'
 
-export const initialGameState = (id = 'game'): GameState => ({
+export const initialGameState = (
+	id = 'game',
+	map = MapType.Standard,
+): GameState => ({
 	id,
 	name: 'Standard Game',
 	state: GameStateValue.WaitingForPlayers,
@@ -15,8 +26,10 @@ export const initialGameState = (id = 'game'): GameState => ({
 	oceans: 0,
 	oxygen: 0,
 	temperature: 0,
-	prelude: true,
-	map: defaultMap(),
+	venus: 0,
+	prelude: false,
+	draft: false,
+	map: Maps[map].build(),
 	competitions: [],
 	milestones: [],
 	cards: [],
@@ -27,7 +40,26 @@ export const initialGameState = (id = 'game'): GameState => ({
 	corporationsDiscarded: [],
 	started: new Date().toISOString(),
 	ended: '',
-	maxPlayers: 5
+	maxPlayers: 5,
+	cardPrice: 3,
+	milestonePrice: 8,
+	milestoneReward: 5,
+	milestonesLimit: 3,
+	competitionsLimit: 3,
+	competitionsPrices: [8, 14, 20],
+	competitionRewards: [5, 2],
+	expansions: [ExpansionType.Base],
+	solarPhase: true,
+	standardProjects: [
+		StandardProjectType.SellPatents,
+		StandardProjectType.PowerPlant,
+		StandardProjectType.Asteroid,
+		StandardProjectType.Aquifer,
+		StandardProjectType.Greenery,
+		StandardProjectType.City,
+		StandardProjectType.GreeneryForPlants,
+		StandardProjectType.TemperatureForHeat,
+	],
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
@@ -35,6 +67,7 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	id,
 	bot: false,
 	admin: false,
+	owner: false,
 	actionsPlayed: 0,
 	energy: 0,
 	energyProduction: 0,
@@ -53,6 +86,7 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	state: PlayerStateValue.Connecting,
 	terraformRating: 20,
 	cards: [],
+	draftedCards: [],
 	usedCards: [],
 	corporation: '',
 	tagPriceChange: {} as Record<CardCategory, number>,
@@ -61,10 +95,11 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	powerProjectCost: 11,
 	temperatureCost: 8,
 	progressConditionBonus: 0,
+	progressConditionBonusByTag: {},
 	name: '<unknown>',
 	color: '',
 	session,
 	victoryPoints: [],
 	pendingActions: [],
-	protectedHabitat: false
+	protectedHabitat: false,
 })

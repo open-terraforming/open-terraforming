@@ -14,23 +14,26 @@ import {
 	MessageType,
 	PlayerStateValue,
 	serverMessage,
-	VERSION
+	VERSION,
+	kicked,
+	spectateResponse,
+	SpectateError,
 } from '@shared/index'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
-import { sanitize, shuffle } from '@shared/utils'
+import { sanitize, shuffle, nonEmptyStringLength } from '@shared/utils'
 import { CardsLookupApi } from '@shared/cards'
-import { encode, decode } from 'msgpack-lite'
+import { decode, encode } from 'msgpack-lite'
 
 enum ClientState {
 	Initializing,
-	Connected
+	Connected,
 }
 
 export class Client {
 	get logger() {
 		return new Logger(
-			this.player ? `GameClient(${this.player.name})` : 'GameClient'
+			this.player ? `GameClient(${this.player.name})` : 'GameClient',
 		)
 	}
 
@@ -44,6 +47,8 @@ export class Client {
 
 	player?: Player
 
+	spectator = false
+
 	onDisconnected = new MyEvent()
 
 	get game() {
@@ -54,34 +59,52 @@ export class Client {
 		this.server = server
 		this.state = ClientState.Initializing
 
+		this.game.onPlayerKicked.on(this.handlePlayerKicked)
+
 		this.socket = socket
 		this.socket.on('message', this.handleRawMessage)
 		this.socket.on('close', this.handleClose)
 	}
 
+	handlePlayerKicked = (player: Player) => {
+		if (player === this.player) {
+			this.send(kicked())
+
+			setTimeout(() => {
+				try {
+					this.socket.close()
+				} catch (e) {
+					this.logger.warn(`Failed to close socket for kicked player: ${e}`)
+				}
+			}, 1)
+		}
+	}
+
 	handleClose = () => {
 		const player = this.player
+
 		if (player) {
 			// Remove player when in lobby, mark as disconnected otherwise
 			if (this.game.state.state === GameStateValue.WaitingForPlayers) {
 				this.logger.log(
-					'Client disconnected in lobby - removing player from game'
+					'Client disconnected in lobby - removing player from game',
 				)
 
 				this.game.remove(player)
 			} else {
-				player.state.connected = !!this.server.clients.find(
-					p => p !== this && p.player?.id === player.id
-				)
-				player.updated()
+				if (
+					this.server.clients.find(
+						(p) => p !== this && p.player?.id === player.id,
+					) === undefined
+				) {
+					this.logger.log('Client disconnected - starting disconnect timer')
 
-				this.logger.log(
-					player.state.connected
-						? 'Client disconnected - but other clients are connected to its player'
-						: 'Client disconnected - marking as disconnected'
-				)
-
-				this.game.checkState()
+					player.handleDisconnect()
+				} else {
+					this.logger.log(
+						'Client disconnected - but other clients are connected to its player',
+					)
+				}
 			}
 		}
 
@@ -90,12 +113,11 @@ export class Client {
 
 	handleRawMessage = (data: WebSocket.Data) => {
 		let parsed: GameMessage
+
 		try {
 			if (typeof data === 'string') {
-				throw new Error('Not a binary message')
-			}
-
-			if (data instanceof ArrayBuffer) {
+				parsed = JSON.parse(data.toString())
+			} else if (data instanceof ArrayBuffer) {
 				parsed = decode(new Uint8Array(data))
 			} else {
 				if (Array.isArray(data)) {
@@ -104,16 +126,14 @@ export class Client {
 
 				parsed = decode(data as Buffer)
 			}
-
-			if (!parsed) {
-				throw new Error('Failed to parse data')
-			}
 		} catch (e) {
-			this.logger.error('Failed to parse', data)
+			this.logger.error('Failed to parse message', e)
+
 			return
 		}
 
 		const result = this.handleMessage(parsed)
+
 		if (result) {
 			this.send(result)
 		}
@@ -133,25 +153,37 @@ export class Client {
 						return handshakeResponse(undefined, this.game.info())
 					}
 
+					case MessageType.SpectateRequest: {
+						if (!this.game.config.spectatorsAllowed) {
+							return spectateResponse(SpectateError.NotAllowed)
+						}
+
+						this.state = ClientState.Connected
+						this.spectator = true
+						this.sendUpdate(this.game.state)
+
+						return spectateResponse()
+					}
+
 					case MessageType.JoinRequest: {
 						let { name } = message.data
 						const { session } = message.data
 
-						name = sanitize(name)
-
 						if (session) {
-							const p = this.game.players.find(p => p.state.session === session)
+							const p = this.game.players.find(
+								(p) => p.state.session === session,
+							)
+
 							if (p) {
 								this.logger.log('Session matched, joining as existing player')
 
 								this.player = p
-								this.player.state.connected = true
-								this.player.updated()
+								this.player.handleConnect()
 
 								return joinResponse(
 									undefined,
 									this.player.state.session,
-									this.player.state.id
+									this.player.state.id,
 								)
 							} else {
 								return joinResponse(JoinError.InvalidSession)
@@ -162,13 +194,17 @@ export class Client {
 							return joinResponse(JoinError.GameInProgress)
 						}
 
-						if (!name || name.trim().length < 3 || name.length > 10) {
+						name = sanitize(name)
+
+						const length = nonEmptyStringLength(name)
+
+						if (!name || length < 3 || length > 10) {
 							return joinResponse(JoinError.InvalidName)
 						}
 
 						if (
 							this.game.players.find(
-								p => p.name.replace(/\s/g, '') === name?.replace(/\s/g, '')
+								(p) => p.name.replace(/\s/g, '') === name?.replace(/\s/g, ''),
 							)
 						) {
 							return joinResponse(JoinError.DuplicateName)
@@ -185,7 +221,7 @@ export class Client {
 						return joinResponse(
 							undefined,
 							this.player.state.session,
-							this.player.state.id
+							this.player.state.id,
 						)
 					}
 
@@ -194,92 +230,12 @@ export class Client {
 					}
 				}
 			} else {
-				switch (message.type) {
-					case MessageType.PlayerReady: {
-						return this.player.toggleReady(message.data.ready)
-					}
-
-					case MessageType.PickCorporation: {
-						return this.player.pickCorporation(message.data.code)
-					}
-
-					case MessageType.PickCards: {
-						return this.player.pickCards(message.data.cards)
-					}
-
-					case MessageType.PickPreludes: {
-						return this.player.pickPreludes(message.data.cards)
-					}
-
-					case MessageType.PlayerPass: {
-						return this.player.pass(message.data.force)
-					}
-
-					case MessageType.BuyCard: {
-						return this.player.buyCard(
-							message.data.card,
-							message.data.index,
-							message.data.useOre,
-							message.data.useTitan,
-							message.data.args
-						)
-					}
-
-					case MessageType.PlayCard: {
-						return this.player.playCard(
-							message.data.card,
-							message.data.index,
-							message.data.args
-						)
-					}
-
-					case MessageType.PlaceTile: {
-						return this.player.placeTile(message.data.x, message.data.y)
-					}
-
-					case MessageType.AdminChange: {
-						if (this.player.state.admin) {
-							return this.game.adminChange(message.data)
-						} else {
-							throw new Error("You aren't admin")
-						}
-					}
-
-					case MessageType.AdminLogin: {
-						return this.player.adminLogin(message.data.password)
-					}
-
-					case MessageType.BuyStandardProject: {
-						return this.player.buyStandardProject(
-							message.data.project,
-							message.data.cards
-						)
-					}
-
-					case MessageType.BuyMilestone: {
-						return this.player.buyMilestone(message.data.type)
-					}
-
-					case MessageType.SponsorCompetition: {
-						return this.player.sponsorCompetition(message.data.type)
-					}
-
-					case MessageType.PickColor: {
-						return this.player.pickColor(message.data.index)
-					}
-
-					case MessageType.ClaimTile: {
-						return this.player.claimTile(message.data.x, message.data.y)
-					}
-
-					default: {
-						return serverMessage(`Unknown action ${message.type}`)
-					}
-				}
+				this.player.performAction(message)
 			}
 		} catch (e) {
-			console.error(e)
-			return serverMessage(e.toString())
+			this.logger.error(e)
+
+			return serverMessage((e as Error).toString())
 		}
 	}
 
@@ -292,16 +248,19 @@ export class Client {
 			this.cardDictionary = shuffle(Object.keys(CardsLookupApi.data())).reduce(
 				(acc, c, i) => {
 					acc[c] = i.toString(16)
+
 					return acc
 				},
-				{} as Record<string, string>
+				{} as Record<string, string>,
 			)
 		}
 
-		this.send(
-			gameStateUpdate(
-				obfuscateGame(game, this.player?.state, this.cardDictionary)
+		if (this.player || this.spectator) {
+			this.send(
+				gameStateUpdate(
+					obfuscateGame(game, this.player?.id ?? -1, this.cardDictionary),
+				),
 			)
-		)
+		}
 	}
 }

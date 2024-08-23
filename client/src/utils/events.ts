@@ -1,23 +1,3 @@
-export const captureEnter = (callback: (e: React.KeyboardEvent) => void) => (
-	e: React.KeyboardEvent
-) => {
-	if (e.key === 'Enter') {
-		e.preventDefault()
-		e.stopPropagation()
-
-		callback(e)
-	}
-}
-
-export const stopEvent = <T extends React.SyntheticEvent>(
-	callback: (e: T) => void
-) => (e: T) => {
-	e.stopPropagation()
-	e.preventDefault()
-
-	callback(e)
-}
-
 type EventHandler<T> = (e: T) => void
 
 export class MyEvent<T = void> {
@@ -67,12 +47,7 @@ export class MyEvent<T = void> {
 	}
 
 	emit(e: T) {
-		if (this.rememberLastEmit) {
-			this.emitted = true
-			this.lastEmit = e
-		}
-
-		this.listeners.forEach(l => {
+		this.listeners.forEach((l) => {
 			l(e)
 		})
 	}

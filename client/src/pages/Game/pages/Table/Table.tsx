@@ -1,20 +1,26 @@
+import { Button } from '@/components'
 import { useAppStore } from '@/utils/hooks'
+import { faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { PlayerActionType } from '@shared/player-actions'
-import React, { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { CardPicker } from './components/CardPicker/CardPicker'
 import { CompetitionsModal } from './components/CompetitionsModal/CompetitionsModal'
 import { Controls } from './components/Controls/Controls'
-import { CorporationPicker } from './components/CorporationPicker/CorporationPicker'
-import { GameMap } from './components/GameMap/GameMap'
+import { EventList } from './components/EventList/EventList'
 import { GlobalState } from './components/GlobalState/GlobalState'
 import { Header } from './components/Header/Header'
 import { Mouses } from './components/Mouses/Mouses'
+import { PendingCardPicker } from './components/PendingCardPicker/PendingCardPicker'
 import { Players } from './components/Players/Players'
+import { Spectator } from './components/Spectator/Spectator'
+import { StartPicker } from './components/StartPicker/StartPicker'
+import { SolarPhaseTerraformPicker } from './components/SolarPhaseTerraformPicker/SolarPhaseTerraformPicker'
 import ThreeGameMap from './components/ThreeGameMap/ThreeGameMap'
 
-export const Table = () => {
-	const pending = useAppStore(state => state.game.pendingAction)
+const Table = () => {
+	const pending = useAppStore((state) => state.game.pendingAction)
+	const spectating = useAppStore((state) => state.game.spectating)
+	const [pickerHidden, setPickerHidden] = useState(false)
 
 	/*
 	const events = useEvents()
@@ -36,6 +42,16 @@ export const Table = () => {
 
 	useEffect(() => {
 		if (
+			pending?.type !== PlayerActionType.PickCards &&
+			pending?.type !== PlayerActionType.PickPreludes &&
+			pending?.type !== PlayerActionType.DraftCard
+		) {
+			setPickerHidden(false)
+		}
+	}, [pending])
+
+	useEffect(() => {
+		if (
 			Notification.permission !== 'granted' &&
 			Notification.permission !== 'denied'
 		) {
@@ -46,14 +62,20 @@ export const Table = () => {
 	return (
 		<TableContainer>
 			<Mouses />
-			{pending?.type === PlayerActionType.PickCorporation && (
-				<CorporationPicker />
-			)}
-			{pending?.type === PlayerActionType.PickCards && (
-				<CardPicker key={pending.cards.join(',')} />
-			)}
-			{pending?.type === PlayerActionType.PickPreludes && (
-				<CardPicker key={pending.cards.join(',')} prelude />
+			{pending?.type === PlayerActionType.PickStarting && <StartPicker />}
+			{!pickerHidden &&
+				(pending?.type === PlayerActionType.PickCards ||
+					pending?.type === PlayerActionType.PickPreludes ||
+					pending?.type === PlayerActionType.DraftCard) && (
+					<PendingCardPicker
+						key={pending.cards.join(',')}
+						action={pending}
+						closeable
+						onClose={() => setPickerHidden(true)}
+					/>
+				)}
+			{pending?.type === PlayerActionType.SolarPhaseTerraform && (
+				<SolarPhaseTerraformPicker action={pending} />
 			)}
 			{pending?.type === PlayerActionType.SponsorCompetition && (
 				<CompetitionsModal freePick onClose={() => null} />
@@ -61,11 +83,18 @@ export const Table = () => {
 			<GameContainer>
 				<Header />
 				<Players />
+				<EventList />
 				{/*<GameMap />*/}
-				{<ThreeGameMap />}
+				<ThreeGameMap />
 				<GlobalState />
 			</GameContainer>
-			<Controls />
+			<HiddenPicker style={{ opacity: pickerHidden ? 1 : 0 }}>
+				<Button icon={faChevronUp} onClick={() => setPickerHidden(false)}>
+					BACK TO CARD PICKER
+				</Button>
+			</HiddenPicker>
+			{!spectating && <Controls />}
+			{spectating && <Spectator />}
 		</TableContainer>
 	)
 }
@@ -80,9 +109,26 @@ const TableContainer = styled.div`
 `
 
 const GameContainer = styled.div`
-	display: flex;
-	flex-grow: 1;
+	position: relative;
 	width: 100%;
-	min-height: 0;
-	max-height: 100%;
+	height: 100%;
 `
+
+const HiddenPicker = styled.div`
+	position: absolute;
+	bottom: 6rem;
+	left: 50%;
+	display: flex;
+	justify-content: center;
+	width: 20rem;
+	margin-left: -10rem;
+	z-index: 3;
+
+	transition: opacity 200ms;
+
+	> button {
+		padding: 1rem;
+	}
+`
+
+export default Table

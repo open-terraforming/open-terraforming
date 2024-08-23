@@ -3,12 +3,19 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#000" />
     <title>Open Terraforming</title>
+    
     <link href="https://fonts.googleapis.com/css?family=Oswald&display=swap" rel="stylesheet">
+    <link href="./manifest.webmanifest" rel="manifest">
+    <link href="./icons/mars-icon-192.png" rel="apple-touch-icon" sizes="192x192" type="image/png">
+    <link href="./icons/mars-icon-192.png" rel="icon" sizes="192x192" type="image/png">
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="application"></div>
+
+    <script type="module" src="./index.tsx"></script>
   </body>
 </html>

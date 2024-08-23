@@ -1,82 +1,152 @@
-import { deepExtend, range, shuffle } from '@/utils/collections'
+import { StateMachine } from '@/lib/state-machine'
+import { deepExtend, range } from '@/utils/collections'
+import { MyEvent } from '@/utils/events'
 import { Logger } from '@/utils/log'
 import { randomPassword } from '@/utils/password'
 import { f } from '@/utils/string'
-import { CardsLookupApi, CardType, CardSpecial } from '@shared/cards'
-import { Competitions, CompetitionType } from '@shared/competitions'
-import { COMPETITIONS_REWARDS } from '@shared/constants'
+import { CardsLookupApi, GameProgress } from '@shared/cards'
+import { ExpansionType } from '@shared/expansions/types'
+import { GameInfo } from '@shared/extra'
 import {
 	GameState,
 	GameStateValue,
-	PlayerState,
 	PlayerStateValue,
 	ProgressMilestoneType,
-	VictoryPointsSource,
-	GridCellContent
 } from '@shared/game'
-import { UpdateDeepPartial } from '@shared/index'
+import {
+	draftCard,
+	pickCards,
+	pickPreludes,
+	playerPass,
+	UpdateDeepPartial,
+} from '@shared/index'
+import { MapType } from '@shared/map'
+import { Maps } from '@shared/maps'
 import { GameModes } from '@shared/modes'
 import { GameModeType } from '@shared/modes/types'
+import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
-import { MyEvent } from 'src/utils/events'
+import { isMarsTerraformed, shuffle } from '@shared/utils'
+import { v4 as uuidv4 } from 'uuid'
 import { Bot } from './bot'
+import { BotNames } from './bot-names'
+import { DraftGameState } from './game/draft-game-state'
+import { EndedGameState } from './game/ended-game-state'
+import { EndingTilesGameState } from './game/ending-tiles-game-state'
+import { GenerationEndingState } from './game/generation-ending-state'
+import { GenerationInProgressGameState } from './game/generation-in-progress-game-state'
+import { GenerationStartGameState } from './game/generation-start-game-state'
+import { PreludeGameState } from './game/prelude-game-state'
+import { ResearchPhaseGameState } from './game/research-phase-game-state'
+import { StartingGameState } from './game/starting-game-state'
+import { WaitingForPlayersGameState } from './game/waiting-for-players-game-state'
 import {
 	CardPlayedEvent,
 	Player,
+	ProductionChangedEvent,
 	ProjectBought,
-	TilePlacedEvent
+	TilePlacedEvent,
 } from './player'
-import { GameInfo } from '@shared/extra'
-import { v4 as uuidv4 } from 'uuid'
-import { PlayerColors } from '@shared/player-colors'
-import { randomPlayerColor } from '@/utils/colors'
-import { wait } from '@/utils/async'
-import {
-	PlayerActionType,
-	placeTileAction,
-	pickCardsAction
-} from '@shared/player-actions'
-import { pushPendingAction, drawCards, pendingActions } from '@shared/utils'
+import { SolarPhaseGameState } from './game/solar-phase-game-state'
 
 export interface GameConfig {
 	bots: number
 	adminPassword: string
 	mode: GameModeType
+	map: MapType
 	name: string
 	public: boolean
+	spectatorsAllowed: boolean
+	expansions: ExpansionType[]
+	draft: boolean
+	solarPhase: boolean
+
+	fastBots: boolean
+	fastProduction: boolean
 }
 export class Game {
 	get logger() {
-		return new Logger(`Game(${this.state.id})`)
+		const shortId =
+			this.state.id.length > 5
+				? this.state.id.slice(0, 2) + '..' + this.state.id.slice(-2)
+				: this.state.id
+
+		return new Logger(`Game(${shortId})`)
 	}
 
 	config: GameConfig
 
 	state = initialGameState(uuidv4())
 
+	currentProgress = {} as Record<GameProgress, number | undefined>
+
 	players: Player[] = []
 
 	onStateUpdated = new MyEvent<Readonly<GameState>>()
+	onPlayerKicked = new MyEvent<Player>()
+
+	sm = new StateMachine<GameStateValue>()
+
+	botNames = shuffle([...BotNames])
 
 	constructor(config?: Partial<GameConfig>) {
 		this.config = {
 			bots: 0,
 			adminPassword: randomPassword(10),
 			mode: GameModeType.Standard,
+			map: MapType.Standard,
 			name: 'Standard game',
 			public: false,
-			...config
+			spectatorsAllowed: true,
+			expansions: [ExpansionType.Base, ExpansionType.Prelude],
+			fastBots: false,
+			fastProduction: false,
+			draft: false,
+			solarPhase: false,
+			...config,
 		}
 
+		this.state.map = Maps[this.config.map].build()
 		this.state.name = this.config.name
 		this.state.mode = this.config.mode
+		this.state.draft = this.config.draft
+		this.state.solarPhase = this.config.solarPhase
+		this.state.expansions = [...this.config.expansions]
 
 		range(0, this.config.bots).forEach(() => {
-			this.add(new Bot(this), false)
+			this.add(new Bot(this, { fast: config?.fastBots }), false)
 		})
 
-		this.updated()
+		this.sm.onStateChanged.on(({ old, current }) => {
+			if (!current.name) {
+				throw new Error(`Game state without name!`)
+			}
+
+			this.logger.log(
+				`${old && old.name ? GameStateValue[old.name] : 'NONE'} -> ${
+					GameStateValue[current.name]
+				}`,
+			)
+
+			this.state.state = current.name
+			this.updated()
+		})
+
+		this.sm
+			.addState(new WaitingForPlayersGameState(this))
+			.addState(new StartingGameState(this))
+			.addState(new GenerationInProgressGameState(this))
+			.addState(new GenerationStartGameState(this))
+			.addState(new GenerationEndingState(this))
+			.addState(new EndingTilesGameState(this))
+			.addState(new EndedGameState(this))
+			.addState(new ResearchPhaseGameState(this))
+			.addState(new DraftGameState(this))
+			.addState(new PreludeGameState(this))
+			.addState(new SolarPhaseGameState(this))
+
+		this.sm.setState(GameStateValue.WaitingForPlayers)
 	}
 
 	get inProgress() {
@@ -93,49 +163,77 @@ export class Game {
 		return player
 	}
 
+	get currentPlayerInstance() {
+		const playerId = this.currentPlayer.id
+		const player = this.players.find((p) => p.state.id === playerId)
+
+		if (!player) {
+			throw new Error(`Undefined player ${playerId}`)
+		}
+
+		return player
+	}
+
 	get mode() {
 		return GameModes[this.state.mode]
 	}
 
-	get hasReachedLimits() {
-		return (
-			this.state.oceans >= this.state.map.oceans &&
-			this.state.oxygen >= this.state.map.oxygen &&
-			this.state.temperature >= this.state.map.temperature
-		)
+	get isMarsTerraformed() {
+		return isMarsTerraformed(this.state)
+	}
+
+	pickBotName(id: number) {
+		return this.botNames.pop() || `Bot ${id}`
 	}
 
 	load = (state: GameState) => {
 		this.state = state
 		this.players = []
-		state.players.forEach(p => {
-			const player = p.bot ? new Bot(this) : new Player(this)
+
+		state.players.forEach((p) => {
+			const player = p.bot
+				? new Bot(this, { fast: this.config.fastBots })
+				: new Player(this)
+
 			player.state = p
 
 			this.logger.log(
-				f('Player {0} session: {1}', player.name, player.state.session)
+				f('Player {0} session: {1}', player.name, player.state.session),
 			)
 
 			this.add(player, false)
 		})
 
-		this.updated()
+		this.sm.currentState = this.sm.findState(this.state.state)
+		this.currentProgress = {} as Record<GameProgress, number | undefined>
 	}
 
 	updated = () => {
 		this.checkState()
-		this.onStateUpdated.emit(this.state)
+
+		if (this.sm.update()) {
+			this.updated()
+		} else {
+			this.onStateUpdated.emit(this.state)
+		}
 	}
 
 	add(player: Player, triggerUpdate = true) {
-		if (this.players.find(p => p.id === player.id)) {
+		if (this.players.find((p) => p.id === player.id)) {
 			throw new Error(`ID ${player.id} is not unique player id`)
+		}
+
+		if (
+			!player.state.bot &&
+			this.state.players.find((p) => p.owner) === undefined
+		) {
+			player.state.owner = true
 		}
 
 		this.players.push(player)
 
 		// Only add to state if not already present (eg - joining to saved game)
-		if (!this.state.players.find(p => p.id === player.state.id)) {
+		if (!this.state.players.find((p) => p.id === player.state.id)) {
 			this.state.players.push(player.state)
 		}
 
@@ -145,6 +243,7 @@ export class Game {
 		player.onCardPlayed.on(this.handleCardPlayed)
 		player.onTilePlaced.on(this.handleTilePlaced)
 		player.onProjectBought.on(this.handleProjectBought)
+		player.onProductionChanged.on(this.handlePlayerProductionChanged)
 
 		this.logger.log(`Player ${player.name} (${player.id}) added to the game`)
 
@@ -154,11 +253,11 @@ export class Game {
 	}
 
 	remove(player: Player) {
-		this.players = this.players.filter(p => p !== player)
-		this.state.players = this.state.players.filter(p => p !== player.state)
+		this.players = this.players.filter((p) => p !== player)
+		this.state.players = this.state.players.filter((p) => p !== player.state)
 
 		this.logger.log(
-			`Player ${player.name} (${player.id}) removed from the game`
+			`Player ${player.name} (${player.id}) removed from the game`,
 		)
 
 		player.onStateChanged.off(this.updated)
@@ -166,44 +265,40 @@ export class Game {
 	}
 
 	handleGenerationEnd = () => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
-				.forEach(([s, c], cardIndex) => {
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onGenerationEnd &&
 							e.onGenerationEnd({
 								card: s,
-								cardIndex,
 								game: this.state,
 								player: player,
-								playerId: player.id
-							})
+							}),
 					)
 				})
 		})
 	}
 
 	handleProjectBought = ({ player: playedBy, project }: ProjectBought) => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
-				.forEach(([s, c], cardIndex) => {
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onStandardProject &&
 							e.onStandardProject(
 								{
 									card: s,
-									cardIndex,
 									game: this.state,
 									player: player,
-									playerId: player.id
 								},
 								project,
-								playedBy.state
-							)
+								playedBy.state,
+							),
 					)
 				})
 		})
@@ -212,268 +307,192 @@ export class Game {
 	handleCardPlayed = ({
 		player: playedBy,
 		card,
-		cardIndex: playedCardIndex
+		cardIndex: playedCardIndex,
 	}: CardPlayedEvent) => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
-				.forEach(([s, c], cardIndex) => {
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onCardPlayed &&
 							e.onCardPlayed(
 								{
 									card: s,
-									cardIndex,
 									game: this.state,
 									player: player,
-									playerId: player.id
 								},
 								card,
 								playedCardIndex,
-								playedBy.state
-							)
+								playedBy.state,
+							),
 					)
 				})
 		})
 	}
 
 	handleNewGeneration = (generation: number) => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
-				.forEach(([s, c], cardIndex) => {
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onGenerationStarted &&
 							e.onGenerationStarted(
 								{
 									card: s,
-									cardIndex,
 									game: this.state,
 									player: player,
-									playerId: player.id
 								},
-								generation
-							)
+								generation,
+							),
 					)
 				})
 		})
 	}
 
 	handleTilePlaced = ({ player: playedBy, cell }: TilePlacedEvent) => {
-		this.state.players.forEach(player => {
+		this.state.players.forEach((player) => {
 			player.usedCards
-				.map(c => [c, CardsLookupApi.get(c.code)] as const)
-				.forEach(([s, c], cardIndex) => {
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
-						e =>
+						(e) =>
 							e.onTilePlaced &&
 							e.onTilePlaced(
 								{
 									card: s,
-									cardIndex,
 									game: this.state,
 									player: player,
-									playerId: player.id
 								},
 								cell,
-								playedBy.state
-							)
+								playedBy.state,
+							),
+					)
+				})
+		})
+	}
+
+	handlePlayerProductionChanged = ({
+		player: playedBy,
+		production,
+		change,
+	}: ProductionChangedEvent) => {
+		this.state.players.forEach((player) => {
+			player.usedCards
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
+					c.passiveEffects.forEach(
+						(e) =>
+							e.onPlayerProductionChanged &&
+							e.onPlayerProductionChanged(
+								{
+									card: s,
+									game: this.state,
+									player: player,
+								},
+								playedBy.state,
+								production,
+								change,
+							),
 					)
 				})
 		})
 	}
 
 	all(state: PlayerStateValue) {
-		return this.state.players.every(p => p.state === state)
-	}
-
-	startGame() {
-		this.logger.log(`Game starting`)
-
-		// Initial game progress
-		this.state.started = new Date().toISOString()
-		this.state.oxygen = this.state.map.initialOxygen
-		this.state.oceans = this.state.map.initialOceans
-		this.state.temperature = this.state.map.initialTemperature
-
-		// Pick first starting player
-		this.state.startingPlayer = Math.round(
-			Math.random() * (this.players.length - 1)
-		)
-
-		// Assign random colors to players
-		const usedColors = this.state.players.map(p => p.color)
-		const availableColors = shuffle(
-			PlayerColors.filter(c => !usedColors.includes(c))
-		)
-
-		this.state.players
-			.filter(p => !p.color || p.color === '')
-			.forEach(p => {
-				p.color =
-					availableColors.length > 0
-						? (availableColors.pop() as string)
-						: randomPlayerColor(
-								this.state.players.map(p => p.color).filter(c => c !== '')
-						  )
-			})
-
-		// Create card pool
-		let cards = Object.values(CardsLookupApi.data())
-
-		// Remove Prelude if not desired
-		if (!this.state.prelude) {
-			cards = cards.filter(c => !c.special.includes(CardSpecial.Prelude))
-		}
-
-		if (this.mode.filterCards) {
-			cards = this.mode.filterCards(cards)
-		}
-
-		// Pick corporations
-		this.state.corporations = shuffle(
-			cards.filter(c => c.type === CardType.Corporation).map(c => c.code)
-		)
-
-		// Pick preludes
-		this.state.preludeCards = this.state.prelude
-			? shuffle(cards.filter(c => c.type === CardType.Prelude).map(c => c.code))
-			: []
-
-		// Pick projects
-		this.state.cards = shuffle(
-			cards
-				.filter(
-					c => c.type !== CardType.Corporation && c.type !== CardType.Prelude
-				)
-				.map(c => c.code)
-		)
-
-		// Start picking corporations or whatever the mode desires
-		if (this.mode.onGameStart) {
-			this.mode.onGameStart(this.state)
-		}
-
-		this.state.state = GameStateValue.Starting
+		return this.state.players.every((p) => p.state === state)
 	}
 
 	checkState() {
 		this.checkDisconnected()
+		this.checkGameEvents()
+	}
 
-		switch (this.state.state) {
-			case GameStateValue.WaitingForPlayers:
-				if (
-					this.players.filter(p => !p.state.bot).length > 0 &&
-					this.all(PlayerStateValue.Ready)
-				) {
-					this.startGame()
-				}
-				break
+	checkGameEvents() {
+		for (const progress of [
+			'oxygen',
+			'temperature',
+			'oceans',
+			'venus',
+		] as const) {
+			const value = this.state[progress]
+			const lastValue = this.currentProgress[progress]
 
-			case GameStateValue.Starting:
-			case GameStateValue.PickingCards:
-				if (this.all(PlayerStateValue.WaitingForTurn)) {
-					this.logger.log(`All players ready, starting the round`)
+			if (lastValue !== undefined && lastValue !== value) {
+				this.handleProgressChanged(progress)
+			}
 
-					// Reset to starting player
-					this.state.currentPlayer =
-						this.state.startingPlayer > 0
-							? (this.state.startingPlayer - 1) % this.state.players.length
-							: this.state.players.length - 1
-
-					if (this.state.state === GameStateValue.Starting) {
-						this.handleNewGeneration(this.state.generation)
-					}
-
-					this.state.state = GameStateValue.GenerationInProgress
-
-					this.updated()
-				}
-				break
-
-			case GameStateValue.EndingTiles:
-			case GameStateValue.GenerationInProgress:
-				this.checkMilestones()
-				this.checkCurrentPlayer()
-				break
+			this.currentProgress[progress] = value
 		}
+	}
+
+	handleProgressChanged(progress: GameProgress) {
+		this.state.players.forEach((player) => {
+			player.usedCards
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
+					c.passiveEffects.forEach(
+						(e) =>
+							e.onProgress &&
+							e.onProgress(
+								{
+									card: s,
+									game: this.state,
+									player: player,
+								},
+								progress,
+							),
+					)
+				})
+		})
 	}
 
 	/**
 	 * Checks disconnected players and skips them if they're playing right now
 	 */
 	checkDisconnected() {
-		if (!this.players.every(p => !p.state.connected || p.state.bot)) {
+		if (!this.players.every((p) => !p.state.connected || p.state.bot)) {
 			// Make sure disconnected players are not stalling others
-			this.players.forEach(p => {
-				if (!p.state.connected) {
-					if (p.state.state !== PlayerStateValue.Playing) {
-						if (p.state.pendingActions.length > 0) {
-							p.state.pendingActions.forEach(a => {
-								if (a.type === PlayerActionType.PickCorporation) {
-									p.pickCorporation(a.cards[0])
-								}
-								if (a.type === PlayerActionType.PickCards) {
-									p.pickCards([])
-								}
-								if (a.type === PlayerActionType.PickPreludes) {
-									p.pickPreludes([])
-								}
-							})
+			this.players.forEach((p) => {
+				try {
+					if (!p.state.connected) {
+						if (p.state.state !== PlayerStateValue.Playing) {
+							if (p.state.pendingActions.length > 0) {
+								p.state.pendingActions.forEach((a) => {
+									if (a.type === PlayerActionType.PickStarting) {
+										// Starting pick can stall others!
+									}
+
+									if (a.type === PlayerActionType.PickCards) {
+										p.performAction(pickCards([]))
+									}
+
+									if (a.type === PlayerActionType.PickPreludes) {
+										p.performAction(pickPreludes(range(0, a.limit)))
+									}
+
+									if (a.type === PlayerActionType.DraftCard) {
+										p.performAction(draftCard([0]))
+									}
+								})
+							}
+						}
+
+						if (
+							p.id === this.currentPlayer.id &&
+							(p.state.state === PlayerStateValue.Playing ||
+								p.state.state === PlayerStateValue.EndingTiles)
+						) {
+							this.logger.log(`${p.name} is disconnected, passing`)
+							p.performAction(playerPass())
 						}
 					}
-
-					if (
-						p.state.state === PlayerStateValue.Playing ||
-						p.state.state === PlayerStateValue.EndingTiles
-					) {
-						this.logger.log(`${p.name} is disconnected, passing`)
-						p.pass(true)
-					}
+				} catch (e) {
+					this.logger.error(e)
 				}
 			})
-		}
-	}
-
-	/**
-	 * Checks if current player finished his turn and passes to next or ends the round
-	 */
-	checkCurrentPlayer() {
-		// Check if we should move game state
-		if (
-			this.currentPlayer.state === PlayerStateValue.WaitingForTurn ||
-			this.currentPlayer.state === PlayerStateValue.Passed
-		) {
-			if (this.all(PlayerStateValue.Passed)) {
-				if (this.state.state === GameStateValue.EndingTiles) {
-					this.finishGame()
-				} else {
-					this.endGeneration()
-				}
-			} else {
-				do {
-					this.state.currentPlayer =
-						(this.state.currentPlayer + 1) % this.players.length
-				} while (this.currentPlayer.state === PlayerStateValue.Passed)
-
-				this.logger.log(f(`Next player: {0}`, this.currentPlayer.name))
-
-				this.currentPlayer.state =
-					this.state.state === GameStateValue.EndingTiles
-						? PlayerStateValue.EndingTiles
-						: PlayerStateValue.Playing
-				this.currentPlayer.actionsPlayed = 0
-			}
-		}
-
-		// Pass him if there's no tile to be placed
-		if (
-			this.currentPlayer.state === PlayerStateValue.EndingTiles &&
-			pendingActions(this.currentPlayer).length === 0
-		) {
-			this.currentPlayer.state = PlayerStateValue.Passed
 		}
 	}
 
@@ -481,140 +500,59 @@ export class Game {
 	 * Checks if game passed any milestone
 	 */
 	checkMilestones() {
-		this.state.map.oxygenMilestones.forEach(m => {
+		this.state.map.oxygenMilestones.forEach((m) => {
 			if (!m.used && m.value <= this.state.oxygen) {
 				this.logger.log(
 					`Oxygen milestone ${ProgressMilestoneType[m.type]} (at ${
 						m.value
-					}) reached`
+					}) reached`,
 				)
 
 				m.used = true
-				ProgressMilestones[m.type].effects.forEach(e =>
-					e(this.state, this.currentPlayer)
+
+				ProgressMilestones[m.type].effects.forEach((e) =>
+					e(this.state, this.currentPlayer),
 				)
 			}
 		})
 
-		this.state.map.temperatureMilestones.forEach(m => {
+		this.state.map.temperatureMilestones.forEach((m) => {
 			if (!m.used && m.value <= this.state.temperature) {
 				this.logger.log(
 					`Temperature milestone ${ProgressMilestoneType[m.type]} (at ${
 						m.value
-					}) reached`
+					}) reached`,
 				)
 
 				m.used = true
-				ProgressMilestones[m.type].effects.forEach(e =>
-					e(this.state, this.currentPlayer)
+
+				ProgressMilestones[m.type].effects.forEach((e) =>
+					e(this.state, this.currentPlayer),
+				)
+			}
+		})
+
+		this.state.map.venusMilestones.forEach((m) => {
+			if (!m.used && m.value <= this.state.venus) {
+				this.logger.log(
+					`Venus milestone ${ProgressMilestoneType[m.type]} (at ${
+						m.value
+					}) reached`,
+				)
+
+				m.used = true
+
+				ProgressMilestones[m.type].effects.forEach((e) =>
+					e(this.state, this.currentPlayer),
 				)
 			}
 		})
 	}
 
-	/**
-	 * Finish game!
-	 */
-	finishGame() {
-		this.logger.log(`Game finished`)
-
-		this.state.ended = new Date().toISOString()
-		this.state.state = GameStateValue.Ended
-
-		this.players.forEach(p => {
-			p.state.victoryPoints.push({
-				source: VictoryPointsSource.Rating,
-				amount: p.state.terraformRating
-			})
+	filterPendingActions() {
+		this.players.forEach((p) => {
+			p.filterPendingActions()
 		})
-
-		this.state.competitions.forEach(({ type }) => {
-			const competition = Competitions[type]
-			const score = this.state.players.reduce((acc, p) => {
-				const s = competition.getScore(this.state, p)
-
-				if (!acc[s]) {
-					acc[s] = []
-				}
-
-				acc[s].push(p)
-
-				return acc
-			}, {} as Record<number, PlayerState[]>)
-
-			Object.entries(score)
-				.sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
-				.slice(0, 2)
-				.forEach(([, players], index) => {
-					players.forEach(p => {
-						this.logger.log(
-							f(
-								`Player {0} is {1}. at {3} competition`,
-								p.name,
-								index + 1,
-								CompetitionType[type]
-							)
-						)
-						p.victoryPoints.push({
-							source: VictoryPointsSource.Awards,
-							amount: COMPETITIONS_REWARDS[index],
-							competition: type
-						})
-					})
-				})
-		})
-
-		this.players.forEach(p => {
-			p.finishGame()
-		})
-	}
-
-	/**
-	 * End the generation, go to next or finish the game
-	 */
-	async endGeneration() {
-		this.state.state = GameStateValue.GenerationEnding
-
-		this.handleGenerationEnd()
-
-		for (const p of this.players) {
-			await wait(1000)
-
-			p.endGeneration()
-			this.onStateUpdated.emit(this.state)
-		}
-
-		await wait(1000)
-
-		if (this.hasReachedLimits) {
-			this.state.state = GameStateValue.EndingTiles
-			this.players.forEach(p => {
-				p.state.pendingActions = []
-
-				p.buyAllGreeneries()
-
-				p.state.state =
-					p.state.pendingActions.length > 0
-						? PlayerStateValue.WaitingForTurn
-						: PlayerStateValue.Passed
-			})
-		} else {
-			this.players.forEach(p => {
-				pushPendingAction(p.state, pickCardsAction(drawCards(this.state, 4)))
-				p.state.state = PlayerStateValue.Picking
-			})
-
-			this.state.state = GameStateValue.PickingCards
-
-			this.state.generation++
-			this.handleNewGeneration(this.state.generation)
-
-			this.state.startingPlayer =
-				(this.state.startingPlayer + 1) % this.players.length
-
-			this.logger.log(`New generation ${this.state.generation}`)
-		}
-		this.updated()
 	}
 
 	adminChange(data: UpdateDeepPartial<GameState>) {
@@ -630,7 +568,11 @@ export class Game {
 			name: this.state.name,
 			players: this.players.length,
 			maxPlayers: this.state.maxPlayers,
-			prelude: this.state.prelude
+			prelude: this.state.prelude,
+			map: this.state.map.code,
+			spectatorsEnabled: this.config.spectatorsAllowed,
+			expansions: this.state.expansions.filter((e) => e !== ExpansionType.Base),
+			draft: this.state.draft,
 		}
 	}
 }

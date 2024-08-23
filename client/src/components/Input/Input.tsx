@@ -1,4 +1,4 @@
-import React, { useCallback, InputHTMLAttributes } from 'react'
+import { useCallback, InputHTMLAttributes, ChangeEvent } from 'react'
 import styled, { css } from 'styled-components'
 
 type Props = {
@@ -16,10 +16,10 @@ export const Input = ({
 	...htmlProps
 }: Props) => {
 	const handleChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
+		(e: ChangeEvent<HTMLInputElement>) => {
 			onChange(e.target.value)
 		},
-		[onChange]
+		[onChange],
 	)
 
 	return (
@@ -35,7 +35,7 @@ export const Input = ({
 
 const StyledInput = styled.input<{ error: boolean }>`
 	&& {
-		${props =>
+		${(props) =>
 			props.error &&
 			css`
 				border: 1px solid #ff9999;

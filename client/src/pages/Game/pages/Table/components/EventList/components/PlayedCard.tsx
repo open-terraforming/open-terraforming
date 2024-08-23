@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { EventType, CardPlayed, CardUsed } from '../types'
 import { CardView } from '../../CardView/CardView'
 import { CardsLookupApi } from '@shared/cards'
 import styled, { keyframes, css } from 'styled-components'
 import { useAppStore } from '@/utils/hooks'
-import { colors, mainColors } from '@/styles'
 import { rgba } from 'polished'
 
 export type CardEvent = (CardPlayed | CardUsed) & { id: number }
@@ -17,7 +16,7 @@ type Props = {
 }
 
 export const PlayedCard = ({ index, length, event, onRemove }: Props) => {
-	const playerMap = useAppStore(state => state.game.playerMap)
+	const playerMap = useAppStore((state) => state.game.playerMap)
 	const ratio = length > 1 ? index / (length - 1) : 1
 	const [removing, setRemoving] = useState(false)
 	const [spawning, setSpawning] = useState(false)
@@ -40,8 +39,8 @@ export const PlayedCard = ({ index, length, event, onRemove }: Props) => {
 						? -200
 						: 100 - (length - 1 - index) * 30
 					: window.innerWidth / 2,
-				bottom: spawning ? 0 : 400,
-				transform: !spawning ? 'translate(-50%, 0) scale(1)' : undefined
+				bottom: spawning ? 0 : '30vh',
+				transform: !spawning ? 'translate(-50%, 0) scale(1)' : undefined,
 			}}
 			onClick={() => {
 				if (!removing) {
@@ -78,7 +77,7 @@ const PopOut = keyframes`
 `
 
 const Player = styled.span`
-	/*text-shadow: 1px 1px 2px ${mainColors.text};*/
+	/*text-shadow: 1px 1px 2px ${({ theme }) => theme.colors.text};*/
 `
 
 const Title = styled.div`
@@ -90,7 +89,12 @@ const Played = styled.div<{ removing: boolean; spawning: boolean }>`
 	bottom: 0;
 	transform: scale(0.6);
 	transform-origin: bottom center;
-	transition: transform 0.2s, margin 0.2s, opacity 0.2s, left 0.5s, bottom 0.5s;
+	transition:
+		transform 0.2s,
+		margin 0.2s,
+		opacity 0.2s,
+		left 0.5s,
+		bottom 0.5s;
 	z-index: 0;
 	overflow: hidden;
 	opacity: 1;
@@ -105,7 +109,7 @@ const Played = styled.div<{ removing: boolean; spawning: boolean }>`
 		}
 	}
 
-	${props =>
+	${(props) =>
 		props.removing &&
 		css`
 			animation-name: ${PopOut};
@@ -115,5 +119,5 @@ const Played = styled.div<{ removing: boolean; spawning: boolean }>`
 `
 
 const StyledCard = styled(CardView)`
-	background-color: ${rgba(colors.background, 1)};
+	background-color: ${({ theme }) => rgba(theme.colors.background, 1)};
 `

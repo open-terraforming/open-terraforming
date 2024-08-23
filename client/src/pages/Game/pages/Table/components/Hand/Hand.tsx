@@ -5,26 +5,25 @@ import { CardsLookupApi } from '@shared/cards'
 import {
 	emptyCardState,
 	isCardPlayable,
-	minimalCardPrice
+	minimalCardPrice,
 } from '@shared/cards/utils'
-import React from 'react'
 import { CardDisplay } from '../CardDisplay/CardDisplay'
 
 export const Hand = ({
 	onClose,
-	playing
+	playing,
 }: {
 	onClose: () => void
 	playing: boolean
 }) => {
 	const dispatch = useAppDispatch()
-	const player = useAppStore(state => state.game.player)
-	const game = useAppStore(state => state.game.state)
+	const player = useAppStore((state) => state.game.player)
+	const game = useAppStore((state) => state.game.state)
 	const state = player
 
 	const cards =
-		useAppStore(state => state.game.player?.cards)?.map(c =>
-			CardsLookupApi.get(c)
+		useAppStore((state) => state.game.player?.cards)?.map((c) =>
+			CardsLookupApi.get(c),
 		) || []
 
 	const handleSelect = (index: number | undefined) => {
@@ -41,10 +40,8 @@ export const Hand = ({
 				card &&
 				isCardPlayable(card, {
 					card: emptyCardState(card.code),
-					cardIndex: -1,
 					player: player,
-					playerId: player.id,
-					game: game
+					game: game,
 				})
 
 			if (adjusted > state.money || !playable) {
@@ -53,8 +50,8 @@ export const Hand = ({
 
 			dispatch(
 				setTableState({
-					buyingCardIndex: index
-				})
+					buyingCardIndex: index,
+				}),
 			)
 
 			onClose()
@@ -64,14 +61,14 @@ export const Hand = ({
 	return (
 		<Modal
 			open={true}
-			contentStyle={{ width: '80%', maxWidth: '80%' }}
+			contentStyle={{ minWidth: '80%' }}
 			onClose={onClose}
 			header={'Cards in your hand'}
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
 		>
 			<CardDisplay
 				buying
-				onSelect={c => {
+				onSelect={(c) => {
 					handleSelect(c.length > 0 ? c[c.length - 1].index : undefined)
 				}}
 				selected={[]}

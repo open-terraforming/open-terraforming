@@ -1,9 +1,7 @@
-import { colors } from '@/styles'
 import { CardCategory } from '@shared/cards'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Tag } from '../../../../CardView/components/Tag'
-import { useMountAnim } from '@/utils/hooks'
 
 export type TagCount = { tag: CardCategory; count: number }
 
@@ -39,10 +37,10 @@ export const HoverTags = ({ tags, open }: Props) => {
 			style={{
 				transform:
 					closing || !mounted ? 'translate(0, 5rem)' : 'translate(0, 0)',
-				opacity: closing || !mounted ? 0 : 1
+				opacity: closing || !mounted ? 0 : 1,
 			}}
 		>
-			{tags.map(t => (
+			{tags.map((t) => (
 				<Line key={t.tag}>
 					<Count>{t.count}</Count>
 					<div>
@@ -60,8 +58,8 @@ const Container = styled.div`
 	left: 0;
 	min-width: 100%;
 
-	background-color: ${colors.background};
-	border: 0.2rem solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border: 0.2rem solid ${({ theme }) => theme.colors.border};
 
 	transition: all 0.2s;
 `

@@ -1,7 +1,6 @@
 import { faCity, faTint, faTree } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GridCellContent, GridCellOther } from '@shared/index'
-import React from 'react'
 import styled from 'styled-components'
 type Props = {
 	content: GridCellContent
@@ -14,7 +13,7 @@ const contentColor = {
 	[GridCellContent.City]: '#818181',
 	[GridCellContent.Forest]: '#0A3D11',
 	[GridCellContent.Ocean]: '#446DFD',
-	[GridCellContent.Other]: '#9F5C3B'
+	[GridCellContent.Other]: '#9F5C3B',
 } as const
 
 const getTileContent = (content: GridCellContent) => {
@@ -30,7 +29,7 @@ const getTileContent = (content: GridCellContent) => {
 	return null
 }
 
-export const TileIcon = ({ content, other }: Props) => {
+export const TileIcon = ({ content }: Props) => {
 	return (
 		<E>
 			<Icon>{getTileContent(content)}</Icon>

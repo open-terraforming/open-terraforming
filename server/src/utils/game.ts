@@ -1,13 +1,13 @@
-import { GameState, PlayerState } from '@shared/game'
+import { GameState } from '@shared/game'
 import { deepCopy } from './collections'
 
 const clearArray = (a: string[], cards?: Record<string, string>) =>
-	a.map(c => (cards && cards[c]) || '')
+	a.map((c) => (cards && cards[c]) || '')
 
 export const obfuscateGame = (
 	g: GameState,
-	player?: PlayerState,
-	cards?: Record<string, string>
+	playerId: number,
+	cards: Record<string, string>,
 ) => {
 	const copy = deepCopy(g)
 
@@ -17,17 +17,18 @@ export const obfuscateGame = (
 		'preludeCards',
 		'preludeDiscarded',
 		'corporations',
-		'corporationsDiscarded'
+		'corporationsDiscarded',
 	] as const
 
-	toClear.forEach(k => {
+	toClear.forEach((k) => {
 		copy[k] = clearArray(copy[k], cards)
 	})
 
-	copy.players.forEach(p => {
-		if (p.id !== player?.id) {
+	copy.players.forEach((p) => {
+		if (p.id !== playerId) {
 			p.session = ''
 			p.cards = clearArray(p.cards, cards)
+			p.draftedCards = clearArray(p.draftedCards, cards)
 		}
 	})
 

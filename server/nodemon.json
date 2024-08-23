@@ -1,0 +1,6 @@
+{
+    "$schema": "https://json.schemastore.org/nodemon.json",
+    "delay": 1000,
+    "ignore": ["dist/server/storage/*"],
+    "watch": ["dist", ".env"]
+}

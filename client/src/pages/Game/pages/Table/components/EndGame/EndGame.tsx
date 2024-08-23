@@ -1,10 +1,9 @@
 import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
-import { colors } from '@/styles'
 import { useAppStore, useInterval } from '@/utils/hooks'
 import { VictoryPointsSource, VictoryPoints } from '@shared/index'
 import { rgba } from 'polished'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { AnimatedNumber } from '@/components/AnimatedNumber/AnimatedNumber'
 import { CompetitionType } from '@shared/competitions'
@@ -20,7 +19,7 @@ const vpOrder = [
 	VictoryPointsSource.Forests,
 	VictoryPointsSource.Cities,
 	VictoryPointsSource.Milestones,
-	VictoryPointsSource.Awards
+	VictoryPointsSource.Awards,
 ]
 
 const vpToColor = {
@@ -29,7 +28,7 @@ const vpToColor = {
 	[VictoryPointsSource.Forests]: '#B8E238',
 	[VictoryPointsSource.Cities]: '#FF952B',
 	[VictoryPointsSource.Milestones]: '#FF0000',
-	[VictoryPointsSource.Awards]: '#7B7BFF'
+	[VictoryPointsSource.Awards]: '#7B7BFF',
 } as const
 
 const vpText = (vp: VictoryPointsSource, extra?: VictoryPoints) => {
@@ -54,7 +53,7 @@ const vpText = (vp: VictoryPointsSource, extra?: VictoryPoints) => {
 }
 
 export const EndGame = ({ onClose }: Props) => {
-	const game = useAppStore(state => state.game.state)
+	const game = useAppStore((state) => state.game.state)
 
 	const [waiting, setWaiting] = useState(vpOrder.slice(1))
 
@@ -62,8 +61,8 @@ export const EndGame = ({ onClose }: Props) => {
 
 	useInterval(() => {
 		if (waiting.length > 0) {
-			setSources(s => [...s, waiting[0]])
-			setWaiting(s => s.slice(1))
+			setSources((s) => [...s, waiting[0]])
+			setWaiting((s) => s.slice(1))
 		}
 	}, 3000)
 
@@ -71,31 +70,34 @@ export const EndGame = ({ onClose }: Props) => {
 		() =>
 			game
 				? game.players
-						.map(player => {
+						.map((player) => {
 							const score = player.victoryPoints
-								.filter(s => sources.includes(s.source))
+								.filter((s) => sources.includes(s.source))
 								.reduce((acc, v) => acc + v.amount, 0)
 
 							return [player, score] as const
 						})
 						.sort((a, b) => b[1] - a[1])
-						.reduce((acc, item, index) => {
-							acc[item[0].id] = [index, item[1]]
+						.reduce(
+							(acc, item, index) => {
+								acc[item[0].id] = [index, item[1]]
 
-							return acc
-						}, {} as Record<number, [number, number]>)
+								return acc
+							},
+							{} as Record<number, [number, number]>,
+						)
 				: {},
-		[game, sources]
+		[game, sources],
 	)
 
 	const maxValue = useMemo(
 		() =>
 			game
 				? game.players
-						.map(p => p.victoryPoints.reduce((acc, s) => acc + s.amount, 0))
+						.map((p) => p.victoryPoints.reduce((acc, s) => acc + s.amount, 0))
 						.reduce((acc, p) => (p > acc ? p : acc), 0)
 				: 1,
-		[game]
+		[game],
 	)
 
 	const barWidth = game ? 100 / game.players.length : 0
@@ -111,7 +113,7 @@ export const EndGame = ({ onClose }: Props) => {
 		>
 			{sources.length > 0 && (
 				<Current>
-					{sources.map(s => (
+					{sources.map((s) => (
 						<Value key={s}>
 							<Color style={{ background: vpToColor[s] }} />
 							{vpText(s)}
@@ -120,19 +122,19 @@ export const EndGame = ({ onClose }: Props) => {
 				</Current>
 			)}
 			<CharContainer>
-				{(game?.players || []).map(player => (
+				{(game?.players || []).map((player) => (
 					<Place
 						key={player.id}
 						style={{
 							left: chart[player.id][0] * barWidth + barPadding + '%',
-							width: barWidth - barPadding * 2 + '%'
+							width: barWidth - barPadding * 2 + '%',
 						}}
 					>
 						<AnimatedNumber value={chart[player.id][1]} delay={3000} />
 						{player.victoryPoints
 							.slice()
 							.sort(
-								(a, b) => vpOrder.indexOf(b.source) - vpOrder.indexOf(a.source)
+								(a, b) => vpOrder.indexOf(b.source) - vpOrder.indexOf(a.source),
 							)
 							.map((v, i) => (
 								<Bar
@@ -142,7 +144,7 @@ export const EndGame = ({ onClose }: Props) => {
 										height:
 											(sources.includes(v.source)
 												? (v.amount / maxValue) * barHeight
-												: 0) + 'px'
+												: 0) + 'px',
 									}}
 									title={`${vpText(v.source, v)}: ${v.amount}`}
 								/>
@@ -176,7 +178,7 @@ const Place = styled.div`
 
 const Bar = styled.div`
 	transition: height 3s;
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 `
 
 const Current = styled.div`

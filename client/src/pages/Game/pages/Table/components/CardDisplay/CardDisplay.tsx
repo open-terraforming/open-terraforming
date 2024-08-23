@@ -1,11 +1,14 @@
 import { isNotUndefined, mapRight } from '@/utils/collections'
 import { Card, CardCategory, CardType } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { NoCards } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
 import { Tag } from '../CardView/components/Tag'
+import { Checkbox } from '@/components/Checkbox/Checkbox'
+import { media } from '@/styles/media'
+import { lighten } from 'polished'
 
 export type CardInfo = {
 	card: Card
@@ -21,7 +24,7 @@ export const CardDisplay = <T extends CardInfo>({
 	buying = false,
 	evaluate = true,
 	hover = true,
-	defaultType
+	defaultType,
 }: {
 	onSelect: (cards: T[]) => void
 	cards: T[]
@@ -36,7 +39,7 @@ export const CardDisplay = <T extends CardInfo>({
 	const [playable, setPlayable] = useState(false)
 
 	const [selectedCategory, setSelectedCategory] = useState(
-		undefined as CardCategory | undefined
+		undefined as CardCategory | undefined,
 	)
 
 	const categories = useMemo(
@@ -52,17 +55,19 @@ export const CardDisplay = <T extends CardInfo>({
 				CardCategory.Plant,
 				CardCategory.Animal,
 				CardCategory.Event,
-				CardCategory.Science
+				CardCategory.Science,
+				CardCategory.Venus,
 			]
-				.map(
-					cat =>
-						[
-							cat,
-							cards.filter(c => c.card.categories.includes(cat)).length
-						] as const
-				)
-				.filter(([, count]) => count > 0),
-		[cards]
+				.map((cat) => ({
+					category: cat,
+					cards: cards.filter(
+						(c) =>
+							(cat === CardCategory.Event || c.card.type !== CardType.Event) &&
+							c.card.categories.includes(cat),
+					).length,
+				}))
+				.filter(({ cards }) => cards > 0),
+		[cards],
 	)
 
 	const types = useMemo(
@@ -73,29 +78,32 @@ export const CardDisplay = <T extends CardInfo>({
 				[CardType.Effect, 'Effects'] as const,
 				[CardType.Building, 'Automated'] as const,
 				[CardType.Event, 'Events'] as const,
-				[CardType.Corporation, 'Corporation'] as const
+				[CardType.Corporation, 'Corporation'] as const,
 			]
 				.map(
 					([c, title]) =>
 						[
 							c,
 							title,
-							cards.filter(ci => c === undefined || ci.card.type === c).length
-						] as const
+							cards.filter((ci) => c === undefined || ci.card.type === c)
+								.length,
+						] as const,
 				)
 				.filter(([, , count]) => count > 0),
-		[cards]
+		[cards],
 	)
 
 	const filtered = useMemo(
 		() =>
 			cards.filter(
-				ci =>
+				(ci) =>
 					(type === undefined || ci.card.type === type) &&
 					(selectedCategory === undefined ||
-						ci.card.categories.includes(selectedCategory))
+						((selectedCategory === CardCategory.Event ||
+							ci.card.type !== CardType.Event) &&
+							ci.card.categories.includes(selectedCategory))),
 			),
-		[cards, type, selectedCategory]
+		[cards, type, selectedCategory],
 	)
 
 	useEffect(() => {
@@ -108,8 +116,8 @@ export const CardDisplay = <T extends CardInfo>({
 		if (selected.length > 0) {
 			onSelect(
 				selected
-					.map(s => filtered.find(c => c.index === s.index))
-					.filter(isNotUndefined)
+					.map((s) => filtered.find((c) => c.index === s.index))
+					.filter(isNotUndefined),
 			)
 		}
 	}, [type, selectedCategory])
@@ -120,7 +128,7 @@ export const CardDisplay = <T extends CardInfo>({
 				<Filters>
 					<Types>
 						{types.map(([cat, t, count]) => (
-							<FilterTag
+							<FilterItem
 								selected={cat === type}
 								onClick={() => {
 									setType(cat)
@@ -128,38 +136,35 @@ export const CardDisplay = <T extends CardInfo>({
 								key={cat === undefined ? -1 : cat}
 							>
 								<Type>{t}</Type>
-								<Count>
-									<div>{count}</div>
-								</Count>
-							</FilterTag>
+								<Count>{count}</Count>
+							</FilterItem>
 						))}
 					</Types>
 
 					{evaluate && (
-						<label>
-							<input
-								type="checkbox"
-								checked={playable}
-								onChange={e => setPlayable(e.target.checked)}
-							/>
-							Only playable
-						</label>
+						<Checkbox
+							checked={playable}
+							onChange={(v) => setPlayable(v)}
+							label="Only playable"
+						/>
 					)}
 
-					<Categories>
-						{categories.map(([cat, count]) => (
+					<Categories style={{ maxWidth: '50%', overflow: 'auto' }}>
+						{categories.map(({ category, cards }) => (
 							<FilterTag
-								selected={selectedCategory === cat}
+								selected={selectedCategory === category}
 								onClick={() => {
 									setSelectedCategory(
-										selectedCategory === cat ? undefined : cat
+										selectedCategory === category ? undefined : category,
 									)
 								}}
-								key={cat}
+								key={category}
 							>
-								<Tag tag={cat} />
+								<Type>
+									<Tag tag={category} size="sm" />
+								</Type>
 								<Count>
-									<div>{count}</div>
+									<div>{cards}</div>
 								</Count>
 							</FilterTag>
 						))}
@@ -171,25 +176,25 @@ export const CardDisplay = <T extends CardInfo>({
 				{filtered.length === 0 && <NoCards>No cards</NoCards>}
 				{mapRight(
 					filtered,
-					c =>
+					(c) =>
 						c && (
 							<CardView
 								hover={hover}
 								evaluate={evaluate}
 								buying={buying}
 								card={c.card}
-								selected={selected.map(s => s.index).includes(c.index)}
+								selected={selected.map((s) => s.index).includes(c.index)}
 								key={c.index}
 								state={c.state}
 								onClick={() => {
 									onSelect(
-										selected.find(s => s.index === c.index)
-											? selected.filter(s => s.index !== c.index)
-											: [...selected, c]
+										selected.find((s) => s.index === c.index)
+											? selected.filter((s) => s.index !== c.index)
+											: [...selected, c],
 									)
 								}}
 							/>
-						)
+						),
 				)}
 			</CardsContainer>
 		</>
@@ -205,9 +210,14 @@ const CardsContainer = styled.div<{ playableOnly: boolean }>`
 	min-width: 0;
 	padding: 1.5rem 1rem;
 	min-height: 322px;
+
+	${media.medium} {
+		min-height: 100px;
+	}
+
 	flex: 1;
 
-	${props =>
+	${(props) =>
 		props.playableOnly &&
 		css`
 			.unplayable {
@@ -234,36 +244,38 @@ const Filters = styled.div`
 	margin-bottom: 1rem;
 `
 
-const FilterTag = styled.div<{ selected: boolean }>`
-	margin: 0 0.2rem;
-	padding: 0.2rem;
-	position: relative;
-	cursor: pointer;
-
-	${props =>
-		props.selected &&
-		css`
-			background: #44a8f2;
-		`}
-`
-
 const Count = styled.div`
+	padding: 0.35rem;
+	background-color: ${({ theme }) => lighten(0.1, theme.colors.border)};
+
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	position: absolute;
-	left: 0;
-	right: 0;
-	top: 25px;
-
-	> div {
-		border-radius: 3px;
-		background: rgba(98, 98, 255, 0.8);
-		padding: 0.25rem;
-	}
 `
 
 const Type = styled.div`
-	padding: 0.5rem 0;
-	margin: 0 0.5rem;
+	padding: 0.35rem;
+`
+
+const FilterItem = styled.div<{ selected: boolean }>`
+	cursor: pointer;
+	display: flex;
+	margin-right: 0.3rem;
+
+	background-color: ${({ theme }) => theme.colors.border};
+
+	${(props) =>
+		props.selected &&
+		css`
+			background-color: ${({ theme }) => lighten(0.2, theme.colors.border)};
+
+			${Count} {
+				background-color: ${({ theme }) => lighten(0.3, theme.colors.border)};
+			}
+		`}
+`
+
+const FilterTag = styled(FilterItem)`
+	margin-right: 0;
+	margin-left: 0.3rem;
 `

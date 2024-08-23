@@ -5,7 +5,7 @@ import {
 	GridCell,
 	PlayerState,
 	GridCellContent,
-	GridCellOther
+	GridCellOther,
 } from '../game'
 import { StandardProject } from '../projects'
 
@@ -21,18 +21,24 @@ export type Production =
 	| 'energyProduction'
 	| 'heatProduction'
 
-export type CardResource = 'microbes' | 'animals' | 'science' | 'fighters'
+export type CardResource =
+	| 'microbes'
+	| 'animals'
+	| 'science'
+	| 'fighters'
+	| 'floaters'
+	| 'asteroids'
 
-export type GameProgress = 'oxygen' | 'temperature' | 'oceans'
+export type GameProgress = 'oxygen' | 'temperature' | 'oceans' | 'venus'
 
 export type CardEffectArgumentType = number | string | CardEffectArgumentType[]
 
 export interface CardCallbackContext {
 	game: GameState
 	player: PlayerGameState
-	playerId: number
 	card: UsedCardState
-	cardIndex: number
+	/** used by joinedEffects, includes all args sent to the action */
+	allArgs?: unknown[]
 }
 
 export interface PlayerCallbackContext {
@@ -59,7 +65,8 @@ export enum CardCategory {
 	Earth,
 	City,
 	Event,
-	Any
+	Venus,
+	Any,
 }
 
 export enum CardType {
@@ -68,13 +75,14 @@ export enum CardType {
 	Effect,
 	Building,
 	Corporation,
-	Prelude
+	Prelude,
 }
 
 export enum CardSpecial {
 	CorporationsEra = 1,
 	StartingCorporation,
-	Prelude
+	Prelude,
+	Venus,
 }
 
 export interface CardVictoryPointsCallback {
@@ -84,7 +92,6 @@ export interface CardVictoryPointsCallback {
 
 export interface Card {
 	code: string
-	title: string
 	description: string
 	type: CardType
 	categories: CardCategory[]
@@ -101,11 +108,16 @@ export interface Card {
 	passiveEffects: CardPassiveEffect[]
 
 	victoryPointsCallback?: CardVictoryPointsCallback
+
+	resourcesUsableAsMoney?: {
+		amount: number
+		categories?: CardCategory[]
+	}
 }
 
 export type CardCondition<
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	T extends (CardEffectArgumentType | undefined)[] = any
+	T extends (CardEffectArgumentType | undefined)[] = any,
 > = {
 	description?: string
 	symbols: CardSymbol[]
@@ -126,18 +138,19 @@ export type CellCondition = {
 export enum CardEffectType {
 	Production = 1,
 	Resource,
-	Other
+	Other,
 }
 
 export interface CardEffect<
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	T extends Array<CardEffectArgumentType | undefined> = any
+	T extends Array<CardEffectArgumentType | undefined> = any,
 > {
 	args: CardEffectArgument[]
 	conditions: CardCondition[]
 	description?: string
 	type: CardEffectType
 	symbols: CardSymbol[]
+	aiScore: number | ((ctx: CardCallbackContext) => number)
 	perform: (ctx: CardCallbackContext, ...args: T) => void
 }
 
@@ -150,6 +163,8 @@ export enum CardEffectTarget {
 	Resource,
 	// Type - resource: Resource
 	ResourceType,
+	// Type - amount: number
+	Production,
 	// Type - cardIndex: number
 	Card,
 	// Type - [player: number, cardIndex: number]
@@ -157,7 +172,9 @@ export enum CardEffectTarget {
 	// Type - [choice: number, choiceParams: any[]]
 	EffectChoice,
 	// Type - [x: number, y: number]
-	Cell
+	Cell,
+	// Type - amount: number
+	CardResourceCount,
 }
 
 export interface CardEffectArgument {
@@ -176,11 +193,12 @@ export interface CardEffectArgument {
 	production?: Production
 	fromHand?: boolean
 	effects?: CardEffect[]
+	minAmount?: number
 }
 
 export type ResourceCondition = (
 	context: { player: PlayerState; game: GameState },
-	resource: Resource
+	resource: Resource,
 ) => boolean
 
 export interface CardPassiveEffect {
@@ -190,20 +208,27 @@ export interface CardPassiveEffect {
 	onTilePlaced?: (
 		ctx: CardCallbackContext,
 		cell: GridCell,
-		placedBy: PlayerState
+		placedBy: PlayerState,
 	) => void
 	onCardPlayed?: (
 		ctx: CardCallbackContext,
 		playedCard: Card,
 		playedCardIndex: number,
-		playedBy: PlayerState
+		playedBy: PlayerState,
 	) => void
 	onStandardProject?: (
 		ctx: CardCallbackContext,
 		project: StandardProject,
-		playedBy: PlayerState
+		playedBy: PlayerState,
 	) => void
+	onProgress?: (ctx: CardCallbackContext, progress: GameProgress) => void
 	onGenerationEnd?: (ctx: CardCallbackContext) => void
+	onPlayerProductionChanged?: (
+		ctx: CardCallbackContext,
+		player: PlayerState,
+		production: Production,
+		change: number,
+	) => void
 }
 
 export enum SymbolType {
@@ -218,7 +243,10 @@ export enum SymbolType {
 	X,
 	Colon,
 	LessOrEqual,
-	MoreOrEqual
+	MoreOrEqual,
+	Venus,
+	AnyResource,
+	Equal,
 }
 
 export interface CardSymbol {

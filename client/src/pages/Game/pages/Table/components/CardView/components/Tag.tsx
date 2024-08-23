@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { CardCategory } from '@shared/cards'
 import styled, { css } from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -13,17 +13,19 @@ import {
 	faCity,
 	faWarehouse,
 	faMicroscope,
-	faQuestion
+	faQuestion,
 } from '@fortawesome/free-solid-svg-icons'
 import { Jupiter } from './Jupiter'
+import { venusIcon } from '@/icons/venus'
 
 type Props = {
 	tag: CardCategory
 	size?: 'md' | 'sm'
 	className?: string
+	onClick?: () => void
 }
 
-export const Tag = ({ tag, size = 'md', className }: Props) => {
+export const Tag = ({ tag, size = 'md', className, onClick }: Props) => {
 	const image = useMemo(() => {
 		switch (tag) {
 			case CardCategory.Animal:
@@ -98,18 +100,29 @@ export const Tag = ({ tag, size = 'md', className }: Props) => {
 						<FontAwesomeIcon icon={faQuestion} color="#333" />
 					</IconContainer>
 				)
+			case CardCategory.Venus:
+				return (
+					<IconContainer background="#5675ad">
+						<FontAwesomeIcon icon={venusIcon} color="#fff" />
+					</IconContainer>
+				)
 		}
 	}, [tag])
 
 	return (
-		<Category title={CardCategory[tag]} size={size} className={className}>
+		<Category
+			title={CardCategory[tag]}
+			size={size}
+			className={className}
+			onClick={onClick}
+		>
 			{image || CardCategory[tag]}
 		</Category>
 	)
 }
 
 const IconContainer = styled.div<{ background: string; size?: Props['size'] }>`
-	${props => css`
+	${(props) => css`
 		background: ${props.background};
 		width: 100%;
 		height: 100%;
@@ -121,11 +134,13 @@ const IconContainer = styled.div<{ background: string; size?: Props['size'] }>`
 		border-left: 2px solid rgb(221, 221, 221);
 		border-bottom: 2px solid rgb(137, 137, 137);
 		border-right: 2px solid rgb(137, 137, 137);
+
+		overflow: hidden;
 	`}
 `
 
 const Category = styled.div<{ size?: Props['size'] }>`
-	${props =>
+	${(props) =>
 		props.size === 'md'
 			? css`
 					width: 2rem;
@@ -135,7 +150,7 @@ const Category = styled.div<{ size?: Props['size'] }>`
 						margin-top: -2px;
 						margin-left: -2px;
 					}
-			  `
+				`
 			: css`
 					width: 1.25rem;
 					height: 1.25rem;
@@ -145,7 +160,7 @@ const Category = styled.div<{ size?: Props['size'] }>`
 					> ${IconContainer} {
 						box-sizing: border-box;
 					}
-			  `}
+				`}
 
 	img {
 		width: 100%;

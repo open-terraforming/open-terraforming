@@ -1,4 +1,3 @@
-import React from 'react'
 import { CardsLookupApi } from '@shared/cards'
 import { Modal } from '@/components/Modal/Modal'
 import { CardView } from '../../CardView/CardView'

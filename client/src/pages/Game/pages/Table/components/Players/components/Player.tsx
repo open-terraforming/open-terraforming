@@ -1,4 +1,3 @@
-import { colors } from '@/styles'
 import { useAppStore, useElementPosition } from '@/utils/hooks'
 import {
 	faArrowRight,
@@ -8,26 +7,30 @@ import {
 	faUserClock,
 	faChevronRight,
 	faUserSlash,
-	faRobot
+	faRobot,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { PlayerState, PlayerStateValue } from '@shared/index'
-import React, { useState } from 'react'
+import { GameStateValue, PlayerState, PlayerStateValue } from '@shared/index'
+import { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { ResourcesDiff } from './ResourcesDiff/ResourcesDiff'
 import { PlayerActionType } from '@shared/player-actions'
 import { pendingActions } from '@shared/utils'
+import { lighten } from 'polished'
+import { Tooltip } from '@/components'
 
 // TODO: Map pending actions to strings too
 
 const pendingToStr = {
 	[PlayerActionType.PickCards]: 'Picking cards',
-	[PlayerActionType.PickCorporation]: 'Picking corporation',
+	[PlayerActionType.PickStarting]: 'Picking',
 	[PlayerActionType.PickPreludes]: 'Picking preludes',
 	[PlayerActionType.PlaceTile]: 'Placing tile',
 	[PlayerActionType.ClaimTile]: 'Claiming tile',
 	[PlayerActionType.PlayCard]: 'Playing card',
-	[PlayerActionType.SponsorCompetition]: 'Selecting competition'
+	[PlayerActionType.DraftCard]: 'Picking card',
+	[PlayerActionType.SponsorCompetition]: 'Selecting competition',
+	[PlayerActionType.SolarPhaseTerraform]: 'World Government Terraforming',
 }
 
 const stateToStr = {
@@ -38,7 +41,8 @@ const stateToStr = {
 	[PlayerStateValue.Picking]: '',
 	[PlayerStateValue.Connecting]: 'Connecting',
 	[PlayerStateValue.Waiting]: null,
-	[PlayerStateValue.Ready]: null
+	[PlayerStateValue.Ready]: null,
+	[PlayerStateValue.Prelude]: 'Playing',
 } as const
 
 const stateToIcon = {
@@ -49,13 +53,14 @@ const stateToIcon = {
 	[PlayerStateValue.Picking]: faUserClock,
 	[PlayerStateValue.Connecting]: faEthernet,
 	[PlayerStateValue.Waiting]: faHourglassHalf,
-	[PlayerStateValue.Ready]: faCheck
+	[PlayerStateValue.Ready]: faCheck,
+	[PlayerStateValue.Prelude]: faArrowRight,
 } as const
 
 export const Player = ({
 	player,
 	starting,
-	onClick
+	onClick,
 }: {
 	player: PlayerState
 	starting: boolean
@@ -65,15 +70,21 @@ export const Player = ({
 	const position = useElementPosition(container)
 	const state = player
 	const isPlaying = state.state === PlayerStateValue.Playing
-	const isPlayer = player.id === useAppStore(state => state.game.playerId)
+	const isPlayer = player.id === useAppStore((state) => state.game.playerId)
 	const pending = pendingActions(player)[0]
+	const gameState = useAppStore((state) => state.game.state.state)
+
+	const isActionBased =
+		gameState === GameStateValue.GenerationInProgress ||
+		gameState === GameStateValue.EndingTiles
 
 	return (
 		<Container
 			onClick={onClick}
 			isPlaying={isPlaying}
-			ref={e => setContainer(e)}
+			ref={(e) => setContainer(e)}
 		>
+			<Rating>{state.terraformRating}</Rating>
 			<InfoContainer>
 				<NameContainer>
 					<Name>
@@ -96,10 +107,9 @@ export const Player = ({
 						{player.name}
 						{isPlayer ? ' (You)' : ''}
 					</Name>
-					<Rating>{state.terraformRating}</Rating>
 				</NameContainer>
 				<State>
-					{isPlaying ? (
+					{isPlaying && isActionBased ? (
 						<>
 							<FontAwesomeIcon
 								icon={faChevronRight}
@@ -121,7 +131,8 @@ export const Player = ({
 									size="sm"
 								/>
 							)}{' '}
-							{stateToStr[state.state]}
+							{gameState !== GameStateValue.SolarPhase &&
+								stateToStr[state.state]}
 							{pending && ` ${pendingToStr[pending.type]}`}
 						</>
 					)}
@@ -129,12 +140,14 @@ export const Player = ({
 			</InfoContainer>
 			<Color style={{ backgroundColor: player.color }} />
 			{starting && (
-				<Starting title="This player is first this generation">1</Starting>
+				<Starting>
+					<Tooltip content="Starting player this generation">1</Tooltip>
+				</Starting>
 			)}
 			<ResourcesDiff
 				player={player}
-				x={position.left + position.width}
-				y={position.top}
+				x={position ? position.left + position.width : 0}
+				y={position ? position.top : 0}
 			/>
 		</Container>
 	)
@@ -152,7 +165,7 @@ const Container = styled.div<{ isPlaying: boolean }>`
 	cursor: pointer;
 	position: relative;
 
-	${props =>
+	${(props) =>
 		props.isPlaying &&
 		css`
 			opacity: 1;
@@ -161,11 +174,11 @@ const Container = styled.div<{ isPlaying: boolean }>`
 
 const InfoContainer = styled.div`
 	width: 10rem;
-	background-color: ${colors.background};
+	background-color: ${({ theme }) => theme.colors.background};
 `
 
 const Name = styled.div`
-	background-color: ${colors.background};
+	background-color: ${({ theme }) => theme.colors.background};
 	padding: 0.2rem 0.5rem;
 	flex-grow: 1;
 	text-overflow: ellipsis;
@@ -173,7 +186,13 @@ const Name = styled.div`
 `
 
 const Rating = styled.div`
-	padding: 0.2rem 0.5rem;
+	background-color: ${({ theme }) => theme.colors.background};
+	padding: 0.2rem 0rem;
+	width: 2.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 150%;
 `
 
 const State = styled.div`
@@ -185,12 +204,11 @@ const Color = styled.div`
 `
 
 const Starting = styled.div`
-	background: ${colors.background};
-	border-radius: 50%;
+	background: ${({ theme }) => theme.colors.background};
 	width: 2rem;
 	height: 2rem;
 	line-height: 2rem;
 	text-align: center;
 	align-self: center;
-	margin-left: 0.25rem;
+	color: ${({ theme }) => lighten(0.1, theme.colors.text)};
 `

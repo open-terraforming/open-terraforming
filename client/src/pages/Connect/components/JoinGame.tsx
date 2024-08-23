@@ -5,19 +5,17 @@ import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import { joinRequest } from '@shared/actions'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { BackButton } from './BackButton'
 
-type Props = {}
-
-export const JoinGame = ({}: Props) => {
+export const JoinGame = () => {
 	const api = useApi()
 	const [joining, setJoining] = useState(false)
 	const [name, setName] = useState(localStorage['lastName'] || '')
 
-	const apiState = useAppStore(state => state.api.state)
-	const apiError = useAppStore(state => state.api.error)
+	const apiState = useAppStore((state) => state.api.state)
+	const apiError = useAppStore((state) => state.api.error)
 
 	useEffect(() => {
 		setJoining(false)
@@ -34,7 +32,7 @@ export const JoinGame = ({}: Props) => {
 		<>
 			<Input
 				value={name}
-				onChange={v => setName(v)}
+				onChange={(v) => setName(v)}
 				placeholder="Enter your name"
 				minLength={3}
 				maxLength={10}

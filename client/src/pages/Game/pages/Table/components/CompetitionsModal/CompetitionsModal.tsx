@@ -1,14 +1,13 @@
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
-import { useAppStore } from '@/utils/hooks'
+import { useAppStore, useGameState } from '@/utils/hooks'
 import { Competition, Competitions } from '@shared/competitions'
-import { COMPETITIONS_PRICES, COMPETITIONS_REWARDS } from '@shared/constants'
 import { sponsorCompetition } from '@shared/index'
-import React, { useMemo } from 'react'
+import { competitionPrice } from '@shared/utils'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { CompetitionDisplay } from './components/CompetitionDisplay'
-import { competitionPrice } from '@shared/utils'
 
 type Props = {
 	freePick?: boolean
@@ -17,16 +16,18 @@ type Props = {
 
 export const CompetitionsModal = ({ onClose, freePick }: Props) => {
 	const api = useApi()
-	const sponsored = useAppStore(state => state.game.state?.competitions) || []
-	const players = useAppStore(state => state.game.state?.players) || []
-	const playing = useAppStore(state => state.game.playing) || freePick === true
-	const game = useAppStore(state => state.game.state)
+	const game = useGameState()
+	const players = game.players
+	const sponsored = game.competitions
+
+	const playing =
+		useAppStore((state) => state.game.playing) || freePick === true
 
 	const competitionTypes = useAppStore(
-		state => state.game.state.map.competitions
+		(state) => state.game.state.map.competitions,
 	)
 
-	const playerMoney = useAppStore(state => state.game.player?.money) || 0
+	const playerMoney = useAppStore((state) => state.game.player?.money) || 0
 
 	const cost = competitionPrice(game)
 	const affordable = !!freePick || (cost !== undefined && playerMoney >= cost)
@@ -38,8 +39,8 @@ export const CompetitionsModal = ({ onClose, freePick }: Props) => {
 	}
 
 	const competitions = useMemo(
-		() => competitionTypes.map(c => Competitions[c]),
-		[competitionTypes]
+		() => competitionTypes.map((c) => Competitions[c]),
+		[competitionTypes],
 	)
 
 	return (
@@ -47,12 +48,12 @@ export const CompetitionsModal = ({ onClose, freePick }: Props) => {
 			open={true}
 			header="Competitions"
 			onClose={onClose}
-			contentStyle={{ width: '500px' }}
+			contentStyle={{ minWidth: '500px' }}
 		>
 			<Info>
 				<Flexed>
 					<span>Cost:</span>
-					{COMPETITIONS_PRICES.map((p, i) => (
+					{game.competitionsPrices.map((p, i) => (
 						<Flexed key={i}>
 							<Index>{i + 1}.</Index> {p} <ResourceIcon res="money" />
 						</Flexed>
@@ -61,17 +62,17 @@ export const CompetitionsModal = ({ onClose, freePick }: Props) => {
 
 				<Flexed>
 					<span>Rewards:</span>
-					{COMPETITIONS_REWARDS.map((p, i) => (
+					{game.competitionRewards.map((p, i) => (
 						<Flexed key={i}>
 							<Index>{i + 1}.</Index> {p} VPs
 						</Flexed>
 					))}
 				</Flexed>
 			</Info>
-			{competitions.map(c => (
+			{competitions.map((c) => (
 				<CompetitionDisplay
 					sponsored={players.find(
-						p => p.id === sponsored.find(i => i.type === c.type)?.playerId
+						(p) => p.id === sponsored.find((i) => i.type === c.type)?.playerId,
 					)}
 					cost={cost}
 					playing={playing}

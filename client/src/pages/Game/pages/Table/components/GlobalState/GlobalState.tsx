@@ -1,9 +1,8 @@
 import { Button } from '@/components'
-import { colors } from '@/styles'
 import { useAppStore } from '@/utils/hooks'
 import { faPoll } from '@fortawesome/free-solid-svg-icons'
 import { GameStateValue } from '@shared/index'
-import React, { useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { EndGame } from '../EndGame/EndGame'
 import { Oceans } from './components/Oceans'
@@ -11,8 +10,8 @@ import { Oxygen } from './components/Oxygen'
 import { Temperature } from './components/Temperature'
 
 export const GlobalState = () => {
-	const game = useAppStore(state => state.game.state)
-	const player = useAppStore(state => state.game.player)
+	const game = useAppStore((state) => state.game.state)
+	const player = useAppStore((state) => state.game.player)
 	const [showEnd, setShowEnd] = useState(true)
 
 	const handleShow = useCallback(() => {
@@ -45,7 +44,7 @@ export const GlobalState = () => {
 					style={{
 						display: 'flex',
 						justifyContent: 'flex-end',
-						alignItems: 'stretch'
+						alignItems: 'stretch',
 					}}
 				>
 					<Temperature
@@ -71,15 +70,22 @@ export const GlobalState = () => {
 }
 
 const E = styled.div`
-	width: 208px;
+	width: 185px;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
+	overflow-y: auto;
+	overflow-x: hidden;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
 `
 
 const Container = styled.div`
-	background-color: ${colors.background};
-	border: 2px solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0.25rem 0.5rem;
 	margin-bottom: 1rem;
 	margin-right: 2rem;

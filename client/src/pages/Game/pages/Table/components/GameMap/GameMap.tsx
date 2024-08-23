@@ -1,15 +1,15 @@
 import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
-import { useAppStore, useInterval } from '@/utils/hooks'
+import { useAppStore } from '@/utils/hooks'
 import { claimTile, placeTile } from '@shared/actions'
-import { GridCell, PlayerStateValue } from '@shared/game'
+import { GridCell, GridCellLocation, PlayerStateValue } from '@shared/game'
 import { PlayerActionType } from '@shared/player-actions'
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import styled from 'styled-components'
-import { Cell, delayFunctions } from './components/Cell'
+import { Cell } from './components/Cell'
 import { CellOverlay } from './components/CellOverlay'
-
-type Props = {}
+import { ExpansionType } from '@shared/expansions/types'
+import { VenusButton } from './components/VenusButton'
 
 const cellPos = (x: number, y: number) => {
 	if (y % 2 === 1) {
@@ -19,11 +19,16 @@ const cellPos = (x: number, y: number) => {
 	return { x: 15 + x * 18, y: 10 + y * 20 * 0.75 }
 }
 
-export const GameMap = ({}: Props) => {
+export const GameMap = () => {
 	const api = useApi()
-	const map = useAppStore(state => state.game.state?.map)
+
+	const hasVenus = useAppStore((state) =>
+		state.game.state?.expansions.includes(ExpansionType.Venus),
+	)
+
+	const map = useAppStore((state) => state.game.state?.map)
 	const containerRef = useRef<HTMLDivElement>(null)
-	const [delayFunction, setDelayFunction] = useState(0)
+	const [delayFunction] = useState(0)
 
 	/*
 	useWindowEvent('mousemove', (e: MouseEvent) => {
@@ -59,12 +64,13 @@ export const GameMap = ({}: Props) => {
 	})
 	*/
 
-	const pending = useAppStore(state => state.game.pendingAction)
+	const pending = useAppStore((state) => state.game.pendingAction)
 
 	const isPlaying = useAppStore(
-		state =>
+		(state) =>
 			state.game.player?.state === PlayerStateValue.Playing ||
-			state.game.player?.state === PlayerStateValue.EndingTiles
+			state.game.player?.state === PlayerStateValue.EndingTiles ||
+			state.game.player?.state === PlayerStateValue.Prelude,
 	)
 
 	const placing =
@@ -80,68 +86,90 @@ export const GameMap = ({}: Props) => {
 
 	const handleCellClick = (cell: GridCell) => {
 		if (placing) {
-			api.send(placeTile(cell.x, cell.y))
+			api.send(placeTile(cell.x, cell.y, cell.location))
 		} else if (claiming) {
-			api.send(claimTile(cell.x, cell.y))
+			api.send(claimTile(cell.x, cell.y, cell.location))
 		}
 	}
 
+	/*
 	useInterval(() => {
 		setDelayFunction(Math.round(Math.random() * (delayFunctions.length - 1)))
-	}, 20000)
+	}, 15000)
+	*/
 
 	const width = ((map?.width || 0) + 0.5) * 18
 	const height = ((map?.height || 0) + 0.5) * 20 * 0.75
 
 	return map ? (
 		<Container ref={containerRef}>
-			<Background>
-				<img src={background} />
-			</Background>
+			<Inner>
+				<InnerInner>
+					<Background>
+						<img src={background} />
+					</Background>
 
-			{map.grid.map(col =>
-				col
-					.filter(c => c.enabled)
-					.map(cell => (
-						<CellOverlay
-							cell={cell}
-							key={`${cell.x},${cell.y}`}
-							pos={{
-								x: (cellPos(cell.x, cell.y).x - 9) / width,
-								y: (cellPos(cell.x, cell.y).y - 10) / height
-							}}
-							width={18 / width}
-							height={20 / height}
-						/>
-					))
-			)}
+					{hasVenus && <VenusButton placing={placing} />}
 
-			<svg viewBox={`0 0 ${width} ${height}`} style={{ overflow: 'visible' }}>
-				<defs>
-					<radialGradient id="Ocean" cx="0.5" cy="0.5" r="0.5">
-						<stop offset="0%" stopColor="rgba(0,0,0,0)" />
-						<stop offset="100%" stopColor="rgba(15,135,226,0.8)" />
-					</radialGradient>
-				</defs>
-
-				<g>
-					{map.grid.map(col =>
+					{map.grid.map((col) =>
 						col
-							.filter(c => c.enabled)
-							.map(cell => (
-								<Cell
-									cell={cell}
+							.filter(
+								(c) =>
+									c.enabled &&
+									(c.location === undefined ||
+										c.location === GridCellLocation.Main),
+							)
+							.map((cell) => (
+								<CellOverlay
 									placing={placing}
-									claiming={claiming}
-									delayFunction={delayFunction}
+									cell={cell}
 									key={`${cell.x},${cell.y}`}
-									pos={cellPos(cell.x, cell.y)}
-									onClick={() => handleCellClick(cell)}
+									pos={{
+										x: (cellPos(cell.x, cell.y).x - 9) / width,
+										y: (cellPos(cell.x, cell.y).y - 10) / height,
+									}}
+									width={18 / width}
+									height={20 / height}
 								/>
-							))
+							)),
 					)}
-				</g>
-			</svg>
+
+					<svg
+						viewBox={`0 0 ${width} ${height}`}
+						style={{ overflow: 'visible' }}
+					>
+						<defs>
+							<radialGradient id="Ocean" cx="0.5" cy="0.5" r="0.5">
+								<stop offset="0%" stopColor="rgba(0,0,0,0)" />
+								<stop offset="100%" stopColor="rgba(15,135,226,0.8)" />
+							</radialGradient>
+						</defs>
+
+						<g>
+							{map.grid.map((col) =>
+								col
+									.filter(
+										(c) =>
+											c.enabled &&
+											(c.location === undefined ||
+												c.location === GridCellLocation.Main),
+									)
+									.map((cell) => (
+										<Cell
+											cell={cell}
+											placing={placing}
+											claiming={claiming}
+											delayFunction={delayFunction}
+											key={`${cell.x},${cell.y}`}
+											pos={cellPos(cell.x, cell.y)}
+											onClick={() => handleCellClick(cell)}
+										/>
+									)),
+							)}
+						</g>
+					</svg>
+				</InnerInner>
+			</Inner>
 		</Container>
 	) : (
 		<></>
@@ -149,11 +177,38 @@ export const GameMap = ({}: Props) => {
 }
 
 const Container = styled.div`
-	flex-grow: 1;
-	max-width: 800px;
-	margin: auto auto;
-	position: relative;
 	transition: transform 0.05s;
+	overflow: auto;
+
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1;
+
+	max-width: 100%;
+	max-height: 100%;
+
+	display: flex;
+`
+
+const Inner = styled.div`
+	width: 100%;
+	position: relative;
+
+	max-width: 800px;
+	min-width: 600px;
+
+	margin: auto auto;
+
+	padding-top: 4rem;
+	padding-left: 17rem;
+	padding-right: 220px;
+`
+
+const InnerInner = styled.div`
+	position: relative;
 
 	> svg {
 		position: relative;

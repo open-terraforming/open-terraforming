@@ -3,7 +3,7 @@ import { GameState, GameStateValue } from '@shared/index'
 import { objDiff } from '@/utils/collections'
 import {
 	GameEvent,
-	EventType
+	EventType,
 } from '@/pages/Game/pages/Table/components/EventList/types'
 import { resourceProduction } from '@shared/cards/utils'
 
@@ -13,10 +13,10 @@ const resources: Resource[] = [
 	'titan',
 	'plants',
 	'energy',
-	'heat'
+	'heat',
 ]
 
-const progress: GameProgress[] = ['oxygen', 'temperature']
+const progress: GameProgress[] = ['oxygen', 'temperature', 'venus']
 
 export const getEvents = (lastGame: GameState, game: GameState) => {
 	const diff = objDiff(lastGame, game) as GameState
@@ -32,7 +32,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 						type: EventType.TilePlaced,
 						playerId: cellChange.ownerId as number,
 						tile: cellChange.content,
-						other: cellChange.other
+						other: cellChange.other,
 					})
 				}
 			})
@@ -69,7 +69,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 									newEvents.push({
 										type: EventType.CardPlayed,
 										playerId: player.id,
-										card: cardChanges.code
+										card: cardChanges.code,
 									})
 								}
 							} else {
@@ -79,10 +79,10 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 									newEvents.push({
 										type: EventType.CardResourceChanged,
 										playerId: player.id,
-										card: cardChanges.code,
+										card: oldCard.code,
 										resource: card.resource,
 										index: parseInt(cardIndex),
-										amount: cardChanges[card.resource] - oldCard[card.resource]
+										amount: cardChanges[card.resource] - oldCard[card.resource],
 									})
 								}
 
@@ -94,11 +94,11 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 										type: EventType.CardUsed,
 										playerId: player.id,
 										card: oldCard.code,
-										index: parseInt(cardIndex)
+										index: parseInt(cardIndex),
 									})
 								}
 							}
-						}
+						},
 					)
 				}
 
@@ -106,11 +106,11 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 					newEvents.push({
 						type: EventType.RatingChanged,
 						playerId: player.id,
-						amount: gameChanges.terraformRating - player.terraformRating
+						amount: gameChanges.terraformRating - player.terraformRating,
 					})
 				}
 
-				resources.forEach(res => {
+				resources.forEach((res) => {
 					const prod = resourceProduction[res]
 
 					if (gameChanges[res] !== undefined) {
@@ -118,7 +118,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 							type: EventType.ResourceChanged,
 							playerId: player.id,
 							resource: res,
-							amount: gameChanges[res] - player[res]
+							amount: gameChanges[res] - player[res],
 						})
 					}
 
@@ -127,7 +127,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 							type: EventType.ProductionChanged,
 							playerId: player.id,
 							resource: res,
-							amount: gameChanges[prod] - player[prod]
+							amount: gameChanges[prod] - player[prod],
 						})
 					}
 				})
@@ -136,19 +136,20 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 					newEvents.push({
 						type: EventType.CorporationPicked,
 						playerId: player.id,
-						corporation: gameChanges.corporation
+						corporation: gameChanges.corporation,
 					})
 				}
 
 				if (gameChanges.cards) {
-					const diff = newPlayer.cards.filter(c => !player.cards.includes(c))
-						.length
+					const diff = newPlayer.cards.filter(
+						(c) => !player.cards.includes(c),
+					).length
 
 					if (diff > 0) {
 						newEvents.push({
 							type: EventType.CardsReceived,
 							playerId: player.id,
-							amount: diff
+							amount: diff,
 						})
 					}
 				}
@@ -156,32 +157,32 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 		})
 	}
 
-	progress.forEach(p => {
+	progress.forEach((p) => {
 		if (diff[p]) {
 			newEvents.push({
 				type: EventType.GameProgressChanged,
 				progress: p,
-				amount: diff[p] - lastGame[p]
+				amount: diff[p] - lastGame[p],
 			})
 		}
 	})
 
 	if (diff.competitions) {
-		Object.values(diff.competitions).forEach(c => {
+		Object.values(diff.competitions).forEach((c) => {
 			newEvents.push({
 				type: EventType.CompetitionSponsored,
 				playerId: c.playerId,
-				competition: c.type
+				competition: c.type,
 			})
 		})
 	}
 
 	if (diff.milestones) {
-		Object.values(diff.milestones).forEach(c => {
+		Object.values(diff.milestones).forEach((c) => {
 			newEvents.push({
 				type: EventType.MilestoneBought,
 				playerId: c.playerId,
-				milestone: c.type
+				milestone: c.type,
 			})
 		})
 	}
@@ -189,19 +190,19 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 	if (diff.currentPlayer !== undefined) {
 		newEvents.push({
 			type: EventType.PlayingChanged,
-			playing: diff.currentPlayer
+			playing: diff.currentPlayer,
 		})
 	}
 
 	if (diff.generation !== undefined) {
 		newEvents.push({
-			type: EventType.NewGeneration
+			type: EventType.NewGeneration,
 		})
 	}
 
 	if (diff.state === GameStateValue.GenerationEnding) {
 		newEvents.push({
-			type: EventType.ProductionPhase
+			type: EventType.ProductionPhase,
 		})
 	}
 

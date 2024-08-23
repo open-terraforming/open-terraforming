@@ -8,7 +8,7 @@ import {
 	useCallback,
 	useEffect,
 	useRef,
-	useState
+	useState,
 } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -18,110 +18,26 @@ export const useAppStore = <T>(selector: (state: StoreState) => T) => {
 
 export const useAppDispatch = useDispatch as () => AppDispatch
 
-export const useDebounce = <T>(value: T, delay: number): T => {
-	const [debouncedValue, setDebouncedValue] = useState(value)
+export const usePlayerState = () => useAppStore((state) => state.game.player)
+export const useGameState = () => useAppStore((state) => state.game.state)
 
-	useEffect(() => {
-		const handler = setTimeout(() => {
-			setDebouncedValue(value)
-		}, delay)
-
-		return () => {
-			clearTimeout(handler)
-		}
-	}, [value])
-
-	return debouncedValue
-}
-
-export const useDebounceCallback = <T, A extends any[]>(
-	value: (...args: A) => T,
-	delay = 100
-): ((...args: A) => void) => {
-	const callback = useRef<(...args: A) => T>()
-	const callArgs = useRef<A>()
-	const timeout = useRef<ReturnType<typeof setTimeout>>()
-
-	useEffect(
-		() => () => (timeout.current ? clearTimeout(timeout.current) : undefined),
-		[]
-	)
-
-	callback.current = value
-
-	return useCallback(
-		(...args: A) => {
-			callArgs.current = args
-
-			if (timeout.current) {
-				clearTimeout(timeout.current)
-			}
-
-			timeout.current = setTimeout(() => {
-				if (callback.current && callArgs.current) {
-					callback.current.apply(null, callArgs.current)
-				}
-			}, delay)
-		},
-		[callback, callArgs, delay]
-	)
-}
-
-export const useEffectWithoutMount = (
-	effect: EffectCallback,
-	deps?: DependencyList
-) => {
-	const [mounted, setMounted] = useState(false)
-
-	useEffect(() => {
-		if (!mounted) {
-			setMounted(true)
-
-			return
-		}
-
-		return effect()
-	}, deps)
-}
-
-/**
- * Attaches event callback to window when mounting and deattaches it when unmounting.
- * @param target
- * @param event
- * @param callback
- * @param cancelBubble
- */
 export const useWindowEvent = <E extends Event>(
 	event: string,
 	callback: (e: E) => void,
-	cancelBubble = false
+	cancelBubble = false,
 ) => useEvent(window, event, callback, cancelBubble)
 
-/**
- * Attaches event callback to document when mounting  and deattaches it when unmounting.
- * @param target
- * @param event
- * @param callback
- * @param cancelBubble
- */
 export const useDocumentEvent = <E extends Event>(
 	event: string,
 	callback: (e: E) => void,
-	cancelBubble = false
+	cancelBubble = false,
 ) => useEvent(document, event, callback, cancelBubble)
 
-/**
- * Attaches event callback to target when mounting and deattaches it when unmounting.
- * @param target
- * @param event
- * @param callback
- * @param cancelBubble
- */
 export const useEvent = <E extends Event>(
 	target: EventTarget | undefined | null,
 	event: string,
 	callback: (e: E) => void,
-	cancelBubble = false
+	cancelBubble = false,
 ) => {
 	// Hold reference to callback
 	const callbackRef = useRef(callback)
@@ -143,64 +59,6 @@ export const useEvent = <E extends Event>(
 			return () => target.removeEventListener(event, listener)
 		}
 	}, [target])
-}
-
-/**
- * Returns previous props
- * @param value
- */
-export const usePrevious = <T extends {}>(value: T) => {
-	const ref = useRef<T>()
-
-	useEffect(() => {
-		ref.current = value
-	}, [value])
-
-	return ref.current
-}
-
-const hasAnyParentClass = (element: Element, classname?: string): boolean => {
-	if (!classname) {
-		return false
-	}
-
-	if (element.className?.split(' ').indexOf(classname) >= 0) {
-		return true
-	}
-
-	return element.parentNode
-		? hasAnyParentClass(element.parentNode as Element, classname)
-		: false
-}
-
-/**
- * Call function when user clicks outside HTML element
- * @param ref useRef
- * @param onClickOutside call when user clicks outside ref
- * @param classNameToOmit if element or any of his parents have this className, do not call onClickOutside
- */
-export const useClickOutside = (
-	ref: React.RefObject<HTMLElement>,
-	onClickOutside: () => void,
-	classNameToOmit?: string
-) => {
-	const handleClickOutside = (event: MouseEvent) => {
-		if (
-			ref.current &&
-			!ref.current.contains(event.target as Element) &&
-			!hasAnyParentClass(event.target as Element, classNameToOmit)
-		) {
-			onClickOutside()
-		}
-	}
-
-	useEffect(() => {
-		document.addEventListener('mousedown', handleClickOutside)
-
-		return () => {
-			document.removeEventListener('mousedown', handleClickOutside)
-		}
-	})
 }
 
 /**
@@ -233,30 +91,45 @@ export const useInterval = (callback: () => void, delay: number) => {
 }
 
 export const useAnimatedNumber = (value: number, delay = 100) => {
+	// Stop animating when component unmounts
 	const mounted = useRef(true)
-	const [lastValue, setLastValue] = useState(value)
-	const lastTime = useRef<number>()
+
+	// This is the only change that should cause render
 	const [display, setDisplay] = useState(value)
 
-	const update = () => {
+	// Internal data, no need to rerender when those change
+	const state = useRef<{
+		targetValue: number
+		startValue: number
+		startTime: number
+		animationFrame?: number
+	}>({
+		targetValue: value,
+		startTime: 0,
+		startValue: value,
+	})
+
+	// Keeps requesting frames and updating value until we reach the target delay
+	const update = useCallback(() => {
 		if (!mounted.current) {
 			return
 		}
 
-		const diff = lastTime.current
-			? new Date().getTime() - lastTime.current
-			: delay
+		const { startTime, startValue, targetValue } = state.current
 
-		if (diff < delay) {
-			setDisplay(Math.round(lastValue + ((value - lastValue) * diff) / delay))
+		const time = (startTime ? new Date().getTime() - startTime : delay) / delay
 
-			window.requestAnimationFrame(update)
+		if (time < 1) {
+			setDisplay(Math.round(startValue + (targetValue - startValue) * time))
+
+			state.current.animationFrame = window.requestAnimationFrame(update)
 		} else {
-			setDisplay(value)
-			setLastValue(value)
+			setDisplay(targetValue)
+			state.current.animationFrame = undefined
 		}
-	}
+	}, [])
 
+	// Tracks if component is mounted
 	useEffect(() => {
 		mounted.current = true
 
@@ -265,10 +138,15 @@ export const useAnimatedNumber = (value: number, delay = 100) => {
 		}
 	}, [])
 
+	// Updates counter when target value changes
 	useEffect(() => {
-		setLastValue(lastValue)
-		lastTime.current = new Date().getTime()
-		update()
+		state.current.startTime = new Date().getTime()
+		state.current.startValue = display
+		state.current.targetValue = value
+
+		if (state.current.animationFrame === undefined) {
+			update()
+		}
 	}, [value])
 
 	return display
@@ -301,83 +179,35 @@ export const useAnimationFrame = (callback: () => void) => {
 	}, [])
 }
 
-interface Position {
-	left: number
-	top: number
-	width: number
-	height: number
-}
-
-function getPosition(el: HTMLElement, global = true): Position {
-	if (!el) {
-		return {
-			left: 0,
-			top: 0,
-			width: 0,
-			height: 0
-		}
-	}
-
-	const bb = el.getBoundingClientRect()
-	let offsetLeft = el.offsetLeft
-	let offsetTop = el.offsetTop
-	let current: HTMLElement | null = el.offsetParent as HTMLElement
-
-	while (current) {
-		offsetLeft += current.offsetLeft
-		offsetTop += current.offsetTop
-		current = current.offsetParent as HTMLElement
-
-		if (!global && current) {
-			const position = getComputedStyle(current).getPropertyValue('position')
-
-			if (position === 'relative' || position === 'absolute') {
-				break
-			}
-		}
-	}
-
-	return {
-		left: offsetLeft,
-		top: offsetTop,
-		width: bb.width,
-		height: bb.height
-	}
-}
-
 export const useElementPosition = (
-	element?: HTMLElement | null,
-	global = true
-): Position => {
-	const elementRef = useRef<HTMLElement | null>()
+	element?: Element | null,
+): DOMRect | undefined => {
+	const elementRef = useRef<Element | null>()
+	const bb = element ? element.getBoundingClientRect() : undefined
 
-	const [position, setPosition] = useState(
-		!elementRef.current && element
-			? getPosition(element, global)
-			: ({} as Position)
-	)
+	const [position, setPosition] = useState(bb)
 
 	elementRef.current = element
 
 	useEffect(() => {
-		if (elementRef.current) {
-			setPosition(getPosition(elementRef.current, global))
+		if (element) {
+			setPosition(element.getBoundingClientRect())
 		}
 	}, [element])
 
 	useEffect(() => {
 		const update = () => {
 			if (elementRef.current) {
-				setPosition(getPosition(elementRef.current, global))
+				setPosition(elementRef.current.getBoundingClientRect())
 			}
 		}
 
 		window.addEventListener('resize', update)
-		window.addEventListener('scroll', update)
+		window.addEventListener('scroll', update, true)
 
 		return () => {
 			window.removeEventListener('resize', update)
-			window.removeEventListener('scroll', update)
+			window.removeEventListener('scroll', update, true)
 		}
 	}, [])
 
@@ -385,16 +215,16 @@ export const useElementPosition = (
 }
 
 export const useProcessed = (
-	callback: (events: (GameEvent & { id: number })[], processed: number) => void
+	callback: (events: (GameEvent & { id: number })[], processed: number) => void,
 ) => {
 	const [processed, setProcessed] = useState(0)
-	const events = useAppStore(state => state.game.events)
+	const events = useAppStore((state) => state.game.events)
 
 	useEffect(() => {
 		if (events.length > processed) {
 			callback(
 				events.slice(processed).map((e, i) => ({ ...e, id: processed + i })),
-				processed
+				processed,
 			)
 
 			setProcessed(events.length)
@@ -422,4 +252,16 @@ export const useMountAnim = () => {
 	}, [])
 
 	return mounted
+}
+
+export const useChange = (effect: EffectCallback, deps?: DependencyList) => {
+	const mounted = useRef(false)
+
+	useEffect(() => {
+		if (mounted.current) {
+			effect()
+		} else {
+			mounted.current = true
+		}
+	}, deps)
 }

@@ -41,10 +41,10 @@ export class EventsClient {
 
 		this.socket.onopen = () => {
 			clearTimeout(timeout)
-			this.onOpen && this.onOpen()
+			this.onOpen?.()
 		}
 
-		this.socket.onmessage = async msg => {
+		this.socket.onmessage = async (msg) => {
 			if (!(msg.data instanceof Blob)) {
 				console.error('Unknown msg data', msg.data)
 			}
@@ -54,7 +54,7 @@ export class EventsClient {
 		}
 
 		this.socket.onclose = () => {
-			this.onClose && this.onClose()
+			this.onClose?.()
 		}
 	}
 

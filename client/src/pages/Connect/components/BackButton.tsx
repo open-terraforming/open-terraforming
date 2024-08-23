@@ -1,20 +1,17 @@
-import React from 'react'
-import { useAppDispatch } from '@/utils/hooks'
-import { setApiState, ApiState } from '@/store/modules/api'
 import { Button } from '@/components'
+import { ApiState, setApiState } from '@/store/modules/api'
+import { useAppDispatch } from '@/utils/hooks'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 
-type Props = {}
-
-export const BackButton = ({}: Props) => {
+export const BackButton = () => {
 	const dispatch = useAppDispatch()
 
 	const handleBack = () => {
 		dispatch(
 			setApiState({
 				state: ApiState.Ready,
-				gameId: null
-			})
+				gameId: null,
+			}),
 		)
 	}
 

@@ -5,42 +5,59 @@ import { Logger } from '@/utils/log'
 import { CardCategory, CardsLookupApi } from '@shared/cards'
 import express from 'express'
 import got from 'got'
-import config from '../../config'
 import { ServerOptions } from './types'
 import bodyParser from 'body-parser'
+import { globalConfig } from '@/config'
 
 const attr = (s: string) => s.replace(/"/g, '"')
 
 export default (serverConfig: ServerOptions) => {
 	const logger = new Logger('Picker')
 
+	if (
+		!globalConfig.cardEditor.googleCseId ||
+		!globalConfig.cardEditor.googleApiKey
+	) {
+		logger.error('Google credentials not defined, exiting')
+		process.exit(1)
+	}
+
 	const app = express()
 
-	const searchClient = new ImageSearch(config.googleCseId, config.googleApiKey)
+	const searchClient = new ImageSearch(
+		globalConfig.cardEditor.googleCseId,
+		globalConfig.cardEditor.googleApiKey,
+	)
 
 	app.use(bodyParser.urlencoded({ extended: true }))
 	app.use(bodyParser.json())
 	app.use(bodyParser.raw())
 
 	app.get('/picker', async (req, res) => {
-		const card = Object.values(CardsLookupApi.data()).find(c => {
+		const card = Object.values(CardsLookupApi.data()).find((c) => {
 			return !tryLoadStaticSync(`card/${c.code}.jpg`)
 		})
 
 		if (!card) {
-			return res.send('No card to fill')
+			return res.send(
+				'No card to fill (out of ' +
+					Object.values(CardsLookupApi.data()).length +
+					')',
+			)
 		}
 
 		const q =
 			req.query['q'] ||
-			card.title + ' ' + card.categories.map(c => CardCategory[c]).join(' ')
+			card.code + ' ' + card.categories.map((c) => CardCategory[c]).join(' ')
 
-		const page = req.query['page'] ? parseInt(req.query['page'], 10) : 0
+		const page = req.query['page']
+			? parseInt(req.query['page'] as string, 10)
+			: 0
 
-		const data = await searchClient.search(q, {
+		const data = await searchClient.search(q as string, {
 			excludeTerms: 'terraforming mars',
 			imgType: 'photo',
-			start: page * 10
+			start: page * 10,
 		})
 
 		res.type('html').send(`
@@ -62,21 +79,23 @@ export default (serverConfig: ServerOptions) => {
 		</style>
 	</head>
 	<body>
-		<h2>${card.title}</h2> <a href="?page=${page + 1}&q=${attr(q)}">next</a>
+		<h2>${card.code}</h2> <a href="?page=${page + 1}&q=${attr(
+			q as string,
+		)}">next</a>
 		<form method="get"><input type="text" name="q" value="${attr(
-			q
+			q as string,
 		)}" /><button>Search</button></form>
 		<div id="application">
 			${data
 				.map(
-					d =>
+					(d) =>
 						`<form method="post" action="/picker/${
 							card.code
 						}"><input type="hidden" name="url" value="${attr(
-							d
+							d,
 						)}" /><button style="background-image: url('${attr(
-							d
-						)}')"></button></form>`
+							d,
+						)}')"></button></form>`,
 				)
 				.join('')}
 		</div>
@@ -88,9 +107,10 @@ export default (serverConfig: ServerOptions) => {
 	app.post('/picker/:code', async (req, res) => {
 		const card = CardsLookupApi.get(req.params['code'])
 		const url = req.body.url
+
 		try {
 			const image = await got(url, {
-				responseType: 'buffer'
+				responseType: 'buffer',
 			})
 
 			if (image.body && image.headers['content-type']?.includes('image')) {
@@ -104,7 +124,7 @@ export default (serverConfig: ServerOptions) => {
 						image.headers['content-type'] +
 						',' +
 						typeof image.body +
-						')'
+						')',
 				)
 			}
 		} catch (e) {

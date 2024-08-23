@@ -1,12 +1,10 @@
-import React from 'react'
 import { PlayerColors } from '@shared/player-colors'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	faChevronLeft,
-	faChevronRight
+	faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
-import { mainColors } from '@/styles'
 
 type Props = {
 	colors: number[]
@@ -81,5 +79,5 @@ const Value = styled.div`
 const Change = styled.button`
 	padding: 0.5rem 0.2rem;
 	cursor: pointer;
-	color: ${mainColors.text};
+	color: ${({ theme }) => theme.colors.text};
 `

@@ -1,15 +1,14 @@
-import { colors, mainColors } from '@/styles'
-import React from 'react'
+import { MouseEvent, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 type Props = {
-	count: React.ReactNode
-	text: React.ReactNode
+	count: ReactNode
+	text: ReactNode
 	disabled?: boolean
 	onClick?: () => void
-	children?: React.ReactNode
-	onMouseOver?: (e: React.MouseEvent) => void
-	onMouseLeave?: (e: React.MouseEvent) => void
+	children?: ReactNode
+	onMouseOver?: (e: MouseEvent) => void
+	onMouseLeave?: (e: MouseEvent) => void
 }
 
 export const CardsCounter = ({
@@ -19,7 +18,7 @@ export const CardsCounter = ({
 	onClick,
 	children,
 	onMouseOver,
-	onMouseLeave
+	onMouseLeave,
 }: Props) => {
 	return (
 		<D
@@ -38,20 +37,20 @@ export const CardsCounter = ({
 const D = styled.button<{ disabled?: boolean }>`
 	display: flex;
 	flex-direction: column;
-	border-right: 0.2rem solid ${colors.border};
+	border-right: 0.2rem solid ${({ theme }) => theme.colors.border};
 	min-width: 3.5rem;
 	align-items: stretch;
-	color: ${mainColors.text};
+	color: ${({ theme }) => theme.colors.text};
 	flex: 1;
 	position: relative;
 
 	z-index: 2;
 
 	&:first-child {
-		border-left: 0.2rem solid ${colors.border};
+		border-left: 0.2rem solid ${({ theme }) => theme.colors.border};
 	}
 
-	${props =>
+	${(props) =>
 		props.disabled &&
 		css`
 			cursor: default;
@@ -70,8 +69,9 @@ const Count = styled.div`
 `
 
 const Text = styled.div`
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 	text-align: center;
 	padding: 0.2rem 0.5rem;
 	text-transform: uppercase;
+	font-size: 85%;
 `

@@ -4,7 +4,7 @@ import WebSocket from 'ws'
 import {
 	RealtimeEventEmit,
 	RealtimeEventType,
-	RealtimeEvent
+	RealtimeEvent,
 } from '@shared/events'
 import { encode, decode } from 'msgpack-lite'
 import { Logger } from '@/utils/log'
@@ -12,7 +12,7 @@ import { Logger } from '@/utils/log'
 export class EventClient {
 	get logger() {
 		return new Logger(
-			'EventClient' + (this.playerId ? `(${this.playerId})` : '')
+			'EventClient' + (this.playerId ? `(${this.playerId})` : ''),
 		)
 	}
 
@@ -30,11 +30,13 @@ export class EventClient {
 		this.socket.on('close', () => {
 			this.onDisconnected.emit()
 		})
+
 		this.socket.on('message', this.handleRawMessage)
 	}
 
 	handleRawMessage = (data: WebSocket.Data) => {
 		let parsed: RealtimeEventEmit
+
 		try {
 			if (typeof data === 'string') {
 				throw new Error('Not a binary message')
@@ -57,19 +59,22 @@ export class EventClient {
 			if (!this.playerId) {
 				if (parsed.type === RealtimeEventType.Auth) {
 					const session = parsed.session
+
 					this.playerId = this.server.master.game.state.players.find(
-						p => p.session === session
+						(p) => p.session === session,
 					)?.id
+
 					this.logger.info('Auth request')
 				}
 			} else {
 				this.server.emit({
 					...parsed,
-					playerId: this.playerId
+					playerId: this.playerId,
 				})
 			}
-		} catch (e) {
+		} catch {
 			this.logger.error('Failed to parse', data)
+
 			return
 		}
 	}

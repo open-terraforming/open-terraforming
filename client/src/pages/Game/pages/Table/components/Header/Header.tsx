@@ -1,53 +1,46 @@
 import { Button, DialogWrapper } from '@/components'
-import { colors } from '@/styles'
-import { useAppStore } from '@/utils/hooks'
-import { COMPETITIONS_LIMIT, MILESTONES_LIMIT } from '@shared/constants'
-import React from 'react'
+import { useGameState } from '@/utils/hooks'
 import styled from 'styled-components'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
 
-type Props = {}
-
-export const Header = ({}: Props) => {
-	const interrupted = useAppStore(state => state.game.interrupted)
-	const milestones = useAppStore(state => state.game.state.milestones)
-	const competitions = useAppStore(state => state.game.state.competitions)
+export const Header = () => {
+	const game = useGameState()
+	const milestones = game.milestones
+	const competitions = game.competitions
 
 	return (
 		<>
-			<E
-				style={{
-					transform: interrupted
-						? 'translate(-50%, -100%)'
-						: 'translate(-50%, 0)'
-				}}
-			>
-				<DialogWrapper dialog={close => <MilestonesModal onClose={close} />}>
-					{open => (
-						<StyledButton onClick={open}>
+			<E>
+				<DialogWrapper dialog={(close) => <MilestonesModal onClose={close} />}>
+					{(open) => (
+						<StyledButton noClip onClick={open}>
 							<Counter>
-								{milestones.length}/{MILESTONES_LIMIT}
+								{milestones.length}/{game.milestonesLimit}
 							</Counter>
 							<span>Milestones</span>
 						</StyledButton>
 					)}
 				</DialogWrapper>
 				<DialogWrapper
-					dialog={close => <StandardProjectModal onClose={close} />}
+					dialog={(close) => <StandardProjectModal onClose={close} />}
 				>
-					{open => (
-						<StandardButton onClick={open}>Standard projects</StandardButton>
+					{(open) => (
+						<StandardButton noClip onClick={open}>
+							Standard projects
+						</StandardButton>
 					)}
 				</DialogWrapper>
-				<DialogWrapper dialog={close => <CompetitionsModal onClose={close} />}>
-					{open => (
-						<StyledButton onClick={open}>
+				<DialogWrapper
+					dialog={(close) => <CompetitionsModal onClose={close} />}
+				>
+					{(open) => (
+						<StyledButton noClip onClick={open}>
 							<span>Competitions</span>
 							<Counter>
-								{competitions.length}/{COMPETITIONS_LIMIT}
+								{competitions.length}/{game.competitionsLimit}
 							</Counter>
 						</StyledButton>
 					)}
@@ -70,8 +63,8 @@ const E = styled.div`
 `
 
 const StyledButton = styled(Button)`
-	background-color: ${colors.background};
-	border: 2px solid ${colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0 0.8rem;
 	> span {
 		padding: 0.5rem 0.2rem;

@@ -1,30 +1,20 @@
-import { ServerInfo, GameInfo } from '@shared/extra'
-import { GameModeType } from '@shared/modes/types'
+import { API_URL } from '@/constants'
+import { GameInfo, ServerInfo } from '@shared/extra'
+import { NewGameRequest } from '@shared/requests'
 
-const basePath =
-	location.protocol + '//' + (process.env.APP_API_URL || location.host)
+const basePath = location.protocol + '//' + (API_URL || location.host)
 
 export const getServerInfo = (): Promise<ServerInfo> =>
-	fetch(basePath + '/info').then(res => res.json())
+	fetch(basePath + '/api/info').then((res) => res.json())
 
 export const getGames = (): Promise<GameInfo[]> =>
-	fetch(basePath + '/games').then(res => res.json())
+	fetch(basePath + '/api/games').then((res) => res.json())
 
-export const createGame = (
-	name: string,
-	mode: GameModeType,
-	bots: number,
-	isPublic: boolean
-): Promise<GameInfo> =>
-	fetch(basePath + '/games', {
+export const createGame = (options: NewGameRequest): Promise<GameInfo> =>
+	fetch(basePath + '/api/games', {
 		method: 'POST',
 		headers: {
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
 		},
-		body: JSON.stringify({
-			name,
-			mode,
-			bots,
-			public: isPublic
-		})
-	}).then(res => res.json())
+		body: JSON.stringify(options),
+	}).then((res) => res.json())

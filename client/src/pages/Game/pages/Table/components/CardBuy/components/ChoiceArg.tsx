@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { CardEffectArgument, CardEffectArgumentType } from '@shared/cards'
 import styled, { css } from 'styled-components'
 import { ArgContainer } from './ArgContainer'
@@ -15,8 +15,8 @@ type Props = {
 }
 
 export const ChoiceArg = ({ arg, onChange, card, cardState }: Props) => {
-	const player = useAppStore(state => state.game.player)
-	const game = useAppStore(state => state.game.state)
+	const player = useAppStore((state) => state.game.player)
+	const game = useAppStore((state) => state.game.state)
 
 	const choices = useMemo(
 		() =>
@@ -26,17 +26,15 @@ export const ChoiceArg = ({ arg, onChange, card, cardState }: Props) => {
 					({ effect }) =>
 						player &&
 						game &&
-						effect.conditions.every(c =>
+						effect.conditions.every((c) =>
 							c.evaluate({
 								card: cardState || emptyCardState(card),
-								cardIndex: cardState === undefined ? -1 : cardState.index,
 								player: player,
 								game,
-								playerId: player.id
-							})
-						)
+							}),
+						),
 				),
-		[arg, game, player]
+		[arg, game, player],
 	)
 
 	const [selected, setSelected] = useState((choices[0]?.index || 0) as number)
@@ -64,8 +62,8 @@ export const ChoiceArg = ({ arg, onChange, card, cardState }: Props) => {
 							<ArgsPicker
 								card={card}
 								cardState={cardState}
-								onChange={v => {
-									setArgs(args => {
+								onChange={(v) => {
+									setArgs((args) => {
 										const updated = [...args]
 										updated[i] = v
 
@@ -93,7 +91,7 @@ const Choice = styled.div<{ selected?: boolean }>`
 	opacity: 0.6;
 	transition: opacity 0.1s;
 
-	${props =>
+	${(props) =>
 		props.selected &&
 		css`
 			opacity: 1;

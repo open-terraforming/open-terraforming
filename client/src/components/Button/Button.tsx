@@ -1,8 +1,8 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import React, { memo, useMemo } from 'react'
-import Tooltip from '@/components/Tooltip/Tooltip'
+import { memo, MouseEvent, ReactChild, ReactNode, useMemo } from 'react'
+import { Tooltip } from '@/components/Tooltip/Tooltip'
 import styled, { css } from 'styled-components'
 
 export type Schema = 'primary' | 'transparent'
@@ -14,25 +14,22 @@ interface Props {
 	isLoading?: boolean
 	icon?: IconProp
 	schema?: Schema
-	size?: Size
 	type?: 'button' | 'submit' | 'reset'
 	name?: string
-	onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
-	onMouseOver?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-	onMouseLeave?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-	tooltip?: string
-	ariaLabel?: string
+	onClick?: (e: MouseEvent<HTMLButtonElement>) => void
+	onMouseOver?: (e: MouseEvent<HTMLButtonElement>) => void
+	onMouseLeave?: (e: MouseEvent<HTMLButtonElement>) => void
+	tooltip?: ReactChild
 	className?: string
-	coloredIcon?: boolean
-	children?: React.ReactNode
+	children?: ReactNode
+	noClip?: boolean
 }
 
-const Button = ({
+const ButtonComponent = ({
 	disabled = false,
 	name,
 	schema,
 	type = 'button',
-	size = 'md',
 	children,
 	icon,
 	onClick,
@@ -40,9 +37,8 @@ const Button = ({
 	onMouseOver,
 	onMouseLeave,
 	tooltip,
-	ariaLabel,
 	className,
-	coloredIcon
+	noClip = false,
 }: Props) => {
 	const hasContent = !!children
 
@@ -57,9 +53,8 @@ const Button = ({
 			<>
 				{iconToShow && (
 					<Icon
-						disabled={disabled || false}
+						isDisabled={disabled || false}
 						hasContent={hasContent}
-						coloredIcon={coloredIcon}
 						schema={schema || 'primary'}
 					>
 						<FontAwesomeIcon icon={iconToShow} spin={isLoading} />
@@ -68,7 +63,7 @@ const Button = ({
 				{children}
 			</>
 		),
-		[children, iconToShow, disabled, hasContent, coloredIcon, schema, isLoading]
+		[children, iconToShow, disabled, hasContent, schema, isLoading],
 	)
 
 	if (tooltip) {
@@ -77,8 +72,9 @@ const Button = ({
 
 	return (
 		<Container
+			noClip={noClip}
 			className={className}
-			disabled={disabled || false}
+			isDisabled={disabled || false}
 			name={name}
 			onClick={!disabled ? onClick : undefined}
 			onMouseOver={onMouseOver}
@@ -86,8 +82,6 @@ const Button = ({
 			type={type}
 			hasContent={hasContent}
 			schema={schema || 'primary'}
-			size={size || 'md'}
-			aria-label={ariaLabel}
 		>
 			{contents}
 		</Container>
@@ -95,10 +89,10 @@ const Button = ({
 }
 
 const Container = styled.button<{
-	disabled: boolean
+	isDisabled: boolean
 	hasContent: boolean
 	schema: Schema
-	size: Size
+	noClip: boolean
 }>`
 	transition: 0.2s;
 	border-radius: 0;
@@ -107,16 +101,28 @@ const Container = styled.button<{
 	user-select: none;
 	display: flex;
 	justify-content: center;
+	align-items: center;
 	font-size: 100%;
 
-	${props => css`
-		padding: ${props.size === 'sm' ? '0.1rem 0.2rem' : '0.4rem 0.8rem'};
-		border-width: 1px;
-		border-style: solid;
-	`}
+	padding: 0.4rem 0.8rem;
+	border-width: 1px;
+	border-style: solid;
 
-	${props =>
-		!props.disabled &&
+	${(props) =>
+		!props.noClip &&
+		css`
+			clip-path: polygon(
+				0 0,
+				calc(100% - 7px) 0,
+				100% 7px,
+				100% 100%,
+				7px 100%,
+				0 calc(100% - 7px)
+			);
+		`}
+
+	${(props) =>
+		!props.isDisabled &&
 		css`
 			background: ${props.theme.colors.button[props.schema].background};
 			border-color: ${props.theme.colors.button[props.schema].borderColor};
@@ -124,9 +130,10 @@ const Container = styled.button<{
 
 			&:hover {
 				background: ${props.theme.colors.button[props.schema].hover.background};
-				border-color: ${props.theme.colors.button[props.schema].hover.borderColor};
+				border-color: ${props.theme.colors.button[props.schema].hover
+					.borderColor};
 				color: ${props.theme.colors.button[props.schema].hover.color};
-				
+
 				/*
 				& svg {
 					color: ${props.theme.colors.button[props.schema].hover.color};
@@ -135,14 +142,14 @@ const Container = styled.button<{
 			}
 		`}
 
-
-	${props =>
-		props.disabled &&
+	${(props) =>
+		props.isDisabled &&
 		css`
 			cursor: not-allowed;
 			opacity: 0.5;
 			background: ${props.theme.colors.button.disabledBackground} !important;
 			border-color: ${props.theme.colors.button.disabledBorder} !important;
+			color: ${props.theme.colors.button.disabledColor} !important;
 		`}
 
 	> * {
@@ -151,25 +158,23 @@ const Container = styled.button<{
 `
 
 const Icon = styled.span<{
-	disabled: boolean
+	isDisabled: boolean
 	hasContent: boolean
-	coloredIcon?: boolean
 	schema: Schema
 }>`
 	margin-right: 0.5rem;
 
-	${props =>
-		props.coloredIcon &&
-		!props.disabled &&
+	${(props) =>
+		!props.isDisabled &&
 		css`
-			color: ${props.theme.colors.button[props.schema].background};
+			color: ${props.theme.colors.button[props.schema].color};
 		`}
 
-	${props =>
+	${(props) =>
 		!props.hasContent &&
 		css`
-			margin-right: 0;
+			margin: 0;
 		`}
 `
 
-export default memo(Button)
+export const Button = memo(ButtonComponent)

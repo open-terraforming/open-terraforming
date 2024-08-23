@@ -1,32 +1,35 @@
 import mars from '@/assets/mars-icon.png'
-import { Button, Portal } from '@/components'
+import { Button, DialogWrapper, Portal } from '@/components'
 import { useAppStore } from '@/utils/hooks'
+import { faBars, faExpand } from '@fortawesome/free-solid-svg-icons'
 import { PlayerStateValue } from '@shared/index'
-import React, { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import styled from 'styled-components'
+import { CheatsModal } from '../CheatsModal/CheatsModal'
 import { CardsPlayedDisplay } from './components/CardsPlayedDisplay'
 import { EventsModal } from './components/EventsModal'
 import { EventSounds } from './components/EventSounds'
+import { IngameMenuModal } from './components/IngameMenuModal'
 import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
+import { TimeDisplay } from './components/TimeDisplay'
 
-type Props = {}
-
-export const EventList = ({}: Props) => {
-	const player = useAppStore(state => state.game.player)
-	const events = useAppStore(state => state.game.events)
-
-	const [displayModal, setDisplayModal] = useState(false)
+export const EventList = () => {
+	const player = useAppStore((state) => state.game.player)
+	const events = useAppStore((state) => state.game.events)
+	const settings = useAppStore((state) => state.settings.data)
+	const isAdmin = player.admin
 
 	useEffect(() => {
 		if (
+			settings.enableBrowserNotifications &&
 			document.hidden &&
 			(player?.state === PlayerStateValue.Playing ||
 				player?.state === PlayerStateValue.Picking)
 		) {
 			if (Notification.permission === 'granted') {
 				const notification = new Notification("It's your turn!", {
-					icon: mars
+					icon: mars,
 				})
 
 				notification.onclick = () => {
@@ -38,17 +41,42 @@ export const EventList = ({}: Props) => {
 		}
 	}, [player?.state])
 
+	const handleFullscreen = () => {
+		if (document.fullscreen) {
+			document.exitFullscreen()
+		} else {
+			document.documentElement.requestFullscreen()
+		}
+	}
+
 	return (
 		<Centered>
-			{displayModal && (
-				<EventsModal events={events} onClose={() => setDisplayModal(false)} />
-			)}
 			<EventSounds events={events} />
 			<CardsPlayedDisplay events={events} />
 			<LastEventsDisplay events={events} />
 			<PopEventDisplay events={events} />
 			<Portal>
-				<EventLog onClick={() => setDisplayModal(true)}>Event log</EventLog>
+				<TopButtons>
+					<DialogWrapper
+						dialog={(close) => <IngameMenuModal onClose={close} />}
+					>
+						{(open) => <Button onClick={open} icon={faBars}></Button>}
+					</DialogWrapper>
+					<Button onClick={handleFullscreen} icon={faExpand} />
+					<DialogWrapper
+						dialog={(close) => <EventsModal events={events} onClose={close} />}
+					>
+						{(open) => <Button onClick={open}>Event log</Button>}
+					</DialogWrapper>
+					{isAdmin && (
+						<DialogWrapper
+							dialog={(close) => <CheatsModal open onClose={close} />}
+						>
+							{(open) => <Button onClick={open}>Cheats</Button>}
+						</DialogWrapper>
+					)}
+					<TimeDisplay />
+				</TopButtons>
 			</Portal>
 		</Centered>
 	)
@@ -66,11 +94,21 @@ const Centered = styled.div`
 	max-width: 13rem;
 	width: 13rem;
 	min-width: 0;
-	position: relative;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	z-index: 2;
+	max-height: 50%;
 `
 
-const EventLog = styled(Button)`
+const TopButtons = styled.div`
 	position: absolute;
-	top: 0;
-	left: 0;
+	top: 0.2rem;
+	left: 0.2rem;
+	display: flex;
+	gap: 0.2rem;
+
+	> button {
+		clip-path: none;
+	}
 `

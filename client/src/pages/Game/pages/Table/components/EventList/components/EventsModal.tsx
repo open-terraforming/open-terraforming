@@ -1,5 +1,4 @@
 import { Modal } from '@/components/Modal/Modal'
-import React from 'react'
 import { GameEvent } from '../types'
 import { EventLine } from './EventLine'
 
@@ -12,7 +11,7 @@ export const EventsModal = ({ onClose, events }: Props) => {
 	return (
 		<Modal
 			open={true}
-			contentStyle={{ minWidth: '300px' }}
+			contentStyle={{ minWidth: '500px' }}
 			onClose={onClose}
 			header="Events"
 		>

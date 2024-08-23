@@ -1,106 +1,110 @@
 import { shuffle } from '@/utils/collections'
-import {
-	CardCategory,
-	CardEffect,
-	CardEffectArgumentType,
-	CardEffectTarget,
-	CardsLookupApi,
-	Resource
-} from '@shared/cards'
+import { CardCategory, CardsLookupApi } from '@shared/cards'
 import {
 	emptyCardState,
 	isCardActionable,
 	isCardPlayable,
-	minimalCardPrice
+	minimalCardPrice,
 } from '@shared/cards/utils'
+import { Competitions } from '@shared/competitions'
 import {
-	CARD_PRICE,
-	MILESTONES_LIMIT,
-	COMPETITIONS_LIMIT
-} from '@shared/constants'
-import {
+	GameStateValue,
 	PlayerStateValue,
-	UsedCardState,
-	StandardProjectType
+	StandardProjectType,
 } from '@shared/game'
+import {
+	buyCard,
+	buyMilestone,
+	buyStandardProject,
+	claimTile,
+	draftCard,
+	pickCards,
+	pickPreludes,
+	pickStarting,
+	placeTile,
+	playCard,
+	playerPass,
+	playerReady,
+	solarPhaseTerraform,
+	sponsorCompetition,
+} from '@shared/index'
+import { Milestones } from '@shared/milestones'
 import { canPlace, isClaimable } from '@shared/placements'
-import { allCells, milestonePrice, competitionPrice } from '@shared/utils'
+import { PlayerAction, PlayerActionType } from '@shared/player-actions'
+import { Projects } from '@shared/projects'
+import { allCells, competitionPrice, f } from '@shared/utils'
+import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { Game } from './game'
 import { Player } from './player'
-import { Milestones } from '@shared/milestones'
-import { Competitions } from '@shared/competitions'
-import { Projects } from '@shared/projects'
-import { PlayerActionType, PlayerAction } from '@shared/player-actions'
+import { claimTileScore } from './scoring/claim-tile-score'
+import { placeTileScore } from './scoring/place-tile-score'
+import { playCardScore } from './scoring/play-card-score'
+import { standardProjectScore } from './scoring/standard-project-score'
+import { ScoringContext } from './scoring/types'
+import { useCardScore } from './scoring/use-card-score'
+import { computeScore, getBestArgs, pickBest } from './scoring/utils'
 
-const BotNames = [
-	'Rick',
-	'Jon',
-	'Joana',
-	'James',
-	'Jack',
-	'Oprah',
-	'Trump',
-	'Lin',
-	'Sarah',
-	'Bojack',
-	'Horse',
-	'Theodor',
-	'Pierre',
-	'Keren',
-	'Sanders',
-	'Babish',
-	'Robert',
-	'Sir',
-	'China',
-	'Europe',
-	'Fredrick',
-	'Harry'
-]
+const defaultOptions = () => ({
+	fast: false,
+})
 
-let names = [] as string[]
-const pickBotName = (id: number) => {
-	if (names.length === 0) {
-		names = shuffle(BotNames)
-	}
-
-	return names.pop() || `Bot ${id}`
-}
+export type BotOptions = ReturnType<typeof defaultOptions>
 
 export class Bot extends Player {
+	stopped = false
 	doing?: ReturnType<typeof setTimeout>
 
-	constructor(game: Game) {
+	options: BotOptions
+
+	constructor(game: Game, options: Partial<BotOptions> = {}) {
 		super(game)
 
-		this.name = pickBotName(this.state.id)
+		this.options = {
+			...defaultOptions(),
+			...options,
+		}
+
+		this.state.name = game.pickBotName(this.state.id)
 		this.state.connected = true
 		this.state.bot = true
 		this.state.state = PlayerStateValue.Ready
-		this.updated()
 
 		this.game.onStateUpdated.on(() => this.updated(false))
 	}
 
 	get cards() {
-		return this.state.cards.map(c => CardsLookupApi.get(c))
+		return this.state.cards.map((c) => CardsLookupApi.get(c))
+	}
+
+	stop() {
+		this.stopped = true
 	}
 
 	updated(broadcast = true) {
+		if (this.stopped) {
+			return
+		}
+
 		if (!this.doing) {
-			this.doing = setTimeout(() => {
-				this.doing = undefined
-				try {
-					this.doSomething()
-				} catch (e) {
-					this.logger.log('Bot failed:')
-					this.logger.error(e)
+			this.doing = setTimeout(
+				() => {
+					this.doing = undefined
+
 					try {
-						this.pass()
+						this.doSomething()
 					} catch (e) {
-						this.logger.error('Unable to pass', e)
+						this.logger.log('Bot failed:')
+						this.logger.error(e)
+
+						try {
+							this.performAction(playerPass(true))
+						} catch (e) {
+							this.logger.error('Unable to pass', e)
+						}
 					}
-				}
-			}, 2000 + Math.random() * 5000)
+				},
+				this.options.fast ? 10 : 3000 + Math.random() * 2000,
+			)
 		}
 
 		if (broadcast) {
@@ -108,338 +112,288 @@ export class Bot extends Player {
 		}
 	}
 
-	prepareParams(
-		effects: CardEffect[],
-		card: UsedCardState,
-		cardIndex: number
-	): CardEffectArgumentType[][] {
-		return effects.map(e =>
-			e.args.map(a => {
-				switch (a.type) {
-					case CardEffectTarget.Card: {
-						const card = shuffle(
-							a.fromHand
-								? this.state.cards
-										.filter(
-											(card, cardIndex) =>
-												!a.cardConditions.find(
-													c =>
-														!c.evaluate({
-															card: emptyCardState(card),
-															cardIndex,
-															game: this.game.state,
-															player: this.state,
-															playerId: this.id
-														})
-												)
-										)
-										.map(c => this.state.cards.indexOf(c))
-								: this.state.usedCards
-										.filter(
-											(card, cardIndex) =>
-												!a.cardConditions.find(
-													c =>
-														!c.evaluate({
-															card,
-															cardIndex,
-															game: this.game.state,
-															player: this.state,
-															playerId: this.id
-														})
-												)
-										)
-										.map(c => this.state.usedCards.indexOf(c))
-						)[0]
-
-						return card as number
-					}
-					case CardEffectTarget.Player: {
-						const player = shuffle(
-							this.game.state.players.filter(
-								player =>
-									player.id !== this.id &&
-									!a.playerConditions.find(
-										c =>
-											!c.evaluate({
-												game: this.game.state,
-												player: player,
-												card
-											})
-									)
-							)
-						)[0]
-
-						return player?.id as number
-					}
-					case CardEffectTarget.PlayerResource: {
-						const player = shuffle(
-							this.game.state.players.filter(
-								player =>
-									player.id !== this.id &&
-									!a.playerConditions.find(
-										c =>
-											!c.evaluate({
-												game: this.game.state,
-												player: player,
-												card
-											})
-									)
-							)
-						)[0]
-
-						if (player) {
-							return [
-								player.id,
-								Math.min(player[a.resource as Resource], a.maxAmount as number)
-							]
-						}
-
-						return [-1, 0]
-					}
-					case CardEffectTarget.PlayerCardResource: {
-						const player = shuffle(
-							this.game.state.players
-								.filter(player => player.id !== this.id)
-								.map(player => ({
-									player,
-									cards: shuffle(
-										player.usedCards
-											.filter(
-												(card, cardIndex) =>
-													!a.cardConditions.find(
-														c =>
-															!c.evaluate({
-																card,
-																cardIndex,
-																game: this.game.state,
-																player: player,
-																playerId: player.id
-															})
-													)
-											)
-											.map(c => player.usedCards.indexOf(c))
-									)
-								}))
-								.filter(({ cards }) => cards.length > 0)
-						)[0]
-
-						if (player) {
-							return [player.player.id, player.cards[0]]
-						}
-
-						return [-1, 0]
-					}
-					case CardEffectTarget.Resource: {
-						return this.state[a.resource as Resource]
-					}
-					case CardEffectTarget.EffectChoice: {
-						const effect = shuffle(
-							(a.effects || [])
-								.filter(
-									e =>
-										!e.conditions.find(
-											c =>
-												!c.evaluate({
-													card,
-													cardIndex,
-													game: this.game.state,
-													player: this.state,
-													playerId: this.id
-												})
-										)
-								)
-								.map(e => a.effects?.indexOf(e))
-						)[0]
-
-						if (effect !== undefined && a.effects) {
-							return [
-								effect,
-								this.prepareParams(
-									[a.effects[effect]],
-									card,
-									cardIndex
-								)[0] as CardEffectArgumentType[]
-							]
-						}
-
-						return [-1, []]
-					}
-					default:
-						return -1
-				}
-			})
-		)
+	get scoringContext(): ScoringContext {
+		return {
+			game: this.game.state,
+			player: this.state,
+		}
 	}
 
 	performPending(a: PlayerAction) {
 		switch (a.type) {
-			case PlayerActionType.PickCorporation: {
-				return this.pickCorporation(shuffle(a.cards.slice(0))[0])
+			case PlayerActionType.PickStarting: {
+				const pickedPreludes = shuffle(
+					a.preludes.map((c, i) => [CardsLookupApi.get(c), i] as const),
+				)
+					.filter(([c]) =>
+						isCardPlayable(c, {
+							card: emptyCardState(c.code),
+							game: this.game.state,
+							player: this.state,
+						}),
+					)
+					.map(([, i]) => i)
+					.slice(0, a.preludesLimit)
+
+				const corporation = shuffle(a.corporations.slice(0))[0]
+
+				const { player: simulatedPlayer } = simulateCardEffects(
+					corporation,
+					CardsLookupApi.get(corporation).playEffects,
+				)
+
+				return this.performAction(
+					pickStarting(
+						shuffle(a.corporations.slice(0))[0],
+						shuffle(a.cards.map((_c, i) => i)).slice(
+							0,
+							Math.max(
+								0,
+								Math.floor(
+									((simulatedPlayer.money *
+										(this.game.state.state === GameStateValue.Starting
+											? 0.8
+											: 0.3)) /
+										this.game.state.cardPrice) *
+										(0.6 + 0.4 * Math.random()),
+								),
+							),
+						),
+						pickedPreludes,
+					),
+				)
 			}
 
 			case PlayerActionType.PickCards: {
+				// TODO: Add some kind of logic here
 				const picked = a.free
 					? shuffle(a.cards.map((_c, i) => i)).slice(
 							0,
-							a.limit || a.cards.length
-					  )
+							a.limit || a.cards.length,
+						)
 					: shuffle(a.cards.map((_c, i) => i)).slice(
 							0,
 							Math.max(
 								0,
 								Math.floor(
-									(this.state.money / CARD_PRICE) * (0.5 + 0.5 * Math.random())
-								)
-							)
-					  )
+									((this.state.money *
+										(this.game.state.state === GameStateValue.Starting
+											? 0.8
+											: 0.3)) /
+										this.game.state.cardPrice) *
+										(0.6 + 0.4 * Math.random()),
+								),
+							),
+						)
 
-				return this.pickCards(picked)
+				return this.performAction(pickCards(picked))
+			}
+
+			case PlayerActionType.DraftCard: {
+				// TODO: Add some kind of logic here
+				const picked = shuffle(a.cards.map((_c, i) => i)).slice(0, a.limit)
+
+				return this.performAction(draftCard(picked))
 			}
 
 			case PlayerActionType.PickPreludes: {
+				// TODO: Add some kind of logic here
+
 				const picked = shuffle(
-					a.cards.map((c, i) => [CardsLookupApi.get(c), i] as const)
+					a.cards.map((c, i) => [CardsLookupApi.get(c), i] as const),
 				)
 					.filter(([c]) =>
 						isCardPlayable(c, {
 							card: emptyCardState(c.code),
-							cardIndex: -1,
 							game: this.game.state,
 							player: this.state,
-							playerId: this.state.id
-						})
+						}),
 					)
 					.map(([, i]) => i)
 					.slice(0, a.limit)
 
-				return this.pickPreludes(picked)
+				return this.performAction(pickPreludes(picked))
 			}
 
 			case PlayerActionType.PlaceTile: {
 				const placed = a.state
-				const tile = shuffle(allCells(this.game.state)).find(c =>
-					canPlace(this.game.state, this.state, c, placed)
+
+				const tile = pickBest(
+					allCells(this.game.state).filter((c) =>
+						canPlace(this.game.state, this.state, c, placed),
+					),
+					(c) => placeTileScore(this.scoringContext, placed, c),
 				)
+
 				if (tile) {
-					return this.placeTile(tile.x, tile.y)
+					return this.performAction(placeTile(tile.x, tile.y, tile.location))
 				} else {
-					return this.pass(true)
+					return this.performAction(playerPass(true))
 				}
 			}
 
 			case PlayerActionType.ClaimTile: {
-				const tile = shuffle(allCells(this.game.state)).find(c =>
-					isClaimable(c)
+				const tile = pickBest(
+					allCells(this.game.state).filter((c) => isClaimable(c)),
+					(c) => claimTileScore(this.scoringContext, c),
 				)
+
 				if (tile) {
-					return this.claimTile(tile.x, tile.y)
+					return this.performAction(claimTile(tile.x, tile.y, tile.location))
 				} else {
-					return this.pass(true)
+					return this.performAction(playerPass(true))
 				}
 			}
 
 			case PlayerActionType.PlayCard: {
 				const card = this.state.usedCards[a.cardIndex]
 
-				return this.playCard(
-					card.code,
-					a.cardIndex,
-					this.prepareParams(
-						CardsLookupApi.get(card.code).actionEffects,
-						card,
-						a.cardIndex
-					)
+				const args = getBestArgs(
+					this.game.state,
+					this.state,
+					card,
+					CardsLookupApi.get(card.code).actionEffects,
 				)
+
+				return this.performAction(playCard(card.code, a.cardIndex, args.args))
 			}
 
 			case PlayerActionType.SponsorCompetition: {
 				const comp = shuffle(
 					this.game.state.map.competitions
-						.map(c => Competitions[c])
+						.map((c) => Competitions[c])
 						.filter(
-							c => !this.game.state.competitions.find(b => b.type === c.type)
-						)
+							(c) =>
+								!this.game.state.competitions.find((b) => b.type === c.type),
+						),
 				)[0]
 
 				if (comp) {
-					return this.sponsorCompetition(comp.type)
+					return this.performAction(sponsorCompetition(comp.type))
 				} else {
-					return this.pass(true)
+					return this.performAction(playerPass(true))
 				}
+			}
+
+			case PlayerActionType.SolarPhaseTerraform: {
+				// TODO: Scoring?
+				const availableProgressValues = (
+					['oceans', 'temperature', 'oxygen'] as const
+				).filter(
+					(progress) =>
+						this.game.state[progress] < this.game.state.map[progress],
+				)
+
+				const progress = shuffle(availableProgressValues)[0]
+
+				return this.performAction(solarPhaseTerraform(progress))
 			}
 		}
 	}
 
 	doSomething() {
-		const actions = [] as [number, () => void][]
+		let actions = [] as [number, () => void][]
 
 		switch (this.state.state) {
 			case PlayerStateValue.Waiting: {
-				actions.push([0, () => this.toggleReady(true)])
+				actions.push([0, () => this.performAction(playerReady(true))])
 				break
 			}
 
 			case PlayerStateValue.Picking: {
 				const pending = this.pendingAction
+
 				if (pending) {
 					actions.push([0, () => this.performPending(pending)])
 				} else {
 					this.logger.error('Nothing to do, yet I have to pick something...')
 				}
+
 				break
 			}
 
 			case PlayerStateValue.EndingTiles: {
 				const placed = this.pendingAction
+
 				if (placed && placed.type === PlayerActionType.PlaceTile) {
-					const tile = shuffle(allCells(this.game.state)).find(c =>
-						canPlace(this.game.state, this.state, c, placed.state)
+					const tile = pickBest(
+						allCells(this.game.state).filter((c) =>
+							canPlace(this.game.state, this.state, c, placed.state),
+						),
+						(c) => placeTileScore(this.scoringContext, placed.state, c),
 					)
+
 					if (tile) {
-						actions.push([0, () => this.placeTile(tile.x, tile.y)])
+						actions.push([
+							0,
+							() =>
+								this.performAction(placeTile(tile.x, tile.y, tile.location)),
+						])
 					}
 				}
+
+				break
+			}
+
+			case PlayerStateValue.Prelude: {
+				const pending = this.pendingAction
+
+				if (pending) {
+					actions.push([0, () => this.performPending(pending)])
+				}
+
 				break
 			}
 
 			case PlayerStateValue.Playing: {
 				const pending = this.pendingAction
+
 				if (pending) {
 					actions.push([0, () => this.performPending(pending)])
 				} else {
-					if (this.game.state.milestones.length < MILESTONES_LIMIT) {
-						Object.values(Milestones)
+					if (
+						this.game.state.milestones.length < this.game.state.milestonesLimit
+					) {
+						this.game.state.map.milestones
+							.map((m) => Milestones[m])
 							.filter(
-								m => !this.game.state.milestones.find(s => s.type === m.type)
+								(m) =>
+									!this.game.state.milestones.find((s) => s.type === m.type),
 							)
-							.forEach(m => {
+							.forEach((m) => {
 								if (
-									this.state.money >= milestonePrice() &&
+									this.state.money >= this.game.state.milestonePrice &&
 									m.getValue(this.game.state, this.state) >= m.limit
 								) {
 									actions.push([
-										10,
+										computeScore(this.game.state, this.state) + 5,
 										() => {
-											this.buyMilestone(m.type)
-										}
+											this.performAction(buyMilestone(m.type))
+										},
 									])
 								}
 							})
 					}
 
-					if (this.game.state.competitions.length < COMPETITIONS_LIMIT) {
-						Object.values(Competitions)
+					if (
+						this.game.state.competitions.length <
+						this.game.state.competitionsLimit
+					) {
+						this.game.state.map.competitions
+							.map((c) => Competitions[c])
 							.filter(
-								m => !this.game.state.competitions.find(s => s.type === m.type)
+								(m) =>
+									!this.game.state.competitions.find((s) => s.type === m.type),
 							)
-							.forEach(c => {
+							.forEach((c) => {
 								if (
 									this.state.money >= competitionPrice(this.game.state) &&
 									c.getScore(this.game.state, this.state) >
 										this.game.state.players
-											.filter(p => p.id !== this.id)
+											.filter((p) => p.id !== this.id)
 											.reduce((m, p) => {
 												const s = c.getScore(this.game.state, p)
+
 												return s > m ? s : m
 											}, 0) &&
 									this.game.state.generation > 5
@@ -447,98 +401,107 @@ export class Bot extends Player {
 									actions.push([
 										0,
 										() => {
-											this.sponsorCompetition(c.type)
-										}
+											this.performAction(sponsorCompetition(c.type))
+										},
 									])
 								}
 							})
 					}
 
-					Object.values(Projects).forEach(p => {
-						if (
-							p.conditions.every(c =>
-								c({ game: this.game.state, player: this.state })
-							)
-						) {
+					this.game.state.standardProjects
+						.map((p) => Projects[p])
+						.forEach((p) => {
 							if (
-								p.type !== StandardProjectType.SellPatents &&
-								(p.resource !== 'money' ||
-									(this.game.state.generation > 2 && Math.random() > 0.5))
+								p.conditions.every((c) =>
+									c({ game: this.game.state, player: this.state }),
+								)
 							) {
-								actions.push([
-									p.resource !== 'money' ? 10 : 0,
-									() => {
-										this.buyStandardProject(p.type, [])
-									}
-								])
+								if (p.type !== StandardProjectType.SellPatents) {
+									actions.push([
+										standardProjectScore(this.scoringContext, p),
+										() => {
+											this.performAction(buyStandardProject(p.type, []))
+										},
+									])
+								}
 							}
-						}
-					})
+						})
 
 					this.cards
 						.filter(
-							c =>
+							(c) =>
 								isCardPlayable(c, {
 									card: emptyCardState(c.code),
-									cardIndex: -1,
 									game: this.game.state,
 									player: this.state,
-									playerId: this.state.id
-								}) && minimalCardPrice(c, this.state) <= this.state.money
+								}) && minimalCardPrice(c, this.state) <= this.state.money,
 						)
-						.forEach(c => {
-							actions.push([
-								1,
-								() => {
-									const card = CardsLookupApi.get(c.code)
+						.forEach((c) => {
+							const score = playCardScore(this.scoringContext, c)
 
-									this.buyCard(
-										c.code,
-										this.state.cards.indexOf(c.code),
-										card.categories.includes(CardCategory.Building)
-											? this.state.ore
-											: 0,
-										card.categories.includes(CardCategory.Space)
-											? this.state.titan
-											: 0,
-										this.prepareParams(
-											card.playEffects,
-											emptyCardState(c.code),
-											-1
+							this.logger.log(
+								c.code,
+								'score',
+								score.score,
+								'with',
+								JSON.stringify(score.args),
+							)
+
+							actions.push([
+								score.score,
+								() => {
+									try {
+										this.performAction(
+											buyCard(
+												c.code,
+												this.state.cards.indexOf(c.code),
+												c.categories.includes(CardCategory.Building)
+													? this.state.ore
+													: 0,
+												c.categories.includes(CardCategory.Space)
+													? this.state.titan
+													: 0,
+												{},
+												score.args,
+											),
 										)
-									)
-								}
+									} catch (e) {
+										this.logger.log(
+											`Failed to play ${c.code} with ${score.args}`,
+										)
+
+										throw e
+									}
+								},
 							])
 						})
 
 					this.state.usedCards
 						.filter(
-							(c, i) =>
+							(c) =>
 								CardsLookupApi.get(c.code).actionEffects.length > 0 &&
 								isCardActionable(CardsLookupApi.get(c.code), {
 									card: c,
-									cardIndex: i,
 									game: this.game.state,
 									player: this.state,
-									playerId: this.state.id
-								})
+								}),
 						)
-						.forEach(c => {
-							actions.push([
-								0,
-								() => {
-									const cardIndex = this.state.usedCards.indexOf(c) as number
+						.forEach((c) => {
+							const score = useCardScore(this.scoringContext, c)
 
-									this.playCard(
-										c.code,
-										cardIndex,
-										this.prepareParams(
-											CardsLookupApi.get(c.code).actionEffects,
-											c,
-											cardIndex
+							actions.push([
+								score.score,
+								() => {
+									try {
+										this.performAction(playCard(c.code, c.index, score.args))
+									} catch (e) {
+										this.logger.log(
+											`Failed to use ${c.code} with ${score.args}`,
 										)
-									)
-								}
+
+										throw e
+									}
+								},
 							])
 						})
 				}
@@ -547,14 +510,22 @@ export class Bot extends Player {
 			}
 		}
 
+		actions = actions.filter(([s]) => s >= 0)
+
+		this.logger.log(f('{0} actions available', actions.length))
+
 		if (actions.length === 0) {
-			if (this.isPlaying) {
-				this.pass()
+			if (
+				[PlayerStateValue.Playing, PlayerStateValue.EndingTiles].includes(
+					this.state.state,
+				)
+			) {
+				this.performAction(playerPass(false))
 			}
 		} else {
 			const sorted = actions.sort(([a], [b]) => b - a)
 
-			shuffle(sorted.filter(s => s[0] === sorted[0][0]))[0][1]()
+			shuffle(sorted.filter((s) => s[0] === sorted[0][0]))[0][1]()
 		}
 	}
 }

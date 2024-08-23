@@ -8,13 +8,13 @@ export const Sounds = {
 	otherPlaced: new GameSound(['audio/other-placed']),
 	greeneryPlaced: new GameSound([
 		'audio/greenery-placed-1',
-		'audio/greenery-placed-2'
+		'audio/greenery-placed-2',
 	]),
 	cardPlayed: new GameSound([
 		'audio/card-played-1',
 		'audio/card-played-2',
 		'audio/card-played-3',
-		'audio/card-played-4'
+		'audio/card-played-4',
 	]),
-	progressImproved: new GameSound(['audio/progress-improved'])
+	progressImproved: new GameSound(['audio/progress-improved']),
 }

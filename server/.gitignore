@@ -3,3 +3,5 @@ dist
 static
 storage
 .cache
+
+.env

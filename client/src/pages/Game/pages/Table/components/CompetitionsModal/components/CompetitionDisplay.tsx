@@ -1,9 +1,8 @@
 import { Button } from '@/components'
-import { colors } from '@/styles'
 import { useAppStore } from '@/utils/hooks'
 import { Competition } from '@shared/competitions'
 import { PlayerState } from '@shared/index'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import { faCheck, faAward } from '@fortawesome/free-solid-svg-icons'
 
@@ -24,27 +23,30 @@ export const CompetitionDisplay = ({
 	sponsored,
 	playing,
 	cost,
-	freePick: pendingAction
+	freePick: pendingAction,
 }: Props) => {
-	const game = useAppStore(state => state.game.state)
-	const playerId = useAppStore(state => state.game.playerId)
+	const game = useAppStore((state) => state.game.state)
+	const playerId = useAppStore((state) => state.game.playerId)
 
 	const score = useMemo(
 		() =>
 			game
-				? game.players.reduce((acc, p) => {
-						const s = competition.getScore(game, p)
+				? game.players.reduce(
+						(acc, p) => {
+							const s = competition.getScore(game, p)
 
-						if (!acc[s]) {
-							acc[s] = []
-						}
+							if (!acc[s]) {
+								acc[s] = []
+							}
 
-						acc[s].push(p)
+							acc[s].push(p)
 
-						return acc
-				  }, {} as Record<number, PlayerState[]>)
+							return acc
+						},
+						{} as Record<number, PlayerState[]>,
+					)
 				: ({} as Record<number, PlayerState[]>),
-		[game, competition]
+		[game, competition],
 	)
 
 	if (!game || !playerId) {
@@ -57,6 +59,7 @@ export const CompetitionDisplay = ({
 				<Title>{competition.title}</Title>
 				{(cost !== undefined || sponsored) && (
 					<Button
+						noClip
 						disabled={!playing || !canAfford || !!sponsored}
 						onClick={() => onBuy(competition)}
 						icon={sponsored ? faCheck : faAward}
@@ -73,7 +76,7 @@ export const CompetitionDisplay = ({
 					.map(([score, players], index) => (
 						<Position key={score}>
 							<Index>{index + 1}.</Index>
-							<Name>{players.map(p => p.name).join(', ')}</Name>
+							<Name>{players.map((p) => p.name).join(', ')}</Name>
 							<Score>{score}</Score>
 						</Position>
 					))}
@@ -91,7 +94,7 @@ const Head = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 
 	> button {
 		margin: 0;
@@ -104,7 +107,7 @@ const Title = styled.div`
 `
 
 const Info = styled.div`
-	background: ${colors.border};
+	background: ${({ theme }) => theme.colors.border};
 	padding: 0.5rem 0.5rem;
 `
 
@@ -112,8 +115,8 @@ const ScoreList = styled.div`
 	padding: 0.25rem 0.5rem;
 	max-height: 4rem;
 	overflow: auto;
-	border-left: 2px solid ${colors.border};
-	border-right: 2px solid ${colors.border};
+	border-left: 2px solid ${({ theme }) => theme.colors.border};
+	border-right: 2px solid ${({ theme }) => theme.colors.border};
 `
 
 const Position = styled.div`

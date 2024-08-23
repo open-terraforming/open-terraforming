@@ -2,9 +2,9 @@ import {
 	GameMessage,
 	adminChange,
 	adminLogin,
-	MessageType
+	MessageType,
 } from '@shared/index'
-import { decode, encode } from 'msgpack-lite'
+import { encode, decode } from 'msgpack-lite'
 
 export class Client {
 	server: string
@@ -19,10 +19,12 @@ export class Client {
 		this.connect()
 	}
 
-	send(msg: object) {
+	send(msg: GameMessage) {
 		if (typeof msg !== 'object') {
 			throw new Error('Trying to send non-object - no!')
 		}
+
+		console.log('Outgoing', MessageType[msg.type], msg)
 
 		return this.socket?.send(encode(msg))
 	}
@@ -38,27 +40,25 @@ export class Client {
 
 		this.socket.onopen = () => {
 			clearTimeout(timeout)
-			this.onOpen && this.onOpen()
+			this.onOpen?.()
 		}
 
-		this.socket.onmessage = async msg => {
-			const data = decode(
-				new Uint8Array(await msg.data.arrayBuffer())
-			) as GameMessage
-
-			if (!data) {
-				throw new Error('Failed to parse message')
+		this.socket.onmessage = async (msg) => {
+			if (this.onMessage) {
+				if (typeof msg.data === 'string') {
+					this.onMessage(JSON.parse(msg.data.toString()))
+				} else if (msg.data instanceof Blob) {
+					const data = decode(new Uint8Array(await msg.data.arrayBuffer()))
+					this.onMessage(data)
+				} else {
+					console.error(msg)
+					throw new Error('Unknown message: ' + typeof msg)
+				}
 			}
-
-			console.groupCollapsed(`Received ${MessageType[data?.type]}`)
-			console.log(data)
-			console.groupEnd()
-
-			this.onMessage && this.onMessage(data)
 		}
 
 		this.socket.onclose = () => {
-			this.onClose && this.onClose()
+			this.onClose?.()
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any

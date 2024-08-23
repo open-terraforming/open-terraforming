@@ -1,16 +1,25 @@
-import { GameState, GridCell, GridCellContent, PlayerGameState } from '../game'
+import {
+	GameState,
+	GridCell,
+	GridCellContent,
+	GridCellLocation,
+	PlayerGameState,
+	UsedCardState,
+} from '../game'
 import { withUnits } from '../units'
+import { allCells, tiles } from '../utils'
+import { CardsLookupApi } from './lookup'
 import {
 	Card,
 	CardCallbackContext,
 	CardCategory,
-	CardType,
-	Resource,
-	WithOptional,
 	CardSymbol,
-	SymbolType,
+	CardType,
 	GameProgress,
-	Production
+	Production,
+	Resource,
+	SymbolType,
+	WithOptional,
 } from './types'
 
 export const resources: Resource[] = [
@@ -19,7 +28,7 @@ export const resources: Resource[] = [
 	'titan',
 	'plants',
 	'energy',
-	'heat'
+	'heat',
 ]
 
 export const productions: Production[] = [
@@ -28,7 +37,7 @@ export const productions: Production[] = [
 	'titanProduction',
 	'plantsProduction',
 	'energyProduction',
-	'heatProduction'
+	'heatProduction',
 ]
 
 export const resourceProduction = {
@@ -37,7 +46,7 @@ export const resourceProduction = {
 	titan: 'titanProduction',
 	plants: 'plantsProduction',
 	energy: 'energyProduction',
-	heat: 'heatProduction'
+	heat: 'heatProduction',
 } as const
 
 export const productionResource = {
@@ -46,26 +55,42 @@ export const productionResource = {
 	titanProduction: 'titan',
 	plantsProduction: 'plants',
 	energyProduction: 'energy',
-	heatProduction: 'heat'
+	heatProduction: 'heat',
 } as const
 
 export const resToPrice = {
 	ore: 'orePrice',
-	titan: 'titanPrice'
+	titan: 'titanPrice',
 } as const
 
 export const gamePlayer = (game: GameState, playerId: number) => {
-	const p = game.players.find(p => p.id === playerId)
+	const p = game.players.find((p) => p.id === playerId)
+
 	if (!p) {
 		throw new Error(`Failed to find player #${playerId}`)
 	}
+
 	return p
 }
 
-export const cellByCoords = (game: GameState, x: number, y: number) => {
-	const spec = game.map.special.find(s => s.x === x && s.y === y)
-	if (spec) {
-		return spec
+export const cellByCoords = (
+	game: GameState,
+	x: number,
+	y: number,
+	location: GridCellLocation | undefined,
+) => {
+	if (location) {
+		const matchingCells = game.map.grid.flatMap((row) =>
+			row.filter((c) => c.location === location),
+		)
+
+		const cell = matchingCells.find((c) => c.x === x && c.y === y)
+
+		if (!cell) {
+			throw new Error(`No cell at ${x},${y},${GridCellLocation[location]}`)
+		}
+
+		return cell
 	}
 
 	let cell: GridCell | undefined
@@ -81,21 +106,29 @@ export const cellByCoords = (game: GameState, x: number, y: number) => {
 	return cell
 }
 
+export const countGridContentOnMars = (
+	game: GameState,
+	content: GridCellContent,
+	playerId?: number,
+) => countGridContent(game, content, playerId, true)
+
 export const countGridContent = (
 	game: GameState,
 	content: GridCellContent,
-	playerId?: number
+	playerId?: number,
+	onMars = false,
 ) => {
-	return game.map.grid.reduce(
-		(acc, c) =>
-			acc +
-			c.filter(
-				c =>
-					c.content === content &&
-					(playerId === undefined || c.ownerId === playerId)
-			).length,
-		0
-	)
+	const query = tiles(allCells(game)).hasContent(content)
+
+	if (onMars) {
+		query.onMars()
+	}
+
+	if (playerId !== undefined) {
+		query.ownedBy(playerId)
+	}
+
+	return query.length
 }
 
 export const card = (
@@ -106,9 +139,9 @@ export const card = (
 		| 'passiveEffects'
 		| 'actionEffects'
 		| 'victoryPoints'
-		| 'description'
 		| 'special'
-	>
+		| 'description'
+	>,
 ) =>
 	({
 		victoryPoints: 0,
@@ -118,18 +151,18 @@ export const card = (
 		actionEffects: [],
 		special: [],
 		description: '',
-		...c
-	} as Card)
+		...c,
+	}) as Card
 
 export const isCardPlayable = (card: Card, ctx: CardCallbackContext) =>
-	!card.conditions.find(c => !c.evaluate(ctx)) &&
-	!card.playEffects.find(e => e.conditions.find(c => !c.evaluate(ctx)))
+	!card.conditions.find((c) => !c.evaluate(ctx)) &&
+	!card.playEffects.find((e) => e.conditions.find((c) => !c.evaluate(ctx)))
 
 export const isCardActionable = (card: Card, ctx: CardCallbackContext) =>
 	(card.type === CardType.Action || card.type === CardType.Corporation) &&
 	!ctx.card.played &&
 	card.actionEffects.length > 0 &&
-	!card.actionEffects.find(e => e.conditions.find(c => !c.evaluate(ctx)))
+	!card.actionEffects.find((e) => e.conditions.find((c) => !c.evaluate(ctx)))
 
 export const emptyCardState = (cardCode: string, index = -1) => ({
 	code: cardCode,
@@ -138,7 +171,9 @@ export const emptyCardState = (cardCode: string, index = -1) => ({
 	animals: 0,
 	fighters: 0,
 	microbes: 0,
-	science: 0
+	science: 0,
+	floaters: 0,
+	asteroids: 0,
 })
 
 export const minimalCardPrice = (card: Card, player: PlayerGameState) =>
@@ -150,7 +185,7 @@ export const minimalCardPrice = (card: Card, player: PlayerGameState) =>
 				: 0) -
 			(card.categories.includes(CardCategory.Space)
 				? player?.titan * player?.titanPrice
-				: 0)
+				: 0),
 	)
 
 export const adjustedCardPrice = (card: Card, player: PlayerGameState) =>
@@ -159,22 +194,22 @@ export const adjustedCardPrice = (card: Card, player: PlayerGameState) =>
 		card.cost +
 			card.categories.reduce(
 				(acc, c) => acc + (player.tagPriceChange[c] ?? 0),
-				0
+				0,
 			) +
-			player.cardPriceChange
+			player.cardPriceChange,
 	)
 
 export const updatePlayerResource = (
 	player: PlayerGameState,
 	res: Resource,
-	amount: number
+	amount: number,
 ) => {
 	if (amount < 0 && player[res] < -amount) {
 		throw new Error(
 			`Player doesn't have ${withUnits(res, -amount)}! Owned: ${withUnits(
 				res,
-				player[res]
-			)}`
+				player[res],
+			)}`,
 		)
 	}
 
@@ -184,7 +219,7 @@ export const updatePlayerResource = (
 export const updatePlayerProduction = (
 	player: PlayerGameState,
 	res: Resource,
-	amount: number
+	amount: number,
 ) => {
 	const prod = resourceProduction[res]
 
@@ -197,18 +232,39 @@ export const updatePlayerProduction = (
 
 export const noDesc = <T extends { description?: string }>(e: T) => {
 	delete e.description
+
 	return e
 }
 
 export const withRightArrow = <T extends { symbols: CardSymbol[] }>(
-	e: T
+	e: T,
 ): T => ({
 	...e,
-	symbols: [...e.symbols, { symbol: SymbolType.RightArrow }]
+	symbols: [...e.symbols, { symbol: SymbolType.RightArrow }],
 })
 
 export const progressSymbol: Record<GameProgress, Readonly<CardSymbol>> = {
 	oceans: { tile: GridCellContent.Ocean },
 	oxygen: { symbol: SymbolType.Oxygen },
-	temperature: { symbol: SymbolType.Temperature }
+	temperature: { symbol: SymbolType.Temperature },
+	venus: { symbol: SymbolType.Venus },
+}
+
+/**
+ * Counts tags, excluding action cards
+ */
+export const countTagsWithoutEvents = (
+	cards: (string | UsedCardState)[],
+	tag: CardCategory,
+) => {
+	return cards
+		.map((c) => CardsLookupApi.get(typeof c === 'string' ? c : c.code))
+		.filter((c) => c.type !== CardType.Event)
+		.reduce(
+			(acc, c) =>
+				acc +
+				c.categories.filter((cat) => cat === tag || cat === CardCategory.Any)
+					.length,
+			0,
+		)
 }

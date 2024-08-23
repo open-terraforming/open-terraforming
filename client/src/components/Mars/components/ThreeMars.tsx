@@ -1,7 +1,7 @@
 import marsTexture from '@/assets/mars_4k_color.jpg'
 import marsNormal from '@/assets/mars_4k_normal.jpg'
 import { useAnimationFrame } from '@/utils/hooks'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
 	AmbientLight,
 	Mesh,
@@ -13,12 +13,10 @@ import {
 	Texture,
 	TextureLoader,
 	Vector2,
-	WebGLRenderer
+	WebGLRenderer,
 } from 'three'
 
-type Props = {}
-
-export default ({}: Props) => {
+export default () => {
 	const [canvas, setCanvas] = useState(null as null | HTMLCanvasElement)
 	const [texture, setTexture] = useState(null as null | [Texture, Texture])
 	const [size, setSize] = useState([600, 600])
@@ -39,7 +37,7 @@ export default ({}: Props) => {
 
 	const camera = useMemo(
 		() => new PerspectiveCamera(75, size[0] / size[1], 0.1, 1000),
-		[]
+		[],
 	)
 
 	const scene = useMemo(() => {
@@ -59,7 +57,7 @@ export default ({}: Props) => {
 	}, [])
 
 	const planet = useMemo(() => {
-		scene.children.forEach(c => {
+		scene.children.forEach((c) => {
 			if (c instanceof Mesh) {
 				scene.remove(c)
 			}
@@ -73,7 +71,7 @@ export default ({}: Props) => {
 				map: texture[0],
 				normalMap: texture[1],
 				shininess: 0.1,
-				normalScale: new Vector2(5, 5)
+				normalScale: new Vector2(5, 5),
 			})
 
 			const newPlanet = new Mesh(geometry, material)
@@ -88,8 +86,8 @@ export default ({}: Props) => {
 		if (!texture) {
 			const loader = new TextureLoader()
 
-			loader.load(marsTexture, texture => {
-				loader.load(marsNormal, normal => {
+			loader.load(marsTexture, (texture) => {
+				loader.load(marsNormal, (normal) => {
 					setTexture([texture, normal])
 				})
 			})
@@ -134,5 +132,5 @@ export default ({}: Props) => {
 		}
 	})
 
-	return <canvas ref={e => setCanvas(e)} />
+	return <canvas ref={(e) => setCanvas(e)} />
 }

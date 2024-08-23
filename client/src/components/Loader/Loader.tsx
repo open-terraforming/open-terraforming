@@ -1,6 +1,6 @@
-import React from 'react'
-import styled, { keyframes, css } from 'styled-components'
+import { useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
+import styled, { css, keyframes } from 'styled-components'
 
 interface Props {
 	loaded: boolean
@@ -18,25 +18,30 @@ const getInnerSpinners = () => {
 	return rows
 }
 
-export const Loader = ({ loaded, message, absolute }: Props) => (
-	<React.Fragment>
-		<CSSTransition
-			in={!loaded}
-			mountOnEnter
-			unmountOnExit
-			classNames="fade"
-			timeout={100}
-		>
-			<Container absolute={!!absolute}>
-				<Spinner>{getInnerSpinners()}</Spinner>
-				{message && <Message>{message}</Message>}
-			</Container>
-		</CSSTransition>
-	</React.Fragment>
-)
+export const Loader = ({ loaded, message, absolute }: Props) => {
+	const nodeRef = useRef(null)
+
+	return (
+		<>
+			<CSSTransition
+				in={!loaded}
+				mountOnEnter
+				unmountOnExit
+				classNames="fade"
+				timeout={100}
+				nodeRef={nodeRef}
+			>
+				<Container absolute={!!absolute} ref={nodeRef}>
+					<Spinner>{getInnerSpinners()}</Spinner>
+					{message && <Message>{message}</Message>}
+				</Container>
+			</CSSTransition>
+		</>
+	)
+}
 
 const Container = styled.div<{ absolute: boolean }>`
-	${props =>
+	${(props) =>
 		props.absolute &&
 		css`
 			position: absolute;
@@ -74,8 +79,8 @@ const spinnerKeyframes = keyframes`
 const SpinnerDiv = styled.div<{ rotate: number; delay: number }>`
 	transform-origin: 32px 32px;
 	animation: ${spinnerKeyframes} 1.2s linear infinite;
-	transform: rotate(${props => props.rotate}deg);
-	animation-delay: -${props => props.delay}s;
+	transform: rotate(${(props) => props.rotate}deg);
+	animation-delay: -${(props) => props.delay}s;
 
 	&:after {
 		content: ' ';
@@ -86,7 +91,7 @@ const SpinnerDiv = styled.div<{ rotate: number; delay: number }>`
 		width: 5px;
 		height: 14px;
 		border-radius: 20%;
-		background-color: ${props => props.theme.colors.primary.base};
+		background-color: ${(props) => props.theme.colors.primary.base};
 		box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.1);
 	}
 `

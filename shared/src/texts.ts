@@ -1,5 +1,4 @@
 import { GridCellContent, GridCellOther, GridCellSpecial } from './game'
-import { CardSpecial } from './cards'
 
 export const tileWithArticle = (content: GridCellContent) => {
 	return `${tileArticle(content)} ${tileToStr(content)}`
@@ -91,5 +90,19 @@ export const specialToStr = (special: GridCellSpecial) => {
 			return 'Ganymede Colony'
 		case GridCellSpecial.PhobosSpaceHaven:
 			return 'Phobos Space Haven'
+		case GridCellSpecial.HecatesTholus:
+			return 'Hecates Tholus'
+		case GridCellSpecial.ElysiumMons:
+			return 'Elysium Mons'
+		case GridCellSpecial.OlympusMons:
+			return 'Olympus Mons'
+		case GridCellSpecial.MaxwellBase:
+			return 'Maxwell Base'
+		case GridCellSpecial.Stratopolis:
+			return 'Stratopolis'
+		case GridCellSpecial.DawnCity:
+			return 'Dawn City'
+		case GridCellSpecial.LunaMetropolis:
+			return 'Luna Metropolis'
 	}
 }
