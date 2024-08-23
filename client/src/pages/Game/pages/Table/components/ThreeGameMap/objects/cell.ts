@@ -2,7 +2,7 @@ import {
 	GridCell,
 	GridCellContent,
 	GridCellOther,
-	PlayerStateValue
+	PlayerStateValue,
 } from '@shared/index'
 import { canPlace, isClaimable } from '@shared/placements'
 import { PlayerActionType } from '@shared/player-actions'
@@ -15,7 +15,7 @@ import {
 	Object3D,
 	PlaneBufferGeometry,
 	Vector2,
-	Vector3
+	Vector3,
 } from 'three'
 import { resources } from '../resources'
 import { MarsObject } from './mars-object'
@@ -73,19 +73,19 @@ export class Cell {
 		let totalOre = cell.ore
 		let totalTitan = cell.titan
 
-		range(0, total).forEach(i => {
+		range(0, total).forEach((i) => {
 			const rx = ((total - 1) / 2 - i) * 0.45
 
 			const res =
 				totalPlants-- > 0
 					? 'plant'
 					: totalOre-- > 0
-					? 'ore'
-					: totalTitan-- > 0
-					? 'titan'
-					: totalCards--
-					? 'card'
-					: null
+						? 'ore'
+						: totalTitan-- > 0
+							? 'titan'
+							: totalCards--
+								? 'card'
+								: null
 
 			if (res) {
 				const mesh = resources.get(res).clone()
@@ -101,12 +101,12 @@ export class Cell {
 				250,
 				'Oswald',
 				60,
-				specialToStr(cell.special)
+				specialToStr(cell.special),
 			)
 
 			const labelMaterial = new MeshBasicMaterial({
 				map: labelTexture,
-				transparent: true
+				transparent: true,
 			})
 
 			const label = new Mesh(new PlaneBufferGeometry(1, 1), labelMaterial)
@@ -132,7 +132,7 @@ export class Cell {
 
 		if (this.ocean) {
 			this.ocean.map?.offset.add(
-				new Vector2(1, 1).normalize().multiplyScalar((1 / 60) * 0.01)
+				new Vector2(1, 1).normalize().multiplyScalar((1 / 60) * 0.01),
 			)
 		}
 	}
@@ -150,10 +150,10 @@ export class Cell {
 				cell.ownerId !== undefined &&
 				cell.content !== GridCellContent.Ocean
 			) {
-				const owner = game.players.find(p => p.id === cell.ownerId)
+				const owner = game.players.find((p) => p.id === cell.ownerId)
 				const color = owner?.color ?? '#ffffff'
 
-				this.hex.traverse(i => {
+				this.hex.traverse((i) => {
 					if (
 						i instanceof Mesh &&
 						!Array.isArray(i.material) &&
@@ -197,7 +197,7 @@ export class Cell {
 	}
 
 	private setModel(type?: GridCellContent, other?: GridCellOther) {
-		this.container.children.forEach(c => {
+		this.container.children.forEach((c) => {
 			if (c.name === 'Model') {
 				this.container.remove(c)
 			}
@@ -210,7 +210,7 @@ export class Cell {
 			newModel.name = 'Model'
 
 			if (type === GridCellContent.Ocean) {
-				newModel.traverse(i => {
+				newModel.traverse((i) => {
 					if (i instanceof Mesh && i.material instanceof MeshStandardMaterial) {
 						this.ocean = i.material.clone()
 						i.material.opacity = 0.5

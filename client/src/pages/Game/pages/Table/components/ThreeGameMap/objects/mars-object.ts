@@ -1,19 +1,15 @@
+import { MyEvent } from '@/utils/events'
 import { GameState, PlayerState } from '@shared/index'
 import {
 	Camera,
-	Mesh,
-	MeshPhongMaterial,
 	Object3D,
-	Raycaster,
-	SphereGeometry,
-	Vector2,
-	Vector3,
 	PointLight,
-	SpotLight
+	Raycaster,
+	SpotLight,
+	Vector3,
 } from 'three'
-import { resources, findMesh } from '../resources'
+import { findMesh, resources } from '../resources'
 import { Cell } from './cell'
-import { MyEvent } from '@/utils/events'
 
 const raycaster = new Raycaster()
 
@@ -61,9 +57,9 @@ export class MarsObject {
 
 	initialize() {
 		const scene = resources.get('mars-4k').clone()
-		const camera = findMesh(scene, i => i.name === 'Camera')
+		const camera = findMesh(scene, (i) => i.name === 'Camera')
 
-		scene.traverse(i => {
+		scene.traverse((i) => {
 			if (i instanceof PointLight || i instanceof SpotLight) {
 				i.intensity /= 20
 			}
@@ -105,7 +101,7 @@ export class MarsObject {
 					const position = new Vector3(
 						Math.sin(yaw) * Math.cos(pitch),
 						Math.sin(pitch),
-						Math.cos(yaw) * Math.cos(pitch)
+						Math.cos(yaw) * Math.cos(pitch),
 					).multiplyScalar(this.radius)
 
 					if (!this.cells[x]) {
@@ -126,11 +122,11 @@ export class MarsObject {
 
 		const intersects = raycaster.intersectObjects(this.colliders)
 
-		Object.values(this.cells).forEach(v => {
+		Object.values(this.cells).forEach((v) => {
 			if (v) {
-				Object.values(v).forEach(v => {
+				Object.values(v).forEach((v) => {
 					if (v) {
-						v.hover = !!intersects.find(i => i.object === v.collider)
+						v.hover = !!intersects.find((i) => i.object === v.collider)
 
 						v.tick()
 					}
@@ -143,9 +139,9 @@ export class MarsObject {
 		this.game = game
 		this.player = player
 
-		Object.values(this.cells).forEach(v => {
+		Object.values(this.cells).forEach((v) => {
 			if (v) {
-				Object.values(v).forEach(v => {
+				Object.values(v).forEach((v) => {
 					if (v && v.cell) {
 						v.update(game.map.grid[v.cell.x][v.cell.y])
 					}

@@ -4,7 +4,7 @@ export function makeLabelTexture(
 	baseWidth: number,
 	fontName: string,
 	size: number,
-	text: string
+	text: string,
 ) {
 	const borderSize = 2
 	const ctx = document.createElement('canvas').getContext('2d')

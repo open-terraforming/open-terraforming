@@ -1,33 +1,31 @@
 import { useApi } from '@/context/ApiContext'
 import { useAnimationFrame, useAppStore, useEvent } from '@/utils/hooks'
-import { claimTile, GridCell, placeTile, PlayerStateValue } from '@shared/index'
+import { claimTile, placeTile, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import {
 	ACESFilmicToneMapping,
 	PerspectiveCamera,
 	Scene,
 	sRGBEncoding,
-	WebGLRenderer
+	WebGLRenderer,
 } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass'
 import { MarsObject } from './objects/mars-object'
 
-type Props = {}
-
-export default ({}: Props) => {
+export default () => {
 	const api = useApi()
-	const player = useAppStore(state => state.game.player)
-	const game = useAppStore(state => state.game.state)
-	const pending = useAppStore(state => state.game.pendingAction)
+	const player = useAppStore((state) => state.game.player)
+	const game = useAppStore((state) => state.game.state)
+	const pending = useAppStore((state) => state.game.pendingAction)
 
 	const isPlaying = useAppStore(
-		state =>
+		(state) =>
 			state.game.player.state === PlayerStateValue.Playing ||
-			state.game.player.state === PlayerStateValue.EndingTiles
+			state.game.player.state === PlayerStateValue.EndingTiles,
 	)
 
 	const placing =
@@ -46,9 +44,11 @@ export default ({}: Props) => {
 	const mouse = useRef({ x: -5, y: -5 })
 	const controls = useRef<OrbitControls>()
 
+	/*
 	const [cells, setCells] = useState(
-		[] as { x: number; y: number; px: number; py: number; cell: GridCell }[]
+		[] as { x: number; y: number; px: number; py: number; cell: GridCell }[],
 	)
+		*/
 
 	useEffect(() => {
 		const updateSize = () => {
@@ -74,7 +74,7 @@ export default ({}: Props) => {
 
 	const camera = useMemo(
 		() => new PerspectiveCamera(75, size[0] / size[1], 0.1, 1000),
-		[]
+		[],
 	)
 
 	const scene = useMemo(() => {
@@ -97,7 +97,7 @@ export default ({}: Props) => {
 	const planet = useMemo(() => {
 		console.log('Building planet')
 
-		scene.children.forEach(c => {
+		scene.children.forEach((c) => {
 			if (c.name === 'Mars') {
 				console.log('Removing previous planet')
 				scene.remove(c)
@@ -206,9 +206,9 @@ export default ({}: Props) => {
 
 					if (cell.hover && cell.available) {
 						if (placing) {
-							api.send(placeTile(x, y))
+							api.send(placeTile(x, y, undefined))
 						} else if (claiming) {
-							api.send(claimTile(x, y))
+							api.send(claimTile(x, y, undefined))
 						}
 					}
 				}
@@ -279,7 +279,7 @@ export default ({}: Props) => {
 	return (
 		<>
 			<E>
-				<canvas ref={e => setCanvas(e)} onClick={handleClick} />
+				<canvas ref={(e) => setCanvas(e)} onClick={handleClick} />
 				{/*cells.map(c => (
 					<Cell key={`${c.x}_${c.y}`} style={{ top: c.py, left: c.px }}>
 						<Resources>
@@ -318,43 +318,4 @@ const E = styled.div`
 
 const O = styled.div`
 	flex: 1;
-`
-
-const Cell = styled.div`
-	position: absolute;
-	z-index: 1;
-	color: #000;
-`
-
-const Resources = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	position: relative;
-`
-
-const Special = styled.div`
-	margin-bottom: 0.5rem;
-	text-align: center;
-	margin-left: 0.25rem;
-	margin-right: 0.25rem;
-	position: relative;
-	text-shadow: 0px 0px 4px rgba(0, 0, 0, 1);
-`
-
-const Res = styled.div`
-	padding: 0.1rem;
-	margin: 0 0.1rem;
-	border-radius: 0.25rem;
-	border: 1px solid #fff;
-`
-
-const PlantRes = styled(Res)`
-	background: #54a800;
-	border-color: #356a00;
-`
-
-const OreRes = styled(Res)`
-	background: #ff8811;
-	border-color: #8a4500;
 `
