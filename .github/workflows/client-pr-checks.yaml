@@ -1,0 +1,34 @@
+name: Client PR checks
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.9.0"
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm install
+        working-directory: client
+      - run: npm run lint
+        working-directory: client
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20.9.0"
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm install
+        working-directory: client
+      - run: npm run type-check
+        working-directory: client
