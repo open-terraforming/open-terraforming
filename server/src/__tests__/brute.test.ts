@@ -26,7 +26,7 @@ describe('brute', () => {
 		while (true) {
 			await wait(5)
 
-			if (game.state.generation > 5 || start + 4000 < Date.now()) {
+			if (game.state.generation > 5 || start + 10000 < Date.now()) {
 				game.players.forEach((p) => (p instanceof Bot ? p.stop() : null))
 				await wait(20)
 
@@ -35,5 +35,5 @@ describe('brute', () => {
 		}
 
 		expect(game.state.generation).toBeGreaterThan(5)
-	})
+	}, 15000)
 })

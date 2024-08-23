@@ -218,7 +218,7 @@ export const venusCards: Card[] = [
 		playEffects: [
 			effectChoice([
 				joinedEffects([
-					withRightArrow(playerResourceChange('money', -2)),
+					withRightArrow(resourceChange('money', -2)),
 					cardResourceChange('floaters', 1)
 				]),
 				joinedEffects([
