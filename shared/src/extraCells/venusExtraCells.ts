@@ -2,7 +2,7 @@ import {
 	GridCell,
 	GridCellLocation,
 	GridCellSpecial,
-	GridCellType
+	GridCellType,
 } from '../game'
 import { cell } from '../maps/utils'
 
@@ -14,7 +14,7 @@ export const venusExtraCells: GridCell[] = [
 		outside: true,
 		location: GridCellLocation.Venus,
 		x: 2,
-		y: 2
+		y: 2,
 	}),
 	cell({
 		enabled: true,
@@ -23,7 +23,7 @@ export const venusExtraCells: GridCell[] = [
 		outside: true,
 		location: GridCellLocation.Venus,
 		x: 4,
-		y: 2
+		y: 2,
 	}),
 	cell({
 		enabled: true,
@@ -32,7 +32,7 @@ export const venusExtraCells: GridCell[] = [
 		outside: true,
 		location: GridCellLocation.Venus,
 		x: 5,
-		y: 5
+		y: 5,
 	}),
 	cell({
 		enabled: true,
@@ -41,6 +41,6 @@ export const venusExtraCells: GridCell[] = [
 		outside: true,
 		location: GridCellLocation.Venus,
 		x: 5,
-		y: 1
-	})
+		y: 1,
+	}),
 ]

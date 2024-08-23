@@ -13,14 +13,14 @@ test('terraformRatingForTags should change production based on tag count', () =>
 		usedCards: [
 			emptyCardState('colonizer_training_camp'),
 			emptyCardState('asteroid_mining_consortium'),
-			emptyCardState('methane_from_titan')
-		]
+			emptyCardState('methane_from_titan'),
+		],
 	})
 
 	terraformRatingForTags(CardCategory.Jupiter, 2).perform({
 		card,
 		game,
-		player
+		player,
 	})
 
 	expect(player.terraformRating).toBe(13)

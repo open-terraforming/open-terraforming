@@ -7,11 +7,14 @@ export class CardsLookupApi {
 
 	static data() {
 		if (!this._data || this._length !== Cards.length) {
-			this._data = Cards.reduce((acc, c) => {
-				acc[c.code] = c
+			this._data = Cards.reduce(
+				(acc, c) => {
+					acc[c.code] = c
 
-				return acc
-			}, {} as Record<string, Card>)
+					return acc
+				},
+				{} as Record<string, Card>,
+			)
 		}
 
 		return this._data

@@ -28,7 +28,7 @@ export enum GameStateValue {
 	/** Players are playing their prelude cards */
 	Prelude,
 	/** After production phase this phase allows the current player to increase one progress */
-	SolarPhase
+	SolarPhase,
 }
 
 export enum PlayerStateValue {
@@ -49,7 +49,7 @@ export enum PlayerStateValue {
 	/** Waiting for his turn */
 	WaitingForTurn,
 	/** Playing prelude cards */
-	Prelude
+	Prelude,
 }
 
 export interface GameState {
@@ -164,7 +164,7 @@ export enum GridCellType {
 	Stratopolis,
 	MaxwellBase,
 	DawnCity,
-	LunaMetropolis
+	LunaMetropolis,
 }
 
 export enum GridCellSpecial {
@@ -181,14 +181,14 @@ export enum GridCellSpecial {
 	MaxwellBase,
 	Stratopolis,
 	DawnCity,
-	LunaMetropolis
+	LunaMetropolis,
 }
 
 export enum GridCellContent {
 	City = 1,
 	Forest,
 	Ocean,
-	Other
+	Other,
 }
 
 export enum GridCellOther {
@@ -201,12 +201,12 @@ export enum GridCellOther {
 	EcologicalZone,
 	Volcano,
 	Mohole,
-	RestrictedZone
+	RestrictedZone,
 }
 
 export enum GridCellLocation {
 	Main = 1,
-	Venus
+	Venus,
 }
 
 export interface GridCell {
@@ -316,7 +316,7 @@ export enum VictoryPointsSource {
 	Milestones,
 	Awards,
 	Forests,
-	Cities
+	Cities,
 }
 
 export type VictoryPoints = {
@@ -367,7 +367,7 @@ export enum StandardProjectType {
 	City,
 	GreeneryForPlants,
 	TemperatureForHeat,
-	AirScrapping
+	AirScrapping,
 }
 
 export enum ProgressMilestoneType {
@@ -375,7 +375,7 @@ export enum ProgressMilestoneType {
 	Heat,
 	Temperature,
 	Card,
-	TerraformingRating
+	TerraformingRating,
 }
 
 export interface ProgressMilestoneItem {

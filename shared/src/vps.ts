@@ -5,7 +5,7 @@ import {
 	GridCellContent,
 	PlayerState,
 	VictoryPoints,
-	VictoryPointsSource
+	VictoryPointsSource,
 } from './game'
 import { adjacentCells, allCells } from './utils'
 
@@ -18,7 +18,7 @@ export const getCardVictoryPoints = (game: GameState, player: PlayerState) => {
 			acc += card.victoryPointsCallback.compute({
 				card: state,
 				game: game,
-				player: player
+				player: player,
 			})
 		}
 
@@ -38,7 +38,7 @@ export const getTilesVictoryPoints = (game: GameState, player: PlayerState) => {
 
 					case GridCellContent.City: {
 						acc.cities += adjacentCells(game, cell.x, cell.y).filter(
-							c => c.content === GridCellContent.Forest
+							(c) => c.content === GridCellContent.Forest,
 						).length
 
 						break
@@ -48,29 +48,29 @@ export const getTilesVictoryPoints = (game: GameState, player: PlayerState) => {
 
 			return acc
 		},
-		{ forests: 0, cities: 0 }
+		{ forests: 0, cities: 0 },
 	)
 }
 
 export const getVictoryPoints = (
 	game: GameState,
 	player: PlayerState,
-	competitions = true
+	competitions = true,
 ) => {
 	const victoryPoints = [] as VictoryPoints[]
 
 	victoryPoints.push({
 		source: VictoryPointsSource.Rating,
-		amount: player.terraformRating
+		amount: player.terraformRating,
 	})
 
 	game.milestones
-		.filter(m => m.playerId === player.id)
-		.forEach(m => {
+		.filter((m) => m.playerId === player.id)
+		.forEach((m) => {
 			victoryPoints.push({
 				source: VictoryPointsSource.Milestones,
 				amount: game.milestoneReward,
-				milestone: m.type
+				milestone: m.type,
 			})
 		})
 
@@ -78,28 +78,31 @@ export const getVictoryPoints = (
 		game.competitions.forEach(({ type }) => {
 			const competition = Competitions[type]
 
-			const score = game.players.reduce((acc, p) => {
-				const s = competition.getScore(game, p)
+			const score = game.players.reduce(
+				(acc, p) => {
+					const s = competition.getScore(game, p)
 
-				if (!acc[s]) {
-					acc[s] = []
-				}
+					if (!acc[s]) {
+						acc[s] = []
+					}
 
-				acc[s].push(p)
+					acc[s].push(p)
 
-				return acc
-			}, {} as Record<number, PlayerState[]>)
+					return acc
+				},
+				{} as Record<number, PlayerState[]>,
+			)
 
 			Object.entries(score)
 				.sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
 				.slice(0, game.competitionRewards.length)
 				.forEach(([, players], index) => {
-					players.forEach(p => {
+					players.forEach((p) => {
 						if (p.id === player.id) {
 							victoryPoints.push({
 								source: VictoryPointsSource.Awards,
 								amount: game.competitionRewards[index],
-								competition: type
+								competition: type,
 							})
 						}
 					})
@@ -109,19 +112,19 @@ export const getVictoryPoints = (
 
 	victoryPoints.push({
 		source: VictoryPointsSource.Cards,
-		amount: getCardVictoryPoints(game, player)
+		amount: getCardVictoryPoints(game, player),
 	})
 
 	const tileVps = getTilesVictoryPoints(game, player)
 
 	victoryPoints.push({
 		source: VictoryPointsSource.Forests,
-		amount: tileVps.forests
+		amount: tileVps.forests,
 	})
 
 	victoryPoints.push({
 		source: VictoryPointsSource.Cities,
-		amount: tileVps.cities
+		amount: tileVps.cities,
 	})
 
 	return victoryPoints

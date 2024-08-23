@@ -2,39 +2,39 @@ export enum RealtimeEventType {
 	Auth = 1,
 	MouseMove,
 	Message,
-	Emotion
+	Emotion,
 }
 
 export enum EmotionType {
 	Anger = 1,
 	Happy,
-	ThumbUp
+	ThumbUp,
 }
 
 export const eventsAuth = (session: string) =>
 	({
 		type: RealtimeEventType.Auth,
-		session
-	} as const)
+		session,
+	}) as const
 
 export const mouseMoveEvent = (x: number, y: number) =>
 	({
 		type: RealtimeEventType.MouseMove,
 		x,
-		y
-	} as const)
+		y,
+	}) as const
 
 export const messageEvent = (text: string) =>
 	({
 		type: RealtimeEventType.Message,
-		text
-	} as const)
+		text,
+	}) as const
 
 export const emotionEvent = (emotion: EmotionType) =>
 	({
 		type: RealtimeEventType.Message,
-		emotion
-	} as const)
+		emotion,
+	}) as const
 
 export type RealtimeEventEmit =
 	| ReturnType<typeof eventsAuth>

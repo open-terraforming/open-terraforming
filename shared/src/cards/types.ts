@@ -5,7 +5,7 @@ import {
 	GridCell,
 	PlayerState,
 	GridCellContent,
-	GridCellOther
+	GridCellOther,
 } from '../game'
 import { StandardProject } from '../projects'
 
@@ -66,7 +66,7 @@ export enum CardCategory {
 	City,
 	Event,
 	Venus,
-	Any
+	Any,
 }
 
 export enum CardType {
@@ -75,14 +75,14 @@ export enum CardType {
 	Effect,
 	Building,
 	Corporation,
-	Prelude
+	Prelude,
 }
 
 export enum CardSpecial {
 	CorporationsEra = 1,
 	StartingCorporation,
 	Prelude,
-	Venus
+	Venus,
 }
 
 export interface CardVictoryPointsCallback {
@@ -117,7 +117,7 @@ export interface Card {
 
 export type CardCondition<
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	T extends (CardEffectArgumentType | undefined)[] = any
+	T extends (CardEffectArgumentType | undefined)[] = any,
 > = {
 	description?: string
 	symbols: CardSymbol[]
@@ -138,12 +138,12 @@ export type CellCondition = {
 export enum CardEffectType {
 	Production = 1,
 	Resource,
-	Other
+	Other,
 }
 
 export interface CardEffect<
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	T extends Array<CardEffectArgumentType | undefined> = any
+	T extends Array<CardEffectArgumentType | undefined> = any,
 > {
 	args: CardEffectArgument[]
 	conditions: CardCondition[]
@@ -174,7 +174,7 @@ export enum CardEffectTarget {
 	// Type - [x: number, y: number]
 	Cell,
 	// Type - amount: number
-	CardResourceCount
+	CardResourceCount,
 }
 
 export interface CardEffectArgument {
@@ -198,7 +198,7 @@ export interface CardEffectArgument {
 
 export type ResourceCondition = (
 	context: { player: PlayerState; game: GameState },
-	resource: Resource
+	resource: Resource,
 ) => boolean
 
 export interface CardPassiveEffect {
@@ -208,18 +208,18 @@ export interface CardPassiveEffect {
 	onTilePlaced?: (
 		ctx: CardCallbackContext,
 		cell: GridCell,
-		placedBy: PlayerState
+		placedBy: PlayerState,
 	) => void
 	onCardPlayed?: (
 		ctx: CardCallbackContext,
 		playedCard: Card,
 		playedCardIndex: number,
-		playedBy: PlayerState
+		playedBy: PlayerState,
 	) => void
 	onStandardProject?: (
 		ctx: CardCallbackContext,
 		project: StandardProject,
-		playedBy: PlayerState
+		playedBy: PlayerState,
 	) => void
 	onProgress?: (ctx: CardCallbackContext, progress: GameProgress) => void
 	onGenerationEnd?: (ctx: CardCallbackContext) => void
@@ -227,7 +227,7 @@ export interface CardPassiveEffect {
 		ctx: CardCallbackContext,
 		player: PlayerState,
 		production: Production,
-		change: number
+		change: number,
 	) => void
 }
 
@@ -246,7 +246,7 @@ export enum SymbolType {
 	MoreOrEqual,
 	Venus,
 	AnyResource,
-	Equal
+	Equal,
 }
 
 export interface CardSymbol {

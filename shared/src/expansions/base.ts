@@ -8,9 +8,9 @@ export const baseExpansion = expansion({
 
 	getCards: () =>
 		Cards.filter(
-			c =>
+			(c) =>
 				c.special.length === 0 ||
 				c.special.includes(CardSpecial.CorporationsEra) ||
-				c.special.includes(CardSpecial.StartingCorporation)
-		)
+				c.special.includes(CardSpecial.StartingCorporation),
+		),
 })

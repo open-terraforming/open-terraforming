@@ -19,7 +19,7 @@ export enum MilestoneType {
 	Ecologist,
 	Tycoon,
 	Legend,
-	Hoverlord
+	Hoverlord,
 }
 
 export interface Milestone {
@@ -38,7 +38,7 @@ const MilestonesList = [
 		title: 'Terraformer',
 		description: 'Terraforming rating',
 		limit: 35,
-		getValue: (_game, player) => player.terraformRating
+		getValue: (_game, player) => player.terraformRating,
 	}),
 	milestone({
 		type: MilestoneType.Mayor,
@@ -47,8 +47,8 @@ const MilestonesList = [
 		limit: 3,
 		getValue: (game, player) =>
 			allCells(game).filter(
-				c => c.content === GridCellContent.City && c.ownerId === player.id
-			).length
+				(c) => c.content === GridCellContent.City && c.ownerId === player.id,
+			).length,
 	}),
 	milestone({
 		type: MilestoneType.Gardener,
@@ -57,8 +57,8 @@ const MilestonesList = [
 		limit: 3,
 		getValue: (game, player) =>
 			allCells(game).filter(
-				c => c.content === GridCellContent.Forest && c.ownerId === player.id
-			).length
+				(c) => c.content === GridCellContent.Forest && c.ownerId === player.id,
+			).length,
 	}),
 	milestone({
 		type: MilestoneType.Builder,
@@ -67,8 +67,8 @@ const MilestonesList = [
 		limit: 8,
 		getValue: (_game, player) =>
 			player.usedCards
-				.map(c => CardsLookupApi.get(c.code))
-				.filter(c => c.categories.includes(CardCategory.Building)).length
+				.map((c) => CardsLookupApi.get(c.code))
+				.filter((c) => c.categories.includes(CardCategory.Building)).length,
 	}),
 	milestone({
 		type: MilestoneType.Planner,
@@ -77,8 +77,8 @@ const MilestonesList = [
 		limit: 16,
 		getValue: (_game, player) =>
 			player.cards.filter(
-				c => CardsLookupApi.get(c).type !== CardType.Corporation
-			).length
+				(c) => CardsLookupApi.get(c).type !== CardType.Corporation,
+			).length,
 	}),
 	milestone({
 		type: MilestoneType.Diversifier,
@@ -94,15 +94,15 @@ const MilestonesList = [
 						const info = CardsLookupApi.get(c.code)
 
 						if (info.type !== CardType.Event) {
-							info.categories.forEach(c => {
+							info.categories.forEach((c) => {
 								if (!acc[c]) {
 									acc[c] = true
 								}
 							})
 						}
-					}
-				)
-			).length
+					},
+				),
+			).length,
 	}),
 	milestone({
 		type: MilestoneType.Tactician,
@@ -111,8 +111,8 @@ const MilestonesList = [
 		limit: 5,
 		getValue: (_game, player) =>
 			player.usedCards.filter(
-				c => CardsLookupApi.get(c.code).conditions.length > 0
-			).length
+				(c) => CardsLookupApi.get(c.code).conditions.length > 0,
+			).length,
 	}),
 	milestone({
 		type: MilestoneType.PolarExplorer,
@@ -123,14 +123,14 @@ const MilestonesList = [
 			tiles(allCells(game))
 				.ownedBy(player.id)
 				.onMars()
-				.c(c => c.y >= game.map.height - 2).length
+				.c((c) => c.y >= game.map.height - 2).length,
 	}),
 	milestone({
 		type: MilestoneType.Energizer,
 		title: 'Energizer',
 		description: 'Energy production',
 		limit: 6,
-		getValue: (_game, player) => player.energyProduction
+		getValue: (_game, player) => player.energyProduction,
 	}),
 	milestone({
 		type: MilestoneType.RimSettler,
@@ -142,10 +142,10 @@ const MilestonesList = [
 				(acc, c) =>
 					acc +
 					CardsLookupApi.get(c.code).categories.filter(
-						c => c === CardCategory.Jupiter
+						(c) => c === CardCategory.Jupiter,
 					).length,
-				0
-			)
+				0,
+			),
 	}),
 	milestone({
 		type: MilestoneType.Generalist,
@@ -153,7 +153,7 @@ const MilestonesList = [
 		description: 'Resources with production of at least 1',
 		limit: 6,
 		getValue: (_game, player) =>
-			resources.filter(r => player[resourceProduction[r]] > 0).length
+			resources.filter((r) => player[resourceProduction[r]] > 0).length,
 	}),
 	milestone({
 		type: MilestoneType.Specialist,
@@ -161,7 +161,9 @@ const MilestonesList = [
 		description: 'Production of any resource',
 		limit: 10,
 		getValue: (_game, player) =>
-			resources.map(r => player[resourceProduction[r]]).sort((a, b) => b - a)[0]
+			resources
+				.map((r) => player[resourceProduction[r]])
+				.sort((a, b) => b - a)[0],
 	}),
 	milestone({
 		type: MilestoneType.Ecologist,
@@ -172,16 +174,16 @@ const MilestonesList = [
 			player.usedCards.reduce(
 				(acc, c) =>
 					acc +
-					CardsLookupApi.get(c.code).categories.filter(c =>
+					CardsLookupApi.get(c.code).categories.filter((c) =>
 						[
 							CardCategory.Animal,
 							CardCategory.Microbe,
 							CardCategory.Plant,
-							CardCategory.Any
-						].includes(c)
+							CardCategory.Any,
+						].includes(c),
 					).length,
-				0
-			)
+				0,
+			),
 	}),
 	milestone({
 		type: MilestoneType.Tycoon,
@@ -189,11 +191,11 @@ const MilestonesList = [
 		description: 'Project cards in play (Green / Blue cards)',
 		limit: 15,
 		getValue: (_game, player) =>
-			player.usedCards.filter(c =>
+			player.usedCards.filter((c) =>
 				[CardType.Action, CardType.Effect, CardType.Building].includes(
-					CardsLookupApi.get(c.code).type
-				)
-			).length
+					CardsLookupApi.get(c.code).type,
+				),
+			).length,
 	}),
 	milestone({
 		type: MilestoneType.Legend,
@@ -202,8 +204,8 @@ const MilestonesList = [
 		limit: 5,
 		getValue: (_game, player) =>
 			player.usedCards.filter(
-				c => CardsLookupApi.get(c.code).type === CardType.Event
-			).length
+				(c) => CardsLookupApi.get(c.code).type === CardType.Event,
+			).length,
 	}),
 	milestone({
 		type: MilestoneType.Hoverlord,
@@ -211,8 +213,8 @@ const MilestonesList = [
 		description: 'Number of floaters on cards',
 		limit: 7,
 		getValue: (_game, player) =>
-			player.usedCards.reduce((acc, c) => acc + c.floaters, 0)
-	})
+			player.usedCards.reduce((acc, c) => acc + c.floaters, 0),
+	}),
 ]
 
 export const Milestones = keyMap(MilestonesList, 'type')

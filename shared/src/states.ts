@@ -3,7 +3,7 @@ import {
 	GameStateValue,
 	PlayerState,
 	PlayerStateValue,
-	StandardProjectType
+	StandardProjectType,
 } from '.'
 import { CardCategory } from './cards'
 import { MapType } from './map'
@@ -13,7 +13,7 @@ import { ExpansionType } from './expansions/types'
 
 export const initialGameState = (
 	id = 'game',
-	map = MapType.Standard
+	map = MapType.Standard,
 ): GameState => ({
 	id,
 	name: 'Standard Game',
@@ -58,8 +58,8 @@ export const initialGameState = (
 		StandardProjectType.Greenery,
 		StandardProjectType.City,
 		StandardProjectType.GreeneryForPlants,
-		StandardProjectType.TemperatureForHeat
-	]
+		StandardProjectType.TemperatureForHeat,
+	],
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
@@ -101,5 +101,5 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	session,
 	victoryPoints: [],
 	pendingActions: [],
-	protectedHabitat: false
+	protectedHabitat: false,
 })

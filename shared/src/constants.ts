@@ -6,7 +6,7 @@ export const PLAYER_PRODUCTION_FIELDS: Production[] = [
 	'titanProduction',
 	'plantsProduction',
 	'energyProduction',
-	'heatProduction'
+	'heatProduction',
 ]
 
 export const PLAYER_PRODUCTION_TO_RESOURCE: Record<Production, Resource> = {
@@ -15,7 +15,7 @@ export const PLAYER_PRODUCTION_TO_RESOURCE: Record<Production, Resource> = {
 	titanProduction: 'titan',
 	plantsProduction: 'plants',
 	energyProduction: 'energy',
-	heatProduction: 'heat'
+	heatProduction: 'heat',
 }
 
 export const PLAYER_RESOURCE_TO_PRODUCTION: Record<Resource, Production> = {
@@ -24,12 +24,12 @@ export const PLAYER_RESOURCE_TO_PRODUCTION: Record<Resource, Production> = {
 	titan: 'titanProduction',
 	plants: 'plantsProduction',
 	energy: 'energyProduction',
-	heat: 'heatProduction'
+	heat: 'heatProduction',
 }
 
 export const GAME_PROGRESS_VALUES = [
 	'temperature',
 	'oxygen',
 	'oceans',
-	'venus'
+	'venus',
 ] as const

@@ -6,17 +6,17 @@ export const preludeExpansion = expansion({
 	type: ExpansionType.Prelude,
 	name: 'Prelude',
 
-	initialize: g => {
+	initialize: (g) => {
 		g.prelude = true
 
 		g.preludeCards = shuffle(
 			Object.values(CardsLookupApi.data())
-				.filter(c => c.type === CardType.Prelude)
-				.map(c => c.code)
+				.filter((c) => c.type === CardType.Prelude)
+				.map((c) => c.code),
 		)
 	},
 	getCards: () =>
-		Object.values(CardsLookupApi.data()).filter(c =>
-			c.special.includes(CardSpecial.Prelude)
-		)
+		Object.values(CardsLookupApi.data()).filter((c) =>
+			c.special.includes(CardSpecial.Prelude),
+		),
 })

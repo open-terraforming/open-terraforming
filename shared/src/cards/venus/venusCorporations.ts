@@ -2,13 +2,13 @@ import {
 	getTopCardsWithTag,
 	otherCardResourceChange,
 	productionChange,
-	resourceChange
+	resourceChange,
 } from '../effects'
 import { changeProgressConditionBonusPerTag } from '../effects/changeProgressConditionBonusPerTag'
 import { markCardAsUnplayed } from '../effects/mark-card-as-unplayed'
 import {
 	resourceForProductionChange,
-	resourceForProgress
+	resourceForProgress,
 } from '../passive-effects'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
 import { card } from '../utils'
@@ -22,7 +22,7 @@ export const venusCorporations: Card[] = [
 		special: [CardSpecial.Venus],
 		cost: 0,
 		playEffects: [resourceChange('money', 47), productionChange('plants', 1)],
-		passiveEffects: [resourceForProgress('venus', 'money', 2)]
+		passiveEffects: [resourceForProgress('venus', 'money', 2)],
 	}),
 	card({
 		code: 'celestic',
@@ -33,10 +33,10 @@ export const venusCorporations: Card[] = [
 		resource: 'floaters',
 		playEffects: [
 			resourceChange('money', 42),
-			getTopCardsWithTag(2, CardCategory.Venus)
+			getTopCardsWithTag(2, CardCategory.Venus),
 		],
 		actionEffects: [otherCardResourceChange('floaters', 1)],
-		victoryPointsCallback: vpsForCardResources('floaters', 3)
+		victoryPointsCallback: vpsForCardResources('floaters', 3),
 	}),
 	card({
 		code: 'manutech',
@@ -47,9 +47,9 @@ export const venusCorporations: Card[] = [
 		playEffects: [
 			productionChange('ore', 1),
 			resourceChange('money', 35),
-			resourceChange('ore', 1)
+			resourceChange('ore', 1),
 		],
-		passiveEffects: [resourceForProductionChange()]
+		passiveEffects: [resourceForProductionChange()],
 	}),
 	card({
 		code: 'mining_star_inc',
@@ -61,8 +61,8 @@ export const venusCorporations: Card[] = [
 			resourceChange('money', 50),
 			getTopCardsWithTag(3, CardCategory.Venus),
 			// TODO: Test this
-			changeProgressConditionBonusPerTag(CardCategory.Venus, 2)
-		]
+			changeProgressConditionBonusPerTag(CardCategory.Venus, 2),
+		],
 	}),
 	card({
 		code: 'viron',
@@ -72,6 +72,6 @@ export const venusCorporations: Card[] = [
 		cost: 0,
 		playEffects: [resourceChange('money', 48)],
 		// TODO: Test this
-		actionEffects: [markCardAsUnplayed]
-	})
+		actionEffects: [markCardAsUnplayed],
+	}),
 ]

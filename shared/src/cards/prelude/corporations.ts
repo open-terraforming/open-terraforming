@@ -7,7 +7,7 @@ import {
 	tagPriceChange,
 	emptyEffect,
 	lowestProductionChange,
-	sponsorCompetitionForFree
+	sponsorCompetitionForFree,
 } from '../effects'
 import { passiveEffect, asFirstAction } from '../passive-effects'
 import { CardCategory, CardSpecial, CardType } from '../types'
@@ -25,9 +25,9 @@ export const preludeCorporations = [
 			playEffects: [
 				productionChange('money', 3),
 				resourceChange('money', 44),
-				tagPriceChange(CardCategory.Building, -2)
-			]
-		})
+				tagPriceChange(CardCategory.Building, -2),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -45,7 +45,7 @@ export const preludeCorporations = [
 						{ player, game },
 						playedCard,
 						_cardIndex,
-						playedBy
+						playedBy,
 					) => {
 						if (
 							playedBy.id === player.id &&
@@ -53,10 +53,10 @@ export const preludeCorporations = [
 						) {
 							player.cards.push(drawCard(game))
 						}
-					}
-				})
-			]
-		})
+					},
+				}),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -68,9 +68,9 @@ export const preludeCorporations = [
 			playEffects: [resourceChange('money', 47)],
 			actionEffects: [
 				withRightArrow(resourceChange('money', -4)),
-				lowestProductionChange(1)
-			]
-		})
+				lowestProductionChange(1),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -83,11 +83,11 @@ export const preludeCorporations = [
 				resourceChange('money', 37),
 				tagPriceChange(CardCategory.Science, -2),
 				emptyEffect(
-					'As your first action, draw 3 prelude cards, pick 1 and discard the rest'
-				)
+					'As your first action, draw 3 prelude cards, pick 1 and discard the rest',
+				),
 			],
-			passiveEffects: [asFirstAction(pickPreludes(3, 1))]
-		})
+			passiveEffects: [asFirstAction(pickPreludes(3, 1))],
+		}),
 	),
 	corp(
 		card({
@@ -101,7 +101,7 @@ export const preludeCorporations = [
 				passiveEffect({
 					description: f(
 						'When you play a card with non-negative victory points, gain {0}',
-						withUnits('money', 3)
+						withUnits('money', 3),
 					),
 					onCardPlayed: ({ player }, playedCard, _cardIndex, playedBy) => {
 						if (
@@ -110,9 +110,9 @@ export const preludeCorporations = [
 						) {
 							updatePlayerResource(player, 'money', 3)
 						}
-					}
-				})
-			]
-		})
-	)
+					},
+				}),
+			],
+		}),
+	),
 ]

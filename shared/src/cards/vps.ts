@@ -9,13 +9,13 @@ export const vpCb = (cb: CardVictoryPointsCallback) => cb
 export const minCardResourceToVP = (
 	res: CardResource,
 	amount: number,
-	vps: number
+	vps: number,
 ) =>
 	vpCb({
 		description: `${vps} VPs if you have at least ${amount} of ${res} resources here`,
 		compute: ({ card }) => {
 			return card[res] >= amount ? vps : 0
-		}
+		},
 	})
 
 export const vpsForAdjacentTiles = (type: GridCellContent, perTile: number) =>
@@ -23,7 +23,7 @@ export const vpsForAdjacentTiles = (type: GridCellContent, perTile: number) =>
 		description: `${perTile} VPs for each adjacent ${GridCellContent[type]} tile`,
 		compute: ({ game, player, card }) => {
 			const tile = allCells(game).find(
-				c => c.ownerId === player.id && c.ownerCard === card.index
+				(c) => c.ownerId === player.id && c.ownerCard === card.index,
 			)
 
 			if (!tile) {
@@ -31,10 +31,10 @@ export const vpsForAdjacentTiles = (type: GridCellContent, perTile: number) =>
 			}
 
 			return Math.floor(
-				adjacentCells(game, tile.x, tile.y).filter(c => c.content === type)
-					.length * perTile
+				adjacentCells(game, tile.x, tile.y).filter((c) => c.content === type)
+					.length * perTile,
 			)
-		}
+		},
 	})
 
 export const vpsForCards = (category: CardCategory, vpPerCategory: number) =>
@@ -43,14 +43,14 @@ export const vpsForCards = (category: CardCategory, vpPerCategory: number) =>
 		compute: ({ player }) => {
 			return Math.floor(
 				player.usedCards
-					.map(c => CardsLookupApi.get(c.code))
+					.map((c) => CardsLookupApi.get(c.code))
 					.reduce(
 						(acc, c) =>
-							acc + c.categories.filter(cat => cat === category).length,
-						0
-					) * vpPerCategory
+							acc + c.categories.filter((cat) => cat === category).length,
+						0,
+					) * vpPerCategory,
 			)
-		}
+		},
 	})
 
 export const vpsForCardResources = (res: CardResource, vpPerUnit: number) =>
@@ -60,7 +60,7 @@ export const vpsForCardResources = (res: CardResource, vpPerUnit: number) =>
 		} ${res} on this card`,
 		compute: ({ card }) => {
 			return Math.floor(card[res] * vpPerUnit)
-		}
+		},
 	})
 
 export const vpsForTiles = (type: GridCellContent, perTile: number) =>
@@ -70,8 +70,8 @@ export const vpsForTiles = (type: GridCellContent, perTile: number) =>
 				? `${perTile} VPs for each ${GridCellContent[type]} tile in game`
 				: `1 VPs for every ${Math.ceil(1 / perTile)} ${
 						GridCellContent[type]
-				  } tiles in game`,
+					} tiles in game`,
 		compute: ({ game }) => {
 			return Math.floor(countGridContent(game, type) * perTile)
-		}
+		},
 	})

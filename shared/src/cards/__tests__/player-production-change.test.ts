@@ -13,9 +13,9 @@ test('playerProductionChange should change production of right player', () => {
 		{
 			card,
 			player: state.players[0],
-			game: state
+			game: state,
 		},
-		state.players[1].id
+		state.players[1].id,
 	)
 
 	expect(state.players[0].oreProduction).toBe(2)
@@ -34,9 +34,9 @@ test("playerProductionChange won't allow negative production (except money)", ()
 			{
 				card,
 				player: state.players[0],
-				game: state
+				game: state,
 			},
-			state.players[1].id
+			state.players[1].id,
 		)
 	}).toThrow()
 
@@ -48,9 +48,9 @@ test("playerProductionChange won't allow negative production (except money)", ()
 			{
 				card,
 				player: state.players[0],
-				game: state
+				game: state,
 			},
-			state.players[1].id
+			state.players[1].id,
 		)
 	}).not.toThrowError()
 

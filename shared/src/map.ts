@@ -3,7 +3,7 @@ import { MapState, GridCellSpecial } from './game'
 export enum MapType {
 	Standard = 1,
 	Hellas,
-	Elysium
+	Elysium,
 }
 
 export type MapInfo = {
@@ -19,5 +19,5 @@ export const LavaCells = [
 	GridCellSpecial.ArsiaMons,
 	GridCellSpecial.OlympusMons,
 	GridCellSpecial.HecatesTholus,
-	GridCellSpecial.ElysiumMons
+	GridCellSpecial.ElysiumMons,
 ]

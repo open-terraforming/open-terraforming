@@ -20,7 +20,7 @@ export const venusExpansion = expansion({
 	},
 
 	getCards: () =>
-		Object.values(CardsLookupApi.data()).filter(c =>
-			c.special.includes(CardSpecial.Venus)
-		)
+		Object.values(CardsLookupApi.data()).filter((c) =>
+			c.special.includes(CardSpecial.Venus),
+		),
 })

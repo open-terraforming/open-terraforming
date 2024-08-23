@@ -6,7 +6,7 @@ import {
 	drawCorporation,
 	drawPreludeCards,
 	pushPendingAction,
-	range
+	range,
 } from '../utils'
 import { GameMode, GameModeType } from './types'
 
@@ -18,32 +18,32 @@ export const prepareStartingPick = (
 		corporations = 2,
 		cards = 10,
 		preludes = 4,
-		preludesLimit = 2
+		preludesLimit = 2,
 	}: {
 		corporations?: number
 		cards?: number
 		preludes?: number
 		preludesLimit?: number
-	} = {}
+	} = {},
 ) => {
-	const startingCorp = Object.values(CardsLookupApi.data()).find(c =>
-		c.special.includes(CardSpecial.StartingCorporation)
+	const startingCorp = Object.values(CardsLookupApi.data()).find((c) =>
+		c.special.includes(CardSpecial.StartingCorporation),
 	)
 
 	if (!startingCorp) {
 		throw new Error('Failed to find starting corporation')
 	}
 
-	game.corporations = game.corporations.filter(c => c !== startingCorp.code)
+	game.corporations = game.corporations.filter((c) => c !== startingCorp.code)
 
-	game.players.forEach(p => {
+	game.players.forEach((p) => {
 		const corpCards: string[] = []
 
 		try {
 			range(0, corporations).forEach(() => {
 				corpCards.push(drawCorporation(game))
 			})
-		} catch (e) {
+		} catch {
 			if (corpCards.length === 0) {
 				corpCards.push(startingCorp.code)
 			}
@@ -55,8 +55,8 @@ export const prepareStartingPick = (
 				corpCards,
 				drawCards(game, cards),
 				game.prelude ? drawPreludeCards(game, preludes) : [],
-				game.prelude ? preludesLimit : 0
-			)
+				game.prelude ? preludesLimit : 0,
+			),
 		)
 
 		p.state = PlayerStateValue.Picking
@@ -65,5 +65,5 @@ export const prepareStartingPick = (
 
 export const strToMode = {
 	standard: GameModeType.Standard,
-	beginner: GameModeType.Beginner
+	beginner: GameModeType.Beginner,
 } as const

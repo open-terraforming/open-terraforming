@@ -6,14 +6,14 @@ import {
 	GridCellContent,
 	PlayerState,
 	PlayerStateValue,
-	UsedCardState
+	UsedCardState,
 } from '../game'
 import { PlayerAction, PlayerActionType } from '../player-actions'
 
 export const allCells = (game: GameState) => {
 	return game.map.grid
 		.reduce((acc, c) => [...acc, ...c], [] as GridCell[])
-		.filter(c => c.enabled)
+		.filter((c) => c.enabled)
 }
 
 export const adjacentCells = (game: GameState, x: number, y: number) => {
@@ -26,8 +26,8 @@ export const adjacentCells = (game: GameState, x: number, y: number) => {
 			? [
 					y % 2 === 0 && x > 0 && g[x - 1][y - 1],
 					g[x][y - 1],
-					y % 2 === 1 && x < w - 1 && g[x + 1][y - 1]
-			  ]
+					y % 2 === 1 && x < w - 1 && g[x + 1][y - 1],
+				]
 			: []),
 		x > 0 && g[x - 1][y],
 		x < w - 1 && g[x + 1][y],
@@ -35,10 +35,10 @@ export const adjacentCells = (game: GameState, x: number, y: number) => {
 			? [
 					y % 2 === 0 && x > 0 && g[x - 1][y + 1],
 					g[x][y + 1],
-					y % 2 === 1 && x < w - 1 && g[x + 1][y + 1]
-			  ]
-			: [])
-	].filter(c => c && c.enabled) as GridCell[]
+					y % 2 === 1 && x < w - 1 && g[x + 1][y + 1],
+				]
+			: []),
+	].filter((c) => c && c.enabled) as GridCell[]
 }
 
 export const ucFirst = (value: string) =>
@@ -69,11 +69,11 @@ export const drawCard = (game: GameState) => {
 	if (game.cards.length === 0) {
 		const played = game.players.reduce(
 			(acc, p) => acc + p.cards.length + p.usedCards.length,
-			0
+			0,
 		)
 
 		throw new Error(
-			`There are no more cards. Players have ${played} in their hands`
+			`There are no more cards. Players have ${played} in their hands`,
 		)
 	}
 
@@ -107,9 +107,9 @@ export const f = (s: string, ...args: any[]) =>
 				`{${i}}`,
 				typeof a === 'object' && typeof a.toString === 'function'
 					? a.toString()
-					: a
+					: a,
 			),
-		s
+		s,
 	)
 
 /**
@@ -134,7 +134,7 @@ export const competitionPrice = (game: GameState) => {
 
 export const pushPendingAction = (
 	player: PlayerState,
-	action: PlayerAction
+	action: PlayerAction,
 ) => {
 	player.pendingActions.push(action)
 }
@@ -144,11 +144,11 @@ const allowedActions: Record<number, PlayerActionType[] | undefined> = {
 		PlayerActionType.PickStarting,
 		PlayerActionType.PickCards,
 		PlayerActionType.PickPreludes,
-		PlayerActionType.DraftCard
+		PlayerActionType.DraftCard,
 	],
 	[PlayerStateValue.Prelude]: [PlayerActionType.PlaceTile],
 	[PlayerStateValue.EndingTiles]: [PlayerActionType.PlaceTile],
-	[PlayerStateValue.Playing]: []
+	[PlayerStateValue.Playing]: [],
 }
 
 export const pendingActions = (player: PlayerState) => {
@@ -157,7 +157,7 @@ export const pendingActions = (player: PlayerState) => {
 	return allowed
 		? allowed.length === 0
 			? player.pendingActions
-			: player.pendingActions.filter(p => allowed.includes(p.type))
+			: player.pendingActions.filter((p) => allowed.includes(p.type))
 		: []
 }
 
@@ -209,7 +209,7 @@ export class FilteredCollection<T> {
 		}
 
 		return (this.__evaluated = this.list.filter(
-			cell => !this.conditions.find(condition => !condition(cell))
+			(cell) => !this.conditions.find((condition) => !condition(cell)),
 		))
 	}
 
@@ -242,7 +242,7 @@ export class TileCollection extends FilteredCollection<GridCell> {
 	ownedBy(playerId: number) {
 		return this.c(
 			(c: GridCell) =>
-				c.ownerId === playerId && c.content !== GridCellContent.Ocean
+				c.ownerId === playerId && c.content !== GridCellContent.Ocean,
 		)
 	}
 
@@ -256,15 +256,15 @@ export class TileCollection extends FilteredCollection<GridCell> {
 
 	hasAnyContent(content: GridCellContent[]) {
 		return this.c(
-			(c: GridCell) => c.content !== undefined && content.includes(c.content)
+			(c: GridCell) => c.content !== undefined && content.includes(c.content),
 		)
 	}
 
 	nextTo(game: GameState, content: GridCellContent) {
 		return this.c(
-			c =>
-				adjacentCells(game, c.x, c.y).find(c => c.content === content) !==
-				undefined
+			(c) =>
+				adjacentCells(game, c.x, c.y).find((c) => c.content === content) !==
+				undefined,
 		)
 	}
 
@@ -288,20 +288,20 @@ export class CardsCollection extends FilteredCollection<CardInfo> {
 		return this.c(
 			(i: CardInfo) =>
 				!conditions.find(
-					c =>
+					(c) =>
 						!c.evaluate({
 							game,
 							player,
-							card: i.state
-						})
-				)
+							card: i.state,
+						}),
+				),
 		)
 	}
 }
 
 export const sortBy = <T>(a: T[], score: (a: T) => number) => {
 	return a
-		.map(i => [score(i), i] as const)
+		.map((i) => [score(i), i] as const)
 		.sort(([a], [b]) => a - b)
 		.map(([, i]) => i)
 }
@@ -318,7 +318,7 @@ type KeysMatching<T, V> = {
 export function keyMap<T, K extends KeysMatching<T, string | number>>(
 	collection: T[],
 	key: K,
-	source = {} as Record<Extract<T[K], string | number | symbol>, T>
+	source = {} as Record<Extract<T[K], string | number | symbol>, T>,
 ): Record<Extract<T[K], string | number | symbol>, T> {
 	return collection.reduce((acc, item) => {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -335,7 +335,7 @@ export function keyMap<T, K extends KeysMatching<T, string | number>>(
 export function shuffle<T>(a: T[]) {
 	for (let i = a.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1))
-			// eslint-disable-next-line padding-line-between-statements
+		// eslint-disable-next-line padding-line-between-statements
 		;[a[i], a[j]] = [a[j], a[i]]
 	}
 
@@ -345,7 +345,7 @@ export function shuffle<T>(a: T[]) {
 export const voidReduce = <T, R>(
 	array: T[],
 	accumulator: R,
-	callback: (accumulator: R, item: T, index: number) => any
+	callback: (accumulator: R, item: T, index: number) => any,
 ) => {
 	return array.reduce((acc, item, index) => {
 		callback(acc, item, index)
@@ -357,7 +357,7 @@ export const voidReduce = <T, R>(
 export const voidReduceRight = <T, R>(
 	array: T[],
 	accumulator: R,
-	callback: (accumulator: R, item: T, index: number) => any
+	callback: (accumulator: R, item: T, index: number) => any,
 ) => {
 	return array.reduceRight((acc, item, index) => {
 		callback(acc, item, index)
@@ -368,10 +368,10 @@ export const voidReduceRight = <T, R>(
 
 export const mapRight = <T, R>(
 	array: T[],
-	callback: (item: T, index: number) => R
+	callback: (item: T, index: number) => R,
 ): R[] =>
 	voidReduceRight(array, [] as R[], (acc, item, index) =>
-		acc.push(callback(item, index))
+		acc.push(callback(item, index)),
 	)
 
 export const isMarsTerraformed = (game: GameState) => {
@@ -383,7 +383,7 @@ export const isMarsTerraformed = (game: GameState) => {
 }
 
 export const getPlayerIndex = (game: GameState, playerId: number) =>
-	game.players.findIndex(p => p.id === playerId)
+	game.players.findIndex((p) => p.id === playerId)
 
 export const mod = (n: number, m: number) => {
 	return ((n % m) + m) % m
