@@ -1,5 +1,3 @@
-import React from 'react'
-
 export const Jupiter = () => (
 	<svg version="1.1" viewBox="0 0 640 640" style={{ width: '100%' }}>
 		<defs>

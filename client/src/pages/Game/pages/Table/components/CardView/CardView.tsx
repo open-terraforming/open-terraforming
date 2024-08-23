@@ -4,11 +4,24 @@ import {
 	emptyCardState,
 	isCardActionable,
 	isCardPlayable,
-	minimalCardPrice
+	minimalCardPrice,
 } from '@shared/cards/utils'
 import { UsedCardState } from '@shared/index'
-import React, { useMemo } from 'react'
+import { CSSProperties, useMemo } from 'react'
 import { StatelessCardView } from './StatelessCardView'
+
+type Props = {
+	card: Card
+	state?: UsedCardState
+	selected?: boolean
+	onClick?: () => void
+	buying?: boolean
+	evaluate?: boolean
+	hover?: boolean
+	fade?: boolean
+	className?: string
+	style?: CSSProperties
+}
 
 export const CardView = ({
 	card,
@@ -20,22 +33,11 @@ export const CardView = ({
 	className,
 	state,
 	onClick,
-	style
-}: {
-	card: Card
-	state?: UsedCardState
-	selected?: boolean
-	onClick?: () => void
-	buying?: boolean
-	evaluate?: boolean
-	hover?: boolean
-	fade?: boolean
-	className?: string
-	style?: React.CSSProperties
-}) => {
-	const game = useAppStore(state => state.game.state)
-	const player = useAppStore(state => state.game.player)
-	const playerId = useAppStore(state => state.game.playerId)
+	style,
+}: Props) => {
+	const game = useAppStore((state) => state.game.state)
+	const player = useAppStore((state) => state.game.player)
+	const playerId = useAppStore((state) => state.game.playerId)
 
 	if (!player || !game || playerId === undefined) {
 		return <></>
@@ -46,9 +48,9 @@ export const CardView = ({
 			({
 				card: state || emptyCardState(card.code),
 				game,
-				player
-			} as CardCallbackContext),
-		[state, card, game, playerId]
+				player,
+			}) as CardCallbackContext,
+		[state, card, game, playerId],
 	)
 
 	const adjusted = !buying ? card.cost : minimalCardPrice(card, player)
@@ -61,10 +63,10 @@ export const CardView = ({
 				? card.victoryPointsCallback.compute({
 						card: state || emptyCardState(card.code),
 						player,
-						game
-				  })
+						game,
+					})
 				: undefined,
-		[card, player, game]
+		[card, player, game],
 	)
 
 	const playable = state

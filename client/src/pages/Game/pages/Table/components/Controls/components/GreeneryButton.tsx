@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { useCallback } from 'react'
 import { Button } from '@/components'
 import { Projects } from '@shared/projects'
 import { StandardProjectType, buyStandardProject } from '@shared/index'
@@ -14,13 +14,14 @@ type Props = {
 
 export const GreeneryButton = ({ className }: Props) => {
 	const api = useApi()
-	const playing = useAppStore(state => state.game.playing)
-	const player = useAppStore(state => state.game.player)
-	const game = useAppStore(state => state.game.state)
+	const playing = useAppStore((state) => state.game.playing)
+	const player = useAppStore((state) => state.game.player)
+	const game = useAppStore((state) => state.game.state)
 	const project = Projects[StandardProjectType.GreeneryForPlants]
 
 	const usable =
-		playing && project.conditions.find(c => !c({ game, player })) === undefined
+		playing &&
+		project.conditions.find((c) => !c({ game, player })) === undefined
 
 	const buyForest = useCallback(() => {
 		if (player && usable) {

@@ -1,4 +1,3 @@
-import React from 'react'
 import { StandardProject } from '@shared/projects'
 import { StandardProjectType } from '@shared/index'
 import styled from 'styled-components'

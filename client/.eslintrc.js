@@ -28,7 +28,6 @@ module.exports = {
         '@typescript-eslint/no-use-before-define': 'off',
         '@typescript-eslint/explicit-member-accessibility': ['warn', { accessibility: 'no-public' }],
         '@typescript-eslint/explicit-function-return-type': 'off',
-        '@typescript-eslint/member-delimiter-style': ['warn', { multiline: { delimiter: 'none' } }],
         '@typescript-eslint/no-object-literal-type-assertion': 'off',
         '@typescript-eslint/prefer-interface': 'off',
         'prettier/prettier': 'warn',

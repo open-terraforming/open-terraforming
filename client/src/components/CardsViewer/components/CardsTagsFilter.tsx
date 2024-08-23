@@ -23,10 +23,10 @@ export const CardsTagsFilter = ({ tags, setTags }: Props) => {
 						<Tag
 							tag={value as CardCategory}
 							onClick={() => {
-								setTags(previous =>
+								setTags((previous) =>
 									previous.includes(value as CardCategory)
-										? previous.filter(tag => tag !== value)
-										: [...previous, value as CardCategory]
+										? previous.filter((tag) => tag !== value)
+										: [...previous, value as CardCategory],
 								)
 							}}
 						/>
@@ -37,7 +37,7 @@ export const CardsTagsFilter = ({ tags, setTags }: Props) => {
 }
 
 const StyledTag = styled.div<{ $selected: boolean }>`
-	opacity: ${props => (props.$selected ? 1 : 0.5)};
+	opacity: ${(props) => (props.$selected ? 1 : 0.5)};
 	padding-top: 0.2rem;
 	cursor: pointer;
 `

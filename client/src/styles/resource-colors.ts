@@ -4,5 +4,5 @@ export const resourceColors = {
 	titan: '#ffffff',
 	plants: '#139B2F',
 	energy: '#4267B2',
-	heat: '#BB1724'
+	heat: '#BB1724',
 }

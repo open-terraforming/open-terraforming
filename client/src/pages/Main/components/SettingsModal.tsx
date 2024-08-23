@@ -1,7 +1,7 @@
 import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
-import React from 'react'
+import { ChangeEvent } from 'react'
 import styled from 'styled-components'
 
 type Props = {
@@ -11,25 +11,23 @@ type Props = {
 export const SettingsModal = ({ onClose }: Props) => {
 	const dispatch = useAppDispatch()
 
-	const settings = useAppStore(state => state.settings.data)
+	const settings = useAppStore((state) => state.settings.data)
 
-	const handleThemeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+	const handleThemeChange = (e: ChangeEvent<HTMLSelectElement>) => {
 		dispatch({
 			type: 'SET_SETTINGS',
 			data: {
-				theme: e.target.value
-			}
+				theme: e.target.value,
+			},
 		})
 	}
 
-	const handleNotificationsChange = (
-		e: React.ChangeEvent<HTMLInputElement>
-	) => {
+	const handleNotificationsChange = (e: ChangeEvent<HTMLInputElement>) => {
 		dispatch({
 			type: 'SET_SETTINGS',
 			data: {
-				enableBrowserNotifications: e.target.checked
-			}
+				enableBrowserNotifications: e.target.checked,
+			},
 		})
 	}
 

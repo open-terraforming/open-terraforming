@@ -6,17 +6,17 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import {
 	CardCategory,
 	CardEffectArgumentType,
-	CardsLookupApi
+	CardsLookupApi,
 } from '@shared/cards'
 import { adjustedCardPrice, emptyCardState } from '@shared/cards/utils'
 import {
 	buyCard,
 	playCard,
 	PlayerGameState,
-	PlayerStateValue
+	PlayerStateValue,
 } from '@shared/index'
-import React, { useMemo, useState } from 'react'
-import styled, { Keyframes, keyframes } from 'styled-components'
+import { useMemo, useState } from 'react'
+import styled, { keyframes } from 'styled-components'
 import { CardView } from '../CardView/CardView'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { ArgsPicker } from './components/ArgsPicker'
@@ -30,19 +30,21 @@ type Props = {
 	forced?: boolean
 }
 
+type Keyframes = ReturnType<typeof keyframes>
+
 export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 	const api = useApi()
-	const state = useAppStore(state => state.game.player)
+	const state = useAppStore((state) => state.game.player)
 
 	const cardState = useMemo(
 		() => (!buying ? state?.usedCards[index] : undefined),
-		[buying, index]
+		[buying, index],
 	)
 
 	const card = CardsLookupApi.getOptional(
 		buying
 			? (state?.cards[index] as string)
-			: (state?.usedCards[index].code as string)
+			: (state?.usedCards[index].code as string),
 	)
 
 	const adjustedPrice = card
@@ -56,20 +58,20 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 		(state?.titan || 0) > 0 && card?.categories.includes(CardCategory.Space)
 
 	const usableCards = state?.usedCards
-		.filter(usedCard => {
+		.filter((usedCard) => {
 			const data = CardsLookupApi.get(usedCard.code)
 
 			return (
 				data.resourcesUsableAsMoney &&
 				(!data.resourcesUsableAsMoney.categories ||
-					data.resourcesUsableAsMoney.categories.some(cat =>
-						card?.categories.includes(cat)
+					data.resourcesUsableAsMoney.categories.some((cat) =>
+						card?.categories.includes(cat),
 					))
 			)
 		})
-		.map(card => ({
+		.map((card) => ({
 			card,
-			data: CardsLookupApi.get(card.code)
+			data: CardsLookupApi.get(card.code),
 		}))
 
 	const maxTitan =
@@ -92,22 +94,22 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 			? Math.min(
 					state.ore,
 					Math.floor(
-						(adjustedPrice - bestTitan * state.titanPrice) / state.orePrice
-					)
-			  )
+						(adjustedPrice - bestTitan * state.titanPrice) / state.orePrice,
+					),
+				)
 			: 0
 
 	const [ore, setOre] = useState(bestOre)
 	const [titan, setTitan] = useState(bestTitan)
 
 	const [resourceByCard, setResourceByCard] = useState(
-		{} as Record<string, number>
+		{} as Record<string, number>,
 	)
 
 	const [effectsArgs, setEffectsArgs] = useState(
-		(
-			(buying ? card?.playEffects : card?.actionEffects) ?? []
-		).map(() => []) as CardEffectArgumentType[][]
+		((buying ? card?.playEffects : card?.actionEffects) ?? []).map(
+			() => [],
+		) as CardEffectArgumentType[][],
 	)
 
 	const isPlaying = state?.state === PlayerStateValue.Playing
@@ -119,7 +121,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 					(canUseOre ? ore : 0) * (state?.orePrice || 2) -
 					(canUseTitan ? titan : 0) * (state?.titanPrice || 3) -
 					Object.entries(resourceByCard).reduce((acc, [code, amount]) => {
-						const info = usableCards.find(c => c.card.code === code)
+						const info = usableCards.find((c) => c.card.code === code)
 						const { resource, resourcesUsableAsMoney } = info?.data ?? {}
 
 						if (!info || !resource || !resourcesUsableAsMoney) {
@@ -129,8 +131,8 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 						return (
 							acc + amount * info.card[resource] * resourcesUsableAsMoney.amount
 						)
-					}, 0)
-		  )
+					}, 0),
+			)
 		: 0
 
 	const canAfford = !buying || (state?.money || 0) >= price
@@ -148,13 +150,13 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 						canUseOre ? ore : 0,
 						canUseTitan ? titan : 0,
 						resourceByCard,
-						effectsArgs.map(a => a || [])
-				  )
+						effectsArgs.map((a) => a || []),
+					)
 				: playCard(
 						card.code,
 						index,
-						effectsArgs.map(a => a || [])
-				  )
+						effectsArgs.map((a) => a || []),
+					),
 		)
 
 		close(cardBought)
@@ -203,7 +205,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 								max={maxOre}
 								res={'ore'}
 								initialValue={ore}
-								onChange={v => {
+								onChange={(v) => {
 									setOre(Math.min(v, maxOre))
 								}}
 							/>
@@ -220,7 +222,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 								max={maxTitan}
 								res={'titan'}
 								initialValue={titan}
-								onChange={v => {
+								onChange={(v) => {
 									setTitan(Math.min(v, maxTitan))
 								}}
 							/>
@@ -237,10 +239,10 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 								max={card[data.resource ?? 'animals']}
 								res={data.resource ?? 'animals'}
 								initialValue={resourceByCard[card.code] ?? 0}
-								onChange={v => {
-									setResourceByCard(prev => ({
+								onChange={(v) => {
+									setResourceByCard((prev) => ({
 										...prev,
-										[card.code]: v
+										[card.code]: v,
 									}))
 								}}
 							/>
@@ -257,7 +259,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 							effect={e}
 							card={card.code}
 							cardState={cardState || emptyCardState(card.code)}
-							onChange={v => {
+							onChange={(v) => {
 								const updated = [...effectsArgs]
 								updated[i] = v
 								setEffectsArgs(updated)
@@ -273,7 +275,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 							effect={e}
 							card={card.code}
 							cardState={cardState || emptyCardState(card.code)}
-							onChange={v => {
+							onChange={(v) => {
 								const updated = [...effectsArgs]
 								updated[i] = v
 								setEffectsArgs(updated)

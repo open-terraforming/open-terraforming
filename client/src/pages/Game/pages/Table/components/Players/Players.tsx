@@ -1,15 +1,18 @@
 import { useAppStore } from '@/utils/hooks'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { Player } from './components/Player'
 import { PlayerInfo } from './components/PlayerInfo/PlayerInfo'
 
 export const Players = () => {
-	const startingPlayer = useAppStore(state => state.game.state?.startingPlayer)
-	const players = useAppStore(state => state.game.state?.players)
+	const startingPlayer = useAppStore(
+		(state) => state.game.state?.startingPlayer,
+	)
+
+	const players = useAppStore((state) => state.game.state?.players)
 
 	const [showingPlayerId, setShowingPlayerId] = useState(
-		undefined as number | undefined
+		undefined as number | undefined,
 	)
 
 	return (

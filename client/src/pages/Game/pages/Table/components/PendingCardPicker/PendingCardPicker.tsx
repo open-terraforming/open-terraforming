@@ -1,7 +1,7 @@
 import { useApi } from '@/context/ApiContext'
 import { draftCard, pickCards, pickPreludes } from '@shared/index'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CardPicker, PickerType } from '../CardPicker/CardPicker'
 
 type Props = {

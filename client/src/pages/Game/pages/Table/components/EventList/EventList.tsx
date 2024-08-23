@@ -14,12 +14,10 @@ import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
 import { TimeDisplay } from './components/TimeDisplay'
 
-type Props = {}
-
-export const EventList = ({}: Props) => {
-	const player = useAppStore(state => state.game.player)
-	const events = useAppStore(state => state.game.events)
-	const settings = useAppStore(state => state.settings.data)
+export const EventList = () => {
+	const player = useAppStore((state) => state.game.player)
+	const events = useAppStore((state) => state.game.events)
+	const settings = useAppStore((state) => state.settings.data)
 	const isAdmin = player.admin
 
 	useEffect(() => {
@@ -31,7 +29,7 @@ export const EventList = ({}: Props) => {
 		) {
 			if (Notification.permission === 'granted') {
 				const notification = new Notification("It's your turn!", {
-					icon: mars
+					icon: mars,
 				})
 
 				notification.onclick = () => {
@@ -59,20 +57,22 @@ export const EventList = ({}: Props) => {
 			<PopEventDisplay events={events} />
 			<Portal>
 				<TopButtons>
-					<DialogWrapper dialog={close => <IngameMenuModal onClose={close} />}>
-						{open => <Button onClick={open} icon={faBars}></Button>}
+					<DialogWrapper
+						dialog={(close) => <IngameMenuModal onClose={close} />}
+					>
+						{(open) => <Button onClick={open} icon={faBars}></Button>}
 					</DialogWrapper>
 					<Button onClick={handleFullscreen} icon={faExpand} />
 					<DialogWrapper
-						dialog={close => <EventsModal events={events} onClose={close} />}
+						dialog={(close) => <EventsModal events={events} onClose={close} />}
 					>
-						{open => <Button onClick={open}>Event log</Button>}
+						{(open) => <Button onClick={open}>Event log</Button>}
 					</DialogWrapper>
 					{isAdmin && (
 						<DialogWrapper
-							dialog={close => <CheatsModal open onClose={close} />}
+							dialog={(close) => <CheatsModal open onClose={close} />}
 						>
-							{open => <Button onClick={open}>Cheats</Button>}
+							{(open) => <Button onClick={open}>Cheats</Button>}
 						</DialogWrapper>
 					)}
 					<TimeDisplay />

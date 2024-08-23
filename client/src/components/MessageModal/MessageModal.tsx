@@ -1,14 +1,14 @@
-import React, { useContext, useState } from 'react'
-import { Modal } from '../Modal/Modal'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
+	faCheck,
+	faExclamationCircle,
 	faExclamationTriangle,
 	faInfoCircle,
-	faExclamationCircle,
-	faCheck
 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useState } from 'react'
+import styled, { useTheme } from 'styled-components'
 import { Button } from '../Button/Button'
-import styled, { ThemeContext } from 'styled-components'
+import { Modal } from '../Modal/Modal'
 
 type MessageModalType = 'info' | 'warn' | 'error'
 
@@ -16,7 +16,7 @@ const typeToIcon = {
 	info: faInfoCircle,
 	warn: faExclamationTriangle,
 	error: faExclamationCircle,
-	success: faCheck
+	success: faCheck,
 } as const
 
 export const MessageModal = ({
@@ -24,7 +24,7 @@ export const MessageModal = ({
 	type,
 	message,
 	opened,
-	onClose
+	onClose,
 }: {
 	title: string
 	type: MessageModalType
@@ -34,7 +34,7 @@ export const MessageModal = ({
 }) => {
 	const [open, setOpen] = useState(true)
 	const handleClose = () => setOpen(false)
-	const { colors } = useContext(ThemeContext)
+	const { colors } = useTheme()
 
 	return (
 		<Modal
@@ -47,7 +47,7 @@ export const MessageModal = ({
 			bodyStyle={{ paddingTop: '1rem' }}
 			headerStyle={{
 				background: colors.message[type].background,
-				color: colors.message[type].color
+				color: colors.message[type].color,
 			}}
 			footer={
 				<Button onClick={onClose ?? handleClose} schema="primary">

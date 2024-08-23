@@ -6,7 +6,7 @@ import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { CardsLookupApi } from '@shared/cards'
 import { buyStandardProject, StandardProjectType } from '@shared/index'
 import { withUnits } from '@shared/units'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CardDisplay, CardInfo } from '../../CardDisplay/CardDisplay'
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
 
 export const SellCardsModal = ({ onClose }: Props) => {
 	const api = useApi()
-	const playerCards = useAppStore(state => state.game.player?.cards)
+	const playerCards = useAppStore((state) => state.game.player?.cards)
 	const [selected, setSelected] = useState([] as CardInfo[])
 
 	const cards = useMemo(
@@ -25,19 +25,19 @@ export const SellCardsModal = ({ onClose }: Props) => {
 						(c, i) =>
 							({
 								card: CardsLookupApi.get(c),
-								index: i
-							} as CardInfo)
-				  )
+								index: i,
+							}) as CardInfo,
+					)
 				: [],
-		[playerCards]
+		[playerCards],
 	)
 
 	const handleConfirm = () => {
 		api.send(
 			buyStandardProject(
 				StandardProjectType.SellPatents,
-				selected.map(c => c.index)
-			)
+				selected.map((c) => c.index),
+			),
 		)
 
 		onClose()
@@ -64,7 +64,7 @@ export const SellCardsModal = ({ onClose }: Props) => {
 			<CardDisplay
 				cards={cards}
 				selected={selected}
-				onSelect={cards => {
+				onSelect={(cards) => {
 					setSelected(cards)
 				}}
 			/>

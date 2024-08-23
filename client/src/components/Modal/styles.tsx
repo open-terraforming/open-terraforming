@@ -9,7 +9,7 @@ export const Header = styled.div`
 `
 
 export const Body = styled.div<{ hasHeader?: boolean; hasFooter?: boolean }>`
-	${props => css`
+	${(props) => css`
 		padding: ${props.hasHeader ? '0' : '1rem'} 1.2rem
 			${props.hasFooter ? '0' : '1rem'} 1.2rem;
 	`}
@@ -29,7 +29,7 @@ export const Footer = styled.div<{ stretchFooterButtons: boolean }>`
 		display: inline-block;
 		margin: 0 4px;
 
-		${props =>
+		${(props) =>
 			props.stretchFooterButtons &&
 			css`
 				padding: 8px 20px;

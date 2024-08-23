@@ -1,4 +1,3 @@
-import React from 'react'
 import styled, { css } from 'styled-components'
 import { CardCallbackContext, CardEffect } from '@shared/cards'
 
@@ -11,7 +10,9 @@ type Props = {
 export const PlayEffect = ({ effect, ctx, evaluate }: Props) => {
 	return (
 		<Container
-			fine={!ctx || !evaluate || effect.conditions.every(c => c.evaluate(ctx))}
+			fine={
+				!ctx || !evaluate || effect.conditions.every((c) => c.evaluate(ctx))
+			}
 		>
 			{effect.description}
 		</Container>
@@ -19,7 +20,7 @@ export const PlayEffect = ({ effect, ctx, evaluate }: Props) => {
 }
 
 const Container = styled.div<{ fine: boolean }>`
-	${props =>
+	${(props) =>
 		!props.fine &&
 		css`
 			color: #f12e41;

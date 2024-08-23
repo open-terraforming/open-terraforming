@@ -5,7 +5,7 @@ import { cards as cardNames } from '@/i18n/en/cards'
 import { help } from '@/i18n/en/help'
 import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
@@ -17,7 +17,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
 export enum PickerType {
 	Cards,
 	Preludes,
-	Draft
+	Draft,
 }
 
 type Props = {
@@ -46,15 +46,16 @@ export const CardPicker = ({
 	closeAsMinimize,
 	onClose,
 	loading,
-	moneyOverride
+	moneyOverride,
 }: Props) => {
-	const player = useAppStore(state => state.game.player)
-	const game = useAppStore(state => state.game.state)
+	const player = useAppStore((state) => state.game.player)
+	const game = useAppStore((state) => state.game.state)
 	const state = player
 
-	const cardsToPick = useMemo(() => cards.map(c => CardsLookupApi.get(c)), [
-		cards
-	])
+	const cardsToPick = useMemo(
+		() => cards.map((c) => CardsLookupApi.get(c)),
+		[cards],
+	)
 
 	const [selected, setSelected] = useState(preSelected)
 
@@ -168,7 +169,7 @@ export const CardPicker = ({
 							<PopInContainer
 								key={i}
 								style={{
-									animationDelay: `${i * 200}ms`
+									animationDelay: `${i * 200}ms`,
 								}}
 							>
 								<CardView
@@ -180,19 +181,19 @@ export const CardPicker = ({
 											? () => {
 													setSelected(
 														selected.includes(i)
-															? selected.filter(s => s !== i)
+															? selected.filter((s) => s !== i)
 															: cardsLimit === 0 || selected.length < cardsLimit
-															? [...selected, i]
-															: cardsLimit === 1
-															? [i]
-															: selected
+																? [...selected, i]
+																: cardsLimit === 1
+																	? [i]
+																	: selected,
 													)
-											  }
+												}
 											: undefined
 									}
 								/>
 							</PopInContainer>
-						)
+						),
 				)}
 			</CardsContainer>
 

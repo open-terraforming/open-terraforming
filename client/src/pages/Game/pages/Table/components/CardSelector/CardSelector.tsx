@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { Modal } from '@/components/Modal/Modal'
 import { Button } from '@/components'
 import { CardInfo, CardDisplay } from '../CardDisplay/CardDisplay'
@@ -20,7 +20,7 @@ export const CardSelector = ({
 	onClose,
 	filters = true,
 	title = 'Pick cards',
-	limit = 1
+	limit = 1,
 }: Props) => {
 	const [selected, setSelected] = useState([] as CardInfo[])
 
@@ -40,7 +40,7 @@ export const CardSelector = ({
 
 	const submittable = useMemo(
 		() => (canSubmit !== undefined ? canSubmit(selected) : undefined),
-		[canSubmit, selected]
+		[canSubmit, selected],
 	)
 
 	return (
@@ -57,10 +57,10 @@ export const CardSelector = ({
 						{typeof submittable === 'string'
 							? submittable
 							: selected.length === 0
-							? 'Select nothing'
-							: limit > 1
-							? `Select ${selected.length} cards`
-							: 'Select'}
+								? 'Select nothing'
+								: limit > 1
+									? `Select ${selected.length} cards`
+									: 'Select'}
 					</Button>
 				)
 			}

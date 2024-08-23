@@ -5,12 +5,12 @@ const initialData = {
 	hiddenHelp: {} as Record<string, boolean>,
 	theme: 'default' as undefined | 'default' | 'green' | 'red',
 	enableBrowserNotifications: true,
-	cardImagesUrl: undefined as string | undefined
+	cardImagesUrl: undefined as string | undefined,
 }
 
 const initialState = {
 	version: '1.0',
-	data: initialData
+	data: initialData,
 }
 
 const STORAGE_KEY = 'open-tr-settings'
@@ -21,28 +21,28 @@ const LOAD_SETTINGS = 'LOAD_SETTINGS'
 export const setSettings = (data: Partial<State['data']>) =>
 	({
 		type: SET_SETTINGS,
-		data
-	} as const)
+		data,
+	}) as const
 
 export const loadSettings = () =>
 	({
-		type: LOAD_SETTINGS
-	} as const)
+		type: LOAD_SETTINGS,
+	}) as const
 
 export default (state = initialState, action: Actions): State => {
 	switch (action.type) {
 		case SET_SETTINGS: {
 			localStorage[STORAGE_KEY] = JSON.stringify({
 				version: state.version,
-				data: action.data
+				data: action.data,
 			})
 
 			return {
 				...state,
 				data: {
 					...state.data,
-					...action.data
-				}
+					...action.data,
+				},
 			}
 		}
 
@@ -55,7 +55,7 @@ export default (state = initialState, action: Actions): State => {
 				if (newData.version === state.version) {
 					data = {
 						...data,
-						...newData.data
+						...newData.data,
 					}
 				}
 			} catch (e) {
@@ -64,7 +64,7 @@ export default (state = initialState, action: Actions): State => {
 
 			return {
 				...state,
-				data
+				data,
 			}
 		}
 

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { ArgContainer } from './ArgContainer'
 import { CardEffectArgument, Resource } from '@shared/cards'
 import { useAppStore } from '@/utils/hooks'
@@ -10,15 +10,15 @@ type Props = {
 }
 
 export const ResourceTypeArg = ({ arg, onChange }: Props) => {
-	const game = useAppStore(state => state.game.state)
-	const player = useAppStore(state => state.game.player)
+	const game = useAppStore((state) => state.game.state)
+	const player = useAppStore((state) => state.game.player)
 
 	const availableResources = useMemo(
 		() =>
 			resources.filter(
-				r => !arg.resourceConditions.find(c => !c({ player, game }, r))
+				(r) => !arg.resourceConditions.find((c) => !c({ player, game }, r)),
 			),
-		[]
+		[],
 	)
 
 	const [selected, setSelected] = useState(availableResources[0])
@@ -32,9 +32,9 @@ export const ResourceTypeArg = ({ arg, onChange }: Props) => {
 			<span>{arg.descriptionPrefix}</span>
 			<select
 				value={selected}
-				onChange={e => setSelected(e.target.value as Resource)}
+				onChange={(e) => setSelected(e.target.value as Resource)}
 			>
-				{availableResources.map(r => (
+				{availableResources.map((r) => (
 					<option key={r} value={r}>
 						{r}
 					</option>

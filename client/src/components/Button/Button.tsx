@@ -1,7 +1,7 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import React, { memo, useMemo } from 'react'
+import { memo, MouseEvent, ReactChild, ReactNode, useMemo } from 'react'
 import { Tooltip } from '@/components/Tooltip/Tooltip'
 import styled, { css } from 'styled-components'
 
@@ -16,12 +16,12 @@ interface Props {
 	schema?: Schema
 	type?: 'button' | 'submit' | 'reset'
 	name?: string
-	onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void
-	onMouseOver?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-	onMouseLeave?: (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void
-	tooltip?: React.ReactChild
+	onClick?: (e: MouseEvent<HTMLButtonElement>) => void
+	onMouseOver?: (e: MouseEvent<HTMLButtonElement>) => void
+	onMouseLeave?: (e: MouseEvent<HTMLButtonElement>) => void
+	tooltip?: ReactChild
 	className?: string
-	children?: React.ReactNode
+	children?: ReactNode
 	noClip?: boolean
 }
 
@@ -38,7 +38,7 @@ const ButtonComponent = ({
 	onMouseLeave,
 	tooltip,
 	className,
-	noClip = false
+	noClip = false,
 }: Props) => {
 	const hasContent = !!children
 
@@ -63,7 +63,7 @@ const ButtonComponent = ({
 				{children}
 			</>
 		),
-		[children, iconToShow, disabled, hasContent, schema, isLoading]
+		[children, iconToShow, disabled, hasContent, schema, isLoading],
 	)
 
 	if (tooltip) {
@@ -108,7 +108,7 @@ const Container = styled.button<{
 	border-width: 1px;
 	border-style: solid;
 
-	${props =>
+	${(props) =>
 		!props.noClip &&
 		css`
 			clip-path: polygon(
@@ -121,7 +121,7 @@ const Container = styled.button<{
 			);
 		`}
 
-	${props =>
+	${(props) =>
 		!props.isDisabled &&
 		css`
 			background: ${props.theme.colors.button[props.schema].background};
@@ -130,9 +130,10 @@ const Container = styled.button<{
 
 			&:hover {
 				background: ${props.theme.colors.button[props.schema].hover.background};
-				border-color: ${props.theme.colors.button[props.schema].hover.borderColor};
+				border-color: ${props.theme.colors.button[props.schema].hover
+					.borderColor};
 				color: ${props.theme.colors.button[props.schema].hover.color};
-				
+
 				/*
 				& svg {
 					color: ${props.theme.colors.button[props.schema].hover.color};
@@ -141,7 +142,7 @@ const Container = styled.button<{
 			}
 		`}
 
-	${props =>
+	${(props) =>
 		props.isDisabled &&
 		css`
 			cursor: not-allowed;
@@ -163,13 +164,13 @@ const Icon = styled.span<{
 }>`
 	margin-right: 0.5rem;
 
-	${props =>
+	${(props) =>
 		!props.isDisabled &&
 		css`
 			color: ${props.theme.colors.button[props.schema].color};
 		`}
 
-	${props =>
+	${(props) =>
 		!props.hasContent &&
 		css`
 			margin: 0;

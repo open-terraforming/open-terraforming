@@ -6,24 +6,22 @@ import { useAppStore } from '@/utils/hooks'
 import {
 	faArrowRight,
 	faArrowLeft,
-	faEye
+	faEye,
 } from '@fortawesome/free-solid-svg-icons'
 import { joinRequest, spectateRequest } from '@shared/actions'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { BackButton } from './BackButton'
 
-type Props = {}
-
-export const JoinGameBySession = ({}: Props) => {
+export const JoinGameBySession = () => {
 	const api = useApi()
 	const [joining, setJoining] = useState(false)
 	const [session, setSession] = useState('')
 	const [useSession, setUseSession] = useState(false)
 
-	const apiState = useAppStore(state => state.api.state)
-	const apiError = useAppStore(state => state.api.error)
-	const gameInfo = useAppStore(state => state.client.info)
+	const apiState = useAppStore((state) => state.api.state)
+	const apiError = useAppStore((state) => state.api.error)
+	const gameInfo = useAppStore((state) => state.client.info)
 
 	useEffect(() => {
 		setJoining(false)
@@ -53,7 +51,7 @@ export const JoinGameBySession = ({}: Props) => {
 				<>
 					<Input
 						value={session}
-						onChange={v => setSession(v)}
+						onChange={(v) => setSession(v)}
 						placeholder="Enter session"
 						minLength={1}
 					/>

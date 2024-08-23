@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react'
-import styled, { keyframes, css } from 'styled-components'
-import {
-	MilestoneBought,
-	CompetitionSponsored,
-	EventType
-} from '../../EventList/types'
+import { useAppStore } from '@/utils/hooks'
 import { Competitions } from '@shared/competitions'
 import { Milestones } from '@shared/milestones'
-import { useAppStore } from '@/utils/hooks'
 import { rgba } from 'polished'
+import { useEffect } from 'react'
+import styled, { css, keyframes } from 'styled-components'
+import {
+	CompetitionSponsored,
+	EventType,
+	MilestoneBought,
+} from '../../EventList/types'
 
 export type HeaderEvent = (MilestoneBought | CompetitionSponsored) & {
 	id: number
@@ -20,7 +20,7 @@ type Props = {
 }
 
 export const HeaderEventText = ({ ev, onDone }: Props) => {
-	const playerMap = useAppStore(state => state.game.playerMap)
+	const playerMap = useAppStore((state) => state.game.playerMap)
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -68,7 +68,7 @@ const Display = styled.div<{ color: string }>`
 
 	padding: 0.5rem 0;
 
-	${props => css`
+	${(props) => css`
 		background: linear-gradient(
 			to right,
 			${rgba(props.color, 0)} 0%,

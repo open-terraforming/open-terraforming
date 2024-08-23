@@ -1,11 +1,11 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import {
 	faChevronLeft,
-	faChevronRight
+	faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { darken, rgba } from 'polished'
-import React from 'react'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 type Props = {
@@ -15,8 +15,8 @@ type Props = {
 	max?: number
 	onChange: (v: number) => void
 	icon?: IconProp
-	iconComponent?: React.ReactChild
-	valueComponent?: (value: number) => React.ReactChild
+	iconComponent?: ReactNode
+	valueComponent?: (value: number) => ReactNode
 }
 
 export const NumberInput = ({
@@ -27,7 +27,7 @@ export const NumberInput = ({
 	max,
 	icon,
 	iconComponent,
-	valueComponent
+	valueComponent,
 }: Props) => {
 	const handleChange = (v: number) => {
 		if (min !== undefined) {
@@ -94,7 +94,7 @@ const Value = styled.div<{ hasIcon: boolean }>`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-width: ${props => (props.hasIcon ? '3rem' : '2rem')};
+	min-width: ${(props) => (props.hasIcon ? '3rem' : '2rem')};
 `
 
 const ChangeButton = styled.button<{ disabled: boolean }>`
@@ -109,13 +109,13 @@ const ChangeButton = styled.button<{ disabled: boolean }>`
 		margin-right: 0;
 	}
 
-	${props =>
+	${(props) =>
 		props.disabled
 			? css`
 					color: ${darken(0.2, props.theme.colors.text)};
 					background-color: ${darken(0.1, props.theme.colors.border)};
-			  `
+				`
 			: css`
 					cursor: pointer;
-			  `}
+				`}
 `

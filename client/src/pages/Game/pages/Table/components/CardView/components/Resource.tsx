@@ -1,6 +1,5 @@
 import { Card } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
-import React from 'react'
 import styled from 'styled-components'
 import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 

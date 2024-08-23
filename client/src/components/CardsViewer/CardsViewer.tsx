@@ -26,7 +26,7 @@ export const CardsViewer = ({ onClose }: Props) => {
 
 	const filteredCards = useMemo(
 		() =>
-			allCards.filter(card => {
+			allCards.filter((card) => {
 				if (
 					debouncedSearch.length > 0 &&
 					!locale.cards[card.code]
@@ -38,21 +38,21 @@ export const CardsViewer = ({ onClose }: Props) => {
 
 				if (
 					tags.length > 0 &&
-					!card.categories.some(cat => tags.includes(cat))
+					!card.categories.some((cat) => tags.includes(cat))
 				) {
 					return false
 				}
 
 				if (
 					specials.length > 0 &&
-					!card.special.some(s => specials.includes(s))
+					!card.special.some((s) => specials.includes(s))
 				) {
 					return false
 				}
 
 				return true
 			}),
-		[allCards, debouncedSearch, tags, specials]
+		[allCards, debouncedSearch, tags, specials],
 	)
 
 	return (
@@ -68,7 +68,7 @@ export const CardsViewer = ({ onClose }: Props) => {
 						type="text"
 						placeholder="Search"
 						value={search}
-						onChange={e => setSearch(e.target.value)}
+						onChange={(e) => setSearch(e.target.value)}
 					/>
 				</div>
 
@@ -80,7 +80,7 @@ export const CardsViewer = ({ onClose }: Props) => {
 			</StyledFlex>
 
 			<StyledContainer>
-				{filteredCards.map(card => (
+				{filteredCards.map((card) => (
 					<StatelessCardView
 						key={card.code}
 						card={card}

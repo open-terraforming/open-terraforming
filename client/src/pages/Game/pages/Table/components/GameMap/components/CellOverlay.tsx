@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GridCell, GridCellContent, GridCellType } from '@shared/index'
 import { PlacementState } from '@shared/placements'
 import { specialToStr } from '@shared/texts'
-import React from 'react'
 import styled from 'styled-components'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { TileIcon } from '../../TileIcon/TileIcon'
@@ -27,7 +26,7 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 				top: `${pos.y * 100}%`,
 				left: `${pos.x * 100}%`,
 				width: `${width * 100}%`,
-				height: `${height * 100}%`
+				height: `${height * 100}%`,
 			}}
 		>
 			{cell.type === GridCellType.PhobosSpaceHaven && <Phobos />}
@@ -38,23 +37,23 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 						<Special>{specialToStr(cell.special)}</Special>
 					)}
 					<Resources>
-						{range(0, cell.plants).map(i => (
+						{range(0, cell.plants).map((i) => (
 							<PlantRes key={i}>
 								<FontAwesomeIcon icon={faSeedling} color="#356A00" />
 							</PlantRes>
 						))}
-						{range(0, cell.ore).map(i => (
+						{range(0, cell.ore).map((i) => (
 							<OreRes key={i}>
 								<FontAwesomeIcon icon={faHammer} color="#8A4500" />
 							</OreRes>
 						))}
-						{range(0, cell.titan).map(i => (
+						{range(0, cell.titan).map((i) => (
 							<FontAwesomeIcon key={i} icon={faStar} color="#FFFFAC" />
 						))}
-						{range(0, cell.heat).map(i => (
+						{range(0, cell.heat).map((i) => (
 							<ResourceIcon res="heat" key={i} />
 						))}
-						{range(0, cell.oceans).map(i => (
+						{range(0, cell.oceans).map((i) => (
 							<TileIcon key={i} content={GridCellContent.Ocean} />
 						))}
 						{cell.money !== 0 && (
@@ -63,7 +62,7 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 								<ResourceIcon res="money" />{' '}
 							</>
 						)}
-						{range(0, cell.cards).map(i => (
+						{range(0, cell.cards).map((i) => (
 							<Card key={i} />
 						))}
 					</Resources>
@@ -105,7 +104,6 @@ const Res = styled.div`
 	border: 1px solid #fff;
 `
 
-// @ts-expect-error WTF IS HAPPENING HERE
 const PlantRes = styled(Res)`
 	background: #54a800;
 	border-color: #356a00;

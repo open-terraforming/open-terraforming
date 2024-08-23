@@ -18,7 +18,7 @@ export enum EventType {
 	MilestoneBought,
 	PlayingChanged,
 	NewGeneration,
-	ProductionPhase
+	ProductionPhase,
 }
 
 export type CardPlayed = {

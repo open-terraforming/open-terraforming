@@ -11,7 +11,10 @@ export default css`
 		background-color: ${({ theme }) =>
 			rgba(darken(0.2, theme.colors.application), 0.5)};
 		padding: 0.25rem 0.5rem;
-		transition: border-color, background-color, box-shadow 0.2s ease;
+		transition:
+			border-color,
+			background-color,
+			box-shadow 0.2s ease;
 		color: #eee;
 	}
 

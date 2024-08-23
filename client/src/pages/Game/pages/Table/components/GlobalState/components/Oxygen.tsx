@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { range, keyMap } from '@/utils/collections'
 import { DiffAnim } from './DiffAnim'
@@ -17,9 +17,10 @@ export const Oxygen = ({ current, target, start, milestones }: Props) => {
 	const [lastValue, setLastValue] = useState(current)
 	const [diff, setDiff] = useState(0)
 
-	const milestoneArray = useMemo(() => keyMap(milestones, 'value'), [
-		milestones
-	])
+	const milestoneArray = useMemo(
+		() => keyMap(milestones, 'value'),
+		[milestones],
+	)
 
 	useEffect(() => {
 		const diff = current - lastValue
@@ -34,7 +35,7 @@ export const Oxygen = ({ current, target, start, milestones }: Props) => {
 
 	return (
 		<Container>
-			{range(target, start - 1, -1).map(t => (
+			{range(target, start - 1, -1).map((t) => (
 				<Step passed={current > t} active={current === t} key={t}>
 					{t >= current ? t : '\u00A0'}
 					{milestoneArray[t] && (
@@ -65,17 +66,20 @@ const Step = styled.div<{ passed: boolean; active: boolean }>`
 	text-align: center;
 	padding: 0.55rem 1rem;
 	position: relative;
-	transition: background-color 500ms, opacity 500ms, color 500ms;
+	transition:
+		background-color 500ms,
+		opacity 500ms,
+		color 500ms;
 	flex: 1;
 
-	${props =>
+	${(props) =>
 		props.passed || props.active
 			? css`
 					background-color: ${props.theme.colors.border};
-			  `
+				`
 			: css`
 					color: ${darken(0.3, props.theme.colors.text)};
-			  `}
+				`}
 `
 
 const Icon = styled.div`

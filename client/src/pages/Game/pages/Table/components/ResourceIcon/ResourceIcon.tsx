@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { Resource } from '@shared/cards'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { resourceColors } from '@/styles/resource-colors'
@@ -8,7 +8,7 @@ import {
 	faSeedling,
 	faBolt,
 	faFire,
-	faDollarSign
+	faDollarSign,
 } from '@fortawesome/free-solid-svg-icons'
 import { SizeProp } from '@fortawesome/fontawesome-svg-core'
 import styled, { css } from 'styled-components'
@@ -27,7 +27,7 @@ export const ResourceIcon = ({
 	size,
 	production,
 	fixedWidth,
-	margin
+	margin,
 }: Props) => {
 	const icon = useMemo(() => {
 		switch (res) {
@@ -85,13 +85,13 @@ export const ResourceIcon = ({
 const E = styled.div<{ production?: boolean; res: Resource; margin?: boolean }>`
 	display: inline-block;
 
-	${props =>
+	${(props) =>
 		props.margin &&
 		css`
 			margin: 0 0.3rem;
 		`}
 
-	${props =>
+	${(props) =>
 		props.production
 			? css`
 					background: ${resourceColors[props.res]};
@@ -107,8 +107,8 @@ const E = styled.div<{ production?: boolean; res: Resource; margin?: boolean }>`
 						width: 0.8em !important;
 						height: 0.8em !important;
 					}
-			  `
+				`
 			: css`
 					color: ${resourceColors[props.res]};
-			  `}
+				`}
 `

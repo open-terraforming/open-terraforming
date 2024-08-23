@@ -1,7 +1,7 @@
 import { HelpTooltip } from '@/components/HelpTooltip/HelpTooltip'
 import { useAnimatedNumber } from '@/utils/hooks'
 import { Resource as Res } from '@shared/cards'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { ResourceIcon } from '../../../../ResourceIcon/ResourceIcon'
 import { GreeneryButton } from '../../GreeneryButton'
@@ -13,7 +13,7 @@ export const Resource = ({
 	res,
 	worth = 0,
 	value = 0,
-	production = 0
+	production = 0,
 }: {
 	name: string
 	res: Res
@@ -161,7 +161,7 @@ const Production = styled.div<{ negative: boolean }>`
 	padding: 0.2rem 0.5rem;
 	background: ${({ theme }) => theme.colors.border};
 
-	${props =>
+	${(props) =>
 		props.negative &&
 		css`
 			color: #ff979e;
@@ -173,8 +173,8 @@ const DiffAnim = styled.div<{ positive: boolean; production?: boolean }>`
 	position: absolute;
 	z-index: 3;
 	left: 0;
-	top: ${props => (props.production ? '0' : '2em')};
-	animation-name: ${props => (props.positive ? popIn : popOut)};
+	top: ${(props) => (props.production ? '0' : '2em')};
+	animation-name: ${(props) => (props.positive ? popIn : popOut)};
 	animation-duration: 1500ms;
 	animation-timing-function: ease-out;
 	opacity: 0;

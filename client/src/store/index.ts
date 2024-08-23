@@ -10,7 +10,7 @@ export type StoreState = ReturnType<typeof reducers>
 type DeepPartial<T> = T extends object
 	? {
 			[P in keyof T]?: DeepPartial<T[P]>
-	  }
+		}
 	: T
 
 const middleWares = [thunk]
@@ -18,8 +18,8 @@ const middleWares = [thunk]
 if (process.env.NODE_ENV === 'development') {
 	middleWares.push(
 		reduxLogger.createLogger({
-			collapsed: true
-		}) as any
+			collapsed: true,
+		}) as any,
 	)
 }
 

@@ -1,4 +1,3 @@
-import React from 'react'
 import { CenteredText } from './CenteredText'
 
 type Props = {

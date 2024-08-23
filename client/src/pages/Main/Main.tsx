@@ -9,7 +9,7 @@ import {
 	faCog,
 	faPlusCircle,
 	faSearch,
-	faSync
+	faSync,
 } from '@fortawesome/free-solid-svg-icons'
 import { ServerInfo } from '@shared/extra'
 import { useEffect, useState } from 'react'
@@ -20,9 +20,7 @@ import { NewGameModal } from './components/NewGameModal'
 import { SettingsModal } from './components/SettingsModal'
 import { Footer } from './components/Footer'
 
-type Props = {}
-
-export const Main = ({}: Props) => {
+export const Main = () => {
 	const dispatch = useDispatch()
 	const [info, setInfo] = useState(null as ServerInfo | null)
 	const [loading, setLoading] = useState(true)
@@ -36,8 +34,8 @@ export const Main = ({}: Props) => {
 				dispatch(
 					setApiState({
 						state: ApiState.Connecting,
-						gameId
-					})
+						gameId,
+					}),
 				)
 			}
 		}
@@ -48,12 +46,12 @@ export const Main = ({}: Props) => {
 		setError(null)
 
 		getServerInfo()
-			.then(info => {
+			.then((info) => {
 				if (info.singleGame) {
 					dispatch(
 						setApiState({
-							state: ApiState.Connecting
-						})
+							state: ApiState.Connecting,
+						}),
 					)
 				} else {
 					setInfo(info)
@@ -86,8 +84,8 @@ export const Main = ({}: Props) => {
 
 				{!loading && info && (
 					<Menu>
-						<DialogWrapper dialog={close => <NewGameModal onClose={close} />}>
-							{open => (
+						<DialogWrapper dialog={(close) => <NewGameModal onClose={close} />}>
+							{(open) => (
 								<Button
 									onClick={open}
 									disabled={!allowCreate}
@@ -101,24 +99,28 @@ export const Main = ({}: Props) => {
 							)}
 						</DialogWrapper>
 
-						<DialogWrapper dialog={close => <GamesListModal onClose={close} />}>
-							{open => (
+						<DialogWrapper
+							dialog={(close) => <GamesListModal onClose={close} />}
+						>
+							{(open) => (
 								<Button onClick={open} icon={faArrowRight}>
 									Join game
 								</Button>
 							)}
 						</DialogWrapper>
 
-						<DialogWrapper dialog={close => <SettingsModal onClose={close} />}>
-							{open => (
+						<DialogWrapper
+							dialog={(close) => <SettingsModal onClose={close} />}
+						>
+							{(open) => (
 								<Button onClick={open} icon={faCog}>
 									Settings
 								</Button>
 							)}
 						</DialogWrapper>
 
-						<DialogWrapper dialog={close => <CardsViewer onClose={close} />}>
-							{open => (
+						<DialogWrapper dialog={(close) => <CardsViewer onClose={close} />}>
+							{(open) => (
 								<Button onClick={open} icon={faSearch}>
 									Cards viewer
 								</Button>

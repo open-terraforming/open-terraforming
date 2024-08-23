@@ -3,7 +3,7 @@ import { useLocale } from '@/context/LocaleContext'
 import { Card, CardCallbackContext, CardType } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import { flatten } from '@shared/utils'
-import React, { useMemo } from 'react'
+import { CSSProperties, useMemo } from 'react'
 import {
 	Action,
 	ActionTitle,
@@ -16,7 +16,7 @@ import {
 	Image,
 	Played,
 	Title,
-	VP
+	VP,
 } from './CardView.styles'
 import { Condition } from './components/Condition'
 import { PlayEffect } from './components/PlayEffect'
@@ -24,6 +24,23 @@ import { Resource } from './components/Resource'
 import { Symbols } from './components/Symbols'
 import { Tag } from './components/Tag'
 import { useAppStore } from '@/utils/hooks'
+
+type Props = {
+	card: Card
+	state?: UsedCardState
+	selected?: boolean
+	onClick?: () => void
+	evaluate?: boolean
+	hover?: boolean
+	fade?: boolean
+	className?: string
+	style?: CSSProperties
+	wasPlayed?: boolean
+	isPlayable?: boolean
+	affordable?: boolean
+	conditionContext?: CardCallbackContext
+	calculatedVps?: number
+}
 
 export const StatelessCardView = ({
 	card,
@@ -39,25 +56,10 @@ export const StatelessCardView = ({
 	isPlayable,
 	affordable,
 	conditionContext: condContext,
-	calculatedVps
-}: {
-	card: Card
-	state?: UsedCardState
-	selected?: boolean
-	onClick?: () => void
-	evaluate?: boolean
-	hover?: boolean
-	fade?: boolean
-	className?: string
-	style?: React.CSSProperties
-	wasPlayed?: boolean
-	isPlayable?: boolean
-	affordable?: boolean
-	conditionContext?: CardCallbackContext
-	calculatedVps?: number
-}) => {
+	calculatedVps,
+}: Props) => {
 	const locale = useLocale()
-	const settings = useAppStore(state => state.settings.data)
+	const settings = useAppStore((state) => state.settings.data)
 
 	const played = wasPlayed
 	const playable = isPlayable
@@ -67,25 +69,26 @@ export const StatelessCardView = ({
 			card.description,
 			...(card.victoryPointsCallback
 				? [card.victoryPointsCallback.description]
-				: [])
+				: []),
 		]
 	}, [card])
 
-	const symbols = useMemo(() => flatten(card.playEffects.map(e => e.symbols)), [
-		card
-	])
+	const symbols = useMemo(
+		() => flatten(card.playEffects.map((e) => e.symbols)),
+		[card],
+	)
 
 	const actionSymbols = useMemo(
 		() =>
-			flatten(card.actionEffects.map(e => e.symbols)).concat(
-				flatten(card.passiveEffects.map(e => e.symbols))
+			flatten(card.actionEffects.map((e) => e.symbols)).concat(
+				flatten(card.passiveEffects.map((e) => e.symbols)),
 			),
-		[card]
+		[card],
 	)
 
 	const conditionSymbols = useMemo(
-		() => flatten(card.conditions.map(e => e.symbols)),
-		[card]
+		() => flatten(card.conditions.map((e) => e.symbols)),
+		[card],
 	)
 
 	const cardImagesUrl = settings.cardImagesUrl ?? CARD_IMAGES_URL
@@ -111,11 +114,12 @@ export const StatelessCardView = ({
 			}
 		>
 			<Head>
-				{card.type !== CardType.Corporation && card.type !== CardType.Prelude && (
-					<Cost affordable={!!affordable}>
-						<div>{card.cost}</div>
-					</Cost>
-				)}
+				{card.type !== CardType.Corporation &&
+					card.type !== CardType.Prelude && (
+						<Cost affordable={!!affordable}>
+							<div>{card.cost}</div>
+						</Cost>
+					)}
 				{conditionSymbols.length > 0 && (
 					<HeadSymbols symbols={conditionSymbols} />
 				)}
@@ -157,7 +161,7 @@ export const StatelessCardView = ({
 			<Description>
 				{played && <Played>Card already played this generation</Played>}
 				{(card.actionEffects.length > 0 ||
-					card.passiveEffects.filter(e => e.description).length > 0) && (
+					card.passiveEffects.filter((e) => e.description).length > 0) && (
 					<Action>
 						<ActionTitle>
 							{card.type === CardType.Action ? 'Action' : 'Effect'}
@@ -175,8 +179,8 @@ export const StatelessCardView = ({
 						))}
 
 						{card.passiveEffects
-							.map(e => e.description)
-							.filter(e => !!e)
+							.map((e) => e.description)
+							.filter((e) => !!e)
 							.map((e, i) => (
 								<div key={i}>{e}</div>
 							))}

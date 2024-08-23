@@ -5,11 +5,11 @@ import { useAppStore } from '@/utils/hooks'
 import { adminChange } from '@shared/actions'
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { emptyCardState } from '@shared/cards/utils'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 export const CheatsCorporation = () => {
 	const api = useApi()
-	const game = useAppStore(state => state.game.state)
+	const game = useAppStore((state) => state.game.state)
 
 	const [playerIndex, setPlayerIndex] = useState(0)
 	const [card, setCard] = useState('')
@@ -37,11 +37,11 @@ export const CheatsCorporation = () => {
 					[playerIndex]: {
 						corporation: card,
 						usedCards: {
-							0: emptyCardState(card, 0)
-						}
-					}
-				}
-			})
+							0: emptyCardState(card, 0),
+						},
+					},
+				},
+			}),
 		)
 
 		setCard('')
@@ -49,7 +49,7 @@ export const CheatsCorporation = () => {
 
 	return (
 		<Flex>
-			<select onChange={e => setPlayerIndex(parseInt(e.target.value))}>
+			<select onChange={(e) => setPlayerIndex(parseInt(e.target.value))}>
 				{game.players.map((player, i) => (
 					<option key={i} value={i}>
 						{player.name}
@@ -59,7 +59,7 @@ export const CheatsCorporation = () => {
 			<input
 				type="text"
 				value={card}
-				onChange={e => setCard(e.target.value)}
+				onChange={(e) => setCard(e.target.value)}
 				placeholder="Corporation card id"
 			/>
 			<Button onClick={handleSet}>Set corp</Button>

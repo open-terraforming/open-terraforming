@@ -1,5 +1,5 @@
 import { CardCategory } from '@shared/cards'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Tag } from '../../../../CardView/components/Tag'
 
@@ -37,10 +37,10 @@ export const HoverTags = ({ tags, open }: Props) => {
 			style={{
 				transform:
 					closing || !mounted ? 'translate(0, 5rem)' : 'translate(0, 0)',
-				opacity: closing || !mounted ? 0 : 1
+				opacity: closing || !mounted ? 0 : 1,
 			}}
 		>
-			{tags.map(t => (
+			{tags.map((t) => (
 				<Line key={t.tag}>
 					<Count>{t.count}</Count>
 					<div>

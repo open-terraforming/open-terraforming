@@ -2,7 +2,7 @@ type State = Readonly<typeof initialState>
 
 const initialState = {
 	buyingCardIndex: undefined as number | undefined,
-	playingCardIndex: undefined as number | undefined
+	playingCardIndex: undefined as number | undefined,
 }
 
 export default (state = initialState, action: Action): State => {
@@ -10,7 +10,7 @@ export default (state = initialState, action: Action): State => {
 		case TABLE_SET_STATE: {
 			return {
 				...state,
-				...action.state
+				...action.state,
 			}
 		}
 
@@ -31,5 +31,5 @@ type Action = TableSetState
 export const setTableState = (state: Partial<State>) =>
 	({
 		type: TABLE_SET_STATE,
-		state
-	} as TableSetState)
+		state,
+	}) as TableSetState

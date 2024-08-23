@@ -1,8 +1,7 @@
 export const help = {
 	money:
 		"Money is the most used resource. It's mainly used to play cards from your hand, but you can use it to buy standard projects, milestones and competitions. You also use money to buy cards at the beginning of each generation.",
-	ore:
-		'Ore can be used to buy cards with Building tag (brown). When using ore to buy cards, one ore is worth ${0}.',
+	ore: 'Ore can be used to buy cards with Building tag (brown). When using ore to buy cards, one ore is worth ${0}.',
 	titan:
 		'Titan can be used to buy cards with Space tag (black). When using titan to buy cards, one titan is worth ${0}.',
 	plants: 'Plants can be used to buy Greeneries.',
@@ -13,5 +12,5 @@ export const help = {
 	draftedProjects:
 		"Pick one card to draft, the rest will be passed to the next player. Once there're no more cards to pass, you'll pick projects to sponsor from the cards you've drafted.",
 	preludes:
-		"Prelude cards are played at the beginning of the first generations and they're free."
+		"Prelude cards are played at the beginning of the first generations and they're free.",
 }

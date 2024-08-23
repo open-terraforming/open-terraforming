@@ -1,10 +1,9 @@
-import React from 'react'
 import { PlayerColors } from '@shared/player-colors'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
 	faChevronLeft,
-	faChevronRight
+	faChevronRight,
 } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {

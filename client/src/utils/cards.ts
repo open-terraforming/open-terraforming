@@ -2,7 +2,7 @@ import { UsedCardState } from '@shared/index'
 import {
 	CardCondition,
 	CardCallbackContext,
-	CardsLookupApi
+	CardsLookupApi,
 } from '@shared/cards'
 import { CardInfo } from '@/pages/Game/pages/Table/components/CardDisplay/CardDisplay'
 import { emptyCardState } from '@shared/cards/utils'
@@ -10,7 +10,7 @@ import { emptyCardState } from '@shared/cards/utils'
 export const cardsToCardList = (
 	cards: UsedCardState[],
 	conditions: CardCondition[] = [],
-	ctx: Partial<CardCallbackContext> = {}
+	ctx: Partial<CardCallbackContext> = {},
 ) =>
 	cards
 		.map(
@@ -18,16 +18,16 @@ export const cardsToCardList = (
 				({
 					card: CardsLookupApi.get(c.code),
 					index: i,
-					state: c
-				} as CardInfo)
+					state: c,
+				}) as CardInfo,
 		)
 		.filter(
-			item =>
+			(item) =>
 				conditions.length === 0 ||
-				conditions.every(c =>
+				conditions.every((c) =>
 					c.evaluate({
 						...ctx,
-						card: item.state || emptyCardState(item.card.code)
-					} as CardCallbackContext)
-				)
+						card: item.state || emptyCardState(item.card.code),
+					} as CardCallbackContext),
+				),
 		)

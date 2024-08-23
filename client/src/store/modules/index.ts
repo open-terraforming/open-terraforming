@@ -12,7 +12,7 @@ const reducers = combineReducers({
 	client,
 	game,
 	table,
-	settings
+	settings,
 })
 
 export default (state: any, action: any) => {

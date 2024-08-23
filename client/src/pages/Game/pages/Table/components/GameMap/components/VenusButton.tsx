@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import venusBackground from '@/assets/venus-background.png'
 import styled from 'styled-components'
 import { VenusModal } from './VenusModal'
@@ -15,20 +15,20 @@ type Props = {
 
 export const VenusButton = ({ placing }: Props) => {
 	const [open, setOpen] = useState(false)
-	const game = useAppStore(state => state.game.state)
+	const game = useAppStore((state) => state.game.state)
 
-	const venusMap = game.map.grid.map(col =>
-		col.filter(c => c.enabled && c.location === GridCellLocation.Venus)
+	const venusMap = game.map.grid.map((col) =>
+		col.filter((c) => c.enabled && c.location === GridCellLocation.Venus),
 	)
 
 	useEffect(() => {
 		if (
 			!open &&
 			placing?.special?.length &&
-			venusMap.some(col =>
+			venusMap.some((col) =>
 				col.some(
-					cell => cell.special && placing.special?.includes(cell.special)
-				)
+					(cell) => cell.special && placing.special?.includes(cell.special),
+				),
 			)
 		) {
 			setOpen(true)
@@ -54,8 +54,9 @@ export const VenusButton = ({ placing }: Props) => {
 						<FontAwesomeIcon icon={faCity} /> x
 						{venusMap.reduce(
 							(acc, m) =>
-								acc + m.filter(c => c.content === GridCellContent.City).length,
-							0
+								acc +
+								m.filter((c) => c.content === GridCellContent.City).length,
+							0,
 						)}
 					</CitiesContainer>
 				</LabelContainer>

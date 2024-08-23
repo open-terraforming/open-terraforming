@@ -1,10 +1,13 @@
-import React from 'react'
+import { PureComponent, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 
-export class Portal extends React.PureComponent {
+type Props = { children: ReactNode }
+
+// TODO: Rewrite to functional component
+export class Portal extends PureComponent<Props> {
 	el: HTMLDivElement
 
-	constructor(props: {}) {
+	constructor(props: Props) {
 		super(props)
 
 		this.el = document.createElement('div')

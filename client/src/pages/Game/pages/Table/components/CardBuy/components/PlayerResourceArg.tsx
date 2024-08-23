@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { CardEffectArgument, Resource } from '@shared/cards'
 import { ArgContainer } from './ArgContainer'
 import { useAppStore } from '@/utils/hooks'
@@ -14,29 +14,29 @@ type Props = {
 
 export const PlayerResourceArg = ({ arg, onChange, card }: Props) => {
 	const [amount, setAmount] = useState(0)
-	const game = useAppStore(state => state.game.state)
-	const playerId = useAppStore(state => state.game.playerId)
+	const game = useAppStore((state) => state.game.state)
+	const playerId = useAppStore((state) => state.game.playerId)
 
 	const players = useMemo(
 		() =>
 			game
 				? game.players.filter(
-						p =>
+						(p) =>
 							p.id !== playerId &&
-							arg.playerConditions.every(c =>
+							arg.playerConditions.every((c) =>
 								c.evaluate({
 									game,
 									player: p,
-									card
-								})
-							)
-				  )
+									card,
+								}),
+							),
+					)
 				: [],
-		[game, arg]
+		[game, arg],
 	)
 
 	const [selectedPlayer, setSelectedPlayer] = useState(
-		players[0] as PlayerState | undefined
+		players[0] as PlayerState | undefined,
 	)
 
 	useEffect(() => {
@@ -55,8 +55,8 @@ export const PlayerResourceArg = ({ arg, onChange, card }: Props) => {
 				players={players}
 				playerId={selectedPlayer ? selectedPlayer.id : -1}
 				res={arg.resource}
-				onChange={playerId => {
-					setSelectedPlayer(game.players.find(p => p.id === playerId))
+				onChange={(playerId) => {
+					setSelectedPlayer(game.players.find((p) => p.id === playerId))
 				}}
 			/>
 
@@ -65,9 +65,9 @@ export const PlayerResourceArg = ({ arg, onChange, card }: Props) => {
 					res={arg.resource as Resource}
 					max={Math.min(
 						arg.maxAmount || selectedPlayer[arg.resource as Resource],
-						selectedPlayer[arg.resource as Resource]
+						selectedPlayer[arg.resource as Resource],
 					)}
-					onChange={v => setAmount(v)}
+					onChange={(v) => setAmount(v)}
 				/>
 			)}
 			<span>{arg.descriptionPostfix}</span>

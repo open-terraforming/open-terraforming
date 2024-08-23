@@ -3,7 +3,6 @@ import { useAppStore } from '@/utils/hooks'
 import { faTint, faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { ExpansionType } from '@shared/expansions/types'
-import React from 'react'
 import styled from 'styled-components'
 
 type Props = {
@@ -11,7 +10,7 @@ type Props = {
 }
 
 export const CardPickerHeader = ({ text }: Props) => {
-	const game = useAppStore(state => state.game.state)
+	const game = useAppStore((state) => state.game.state)
 
 	return (
 		<PickerHeader>

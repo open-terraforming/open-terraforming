@@ -1,6 +1,6 @@
 import { useLocale } from '@/context/LocaleContext'
 import { CardsLookupApi, CardType } from '@shared/cards'
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { Tag } from '../CardView/components/Tag'
 
@@ -16,11 +16,12 @@ export const MiniCardView = ({ card, extended }: Props) => {
 	return (
 		<Container type={info.type} extended={!!extended}>
 			<Head type={info.type}>
-				{info.type !== CardType.Corporation && info.type !== CardType.Prelude && (
-					<Cost>
-						<div>{info.cost}</div>
-					</Cost>
-				)}
+				{info.type !== CardType.Corporation &&
+					info.type !== CardType.Prelude && (
+						<Cost>
+							<div>{info.cost}</div>
+						</Cost>
+					)}
 				<Title>{t.cards[card]}</Title>
 				<Categories>
 					<Categories>
@@ -42,7 +43,7 @@ export const MiniCardView = ({ card, extended }: Props) => {
 }
 
 const Container = styled.div<{ type: CardType; extended: boolean }>`
-	${props =>
+	${(props) =>
 		props.extended &&
 		css`
 			border: 0.2rem solid ${props.theme.colors.cards[props.type]};
@@ -55,7 +56,7 @@ const Head = styled.div<{ type: CardType }>`
 	display: flex;
 	height: 2rem;
 	align-items: center;
-	background-color: ${props => props.theme.colors.cards[props.type]};
+	background-color: ${(props) => props.theme.colors.cards[props.type]};
 `
 
 const Title = styled.div`

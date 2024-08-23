@@ -1,16 +1,15 @@
-import React, { useMemo } from 'react'
-import styled from 'styled-components'
-import { CardResource } from '@shared/cards'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
-	faPaw,
-	faMicroscope,
 	faAtom,
+	faCloud,
 	faFighterJet,
-	faGripLines,
+	faMicroscope,
+	faPaw,
 	faRocket,
-	faCloud
 } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { CardResource } from '@shared/cards'
+import { useMemo } from 'react'
+import styled from 'styled-components'
 
 type Props = {
 	res: CardResource
@@ -22,7 +21,7 @@ const resourceToColor: Record<CardResource, string> = {
 	fighters: '#fff',
 	science: '#fff',
 	floaters: '#b3b149',
-	asteroids: '#fff'
+	asteroids: '#fff',
 }
 
 export const CardResourceIcon = ({ res }: Props) => {

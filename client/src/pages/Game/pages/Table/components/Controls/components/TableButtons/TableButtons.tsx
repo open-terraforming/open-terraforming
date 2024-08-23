@@ -1,5 +1,5 @@
 import { CardType } from '@shared/cards'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { PlayedCards } from '../../../PlayedCards/PlayedCards'
 import { ActionableButton } from './components/ActionableButton'
 import { EffectCards } from './components/EffectCards'
@@ -7,13 +7,11 @@ import { Tags } from './components/Tags'
 import { TotalCards } from './components/TotalCards'
 import { CorporationButton } from './components/CorporationButton'
 
-type Props = {}
-
-export const TableButtons = ({}: Props) => {
+export const TableButtons = () => {
 	const [shown, setShown] = useState(false)
 
 	const [defaultType, setDefaultType] = useState(
-		undefined as CardType | undefined
+		undefined as CardType | undefined,
 	)
 
 	const handleShow = (type?: CardType) => {

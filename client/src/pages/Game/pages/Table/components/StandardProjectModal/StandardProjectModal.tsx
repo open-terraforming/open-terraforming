@@ -6,9 +6,9 @@ import { buyStandardProject, StandardProjectType } from '@shared/index'
 import {
 	Projects,
 	StandardProject,
-	StandardProjectContext
+	StandardProjectContext,
 } from '@shared/projects'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { ProjectDescription } from './components/ProjectDescription'
 import { SellCardsModal } from './components/SellCardsModal'
@@ -19,27 +19,27 @@ type Props = {
 
 const HIDDEN_PROJECTS = [
 	StandardProjectType.GreeneryForPlants,
-	StandardProjectType.TemperatureForHeat
+	StandardProjectType.TemperatureForHeat,
 ]
 
 export const StandardProjectModal = ({ onClose }: Props) => {
 	const api = useApi()
-	const game = useAppStore(state => state.game.state)
-	const player = useAppStore(state => state.game.player)
-	const playing = useAppStore(state => state.game.playing)
+	const game = useAppStore((state) => state.game.state)
+	const player = useAppStore((state) => state.game.player)
+	const playing = useAppStore((state) => state.game.playing)
 	const [selling, setSelling] = useState(false)
 
 	const projects = game.standardProjects
-		.filter(p => !HIDDEN_PROJECTS.includes(p))
-		.map(p => Projects[p])
+		.filter((p) => !HIDDEN_PROJECTS.includes(p))
+		.map((p) => Projects[p])
 
 	const ctx = useMemo(
 		() =>
 			({
 				game,
-				player
-			} as StandardProjectContext),
-		[game, player]
+				player,
+			}) as StandardProjectContext,
+		[game, player],
 	)
 
 	const handleSubmit = (p: StandardProject) => {
@@ -66,7 +66,7 @@ export const StandardProjectModal = ({ onClose }: Props) => {
 				{projects.map((p, i) => (
 					<Project key={i}>
 						<Button
-							disabled={!playing || !p.conditions.every(c => c(ctx))}
+							disabled={!playing || !p.conditions.every((c) => c(ctx))}
 							onClick={() => handleSubmit(p)}
 						>
 							{p.type === StandardProjectType.SellPatents

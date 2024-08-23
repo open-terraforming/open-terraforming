@@ -10,22 +10,24 @@ import {
 	JoinError,
 	joinRequest,
 	MessageType,
-	VERSION
+	VERSION,
 } from '@shared/index'
-import React, { useContext, useEffect, useState } from 'react'
+import {
+	createContext,
+	ReactNode,
+	useContext,
+	useEffect,
+	useState,
+} from 'react'
 import { useDispatch } from 'react-redux'
 
-export const ApiContext = React.createContext<Client | null>(null)
+export const ApiContext = createContext<Client | null>(null)
 
-export const ApiContextProvider = ({
-	children
-}: {
-	children: React.ReactNode
-}) => {
+export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 	const dispatch = useDispatch()
-	const sessions = useAppStore(state => state.client.sessions)
-	const state = useAppStore(state => state.api.state)
-	const gameId = useAppStore(state => state.api.gameId)
+	const sessions = useAppStore((state) => state.client.sessions)
+	const state = useAppStore((state) => state.api.state)
+	const gameId = useAppStore((state) => state.api.gameId)
 	const sessionKey = gameId || 'single'
 	const [reconnectCount, setReconnectCount] = useState(0)
 	const [client, setClient] = useState(null as Client | null)
@@ -49,7 +51,7 @@ export const ApiContextProvider = ({
 			}
 
 			setClient(
-				new Client(getWebsocketUrl(gameId ? `game/${gameId}/socket` : ''))
+				new Client(getWebsocketUrl(gameId ? `game/${gameId}/socket` : '')),
 			)
 		}
 	}, [state, gameId])
@@ -64,25 +66,28 @@ export const ApiContextProvider = ({
 			if (reconnectCount < 5) {
 				dispatch(
 					setApiState({
-						state: ApiState.Connecting
-					})
+						state: ApiState.Connecting,
+					}),
 				)
 
 				setReconnectCount(reconnectCount + 1)
 
-				setTimeout(() => {
-					client.reconnect()
-				}, 100 + reconnectCount * 300)
+				setTimeout(
+					() => {
+						client.reconnect()
+					},
+					100 + reconnectCount * 300,
+				)
 			} else {
 				dispatch(
 					setApiState({
-						state: ApiState.Error
-					})
+						state: ApiState.Error,
+					}),
 				)
 			}
 		}
 
-		client.onMessage = m => {
+		client.onMessage = (m) => {
 			console.log('Incoming', MessageType[m.type], m)
 
 			switch (m.type) {
@@ -93,22 +98,22 @@ export const ApiContextProvider = ({
 						dispatch(
 							setApiState({
 								state: ApiState.Error,
-								error
-							})
+								error,
+							}),
 						)
 					} else {
 						dispatch(
 							setApiState({
 								state: ApiState.Connected,
-								error: undefined
-							})
+								error: undefined,
+							}),
 						)
 
 						dispatch(
 							setClientState({
 								gameState: info?.state,
-								info: info
-							})
+								info: info,
+							}),
 						)
 
 						if (info) {
@@ -136,8 +141,8 @@ export const ApiContextProvider = ({
 
 						dispatch(
 							setClientState({
-								sessions: newSessions
-							})
+								sessions: newSessions,
+							}),
 						)
 					}
 
@@ -145,8 +150,8 @@ export const ApiContextProvider = ({
 						dispatch(
 							setApiState({
 								state: ApiState.Connected,
-								error
-							})
+								error,
+							}),
 						)
 					} else {
 						dispatch(setGamePlayer(id as number, false))
@@ -156,16 +161,16 @@ export const ApiContextProvider = ({
 								id,
 								sessions: {
 									...sessions,
-									[sessionKey]: session
-								}
-							})
+									[sessionKey]: session,
+								},
+							}),
 						)
 
 						dispatch(
 							setApiState({
 								state: ApiState.Joined,
-								error: undefined
-							})
+								error: undefined,
+							}),
 						)
 					}
 
@@ -177,8 +182,8 @@ export const ApiContextProvider = ({
 						dispatch(
 							setApiState({
 								state: ApiState.Connected,
-								error: m.data.error
-							})
+								error: m.data.error,
+							}),
 						)
 					} else {
 						dispatch(setGamePlayer(-1, true))
@@ -186,8 +191,8 @@ export const ApiContextProvider = ({
 						dispatch(
 							setApiState({
 								state: ApiState.Joined,
-								error: undefined
-							})
+								error: undefined,
+							}),
 						)
 					}
 
@@ -210,14 +215,14 @@ export const ApiContextProvider = ({
 					dispatch(
 						setApiState({
 							error: "You've been kicked",
-							state: ApiState.Ready
-						})
+							state: ApiState.Ready,
+						}),
 					)
 
 					dispatch(
 						setClientState({
-							id: undefined
-						})
+							id: undefined,
+						}),
 					)
 
 					break

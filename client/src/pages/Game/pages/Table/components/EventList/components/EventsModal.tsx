@@ -1,5 +1,4 @@
 import { Modal } from '@/components/Modal/Modal'
-import React from 'react'
 import { GameEvent } from '../types'
 import { EventLine } from './EventLine'
 

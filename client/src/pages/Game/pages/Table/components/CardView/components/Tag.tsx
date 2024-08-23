@@ -13,7 +13,7 @@ import {
 	faCity,
 	faWarehouse,
 	faMicroscope,
-	faQuestion
+	faQuestion,
 } from '@fortawesome/free-solid-svg-icons'
 import { Jupiter } from './Jupiter'
 import { venusIcon } from '@/icons/venus'
@@ -122,7 +122,7 @@ export const Tag = ({ tag, size = 'md', className, onClick }: Props) => {
 }
 
 const IconContainer = styled.div<{ background: string; size?: Props['size'] }>`
-	${props => css`
+	${(props) => css`
 		background: ${props.background};
 		width: 100%;
 		height: 100%;
@@ -140,7 +140,7 @@ const IconContainer = styled.div<{ background: string; size?: Props['size'] }>`
 `
 
 const Category = styled.div<{ size?: Props['size'] }>`
-	${props =>
+	${(props) =>
 		props.size === 'md'
 			? css`
 					width: 2rem;
@@ -150,7 +150,7 @@ const Category = styled.div<{ size?: Props['size'] }>`
 						margin-top: -2px;
 						margin-left: -2px;
 					}
-			  `
+				`
 			: css`
 					width: 1.25rem;
 					height: 1.25rem;
@@ -160,7 +160,7 @@ const Category = styled.div<{ size?: Props['size'] }>`
 					> ${IconContainer} {
 						box-sizing: border-box;
 					}
-			  `}
+				`}
 
 	img {
 		width: 100%;

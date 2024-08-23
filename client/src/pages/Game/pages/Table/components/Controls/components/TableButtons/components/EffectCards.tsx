@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { CardsCounter } from '../../CardsCounter'
@@ -9,15 +9,15 @@ type Props = {
 }
 
 export const EffectCards = ({ onClick }: Props) => {
-	const player = useAppStore(state => state.game.player)
+	const player = useAppStore((state) => state.game.player)
 	const [opened, setOpened] = useState(false)
 
 	const cards = useMemo(
 		() =>
 			player.usedCards.filter(
-				state => CardsLookupApi.get(state.code).type === CardType.Effect
+				(state) => CardsLookupApi.get(state.code).type === CardType.Effect,
 			),
-		[player]
+		[player],
 	)
 
 	const handleClick = () => {

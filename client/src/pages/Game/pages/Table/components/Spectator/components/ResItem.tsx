@@ -1,4 +1,3 @@
-import React from 'react'
 import { Resource } from '@shared/cards'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import styled from 'styled-components'
@@ -6,7 +5,7 @@ import styled from 'styled-components'
 export const ResItem = ({
 	res,
 	value,
-	production
+	production,
 }: {
 	res: Resource
 	value: number

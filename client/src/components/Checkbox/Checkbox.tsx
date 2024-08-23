@@ -1,7 +1,7 @@
 import { useChange } from '@/utils/hooks'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
 
 type Props = {
@@ -14,7 +14,7 @@ export const Checkbox = ({ label, checked, onChange }: Props) => {
 	const [value, setValue] = useState(checked ?? false)
 
 	useChange(() => {
-		onChange && onChange(value)
+		onChange?.(value)
 	}, [value])
 
 	return (
@@ -22,7 +22,7 @@ export const Checkbox = ({ label, checked, onChange }: Props) => {
 			<input
 				type="checkbox"
 				checked={value}
-				onChange={e => setValue(e.target.checked)}
+				onChange={(e) => setValue(e.target.checked)}
 			/>
 			<Custom>
 				{value && <FontAwesomeIcon icon={faCheck} fixedWidth size="xs" />}

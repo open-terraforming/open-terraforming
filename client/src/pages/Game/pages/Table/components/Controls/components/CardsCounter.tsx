@@ -1,14 +1,14 @@
-import React from 'react'
+import { MouseEvent, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 type Props = {
-	count: React.ReactNode
-	text: React.ReactNode
+	count: ReactNode
+	text: ReactNode
 	disabled?: boolean
 	onClick?: () => void
-	children?: React.ReactNode
-	onMouseOver?: (e: React.MouseEvent) => void
-	onMouseLeave?: (e: React.MouseEvent) => void
+	children?: ReactNode
+	onMouseOver?: (e: MouseEvent) => void
+	onMouseLeave?: (e: MouseEvent) => void
 }
 
 export const CardsCounter = ({
@@ -18,7 +18,7 @@ export const CardsCounter = ({
 	onClick,
 	children,
 	onMouseOver,
-	onMouseLeave
+	onMouseLeave,
 }: Props) => {
 	return (
 		<D
@@ -50,7 +50,7 @@ const D = styled.button<{ disabled?: boolean }>`
 		border-left: 0.2rem solid ${({ theme }) => theme.colors.border};
 	}
 
-	${props =>
+	${(props) =>
 		props.disabled &&
 		css`
 			cursor: default;

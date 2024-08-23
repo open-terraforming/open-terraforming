@@ -2,7 +2,7 @@ import { Button } from '@/components'
 import { useAppStore } from '@/utils/hooks'
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons'
 import { PlayerActionType } from '@shared/player-actions'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { CompetitionsModal } from './components/CompetitionsModal/CompetitionsModal'
 import { Controls } from './components/Controls/Controls'
@@ -18,8 +18,8 @@ import { StartPicker } from './components/StartPicker/StartPicker'
 import { SolarPhaseTerraformPicker } from './components/SolarPhaseTerraformPicker/SolarPhaseTerraformPicker'
 
 const Table = () => {
-	const pending = useAppStore(state => state.game.pendingAction)
-	const spectating = useAppStore(state => state.game.spectating)
+	const pending = useAppStore((state) => state.game.pendingAction)
+	const spectating = useAppStore((state) => state.game.spectating)
 	const [pickerHidden, setPickerHidden] = useState(false)
 
 	/*

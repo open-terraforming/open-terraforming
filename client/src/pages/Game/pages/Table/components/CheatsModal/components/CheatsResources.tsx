@@ -4,11 +4,11 @@ import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { adminChange } from '@shared/actions'
 import { Resource } from '@shared/cards'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export const CheatsResources = () => {
 	const api = useApi()
-	const game = useAppStore(state => state.game.state)
+	const game = useAppStore((state) => state.game.state)
 
 	const [playerIndex, setPlayerIndex] = useState(0)
 	const [resource, setResource] = useState<Resource>('money')
@@ -19,10 +19,10 @@ export const CheatsResources = () => {
 			adminChange({
 				players: {
 					[playerIndex]: {
-						[resource]: value
-					}
-				}
-			})
+						[resource]: value,
+					},
+				},
+			}),
 		)
 	}
 
@@ -33,14 +33,14 @@ export const CheatsResources = () => {
 	return (
 		<Flex>
 			RES:
-			<select onChange={e => setPlayerIndex(parseInt(e.target.value))}>
+			<select onChange={(e) => setPlayerIndex(parseInt(e.target.value))}>
 				{game.players.map((player, i) => (
 					<option key={i} value={i}>
 						{player.name}
 					</option>
 				))}
 			</select>
-			<select onChange={e => setResource(e.target.value as Resource)}>
+			<select onChange={(e) => setResource(e.target.value as Resource)}>
 				<option value="money">Money</option>
 				<option value="ore">Ore</option>
 				<option value="titan">Titan</option>
@@ -51,7 +51,7 @@ export const CheatsResources = () => {
 			<input
 				type="number"
 				value={value}
-				onChange={e => setValue(parseFloat(e.target.value))}
+				onChange={(e) => setValue(parseFloat(e.target.value))}
 			/>
 			<Button onClick={handleSet}>Set</Button>
 		</Flex>
