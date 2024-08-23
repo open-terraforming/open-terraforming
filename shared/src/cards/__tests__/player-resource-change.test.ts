@@ -12,9 +12,9 @@ test('playerResourceChange should change resources of right player', () => {
 		{
 			card,
 			player: state.players[0],
-			game: state
+			game: state,
 		},
-		[state.players[1].id, 2]
+		[state.players[1].id, 2],
 	)
 
 	expect(state.players[0].ore).toBe(2)
@@ -32,9 +32,9 @@ test("playerResourceChange won't remove more than player owns", () => {
 			{
 				card,
 				player: state.players[0],
-				game: state
+				game: state,
 			},
-			[state.players[1].id, 5]
+			[state.players[1].id, 5],
 		)
 	}).toThrow()
 
@@ -51,9 +51,9 @@ test('playerResourceChange is limited by maximum number of resources', () => {
 		{
 			card,
 			player: state.players[0],
-			game: state
+			game: state,
 		},
-		[state.players[1].id, 10]
+		[state.players[1].id, 10],
 	)
 
 	expect(state.players[1].ore).toBe(15)
@@ -68,9 +68,9 @@ test('playerResourceChange removes exact amount when not optional', () => {
 		{
 			card,
 			player: state.players[0],
-			game: state
+			game: state,
 		},
-		[state.players[1].id, 3]
+		[state.players[1].id, 3],
 	)
 
 	expect(state.players[1].ore).toBe(15)
@@ -85,9 +85,9 @@ test('playerResourceChange accepts single arg when not optional', () => {
 		{
 			card,
 			player: state.players[0],
-			game: state
+			game: state,
 		},
-		state.players[1].id
+		state.players[1].id,
 	)
 
 	expect(state.players[1].ore).toBe(15)
@@ -103,10 +103,10 @@ test('playerResourceChange requires player not optional', () => {
 			{
 				card,
 				player: state.players[0],
-				game: state
+				game: state,
 			},
-			-1
-		)
+			-1,
+		),
 	).toThrowError()
 
 	expect(state.players[1].ore).toBe(20)

@@ -9,13 +9,13 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		0: {
 			type: GridCellType.PhobosSpaceHaven,
 			special: GridCellSpecial.PhobosSpaceHaven,
-			outside: true
+			outside: true,
 		},
 		2: { type: GridCellType.Ocean },
 		3: { titan: 1, type: GridCellType.Ocean },
 		4: { cards: 1, type: GridCellType.Ocean },
 		5: { ore: 1, type: GridCellType.Ocean },
-		6: { cards: 1 }
+		6: { cards: 1 },
 	},
 	1: {
 		1: { titan: 1, special: GridCellSpecial.HecatesTholus },
@@ -23,7 +23,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		3: {},
 		4: { type: GridCellType.Ocean },
 		5: { type: GridCellType.Ocean },
-		6: { ore: 2 }
+		6: { ore: 2 },
 	},
 	2: {
 		1: { titan: 2, special: GridCellSpecial.ElysiumMons },
@@ -32,7 +32,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: {},
 		5: { plants: 1, type: GridCellType.Ocean },
 		6: { type: GridCellType.Ocean },
-		7: { cards: 3, special: GridCellSpecial.OlympusMons }
+		7: { cards: 3, special: GridCellSpecial.OlympusMons },
 	},
 	3: {
 		0: { plants: 1 },
@@ -42,7 +42,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: { plants: 1 },
 		5: { plants: 1, type: GridCellType.Ocean },
 		6: { plants: 1, type: GridCellType.Ocean },
-		7: { plants: 1, ore: 1 }
+		7: { plants: 1, ore: 1 },
 	},
 	4: {
 		0: { plants: 2 },
@@ -53,7 +53,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		5: { plants: 3 },
 		6: { plants: 2 },
 		7: { plants: 2 },
-		8: { plants: 1, titan: 1 }
+		8: { plants: 1, titan: 1 },
 	},
 	5: {
 		0: { ore: 1 },
@@ -63,7 +63,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: { plants: 1 },
 		5: { plants: 1 },
 		6: { plants: 1 },
-		7: {}
+		7: {},
 	},
 	6: {
 		1: { titan: 1 },
@@ -72,7 +72,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: {},
 		5: { ore: 1 },
 		6: {},
-		7: {}
+		7: {},
 	},
 	7: {
 		1: { ore: 2 },
@@ -80,20 +80,20 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		3: {},
 		4: {},
 		5: { ore: 2 },
-		6: {}
+		6: {},
 	},
 	8: {
 		0: {
 			type: GridCellType.GanymedeColony,
 			special: GridCellSpecial.GanymedeColony,
-			outside: true
+			outside: true,
 		},
 		2: { ore: 1 },
 		3: {},
 		4: { cards: 1 },
 		5: { cards: 1 },
-		6: { ore: 2 }
-	}
+		6: { ore: 2 },
+	},
 }
 
 export const elysiumMap = mapInfo({
@@ -123,17 +123,17 @@ export const elysiumMap = mapInfo({
 				CompetitionType.Industrialist,
 				CompetitionType.DesertSettler,
 				CompetitionType.EstateDealer,
-				CompetitionType.Benefactor
+				CompetitionType.Benefactor,
 			],
 			milestones: [
 				MilestoneType.Generalist,
 				MilestoneType.Specialist,
 				MilestoneType.Ecologist,
 				MilestoneType.Tycoon,
-				MilestoneType.Legend
-			]
+				MilestoneType.Legend,
+			],
 		}
 
 		return map
-	}
+	},
 })

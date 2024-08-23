@@ -9,13 +9,13 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		0: {
 			type: GridCellType.PhobosSpaceHaven,
 			special: GridCellSpecial.PhobosSpaceHaven,
-			outside: true
+			outside: true,
 		},
 		2: { plants: 2, type: GridCellType.Ocean },
 		3: { plants: 2 },
 		4: { plants: 2 },
 		5: { plants: 1, ore: 1 },
-		6: { plants: 1 }
+		6: { plants: 1 },
 	},
 	1: {
 		1: { plants: 2, type: GridCellType.Ocean },
@@ -23,7 +23,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		3: { plants: 1 },
 		4: { plants: 1, ore: 1 },
 		5: { plants: 1 },
-		6: { plants: 1 }
+		6: { plants: 1 },
 	},
 	2: {
 		1: { plants: 1, type: GridCellType.Ocean },
@@ -32,7 +32,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: { ore: 1 },
 		5: {},
 		6: { plants: 2 },
-		7: { plants: 1, cards: 1 }
+		7: { plants: 1, cards: 1 },
 	},
 	3: {
 		0: { plants: 1, type: GridCellType.Ocean },
@@ -42,7 +42,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: { ore: 1 },
 		5: { plants: 1, type: GridCellType.Ocean },
 		6: { plants: 2, type: GridCellType.Ocean },
-		7: { plants: 1 }
+		7: { plants: 1 },
 	},
 	4: {
 		0: { cards: 1 },
@@ -53,7 +53,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		5: { cards: 1, type: GridCellType.Ocean },
 		6: { heat: 3, type: GridCellType.Ocean },
 		7: { type: GridCellType.Ocean },
-		8: { plants: 1 }
+		8: { plants: 1 },
 	},
 	5: {
 		0: { titan: 1 },
@@ -63,7 +63,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: {},
 		5: { type: GridCellType.Ocean },
 		6: { ore: 1, type: GridCellType.Ocean },
-		7: {}
+		7: {},
 	},
 	6: {
 		1: { titan: 2, type: GridCellType.Ocean },
@@ -72,7 +72,7 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		4: { cards: 1 },
 		5: {},
 		6: {},
-		7: { titan: 1 }
+		7: { titan: 1 },
 	},
 	7: {
 		1: { ore: 1 },
@@ -80,20 +80,20 @@ const preset: Record<number, Record<number, Partial<GridCell>>> = {
 		3: { heat: 2 },
 		4: { heat: 2 },
 		5: { titan: 1 },
-		6: { titan: 1 }
+		6: { titan: 1 },
 	},
 	8: {
 		0: {
 			type: GridCellType.GanymedeColony,
 			special: GridCellSpecial.GanymedeColony,
-			outside: true
+			outside: true,
 		},
 		2: {},
 		3: { heat: 2 },
 		4: { money: -6, oceans: 1 },
 		5: { heat: 2 },
-		6: {}
-	}
+		6: {},
+	},
 }
 
 export const hellasMap = mapInfo({
@@ -123,17 +123,17 @@ export const hellasMap = mapInfo({
 				CompetitionType.Magnate,
 				CompetitionType.SpaceBaron,
 				CompetitionType.Eccentric,
-				CompetitionType.Contractor
+				CompetitionType.Contractor,
 			],
 			milestones: [
 				MilestoneType.Diversifier,
 				MilestoneType.Tactician,
 				MilestoneType.PolarExplorer,
 				MilestoneType.Energizer,
-				MilestoneType.RimSettler
-			]
+				MilestoneType.RimSettler,
+			],
 		}
 
 		return map
-	}
+	},
 })

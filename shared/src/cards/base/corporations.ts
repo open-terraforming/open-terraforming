@@ -10,7 +10,7 @@ import {
 	placeCity,
 	productionChange,
 	resourceChange,
-	titanPriceChange
+	titanPriceChange,
 } from '../effects'
 import { asFirstAction, passiveEffect } from '../passive-effects'
 import { Card, CardCategory, CardSpecial, CardType, SymbolType } from '../types'
@@ -18,7 +18,7 @@ import {
 	card,
 	updatePlayerProduction,
 	updatePlayerResource,
-	withRightArrow
+	withRightArrow,
 } from '../utils'
 import { PlayerActionType } from '../../player-actions'
 import { effect } from '../effects/types'
@@ -41,13 +41,13 @@ export const baseCorporations = [
 					description: "You don't pick cards at the beginning",
 					perform: ({ player }) => {
 						player.pendingActions = player.pendingActions.filter(
-							a => a.type !== PlayerActionType.PickCards
+							(a) => a.type !== PlayerActionType.PickCards,
 						)
-					}
-				})
+					},
+				}),
 			],
-			special: [CardSpecial.StartingCorporation]
-		})
+			special: [CardSpecial.StartingCorporation],
+		}),
 	),
 	corp(
 		card({
@@ -61,13 +61,13 @@ export const baseCorporations = [
 					description: f(
 						'Effect: When you play a card or a standard project with basic cost of {0} or more, you gain {1}',
 						withUnits('money', 20),
-						withUnits('money', 4)
+						withUnits('money', 4),
 					),
 					onCardPlayed: (
 						{ player },
 						playedCard,
 						_playedCardIndex,
-						playedBy
+						playedBy,
 					) => {
 						if (playedBy.id === player.id && playedCard.cost >= 20) {
 							updatePlayerResource(player, 'money', 4)
@@ -80,10 +80,10 @@ export const baseCorporations = [
 						) {
 							updatePlayerResource(player, 'money', 4)
 						}
-					}
-				})
-			]
-		})
+					},
+				}),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -97,10 +97,10 @@ export const baseCorporations = [
 				productionChange('plants', 2),
 				effect({
 					description: f('Greenery will only cost {0}', withUnits('plants', 7)),
-					perform: ({ player }) => (player.greeneryCost = 7)
-				})
-			]
-		})
+					perform: ({ player }) => (player.greeneryCost = 7),
+				}),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -109,8 +109,8 @@ export const baseCorporations = [
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 42), productionChange('heat', 3)],
-			actionEffects: [exchangeResources('heat', 'money')]
-		})
+			actionEffects: [exchangeResources('heat', 'money')],
+		}),
 	),
 	corp(
 		card({
@@ -121,7 +121,7 @@ export const baseCorporations = [
 			playEffects: [
 				resourceChange('money', 30),
 				resourceChange('ore', 5),
-				productionChange('ore', 1)
+				productionChange('ore', 1),
 			],
 			passiveEffects: [
 				passiveEffect({
@@ -131,10 +131,10 @@ export const baseCorporations = [
 						if (player.id === placedBy.id && (cell.ore > 0 || cell.titan > 0)) {
 							updatePlayerProduction(player, 'ore', 1)
 						}
-					}
-				})
-			]
-		})
+					},
+				}),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -147,13 +147,13 @@ export const baseCorporations = [
 				passiveEffect({
 					description: f(
 						'When you play an Event card, you receive {0}',
-						withUnits('money', 2)
+						withUnits('money', 2),
 					),
 					onCardPlayed: (
 						{ player },
 						playedCard,
 						_playedCardIndex,
-						playedBy
+						playedBy,
 					) => {
 						if (
 							playedBy.id === player.id &&
@@ -161,10 +161,10 @@ export const baseCorporations = [
 						) {
 							updatePlayerResource(player, 'money', 2)
 						}
-					}
-				})
-			]
-		})
+					},
+				}),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -175,9 +175,9 @@ export const baseCorporations = [
 			playEffects: [
 				resourceChange('money', 23),
 				resourceChange('titan', 10),
-				titanPriceChange(1)
-			]
-		})
+				titanPriceChange(1),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -188,15 +188,15 @@ export const baseCorporations = [
 			playEffects: [
 				resourceChange('money', 40),
 				emptyEffect('As your first action, place a City', [
-					{ tile: GridCellContent.City }
-				])
+					{ tile: GridCellContent.City },
+				]),
 			],
 			passiveEffects: [
 				asFirstAction(placeCity()),
 				passiveEffect({
 					description: f(
 						'When any city tile is placed on Mars, increase your money production by 1. When you place a city tile, gain {0}',
-						withUnits('money', 3)
+						withUnits('money', 3),
 					),
 					onTilePlaced: ({ player }, cell, placedBy) => {
 						if (cell.content === GridCellContent.City) {
@@ -208,10 +208,10 @@ export const baseCorporations = [
 								updatePlayerResource(player, 'money', 3)
 							}
 						}
-					}
-				})
-			]
-		})
+					},
+				}),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -225,17 +225,17 @@ export const baseCorporations = [
 				effect({
 					description: f(
 						'Power cards and Standard Project Power Plant cost {0} less',
-						withUnits('money', 3)
+						withUnits('money', 3),
 					),
 					perform: ({ player }) => {
 						player.tagPriceChange[CardCategory.Power] =
 							(player.tagPriceChange[CardCategory.Power] || 0) + -3
 
 						player.powerProjectCost = 11 - 3
-					}
-				})
-			]
-		})
+					},
+				}),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -253,25 +253,25 @@ export const baseCorporations = [
 						condition({
 							description: 'TR has to be increased',
 							evaluate: ({ player, card }) =>
-								(card.data ?? 20) < player.terraformRating
-						})
+								(card.data ?? 20) < player.terraformRating,
+						}),
 					],
 					symbols: [{ symbol: SymbolType.TerraformingRating, count: 1 }],
 					perform: ({ player, card }) => {
 						player.terraformRating++
 						card.played = true
-					}
-				})
+					},
+				}),
 			],
 			passiveEffects: [
 				passiveEffect({
 					description: '',
 					onGenerationStarted: ({ card, player }) => {
 						card.data = player.terraformRating
-					}
-				})
-			]
-		})
+					},
+				}),
+			],
+		}),
 	),
 	corp(
 		card({
@@ -280,8 +280,8 @@ export const baseCorporations = [
 			cost: 0,
 			type: CardType.Corporation,
 			playEffects: [resourceChange('money', 60), earthCardPriceChange(-3)],
-			special: [CardSpecial.CorporationsEra]
-		})
+			special: [CardSpecial.CorporationsEra],
+		}),
 	),
 	corp(
 		card({
@@ -292,22 +292,22 @@ export const baseCorporations = [
 			playEffects: [
 				resourceChange('money', 42),
 				productionChange('titan', 1),
-				productionChange('money', 1)
+				productionChange('money', 1),
 			],
 			passiveEffects: [
 				passiveEffect({
 					description: f(
 						'When any card with {0} tag is played, your money production will increase by 1',
-						CardCategory[CardCategory.Jupiter]
+						CardCategory[CardCategory.Jupiter],
 					),
 					onCardPlayed: ({ player }, playedCard) => {
 						if (playedCard.categories.includes(CardCategory.Jupiter)) {
 							updatePlayerProduction(player, 'money', 1)
 						}
-					}
-				})
+					},
+				}),
 			],
-			special: [CardSpecial.CorporationsEra]
-		})
-	)
+			special: [CardSpecial.CorporationsEra],
+		}),
+	),
 ]

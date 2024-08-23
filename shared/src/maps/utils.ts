@@ -3,42 +3,42 @@ import {
 	ProgressMilestoneItem,
 	ProgressMilestoneType,
 	GridCell,
-	GridCellType
+	GridCellType,
 } from '../game'
 import { MapInfo } from '../map'
 
 export const milestoneItem = (
-	m: WithOptional<ProgressMilestoneItem, 'used'>
+	m: WithOptional<ProgressMilestoneItem, 'used'>,
 ): ProgressMilestoneItem => ({ ...m, used: false })
 
 export const heatAt = (value: number) =>
 	milestoneItem({
 		type: ProgressMilestoneType.Heat,
-		value
+		value,
 	})
 
 export const temperatureAt = (value: number) =>
 	milestoneItem({
 		type: ProgressMilestoneType.Temperature,
-		value
+		value,
 	})
 
 export const oceanAt = (value: number) =>
 	milestoneItem({
 		type: ProgressMilestoneType.Ocean,
-		value
+		value,
 	})
 
 export const cardAt = (value: number) =>
 	milestoneItem({
 		type: ProgressMilestoneType.Card,
-		value
+		value,
 	})
 
 export const terraformingRatingAt = (value: number) =>
 	milestoneItem({
 		type: ProgressMilestoneType.TerraformingRating,
-		value
+		value,
 	})
 
 export const mapInfo = (c: MapInfo) => c
@@ -56,13 +56,13 @@ export const cell = (c: Partial<GridCell>): GridCell => ({
 	oceans: 0,
 	money: 0,
 	outside: false,
-	...c
+	...c,
 })
 
 export const generateGrid = (
 	w: number,
 	h: number,
-	cb: (x: number, y: number) => Partial<GridCell> | undefined
+	cb: (x: number, y: number) => Partial<GridCell> | undefined,
 ) => {
 	const grid = [] as GridCell[][]
 
@@ -77,8 +77,8 @@ export const generateGrid = (
 					x,
 					y,
 					enabled: !!update,
-					...update
-				})
+					...update,
+				}),
 			)
 		}
 

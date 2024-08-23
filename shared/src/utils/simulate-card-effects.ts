@@ -6,7 +6,7 @@ export const simulateCardEffects = (
 	card: string,
 	effects: CardEffect[],
 	player = initialPlayerState(),
-	game = initialGameState()
+	game = initialGameState(),
 ) => {
 	// Make sure draw effects wont fail
 	if (game.cards.length < 100) {
@@ -21,11 +21,11 @@ export const simulateCardEffects = (
 		game.preludeCards = new Array(100).fill('simulated-preludes')
 	}
 
-	effects.forEach(e => {
+	effects.forEach((e) => {
 		e.perform({
 			card: emptyCardState(card),
 			game,
-			player
+			player,
 		})
 	})
 

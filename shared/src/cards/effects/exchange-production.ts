@@ -12,12 +12,12 @@ export const exchangeProduction = (srcRes: Resource, dstRes: Resource) =>
 				type: CardEffectTarget.Production,
 				resource: srcRes,
 				descriptionPrefix: 'Exchange',
-				descriptionPostfix: `production for ${dstRes} production`
-			})
+				descriptionPostfix: `production for ${dstRes} production`,
+			}),
 		],
 		description: `Exchange ${withUnits(srcRes, 'X')} production for ${withUnits(
 			dstRes,
-			'X'
+			'X',
 		)} production`,
 		conditions: [productionCondition(srcRes, 1)],
 		symbols: [
@@ -25,7 +25,7 @@ export const exchangeProduction = (srcRes: Resource, dstRes: Resource) =>
 			{ resource: srcRes, production: true },
 			{ symbol: SymbolType.RightArrow },
 			{ symbol: SymbolType.X },
-			{ resource: dstRes, production: true }
+			{ resource: dstRes, production: true },
 		],
 		perform: ({ player }, amount: number) => {
 			if (player[resourceProduction[srcRes]] < amount) {
@@ -34,5 +34,5 @@ export const exchangeProduction = (srcRes: Resource, dstRes: Resource) =>
 
 			updatePlayerProduction(player, srcRes, -amount)
 			updatePlayerProduction(player, dstRes, amount)
-		}
+		},
 	})

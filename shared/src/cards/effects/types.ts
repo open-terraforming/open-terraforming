@@ -2,14 +2,14 @@ import {
 	CardEffectArgumentType,
 	WithOptional,
 	CardEffect,
-	CardEffectType
+	CardEffectType,
 } from '../types'
 
 export const effect = <T extends (CardEffectArgumentType | undefined)[]>(
 	c: WithOptional<
 		CardEffect<T>,
 		'args' | 'conditions' | 'type' | 'symbols' | 'aiScore'
-	>
+	>,
 ): CardEffect<T> =>
 	({
 		args: [],
@@ -17,5 +17,5 @@ export const effect = <T extends (CardEffectArgumentType | undefined)[]>(
 		symbols: [],
 		type: CardEffectType.Other,
 		aiScore: 0,
-		...c
-	} as CardEffect<T>)
+		...c,
+	}) as CardEffect<T>

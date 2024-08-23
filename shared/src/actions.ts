@@ -11,25 +11,25 @@ export type UpdateDeepPartial<T> = {
 	[K in keyof T]?: T[K] extends (infer U)[]
 		? { [key: number]: UpdateDeepPartial<U> } | U[]
 		: T[K] extends object
-		? UpdateDeepPartial<T[K]>
-		: T[K] extends (infer U)[]
-		? { [key: string]: U }
-		: T[K]
+			? UpdateDeepPartial<T[K]>
+			: T[K] extends (infer U)[]
+				? { [key: string]: U }
+				: T[K]
 }
 
 export enum HandshakeError {
-	InvalidVersion = 'InvalidVersion'
+	InvalidVersion = 'InvalidVersion',
 }
 
 export enum JoinError {
 	InvalidName = 'InvalidName',
 	DuplicateName = 'DuplicateName',
 	GameInProgress = 'GameInProgress',
-	InvalidSession = 'InvalidSession'
+	InvalidSession = 'InvalidSession',
 }
 
 export enum SpectateError {
-	NotAllowed = 'NotAllowed'
+	NotAllowed = 'NotAllowed',
 }
 
 export enum MessageType {
@@ -61,73 +61,73 @@ export enum MessageType {
 	SpectateResponse,
 	DraftCard,
 	PickStarting,
-	SolarPhaseTerraform
+	SolarPhaseTerraform,
 }
 
 export const handshakeRequest = (version: string) =>
 	({
 		type: MessageType.HandshakeRequest,
 		data: {
-			version
-		}
-	} as const)
+			version,
+		},
+	}) as const
 
 export const handshakeResponse = (error?: HandshakeError, info?: GameInfo) =>
 	({
 		type: MessageType.HandshakeResponse,
 		data: {
 			error,
-			info
-		}
-	} as const)
+			info,
+		},
+	}) as const
 
 export const joinRequest = (name?: string, session?: string) =>
 	({
 		type: MessageType.JoinRequest,
-		data: { name, session }
-	} as const)
+		data: { name, session },
+	}) as const
 
 export const joinResponse = (
 	error?: JoinError,
 	session?: string,
-	id?: number
+	id?: number,
 ) =>
 	({
 		type: MessageType.JoinResponse,
 		data: {
 			error,
 			session,
-			id
-		}
-	} as const)
+			id,
+		},
+	}) as const
 
 export const playerReady = (ready = true) =>
-	({ type: MessageType.PlayerReady, data: { ready } } as const)
+	({ type: MessageType.PlayerReady, data: { ready } }) as const
 
 export const playerPass = (force = false) =>
-	({ type: MessageType.PlayerPass, data: { force } } as const)
+	({ type: MessageType.PlayerPass, data: { force } }) as const
 
 export const serverMessage = (message: string) =>
-	({ type: MessageType.ServerMessage, data: { message } } as const)
+	({ type: MessageType.ServerMessage, data: { message } }) as const
 
 export const gameStateUpdate = (data: GameState) =>
-	({ type: MessageType.GameStateUpdate, data } as const)
+	({ type: MessageType.GameStateUpdate, data }) as const
 
 export const pickStarting = (
 	corporation: string,
 	cards: number[],
-	preludes: number[] = []
+	preludes: number[] = [],
 ) =>
 	({
 		type: MessageType.PickStarting,
-		data: { corporation, cards, preludes }
-	} as const)
+		data: { corporation, cards, preludes },
+	}) as const
 
 export const pickCards = (cards: number[]) =>
 	({
 		type: MessageType.PickCards,
-		data: { cards }
-	} as const)
+		data: { cards },
+	}) as const
 
 export const buyCard = (
 	card: string,
@@ -135,146 +135,146 @@ export const buyCard = (
 	useOre: number,
 	useTitan: number,
 	useCards: Record<string, number>,
-	args: CardEffectArgumentType[][]
+	args: CardEffectArgumentType[][],
 ) =>
 	({
 		type: MessageType.BuyCard,
-		data: { card, index, args, useOre, useTitan, useCards }
-	} as const)
+		data: { card, index, args, useOre, useTitan, useCards },
+	}) as const
 
 export const sellCard = (card: string, index: number) =>
 	({
 		type: MessageType.SellCard,
-		data: { card, index }
-	} as const)
+		data: { card, index },
+	}) as const
 
 export const playCard = (
 	card: string,
 	index: number,
-	args: CardEffectArgumentType[][]
+	args: CardEffectArgumentType[][],
 ) =>
 	({
 		type: MessageType.PlayCard,
-		data: { card, index, args }
-	} as const)
+		data: { card, index, args },
+	}) as const
 
 export const placeTile = (
 	x: number,
 	y: number,
-	location: GridCellLocation | undefined
+	location: GridCellLocation | undefined,
 ) =>
 	({
 		type: MessageType.PlaceTile,
-		data: { x, y, location }
-	} as const)
+		data: { x, y, location },
+	}) as const
 
 export const claimTile = (
 	x: number,
 	y: number,
-	location: GridCellLocation | undefined
+	location: GridCellLocation | undefined,
 ) =>
 	({
 		type: MessageType.ClaimTile,
-		data: { x, y, location }
-	} as const)
+		data: { x, y, location },
+	}) as const
 
 export const adminChange = (state: UpdateDeepPartial<GameState>) =>
 	({
 		type: MessageType.AdminChange,
-		data: state
-	} as const)
+		data: state,
+	}) as const
 
 export const buyStandardProject = (
 	project: StandardProjectType,
-	cards: number[] = []
+	cards: number[] = [],
 ) =>
 	({
 		type: MessageType.BuyStandardProject,
 		data: {
 			project,
-			cards
-		}
-	} as const)
+			cards,
+		},
+	}) as const
 
 export const buyMilestone = (type: MilestoneType) =>
 	({
 		type: MessageType.BuyMilestone,
 		data: {
-			type
-		}
-	} as const)
+			type,
+		},
+	}) as const
 
 export const sponsorCompetition = (type: CompetitionType) =>
 	({
 		type: MessageType.SponsorCompetition,
 		data: {
-			type
-		}
-	} as const)
+			type,
+		},
+	}) as const
 
 export const pickColor = (index: number) =>
 	({
 		type: MessageType.PickColor,
 		data: {
-			index
-		}
-	} as const)
+			index,
+		},
+	}) as const
 
 export const adminLogin = (password: string) =>
 	({
 		type: MessageType.AdminLogin,
 		data: {
-			password
-		}
-	} as const)
+			password,
+		},
+	}) as const
 
 export const pickPreludes = (cards: number[]) =>
 	({
 		type: MessageType.PickPreludes,
-		data: { cards }
-	} as const)
+		data: { cards },
+	}) as const
 
 export const startGame = () =>
 	({
 		type: MessageType.StartGame,
-		data: {}
-	} as const)
+		data: {},
+	}) as const
 
 export const kickPlayer = (playerId: number) =>
 	({
 		type: MessageType.KickPlayer,
-		data: { playerId }
-	} as const)
+		data: { playerId },
+	}) as const
 
 export const kicked = () =>
 	({
-		type: MessageType.Kicked
-	} as const)
+		type: MessageType.Kicked,
+	}) as const
 
 export const spectateRequest = () =>
 	({
-		type: MessageType.SpectateRequest
-	} as const)
+		type: MessageType.SpectateRequest,
+	}) as const
 
 export const spectateResponse = (error?: SpectateError) =>
 	({
 		type: MessageType.SpectateResponse,
 		data: {
-			error
-		}
-	} as const)
+			error,
+		},
+	}) as const
 
 export const draftCard = (cards: number[]) =>
 	({
 		type: MessageType.DraftCard,
-		data: { cards }
-	} as const)
+		data: { cards },
+	}) as const
 
 export const solarPhaseTerraform = (progress: GameProgress) =>
 	({
 		type: MessageType.SolarPhaseTerraform,
-		data: { progress }
-	} as const)
+		data: { progress },
+	}) as const
 
 export type GameMessage =
 	| ReturnType<typeof joinRequest>

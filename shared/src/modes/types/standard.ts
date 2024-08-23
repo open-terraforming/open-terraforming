@@ -6,7 +6,7 @@ export const StandardMode = gameMode({
 	description:
 		'Everybody starts with 0 production of everything, extended set of cards is available.',
 	name: 'Standard rules',
-	onGameStart: game => {
+	onGameStart: (game) => {
 		prepareStartingPick(game)
-	}
+	},
 })

@@ -2,7 +2,7 @@ import { Resource, GameProgress } from './cards'
 
 export const withUnits = (
 	res: Resource | GameProgress,
-	amount: number | string
+	amount: number | string,
 ) => {
 	switch (res) {
 		case 'money':

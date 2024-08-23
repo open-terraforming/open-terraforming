@@ -6,7 +6,7 @@ import {
 	CardEffectTarget,
 	CellCondition,
 	WithOptional,
-	ResourceCondition
+	ResourceCondition,
 } from './types'
 
 export const effectArg = (
@@ -17,7 +17,7 @@ export const effectArg = (
 		| 'optional'
 		| 'cellConditions'
 		| 'resourceConditions'
-	>
+	>,
 ) =>
 	({
 		playerConditions: [],
@@ -25,48 +25,48 @@ export const effectArg = (
 		cellConditions: [],
 		resourceConditions: [],
 		optional: true,
-		...c
-	} as CardEffectArgument)
+		...c,
+	}) as CardEffectArgument
 
 export const effectChoiceArg = (effects: CardEffect[]) =>
 	effectArg({
 		type: CardEffectTarget.EffectChoice,
-		effects
+		effects,
 	})
 
 export const cardArg = (
 	conditions: CardCondition[] = [],
 	descriptionPrefix?: string,
-	descriptionPostfix?: string
+	descriptionPostfix?: string,
 ) =>
 	effectArg({
 		type: CardEffectTarget.Card,
 		cardConditions: conditions,
 		descriptionPrefix,
-		descriptionPostfix
+		descriptionPostfix,
 	})
 
 export const cellArg = (
 	conditions: CellCondition[],
 	descriptionPrefix?: string,
-	descriptionPostfix?: string
+	descriptionPostfix?: string,
 ) =>
 	effectArg({
 		type: CardEffectTarget.Cell,
 		descriptionPrefix,
 		descriptionPostfix,
-		cellConditions: conditions
+		cellConditions: conditions,
 	})
 
 export const playerCardArg = (conditions: CardCondition[] = [], amount = 0) =>
 	effectArg({
 		type: CardEffectTarget.PlayerCardResource,
 		cardConditions: [...conditions, unprotectedCard()],
-		amount
+		amount,
 	})
 
 export const resourceTypeArg = (resourceConditions: ResourceCondition[] = []) =>
 	effectArg({
 		type: CardEffectTarget.ResourceType,
-		resourceConditions
+		resourceConditions,
 	})

@@ -9,16 +9,16 @@ test('exchangeProduction should properly work with arguments', () => {
 	const player = (game.players[0] = {
 		...game.players[0],
 		heatProduction: 3,
-		moneyProduction: 5
+		moneyProduction: 5,
 	})
 
 	exchangeProduction('heat', 'money').perform(
 		{
 			card,
 			game,
-			player
+			player,
 		},
-		2
+		2,
 	)
 
 	expect(player.moneyProduction).toBe(7)
@@ -32,7 +32,7 @@ test('exchangeProduction should crash with incorrect arguments', () => {
 	const player = (game.players[0] = {
 		...game.players[0],
 		heatProduction: 3,
-		moneyProduction: 5
+		moneyProduction: 5,
 	})
 
 	expect(() =>
@@ -40,10 +40,10 @@ test('exchangeProduction should crash with incorrect arguments', () => {
 			{
 				card,
 				game,
-				player
+				player,
 			},
-			5
-		)
+			5,
+		),
 	).toThrowError()
 
 	expect(player.moneyProduction).toBe(5)
@@ -57,36 +57,36 @@ test('exchangeProduction should have proper conditions', () => {
 	const player = (game.players[0] = {
 		...game.players[0],
 		heatProduction: 3,
-		moneyProduction: 5
+		moneyProduction: 5,
 	})
 
 	expect(
 		exchangeProduction('heat', 'money').conditions.find(
-			c =>
+			(c) =>
 				!c.evaluate(
 					{
 						card,
 						game,
-						player
+						player,
 					},
-					2
-				)
-		)
+					2,
+				),
+		),
 	).toBe(undefined)
 
 	player.heatProduction = 0
 
 	expect(
 		exchangeProduction('heat', 'money').conditions.find(
-			c =>
+			(c) =>
 				!c.evaluate(
 					{
 						card,
 						game,
-						player
+						player,
 					},
-					2
-				)
-		)
+					2,
+				),
+		),
 	).toBeDefined()
 })

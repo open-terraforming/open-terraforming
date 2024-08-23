@@ -11,7 +11,7 @@ import {
 	placeOcean,
 	gameProcessChange,
 	terraformRatingChange,
-	placeCity
+	placeCity,
 } from '../effects'
 import { GridCellContent } from '../../game'
 import { resetProgressBonus, resetCardPriceChange } from '../passive-effects'
@@ -23,7 +23,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Earth],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('money', 4), resourceChange('money', 3)]
+		playEffects: [productionChange('money', 4), resourceChange('money', 3)],
 	}),
 	card({
 		code: 'aquifer_turbines',
@@ -34,8 +34,8 @@ export const preludePreludes: Card[] = [
 		playEffects: [
 			placeTile({ type: GridCellContent.Ocean }),
 			productionChange('energy', 2),
-			resourceChange('money', -3)
-		]
+			resourceChange('money', -3),
+		],
 	}),
 	card({
 		code: 'biofuels',
@@ -46,8 +46,8 @@ export const preludePreludes: Card[] = [
 		playEffects: [
 			productionChange('energy', 1),
 			productionChange('plants', 1),
-			resourceChange('plants', 2)
-		]
+			resourceChange('plants', 2),
+		],
 	}),
 	card({
 		code: 'biolab',
@@ -55,7 +55,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Science],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('plants', 1), getTopCards(3)]
+		playEffects: [productionChange('plants', 1), getTopCards(3)],
 	}),
 	card({
 		code: 'biosphere_support',
@@ -63,7 +63,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Plant],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('money', -1), productionChange('plants', 2)]
+		playEffects: [productionChange('money', -1), productionChange('plants', 2)],
 	}),
 	card({
 		code: 'business_empire',
@@ -71,7 +71,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Earth],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('money', 6), resourceChange('money', -6)]
+		playEffects: [productionChange('money', 6), resourceChange('money', -6)],
 	}),
 	card({
 		code: 'dome_farming',
@@ -79,7 +79,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Plant, CardCategory.Building],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('money', 2), productionChange('plants', 1)]
+		playEffects: [productionChange('money', 2), productionChange('plants', 1)],
 	}),
 	card({
 		code: 'donation',
@@ -87,7 +87,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [],
 		special: [CardSpecial.Prelude],
-		playEffects: [resourceChange('money', 21)]
+		playEffects: [resourceChange('money', 21)],
 	}),
 	card({
 		code: 'early_settlement',
@@ -97,8 +97,8 @@ export const preludePreludes: Card[] = [
 		special: [CardSpecial.Prelude],
 		playEffects: [
 			productionChange('plants', 1),
-			placeTile({ type: GridCellContent.City })
-		]
+			placeTile({ type: GridCellContent.City }),
+		],
 	}),
 	card({
 		code: 'ecology_experts',
@@ -108,9 +108,9 @@ export const preludePreludes: Card[] = [
 		special: [CardSpecial.Prelude],
 		playEffects: [
 			productionChange('plants', 1),
-			noDesc(changeProgressConditionBonus(30))
+			noDesc(changeProgressConditionBonus(30)),
 		],
-		passiveEffects: [resetProgressBonus(30)]
+		passiveEffects: [resetProgressBonus(30)],
 	}),
 	card({
 		code: 'eccentric_sponsor',
@@ -119,7 +119,7 @@ export const preludePreludes: Card[] = [
 		categories: [],
 		special: [CardSpecial.Prelude],
 		playEffects: [noDesc(cardPriceChange(-25))],
-		passiveEffects: [resetCardPriceChange(-25)]
+		passiveEffects: [resetCardPriceChange(-25)],
 	}),
 	card({
 		code: 'experimental_forest',
@@ -129,8 +129,8 @@ export const preludePreludes: Card[] = [
 		special: [CardSpecial.Prelude],
 		playEffects: [
 			placeTile({ type: GridCellContent.Forest }),
-			getTopCardsWithTag(2, CardCategory.Plant)
-		]
+			getTopCardsWithTag(2, CardCategory.Plant),
+		],
 	}),
 	card({
 		code: 'galilean_mining',
@@ -138,7 +138,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Jupiter],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('titan', 2), resourceChange('money', -5)]
+		playEffects: [productionChange('titan', 2), resourceChange('money', -5)],
 	}),
 	card({
 		code: 'great_aquifer',
@@ -146,7 +146,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [],
 		special: [CardSpecial.Prelude],
-		playEffects: [placeOcean(), placeOcean()]
+		playEffects: [placeOcean(), placeOcean()],
 	}),
 	card({
 		code: 'huge_asteroid',
@@ -156,8 +156,8 @@ export const preludePreludes: Card[] = [
 		special: [CardSpecial.Prelude],
 		playEffects: [
 			gameProcessChange('temperature', 3),
-			resourceChange('money', -5)
-		]
+			resourceChange('money', -5),
+		],
 	}),
 	card({
 		code: 'io_research_outpost',
@@ -165,7 +165,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Jupiter, CardCategory.Science],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('titan', 1), getTopCards(1)]
+		playEffects: [productionChange('titan', 1), getTopCards(1)],
 	}),
 	card({
 		code: 'loan',
@@ -173,7 +173,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('money', -2), resourceChange('money', 30)]
+		playEffects: [productionChange('money', -2), resourceChange('money', 30)],
 	}),
 	card({
 		code: 'martian_industries',
@@ -184,8 +184,8 @@ export const preludePreludes: Card[] = [
 		playEffects: [
 			productionChange('energy', 1),
 			productionChange('ore', 1),
-			resourceChange('money', 6)
-		]
+			resourceChange('money', 6),
+		],
 	}),
 	card({
 		code: 'metal_rich_asteroid',
@@ -196,8 +196,8 @@ export const preludePreludes: Card[] = [
 		playEffects: [
 			gameProcessChange('temperature', 1),
 			resourceChange('titan', 4),
-			resourceChange('ore', 4)
-		]
+			resourceChange('ore', 4),
+		],
 	}),
 	card({
 		code: 'metals_company',
@@ -208,8 +208,8 @@ export const preludePreludes: Card[] = [
 		playEffects: [
 			productionChange('money', 1),
 			productionChange('ore', 1),
-			productionChange('titan', 1)
-		]
+			productionChange('titan', 1),
+		],
 	}),
 	card({
 		code: 'mining_operations',
@@ -217,7 +217,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('ore', 2), resourceChange('ore', 4)]
+		playEffects: [productionChange('ore', 2), resourceChange('ore', 4)],
 	}),
 	card({
 		code: 'mohole',
@@ -225,7 +225,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('heat', 3), resourceChange('heat', 3)]
+		playEffects: [productionChange('heat', 3), resourceChange('heat', 3)],
 	}),
 	card({
 		code: 'mohole_excavation',
@@ -236,8 +236,8 @@ export const preludePreludes: Card[] = [
 		playEffects: [
 			productionChange('ore', 1),
 			productionChange('heat', 2),
-			resourceChange('heat', 2)
-		]
+			resourceChange('heat', 2),
+		],
 	}),
 	card({
 		code: 'nitrogen_shipment',
@@ -248,8 +248,8 @@ export const preludePreludes: Card[] = [
 		playEffects: [
 			productionChange('plants', 1),
 			terraformRatingChange(1),
-			resourceChange('money', 5)
-		]
+			resourceChange('money', 5),
+		],
 	}),
 	card({
 		code: 'orbital_construction_yard',
@@ -257,7 +257,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Space],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('titan', 1), resourceChange('titan', 4)]
+		playEffects: [productionChange('titan', 1), resourceChange('titan', 4)],
 	}),
 	card({
 		code: 'polar_industries',
@@ -265,7 +265,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('heat', 2), placeOcean()]
+		playEffects: [productionChange('heat', 2), placeOcean()],
 	}),
 	card({
 		code: 'power_generation',
@@ -273,7 +273,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Power],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('energy', 3)]
+		playEffects: [productionChange('energy', 3)],
 	}),
 	card({
 		code: 'research_network',
@@ -281,7 +281,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Any],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('money', 1), getTopCards(3)]
+		playEffects: [productionChange('money', 1), getTopCards(3)],
 	}),
 	card({
 		code: 'self_sufficient_settlement',
@@ -289,7 +289,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Building, CardCategory.City],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('money', 2), placeCity()]
+		playEffects: [productionChange('money', 2), placeCity()],
 	}),
 	card({
 		code: 'smelting_plant',
@@ -297,7 +297,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Prelude],
-		playEffects: [gameProcessChange('oxygen', 2), resourceChange('ore', 5)]
+		playEffects: [gameProcessChange('oxygen', 2), resourceChange('ore', 5)],
 	}),
 	card({
 		code: 'society_support',
@@ -309,8 +309,8 @@ export const preludePreludes: Card[] = [
 			productionChange('money', -1),
 			productionChange('plants', 1),
 			productionChange('energy', 1),
-			productionChange('heat', 1)
-		]
+			productionChange('heat', 1),
+		],
 	}),
 	card({
 		code: 'supplier',
@@ -318,7 +318,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Power],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('energy', 2), resourceChange('ore', 2)]
+		playEffects: [productionChange('energy', 2), resourceChange('ore', 2)],
 	}),
 	card({
 		code: 'supply_drop',
@@ -329,8 +329,8 @@ export const preludePreludes: Card[] = [
 		playEffects: [
 			resourceChange('titan', 3),
 			resourceChange('ore', 8),
-			resourceChange('plants', 3)
-		]
+			resourceChange('plants', 3),
+		],
 	}),
 	card({
 		code: 'unmi_contractor',
@@ -338,7 +338,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Earth],
 		special: [CardSpecial.Prelude],
-		playEffects: [terraformRatingChange(3), getTopCards(1)]
+		playEffects: [terraformRatingChange(3), getTopCards(1)],
 	}),
 	card({
 		code: 'acquired_space_agency',
@@ -348,7 +348,7 @@ export const preludePreludes: Card[] = [
 		special: [CardSpecial.Prelude],
 		playEffects: [
 			resourceChange('titan', 6),
-			getTopCardsWithTag(2, CardCategory.Space)
-		]
-	})
+			getTopCardsWithTag(2, CardCategory.Space),
+		],
+	}),
 ]

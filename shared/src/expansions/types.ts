@@ -4,7 +4,7 @@ import { WithOptional, Card } from '../cards'
 export enum ExpansionType {
 	Base = 1,
 	Prelude,
-	Venus
+	Venus,
 }
 
 export interface Expansion {
@@ -16,9 +16,9 @@ export interface Expansion {
 }
 
 export const expansion = (
-	e: WithOptional<Expansion, 'initialize' | 'getCards'>
+	e: WithOptional<Expansion, 'initialize' | 'getCards'>,
 ): Expansion => ({
 	initialize: () => null,
 	getCards: () => [],
-	...e
+	...e,
 })

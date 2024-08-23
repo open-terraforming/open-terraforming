@@ -13,14 +13,14 @@ test('productionForTags should change production based on tag count', () => {
 		usedCards: [
 			emptyCardState('lunar_beam'),
 			emptyCardState('lightning_harvest'),
-			emptyCardState('space_mirrors')
-		]
+			emptyCardState('space_mirrors'),
+		],
 	})
 
 	productionForTags(CardCategory.Power, 'energy', 2).perform({
 		card,
 		game,
-		player
+		player,
 	})
 
 	expect(player.energyProduction).toBe(9)

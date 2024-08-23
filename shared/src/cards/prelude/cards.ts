@@ -13,7 +13,7 @@ export const preludeCards: Card[] = [
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Prelude],
 		victoryPoints: 1,
-		playEffects: [productionChange('ore', 1)]
+		playEffects: [productionChange('ore', 1)],
 	}),
 	card({
 		code: 'lava_tube_settlement',
@@ -26,9 +26,9 @@ export const preludeCards: Card[] = [
 			productionChange('money', 2),
 			placeTile({
 				type: GridCellContent.City,
-				special: LavaCells
-			})
-		]
+				special: LavaCells,
+			}),
+		],
 	}),
 	card({
 		code: 'martian_survey',
@@ -38,7 +38,7 @@ export const preludeCards: Card[] = [
 		special: [CardSpecial.Prelude],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMax('oxygen', 4)],
-		playEffects: [getTopCards(2)]
+		playEffects: [getTopCards(2)],
 	}),
 	/*
 	TODO:
@@ -58,7 +58,7 @@ export const preludeCards: Card[] = [
 		description: 'This cards counts as any tag',
 		cost: 4,
 		categories: [CardCategory.Any],
-		special: [CardSpecial.Prelude]
+		special: [CardSpecial.Prelude],
 	}),
 	card({
 		code: 'sf_memorial',
@@ -67,7 +67,7 @@ export const preludeCards: Card[] = [
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Prelude],
 		victoryPoints: 1,
-		playEffects: [getTopCards(1)]
+		playEffects: [getTopCards(1)],
 	}),
 	card({
 		code: 'space_hotels',
@@ -76,6 +76,6 @@ export const preludeCards: Card[] = [
 		categories: [CardCategory.Space, CardCategory.Earth],
 		special: [CardSpecial.Prelude],
 		conditions: [cardCountCondition(CardCategory.Earth, 2)],
-		playEffects: [productionChange('money', 4)]
-	})
+		playEffects: [productionChange('money', 4)],
+	}),
 ]

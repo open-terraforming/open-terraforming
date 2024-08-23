@@ -10,7 +10,7 @@ test('adjustedCardPrice should return normal price for normal cards', () => {
 	player.tagPriceChange[CardCategory.Plant] = -2
 
 	const testCard = prepareTestCard({
-		cost: 10
+		cost: 10,
 	})
 
 	expect(adjustedCardPrice(testCard, player)).toEqual(testCard.cost)
@@ -24,7 +24,7 @@ test('adjustedCardPrice should return discounted price for general discount', ()
 	player.tagPriceChange[CardCategory.Plant] = -2
 
 	const testCard = prepareTestCard({
-		cost: 10
+		cost: 10,
 	})
 
 	expect(adjustedCardPrice(testCard, player)).toEqual(testCard.cost - 5)
@@ -38,7 +38,7 @@ test('adjustedCardPrice should return 0 when adjusted price is less than 0', () 
 	player.tagPriceChange[CardCategory.Plant] = -2
 
 	const testCard = prepareTestCard({
-		cost: 10
+		cost: 10,
 	})
 
 	expect(adjustedCardPrice(testCard, player)).toEqual(0)
@@ -53,49 +53,49 @@ test('adjustedCardPrice should return discounted price for tags', () => {
 	expect(
 		adjustedCardPrice(
 			prepareTestCard({
-				cost: 10
+				cost: 10,
 			}),
-			player
-		)
+			player,
+		),
 	).toEqual(10)
 
 	expect(
 		adjustedCardPrice(
 			prepareTestCard({
 				cost: 10,
-				categories: [CardCategory.Animal]
+				categories: [CardCategory.Animal],
 			}),
-			player
-		)
+			player,
+		),
 	).toEqual(8)
 
 	expect(
 		adjustedCardPrice(
 			prepareTestCard({
 				cost: 10,
-				categories: [CardCategory.Building]
+				categories: [CardCategory.Building],
 			}),
-			player
-		)
+			player,
+		),
 	).toEqual(8)
 
 	expect(
 		adjustedCardPrice(
 			prepareTestCard({
 				cost: 10,
-				categories: [CardCategory.Plant]
+				categories: [CardCategory.Plant],
 			}),
-			player
-		)
+			player,
+		),
 	).toEqual(8)
 
 	expect(
 		adjustedCardPrice(
 			prepareTestCard({
 				cost: 10,
-				categories: [CardCategory.Animal, CardCategory.Building]
+				categories: [CardCategory.Animal, CardCategory.Building],
 			}),
-			player
-		)
+			player,
+		),
 	).toEqual(6)
 })
