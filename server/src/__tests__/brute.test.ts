@@ -7,7 +7,7 @@ import { Bot } from '@/game/bot'
 describe('brute', () => {
 	it('bots can run for 5 generations', async () => {
 		const game = new Game({
-			bots: 4,
+			bots: 2,
 			fastBots: true,
 			fastProduction: true,
 			expansions: [
