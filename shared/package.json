@@ -8,8 +8,8 @@
     "lint": "eslint ./src --ext .ts",
     "type-check": "tsc --noEmit"
   },
-  "author": "Kamen",
-  "license": "ISC",
+  "author": "Jan Zípek",
+  "license": "AGPL-3.0-or-later",
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "20.9.0",
