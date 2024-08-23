@@ -1,18 +1,18 @@
 import mars from '@/assets/mars-icon.png'
 import { Button, DialogWrapper, Portal } from '@/components'
 import { useAppStore } from '@/utils/hooks'
-import { faExpand } from '@fortawesome/free-solid-svg-icons'
+import { faBars, faExpand } from '@fortawesome/free-solid-svg-icons'
 import { PlayerStateValue } from '@shared/index'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import styled from 'styled-components'
+import { CheatsModal } from '../CheatsModal/CheatsModal'
 import { CardsPlayedDisplay } from './components/CardsPlayedDisplay'
 import { EventsModal } from './components/EventsModal'
 import { EventSounds } from './components/EventSounds'
+import { IngameMenuModal } from './components/IngameMenuModal'
 import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
 import { TimeDisplay } from './components/TimeDisplay'
-import { CheatsModal } from '../CheatsModal/CheatsModal'
-import { SettingsModal } from '@/pages/Main/components/SettingsModal'
 
 type Props = {}
 
@@ -59,10 +59,10 @@ export const EventList = ({}: Props) => {
 			<PopEventDisplay events={events} />
 			<Portal>
 				<TopButtons>
-					<Button onClick={handleFullscreen} icon={faExpand} />
-					<DialogWrapper dialog={close => <SettingsModal onClose={close} />}>
-						{open => <Button onClick={open}>Settings</Button>}
+					<DialogWrapper dialog={close => <IngameMenuModal onClose={close} />}>
+						{open => <Button onClick={open} icon={faBars}></Button>}
 					</DialogWrapper>
+					<Button onClick={handleFullscreen} icon={faExpand} />
 					<DialogWrapper
 						dialog={close => <EventsModal events={events} onClose={close} />}
 					>
