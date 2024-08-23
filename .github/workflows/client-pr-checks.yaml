@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: "20.9.0"
           cache: npm
-          cache-dependency-path: client/package-lock.json,shared/package-lock.json
+          cache-dependency-path: client/package-lock.json
       - run: npm install
         working-directory: shared
       - run: npm install
