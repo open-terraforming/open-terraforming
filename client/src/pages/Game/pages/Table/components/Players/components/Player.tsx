@@ -10,8 +10,8 @@ import {
 	faRobot
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { PlayerState, PlayerStateValue } from '@shared/index'
-import React, { useState } from 'react'
+import { GameStateValue, PlayerState, PlayerStateValue } from '@shared/index'
+import { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { ResourcesDiff } from './ResourcesDiff/ResourcesDiff'
 import { PlayerActionType } from '@shared/player-actions'
@@ -72,6 +72,11 @@ export const Player = ({
 	const isPlaying = state.state === PlayerStateValue.Playing
 	const isPlayer = player.id === useAppStore(state => state.game.playerId)
 	const pending = pendingActions(player)[0]
+	const gameState = useAppStore(state => state.game.state.state)
+
+	const isActionBased =
+		gameState === GameStateValue.GenerationInProgress ||
+		gameState === GameStateValue.EndingTiles
 
 	return (
 		<Container
@@ -104,7 +109,7 @@ export const Player = ({
 					</Name>
 				</NameContainer>
 				<State>
-					{isPlaying ? (
+					{isPlaying && isActionBased ? (
 						<>
 							<FontAwesomeIcon
 								icon={faChevronRight}

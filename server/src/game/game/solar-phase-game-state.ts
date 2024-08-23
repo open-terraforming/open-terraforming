@@ -7,7 +7,7 @@ export class SolarPhaseGameState extends BaseGameState {
 	name = GameStateValue.SolarPhase
 
 	onEnter() {
-		const player = this.state.players[this.state.currentPlayer]
+		const player = this.state.players[this.state.startingPlayer]
 		player.state = PlayerStateValue.Playing
 		pushPendingAction(player, solarPhaseTerraformAction())
 		this.game.updated()
