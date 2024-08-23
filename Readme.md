@@ -1,11 +1,32 @@
 ![Open Terraforming](./presentation/open-terraforming-logo.png)
 
-Open source implementation of terraforming focused board game.
+Open source implementation of terraforming focused board game. Not associated with Firaxis Games.
+
+You can play it at https://terraforming.cerno.ch or just host it yourself.
 
 ## Screenshots
 
 ![ingame screenshot](./presentation/ingame-1.jpg)
+![other screenshot](./presentation/ingame-2.jpg)
+![other screenshot](./presentation/new-game-screen.jpg)
 
 ## Hosting
+
+Easiest way to host is to use prepared docker image. See example `docker-compose.yml`:
+
+```yaml
+services:
+  terraforming:
+    image: openterraforming/open-terraforming
+    container_name: terraforming
+    ports:
+      - 8000:80
+    volumes:
+      - data:/data
+    restart: unless-stopped
+
+volumes:
+  data:
+```
 
 ## Contributing
