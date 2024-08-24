@@ -75,6 +75,7 @@ export const JoinGameBySession = () => {
 							disabled={session.length < 1 || joining}
 							isLoading={joining}
 							icon={faArrowRight}
+							type="submit"
 						>
 							Connect
 						</Button>
