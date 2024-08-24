@@ -1,5 +1,5 @@
 import { GameConfig } from '@/game/game'
-import { corsMiddleware } from '@/server/cors'
+import { corsMiddleware } from '@/server/http/middleware/cors-middleware'
 import { ServerOptions } from '@/server/types'
 import { Logger } from '@/utils/log'
 import { ServerInfo } from '@shared/extra'

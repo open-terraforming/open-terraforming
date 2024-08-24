@@ -2,9 +2,8 @@ import { strToMode } from '@shared/modes/utils'
 import { promises as fs } from 'fs'
 import yargs from 'yargs'
 import { globalConfig } from './config'
-import { multiApp } from './modes/multi'
 import { singleApp } from './modes/single'
-import picker from './server/picker'
+import { httpServer } from './server/http/http-server'
 import { ServerOptions } from './server/types'
 import { Logger } from './utils/log'
 
@@ -19,11 +18,6 @@ export async function main() {
 			alias: 's',
 			default: false,
 			description: 'Start server in single-game mode',
-		})
-		.option('picker', {
-			type: 'boolean',
-			default: false,
-			description: 'Start card image picker instead',
 		})
 		.option('port', {
 			type: 'number',
@@ -77,9 +71,7 @@ export async function main() {
 		fastBots: argv['fast-bots'],
 	}
 
-	if (argv.picker) {
-		picker(serverConfig)
-	} else if (argv.single) {
+	if (argv.single) {
 		const { game } = await singleApp(serverConfig, {
 			bots: argv.bots,
 			mode: mode,
@@ -95,7 +87,7 @@ export async function main() {
 			}
 		}
 	} else {
-		await multiApp(serverConfig)
+		await httpServer(serverConfig)
 	}
 
 	return { port: serverConfig.port }
