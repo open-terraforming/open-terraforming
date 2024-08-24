@@ -53,6 +53,7 @@ export const JoinGame = () => {
 					disabled={name.length < 3 || name.length > 10 || joining}
 					isLoading={joining}
 					icon={faArrowRight}
+					type="submit"
 				>
 					Connect
 				</Button>
