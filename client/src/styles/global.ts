@@ -4,8 +4,10 @@ import reset from './components/reset'
 import scrollbar from './components/scrollbar'
 import { media } from './media'
 import transitions from './components/transitions'
+import fonts from './components/fonts'
 
 export const GlobalStyle = createGlobalStyle`
+${fonts}
 ${reset} 
 
 * {
