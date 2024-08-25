@@ -1,8 +1,8 @@
 ![Open Terraforming](./presentation/open-terraforming-logo.png)
 
-Open source implementation of terraforming focused board game. Not associated with Firaxis Games.
+Open source implementation of terraforming focused board game. You can play it at https://terraforming.cerno.ch or just host it yourself.
 
-You can play it at https://terraforming.cerno.ch or just host it yourself.
+Not associated with Firaxis Games.
 
 ## Screenshots
 
