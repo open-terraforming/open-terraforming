@@ -11,8 +11,9 @@ You can play it at https://terraforming.cerno.ch or just host it yourself.
 
 ## Features
 
+ - **Web application** - all you need to play is your browser
  - **Multiplayer** - play with your friends by simply sharing a link
- - **Fancy UI** - hand crafter UI that should keep you engaged with the game
+ - **Fancy UI** - hand crafted UI with animations, almost like a real game
  - **Bots** - they aren't very smart, but they're there!
  - **Self host** - you can run it just for yourself!
  - **Open Source** - you can change anything you want, create your own expansions, the possibilities are endless!
