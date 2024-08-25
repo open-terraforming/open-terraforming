@@ -19,7 +19,10 @@ You can play it at https://terraforming.cerno.ch or just host it yourself.
 
 ## Hosting
 
-Easiest way to host is to use prepared docker image. See example `docker-compose.yml`:
+Easiest way to host is to use prepared docker image.
+
+### Docker Compose
+Create `docker-compose.yml`:
 
 ```yaml
 services:
@@ -36,9 +39,15 @@ volumes:
   data:
 ```
 
-Or you can use raw docker:
+Run:
 
-1. Create a Docker volume named data:
+```sh
+docker compose up -d
+```
+
+### Docker run
+
+1. Create a Docker volume named data, this will be used to store running and paused game states
 ```sh
 docker volume create data
 ```
@@ -53,7 +62,5 @@ docker run -d \
   --restart unless-stopped \
   openterraforming/open-terraforming
 ```
-
-These commands will create the necessary volume and run the container with the specified configurations.
 
 ## Contributing
