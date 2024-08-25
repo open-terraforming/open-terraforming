@@ -32,7 +32,7 @@ const EXPANSIONS_OPTIONS = [
 		value: ExpansionType.Venus,
 		label: 'Venus',
 		description:
-			'Extends the board with Venus and adds a new global parameter to increase: Venus scale. It also adds new cards and corporations.',
+			'Adds a new global parameter to increase: Venus scale. It also adds new cards and corporations.',
 	},
 ]
 
