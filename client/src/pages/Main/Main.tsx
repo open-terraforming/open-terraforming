@@ -49,16 +49,8 @@ export const Main = () => {
 			.then((info) => {
 				dispatch(setApiInfo(info))
 
-				if (info.singleGame) {
-					dispatch(
-						setApiState({
-							state: ApiState.Connecting,
-						}),
-					)
-				} else {
-					setInfo(info)
-					setLoading(false)
-				}
+				setInfo(info)
+				setLoading(false)
 			})
 			.catch(() => {
 				setError('Failed to fetch server info')
