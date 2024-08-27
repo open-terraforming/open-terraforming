@@ -22,7 +22,6 @@ export const globalConfig = {
 	spectators: {
 		max: parseInt(process.env.OT_SPECTATORS_MAX ?? '20', 10),
 	},
-	cachePath: process.env.OT_CACHE_PATH ?? join(__dirname, '..', '.cache'),
 	storagePath: process.env.OT_STORAGE_PATH ?? join(__dirname, '..', 'storage'),
 	staticPath: process.env.OT_STATIC_PATH ?? join(__dirname, '..', 'static'),
 	everybodyIsAdmin: process.env.OT_EVERYBODY_IS_ADMIN === 'true',
