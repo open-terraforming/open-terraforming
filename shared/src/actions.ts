@@ -26,6 +26,7 @@ export enum JoinError {
 	DuplicateName = 'DuplicateName',
 	GameInProgress = 'GameInProgress',
 	InvalidSession = 'InvalidSession',
+	PlayersLimitReached = 'PlayersLimitReached',
 }
 
 export enum SpectateError {

@@ -1,7 +1,7 @@
 import { configDotenv } from 'dotenv'
 import { join } from 'path'
 
-configDotenv()
+configDotenv({ path: ['.env.local', '.env'] })
 
 export const globalConfig = {
 	metrics: {
@@ -13,8 +13,14 @@ export const globalConfig = {
 	slots: parseInt(process.env.OT_SLOTS ?? '20', 10),
 	bots: {
 		enabled: (process.env.OT_BOTS_ENABLED ?? 'true') === 'true',
+		max: parseInt(process.env.OT_BOTS_MAX ?? '5', 10),
 	},
-	fastBots: process.env.OT_FAST_BOTS === 'true',
+	players: {
+		max: parseInt(process.env.OT_PLAYERS_MAX ?? '20', 10),
+	},
+	spectators: {
+		max: parseInt(process.env.OT_SPECTATORS_MAX ?? '20', 10),
+	},
 	cachePath: process.env.OT_CACHE_PATH ?? join(__dirname, '..', '.cache'),
 	storagePath: process.env.OT_STORAGE_PATH ?? join(__dirname, '..', 'storage'),
 	staticPath: process.env.OT_STATIC_PATH ?? join(__dirname, '..', 'static'),

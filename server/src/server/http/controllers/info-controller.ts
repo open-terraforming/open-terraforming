@@ -9,7 +9,17 @@ export const infoController = appController(
 			res.json({
 				maxServers: config.maxServers,
 				servers: gamesContainer.servers.length,
-				botsEnabled: globalConfig.bots.enabled,
+				players: {
+					max: globalConfig.players.max,
+				},
+				spectators: {
+					max: globalConfig.spectators.max,
+				},
+				bots: {
+					enabled: globalConfig.bots.enabled,
+					max: globalConfig.bots.max,
+					fast: globalConfig.bots.fast,
+				},
 			} satisfies ServerInfo)
 		})
 	},

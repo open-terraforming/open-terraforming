@@ -20,5 +20,15 @@ export interface GameInfo {
 export interface ServerInfo {
 	servers: number
 	maxServers: number
-	botsEnabled: boolean
+	players: {
+		max: number
+	}
+	spectators: {
+		max: number
+	}
+	bots: {
+		enabled: boolean
+		max: number
+		fast: boolean
+	}
 }

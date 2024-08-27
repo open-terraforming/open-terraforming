@@ -42,6 +42,10 @@ export const gamesController = appController(
 				throw new Error(`Bots are disabled`)
 			}
 
+			if (bots > globalConfig.bots.max) {
+				throw new Error(`Too many bots, maximum is ${globalConfig.bots.max}`)
+			}
+
 			expansions.forEach((e) => {
 				if (
 					typeof e !== 'number' ||
