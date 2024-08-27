@@ -7,7 +7,7 @@ import { Modal } from '@/components/Modal/Modal'
 import { MultiSelect } from '@/components/MultiSelect/MultiSelect'
 import { NumberInput } from '@/components/NumberInput/NumberInput'
 import { ApiState, setApiState } from '@/store/modules/api'
-import { useAppDispatch } from '@/utils/hooks'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { faRobot, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { ExpansionType } from '@shared/expansions/types'
 import { MapType } from '@shared/map'
@@ -47,6 +47,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [draft, setDraft] = useState(false)
 	const [bots, setBots] = useState(0)
 	const [solarPhase, setSolarPhase] = useState(true)
+	const serverInfo = useAppStore((app) => app.api.info)
 
 	const [expansions, setExpansions] = useState([
 		ExpansionType.Prelude,
@@ -156,16 +157,18 @@ export const NewGameModal = ({ onClose }: Props) => {
 						</select>
 					</Field>
 
-					<Field>
-						<label>Bots</label>
-						<NumberInput
-							min={0}
-							max={4}
-							value={bots}
-							onChange={(v) => setBots(v)}
-							icon={faRobot}
-						/>
-					</Field>
+					{serverInfo?.botsEnabled && (
+						<Field>
+							<label>Bots</label>
+							<NumberInput
+								min={0}
+								max={4}
+								value={bots}
+								onChange={(v) => setBots(v)}
+								icon={faRobot}
+							/>
+						</Field>
+					)}
 				</Flex>
 
 				<Field>

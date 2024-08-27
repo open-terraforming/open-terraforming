@@ -7,6 +7,7 @@ import { assert } from 'superstruct'
 import { appController } from '../utils/app-controller'
 import { newGameValidator } from '../validators/new-game-validator'
 import { Logger } from '@/utils/log'
+import { globalConfig } from '@/config'
 
 export const gamesController = appController(
 	'/api/games',
@@ -36,6 +37,10 @@ export const gamesController = appController(
 			const expansions = Array.from(new Set(request.expansions))
 			const draft = request.draft
 			const solarPhase = request.solarPhase
+
+			if (!globalConfig.bots.enabled && bots > 0) {
+				throw new Error(`Bots are disabled`)
+			}
 
 			expansions.forEach((e) => {
 				if (
