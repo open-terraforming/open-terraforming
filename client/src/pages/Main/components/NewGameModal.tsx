@@ -47,6 +47,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [draft, setDraft] = useState(false)
 	const [bots, setBots] = useState(0)
 	const [solarPhase, setSolarPhase] = useState(true)
+	const [fastBots, setFastBots] = useState(false)
 	const serverInfo = useAppStore((app) => app.api.info)
 
 	const [expansions, setExpansions] = useState([
@@ -86,6 +87,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 				expansions,
 				draft,
 				solarPhase,
+				fastBots,
 			})
 
 			if (res.id) {
@@ -172,6 +174,14 @@ export const NewGameModal = ({ onClose }: Props) => {
 				</Flex>
 
 				<Field>
+					{bots > 0 && (
+						<Checkbox
+							checked={fastBots}
+							onChange={(v) => setFastBots(v)}
+							label="Fast bots"
+						/>
+					)}
+
 					<Checkbox
 						checked={isPublic}
 						onChange={(v) => setPublic(v)}

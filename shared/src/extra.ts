@@ -29,6 +29,5 @@ export interface ServerInfo {
 	bots: {
 		enabled: boolean
 		max: number
-		fast: boolean
 	}
 }

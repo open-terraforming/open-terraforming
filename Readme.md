@@ -74,6 +74,5 @@ docker run -d \
 | OT_SPECTATORS_MAX | `20` | Maximum number of spectators |
 | OT_BOTS_ENABLED | `true` | Enable bots |
 | OT_BOTS_MAX | `5` | Maximum number of bots |
-| OT_BOTS_FAST | `false` | Bots should execute all their actions immediately |
 
 ## Contributing

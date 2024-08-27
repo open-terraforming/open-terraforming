@@ -14,7 +14,6 @@ export const globalConfig = {
 	bots: {
 		enabled: (process.env.OT_BOTS_ENABLED ?? 'true') === 'true',
 		max: parseInt(process.env.OT_BOTS_MAX ?? '5', 10),
-		fast: process.env.OT_BOTS_FAST === 'true',
 	},
 	players: {
 		max: parseInt(process.env.OT_PLAYERS_MAX ?? '20', 10),
