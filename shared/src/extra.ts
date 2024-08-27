@@ -21,8 +21,15 @@ export interface ServerInfo {
 	singleGame: boolean
 	servers: number
 	maxServers: number
+	players: {
+		max: number
+	}
+	spectators: {
+		max: number
+	}
 	bots: {
 		enabled: boolean
 		max: number
+		fast: boolean
 	}
 }

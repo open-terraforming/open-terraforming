@@ -70,7 +70,10 @@ docker run -d \
 | --- | --- | --- |
 | PORT | `80` | Port on which HTTP server will listen |
 | OT_SLOTS | `20` | Maximum number of simultaneous games running |
-| OT_ENABLE_BOTS | `true` | Enable bots |
-| OT_FAST_BOTS | `false` | Bots should execute all their actions immediately |
+| OT_PLAYERS_MAX | `20` | Maximum number of players per game |
+| OT_SPECTATORS_MAX | `20` | Maximum number of spectators |
+| OT_BOTS_ENABLED | `true` | Enable bots |
+| OT_BOTS_MAX | `5` | Maximum number of bots |
+| OT_BOTS_FAST | `false` | Bots should execute all their actions immediately |
 
 ## Contributing

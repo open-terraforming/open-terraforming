@@ -61,6 +61,14 @@ export class GameServer {
 		return true
 	}
 
+	get spectators() {
+		return this.clients.filter((c) => c.spectator)
+	}
+
+	get connectedPlayers() {
+		return this.clients.filter((c) => c.player)
+	}
+
 	get listable() {
 		return (
 			!this.game.inProgress &&
