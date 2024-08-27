@@ -18,7 +18,6 @@ export const infoController = appController(
 				bots: {
 					enabled: globalConfig.bots.enabled,
 					max: globalConfig.bots.max,
-					fast: globalConfig.bots.fast,
 				},
 			} satisfies ServerInfo)
 		})
