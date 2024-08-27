@@ -15,6 +15,9 @@ export const globalConfig = {
 	},
 	port: parseInt(process.env.PORT ?? '80', 10),
 	slots: parseInt(process.env.OT_SLOTS ?? '20', 10),
+	bots: {
+		enabled: (process.env.OT_BOTS_ENABLED ?? 'true') === 'true',
+	},
 	fastBots: process.env.OT_FAST_BOTS === 'true',
 	cachePath: process.env.OT_CACHE_PATH ?? join(__dirname, '..', '.cache'),
 	storagePath: process.env.OT_STORAGE_PATH ?? join(__dirname, '..', 'storage'),

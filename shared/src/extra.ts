@@ -21,4 +21,5 @@ export interface ServerInfo {
 	singleGame: boolean
 	servers: number
 	maxServers: number
+	botsEnabled: boolean
 }

@@ -3,7 +3,7 @@ import { Button, DialogWrapper, Loader, Message } from '@/components'
 import { CardsViewer } from '@/components/CardsViewer/CardsViewer'
 import { Mars } from '@/components/Mars/Mars'
 import { Modal } from '@/components/Modal/Modal'
-import { ApiState, setApiState } from '@/store/modules/api'
+import { ApiState, setApiInfo, setApiState } from '@/store/modules/api'
 import {
 	faArrowRight,
 	faCog,
@@ -47,6 +47,8 @@ export const Main = () => {
 
 		getServerInfo()
 			.then((info) => {
+				dispatch(setApiInfo(info))
+
 				if (info.singleGame) {
 					dispatch(
 						setApiState({

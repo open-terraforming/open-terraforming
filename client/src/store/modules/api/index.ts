@@ -1,3 +1,5 @@
+import { ServerInfo } from '@shared/extra'
+
 type State = Readonly<typeof initialState>
 
 export enum ApiState {
@@ -12,6 +14,7 @@ const initialState = {
 	error: null as string | null,
 	gameId: null as string | null,
 	state: ApiState.Ready,
+	info: null as ServerInfo | null,
 }
 
 export default (state = initialState, action: Actions): State => {
@@ -74,3 +77,9 @@ export const setApiState = (state: Partial<State>) =>
 		type: API_SET_STATE,
 		state,
 	}) as ApiSetState
+
+export const setApiInfo = (info: ServerInfo | null) =>
+	({
+		type: API_SET_STATE,
+		state: { info },
+	}) satisfies ApiSetState

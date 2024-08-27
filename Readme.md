@@ -64,4 +64,13 @@ docker run -d \
   openterraforming/open-terraforming
 ```
 
+### Configuration options
+
+| Environment variable | Default value | Description |
+| --- | --- | --- |
+| PORT | `80` | Port on which HTTP server will listen |
+| OT_SLOTS | `20` | Maximum number of simultaneous games running |
+| OT_ENABLE_BOTS | `true` | Enable bots |
+| OT_FAST_BOTS | `false` | Bots should execute all their actions immediately |
+
 ## Contributing

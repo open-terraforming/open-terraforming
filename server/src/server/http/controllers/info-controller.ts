@@ -1,5 +1,6 @@
 import { ServerInfo } from '@shared/extra'
 import { appController } from '../utils/app-controller'
+import { globalConfig } from '@/config'
 
 export const infoController = appController(
 	'/api/info',
@@ -9,6 +10,7 @@ export const infoController = appController(
 				maxServers: config.maxServers,
 				servers: gamesContainer.servers.length,
 				singleGame: config.singleGame,
+				botsEnabled: globalConfig.bots.enabled,
 			} satisfies ServerInfo)
 		})
 	},
