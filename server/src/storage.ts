@@ -51,19 +51,6 @@ export const tryLoadLock = (id: string) => {
 	}
 }
 
-export const saveToCache = async (name: string, data: Buffer | string) => {
-	await fs.mkdir(globalConfig.cachePath, { recursive: true })
-	await fs.writeFile(join(globalConfig.cachePath, name), data)
-}
-
-export const tryLoadCache = async (name: string) => {
-	try {
-		return await fs.readFile(join(globalConfig.cachePath, name))
-	} catch {
-		return null
-	}
-}
-
 export const saveStatic = async (name: string, data: Buffer | string) => {
 	await fs.mkdir(dirname(join(globalConfig.staticPath, name)), {
 		recursive: true,

@@ -6,6 +6,10 @@ import { appController } from '../utils/app-controller'
 export const metricsController = appController(
 	globalConfig.metrics.endpoint,
 	(router) => {
+		if (!globalConfig.metrics.enabled) {
+			return
+		}
+
 		router.use(
 			basicAuthMiddleware({
 				username: globalConfig.metrics.username,

@@ -74,5 +74,9 @@ docker run -d \
 | OT_SPECTATORS_MAX | `20` | Maximum number of spectators |
 | OT_BOTS_ENABLED | `true` | Enable bots |
 | OT_BOTS_MAX | `5` | Maximum number of bots |
+| METRICS_ENABLED | `false` | Export prometheus metrics |
+| METRICS_ENDPOINT | `/metrics` | Prometheus metrics export endpoint |
+| METRICS_USERNAME | `metrics` | Prometheus metrics export username |
+| METRICS_PASSWORD | `metrics` | Prometheus metrics export password |
 
 ## Contributing
