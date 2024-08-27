@@ -17,6 +17,7 @@ export const globalConfig = {
 	slots: parseInt(process.env.OT_SLOTS ?? '20', 10),
 	bots: {
 		enabled: (process.env.OT_BOTS_ENABLED ?? 'true') === 'true',
+		max: parseInt(process.env.OT_BOTS_MAX ?? '5', 10),
 	},
 	fastBots: process.env.OT_FAST_BOTS === 'true',
 	cachePath: process.env.OT_CACHE_PATH ?? join(__dirname, '..', '.cache'),
