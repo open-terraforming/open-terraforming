@@ -1,4 +1,3 @@
-import { strToMode } from '@shared/modes/utils'
 import { promises as fs } from 'fs'
 import yargs from 'yargs'
 import { globalConfig } from './config'
@@ -32,12 +31,6 @@ export async function main() {
 		fs.mkdir(globalConfig.cachePath, { recursive: true })
 	} catch (e) {
 		logger.error('Failed to create cache path', e)
-	}
-
-	const mode = strToMode[argv.mode as keyof typeof strToMode]
-
-	if (!mode) {
-		throw new Error(`Unknown mode ${argv.mode}`)
 	}
 
 	const serverConfig: ServerOptions = {
