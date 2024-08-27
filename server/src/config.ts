@@ -5,6 +5,7 @@ configDotenv({ path: ['.env.local', '.env'] })
 
 export const globalConfig = {
 	metrics: {
+		enabled: process.env.METRICS_ENABLED === 'true',
 		endpoint: process.env.METRICS_ENDPOINT ?? '/metrics',
 		username: process.env.METRICS_USERNAME ?? 'metrics',
 		password: process.env.METRICS_PASSWORD ?? 'metrics',
