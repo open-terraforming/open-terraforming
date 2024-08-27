@@ -55,9 +55,7 @@ export const httpServer = (config: ServerOptions) => {
 					throw new Error(`Cannot upgrade, unknown game id ${request.url}`)
 				}
 
-				let game = gamesContainer.servers.find(
-					(s) => s.acceptsConnections && s.id === gameMatch[1],
-				)
+				let game = gamesContainer.servers.find((s) => s.id === gameMatch[1])
 
 				if (!game) {
 					// TODO: Check server limit when creating ongoing game
@@ -71,6 +69,13 @@ export const httpServer = (config: ServerOptions) => {
 
 				if (!game) {
 					throw new Error(`Failed to find game ${gameMatch[1]}`)
+				}
+
+				if (
+					game.clients.length >=
+					globalConfig.players.max + globalConfig.spectators.max
+				) {
+					throw new Error(`Game ${game.id} is full`)
 				}
 
 				if (request.url?.endsWith('/events')) {

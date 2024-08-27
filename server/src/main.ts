@@ -24,7 +24,7 @@ export async function main() {
 		.option('fast-bots', {
 			type: 'boolean',
 			description: 'Skip interval between bot actions',
-			default: globalConfig.fastBots,
+			default: globalConfig.bots.fast,
 		}).argv
 
 	try {

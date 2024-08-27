@@ -157,12 +157,12 @@ export const NewGameModal = ({ onClose }: Props) => {
 						</select>
 					</Field>
 
-					{serverInfo?.botsEnabled && (
+					{serverInfo?.bots.enabled && (
 						<Field>
 							<label>Bots</label>
 							<NumberInput
 								min={0}
-								max={4}
+								max={serverInfo.bots.max}
 								value={bots}
 								onChange={(v) => setBots(v)}
 								icon={faRobot}
