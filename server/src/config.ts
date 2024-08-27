@@ -4,10 +4,6 @@ import { join } from 'path'
 configDotenv({ path: ['.env.local', '.env'] })
 
 export const globalConfig = {
-	cardEditor: {
-		googleApiKey: process.env.CARD_EDITOR_GOOGLE_API_KEY,
-		googleCseId: process.env.CARD_EDITOR_GOOGLE_CSE_ID,
-	},
 	metrics: {
 		endpoint: process.env.METRICS_ENDPOINT ?? '/metrics',
 		username: process.env.METRICS_USERNAME ?? 'metrics',
