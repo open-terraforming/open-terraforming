@@ -20,11 +20,6 @@ export async function main() {
 			type: 'number',
 			description: 'Number of server slots',
 			default: globalConfig.slots,
-		})
-		.option('fast-bots', {
-			type: 'boolean',
-			description: 'Skip interval between bot actions',
-			default: globalConfig.fastBots,
 		}).argv
 
 	try {
@@ -36,7 +31,6 @@ export async function main() {
 	const serverConfig: ServerOptions = {
 		maxServers: argv.single ? 1 : argv.slots,
 		port: argv.port,
-		fastBots: argv['fast-bots'],
 	}
 
 	const serverStart = await httpServer(serverConfig)

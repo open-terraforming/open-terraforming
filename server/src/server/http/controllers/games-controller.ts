@@ -72,7 +72,7 @@ export const gamesController = appController(
 				map: map,
 				spectatorsAllowed,
 				expansions: [ExpansionType.Base, ...expansions],
-				fastBots: config.fastBots,
+				fastBots: request.fastBots,
 				draft,
 				solarPhase,
 			})

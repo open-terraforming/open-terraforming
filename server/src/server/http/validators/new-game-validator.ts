@@ -26,4 +26,5 @@ export const newGameValidator = object({
 	draft: optional(boolean()),
 	map: enums([MapType.Elysium, MapType.Hellas, MapType.Standard]),
 	solarPhase: optional(boolean()),
+	fastBots: optional(boolean()),
 })

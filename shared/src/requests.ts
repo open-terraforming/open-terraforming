@@ -12,4 +12,5 @@ export type NewGameRequest = {
 	spectatorsAllowed?: boolean
 	draft?: boolean
 	solarPhase?: boolean
+	fastBots?: boolean
 }
