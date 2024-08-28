@@ -24,6 +24,7 @@ import { GameServer } from './game-server'
 import { sanitize, shuffle, nonEmptyStringLength } from '@shared/utils'
 import { CardsLookupApi } from '@shared/cards'
 import { decode, encode } from 'msgpack-lite'
+import { globalConfig } from '@/config'
 
 enum ClientState {
 	Initializing,
@@ -158,6 +159,10 @@ export class Client {
 							return spectateResponse(SpectateError.NotAllowed)
 						}
 
+						if (this.server.spectators.length >= globalConfig.spectators.max) {
+							return spectateResponse(SpectateError.NotAllowed)
+						}
+
 						this.state = ClientState.Connected
 						this.spectator = true
 						this.sendUpdate(this.game.state)
@@ -192,6 +197,12 @@ export class Client {
 
 						if (this.game.inProgress) {
 							return joinResponse(JoinError.GameInProgress)
+						}
+
+						if (
+							this.server.connectedPlayers.length >= globalConfig.players.max
+						) {
+							return joinResponse(JoinError.PlayersLimitReached)
 						}
 
 						name = sanitize(name)

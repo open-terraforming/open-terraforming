@@ -9,7 +9,7 @@ import {
 	faEye,
 } from '@fortawesome/free-solid-svg-icons'
 import { joinRequest, spectateRequest } from '@shared/actions'
-import { useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { BackButton } from './BackButton'
 
@@ -33,6 +33,12 @@ export const JoinGameBySession = () => {
 		api.send(joinRequest(undefined, session))
 	}
 
+	const handleSubmit = (e: FormEvent) => {
+		e.stopPropagation()
+		e.preventDefault()
+		handleConnect()
+	}
+
 	const handleSession = () => {
 		setUseSession(true)
 	}
@@ -48,7 +54,7 @@ export const JoinGameBySession = () => {
 	return (
 		<>
 			{useSession ? (
-				<>
+				<form onSubmit={handleSubmit}>
 					<Input
 						value={session}
 						onChange={(v) => setSession(v)}
@@ -67,14 +73,14 @@ export const JoinGameBySession = () => {
 
 						<Button
 							disabled={session.length < 1 || joining}
-							onClick={handleConnect}
 							isLoading={joining}
 							icon={faArrowRight}
+							type="submit"
 						>
 							Connect
 						</Button>
 					</ConnectButtons>
-				</>
+				</form>
 			) : (
 				<>
 					<Text>Game is already running.</Text>

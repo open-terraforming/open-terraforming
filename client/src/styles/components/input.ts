@@ -22,6 +22,10 @@ export default css`
 		display: inline-block;
 	}
 
+	input:read-only {
+		color: #aaa;
+	}
+
 	select option {
 		color: #eee;
 		background: #000;

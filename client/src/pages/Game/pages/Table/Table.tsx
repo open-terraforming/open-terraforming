@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { CompetitionsModal } from './components/CompetitionsModal/CompetitionsModal'
 import { Controls } from './components/Controls/Controls'
 import { EventList } from './components/EventList/EventList'
+import { GameMap } from './components/GameMap/GameMap'
 import { GlobalState } from './components/GlobalState/GlobalState'
 import { Header } from './components/Header/Header'
 import { Mouses } from './components/Mouses/Mouses'
@@ -15,7 +16,6 @@ import { Players } from './components/Players/Players'
 import { Spectator } from './components/Spectator/Spectator'
 import { StartPicker } from './components/StartPicker/StartPicker'
 import { SolarPhaseTerraformPicker } from './components/SolarPhaseTerraformPicker/SolarPhaseTerraformPicker'
-import ThreeGameMap from './components/ThreeGameMap/ThreeGameMap'
 
 const Table = () => {
 	const pending = useAppStore((state) => state.game.pendingAction)
@@ -84,8 +84,7 @@ const Table = () => {
 				<Header />
 				<Players />
 				<EventList />
-				{/*<GameMap />*/}
-				<ThreeGameMap />
+				<GameMap />
 				<GlobalState />
 			</GameContainer>
 			<HiddenPicker style={{ opacity: pickerHidden ? 1 : 0 }}>

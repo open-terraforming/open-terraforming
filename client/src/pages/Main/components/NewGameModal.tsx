@@ -1,28 +1,40 @@
 import { createGame } from '@/api/rest'
 import { Button, MessageModal } from '@/components'
+import { Checkbox } from '@/components/Checkbox/Checkbox'
+import { Flex } from '@/components/Flex/Flex'
 import { Input } from '@/components/Input/Input'
 import { Modal } from '@/components/Modal/Modal'
+import { MultiSelect } from '@/components/MultiSelect/MultiSelect'
+import { NumberInput } from '@/components/NumberInput/NumberInput'
 import { ApiState, setApiState } from '@/store/modules/api'
-import { useAppDispatch } from '@/utils/hooks'
-import { faTimes, faRobot } from '@fortawesome/free-solid-svg-icons'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { faRobot, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { ExpansionType } from '@shared/expansions/types'
+import { MapType } from '@shared/map'
+import { MapsList } from '@shared/maps'
 import { GameModes } from '@shared/modes'
 import { GameModeType } from '@shared/modes/types'
 import { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { NumberInput } from '@/components/NumberInput/NumberInput'
-import { Flex } from '@/components/Flex/Flex'
-import { MapType } from '@shared/map'
-import { MapsList } from '@shared/maps'
-import { Checkbox } from '@/components/Checkbox/Checkbox'
-import { Expansions } from '@shared/expansions'
-import { ExpansionType } from '@shared/expansions/types'
-import { MultiSelect } from '@/components/MultiSelect/MultiSelect'
 
 type Props = {
 	onClose: () => void
 }
 
-const availableExpansions = [ExpansionType.Prelude, ExpansionType.Venus]
+const EXPANSIONS_OPTIONS = [
+	{
+		value: ExpansionType.Prelude,
+		label: 'Prelude',
+		description:
+			'At the start of the game, you get to pick 2 prelude cards which bootstrap your corporation making the game faster.',
+	},
+	{
+		value: ExpansionType.Venus,
+		label: 'Venus',
+		description:
+			'Adds a new global parameter to increase: Venus scale. It also adds new cards and corporations.',
+	},
+]
 
 export const NewGameModal = ({ onClose }: Props) => {
 	const dispatch = useAppDispatch()
@@ -35,6 +47,8 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [draft, setDraft] = useState(false)
 	const [bots, setBots] = useState(0)
 	const [solarPhase, setSolarPhase] = useState(true)
+	const [fastBots, setFastBots] = useState(false)
+	const serverInfo = useAppStore((app) => app.api.info)
 
 	const [expansions, setExpansions] = useState([
 		ExpansionType.Prelude,
@@ -73,6 +87,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 				expansions,
 				draft,
 				solarPhase,
+				fastBots,
 			})
 
 			if (res.id) {
@@ -144,19 +159,29 @@ export const NewGameModal = ({ onClose }: Props) => {
 						</select>
 					</Field>
 
-					<Field>
-						<label>Bots</label>
-						<NumberInput
-							min={0}
-							max={4}
-							value={bots}
-							onChange={(v) => setBots(v)}
-							icon={faRobot}
-						/>
-					</Field>
+					{serverInfo?.bots.enabled && (
+						<Field>
+							<label>Bots</label>
+							<NumberInput
+								min={0}
+								max={serverInfo.bots.max}
+								value={bots}
+								onChange={(v) => setBots(v)}
+								icon={faRobot}
+							/>
+						</Field>
+					)}
 				</Flex>
 
 				<Field>
+					{bots > 0 && (
+						<Checkbox
+							checked={fastBots}
+							onChange={(v) => setFastBots(v)}
+							label="Fast bots"
+						/>
+					)}
+
 					<Checkbox
 						checked={isPublic}
 						onChange={(v) => setPublic(v)}
@@ -222,12 +247,9 @@ export const NewGameModal = ({ onClose }: Props) => {
 
 				<Field>
 					<label>Expansions</label>
-					<MultiSelect
+					<ExpansionsMultiSelect
 						value={expansions}
-						options={availableExpansions.map((e) => ({
-							value: e,
-							label: Expansions[e].name,
-						}))}
+						options={EXPANSIONS_OPTIONS}
 						onChange={(v) => setExpansions(v)}
 					/>
 				</Field>
@@ -281,3 +303,7 @@ const Field = styled.div`
 const SelectItemDesc = styled.div`
 	padding: 0.3rem 1rem;
 `
+
+const ExpansionsMultiSelect = styled(MultiSelect)`
+	max-width: 30rem;
+` as typeof MultiSelect
