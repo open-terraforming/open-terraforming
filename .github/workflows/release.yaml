@@ -1,0 +1,86 @@
+name: Release a new version
+
+concurrency:
+  cancel-in-progress: true
+  group: release
+
+on:
+  workflow_dispatch:
+
+permissions: write-all
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create tag
+        uses: actions/github-script@v7
+        id: tag
+        with:
+          result-encoding: string
+          script: |
+            const tag = 'v' + (
+              new Date().toISOString().slice(0, 16)
+                .replace(/[-:]/g, '')
+                .replace('T', '.')
+            )
+
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/' + tag,
+              sha: context.sha
+            })
+
+            return tag
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.result }}
+
+      - uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+  
+      - name: Login to private registry
+        uses: docker/login-action@v3
+        with:
+          registry: containers.zipek.cz
+          username: ${{ secrets.REPOSITORY_USERNAME }}
+          password: ${{ secrets.REPOSITORY_PASSWORD }}
+
+      - name: Login to DockerHub registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Login to GH registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          file: docker/Dockerfile
+          tags: |
+            containers.zipek.cz/kamen/open-terraforming:latest,
+            containers.zipek.cz/kamen/open-terraforming:${{ steps.tag.outputs.result }},
+            ghcr.io/open-terraforming/open-terraforming:latest,
+            ghcr.io/open-terraforming/open-terraforming:${{ steps.tag.outputs.result }}
+            openterraforming/open-terraforming:latest,
+            openterraforming/open-terraforming:${{ steps.tag.outputs.result }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: OT_VERSION=${{ steps.tag.outputs.result }}
+          platforms: linux/amd64,linux/arm64

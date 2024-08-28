@@ -1,0 +1,30 @@
+{
+	"folders": [
+		{
+			"path": "server"
+		},
+		{
+			"path": "client"
+		},
+		{
+			"path": "shared"
+		},
+		{
+			"path": "desktop"
+		},
+		{
+			"path": "docker"
+		},
+		{
+			"path": ".github"
+		}
+	],
+	"settings": {
+		"editor.insertSpaces": false,
+		"editor.tabSize": 2,
+		"files.eol": "\n",
+		"cSpell.words": [
+			"Stratopolis"
+		]
+	}
+}

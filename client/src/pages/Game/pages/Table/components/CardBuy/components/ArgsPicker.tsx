@@ -1,0 +1,40 @@
+import { useState, useEffect } from 'react'
+import { CardEffectArgumentType, CardEffect } from '@shared/cards'
+import { UsedCardState } from '@shared/index'
+import { Arg } from './Arg'
+
+type Props = {
+	effect: CardEffect
+	card: string
+	cardState: UsedCardState
+	onChange: (args: CardEffectArgumentType[]) => void
+}
+
+export const ArgsPicker = ({ effect, card, cardState, onChange }: Props) => {
+	const [values, setValues] = useState([] as CardEffectArgumentType[])
+
+	useEffect(() => {
+		onChange(values)
+	}, [values])
+
+	return (
+		<div>
+			{effect.args.map((a, i) => (
+				<Arg
+					key={i}
+					arg={a}
+					card={card}
+					cardState={cardState}
+					onChange={(v) => {
+						setValues((values) => {
+							const updated = [...values]
+							updated[i] = v
+
+							return updated
+						})
+					}}
+				/>
+			))}
+		</div>
+	)
+}
