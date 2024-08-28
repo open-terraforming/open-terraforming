@@ -35,7 +35,7 @@ export const LobbyInviteLink = ({ id }: Props) => {
 const InviteLink = styled.div`
 	display: flex;
 	align-items: center;
-	gap: 0.25rem;
+	gap: 0.5rem;
 	margin-bottom: 1rem;
 `
 
