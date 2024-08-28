@@ -13,6 +13,7 @@ import { Player } from './components/Player'
 import { Modal } from '@/components/Modal/Modal'
 import { Flex } from '@/components/Flex/Flex'
 import { Info } from './components/Info'
+import { LobbyInviteLink } from './components/LobbyInviteLink'
 
 const Lobby = () => {
 	const api = useApi()
@@ -57,6 +58,7 @@ const Lobby = () => {
 					</>
 				}
 			>
+				{info && <LobbyInviteLink id={info.id} />}
 				<Flex align="flex-start">
 					<Players>
 						{players?.map((p) => (
