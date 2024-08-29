@@ -1,4 +1,4 @@
-import { GameLockSystem } from '@/game/game'
+import { GameLockSystem } from '@shared/game/game'
 
 export class DummyGameLockSystem implements GameLockSystem {
 	createLock() {

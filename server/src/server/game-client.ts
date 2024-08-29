@@ -1,4 +1,4 @@
-import { Player } from '@/game/player'
+import { Player } from '@shared/game/player'
 import { MyEvent } from '@/utils/events'
 import { obfuscateGame } from '@/utils/game'
 import { Logger } from '@/utils/log'

@@ -1,4 +1,4 @@
-import { Game, GameConfig, GameLockSystem } from '@/game/game'
+import { Game, GameConfig, GameLockSystem } from '@shared/game/game'
 import { GamesStorage } from '@/lib/games-storage'
 import { debounce } from '@/utils/debounce'
 import { MyEvent } from '@/utils/events'

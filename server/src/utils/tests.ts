@@ -1,7 +1,7 @@
-import { Game } from '@/game/game'
-import { Player } from '@/game/player'
-import { PlayerBaseAction } from '@/game/player/action'
-import { StartGameAction } from '@/game/player/actions/start-game'
+import { Game } from '@shared/game/game'
+import { Player } from '@shared/game/player'
+import { PlayerBaseAction } from '@shared/game/player/action'
+import { StartGameAction } from '@shared/game/player/actions/start-game'
 import { DummyGameLockSystem } from '@/lib/dummy-game-lock-system'
 
 export const prepareGame = (

@@ -2,7 +2,7 @@ import 'module-alias/register'
 import 'source-map-support/register'
 
 import { startGame } from '@shared/actions'
-import { Game } from './game/game'
+import { Game } from '../../shared/src/game/game'
 import { DummyGameLockSystem } from './lib/dummy-game-lock-system'
 
 async function main() {

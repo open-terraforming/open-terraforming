@@ -1,4 +1,4 @@
-import { GameConfig, GameLockSystem } from '@/game/game'
+import { GameConfig, GameLockSystem } from '@shared/game/game'
 import { Logger } from '@/utils/log'
 import { GameServer } from '../../game-server'
 import { runningGamesGauge } from '@/utils/metrics'

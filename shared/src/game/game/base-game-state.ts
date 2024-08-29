@@ -1,6 +1,6 @@
-import { State } from '@/lib/state-machine'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { Game } from '../game'
+import { State } from '@shared/lib/state-machine'
 
 export class BaseGameState extends State<GameStateValue> {
 	game: Game

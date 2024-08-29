@@ -1,4 +1,3 @@
-import { shuffle } from '@/utils/collections'
 import { CardCategory, CardsLookupApi } from '@shared/cards'
 import {
 	emptyCardState,
@@ -32,7 +31,7 @@ import { Milestones } from '@shared/milestones'
 import { canPlace, isClaimable } from '@shared/placements'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import { Projects } from '@shared/projects'
-import { allCells, competitionPrice, f } from '@shared/utils'
+import { allCells, competitionPrice, f, shuffle } from '@shared/utils'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { Game } from './game'
 import { Player } from './player'
