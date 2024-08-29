@@ -1,5 +1,7 @@
 import { configDotenv } from 'dotenv'
 import { join } from 'path'
+import parseDuration from 'parse-duration'
+import { raise } from './utils/raise'
 
 configDotenv({ path: ['.env.local', '.env'] })
 
@@ -22,7 +24,17 @@ export const globalConfig = {
 	spectators: {
 		max: parseInt(process.env.OT_SPECTATORS_MAX ?? '20', 10),
 	},
-	storagePath: process.env.OT_STORAGE_PATH ?? join(__dirname, '..', 'storage'),
+	storage: {
+		path: process.env.OT_STORAGE_PATH ?? join(__dirname, '..', 'storage'),
+		useCompression:
+			(process.env.OT_STORAGE_USE_COMPRESSION ?? 'true') === 'true',
+		cleanAfterInMs:
+			parseDuration(process.env.OT_STORAGE_CLEAN_AFTER ?? '6w') ??
+			raise('OT_STORAGE_CLEAN_AFTER has incorrect value'),
+		cleanIntervalInMs:
+			parseDuration(process.env.OT_STORAGE_CLEAN_INTERVAL ?? '1d') ??
+			raise('OT_STORAGE_CLEAN_INTERVAL has incorrect value'),
+	},
 	staticPath: process.env.OT_STATIC_PATH ?? join(__dirname, '..', 'static'),
 	everybodyIsAdmin: process.env.OT_EVERYBODY_IS_ADMIN === 'true',
 }

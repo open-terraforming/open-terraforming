@@ -1,5 +1,6 @@
 import { globalConfig } from '@/config'
-import { tryLoadOngoing } from '@/storage'
+import { FileGameLockSystem } from '@/lib/file-game-lock-system'
+import { GamesStorage } from '@/lib/games-storage'
 import { Logger } from '@/utils/log'
 import express from 'express'
 import { createServer, IncomingMessage, Server } from 'http'
@@ -13,16 +14,33 @@ import { corsMiddleware } from './middleware/cors-middleware'
 import { errorHandlerMiddleware } from './middleware/error-handler-middleware'
 import { expressMetricsMiddleware } from './middleware/express-metrics-middleware'
 import { RunningGamesContainer } from './utils/running-games-container'
+import { GamesStorageCleaner } from '@/lib/games-storage-cleaner'
 
 type HttpServerInfo = {
 	app: express.Application
 	server: Server
 	port: number
+	stop: () => Promise<void>
 }
 
 export const httpServer = (config: ServerOptions) => {
 	const logger = new Logger('Master')
-	const gamesContainer = new RunningGamesContainer()
+
+	const storage = new GamesStorage({
+		path: globalConfig.storage.path,
+		useCompression: globalConfig.storage.useCompression,
+	})
+
+	const storageCleaner = new GamesStorageCleaner(storage, {
+		maxAgeInMs: globalConfig.storage.cleanAfterInMs,
+		checkIntervalInMs: globalConfig.storage.cleanIntervalInMs,
+	})
+
+	const lockSystem = new FileGameLockSystem({
+		path: globalConfig.storage.path,
+	})
+
+	const gamesContainer = new RunningGamesContainer(storage, lockSystem)
 
 	const context: HttpContext = {
 		config,
@@ -59,7 +77,7 @@ export const httpServer = (config: ServerOptions) => {
 
 				if (!game) {
 					// TODO: Check server limit when creating ongoing game
-					const ongoing = await tryLoadOngoing(gameMatch[1])
+					const ongoing = await storage.tryGet(gameMatch[1])
 
 					if (ongoing) {
 						game = gamesContainer.startNewGame()
@@ -101,10 +119,21 @@ export const httpServer = (config: ServerOptions) => {
 
 	app.use(errorHandlerMiddleware)
 
+	storageCleaner.start()
+
 	return new Promise<HttpServerInfo>((resolve) => {
 		server.listen(config.port, () => {
 			logger.log('Listening on', config.port)
-			resolve({ app, server, port: config.port })
+
+			resolve({
+				app,
+				server,
+				port: config.port,
+				stop: async () => {
+					server.close()
+					storageCleaner.stop()
+				},
+			})
 		})
 	})
 }
