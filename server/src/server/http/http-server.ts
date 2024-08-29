@@ -1,5 +1,6 @@
 import { globalConfig } from '@/config'
-import { tryLoadOngoing } from '@/storage'
+import { FileGameLockSystem } from '@/lib/file-game-lock-system'
+import { GamesStorage } from '@/lib/games-storage'
 import { Logger } from '@/utils/log'
 import express from 'express'
 import { createServer, IncomingMessage, Server } from 'http'
@@ -22,7 +23,17 @@ type HttpServerInfo = {
 
 export const httpServer = (config: ServerOptions) => {
 	const logger = new Logger('Master')
-	const gamesContainer = new RunningGamesContainer()
+
+	const storage = new GamesStorage({
+		path: globalConfig.storage.path,
+		useCompression: globalConfig.storage.useCompression,
+	})
+
+	const lockSystem = new FileGameLockSystem({
+		path: globalConfig.storage.path,
+	})
+
+	const gamesContainer = new RunningGamesContainer(storage, lockSystem)
 
 	const context: HttpContext = {
 		config,
@@ -59,7 +70,7 @@ export const httpServer = (config: ServerOptions) => {
 
 				if (!game) {
 					// TODO: Check server limit when creating ongoing game
-					const ongoing = await tryLoadOngoing(gameMatch[1])
+					const ongoing = await storage.tryGet(gameMatch[1])
 
 					if (ongoing) {
 						game = gamesContainer.startNewGame()

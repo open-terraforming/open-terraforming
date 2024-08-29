@@ -3,10 +3,11 @@ import { Game } from '../game/game'
 import { wait } from '../utils/async'
 import { ExpansionType } from '@shared/expansions/types'
 import { Bot } from '@/game/bot'
+import { DummyGameLockSystem } from '@/lib/dummy-game-lock-system'
 
 describe('brute', () => {
 	it('bots can run for 5 generations', async () => {
-		const game = new Game({
+		const game = new Game(new DummyGameLockSystem(), {
 			bots: 2,
 			fastBots: true,
 			fastProduction: true,

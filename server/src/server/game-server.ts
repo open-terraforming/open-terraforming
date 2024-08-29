@@ -1,15 +1,15 @@
-import { Game, GameConfig } from '@/game/game'
-import { saveOngoing } from '@/storage'
+import { Game, GameConfig, GameLockSystem } from '@/game/game'
+import { GamesStorage } from '@/lib/games-storage'
 import { debounce } from '@/utils/debounce'
 import { MyEvent } from '@/utils/events'
 import { Logger } from '@/utils/log'
+import { playerCountGauge } from '@/utils/metrics'
 import { GameState, GameStateValue } from '@shared/index'
 import { IncomingMessage } from 'http'
+import { Duplex } from 'stream'
 import WebSocket from 'ws'
 import { EventServer } from './event-server'
 import { Client } from './game-client'
-import { playerCountGauge } from '@/utils/metrics'
-import { Duplex } from 'stream'
 
 export class GameServer {
 	logger = new Logger('GameServer')
@@ -33,8 +33,13 @@ export class GameServer {
 	emptyTimeout?: ReturnType<typeof setTimeout>
 	endedTimeout?: ReturnType<typeof setTimeout>
 
-	constructor(config?: Partial<GameConfig>) {
-		this.game = new Game(config)
+	constructor(
+		private readonly storage: GamesStorage,
+		lockSystem: GameLockSystem,
+		config?: Partial<GameConfig>,
+	) {
+		this.game = new Game(lockSystem, config)
+
 		this.game.onStateUpdated.on(this.handleGameUpdate)
 
 		this.logger.log('Admin password', this.game.config.adminPassword)
@@ -129,7 +134,7 @@ export class GameServer {
 		}
 
 		try {
-			saveOngoing(this.game.state)
+			await this.storage.put(s)
 		} catch (e) {
 			this.logger.error('Failed to save game state:', e)
 		}

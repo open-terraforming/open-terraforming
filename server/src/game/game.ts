@@ -51,6 +51,8 @@ import {
 import { SolarPhaseGameState } from './game/solar-phase-game-state'
 
 export interface GameConfig {
+	lockSystem: GameLockSystem
+
 	bots: number
 	adminPassword: string
 	mode: GameModeType
@@ -65,6 +67,13 @@ export interface GameConfig {
 	fastBots: boolean
 	fastProduction: boolean
 }
+
+export interface GameLockSystem {
+	createLock: (state: GameState) => void
+	clearLock: (id: string) => void
+	tryLoadLock: (id: string) => GameState | null
+}
+
 export class Game {
 	get logger() {
 		const shortId =
@@ -75,7 +84,7 @@ export class Game {
 		return new Logger(`Game(${shortId})`)
 	}
 
-	config: GameConfig
+	config: Omit<GameConfig, 'lockSystem'>
 
 	state = initialGameState(uuidv4())
 
@@ -90,7 +99,10 @@ export class Game {
 
 	botNames = shuffle([...BotNames])
 
-	constructor(config?: Partial<GameConfig>) {
+	constructor(
+		readonly lockSystem: GameLockSystem,
+		config?: Partial<GameConfig>,
+	) {
 		this.config = {
 			bots: 0,
 			adminPassword: randomPassword(10),

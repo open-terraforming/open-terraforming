@@ -1,5 +1,4 @@
 import { State } from '@/lib/state-machine'
-import { saveLock, tryLoadLock, clearLock } from '@/storage'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { Game } from '../game'
 
@@ -43,14 +42,14 @@ export class BaseGameState extends State<GameStateValue> {
 	}
 
 	createLock() {
-		return saveLock(this.state)
+		return this.game.lockSystem.createLock(this.state)
 	}
 
 	clearLock() {
-		clearLock(this.state.id)
+		this.game.lockSystem.clearLock(this.state.id)
 	}
 
 	getLock() {
-		return tryLoadLock(this.state.id)
+		return this.game.lockSystem.tryLoadLock(this.state.id)
 	}
 }
