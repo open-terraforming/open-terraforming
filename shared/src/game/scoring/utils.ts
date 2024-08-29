@@ -1,4 +1,3 @@
-import { deepCopy } from '@/utils/collections'
 import {
 	CardEffect,
 	CardEffectArgumentType,
@@ -16,7 +15,8 @@ import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import { adjTilesList, allCells, shuffle, sortBy, tiles } from '@shared/utils'
 import { getPossibleArgs } from './args/get-possible-args'
 import { placeTileScore } from './place-tile-score'
-import { Logger } from '@/utils/log'
+import { Logger } from '@shared/utils/log'
+import { deepCopy } from '@shared/utils/collections'
 
 export const pickBest = <T>(values: T[], scoring: (v: T) => number) => {
 	if (values.length === 0) {
