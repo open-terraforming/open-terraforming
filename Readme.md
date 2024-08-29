@@ -74,6 +74,9 @@ docker run -d \
 | OT_SPECTATORS_MAX | `20` | Maximum number of spectators |
 | OT_BOTS_ENABLED | `true` | Enable bots |
 | OT_BOTS_MAX | `5` | Maximum number of bots |
+| OT_STORAGE_USE_COMPRESSION | `true` | Compress games when storing them |
+| OT_STORAGE_CLEAN_AFTER | `6w` | After how long should game be removed from storage when there's no activity, see https://www.npmjs.com/package/parse-duration for syntax |
+| OT_STORAGE_CLEAN_INTERVAL | `1d` | How often to check for games that need to be removed, see https://www.npmjs.com/package/parse-duration for syntax |
 | METRICS_ENABLED | `false` | Export prometheus metrics |
 | METRICS_ENDPOINT | `/metrics` | Prometheus metrics export endpoint |
 | METRICS_USERNAME | `metrics` | Prometheus metrics export username |
