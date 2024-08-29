@@ -14,11 +14,13 @@ import { corsMiddleware } from './middleware/cors-middleware'
 import { errorHandlerMiddleware } from './middleware/error-handler-middleware'
 import { expressMetricsMiddleware } from './middleware/express-metrics-middleware'
 import { RunningGamesContainer } from './utils/running-games-container'
+import { GamesStorageCleaner } from '@/lib/games-storage-cleaner'
 
 type HttpServerInfo = {
 	app: express.Application
 	server: Server
 	port: number
+	stop: () => Promise<void>
 }
 
 export const httpServer = (config: ServerOptions) => {
@@ -27,6 +29,11 @@ export const httpServer = (config: ServerOptions) => {
 	const storage = new GamesStorage({
 		path: globalConfig.storage.path,
 		useCompression: globalConfig.storage.useCompression,
+	})
+
+	const storageCleaner = new GamesStorageCleaner(storage, {
+		maxAgeInMs: globalConfig.storage.cleanAfterInMs,
+		checkIntervalInMs: globalConfig.storage.cleanIntervalInMs,
 	})
 
 	const lockSystem = new FileGameLockSystem({
@@ -112,10 +119,21 @@ export const httpServer = (config: ServerOptions) => {
 
 	app.use(errorHandlerMiddleware)
 
+	storageCleaner.start()
+
 	return new Promise<HttpServerInfo>((resolve) => {
 		server.listen(config.port, () => {
 			logger.log('Listening on', config.port)
-			resolve({ app, server, port: config.port })
+
+			resolve({
+				app,
+				server,
+				port: config.port,
+				stop: async () => {
+					server.close()
+					storageCleaner.stop()
+				},
+			})
 		})
 	})
 }

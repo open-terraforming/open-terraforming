@@ -1,5 +1,5 @@
 import { GameState } from '@shared/game'
-import { mkdir, readFile, stat, writeFile } from 'fs/promises'
+import { mkdir, readdir, readFile, stat, unlink, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { fileCompression } from './file-compression'
 
@@ -48,11 +48,28 @@ export class GamesStorage {
 		}
 	}
 
+	async remove(id: string) {
+		await unlink(this.gameFilename(id))
+	}
+
 	async tryGet(id: string) {
 		try {
 			return await this.get(id)
 		} catch {
 			return null
 		}
+	}
+
+	async list() {
+		const files = await readdir(this.settings.path, { withFileTypes: true })
+
+		return await Promise.all(
+			files
+				.filter((f) => f.isFile() && f.name.endsWith('.json'))
+				.map(async (f) => ({
+					id: f.name.replace(/\.json$/, ''),
+					lastModified: (await stat(join(f.path, f.name))).mtime,
+				})),
+		)
 	}
 }
