@@ -30,6 +30,8 @@ jobs:
           cache-dependency-path: server/package-lock.json
       - run: npm install
         working-directory: server
+      - run: npm install
+        working-directory: shared
       - run: npm run test
         working-directory: server
   build:
@@ -44,5 +46,7 @@ jobs:
           cache-dependency-path: server/package-lock.json
       - run: npm install
         working-directory: server
+      - run: npm install
+        working-directory: shared
       - run: npm run build -- --noEmit
         working-directory: server
