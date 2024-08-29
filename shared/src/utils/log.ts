@@ -1,6 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import c from 'chalk'
 import { isRunningInJest } from './isRunningInJest'
+import chalk from 'chalk'
+
+// @ts-expect-error window can be undefined
+const IS_BROWSER = typeof window !== 'undefined'
+
+const c = {
+	gray: (text: string) =>
+		IS_BROWSER ? ['%c' + text, 'color: gray'] : [chalk.gray(text)],
+	green: (text: string) =>
+		IS_BROWSER ? ['%c' + text, 'color: green'] : [chalk.green(text)],
+}
 
 export class Logger {
 	category: string
@@ -10,9 +20,10 @@ export class Logger {
 	}
 
 	get prefix() {
-		return (
-			c.gray(new Date().toISOString().substr(11)) + ' ' + c.green(this.category)
-		)
+		return [
+			...c.gray(new Date().toISOString().substr(11)),
+			...c.green(this.category),
+		]
 	}
 
 	log(...args: any[]) {
@@ -20,7 +31,7 @@ export class Logger {
 			return
 		}
 
-		console.log(this.prefix, ...args)
+		console.log(...this.prefix, ...args)
 	}
 
 	info(...args: any[]) {
@@ -28,7 +39,7 @@ export class Logger {
 			return
 		}
 
-		console.info(this.prefix, ...args)
+		console.info(...this.prefix, ...args)
 	}
 
 	warn(...args: any[]) {
@@ -36,7 +47,7 @@ export class Logger {
 			return
 		}
 
-		console.warn(this.prefix, ...args)
+		console.warn(...this.prefix, ...args)
 	}
 
 	trace(...args: any[]) {
@@ -44,7 +55,7 @@ export class Logger {
 			return
 		}
 
-		console.trace(this.prefix, ...args)
+		console.trace(...this.prefix, ...args)
 	}
 
 	error(...args: any[]) {
@@ -52,7 +63,7 @@ export class Logger {
 			return
 		}
 
-		console.error(this.prefix, ...args)
+		console.error(...this.prefix, ...args)
 	}
 
 	group(...args: any[]) {
@@ -60,7 +71,7 @@ export class Logger {
 			return
 		}
 
-		console.group(this.prefix, ...args)
+		console.group(...this.prefix, ...args)
 	}
 
 	groupCollapsed(...args: any[]) {
@@ -68,7 +79,7 @@ export class Logger {
 			return
 		}
 
-		console.groupCollapsed(this.prefix, ...args)
+		console.groupCollapsed(...this.prefix, ...args)
 	}
 
 	groupEnd() {
