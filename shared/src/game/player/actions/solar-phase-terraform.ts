@@ -11,7 +11,7 @@ import { PlayerBaseAction } from '../action'
 type Args = ReturnType<typeof solarPhaseTerraform>['data']
 
 export class SolarPhaseTerraform extends PlayerBaseAction<Args> {
-	states = [PlayerStateValue.Playing]
+	states = [PlayerStateValue.SolarPhaseTerraform]
 	gameStates = [GameStateValue.SolarPhase]
 
 	perform({ progress }: Args) {

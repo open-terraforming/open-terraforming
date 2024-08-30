@@ -149,6 +149,9 @@ const allowedActions: Record<number, PlayerActionType[] | undefined> = {
 	[PlayerStateValue.Prelude]: [PlayerActionType.PlaceTile],
 	[PlayerStateValue.EndingTiles]: [PlayerActionType.PlaceTile],
 	[PlayerStateValue.Playing]: [],
+	[PlayerStateValue.SolarPhaseTerraform]: [
+		PlayerActionType.SolarPhaseTerraform,
+	],
 }
 
 export const pendingActions = (player: PlayerState) => {

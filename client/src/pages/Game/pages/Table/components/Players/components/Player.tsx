@@ -30,7 +30,7 @@ const pendingToStr = {
 	[PlayerActionType.PlayCard]: 'Playing card',
 	[PlayerActionType.DraftCard]: 'Picking card',
 	[PlayerActionType.SponsorCompetition]: 'Selecting competition',
-	[PlayerActionType.SolarPhaseTerraform]: 'World Government Terraforming',
+	[PlayerActionType.SolarPhaseTerraform]: 'WG Terraforming',
 }
 
 const stateToStr = {
@@ -43,6 +43,7 @@ const stateToStr = {
 	[PlayerStateValue.Waiting]: null,
 	[PlayerStateValue.Ready]: null,
 	[PlayerStateValue.Prelude]: 'Playing',
+	[PlayerStateValue.SolarPhaseTerraform]: null,
 } as const
 
 const stateToIcon = {
@@ -55,6 +56,7 @@ const stateToIcon = {
 	[PlayerStateValue.Waiting]: faHourglassHalf,
 	[PlayerStateValue.Ready]: faCheck,
 	[PlayerStateValue.Prelude]: faArrowRight,
+	[PlayerStateValue.SolarPhaseTerraform]: faUserClock,
 } as const
 
 export const Player = ({
@@ -131,8 +133,7 @@ export const Player = ({
 									size="sm"
 								/>
 							)}{' '}
-							{gameState !== GameStateValue.SolarPhase &&
-								stateToStr[state.state]}
+							{stateToStr[state.state]}
 							{pending && ` ${pendingToStr[pending.type]}`}
 						</>
 					)}
