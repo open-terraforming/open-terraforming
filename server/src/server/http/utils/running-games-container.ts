@@ -1,8 +1,8 @@
 import { GameConfig, GameLockSystem } from '@shared/game/game'
-import { Logger } from '@/utils/log'
 import { GameServer } from '../../game-server'
 import { runningGamesGauge } from '@/utils/metrics'
 import { GamesStorage } from '@/lib/games-storage'
+import { NodeLogger } from '@/lib/node-logger'
 
 export class RunningGamesContainer {
 	constructor(
@@ -10,7 +10,7 @@ export class RunningGamesContainer {
 		private lockSystem: GameLockSystem,
 	) {}
 
-	logger = new Logger(this.constructor.name)
+	logger = new NodeLogger(this.constructor.name)
 
 	servers: GameServer[] = []
 

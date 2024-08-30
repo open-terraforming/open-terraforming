@@ -1,11 +1,11 @@
+import { NodeLogger } from '@/lib/node-logger'
 import { RealtimeEvent } from '@shared/events'
 import WebSocket from 'ws'
 import { EventClient } from './event-client'
 import { GameServer } from './game-server'
-import { Logger } from '@/utils/log'
 
 export class EventServer {
-	logger = new Logger('EventServer')
+	logger = new NodeLogger('EventServer')
 
 	master: GameServer
 	socket: WebSocket.Server
