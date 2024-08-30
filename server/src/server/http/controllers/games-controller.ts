@@ -1,3 +1,5 @@
+import { globalConfig } from '@/config'
+import { NodeLogger } from '@/lib/node-logger'
 import { Expansions } from '@shared/expansions'
 import { ExpansionType } from '@shared/expansions/types'
 import { Maps } from '@shared/maps'
@@ -6,13 +8,11 @@ import { nonEmptyStringLength } from '@shared/utils'
 import { assert } from 'superstruct'
 import { appController } from '../utils/app-controller'
 import { newGameValidator } from '../validators/new-game-validator'
-import { Logger } from '@/utils/log'
-import { globalConfig } from '@/config'
 
 export const gamesController = appController(
 	'/api/games',
 	(router, { gamesContainer, config }) => {
-		const logger = new Logger('GamesController')
+		const logger = new NodeLogger('GamesController')
 
 		router.get('/', (_, res) => {
 			res.json(

@@ -7,11 +7,11 @@ import {
 	RealtimeEvent,
 } from '@shared/events'
 import { encode, decode } from 'msgpack-lite'
-import { Logger } from '@/utils/log'
+import { NodeLogger } from '@/lib/node-logger'
 
 export class EventClient {
 	get logger() {
-		return new Logger(
+		return new NodeLogger(
 			'EventClient' + (this.playerId ? `(${this.playerId})` : ''),
 		)
 	}

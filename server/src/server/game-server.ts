@@ -1,9 +1,9 @@
-import { Game, GameConfig, GameLockSystem } from '@shared/game/game'
 import { GamesStorage } from '@/lib/games-storage'
+import { NodeLogger } from '@/lib/node-logger'
 import { debounce } from '@/utils/debounce'
 import { MyEvent } from '@/utils/events'
-import { Logger } from '@/utils/log'
 import { playerCountGauge } from '@/utils/metrics'
+import { Game, GameConfig, GameLockSystem } from '@shared/game/game'
 import { GameState, GameStateValue } from '@shared/index'
 import { IncomingMessage } from 'http'
 import { Duplex } from 'stream'
@@ -12,7 +12,7 @@ import { EventServer } from './event-server'
 import { Client } from './game-client'
 
 export class GameServer {
-	logger = new Logger('GameServer')
+	logger = new NodeLogger('GameServer')
 
 	/** in ms */
 	closeEmptyAfter = 5 * 60 * 1000
@@ -38,7 +38,7 @@ export class GameServer {
 		lockSystem: GameLockSystem,
 		config?: Partial<GameConfig>,
 	) {
-		this.game = new Game(lockSystem, config)
+		this.game = new Game(lockSystem, this.logger, config)
 
 		this.game.onStateUpdated.on(this.handleGameUpdate)
 

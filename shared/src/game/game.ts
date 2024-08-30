@@ -46,8 +46,8 @@ import { SolarPhaseGameState } from './game/solar-phase-game-state'
 import { randomPassword } from '@shared/utils/password'
 import { deepExtend } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
-import { Logger } from '@shared/utils/log'
 import { StateMachine } from '@shared/lib/state-machine'
+import { Logger } from '@shared/lib/logger'
 
 export interface GameConfig {
 	lockSystem: GameLockSystem
@@ -80,7 +80,7 @@ export class Game {
 				? this.state.id.slice(0, 2) + '..' + this.state.id.slice(-2)
 				: this.state.id
 
-		return new Logger(`Game(${shortId})`)
+		return this.baseLogger.duplicate(`Game(${shortId})`)
 	}
 
 	config: Omit<GameConfig, 'lockSystem'>
@@ -100,6 +100,7 @@ export class Game {
 
 	constructor(
 		readonly lockSystem: GameLockSystem,
+		readonly baseLogger: Logger,
 		config?: Partial<GameConfig>,
 	) {
 		this.config = {

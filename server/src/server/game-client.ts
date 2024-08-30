@@ -1,7 +1,9 @@
-import { Player } from '@shared/game/player'
+import { globalConfig } from '@/config'
+import { NodeLogger } from '@/lib/node-logger'
 import { MyEvent } from '@/utils/events'
 import { obfuscateGame } from '@/utils/game'
-import { Logger } from '@/utils/log'
+import { CardsLookupApi } from '@shared/cards'
+import { Player } from '@shared/game/player'
 import {
 	GameMessage,
 	GameState,
@@ -11,20 +13,18 @@ import {
 	handshakeResponse,
 	JoinError,
 	joinResponse,
+	kicked,
 	MessageType,
 	PlayerStateValue,
 	serverMessage,
-	VERSION,
-	kicked,
-	spectateResponse,
 	SpectateError,
+	spectateResponse,
+	VERSION,
 } from '@shared/index'
+import { nonEmptyStringLength, sanitize, shuffle } from '@shared/utils'
+import { decode, encode } from 'msgpack-lite'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
-import { sanitize, shuffle, nonEmptyStringLength } from '@shared/utils'
-import { CardsLookupApi } from '@shared/cards'
-import { decode, encode } from 'msgpack-lite'
-import { globalConfig } from '@/config'
 
 enum ClientState {
 	Initializing,
@@ -33,7 +33,7 @@ enum ClientState {
 
 export class Client {
 	get logger() {
-		return new Logger(
+		return new NodeLogger(
 			this.player ? `GameClient(${this.player.name})` : 'GameClient',
 		)
 	}

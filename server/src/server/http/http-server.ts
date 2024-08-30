@@ -1,7 +1,8 @@
 import { globalConfig } from '@/config'
 import { FileGameLockSystem } from '@/lib/file-game-lock-system'
 import { GamesStorage } from '@/lib/games-storage'
-import { Logger } from '@/utils/log'
+import { GamesStorageCleaner } from '@/lib/games-storage-cleaner'
+import { NodeLogger } from '@/lib/node-logger'
 import express from 'express'
 import { createServer, IncomingMessage, Server } from 'http'
 import { Socket } from 'net'
@@ -14,7 +15,6 @@ import { corsMiddleware } from './middleware/cors-middleware'
 import { errorHandlerMiddleware } from './middleware/error-handler-middleware'
 import { expressMetricsMiddleware } from './middleware/express-metrics-middleware'
 import { RunningGamesContainer } from './utils/running-games-container'
-import { GamesStorageCleaner } from '@/lib/games-storage-cleaner'
 
 type HttpServerInfo = {
 	app: express.Application
@@ -24,7 +24,7 @@ type HttpServerInfo = {
 }
 
 export const httpServer = (config: ServerOptions) => {
-	const logger = new Logger('Master')
+	const logger = new NodeLogger('Master')
 
 	const storage = new GamesStorage({
 		path: globalConfig.storage.path,

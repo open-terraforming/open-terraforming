@@ -1,8 +1,8 @@
-import { Logger } from '@/utils/log'
 import { GamesStorage } from './games-storage'
+import { NodeLogger } from './node-logger'
 
 export class GamesStorageCleaner {
-	logger = new Logger(this.constructor.name)
+	logger = new NodeLogger(this.constructor.name)
 
 	constructor(
 		private gamesStorage: GamesStorage,

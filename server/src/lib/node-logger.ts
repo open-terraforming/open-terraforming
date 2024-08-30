@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Logger } from '@shared/lib/logger'
 import c from 'chalk'
-import { isRunningInJest } from './isRunningInJest'
 
-export class Logger {
+export class NodeLogger implements Logger {
 	category: string
 
 	constructor(category: string) {
@@ -16,70 +16,46 @@ export class Logger {
 	}
 
 	log(...args: any[]) {
-		if (this.isLoggingDisabled()) {
-			return
-		}
-
 		console.log(this.prefix, ...args)
 	}
 
 	info(...args: any[]) {
-		if (this.isLoggingDisabled()) {
-			return
-		}
-
 		console.info(this.prefix, ...args)
 	}
 
 	warn(...args: any[]) {
-		if (this.isLoggingDisabled()) {
-			return
-		}
-
 		console.warn(this.prefix, ...args)
 	}
 
 	trace(...args: any[]) {
-		if (this.isLoggingDisabled()) {
-			return
-		}
-
 		console.trace(this.prefix, ...args)
 	}
 
 	error(...args: any[]) {
-		if (this.isLoggingDisabled()) {
-			return
-		}
-
 		console.error(this.prefix, ...args)
 	}
 
 	group(...args: any[]) {
-		if (this.isLoggingDisabled()) {
-			return
-		}
-
 		console.group(this.prefix, ...args)
 	}
 
 	groupCollapsed(...args: any[]) {
-		if (this.isLoggingDisabled()) {
-			return
-		}
-
 		console.groupCollapsed(this.prefix, ...args)
 	}
 
 	groupEnd() {
-		if (this.isLoggingDisabled()) {
-			return
-		}
-
 		console.groupEnd()
 	}
 
-	private isLoggingDisabled() {
-		return isRunningInJest()
+	child(category: string) {
+		return new NodeLogger(this.category + ' ' + category)
+	}
+
+	duplicate(category: string) {
+		return new NodeLogger(category)
+	}
+
+	setCategory(category: string) {
+		this.category = category
 	}
 }
