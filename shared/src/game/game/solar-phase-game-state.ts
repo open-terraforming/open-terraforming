@@ -14,16 +14,6 @@ export class SolarPhaseGameState extends BaseGameState {
 	}
 
 	transition() {
-		console.log({
-			transition: this.game.players
-				.map((p) => p.state.pendingActions)
-				.filter((p) => p.length !== 0)
-				.map((p) => JSON.stringify(p)),
-			shouldTransition: this.game.players.every(
-				(p) => p.state.pendingActions.length === 0,
-			),
-		})
-
 		if (this.game.players.every((p) => p.state.pendingActions.length === 0)) {
 			return GameStateValue.GenerationEnding
 		}
