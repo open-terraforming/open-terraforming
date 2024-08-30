@@ -4,11 +4,11 @@ import { wait } from '../utils/async'
 import { ExpansionType } from '@shared/expansions/types'
 import { DummyGameLockSystem } from '@/lib/dummy-game-lock-system'
 import { Bot } from '@shared/game/bot'
-import { NodeLogger } from '@/lib/node-logger'
+import { NullLogger } from '@shared/lib/null-logger'
 
 describe('brute', () => {
 	it('bots can run for 5 generations', async () => {
-		const game = new Game(new DummyGameLockSystem(), new NodeLogger(''), {
+		const game = new Game(new DummyGameLockSystem(), new NullLogger(), {
 			bots: 2,
 			fastBots: true,
 			fastProduction: true,

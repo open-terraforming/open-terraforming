@@ -1,14 +1,14 @@
+import { DummyGameLockSystem } from '@/lib/dummy-game-lock-system'
 import { Game } from '@shared/game/game'
 import { Player } from '@shared/game/player'
 import { PlayerBaseAction } from '@shared/game/player/action'
 import { StartGameAction } from '@shared/game/player/actions/start-game'
-import { DummyGameLockSystem } from '@/lib/dummy-game-lock-system'
-import { NodeLogger } from '@/lib/node-logger'
+import { NullLogger } from '@shared/lib/null-logger'
 
 export const prepareGame = (
 	actionBuilder?: (p: Player) => PlayerBaseAction,
 ) => {
-	const game = new Game(new DummyGameLockSystem(), new NodeLogger(''))
+	const game = new Game(new DummyGameLockSystem(), new NullLogger())
 	const player = new Player(game)
 	game.add(player, false)
 
