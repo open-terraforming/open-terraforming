@@ -1,6 +1,6 @@
-import { wait } from '@/utils/async'
 import { GameStateValue } from '@shared/index'
 import { BaseGameState } from './base-game-state'
+import { wait } from '@shared/utils/async'
 
 export class GenerationEndingState extends BaseGameState {
 	name = GameStateValue.GenerationEnding

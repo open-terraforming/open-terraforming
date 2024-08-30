@@ -1,5 +1,3 @@
-import { MyEvent } from '@/utils/events'
-import { Logger } from '@/utils/log'
 import { Card, CardsLookupApi, Production } from '@shared/cards'
 import { GridCell, GridCellContent, PlayerState } from '@shared/game'
 import { GameMessage, PLAYER_PRODUCTION_FIELDS } from '@shared/index'
@@ -18,12 +16,13 @@ import {
 	pendingActions,
 } from '@shared/utils'
 import { getVictoryPoints } from '@shared/vps'
-import Hashids from 'hashids/cjs'
 import { v4 as uuidv4 } from 'uuid'
 import { Game } from './game'
 import { PlayerActions } from './player/actions'
-import { globalConfig } from '@/config'
-import { deepCopy } from '@/utils/collections'
+import { generateSession } from '../utils/generate-session'
+import { deepCopy } from '@shared/utils/collections'
+import { MyEvent } from '@shared/utils/events'
+import { Logger } from '@shared/utils/log'
 
 export interface CardPlayedEvent {
 	player: Player
@@ -100,11 +99,10 @@ export class Player {
 	constructor(game: Game) {
 		this.game = game
 
-		this.state.session = new Hashids(this.game.config.adminPassword, 5).encode(
-			this.state.id,
-		)
+		this.state.session = generateSession()
 
-		this.state.admin = globalConfig.everybodyIsAdmin
+		// TODO: everybodyIsAdmin config should be somehow passed here?
+		this.state.admin = false
 
 		this.actions = new PlayerActions(this)
 	}

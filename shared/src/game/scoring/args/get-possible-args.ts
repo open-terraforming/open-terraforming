@@ -10,7 +10,7 @@ import { GameState, PlayerState, UsedCardState } from '@shared/index'
 import { range, shuffle, CardsCollection, flatten } from '@shared/utils'
 import { emptyCardState, resources } from '@shared/cards/utils'
 import { getBestArgs } from '../utils'
-import { assertNever } from '@/utils/assertNever'
+import { assertNever } from '@shared/utils/assertNever'
 
 export const cardsList = (list: (string | UsedCardState)[]) => {
 	return new CardsCollection(

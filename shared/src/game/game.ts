@@ -1,9 +1,3 @@
-import { StateMachine } from '@/lib/state-machine'
-import { deepExtend, range } from '@/utils/collections'
-import { MyEvent } from '@/utils/events'
-import { Logger } from '@/utils/log'
-import { randomPassword } from '@/utils/password'
-import { f } from '@/utils/string'
 import { CardsLookupApi, GameProgress } from '@shared/cards'
 import { ExpansionType } from '@shared/expansions/types'
 import { GameInfo } from '@shared/extra'
@@ -27,7 +21,7 @@ import { GameModeType } from '@shared/modes/types'
 import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
-import { isMarsTerraformed, shuffle } from '@shared/utils'
+import { f, isMarsTerraformed, range, shuffle } from '@shared/utils'
 import { v4 as uuidv4 } from 'uuid'
 import { Bot } from './bot'
 import { BotNames } from './bot-names'
@@ -49,6 +43,11 @@ import {
 	TilePlacedEvent,
 } from './player'
 import { SolarPhaseGameState } from './game/solar-phase-game-state'
+import { randomPassword } from '@shared/utils/password'
+import { deepExtend } from '@shared/utils/collections'
+import { MyEvent } from '@shared/utils/events'
+import { Logger } from '@shared/utils/log'
+import { StateMachine } from '@shared/lib/state-machine'
 
 export interface GameConfig {
 	lockSystem: GameLockSystem

@@ -4,9 +4,9 @@ import {
 	GameStateValue,
 	GridCellContent,
 } from '@shared/index'
-import { prepareGame } from '@/utils/tests'
 import { pushPendingAction } from '@shared/utils'
 import { placeTileAction } from '@shared/player-actions'
+import { prepareGame } from '@shared/utils/tests'
 
 test('should crash when player is in wrong state', () => {
 	const { player, game, action } = prepareGame(

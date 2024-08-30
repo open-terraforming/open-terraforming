@@ -1,4 +1,4 @@
-import { GameLockSystem } from '@/game/game'
+import { GameLockSystem } from '@shared/game/game'
 import { GameState } from '@shared/game'
 import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { join } from 'path'

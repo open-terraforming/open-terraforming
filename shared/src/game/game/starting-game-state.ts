@@ -1,10 +1,10 @@
-import { randomPlayerColor } from '@/utils/colors'
 import { Card, CardType } from '@shared/cards'
 import { Expansions } from '@shared/expansions'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { PlayerColors } from '@shared/player-colors'
 import { shuffle } from '@shared/utils'
 import { BaseGameState } from './base-game-state'
+import { randomPlayerColor } from '@shared/utils/colors'
 
 export class StartingGameState extends BaseGameState {
 	name = GameStateValue.Starting

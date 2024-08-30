@@ -1,4 +1,4 @@
-import { MyEvent } from '@/utils/events'
+import { MyEvent } from '@shared/utils/events'
 
 export class StateMachine<Name extends string | number = string> {
 	private states = [] as State<Name>[]
