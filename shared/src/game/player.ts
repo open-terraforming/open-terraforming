@@ -4,25 +4,24 @@ import { GameMessage, PLAYER_PRODUCTION_FIELDS } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import {
 	placeTileAction,
-	PlayerActionType,
 	PlayerAction,
+	PlayerActionType,
 } from '@shared/player-actions'
 import { StandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
 import {
 	allCells,
+	pendingActions,
 	pushPendingAction,
 	range,
-	pendingActions,
 } from '@shared/utils'
-import { getVictoryPoints } from '@shared/vps'
-import { v4 as uuidv4 } from 'uuid'
-import { Game } from './game'
-import { PlayerActions } from './player/actions'
-import { generateSession } from '../utils/generate-session'
 import { deepCopy } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
-import { Logger } from '@shared/utils/log'
+import { getVictoryPoints } from '@shared/vps'
+import { v4 as uuidv4 } from 'uuid'
+import { generateSession } from '../utils/generate-session'
+import { Game } from './game'
+import { PlayerActions } from './player/actions'
 
 export interface CardPlayedEvent {
 	player: Player
@@ -49,7 +48,7 @@ export class Player {
 	static idCounter = 1
 
 	get logger() {
-		return new Logger(this.game.logger.category + ' ' + this.state.name)
+		return this.game.logger.child(this.state.name)
 	}
 
 	state = initialPlayerState(Player.idCounter++, uuidv4())
@@ -126,7 +125,7 @@ export class Player {
 	}
 
 	updated() {
-		this.logger.category = this.state.name
+		this.logger.setCategory(this.state.name)
 		this.onStateChanged.emit(this.state)
 
 		if (this.previousState !== undefined) {
