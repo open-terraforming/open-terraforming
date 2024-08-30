@@ -17,6 +17,7 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 		PlayerStateValue.Playing,
 		PlayerStateValue.EndingTiles,
 		PlayerStateValue.Prelude,
+		PlayerStateValue.SolarPhaseTerraform,
 	]
 	gameStates = [
 		GameStateValue.GenerationInProgress,

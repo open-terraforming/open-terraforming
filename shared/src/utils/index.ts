@@ -151,6 +151,8 @@ const allowedActions: Record<number, PlayerActionType[] | undefined> = {
 	[PlayerStateValue.Playing]: [],
 	[PlayerStateValue.SolarPhaseTerraform]: [
 		PlayerActionType.SolarPhaseTerraform,
+		PlayerActionType.ClaimTile,
+		PlayerActionType.PlaceTile,
 	],
 }
 
