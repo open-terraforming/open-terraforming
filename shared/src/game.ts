@@ -50,6 +50,8 @@ export enum PlayerStateValue {
 	WaitingForTurn,
 	/** Playing prelude cards */
 	Prelude,
+	/** Picking what to terraform during the Solar Phase */
+	SolarPhaseTerraform,
 }
 
 export interface GameState {

@@ -344,6 +344,16 @@ export class Bot extends Player {
 				break
 			}
 
+			case PlayerStateValue.SolarPhaseTerraform: {
+				const pending = this.pendingAction
+
+				if (pending) {
+					actions.push([0, () => this.performPending(pending)])
+				}
+
+				break
+			}
+
 			case PlayerStateValue.Playing: {
 				const pending = this.pendingAction
 
