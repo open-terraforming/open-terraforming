@@ -1,13 +1,17 @@
 import { getServerInfo } from '@/api/rest'
 import { Button, DialogWrapper, Loader, Message } from '@/components'
+import { AboutModal } from '@/components/AboutModal/AboutModal'
 import { CardsViewer } from '@/components/CardsViewer/CardsViewer'
+import { DialogButton } from '@/components/DialogButton/DialogButton'
 import { Mars } from '@/components/Mars/Mars'
 import { Modal } from '@/components/Modal/Modal'
 import { ApiState, setApiInfo, setApiState } from '@/store/modules/api'
+import { useAppStore } from '@/utils/hooks'
 import {
-	faArrowRight,
 	faCog,
 	faInfo,
+	faList,
+	faPlay,
 	faPlusCircle,
 	faSearch,
 	faSync,
@@ -16,15 +20,17 @@ import { ServerInfo } from '@shared/extra'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
+import { ContinueModal } from './components/ContinueModal'
+import { Footer } from './components/Footer'
 import { GamesListModal } from './components/GamesListModal'
 import { NewGameModal } from './components/NewGameModal'
 import { SettingsModal } from './components/SettingsModal'
-import { Footer } from './components/Footer'
-import { DialogButton } from '@/components/DialogButton/DialogButton'
-import { AboutModal } from '@/components/AboutModal/AboutModal'
 
 export const Main = () => {
 	const dispatch = useDispatch()
+
+	const sessions = useAppStore((state) => state.client.sessions)
+
 	const [info, setInfo] = useState(null as ServerInfo | null)
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState(null as string | null)
@@ -81,6 +87,15 @@ export const Main = () => {
 
 				{!loading && info && (
 					<Menu>
+						{Object.keys(sessions).length > 0 && (
+							<DialogButton
+								dialog={(close) => <ContinueModal onClose={close} />}
+								icon={faPlay}
+							>
+								Continue
+							</DialogButton>
+						)}
+
 						<DialogWrapper dialog={(close) => <NewGameModal onClose={close} />}>
 							{(open) => (
 								<Button
@@ -100,7 +115,7 @@ export const Main = () => {
 							dialog={(close) => <GamesListModal onClose={close} />}
 						>
 							{(open) => (
-								<Button onClick={open} icon={faArrowRight}>
+								<Button onClick={open} icon={faList}>
 									Join game
 								</Button>
 							)}

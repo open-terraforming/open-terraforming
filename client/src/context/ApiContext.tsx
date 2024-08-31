@@ -124,7 +124,7 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 
 						if (info?.state !== GameStateValue.WaitingForPlayers) {
 							if (session) {
-								client.send(joinRequest(undefined, session))
+								client.send(joinRequest(undefined, session.session))
 							}
 						}
 					}
@@ -161,7 +161,13 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 								id,
 								sessions: {
 									...sessions,
-									[sessionKey]: session,
+									[sessionKey]: {
+										session: session ?? '',
+										name: '',
+										generation: 0,
+										finished: false,
+										lastUpdateAt: Date.now(),
+									},
 								},
 							}),
 						)
@@ -205,6 +211,21 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 				}
 
 				case MessageType.GameStateUpdate: {
+					dispatch(
+						setClientState({
+							sessions: {
+								...sessions,
+								[sessionKey]: {
+									...sessions[sessionKey]!,
+									name: m.data.name,
+									generation: m.data.generation,
+									finished: m.data.state === GameStateValue.Ended,
+									lastUpdateAt: Date.now(),
+								},
+							},
+						}),
+					)
+
 					dispatch(setGameState(m.data))
 					break
 				}
