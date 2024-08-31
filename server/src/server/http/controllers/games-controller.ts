@@ -46,6 +46,10 @@ export const gamesController = appController(
 				throw new Error(`Too many bots, maximum is ${globalConfig.bots.max}`)
 			}
 
+			if (!globalConfig.publicGames.enabled && isPublic) {
+				throw new Error(`Public games are disabled`)
+			}
+
 			expansions.forEach((e) => {
 				if (
 					typeof e !== 'number' ||

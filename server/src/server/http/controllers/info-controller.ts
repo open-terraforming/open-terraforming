@@ -19,6 +19,9 @@ export const infoController = appController(
 					enabled: globalConfig.bots.enabled,
 					max: globalConfig.bots.max,
 				},
+				publicGames: {
+					enabled: globalConfig.publicGames.enabled,
+				},
 			} satisfies ServerInfo)
 		})
 	},

@@ -42,7 +42,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [name, setName] = useState('')
 	const [mode, setMode] = useState(GameModeType.Standard)
 	const [map, setMap] = useState(MapType.Standard)
-	const [isPublic, setPublic] = useState(true)
+	const [isPublic, setPublic] = useState(false)
 	const [spectators, setSpectators] = useState(true)
 	const [draft, setDraft] = useState(false)
 	const [bots, setBots] = useState(0)
@@ -182,11 +182,13 @@ export const NewGameModal = ({ onClose }: Props) => {
 						/>
 					)}
 
-					<Checkbox
-						checked={isPublic}
-						onChange={(v) => setPublic(v)}
-						label="Public (Allow players to join using server browser)"
-					/>
+					{serverInfo?.publicGames.enabled && (
+						<Checkbox
+							checked={isPublic}
+							onChange={(v) => setPublic(v)}
+							label="Public (Allow players to join using server browser)"
+						/>
+					)}
 
 					<Checkbox
 						checked={spectators}
