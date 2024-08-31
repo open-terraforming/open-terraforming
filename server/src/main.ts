@@ -28,14 +28,17 @@ export async function main() {
 
 	const serverStart = await httpServer(serverConfig)
 
-	process.on('SIGTERM', () => {
-		logger.info('SIGTERM signal received, shutting down')
+	const handleExit = () => {
+		logger.info('Termination signal received, shutting down')
 
 		serverStart.server.close(() => {
 			logger.info('Server closed, exiting')
 			process.exit(0)
 		})
-	})
+	}
+
+	process.on('SIGTERM', handleExit)
+	process.on('SIGINT', handleExit)
 
 	return { port: serverStart.port }
 }

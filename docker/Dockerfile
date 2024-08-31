@@ -9,7 +9,11 @@ WORKDIR /app/server
 # Dependencies
 COPY server/package.json .
 COPY server/package-lock.json .
-RUN npm ci
+COPY shared/package.json ../shared/package.json
+COPY shared/package-lock.json ../shared/package-lock.json
+RUN cd ../shared && npm ci
+RUN cd ../server && npm ci
+
 
 # Source code
 COPY server/tsconfig.json .
@@ -44,7 +48,10 @@ WORKDIR /app/client
 # Dependencies
 COPY client/package.json .
 COPY client/package-lock.json .
-RUN npm ci
+COPY shared/package.json ../shared/package.json
+COPY shared/package-lock.json ../shared/package-lock.json
+RUN cd ../shared && npm ci
+RUN cd ../client && npm ci
 
 COPY client/tsconfig.json .
 COPY client/vite.config.mjs .
