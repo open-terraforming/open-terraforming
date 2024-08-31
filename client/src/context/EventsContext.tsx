@@ -42,7 +42,7 @@ export const EventsContextProvider = ({
 
 	if (client) {
 		client.onOpen = () => {
-			client.send(eventsAuth(sessions[sessionKey] as string))
+			client.send(eventsAuth(sessions[sessionKey].session as string))
 		}
 
 		client.onClose = () => {
