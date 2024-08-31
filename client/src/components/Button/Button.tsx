@@ -9,7 +9,7 @@ export type Schema = 'primary' | 'transparent'
 
 export type Size = 'xs' | 'sm' | 'md' | 'lg'
 
-interface Props {
+export interface ButtonProps {
 	disabled?: boolean
 	isLoading?: boolean
 	icon?: IconProp
@@ -39,7 +39,7 @@ const ButtonComponent = ({
 	tooltip,
 	className,
 	noClip = false,
-}: Props) => {
+}: ButtonProps) => {
 	const hasContent = !!children
 
 	let iconToShow = icon

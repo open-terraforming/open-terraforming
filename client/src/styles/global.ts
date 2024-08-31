@@ -43,6 +43,11 @@ button, a {
 	cursor: pointer;
 }
 
+a {
+	color: ${({ theme }) => theme.colors.text};
+	text-decoration: none;
+}
+
 .mr-2 {
 	margin-right: 0.5rem;
 }
