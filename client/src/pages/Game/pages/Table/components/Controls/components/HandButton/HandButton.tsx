@@ -9,10 +9,11 @@ import {
 } from '@shared/cards/utils'
 import { range } from '@shared/utils'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { CardView } from '../../../CardView/CardView'
 import { Hand } from '../../../Hand/Hand'
 import { CardsView } from '../CardsView'
+import { optionalAnimation } from '@/styles/optionalAnimation'
 
 type Props = {
 	playing: boolean
@@ -151,9 +152,11 @@ const Cards = styled.div`
 
 const CardC = styled.div`
 	position: absolute;
-	transition: all 0.1s;
 	left: 0;
 	top: 0;
+	${optionalAnimation(css`
+		transition: all 0.1s;
+	`)}
 `
 
 const CardButton = styled(Button)`
@@ -197,15 +200,41 @@ const popIn = keyframes`
 	}
 `
 
+const popInWithNoAnimation = keyframes`
+	0% {
+		opacity: 1;
+		transform: translate(0, -50vh) scale(0.75);
+	}
+	99% {
+		opacity: 1;
+		transform: translate(0, -50vh) scale(0.75);
+	}
+	100% {
+		opacity: 0;
+		transform: translate(0, -0.5rem) scale(0.3);
+	}
+`
+
 const DiffAnim = styled.div`
 	position: absolute;
 	z-index: 3;
 	left: 0;
 	top: 0;
-	animation-name: ${popIn};
-	animation-duration: 1500ms;
-	animation-timing-function: ease-out;
-	animation-fill-mode: forwards;
+
+	${optionalAnimation(
+		css`
+			animation-name: ${popIn};
+			animation-duration: 1500ms;
+			animation-timing-function: ease-out;
+			animation-fill-mode: forwards;
+		`,
+		css`
+			animation-name: ${popInWithNoAnimation};
+			animation-duration: 1500ms;
+			animation-timing-function: ease-out;
+			animation-fill-mode: forwards;
+		`,
+	)}
 
 	text-transform: none;
 

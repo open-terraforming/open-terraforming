@@ -2,7 +2,7 @@
  * This is required for Theme to be strongly typed in styled-components.
  */
 
-import * as theme from '@/styles'
+import * as theme from '@/styles/theme'
 
 type ThemeInterface = Readonly<typeof theme>
 

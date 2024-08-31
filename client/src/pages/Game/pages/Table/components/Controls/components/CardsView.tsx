@@ -4,7 +4,7 @@ import { CardsLookupApi } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import { rgba } from 'polished'
 import { useEffect, useRef, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 import { CardView } from '../../CardView/CardView'
 
 type Props = {
@@ -20,6 +20,7 @@ export const CardsView = ({
 	play = false,
 	openable = true,
 }: Props) => {
+	const theme = useTheme()
 	const dispatch = useAppDispatch()
 	const playing = useAppStore((state) => state.game.playing)
 	const [mounted, setMounted] = useState(false)
@@ -70,7 +71,11 @@ export const CardsView = ({
 									? width / 2 +
 										(display - i - 1 - (display - 1) / 2) * cardWidth
 									: width / 2,
-							transition: open ? 'all 0.5s' : 'all 0.1s',
+							transition: theme.animations.enabled
+								? open
+									? 'all 0.5s'
+									: 'all 0.1s'
+								: undefined,
 							bottom: open && !opening ? 20 : -10,
 							opacity: open && !opening ? 1 : 0,
 						}}

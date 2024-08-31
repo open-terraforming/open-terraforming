@@ -12,22 +12,34 @@ import { ApiErrorMessage } from './components/ApiErrorMessage'
 import { defaultTheme } from '@/themes/defaultTheme'
 import { greenTheme } from '@/themes/greenTheme'
 import { redTheme } from '@/themes/redTheme'
+import { SoundController } from './components/SoundController'
+
+const THEME_MAP = {
+	default: defaultTheme,
+	green: greenTheme,
+	red: redTheme,
+}
 
 export const App = () => {
 	const apiState = useAppStore((state) => state.api.state)
 	const dispatch = useAppDispatch()
 	const theme = useAppStore((state) => state.settings.data.theme)
 
+	const enableAnimations = useAppStore(
+		(state) => state.settings.data.enableAnimations,
+	)
+
 	const themeData = useMemo(() => {
-		switch (theme) {
-			case 'green':
-				return greenTheme
-			case 'red':
-				return redTheme
-			default:
-				return defaultTheme
+		const themeValues = (theme && THEME_MAP[theme]) || defaultTheme
+
+		return {
+			...themeValues,
+			animations: {
+				...themeValues.animations,
+				enabled: enableAnimations,
+			},
 		}
-	}, [theme])
+	}, [theme, enableAnimations])
 
 	// Load settings from localStorage
 	useEffect(() => {
@@ -45,6 +57,7 @@ export const App = () => {
 				{apiState === ApiState.Joined && <Game />}
 
 				<ApiErrorMessage />
+				<SoundController />
 			</AppContainer>
 		</ThemeProvider>
 	)

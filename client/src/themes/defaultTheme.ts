@@ -1,4 +1,4 @@
-import * as theme from '@/styles'
+import * as theme from '@/styles/theme'
 
 export type Theme = typeof theme
 
