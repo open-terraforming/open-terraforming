@@ -61,6 +61,12 @@ export class GamesStorage {
 	}
 
 	async list() {
+		try {
+			await stat(this.settings.path)
+		} catch {
+			return []
+		}
+
 		const files = await readdir(this.settings.path, { withFileTypes: true })
 
 		return await Promise.all(
