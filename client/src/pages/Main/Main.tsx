@@ -7,6 +7,7 @@ import { ApiState, setApiInfo, setApiState } from '@/store/modules/api'
 import {
 	faArrowRight,
 	faCog,
+	faInfo,
 	faPlusCircle,
 	faSearch,
 	faSync,
@@ -19,6 +20,8 @@ import { GamesListModal } from './components/GamesListModal'
 import { NewGameModal } from './components/NewGameModal'
 import { SettingsModal } from './components/SettingsModal'
 import { Footer } from './components/Footer'
+import { DialogButton } from '@/components/DialogButton/DialogButton'
+import { AboutModal } from '@/components/AboutModal/AboutModal'
 
 export const Main = () => {
 	const dispatch = useDispatch()
@@ -103,6 +106,14 @@ export const Main = () => {
 							)}
 						</DialogWrapper>
 
+						<DialogWrapper dialog={(close) => <CardsViewer onClose={close} />}>
+							{(open) => (
+								<Button onClick={open} icon={faSearch}>
+									Cards viewer
+								</Button>
+							)}
+						</DialogWrapper>
+
 						<DialogWrapper
 							dialog={(close) => <SettingsModal onClose={close} />}
 						>
@@ -113,13 +124,12 @@ export const Main = () => {
 							)}
 						</DialogWrapper>
 
-						<DialogWrapper dialog={(close) => <CardsViewer onClose={close} />}>
-							{(open) => (
-								<Button onClick={open} icon={faSearch}>
-									Cards viewer
-								</Button>
-							)}
-						</DialogWrapper>
+						<DialogButton
+							dialog={(close) => <AboutModal onClose={close} />}
+							icon={faInfo}
+						>
+							About
+						</DialogButton>
 					</Menu>
 				)}
 
