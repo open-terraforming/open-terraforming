@@ -3,11 +3,21 @@ import { GameInfo } from '@shared/extra'
 
 type State = Readonly<typeof initialState>
 
-let sessions = {} as Record<string, string | undefined>
+type SavedSessionInfo = {
+	name: string
+	generation: number
+	finished: boolean
+	session: string
+	lastUpdateAt: number
+}
+
+const SESSIONS_STORAGE_KEY = 'ot-saved-sessions'
+
+let sessions = {} as Record<string, SavedSessionInfo>
 
 try {
 	if (localStorage['sessions']) {
-		sessions = JSON.parse(localStorage['sessions'])
+		sessions = JSON.parse(localStorage[SESSIONS_STORAGE_KEY])
 	}
 } catch {
 	sessions = {}
@@ -25,7 +35,9 @@ export default (state = initialState, action: Actions): State => {
 	switch (action.type) {
 		case SET_CLIENT_STATE: {
 			if (action.state.sessions) {
-				localStorage['sessions'] = JSON.stringify(action.state.sessions)
+				localStorage[SESSIONS_STORAGE_KEY] = JSON.stringify(
+					action.state.sessions,
+				)
 			}
 
 			return {
