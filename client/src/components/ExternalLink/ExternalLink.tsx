@@ -6,11 +6,17 @@ import styled from 'styled-components'
 type Props = {
 	href: string
 	children: ReactNode
+	className?: string
 }
 
-export const ExternalLink = ({ href, children }: Props) => {
+export const ExternalLink = ({ href, children, className }: Props) => {
 	return (
-		<Container href={href} target="_blank" rel="noreferrer">
+		<Container
+			className={className}
+			href={href}
+			target="_blank"
+			rel="noreferrer"
+		>
 			<FontAwesomeIcon icon={faExternalLinkAlt} />
 			{children}
 		</Container>

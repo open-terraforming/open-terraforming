@@ -1,6 +1,7 @@
 import { AboutModal } from '@/components/AboutModal/AboutModal'
 import { CardsViewer } from '@/components/CardsViewer/CardsViewer'
 import { DialogButton } from '@/components/DialogButton/DialogButton'
+import { ExternalLink } from '@/components/ExternalLink/ExternalLink'
 import { Modal } from '@/components/Modal/Modal'
 import { SettingsModal } from '@/pages/Main/components/SettingsModal'
 import { faCog, faInfo, faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -31,9 +32,21 @@ export const IngameMenuModal = ({ onClose }: Props) => {
 			>
 				About
 			</MenuButton>
+
+			<StyledLink href="https://github.com/open-terraforming/open-terraforming/issues/new?assignees=SkaceKamen&labels=bug&projects=&template=bug_report.md&title=">
+				Report a bug
+			</StyledLink>
 		</Modal>
 	)
 }
+
+const StyledLink = styled(ExternalLink)`
+	width: 100%;
+	display: flex;
+	box-sizing: border-box;
+	margin: 1.5rem 0 0.25rem 0;
+	justify-content: center;
+`
 
 const MenuButton = styled(DialogButton)`
 	display: block;
