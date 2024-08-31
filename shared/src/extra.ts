@@ -30,4 +30,7 @@ export interface ServerInfo {
 		enabled: boolean
 		max: number
 	}
+	publicGames: {
+		enabled: boolean
+	}
 }

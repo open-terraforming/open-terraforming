@@ -35,6 +35,9 @@ export const globalConfig = {
 			parseDuration(process.env.OT_STORAGE_CLEAN_INTERVAL ?? '1d') ??
 			raise('OT_STORAGE_CLEAN_INTERVAL has incorrect value'),
 	},
+	publicGames: {
+		enabled: (process.env.OT_PUBLIC_GAMES_ENABLED ?? 'true') === 'true',
+	},
 	staticPath: process.env.OT_STATIC_PATH ?? join(__dirname, '..', 'static'),
 	everybodyIsAdmin: process.env.OT_EVERYBODY_IS_ADMIN === 'true',
 }

@@ -111,15 +111,17 @@ export const Main = () => {
 							)}
 						</DialogWrapper>
 
-						<DialogWrapper
-							dialog={(close) => <GamesListModal onClose={close} />}
-						>
-							{(open) => (
-								<Button onClick={open} icon={faList}>
-									Join game
-								</Button>
-							)}
-						</DialogWrapper>
+						{info.publicGames.enabled && (
+							<DialogWrapper
+								dialog={(close) => <GamesListModal onClose={close} />}
+							>
+								{(open) => (
+									<Button onClick={open} icon={faList}>
+										Join game
+									</Button>
+								)}
+							</DialogWrapper>
+						)}
 
 						<DialogWrapper dialog={(close) => <CardsViewer onClose={close} />}>
 							{(open) => (
