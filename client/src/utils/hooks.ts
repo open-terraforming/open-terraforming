@@ -263,3 +263,11 @@ export const useChange = (effect: EffectCallback, deps?: DependencyList) => {
 		}
 	}, deps)
 }
+
+export const useToggle = (initial = false) => {
+	const [state, setState] = useState(initial)
+
+	const toggle = useCallback(() => setState((s) => !s), [])
+
+	return [state, toggle, setState] as const
+}
