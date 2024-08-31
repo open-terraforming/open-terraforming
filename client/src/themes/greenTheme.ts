@@ -1,4 +1,4 @@
-import { buildColors } from '@/styles/colors'
+import { buildColors } from '@/styles/theme/colors'
 import { defaultTheme, Theme } from './defaultTheme'
 import { lighten } from 'polished'
 

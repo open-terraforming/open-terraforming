@@ -6,13 +6,14 @@ import { help } from '@/i18n/en/help'
 import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { useMemo, useState } from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { CardPickerHeader } from './components/CardPickerHeader'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { optionalAnimation } from '@/styles/optionalAnimation'
 
 export enum PickerType {
 	Cards,
@@ -210,8 +211,10 @@ const PopIn = keyframes`
 `
 
 const PopInContainer = styled.div`
-	animation-name: ${PopIn};
-	animation-duration: 300ms;
-	animation-fill-mode: forwards;
-	opacity: 0;
+	${optionalAnimation(css`
+		animation-name: ${PopIn};
+		animation-duration: 300ms;
+		animation-fill-mode: forwards;
+		opacity: 0;
+	`)}
 `

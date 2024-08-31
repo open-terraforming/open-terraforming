@@ -5,6 +5,9 @@ const initialData = {
 	hiddenHelp: {} as Record<string, boolean>,
 	theme: 'default' as undefined | 'default' | 'green' | 'red',
 	enableBrowserNotifications: true,
+	enableAudio: true,
+	audioVolume: 1,
+	enableAnimations: true,
 	cardImagesUrl: undefined as string | undefined,
 }
 

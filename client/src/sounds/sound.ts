@@ -1,4 +1,5 @@
 export class GameSound {
+	private enabled = true
 	audio: HTMLAudioElement[]
 
 	constructor(urls: string[]) {
@@ -20,7 +21,25 @@ export class GameSound {
 		})
 	}
 
+	setEnabled(enabled: boolean) {
+		this.enabled = enabled
+
+		this.audio.forEach((audio) => {
+			audio.muted = !enabled
+		})
+	}
+
+	setVolume(volume: number) {
+		this.audio.forEach((audio) => {
+			audio.volume = Math.min(1, Math.max(0, volume))
+		})
+	}
+
 	play() {
+		if (!this.enabled) {
+			return
+		}
+
 		const audio =
 			this.audio[Math.round(Math.random() * (this.audio.length - 1))]
 

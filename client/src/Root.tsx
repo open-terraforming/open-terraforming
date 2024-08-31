@@ -1,8 +1,7 @@
-import * as styles from '@/styles'
 import isPropValid from '@emotion/is-prop-valid'
 import { useCallback, useMemo } from 'react'
 import { Provider } from 'react-redux'
-import { StyleSheetManager, ThemeProvider } from 'styled-components'
+import { StyleSheetManager } from 'styled-components'
 import { ApiContextProvider } from './context/ApiContext'
 import { EventsContextProvider } from './context/EventsContext'
 import { LocaleContextProvider } from './context/LocaleContext'
@@ -23,9 +22,7 @@ const RootComponent = () => {
 				<LocaleContextProvider language={'en'}>
 					<ApiContextProvider>
 						<EventsContextProvider>
-							<ThemeProvider theme={styles}>
-								<App />
-							</ThemeProvider>
+							<App />
 						</EventsContextProvider>
 					</ApiContextProvider>
 				</LocaleContextProvider>

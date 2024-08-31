@@ -1,7 +1,8 @@
 import { CardCategory } from '@shared/cards'
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 import { Tag } from '../../../../CardView/components/Tag'
+import { optionalAnimation } from '@/styles/optionalAnimation'
 
 export type TagCount = { tag: CardCategory; count: number }
 
@@ -11,6 +12,7 @@ type Props = {
 }
 
 export const HoverTags = ({ tags, open }: Props) => {
+	const theme = useTheme()
 	const [opened, setOpened] = useState(open)
 	const [closing, setClosing] = useState(false)
 	const [mounted, setMounted] = useState(false)
@@ -19,11 +21,14 @@ export const HoverTags = ({ tags, open }: Props) => {
 		if (!open && !closing) {
 			setClosing(true)
 
-			setTimeout(() => {
-				setMounted(false)
-				setClosing(false)
-				setOpened(false)
-			}, 200)
+			setTimeout(
+				() => {
+					setMounted(false)
+					setClosing(false)
+					setOpened(false)
+				},
+				theme.animations.enabled ? 200 : 1,
+			)
 		} else {
 			if (!closing) {
 				setOpened(open)
@@ -61,7 +66,11 @@ const Container = styled.div`
 	background-color: ${({ theme }) => theme.colors.background};
 	border: 0.2rem solid ${({ theme }) => theme.colors.border};
 
-	transition: all 0.2s;
+	${optionalAnimation(
+		() => css`
+			transition: all 0.2s;
+		`,
+	)}
 `
 
 const Count = styled.div`

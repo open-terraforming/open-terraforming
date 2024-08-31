@@ -1,5 +1,6 @@
 import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
+import { Switch } from '@/components/Switch/Switch'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { ChangeEvent } from 'react'
 import styled from 'styled-components'
@@ -13,23 +14,32 @@ export const SettingsModal = ({ onClose }: Props) => {
 
 	const settings = useAppStore((state) => state.settings.data)
 
-	const handleThemeChange = (e: ChangeEvent<HTMLSelectElement>) => {
-		dispatch({
-			type: 'SET_SETTINGS',
-			data: {
-				theme: e.target.value,
-			},
-		})
-	}
+	const handleSettingsChange =
+		(key: keyof typeof settings, asNumber = false) =>
+		(e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+			dispatch({
+				type: 'SET_SETTINGS',
+				data: {
+					[key]:
+						e.target.type === 'checkbox'
+							? e.target.checked
+							: asNumber
+								? +e.target.value
+								: e.target.value,
+				},
+			})
+		}
 
-	const handleNotificationsChange = (e: ChangeEvent<HTMLInputElement>) => {
-		dispatch({
-			type: 'SET_SETTINGS',
-			data: {
-				enableBrowserNotifications: e.target.checked,
-			},
-		})
-	}
+	const handleSettingsRawChange =
+		<TKey extends keyof typeof settings>(key: TKey) =>
+		(value: (typeof settings)[TKey]) => {
+			dispatch({
+				type: 'SET_SETTINGS',
+				data: {
+					[key]: value,
+				},
+			})
+		}
 
 	return (
 		<Modal
@@ -39,21 +49,48 @@ export const SettingsModal = ({ onClose }: Props) => {
 			contentStyle={{ minWidth: '20rem' }}
 		>
 			<FormContainer>
-				<label className="with-checkbox field">
+				<Flex className="field">
+					<label>Browser notifications</label>
+					<Switch
+						value={settings.enableBrowserNotifications}
+						onChange={handleSettingsRawChange('enableBrowserNotifications')}
+					/>
+				</Flex>
+
+				<Flex className="field">
+					<label>Animations</label>
+					<Switch
+						value={settings.enableAnimations}
+						onChange={handleSettingsRawChange('enableAnimations')}
+					/>
+				</Flex>
+
+				<Flex className="field">
+					<label>Audio</label>
+					<Switch
+						value={settings.enableAudio}
+						onChange={handleSettingsRawChange('enableAudio')}
+					/>
+				</Flex>
+
+				<Flex className="field">
+					<label>Volume</label>
 					<input
-						type="checkbox"
-						checked={
-							settings.enableBrowserNotifications === true ||
-							settings.enableBrowserNotifications === undefined
-						}
-						onChange={handleNotificationsChange}
-					/>{' '}
-					Browser notifications
-				</label>
+						type="range"
+						min={0}
+						max={1}
+						step={0.1}
+						value={settings.audioVolume}
+						onChange={handleSettingsChange('audioVolume', true)}
+					/>
+				</Flex>
 
 				<Flex className="field">
 					<label>Theme</label>
-					<select value={settings.theme} onChange={handleThemeChange}>
+					<select
+						value={settings.theme}
+						onChange={handleSettingsChange('theme')}
+					>
 						<option value="default">Default</option>
 						<option value="green">Green</option>
 						<option value="red">Red</option>
@@ -82,9 +119,13 @@ const FormContainer = styled.div`
 	.field {
 		margin: 1rem 0;
 
+		label {
+			flex: 1;
+		}
+
 		select,
 		input {
-			width: 100%;
+			flex: 2;
 			box-sizing: border-box;
 		}
 	}

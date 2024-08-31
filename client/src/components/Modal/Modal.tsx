@@ -10,9 +10,10 @@ import {
 	useState,
 } from 'react'
 import ReactDOM from 'react-dom'
-import styled, { css, keyframes } from 'styled-components'
+import styled, { css, keyframes, useTheme } from 'styled-components'
 import { Body, Footer, Header } from './styles'
 import { media } from '@/styles/media'
+import { optionalAnimation } from '@/styles/optionalAnimation'
 
 type Keyframes = ReturnType<typeof keyframes>
 
@@ -56,6 +57,7 @@ export const Modal = ({
 	hideClose = false,
 	closeIcon,
 }: ModalProps) => {
+	const theme = useTheme()
 	const [isClosing, setIsClosing] = useState(false)
 
 	const [closingAnimation, setClosingAnimation] = useState(
@@ -74,9 +76,13 @@ export const Modal = ({
 			setClosingAnimation(animation)
 			setIsClosing(true)
 
-			setTimeout(() => {
+			if (theme.animations.enabled) {
+				setTimeout(() => {
+					onClose?.()
+				}, 150)
+			} else {
 				onClose?.()
-			}, 150)
+			}
 		}
 	}
 
@@ -172,7 +178,7 @@ const PopupBackground = styled.div<{ closing?: boolean }>`
 	z-index: 999;
 	align-items: flex-start;
 
-	${(props) =>
+	${optionalAnimation((props) =>
 		props.closing
 			? css`
 					animation-name: ${bgOut};
@@ -184,7 +190,8 @@ const PopupBackground = styled.div<{ closing?: boolean }>`
 					animation-name: ${bgIn};
 					animation-duration: 150ms;
 					animation-timing-function: ease-out;
-				`}
+				`,
+	)}
 `
 
 const popIn = keyframes`
@@ -238,7 +245,7 @@ const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 		margin-bottom: 0;
 	}
 
-	${(props) =>
+	${optionalAnimation((props) =>
 		props.closing
 			? css`
 					animation-name: ${props.closeAnimation || popOut};
@@ -250,7 +257,8 @@ const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 					animation-name: ${popIn};
 					animation-duration: 150ms;
 					animation-timing-function: ease-out;
-				`}
+				`,
+	)}
 `
 
 const Dialog = styled.div`

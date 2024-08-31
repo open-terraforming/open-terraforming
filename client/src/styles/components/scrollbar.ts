@@ -1,5 +1,5 @@
 import { css } from 'styled-components'
-import colors from '../colors'
+import colors from '../theme/colors'
 import { media } from '../media'
 
 export default css`
