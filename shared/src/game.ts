@@ -1,4 +1,4 @@
-import { CardCategory } from './cards'
+import { CardCategory, CardSymbol } from './cards'
 import { CompetitionType } from './competitions'
 import { MilestoneType } from './milestones'
 import { GameModeType } from './modes/types'
@@ -86,6 +86,11 @@ export interface GameState {
 	prelude: boolean
 	preludeCards: string[]
 	preludeDiscarded: string[]
+
+	/** Currently active colonies */
+	colonies: string[]
+	/** Shuffled colonies in draft */
+	colonyCards: string[]
 
 	draft: boolean
 
@@ -384,4 +389,40 @@ export interface ProgressMilestoneItem {
 	type: ProgressMilestoneType
 	value: number
 	used: boolean
+}
+
+export interface ColonyState {
+	code: string
+	step: 0
+	/** IDS of players at steps indicated by the array index */
+	playersAtSteps: number[]
+	/** If the colony can be colonized and has production */
+	active: boolean
+}
+
+export interface Colony {
+	code: string
+	colonizeBonus: ColonyBonus[]
+	incomeBonus: ColonyBonus
+	income: ColonyIncome
+	activationCallback?: (ctx: { state: GameState; colony: ColonyState }) => void
+}
+
+export interface ColonyBonus {
+	description?: string
+	symbols: CardSymbol[]
+	perform: (ctx: ColonyCallbackContext) => void
+}
+
+export interface ColonyIncome {
+	description?: string
+	slots: CardSymbol[]
+	symbols: CardSymbol[]
+	perform: (ctx: ColonyCallbackContext) => void
+}
+
+export interface ColonyCallbackContext {
+	game: GameState
+	player: PlayerGameState
+	colony: ColonyState
 }
