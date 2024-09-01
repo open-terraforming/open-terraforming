@@ -4,4 +4,4 @@ static
 storage
 .cache
 
-.env
+.env.local
