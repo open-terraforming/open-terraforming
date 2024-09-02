@@ -1,3 +1,4 @@
+import { CardResource } from './cards'
 import { PlacementState } from './placements'
 
 export enum PlayerActionType {
@@ -11,6 +12,7 @@ export enum PlayerActionType {
 	SponsorCompetition,
 	PickStarting,
 	SolarPhaseTerraform,
+	AddCardResource,
 }
 
 export const placeTileAction = (state: PlacementState, anonymous = false) =>
@@ -85,6 +87,15 @@ export const solarPhaseTerraformAction = () =>
 		type: PlayerActionType.SolarPhaseTerraform,
 	}) as const
 
+export const addCardResourceAction = (
+	cardResource: CardResource,
+	amount: number,
+) =>
+	({
+		type: PlayerActionType.AddCardResource,
+		data: { cardResource, amount },
+	}) as const
+
 export type PlayerAction =
 	| ReturnType<typeof placeTileAction>
 	| ReturnType<typeof pickCardsAction>
@@ -95,3 +106,4 @@ export type PlayerAction =
 	| ReturnType<typeof draftCardAction>
 	| ReturnType<typeof pickStartingAction>
 	| ReturnType<typeof solarPhaseTerraformAction>
+	| ReturnType<typeof addCardResourceAction>

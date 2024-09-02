@@ -404,7 +404,7 @@ export interface Colony {
 	code: string
 	colonizeBonus: ColonyBonus[]
 	incomeBonus: ColonyBonus
-	income: ColonyIncome
+	tradeIncome: ColonyIncome
 	activationCallback?: (ctx: { state: GameState; colony: ColonyState }) => void
 }
 

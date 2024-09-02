@@ -1,4 +1,4 @@
-import { CardEffectArgumentType, GameProgress } from './cards'
+import { CardEffectArgumentType, CardResource, GameProgress } from './cards'
 import { CompetitionType } from './competitions'
 import { GameInfo } from './extra'
 import { GameState, GridCellLocation, StandardProjectType } from './game'
@@ -63,6 +63,7 @@ export enum MessageType {
 	DraftCard,
 	PickStarting,
 	SolarPhaseTerraform,
+	AddCardResource,
 }
 
 export const handshakeRequest = (version: string) =>
@@ -277,6 +278,12 @@ export const solarPhaseTerraform = (progress: GameProgress) =>
 		data: { progress },
 	}) as const
 
+export const addCardResource = (cardResource: CardResource, amount: number) =>
+	({
+		type: MessageType.AddCardResource,
+		data: { cardResource, amount },
+	}) as const
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -307,3 +314,4 @@ export type GameMessage =
 	| ReturnType<typeof draftCard>
 	| ReturnType<typeof pickStarting>
 	| ReturnType<typeof solarPhaseTerraform>
+	| ReturnType<typeof addCardResource>
