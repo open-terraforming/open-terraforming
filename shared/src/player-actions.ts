@@ -13,6 +13,7 @@ export enum PlayerActionType {
 	PickStarting,
 	SolarPhaseTerraform,
 	AddCardResource,
+	DiscardCards,
 }
 
 export const placeTileAction = (state: PlacementState, anonymous = false) =>
@@ -96,6 +97,12 @@ export const addCardResourceAction = (
 		data: { cardResource, amount },
 	}) as const
 
+export const discardCardsAction = (count: number) =>
+	({
+		type: PlayerActionType.DiscardCards,
+		data: { count },
+	}) as const
+
 export type PlayerAction =
 	| ReturnType<typeof placeTileAction>
 	| ReturnType<typeof pickCardsAction>
@@ -107,3 +114,4 @@ export type PlayerAction =
 	| ReturnType<typeof pickStartingAction>
 	| ReturnType<typeof solarPhaseTerraformAction>
 	| ReturnType<typeof addCardResourceAction>
+	| ReturnType<typeof discardCardsAction>

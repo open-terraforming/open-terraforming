@@ -1,34 +1,47 @@
 import { GameMessage, MessageType } from '@shared/actions'
 import { Player } from '../player'
 import { PlayerBaseAction } from './action'
+import { AddCardResourceAction } from './actions/add-card-resource-action'
 import { AdminChangeAction } from './actions/admin-change'
 import { AdminLoginAction } from './actions/admin-login'
 import { BuyCardAction } from './actions/buy-card'
 import { BuyMilestoneAction } from './actions/buy-milestone'
 import { BuyStandardProjectAction } from './actions/buy-standard-project'
 import { ClaimTileAction } from './actions/claim-tile'
+import { DiscardCardsAction } from './actions/discard-cards'
 import { DraftCardAction } from './actions/draft-card'
 import { KickPlayerAction } from './actions/kick-player'
 import { PassAction } from './actions/pass'
 import { PickCardsAction } from './actions/pick-cards'
 import { PickColorAction } from './actions/pick-color'
-import { PickStartingAction } from './actions/pick-starting'
 import { PickPreludesAction } from './actions/pick-preludes'
+import { PickStartingAction } from './actions/pick-starting'
 import { PlaceTileAction } from './actions/place-tile'
 import { PlayCardAction } from './actions/play-card'
+import { SolarPhaseTerraform } from './actions/solar-phase-terraform'
 import { SponsorCompetitionAction } from './actions/sponsor-competition'
 import { StartGameAction } from './actions/start-game'
 import { ToggleReadyAction } from './actions/toggle-ready'
-import { SolarPhaseTerraform } from './actions/solar-phase-terraform'
 
 export class PlayerActions {
 	player: Player
-	actions: Record<number, PlayerBaseAction>
+	actions: Record<MessageType, PlayerBaseAction | null>
 
 	constructor(player: Player) {
 		this.player = player
 
 		this.actions = {
+			[MessageType.JoinRequest]: null,
+			[MessageType.JoinResponse]: null,
+			[MessageType.HandshakeRequest]: null,
+			[MessageType.HandshakeResponse]: null,
+			[MessageType.ServerMessage]: null,
+			[MessageType.GameStateUpdate]: null,
+			[MessageType.Kicked]: null,
+			[MessageType.SpectateRequest]: null,
+			[MessageType.SpectateResponse]: null,
+			// TODO: Unused?
+			[MessageType.SellCard]: null,
 			[MessageType.PlayerReady]: new ToggleReadyAction(this.player),
 			[MessageType.PickStarting]: new PickStartingAction(this.player),
 			[MessageType.PickCards]: new PickCardsAction(this.player),
@@ -52,15 +65,19 @@ export class PlayerActions {
 			[MessageType.PlayerPass]: new PassAction(this.player),
 			[MessageType.DraftCard]: new DraftCardAction(this.player),
 			[MessageType.SolarPhaseTerraform]: new SolarPhaseTerraform(this.player),
+			[MessageType.AddCardResource]: new AddCardResourceAction(this.player),
+			[MessageType.DiscardCards]: new DiscardCardsAction(this.player),
 		}
 	}
 
 	perform(action: GameMessage) {
-		if (!this.actions[action.type]) {
+		const actionLogic = this.actions[action.type]
+
+		if (!actionLogic) {
 			throw new Error(`Unknown action ${MessageType[action.type]}`)
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		return this.actions[action.type].tryPerform((action as any).data)
+		return actionLogic.tryPerform((action as any).data)
 	}
 }
