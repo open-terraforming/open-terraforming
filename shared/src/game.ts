@@ -88,7 +88,7 @@ export interface GameState {
 	preludeDiscarded: string[]
 
 	/** Currently active colonies */
-	colonies: string[]
+	colonies: ColonyState[]
 	/** Shuffled colonies in draft */
 	colonyCards: string[]
 
@@ -393,7 +393,7 @@ export interface ProgressMilestoneItem {
 
 export interface ColonyState {
 	code: string
-	step: 0
+	step: number
 	/** IDS of players at steps indicated by the array index */
 	playersAtSteps: number[]
 	/** If the colony can be colonized and has production */

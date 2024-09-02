@@ -5,6 +5,10 @@ import { PlayerColors } from '@shared/player-colors'
 import { shuffle } from '@shared/utils'
 import { BaseGameState } from './base-game-state'
 import { randomPlayerColor } from '@shared/utils/colors'
+import { ExpansionType } from '@shared/expansions/types'
+import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
+import { hasExpansion } from '@shared/utils/hasExpansion'
+import { initialColonyState } from '@shared/colonies/states'
 
 export class StartingGameState extends BaseGameState {
 	name = GameStateValue.Starting
@@ -71,6 +75,13 @@ export class StartingGameState extends BaseGameState {
 		this.state.expansions.forEach((e) => {
 			Expansions[e].initialize(this.state)
 		})
+
+		// Initialize colonies if the expansion is enabled
+		if (hasExpansion(this.game.state, ExpansionType.Colonies)) {
+			this.game.state.colonies = shuffle(this.game.state.colonyCards.slice())
+				.slice(0, 5)
+				.map((code) => initialColonyState(ColoniesLookupApi.get(code)))
+		}
 
 		// Start picking corporations or whatever the mode desires
 		if (this.game.mode.onGameStart) {
