@@ -1,7 +1,8 @@
+import { discardCardsAction } from '@shared/player-actions'
 import { Resource, SymbolType } from '../cards'
 import { PLAYER_RESOURCE_TO_PRODUCTION } from '../constants'
 import { Colony, GridCellContent } from '../game'
-import { drawCard, drawCards, range } from '../utils'
+import { drawCard, drawCards, pushPendingAction, range } from '../utils'
 import { colonyDrawCardsBonus } from './bonuses/colonyDrawCardsBonus'
 import { colonyResourceBonus } from './bonuses/colonyResourceBonus'
 import { colonyTileBonus } from './bonuses/colonyTileBonus'
@@ -114,9 +115,10 @@ export const baseColonies: Colony[] = [
 				{ symbol: SymbolType.Card },
 			],
 			perform: ({ game, player }) => {
+				// Draw 1 card
 				player.cards.push(drawCard(game))
-				// TODO: Implement discard card action:
-				// pushPendingAction(player, discardCardAction)
+				// Discard 1 card
+				pushPendingAction(player, discardCardsAction(1))
 			},
 		},
 		colonizeBonus: range(0, 3).map(() => colonyDrawCardsBonus(2)),
