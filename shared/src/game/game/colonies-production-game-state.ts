@@ -8,6 +8,7 @@ export class ColoniesProductionGameState extends BaseGameState {
 		for (const colony of this.game.state.colonies) {
 			if (colony.active) {
 				colony.step++
+				colony.currentlyTradingPlayer = undefined
 			}
 		}
 	}
