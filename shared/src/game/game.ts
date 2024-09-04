@@ -48,6 +48,7 @@ import { deepExtend } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
 import { StateMachine } from '@shared/lib/state-machine'
 import { Logger } from '@shared/lib/logger'
+import { ColoniesProductionGameState } from './game/colonies-production-game-state'
 
 export interface GameConfig {
 	lockSystem: GameLockSystem
@@ -157,6 +158,7 @@ export class Game {
 			.addState(new DraftGameState(this))
 			.addState(new PreludeGameState(this))
 			.addState(new SolarPhaseGameState(this))
+			.addState(new ColoniesProductionGameState(this))
 
 		this.sm.setState(GameStateValue.WaitingForPlayers)
 	}

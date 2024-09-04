@@ -29,6 +29,8 @@ export enum GameStateValue {
 	Prelude,
 	/** After production phase this phase allows the current player to increase one progress */
 	SolarPhase,
+	/** After solar phase or at the end of generation, colonies increase one step */
+	ColoniesProduction,
 }
 
 export enum PlayerStateValue {
