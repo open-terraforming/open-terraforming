@@ -65,6 +65,7 @@ export enum MessageType {
 	SolarPhaseTerraform,
 	AddCardResource,
 	DiscardCards,
+	TradeWithColony,
 }
 
 export const handshakeRequest = (version: string) =>
@@ -291,6 +292,12 @@ export const discardCards = (cardIndexes: number[]) =>
 		data: { cardIndexes },
 	}) as const
 
+export const tradeWithColony = (colonyIndex: number) =>
+	({
+		type: MessageType.TradeWithColony,
+		data: { colonyIndex },
+	}) as const
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -323,3 +330,4 @@ export type GameMessage =
 	| ReturnType<typeof solarPhaseTerraform>
 	| ReturnType<typeof addCardResource>
 	| ReturnType<typeof discardCards>
+	| ReturnType<typeof tradeWithColony>

@@ -407,8 +407,11 @@ export interface ColonyState {
 
 export interface Colony {
 	code: string
+	/** Bonus player receives when they build colony on this colony */
 	colonizeBonus: ColonyBonus[]
+	/** Income all players with colonies on this colony receive when somebody trades with the colony */
 	incomeBonus: ColonyBonus
+	/** Income player receives when they trade with the colony */
 	tradeIncome: ColonyIncome
 	activationCallback?: (ctx: { game: GameState; colony: ColonyState }) => void
 }
