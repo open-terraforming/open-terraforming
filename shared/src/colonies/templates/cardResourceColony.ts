@@ -51,7 +51,8 @@ export const cardResourceColony = ({
 				)
 
 				if (usedCards.some((c) => c.resource === cardResource)) {
-					colony.step = 2
+					// TODO: Is this step correct for all cards?
+					colony.step = 1
 					colony.active = true
 
 					return
