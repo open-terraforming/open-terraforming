@@ -407,7 +407,7 @@ export interface Colony {
 	colonizeBonus: ColonyBonus[]
 	incomeBonus: ColonyBonus
 	tradeIncome: ColonyIncome
-	activationCallback?: (ctx: { state: GameState; colony: ColonyState }) => void
+	activationCallback?: (ctx: { game: GameState; colony: ColonyState }) => void
 }
 
 export interface ColonyBonus {

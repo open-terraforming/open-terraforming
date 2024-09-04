@@ -1,8 +1,8 @@
-import { CardResource, SymbolType } from '../../cards'
-import { colony } from '../utils'
-import { colonyCardResourceBonus } from '../bonuses/colonyCardResourceBonus'
+import { CardResource, CardsLookupApi, SymbolType } from '../../cards'
 import { addCardResourceAction } from '../../player-actions'
-import { range, pushPendingAction } from '../../utils'
+import { pushPendingAction, range } from '../../utils'
+import { colonyCardResourceBonus } from '../bonuses/colonyCardResourceBonus'
+import { colony } from '../utils'
 
 type Params = {
 	code: string
@@ -43,5 +43,19 @@ export const cardResourceColony = ({
 					addCardResourceAction(cardResource, tradeIncome[colony.step]),
 				)
 			},
+		},
+		activationCallback: ({ game, colony }) => {
+			for (const player of game.players) {
+				const usedCards = player.usedCards.map((c) =>
+					CardsLookupApi.get(c.code),
+				)
+
+				if (usedCards.some((c) => c.resource === cardResource)) {
+					colony.step = 2
+					colony.active = true
+
+					return
+				}
+			}
 		},
 	})
