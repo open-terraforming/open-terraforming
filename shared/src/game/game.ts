@@ -49,6 +49,7 @@ import { MyEvent } from '@shared/utils/events'
 import { StateMachine } from '@shared/lib/state-machine'
 import { Logger } from '@shared/lib/logger'
 import { ColoniesProductionGameState } from './game/colonies-production-game-state'
+import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
 
 export interface GameConfig {
 	lockSystem: GameLockSystem
@@ -439,6 +440,15 @@ export class Game {
 			}
 
 			this.currentProgress[progress] = value
+		}
+
+		for (const colony of this.state.colonies) {
+			if (!colony.active) {
+				ColoniesLookupApi.get(colony.code).activationCallback?.({
+					game: this.state,
+					colony,
+				})
+			}
 		}
 	}
 
