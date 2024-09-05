@@ -18,7 +18,12 @@ export const newGameValidator = object({
 	name: size(string(), 3, 20),
 	mode: enums([GameModeType.Beginner, GameModeType.Standard]),
 	expansions: array(
-		enums([ExpansionType.Base, ExpansionType.Prelude, ExpansionType.Venus]),
+		enums([
+			ExpansionType.Base,
+			ExpansionType.Prelude,
+			ExpansionType.Venus,
+			ExpansionType.Colonies,
+		]),
 	),
 	bots: max(min(integer(), 0), 4),
 	public: optional(boolean()),

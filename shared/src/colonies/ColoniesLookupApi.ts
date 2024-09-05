@@ -12,9 +12,10 @@ export class ColoniesLookupApi {
 	static get data(): Map<string, Colony> {
 		if (!this.map || this.mapSourceLength !== COLONIES_LIST.length) {
 			this.map = new Map(COLONIES_LIST.map((c) => [c.code, c]))
+			this.mapSourceLength = COLONIES_LIST.length
 		}
 
-		return this.data
+		return this.map
 	}
 
 	static get(code: string): Colony {

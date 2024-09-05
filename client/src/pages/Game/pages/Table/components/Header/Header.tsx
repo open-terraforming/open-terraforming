@@ -5,6 +5,9 @@ import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
+import { DialogButton } from '@/components/DialogButton/DialogButton'
+import { ColoniesModal } from '../ColoniesModal/ColoniesModal'
+import { Flex } from '@/components/Flex/Flex'
 
 export const Header = () => {
 	const game = useGameState()
@@ -14,37 +17,46 @@ export const Header = () => {
 	return (
 		<>
 			<E>
-				<DialogWrapper dialog={(close) => <MilestonesModal onClose={close} />}>
-					{(open) => (
-						<StyledButton noClip onClick={open}>
-							<Counter>
-								{milestones.length}/{game.milestonesLimit}
-							</Counter>
-							<span>Milestones</span>
-						</StyledButton>
-					)}
-				</DialogWrapper>
-				<DialogWrapper
-					dialog={(close) => <StandardProjectModal onClose={close} />}
-				>
-					{(open) => (
-						<StandardButton noClip onClick={open}>
-							Standard projects
-						</StandardButton>
-					)}
-				</DialogWrapper>
-				<DialogWrapper
-					dialog={(close) => <CompetitionsModal onClose={close} />}
-				>
-					{(open) => (
-						<StyledButton noClip onClick={open}>
-							<span>Competitions</span>
-							<Counter>
-								{competitions.length}/{game.competitionsLimit}
-							</Counter>
-						</StyledButton>
-					)}
-				</DialogWrapper>
+				<Flex align="flex-start">
+					<DialogWrapper
+						dialog={(close) => <MilestonesModal onClose={close} />}
+					>
+						{(open) => (
+							<StyledButton noClip onClick={open}>
+								<Counter>
+									{milestones.length}/{game.milestonesLimit}
+								</Counter>
+								<span>Milestones</span>
+							</StyledButton>
+						)}
+					</DialogWrapper>
+					<DialogWrapper
+						dialog={(close) => <StandardProjectModal onClose={close} />}
+					>
+						{(open) => (
+							<StandardButton noClip onClick={open}>
+								Standard projects
+							</StandardButton>
+						)}
+					</DialogWrapper>
+					<DialogWrapper
+						dialog={(close) => <CompetitionsModal onClose={close} />}
+					>
+						{(open) => (
+							<StyledButton noClip onClick={open}>
+								<span>Competitions</span>
+								<Counter>
+									{competitions.length}/{game.competitionsLimit}
+								</Counter>
+							</StyledButton>
+						)}
+					</DialogWrapper>
+				</Flex>
+				<Flex justify="center">
+					<DialogButton dialog={(close) => <ColoniesModal onClose={close} />}>
+						Colonies
+					</DialogButton>
+				</Flex>
 			</E>
 			<HeaderEventDisplay />
 		</>
@@ -56,9 +68,7 @@ const E = styled.div`
 	left: 50%;
 	top: 0;
 	z-index: 2;
-	display: flex;
 	transform: translate(-50%, 0);
-	align-items: flex-start;
 	transition: transform 0.5s;
 `
 
