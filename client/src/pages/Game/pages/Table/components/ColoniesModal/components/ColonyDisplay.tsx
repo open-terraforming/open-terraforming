@@ -8,6 +8,7 @@ import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { useAppStore } from '@/utils/hooks'
 import { darken } from 'polished'
+import { canTradeWithColony, isFail, isOk } from '@shared/utils'
 
 type Props = {
 	index: number
@@ -15,9 +16,17 @@ type Props = {
 }
 
 export const ColonyDisplay = ({ index, colony }: Props) => {
-	const players = useAppStore((s) => s.game.state.players)
+	const game = useAppStore((s) => s.game.state)
+	const player = useAppStore((s) => s.game.player)
+	const players = game.players
 	const info = ColoniesLookupApi.get(colony.code)
 	const api = useApi()
+
+	const canTrade = canTradeWithColony({
+		player,
+		game,
+		colony,
+	})
 
 	const handleColonize = () => {
 		api.send(colonizeColony(index))
@@ -35,7 +44,11 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 					<Action onClick={handleColonize}>
 						<Symbols symbols={[{ resource: 'money', count: 17 }]} /> Colonize
 					</Action>
-					<Action onClick={handleTrade}>
+					<Action
+						disabled={!isOk(canTrade)}
+						tooltip={isFail(canTrade) ? canTrade.error : undefined}
+						onClick={handleTrade}
+					>
 						<Symbols symbols={[{ resource: 'money', count: 9 }]} />
 						Trade
 					</Action>

@@ -393,3 +393,10 @@ export const getPlayerIndex = (game: GameState, playerId: number) =>
 export const mod = (n: number, m: number) => {
 	return ((n % m) + m) % m
 }
+
+export * from './canTradeWithColony'
+export * from './ok'
+export * from './okOrFail'
+export * from './fail'
+export * from './isOk'
+export * from './isFail'

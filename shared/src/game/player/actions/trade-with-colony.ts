@@ -1,8 +1,9 @@
 import { tradeWithColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
-import { canAffordTradeWithColony } from '@shared/utils/canAffordTradeWithColony'
+import { canTradeWithColony } from '@shared/utils/canTradeWithColony'
 import { PlayerBaseAction } from '../action'
+import { isFail } from '@shared/utils/isFail'
 
 type Args = ReturnType<typeof tradeWithColony>['data']
 
@@ -13,30 +14,14 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 	perform({ colonyIndex }: Args): void {
 		const colony = this.game.colonies[colonyIndex]
 
-		if (!colony.active) {
-			throw new Error('Colony is not active')
-		}
+		const check = canTradeWithColony({
+			player: this.player,
+			game: this.game,
+			colony,
+		})
 
-		if (typeof colony.currentlyTradingPlayer === 'number') {
-			throw new Error('Colony is already trading')
-		}
-
-		const usedFleets = this.game.colonies.filter(
-			(c) => c.currentlyTradingPlayer === this.playerIndex,
-		).length
-
-		if (this.player.tradeFleets <= usedFleets) {
-			throw new Error('Player has no trade fleets left')
-		}
-
-		if (
-			!canAffordTradeWithColony({
-				player: this.player,
-				game: this.game,
-				colony,
-			})
-		) {
-			throw new Error('Player cannot afford to trade')
+		if (isFail(check)) {
+			throw new Error(check.error)
 		}
 
 		const colonyData = ColoniesLookupApi.get(colony.code)
@@ -60,7 +45,7 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 		// TODO: Is this correct?
 		colony.step = Math.max(2, colony.playersAtSteps.length)
 
-		this.player.money -= 9
+		this.player.money -= check.value.cost
 
 		this.actionPlayed()
 	}
