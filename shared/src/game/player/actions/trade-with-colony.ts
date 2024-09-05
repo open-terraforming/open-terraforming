@@ -1,9 +1,8 @@
 import { tradeWithColony } from '@shared/actions'
-import { GameStateValue, PlayerStateValue } from '@shared/game'
-import { PlayerBaseAction } from '../action'
 import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
-import { getPlayerIndex } from '@shared/utils'
+import { GameStateValue, PlayerStateValue } from '@shared/game'
 import { canAffordTradeWithColony } from '@shared/utils/canAffordTradeWithColony'
+import { PlayerBaseAction } from '../action'
 
 type Args = ReturnType<typeof tradeWithColony>['data']
 
@@ -20,6 +19,10 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 
 		if (typeof colony.currentlyTradingPlayer === 'number') {
 			throw new Error('Colony is already trading')
+		}
+
+		if (colony.playersAtSteps.includes(this.playerIndex)) {
+			throw new Error('Player already has a colony on this colony')
 		}
 
 		if (
@@ -48,7 +51,7 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 			player: this.player,
 		})
 
-		colony.currentlyTradingPlayer = getPlayerIndex(this.game, this.player.id)
+		colony.currentlyTradingPlayer = this.playerIndex
 		// Returns the colony indicator to the left
 		// TODO: Is this correct?
 		colony.step = Math.max(2, colony.playersAtSteps.length)

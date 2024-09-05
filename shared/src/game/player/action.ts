@@ -6,7 +6,7 @@ import {
 	CardEffectArgumentType,
 } from '@shared/cards'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
-import { f } from '@shared/utils'
+import { f, getPlayerIndex } from '@shared/utils'
 import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
 
@@ -24,6 +24,10 @@ export abstract class PlayerBaseAction<Args = unknown> {
 
 	get game() {
 		return this.parent.game.state
+	}
+
+	get playerIndex() {
+		return getPlayerIndex(this.game, this.player.id)
 	}
 
 	parent: Player
