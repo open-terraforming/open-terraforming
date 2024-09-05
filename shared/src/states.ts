@@ -104,4 +104,5 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	victoryPoints: [],
 	pendingActions: [],
 	protectedHabitat: false,
+	tradeFleets: 1,
 })

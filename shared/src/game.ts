@@ -317,6 +317,9 @@ export interface PlayerState {
 
 	/** Protects plants/microbes/animals */
 	protectedHabitat: boolean
+
+	/** Number of available trade fleets */
+	tradeFleets: number
 }
 
 export enum VictoryPointsSource {

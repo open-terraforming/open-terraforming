@@ -22,6 +22,11 @@ export class ColonizeColonyAction extends PlayerBaseAction<Args> {
 			throw new Error('Colony already full')
 		}
 
+		// TODO: There will be exceptions to this
+		if (colony.playersAtSteps.includes(this.playerIndex)) {
+			throw new Error('Player already has a colony here')
+		}
+
 		if (!canAffordColonize({ player: this.player, game: this.game, colony })) {
 			throw new Error('Player cannot afford to colonize')
 		}

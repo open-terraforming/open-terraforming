@@ -26,8 +26,14 @@ export abstract class PlayerBaseAction<Args = unknown> {
 		return this.parent.game.state
 	}
 
+	private _playerIndex: number | undefined
+
 	get playerIndex() {
-		return getPlayerIndex(this.game, this.player.id)
+		if (this._playerIndex !== undefined) {
+			return this._playerIndex
+		}
+
+		return (this._playerIndex = getPlayerIndex(this.game, this.player.id))
 	}
 
 	parent: Player

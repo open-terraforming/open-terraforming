@@ -21,8 +21,12 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 			throw new Error('Colony is already trading')
 		}
 
-		if (colony.playersAtSteps.includes(this.playerIndex)) {
-			throw new Error('Player already has a colony on this colony')
+		const usedFleets = this.game.colonies.filter(
+			(c) => c.currentlyTradingPlayer === this.playerIndex,
+		).length
+
+		if (this.player.tradeFleets <= usedFleets) {
+			throw new Error('Player has no trade fleets left')
 		}
 
 		if (
