@@ -1,4 +1,4 @@
-import { Button } from '@/components'
+import { Button, Tooltip } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { useApi } from '@/context/ApiContext'
 import { colonizeColony, tradeWithColony } from '@shared/actions'
@@ -7,6 +7,7 @@ import { ColonyState } from '@shared/game'
 import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { useAppStore } from '@/utils/hooks'
+import { darken } from 'polished'
 
 type Props = {
 	index: number
@@ -72,8 +73,22 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 				{info.tradeIncome.slots.map((s, i) => (
 					<Slot key={i}>
 						<SlotBonus>
-							{info.colonizeBonus[i] && (
-								<Symbols symbols={info.colonizeBonus[i].symbols} />
+							{colony.playersAtSteps[i] !== undefined ? (
+								<Tooltip content={players[colony.playersAtSteps[i]].name}>
+									<PlayerColony
+										style={{
+											backgroundColor: players[colony.playersAtSteps[i]].color,
+											borderColor: darken(
+												0.2,
+												players[colony.playersAtSteps[i]].color,
+											),
+										}}
+									/>
+								</Tooltip>
+							) : (
+								info.colonizeBonus[i] && (
+									<Symbols symbols={info.colonizeBonus[i].symbols} />
+								)
 							)}
 						</SlotBonus>
 						<SlotLabel>
@@ -85,6 +100,12 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 		</Container>
 	)
 }
+
+const PlayerColony = styled.div`
+	width: 1rem;
+	height: 1rem;
+	border: 2px solid #000;
+`
 
 const Container = styled.div`
 	border: 2px solid ${({ theme }) => theme.colors.border};

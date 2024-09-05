@@ -52,5 +52,7 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 		// Returns the colony indicator to the left
 		// TODO: Is this correct?
 		colony.step = Math.max(2, colony.playersAtSteps.length)
+
+		this.actionPlayed()
 	}
 }

@@ -44,5 +44,7 @@ export class ColonizeColonyAction extends PlayerBaseAction<Args> {
 				player: this.player,
 			})
 		}
+
+		this.actionPlayed()
 	}
 }
