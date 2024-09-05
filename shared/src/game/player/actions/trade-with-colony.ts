@@ -53,6 +53,8 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 		// TODO: Is this correct?
 		colony.step = Math.max(2, colony.playersAtSteps.length)
 
+		this.player.money -= 9
+
 		this.actionPlayed()
 	}
 }

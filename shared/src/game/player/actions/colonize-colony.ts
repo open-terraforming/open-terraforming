@@ -45,6 +45,8 @@ export class ColonizeColonyAction extends PlayerBaseAction<Args> {
 			})
 		}
 
+		this.player.money -= 17
+
 		this.actionPlayed()
 	}
 }
