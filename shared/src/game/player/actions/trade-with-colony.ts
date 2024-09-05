@@ -3,10 +3,11 @@ import { GameStateValue, PlayerStateValue } from '@shared/game'
 import { PlayerBaseAction } from '../action'
 import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
 import { getPlayerIndex } from '@shared/utils'
+import { canAffordTradeWithColony } from '@shared/utils/canAffordTradeWithColony'
 
 type Args = ReturnType<typeof tradeWithColony>['data']
 
-export class TradeWithColony extends PlayerBaseAction<Args> {
+export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
@@ -17,8 +18,18 @@ export class TradeWithColony extends PlayerBaseAction<Args> {
 			throw new Error('Colony is not active')
 		}
 
-		if (colony.currentlyTradingPlayer) {
+		if (typeof colony.currentlyTradingPlayer === 'number') {
 			throw new Error('Colony is already trading')
+		}
+
+		if (
+			!canAffordTradeWithColony({
+				player: this.player,
+				game: this.game,
+				colony,
+			})
+		) {
+			throw new Error('Player cannot afford to trade')
 		}
 
 		const colonyData = ColoniesLookupApi.get(colony.code)

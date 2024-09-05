@@ -22,7 +22,8 @@ import { SolarPhaseTerraform } from './actions/solar-phase-terraform'
 import { SponsorCompetitionAction } from './actions/sponsor-competition'
 import { StartGameAction } from './actions/start-game'
 import { ToggleReadyAction } from './actions/toggle-ready'
-import { TradeWithColony } from './actions/trade-with-colony'
+import { TradeWithColonyAction } from './actions/trade-with-colony'
+import { ColonizeColonyAction } from './actions/colonize-colony'
 
 export class PlayerActions {
 	player: Player
@@ -68,7 +69,8 @@ export class PlayerActions {
 			[MessageType.SolarPhaseTerraform]: new SolarPhaseTerraform(this.player),
 			[MessageType.AddCardResource]: new AddCardResourceAction(this.player),
 			[MessageType.DiscardCards]: new DiscardCardsAction(this.player),
-			[MessageType.TradeWithColony]: new TradeWithColony(this.player),
+			[MessageType.TradeWithColony]: new TradeWithColonyAction(this.player),
+			[MessageType.ColonizeColony]: new ColonizeColonyAction(this.player),
 		}
 	}
 

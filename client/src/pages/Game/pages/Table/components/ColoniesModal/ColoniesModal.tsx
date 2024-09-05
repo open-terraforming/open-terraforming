@@ -11,8 +11,8 @@ export const ColoniesModal = ({ onClose }: Props) => {
 
 	return (
 		<Modal header="Colonies" onClose={onClose} open>
-			{colonies.map((colony) => (
-				<ColonyDisplay key={colony.code} colony={colony} />
+			{colonies.map((colony, index) => (
+				<ColonyDisplay key={colony.code} index={index} colony={colony} />
 			))}
 		</Modal>
 	)

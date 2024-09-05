@@ -65,6 +65,7 @@ export enum MessageType {
 	SolarPhaseTerraform,
 	AddCardResource,
 	DiscardCards,
+	ColonizeColony,
 	TradeWithColony,
 }
 
@@ -292,6 +293,12 @@ export const discardCards = (cardIndexes: number[]) =>
 		data: { cardIndexes },
 	}) as const
 
+export const colonizeColony = (colonyIndex: number) =>
+	({
+		type: MessageType.ColonizeColony,
+		data: { colonyIndex },
+	}) as const
+
 export const tradeWithColony = (colonyIndex: number) =>
 	({
 		type: MessageType.TradeWithColony,
@@ -330,4 +337,5 @@ export type GameMessage =
 	| ReturnType<typeof solarPhaseTerraform>
 	| ReturnType<typeof addCardResource>
 	| ReturnType<typeof discardCards>
+	| ReturnType<typeof colonizeColony>
 	| ReturnType<typeof tradeWithColony>
