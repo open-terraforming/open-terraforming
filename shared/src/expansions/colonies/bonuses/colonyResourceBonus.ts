@@ -1,5 +1,5 @@
 import { Resource } from '@shared/cards'
-import { colonyBonus } from '../utils'
+import { colonyBonus } from '../templates/colonyBonus'
 
 export const colonyResourceBonus = (resource: Resource, count: number) =>
 	colonyBonus({

@@ -1,7 +1,8 @@
 import { tradeWithColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { canTradeWithColonyUsingResource } from '@shared/expansions/colonies/utils'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
-import { canTradeWithColonyUsingResource, isFailure } from '@shared/utils'
+import { isFailure } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
 
 type Args = ReturnType<typeof tradeWithColony>['data']
@@ -46,8 +47,7 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 
 		colony.currentlyTradingPlayer = this.playerIndex
 		// Returns the colony indicator to the left
-		// TODO: Is this correct?
-		colony.step = Math.max(2, colony.playersAtSteps.length)
+		colony.step = Math.max(0, colony.playersAtSteps.length)
 
 		this.player[check.value.resource] -= check.value.cost
 

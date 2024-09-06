@@ -4,15 +4,16 @@ import { useApi } from '@/context/ApiContext'
 import { useAppStore, useToggle } from '@/utils/hooks'
 import { colonizeColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
-import { ColonyState } from '@shared/game'
 import {
 	canColonizeColony,
 	canTradeWithColony,
-	isFailure,
-	isOk,
-} from '@shared/utils'
+	getColonyTradeCostSymbols,
+} from '@shared/expansions/colonies/utils'
+import { ColonyState } from '@shared/game'
+import { isFailure, isOk } from '@shared/utils'
 import { darken } from 'polished'
-import styled from 'styled-components'
+import { Fragment } from 'react'
+import styled, { css } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { ColonyTradeModal } from './ColonyTradeModal'
 
@@ -89,7 +90,7 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 			<Slots>
 				{info.tradeIncome.slots.map((s, i) => (
 					<Slot key={i}>
-						<SlotRect>
+						<SlotRect $isStarting={i === (info.startingStep ?? 1)}>
 							{colony.playersAtSteps[i] !== undefined ? (
 								<Tooltip content={players[colony.playersAtSteps[i]].name}>
 									<PlayerColony
@@ -107,9 +108,8 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 									<Symbols symbols={info.colonizeBonus[i].symbols} />
 								)
 							)}
-							{i === colony.step && <SlotIndicator />}
 						</SlotRect>
-						<SlotLabel>
+						<SlotLabel $isCurrent={i === colony.step}>
 							<Symbols symbols={[s]} />
 						</SlotLabel>
 					</Slot>
@@ -124,9 +124,12 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 					noClip
 				>
 					<Flex>
-						<Symbols symbols={[{ resource: 'money', count: 9 }]} /> /{' '}
-						<Symbols symbols={[{ resource: 'energy', count: 3 }]} /> /{' '}
-						<Symbols symbols={[{ resource: 'titan', count: 3 }]} />
+						{getColonyTradeCostSymbols({ player, game, colony }).map((s, i) => (
+							<Fragment key={i}>
+								{i !== 0 && ' / '}
+								<Symbols symbols={[s]} />
+							</Fragment>
+						))}
 						Trade
 					</Flex>
 				</Action>{' '}
@@ -173,7 +176,7 @@ const Action = styled(Button)`
 	padding: 0.1rem 0.5rem;
 `
 
-const SlotRect = styled.div`
+const SlotRect = styled.div<{ $isStarting?: boolean }>`
 	border: 2px solid ${({ theme }) => theme.colors.border};
 	border-right-width: 0;
 	width: 3rem;
@@ -182,6 +185,12 @@ const SlotRect = styled.div`
 	align-items: center;
 	justify-content: center;
 	position: relative;
+
+	${({ $isStarting, theme }) =>
+		$isStarting &&
+		css`
+			background-color: ${darken(0.05, theme.colors.border)};
+		`}
 `
 
 const Slot = styled.div`
@@ -194,17 +203,17 @@ const Slots = styled(Flex)`
 	padding: 0 0.5rem;
 `
 
-const SlotLabel = styled.div``
+const SlotLabel = styled.div<{ $isCurrent: boolean }>`
+	margin-left: 2px;
+	margin-top: 2px;
+
+	${({ $isCurrent, theme }) =>
+		$isCurrent &&
+		css`
+			background-color: ${theme.colors.border};
+		`}
+`
 
 const Info = styled(Flex)`
 	padding: 0.5rem;
-`
-
-const SlotIndicator = styled.div`
-	position: absolute;
-	top: 0rem;
-	right: 0rem;
-	width: 0.5rem;
-	height: 0.5rem;
-	background-color: #bbb;
 `

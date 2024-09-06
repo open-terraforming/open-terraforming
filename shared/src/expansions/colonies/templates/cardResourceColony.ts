@@ -2,7 +2,7 @@ import { CardResource, SymbolType, CardsLookupApi } from '@shared/cards'
 import { addCardResourceAction } from '@shared/player-actions'
 import { range, pushPendingAction } from '@shared/utils'
 import { colonyCardResourceBonus } from '../bonuses/colonyCardResourceBonus'
-import { colony } from '../utils'
+import { colony } from './colony'
 
 type Params = {
 	code: string
@@ -10,6 +10,7 @@ type Params = {
 	incomeBonus: number
 	colonizeBonus: number
 	tradeIncome: number[]
+	startingStep?: number
 }
 
 /**
@@ -21,6 +22,7 @@ export const cardResourceColony = ({
 	incomeBonus,
 	colonizeBonus,
 	tradeIncome,
+	startingStep = 1,
 }: Params) =>
 	colony({
 		code,
@@ -52,7 +54,7 @@ export const cardResourceColony = ({
 
 				if (usedCards.some((c) => c.resource === cardResource)) {
 					// TODO: Is this step correct for all cards?
-					colony.step = 1
+					colony.step = startingStep
 					colony.active = true
 
 					return

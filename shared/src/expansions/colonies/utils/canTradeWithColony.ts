@@ -1,8 +1,8 @@
 import { ColonyState, GameState, PlayerState } from '@shared/game'
-import { getPlayerIndex } from '.'
-import { failure } from './failure'
-import { ok } from './ok'
-import { OkOrFailure } from './okOrFailure'
+import { getPlayerIndex } from '../../../utils'
+import { failure } from '../../../utils/failure'
+import { ok } from '../../../utils/ok'
+import { OkOrFailure } from '../../../utils/okOrFailure'
 
 type Params = {
 	game: GameState

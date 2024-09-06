@@ -8,7 +8,7 @@ import { colonyResourceBonus } from './bonuses/colonyResourceBonus'
 import { colonyTileBonus } from './bonuses/colonyTileBonus'
 import { cardResourceColony } from './templates/cardResourceColony'
 import { resourceColony } from './templates/resourceColony'
-import { colony } from './utils'
+import { colony } from './templates/colony'
 
 const PLUTO_INCOMES = [0, 1, 2, 2, 3, 3, 4]
 

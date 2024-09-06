@@ -3,8 +3,12 @@ import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { tradeWithColony } from '@shared/actions'
+import {
+	canTradeWithColonyUsingResource,
+	getColonyTradeCostSymbols,
+} from '@shared/expansions/colonies/utils'
 import { ColonyState } from '@shared/game'
-import { canTradeWithColonyUsingResource, isFailure } from '@shared/utils'
+import { isFailure } from '@shared/utils'
 import { Symbols } from '../../CardView/components/Symbols'
 
 type Props = {
@@ -12,12 +16,6 @@ type Props = {
 	colony: ColonyState
 	onClose: () => void
 }
-
-const TRADE_OPTIONS = [
-	{ resource: 'money', cost: 9 },
-	{ resource: 'energy', cost: 3 },
-	{ resource: 'titan', cost: 3 },
-] as const
 
 export const ColonyTradeModal = ({ colony, colonyIndex, onClose }: Props) => {
 	const api = useApi()
@@ -29,11 +27,18 @@ export const ColonyTradeModal = ({ colony, colonyIndex, onClose }: Props) => {
 		onClose()
 	}
 
+	const tradeOptions = getColonyTradeCostSymbols({ player, game, colony }).map(
+		(s) => ({
+			resource: s.resource as 'money' | 'titan' | 'energy',
+			symbols: [s],
+		}),
+	)
+
 	return (
 		<Modal header="Trade" open onClose={onClose}>
 			<p>Trade with {colony.code}</p>
 
-			{TRADE_OPTIONS.map(({ resource, cost }) => (
+			{tradeOptions.map(({ resource, symbols }) => (
 				<Button
 					key={resource}
 					onClick={handleTrade(resource)}
@@ -46,7 +51,7 @@ export const ColonyTradeModal = ({ colony, colonyIndex, onClose }: Props) => {
 						}),
 					)}
 				>
-					Use <Symbols symbols={[{ resource, count: cost }]} />
+					Use <Symbols symbols={symbols} />
 				</Button>
 			))}
 		</Modal>

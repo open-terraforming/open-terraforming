@@ -1,7 +1,7 @@
 import { CardResource } from '@shared/cards'
 import { addCardResourceAction } from '@shared/player-actions'
 import { pushPendingAction } from '@shared/utils'
-import { colonyBonus } from '../utils'
+import { colonyBonus } from '../templates/colonyBonus'
 
 export const colonyCardResourceBonus = (
 	cardResource: CardResource,

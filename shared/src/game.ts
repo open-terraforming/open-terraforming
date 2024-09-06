@@ -320,6 +320,9 @@ export interface PlayerState {
 
 	/** Number of available trade fleets */
 	tradeFleets: number
+
+	/** Change of standard colony trade cost */
+	colonyTradeMoneyCostChange?: number
 }
 
 export enum VictoryPointsSource {
@@ -416,7 +419,10 @@ export interface Colony {
 	incomeBonus: ColonyBonus
 	/** Income player receives when they trade with the colony */
 	tradeIncome: ColonyIncome
+	/** Logic for activation - makes colony not active at the start */
 	activationCallback?: (ctx: { game: GameState; colony: ColonyState }) => void
+	/** Override default starting step (=1) */
+	startingStep?: number
 }
 
 export interface ColonyBonus {

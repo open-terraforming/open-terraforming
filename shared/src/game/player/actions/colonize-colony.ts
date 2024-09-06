@@ -1,8 +1,9 @@
 import { colonizeColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
-import { canColonizeColony, getPlayerIndex, isOk } from '@shared/utils'
+import { getPlayerIndex, isOk } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
+import { canColonizeColony } from '../../../expansions/colonies/utils'
 
 type Args = ReturnType<typeof colonizeColony>['data']
 

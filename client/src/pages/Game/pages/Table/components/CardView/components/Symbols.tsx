@@ -23,15 +23,15 @@ const symbolToIcon = (s: CardSymbol) => {
 			case SymbolType.Card:
 				return <Card />
 			case SymbolType.Minus:
-				return '-'
+				return <TextSymbol>-</TextSymbol>
 			case SymbolType.Plus:
-				return '+'
+				return <TextSymbol>+</TextSymbol>
 			case SymbolType.Slash:
-				return '/'
+				return <TextSymbol>/</TextSymbol>
 			case SymbolType.Colon:
-				return ':'
+				return <TextSymbol>:</TextSymbol>
 			case SymbolType.Equal:
-				return '='
+				return <TextSymbol>=</TextSymbol>
 			case SymbolType.X:
 				return <XSymbol>X</XSymbol>
 			case SymbolType.RightArrow:
@@ -117,6 +117,10 @@ export const Symbols = ({ symbols, className }: Props) => {
 const E = styled.div`
 	display: flex;
 	justify-content: center;
+`
+
+const TextSymbol = styled.span`
+	font-weight: bold;
 `
 
 const S = styled.div<{

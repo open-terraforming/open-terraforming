@@ -1,5 +1,5 @@
 import { Resource } from '@shared/cards'
-import { colonyBonus } from '../utils'
+import { colonyBonus } from '../templates/colonyBonus'
 import { PLAYER_RESOURCE_TO_PRODUCTION } from '@shared/constants'
 
 export const colonyResourceProductionBonus = (
