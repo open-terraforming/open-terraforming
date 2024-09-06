@@ -16,6 +16,8 @@ import { Fragment } from 'react'
 import styled, { css } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { ColonyTradeModal } from './ColonyTradeModal'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCaretUp } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
 	index: number
@@ -77,13 +79,20 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 					</Flex>
 				</div>
 				<div style={{ marginLeft: 'auto' }}>
-					<div>Current step: {colony.step}</div>
-					<div>
-						Trading with:{' '}
-						{typeof colony.currentlyTradingPlayer === 'number'
-							? players[colony.currentlyTradingPlayer].name
-							: 'nobody'}
-					</div>
+					{typeof colony.currentlyTradingPlayer === 'number' && (
+						<Tooltip content="Currently docked trade fleet">
+							<FleetDisplay>
+								<FleetIcon
+									style={{
+										color: players[colony.currentlyTradingPlayer].color,
+									}}
+								>
+									<FontAwesomeIcon icon={faCaretUp} />
+								</FleetIcon>
+								{players[colony.currentlyTradingPlayer].name}
+							</FleetDisplay>
+						</Tooltip>
+					)}
 				</div>
 			</Info>
 
@@ -216,4 +225,15 @@ const SlotLabel = styled.div<{ $isCurrent: boolean }>`
 
 const Info = styled(Flex)`
 	padding: 0.5rem;
+`
+
+const FleetDisplay = styled.div`
+	margin-left: auto;
+	text-align: center;
+	border: 2px solid ${({ theme }) => theme.colors.border};
+	padding: 0.25rem;
+`
+
+const FleetIcon = styled.div`
+	font-size: 200%;
 `

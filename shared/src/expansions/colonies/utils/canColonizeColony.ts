@@ -20,20 +20,20 @@ export const canColonizeColony = ({
 	}
 
 	if (colony.playersAtSteps.length >= 3) {
-		return failure('Colony already full')
+		return failure('Colony is already full')
 	}
 
 	const playerIndex = getPlayerIndex(game, player.id)
 
 	// TODO: There will be exceptions to this
 	if (colony.playersAtSteps.includes(playerIndex)) {
-		return failure('Player already has a colony here')
+		return failure('You already have a colony here')
 	}
 
 	const cost = 17
 
 	if (player.money <= cost) {
-		return failure('Player cannot afford to colonize')
+		return failure('You cannot afford to colonize')
 	}
 
 	return ok({ cost })

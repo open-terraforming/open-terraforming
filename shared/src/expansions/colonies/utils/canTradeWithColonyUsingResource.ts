@@ -33,7 +33,7 @@ export const canTradeWithColonyUsingResource = ({
 	}
 
 	if (player[resource] < cost[resource]) {
-		return failure('Player has not enough resources')
+		return failure('You do not have enough resources')
 	}
 
 	return ok({ cost: cost[resource], resource })

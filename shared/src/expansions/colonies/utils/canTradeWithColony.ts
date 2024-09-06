@@ -30,7 +30,7 @@ export const canTradeWithColony = ({
 	).length
 
 	if (player.tradeFleets <= usedFleets) {
-		return failure('Player has no trade fleets left')
+		return failure("You don't have any trade fleets left")
 	}
 
 	return ok()
