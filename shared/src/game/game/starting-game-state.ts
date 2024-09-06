@@ -78,8 +78,13 @@ export class StartingGameState extends BaseGameState {
 
 		// Initialize colonies if the expansion is enabled
 		if (hasExpansion(this.game.state, ExpansionType.Colonies)) {
+			const colonyCount =
+				this.game.state.players.length <= 2
+					? this.game.state.players.length + 3
+					: this.game.state.players.length + 2
+
 			this.game.state.colonies = shuffle(this.game.state.colonyCards.slice())
-				.slice(0, 5)
+				.slice(0, colonyCount)
 				.map((code) => initialColonyState(ColoniesLookupApi.get(code)))
 		}
 
