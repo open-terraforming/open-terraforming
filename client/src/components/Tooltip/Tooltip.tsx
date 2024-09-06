@@ -140,6 +140,7 @@ const Trigger = styled.span``
 
 const Container = styled.div<{ disableStyle?: boolean }>`
 	position: absolute;
+	z-index: 999999;
 
 	${(props) =>
 		!props.disableStyle &&
