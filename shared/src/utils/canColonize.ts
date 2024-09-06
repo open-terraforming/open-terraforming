@@ -10,7 +10,7 @@ type Params = {
 	colony: ColonyState
 }
 
-export const canTradeWithColony = ({
+export const canColonize = ({
 	player,
 	game,
 	colony,
@@ -19,24 +19,21 @@ export const canTradeWithColony = ({
 		return failure('Colony is not active')
 	}
 
-	if (typeof colony.currentlyTradingPlayer === 'number') {
-		return failure('Colony is already trading')
+	if (colony.playersAtSteps.length >= 3) {
+		return failure('Colony already full')
 	}
 
 	const playerIndex = getPlayerIndex(game, player.id)
 
-	const usedFleets = game.colonies.filter(
-		(c) => c.currentlyTradingPlayer === playerIndex,
-	).length
-
-	if (player.tradeFleets <= usedFleets) {
-		return failure('Player has no trade fleets left')
+	// TODO: There will be exceptions to this
+	if (colony.playersAtSteps.includes(playerIndex)) {
+		return failure('Player already has a colony here')
 	}
 
-	const cost = 9
+	const cost = 17
 
 	if (player.money <= cost) {
-		return failure('Player cannot afford to trade')
+		return failure('Player cannot afford to colonize')
 	}
 
 	return ok({ cost })

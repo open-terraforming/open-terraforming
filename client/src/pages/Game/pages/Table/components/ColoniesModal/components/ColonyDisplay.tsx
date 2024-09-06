@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { useAppStore } from '@/utils/hooks'
 import { darken } from 'polished'
-import { canTradeWithColony, isFail, isOk } from '@shared/utils'
+import { canTradeWithColony, isFailure, isOk } from '@shared/utils'
 
 type Props = {
 	index: number
@@ -46,7 +46,7 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 					</Action>
 					<Action
 						disabled={!isOk(canTrade)}
-						tooltip={isFail(canTrade) ? canTrade.error : undefined}
+						tooltip={isFailure(canTrade) ? canTrade.error : undefined}
 						onClick={handleTrade}
 					>
 						<Symbols symbols={[{ resource: 'money', count: 9 }]} />

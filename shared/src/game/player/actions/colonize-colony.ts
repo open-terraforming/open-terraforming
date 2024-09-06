@@ -1,9 +1,9 @@
 import { colonizeColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
-import { getPlayerIndex } from '@shared/utils'
+import { getPlayerIndex, isOk } from '@shared/utils'
+import { canColonize } from '@shared/utils/canColonize'
 import { PlayerBaseAction } from '../action'
-import { canAffordColonize } from '@shared/utils/canAffordColonize'
 
 type Args = ReturnType<typeof colonizeColony>['data']
 
@@ -14,21 +14,14 @@ export class ColonizeColonyAction extends PlayerBaseAction<Args> {
 	perform({ colonyIndex }: Args): void {
 		const colony = this.game.colonies[colonyIndex]
 
-		if (!colony.active) {
-			throw new Error('Colony is not active')
-		}
+		const check = canColonize({
+			game: this.game,
+			player: this.player,
+			colony,
+		})
 
-		if (colony.playersAtSteps.length >= 3) {
-			throw new Error('Colony already full')
-		}
-
-		// TODO: There will be exceptions to this
-		if (colony.playersAtSteps.includes(this.playerIndex)) {
-			throw new Error('Player already has a colony here')
-		}
-
-		if (!canAffordColonize({ player: this.player, game: this.game, colony })) {
-			throw new Error('Player cannot afford to colonize')
+		if (!isOk(check)) {
+			throw new Error(check.error)
 		}
 
 		const colonyData = ColoniesLookupApi.get(colony.code)
@@ -50,7 +43,7 @@ export class ColonizeColonyAction extends PlayerBaseAction<Args> {
 			})
 		}
 
-		this.player.money -= 17
+		this.player.money -= check.value.cost
 
 		this.actionPlayed()
 	}

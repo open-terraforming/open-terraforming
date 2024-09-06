@@ -396,7 +396,7 @@ export const mod = (n: number, m: number) => {
 
 export * from './canTradeWithColony'
 export * from './ok'
-export * from './okOrFail'
-export * from './fail'
+export * from './okOrFailure'
+export * from './failure'
 export * from './isOk'
-export * from './isFail'
+export * from './isFailure'

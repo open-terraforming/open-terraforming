@@ -1,3 +1,3 @@
-export type OkOrFail<TValue, TError> =
+export type OkOrFailure<TValue, TError> =
 	| { ok: true; value: TValue }
 	| { ok: false; error: TError }
