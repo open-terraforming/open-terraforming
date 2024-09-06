@@ -3,7 +3,7 @@ import { Flex } from '@/components/Flex/Flex'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore, useToggle } from '@/utils/hooks'
 import { colonizeColony } from '@shared/actions'
-import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { ColonyState } from '@shared/game'
 import {
 	canColonizeColony,

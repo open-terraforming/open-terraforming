@@ -1,5 +1,5 @@
 import { colonizeColony } from '@shared/actions'
-import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
 import { canColonizeColony, getPlayerIndex, isOk } from '@shared/utils'
 import { PlayerBaseAction } from '../action'

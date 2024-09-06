@@ -1,8 +1,8 @@
-import { Resource, SymbolType } from '../../cards'
 import { colony } from '../utils'
 import { colonyResourceBonus } from '../bonuses/colonyResourceBonus'
 import { colonyResourceProductionBonus } from '../bonuses/colonyResourceProduction'
-import { range } from '../../utils'
+import { Resource, SymbolType } from '@shared/cards'
+import { range } from '@shared/utils'
 
 type Params = {
 	code: string

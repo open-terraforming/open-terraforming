@@ -1,5 +1,5 @@
 import { tradeWithColony } from '@shared/actions'
-import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
 import { canTradeWithColonyUsingResource, isFailure } from '@shared/utils'
 import { PlayerBaseAction } from '../action'

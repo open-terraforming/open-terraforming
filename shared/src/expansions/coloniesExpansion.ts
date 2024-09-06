@@ -1,4 +1,4 @@
-import { baseColonies } from '@shared/colonies/baseColonies'
+import { baseColonies } from '@shared/expansions/colonies/baseColonies'
 import { expansion, ExpansionType } from './types'
 
 export const coloniesExpansion = expansion({

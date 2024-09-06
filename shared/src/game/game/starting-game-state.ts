@@ -6,9 +6,9 @@ import { shuffle } from '@shared/utils'
 import { BaseGameState } from './base-game-state'
 import { randomPlayerColor } from '@shared/utils/colors'
 import { ExpansionType } from '@shared/expansions/types'
-import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { hasExpansion } from '@shared/utils/hasExpansion'
-import { initialColonyState } from '@shared/colonies/states'
+import { initialColonyState } from '@shared/expansions/colonies/states'
 
 export class StartingGameState extends BaseGameState {
 	name = GameStateValue.Starting

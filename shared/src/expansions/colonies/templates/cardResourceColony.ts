@@ -1,6 +1,6 @@
-import { CardResource, CardsLookupApi, SymbolType } from '../../cards'
-import { addCardResourceAction } from '../../player-actions'
-import { pushPendingAction, range } from '../../utils'
+import { CardResource, SymbolType, CardsLookupApi } from '@shared/cards'
+import { addCardResourceAction } from '@shared/player-actions'
+import { range, pushPendingAction } from '@shared/utils'
 import { colonyCardResourceBonus } from '../bonuses/colonyCardResourceBonus'
 import { colony } from '../utils'
 

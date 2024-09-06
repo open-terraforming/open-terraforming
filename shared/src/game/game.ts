@@ -49,7 +49,7 @@ import { MyEvent } from '@shared/utils/events'
 import { StateMachine } from '@shared/lib/state-machine'
 import { Logger } from '@shared/lib/logger'
 import { ColoniesProductionGameState } from './game/colonies-production-game-state'
-import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 
 export interface GameConfig {
 	lockSystem: GameLockSystem
