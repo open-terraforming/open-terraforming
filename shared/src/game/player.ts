@@ -100,8 +100,7 @@ export class Player {
 
 		this.state.session = generateSession()
 
-		// TODO: everybodyIsAdmin config should be somehow passed here?
-		this.state.admin = false
+		this.state.admin = game.config.everybodyIsAdmin
 
 		this.actions = new PlayerActions(this)
 	}

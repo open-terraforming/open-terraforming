@@ -299,10 +299,13 @@ export const colonizeColony = (colonyIndex: number) =>
 		data: { colonyIndex },
 	}) as const
 
-export const tradeWithColony = (colonyIndex: number) =>
+export const tradeWithColony = (
+	colonyIndex: number,
+	resource: 'money' | 'energy' | 'titan',
+) =>
 	({
 		type: MessageType.TradeWithColony,
-		data: { colonyIndex },
+		data: { colonyIndex, resource },
 	}) as const
 
 export type GameMessage =

@@ -401,4 +401,5 @@ export * from './isOk'
 export * from './isFailure'
 
 export * from './canTradeWithColony'
+export * from './canTradeWithColonyUsingResource'
 export * from './canColonizeColony'

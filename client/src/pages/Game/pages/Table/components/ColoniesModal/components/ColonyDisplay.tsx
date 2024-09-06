@@ -1,19 +1,20 @@
 import { Button, Tooltip } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { useApi } from '@/context/ApiContext'
-import { colonizeColony, tradeWithColony } from '@shared/actions'
+import { useAppStore, useToggle } from '@/utils/hooks'
+import { colonizeColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
 import { ColonyState } from '@shared/game'
-import styled from 'styled-components'
-import { Symbols } from '../../CardView/components/Symbols'
-import { useAppStore } from '@/utils/hooks'
-import { darken } from 'polished'
 import {
 	canColonizeColony,
 	canTradeWithColony,
 	isFailure,
 	isOk,
 } from '@shared/utils'
+import { darken } from 'polished'
+import styled from 'styled-components'
+import { Symbols } from '../../CardView/components/Symbols'
+import { ColonyTradeModal } from './ColonyTradeModal'
 
 type Props = {
 	index: number
@@ -26,6 +27,7 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 	const players = game.players
 	const info = ColoniesLookupApi.get(colony.code)
 	const api = useApi()
+	const [isTrading, toggleTrading] = useToggle()
 
 	const canTrade = canTradeWithColony({
 		player,
@@ -43,31 +45,18 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 		api.send(colonizeColony(index))
 	}
 
-	const handleTrade = () => {
-		api.send(tradeWithColony(index))
-	}
-
 	return (
 		<Container>
+			{isTrading && (
+				<ColonyTradeModal
+					onClose={toggleTrading}
+					colony={colony}
+					colonyIndex={index}
+				/>
+			)}
+
 			<Title>
 				<TitleName>{info.code}</TitleName>
-				<Actions>
-					<Action
-						disabled={!isOk(canColonize)}
-						tooltip={isFailure(canColonize) ? canColonize.error : undefined}
-						onClick={handleColonize}
-					>
-						<Symbols symbols={[{ resource: 'money', count: 17 }]} /> Colonize
-					</Action>
-					<Action
-						disabled={!isOk(canTrade)}
-						tooltip={isFailure(canTrade) ? canTrade.error : undefined}
-						onClick={handleTrade}
-					>
-						<Symbols symbols={[{ resource: 'money', count: 9 }]} />
-						Trade
-					</Action>
-				</Actions>
 			</Title>
 
 			<Info>
@@ -90,7 +79,7 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 					<div>Current step: {colony.step}</div>
 					<div>
 						Trading with:{' '}
-						{colony.currentlyTradingPlayer !== undefined
+						{typeof colony.currentlyTradingPlayer === 'number'
 							? players[colony.currentlyTradingPlayer].name
 							: 'nobody'}
 					</div>
@@ -100,7 +89,7 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 			<Slots>
 				{info.tradeIncome.slots.map((s, i) => (
 					<Slot key={i}>
-						<SlotBonus>
+						<SlotRect>
 							{colony.playersAtSteps[i] !== undefined ? (
 								<Tooltip content={players[colony.playersAtSteps[i]].name}>
 									<PlayerColony
@@ -118,13 +107,38 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 									<Symbols symbols={info.colonizeBonus[i].symbols} />
 								)
 							)}
-						</SlotBonus>
+							{i === colony.step && <SlotIndicator />}
+						</SlotRect>
 						<SlotLabel>
 							<Symbols symbols={[s]} />
 						</SlotLabel>
 					</Slot>
 				))}
 			</Slots>
+
+			<Actions>
+				<Action
+					disabled={!isOk(canTrade)}
+					tooltip={isFailure(canTrade) ? canTrade.error : undefined}
+					onClick={toggleTrading}
+					noClip
+				>
+					<Flex>
+						<Symbols symbols={[{ resource: 'money', count: 9 }]} /> /{' '}
+						<Symbols symbols={[{ resource: 'energy', count: 3 }]} /> /{' '}
+						<Symbols symbols={[{ resource: 'titan', count: 3 }]} />
+						Trade
+					</Flex>
+				</Action>{' '}
+				<Action
+					disabled={!isOk(canColonize)}
+					tooltip={isFailure(canColonize) ? canColonize.error : undefined}
+					onClick={handleColonize}
+					noClip
+				>
+					<Symbols symbols={[{ resource: 'money', count: 17 }]} /> Colonize
+				</Action>
+			</Actions>
 		</Container>
 	)
 }
@@ -150,14 +164,16 @@ const TitleName = styled.div`
 `
 
 const Actions = styled(Flex)`
-	margin-left: auto;
+	justify-content: flex-end;
+	gap: 0.5rem;
+	margin-top: 0.5rem;
 `
 
 const Action = styled(Button)`
-	padding: 0.2rem 0.5rem;
+	padding: 0.1rem 0.5rem;
 `
 
-const SlotBonus = styled.div`
+const SlotRect = styled.div`
 	border: 2px solid ${({ theme }) => theme.colors.border};
 	border-right-width: 0;
 	width: 3rem;
@@ -165,10 +181,11 @@ const SlotBonus = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	position: relative;
 `
 
 const Slot = styled.div`
-	&:last-child ${SlotBonus} {
+	&:last-child ${SlotRect} {
 		border-right-width: 2px;
 	}
 `
@@ -181,4 +198,13 @@ const SlotLabel = styled.div``
 
 const Info = styled(Flex)`
 	padding: 0.5rem;
+`
+
+const SlotIndicator = styled.div`
+	position: absolute;
+	top: 0rem;
+	right: 0rem;
+	width: 0.5rem;
+	height: 0.5rem;
+	background-color: #bbb;
 `

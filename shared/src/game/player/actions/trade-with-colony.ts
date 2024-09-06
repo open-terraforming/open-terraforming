@@ -1,9 +1,8 @@
 import { tradeWithColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
-import { canTradeWithColony } from '@shared/utils/canTradeWithColony'
+import { canTradeWithColonyUsingResource, isFailure } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
-import { isFail } from '@shared/utils/isFail'
 
 type Args = ReturnType<typeof tradeWithColony>['data']
 
@@ -11,16 +10,21 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
-	perform({ colonyIndex }: Args): void {
+	perform({ colonyIndex, resource }: Args): void {
+		if (resource !== 'energy' && resource !== 'money' && resource !== 'titan') {
+			throw new Error('Invalid resource')
+		}
+
 		const colony = this.game.colonies[colonyIndex]
 
-		const check = canTradeWithColony({
+		const check = canTradeWithColonyUsingResource({
 			player: this.player,
 			game: this.game,
 			colony,
+			resource,
 		})
 
-		if (isFail(check)) {
+		if (isFailure(check)) {
 			throw new Error(check.error)
 		}
 
@@ -45,7 +49,7 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 		// TODO: Is this correct?
 		colony.step = Math.max(2, colony.playersAtSteps.length)
 
-		this.player.money -= check.value.cost
+		this.player[check.value.resource] -= check.value.cost
 
 		this.actionPlayed()
 	}

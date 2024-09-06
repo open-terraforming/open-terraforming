@@ -111,6 +111,7 @@ export const Tooltip = ({
 				onMouseLeave={showOnHover ? handleMouseLeave : undefined}
 				ref={triggerRef}
 				style={styleTrigger}
+				className="tooltip-trigger"
 			>
 				{children}
 			</Trigger>

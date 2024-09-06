@@ -1,8 +1,8 @@
 import { ColonyState, GameState, PlayerState } from '@shared/game'
 import { getPlayerIndex } from '.'
-import { OkOrFailure } from './okOrFailure'
-import { ok } from './ok'
 import { failure } from './failure'
+import { ok } from './ok'
+import { OkOrFailure } from './okOrFailure'
 
 type Params = {
 	game: GameState
@@ -14,7 +14,7 @@ export const canTradeWithColony = ({
 	player,
 	game,
 	colony,
-}: Params): OkOrFailure<{ cost: number }, string> => {
+}: Params): OkOrFailure<never, string> => {
 	if (!colony.active) {
 		return failure('Colony is not active')
 	}
@@ -33,11 +33,5 @@ export const canTradeWithColony = ({
 		return failure('Player has no trade fleets left')
 	}
 
-	const cost = 9
-
-	if (player.money <= cost) {
-		return failure('Player cannot afford to trade')
-	}
-
-	return ok({ cost })
+	return ok()
 }

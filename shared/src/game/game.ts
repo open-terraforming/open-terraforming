@@ -67,6 +67,8 @@ export interface GameConfig {
 
 	fastBots: boolean
 	fastProduction: boolean
+
+	everybodyIsAdmin: boolean
 }
 
 export interface GameLockSystem {
@@ -118,6 +120,7 @@ export class Game {
 			fastProduction: false,
 			draft: false,
 			solarPhase: false,
+			everybodyIsAdmin: false,
 			...config,
 		}
 
