@@ -10,7 +10,7 @@ type Params = {
 	colony: ColonyState
 }
 
-export const canColonize = ({
+export const canColonizeColony = ({
 	player,
 	game,
 	colony,

@@ -1,8 +1,7 @@
 import { colonizeColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/colonies/ColoniesLookupApi'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
-import { getPlayerIndex, isOk } from '@shared/utils'
-import { canColonize } from '@shared/utils/canColonize'
+import { canColonizeColony, getPlayerIndex, isOk } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
 
 type Args = ReturnType<typeof colonizeColony>['data']
@@ -14,7 +13,7 @@ export class ColonizeColonyAction extends PlayerBaseAction<Args> {
 	perform({ colonyIndex }: Args): void {
 		const colony = this.game.colonies[colonyIndex]
 
-		const check = canColonize({
+		const check = canColonizeColony({
 			game: this.game,
 			player: this.player,
 			colony,

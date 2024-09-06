@@ -8,7 +8,12 @@ import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { useAppStore } from '@/utils/hooks'
 import { darken } from 'polished'
-import { canTradeWithColony, isFailure, isOk } from '@shared/utils'
+import {
+	canColonizeColony,
+	canTradeWithColony,
+	isFailure,
+	isOk,
+} from '@shared/utils'
 
 type Props = {
 	index: number
@@ -28,6 +33,12 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 		colony,
 	})
 
+	const canColonize = canColonizeColony({
+		game,
+		player,
+		colony,
+	})
+
 	const handleColonize = () => {
 		api.send(colonizeColony(index))
 	}
@@ -41,7 +52,11 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 			<Title>
 				<TitleName>{info.code}</TitleName>
 				<Actions>
-					<Action onClick={handleColonize}>
+					<Action
+						disabled={!isOk(canColonize)}
+						tooltip={isFailure(canColonize) ? canColonize.error : undefined}
+						onClick={handleColonize}
+					>
 						<Symbols symbols={[{ resource: 'money', count: 17 }]} /> Colonize
 					</Action>
 					<Action

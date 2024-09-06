@@ -394,9 +394,11 @@ export const mod = (n: number, m: number) => {
 	return ((n % m) + m) % m
 }
 
-export * from './canTradeWithColony'
 export * from './ok'
 export * from './okOrFailure'
 export * from './failure'
 export * from './isOk'
 export * from './isFailure'
+
+export * from './canTradeWithColony'
+export * from './canColonizeColony'
