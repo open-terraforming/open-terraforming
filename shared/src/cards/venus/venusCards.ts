@@ -215,7 +215,7 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Venus],
 		special: [CardSpecial.Venus],
 		resource: 'floaters',
-		playEffects: [
+		actionEffects: [
 			effectChoice([
 				joinedEffects([
 					withRightArrow(resourceChange('money', -2)),
@@ -246,11 +246,11 @@ export const venusCards: Card[] = [
 	}),
 	card({
 		code: 'ghg_import_from_venus',
-		type: CardType.Effect,
+		type: CardType.Event,
 		cost: 23,
 		categories: [CardCategory.Venus, CardCategory.Space, CardCategory.Event],
 		special: [CardSpecial.Venus],
-		actionEffects: [gameProcessChange('venus', 1), productionChange('heat', 3)],
+		playEffects: [gameProcessChange('venus', 1), productionChange('heat', 3)],
 	}),
 	card({
 		code: 'giant_solar_shade',
