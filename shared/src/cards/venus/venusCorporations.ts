@@ -36,7 +36,7 @@ export const venusCorporations: Card[] = [
 			getTopCardsWithTag(2, CardCategory.Venus),
 		],
 		actionEffects: [otherCardResourceChange('floaters', 1)],
-		victoryPointsCallback: vpsForCardResources('floaters', 3),
+		victoryPointsCallback: vpsForCardResources('floaters', 1 / 3),
 	}),
 	card({
 		code: 'manutech',
