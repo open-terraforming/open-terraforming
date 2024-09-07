@@ -634,7 +634,7 @@ export const venusCards: Card[] = [
 		cost: 20,
 		categories: [CardCategory.Venus, CardCategory.Plant],
 		special: [CardSpecial.Venus],
-		actionEffects: [
+		playEffects: [
 			gameProcessChange('venus', 1),
 			productionChange('plants', 1),
 			otherCardResourceChange('microbes', 2),
