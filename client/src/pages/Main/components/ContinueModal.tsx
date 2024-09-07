@@ -1,10 +1,14 @@
 import { Button } from '@/components'
+import { DialogButton } from '@/components/DialogButton/DialogButton'
+import { ExportSavedGamesButton } from '@/components/ExportSavedGamesButton/ExportSavedGamesButton'
 import { Flex } from '@/components/Flex/Flex'
+import { ImportSavedGamesModal } from '@/components/ImportSavedGamesModal/ImportSavedGamesModal'
 import { Modal } from '@/components/Modal/Modal'
 import { ApiState, setApiState } from '@/store/modules/api'
 import { setClientState } from '@/store/modules/client'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
-import { faPlay, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faPlay, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons'
+import { darken } from 'polished'
 import styled from 'styled-components'
 
 type Props = {
@@ -52,9 +56,30 @@ export const ContinueModal = ({ onClose }: Props) => {
 					</Button>
 				</GameItem>
 			))}
+
+			{Object.keys(sessions).length > 0 && (
+				<>
+					<Spitter />
+					<Flex justify="center" gap="0.5rem">
+						<ExportSavedGamesButton />
+						<DialogButton
+							dialog={(onClose) => <ImportSavedGamesModal onClose={onClose} />}
+							icon={faUpload}
+						>
+							Import sessions
+						</DialogButton>
+					</Flex>
+				</>
+			)}
 		</Modal>
 	)
 }
+
+const Spitter = styled.div`
+	background-color: ${({ theme }) => darken(0.05, theme.colors.border)};
+	height: 2px;
+	margin: 1.5rem 0 1rem 0;
+`
 
 const GameItem = styled(Flex)`
 	gap: 1rem;
