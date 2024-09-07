@@ -1,7 +1,11 @@
+import { DialogButton } from '@/components/DialogButton/DialogButton'
+import { ExportSavedGamesButton } from '@/components/ExportSavedGamesButton/ExportSavedGamesButton'
 import { Flex } from '@/components/Flex/Flex'
+import { ImportSavedGamesModal } from '@/components/ImportSavedGamesModal/ImportSavedGamesModal'
 import { Modal } from '@/components/Modal/Modal'
 import { Switch } from '@/components/Switch/Switch'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { faUpload } from '@fortawesome/free-solid-svg-icons'
 import { ChangeEvent } from 'react'
 import styled from 'styled-components'
 
@@ -97,6 +101,16 @@ export const SettingsModal = ({ onClose }: Props) => {
 					</select>
 				</Flex>
 			</FormContainer>
+
+			<Flex justify="center" gap="0.5rem">
+				<ExportSavedGamesButton />
+				<DialogButton
+					dialog={(onClose) => <ImportSavedGamesModal onClose={onClose} />}
+					icon={faUpload}
+				>
+					Import sessions
+				</DialogButton>
+			</Flex>
 		</Modal>
 	)
 }

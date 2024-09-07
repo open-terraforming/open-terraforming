@@ -18,6 +18,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.13.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "debounce": "^1.2.0",
+    "file-saver": "^2.0.5",
     "msgpack-lite": "^0.1.26",
     "polished": "^3.6.3",
     "querystring": "^0.2.0",
@@ -33,6 +34,7 @@
   },
   "devDependencies": {
     "@types/debounce": "^1.2.0",
+    "@types/file-saver": "^2.0.7",
     "@types/msgpack-lite": "^0.1.7",
     "@types/prettier": "^1.19.1",
     "@types/react": "^18.3.3",
