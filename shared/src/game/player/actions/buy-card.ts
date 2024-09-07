@@ -90,7 +90,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 					throw new Error(`You don't have ${amount} of card ${code}`)
 				}
 
-				cost -= amount * usedCard[resource] * resourcesUsableAsMoney.amount
+				cost -= amount * resourcesUsableAsMoney.amount
 				usedCard[resource] -= amount
 			}
 		}

@@ -128,9 +128,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 							return acc
 						}
 
-						return (
-							acc + amount * info.card[resource] * resourcesUsableAsMoney.amount
-						)
+						return acc + amount * resourcesUsableAsMoney.amount
 					}, 0),
 			)
 		: 0
