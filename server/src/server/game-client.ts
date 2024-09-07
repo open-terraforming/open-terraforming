@@ -100,9 +100,9 @@ export class Client {
 				) {
 					this.logger.log(
 						'Client disconnected' +
-							this.game.config.disablePlayersWhenDisconnectedForInSeconds
-							? ' - starting disconnect disable timer'
-							: '',
+							(this.game.config.disablePlayersWhenDisconnectedForInSeconds
+								? ' - starting disconnect disable timer'
+								: ''),
 					)
 
 					player.handleDisconnect()
