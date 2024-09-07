@@ -8,10 +8,10 @@ export const colonyTradePriceChange = (change: number) =>
 			{ symbol: SymbolType.ColonyTrade },
 			{ symbol: SymbolType.Colon },
 			// TODO: Maybe better symbol for this?
-			{ resource: 'money', count: change },
+			{ count: change },
 		],
 		perform: ({ player }) => {
-			player.colonyTradeMoneyCostChange =
-				(player.colonyTradeMoneyCostChange ?? 0) + change
+			player.colonyTradeResourceCostChange =
+				(player.colonyTradeResourceCostChange ?? 0) + change
 		},
 	})

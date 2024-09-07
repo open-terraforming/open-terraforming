@@ -105,5 +105,5 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	pendingActions: [],
 	protectedHabitat: false,
 	tradeFleets: 1,
-	colonyTradeMoneyCostChange: 0,
+	colonyTradeResourceCostChange: 0,
 })

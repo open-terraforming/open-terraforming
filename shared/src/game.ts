@@ -322,7 +322,7 @@ export interface PlayerState {
 	tradeFleets: number
 
 	/** Change of standard colony trade cost */
-	colonyTradeMoneyCostChange?: number
+	colonyTradeResourceCostChange?: number
 }
 
 export enum VictoryPointsSource {

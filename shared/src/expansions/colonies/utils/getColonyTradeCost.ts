@@ -8,8 +8,8 @@ type Params = {
 
 export const getColonyTradeCost = ({ player }: Params) => {
 	return {
-		money: 9 + (player.colonyTradeMoneyCostChange ?? 0),
-		energy: 3,
-		titan: 3,
+		money: 9 + (player.colonyTradeResourceCostChange ?? 0),
+		energy: 3 + (player.colonyTradeResourceCostChange ?? 0),
+		titan: 3 + (player.colonyTradeResourceCostChange ?? 0),
 	}
 }
