@@ -164,6 +164,31 @@ export const cardResourcePerAnybodyTilePlaced = (
 		},
 	})
 
+export const cardResourcePerSelfTagPlayed = (
+	tag: CardCategory,
+	res: CardResource,
+	amount: number,
+) =>
+	passiveEffect({
+		description: `When you play ${CardCategory[tag]}, place ${amount > 1 ? `${amount} of ${res}` : res} on this card`,
+		symbols: [
+			{ tag },
+			{ symbol: SymbolType.Colon },
+			{ cardResource: res, count: amount },
+		],
+		onCardPlayed: ({ player, card }, playedCard, _, playedBy) => {
+			if (playedBy.id !== player.id) {
+				return
+			}
+
+			const matches = playedCard.categories.filter((t) => t === tag).length
+
+			if (playedCard.categories.includes(tag)) {
+				card[res] += matches * amount
+			}
+		},
+	})
+
 export const productionChangeAfterPlace = (
 	amount: number,
 	type: GridCellOther,

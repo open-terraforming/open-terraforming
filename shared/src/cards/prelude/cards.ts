@@ -1,6 +1,6 @@
 import { GridCellContent } from '../../game'
 import { LavaCells } from '../../map'
-import { cardCountCondition, gameProgressConditionMax } from '../conditions'
+import { cardCategoryCountCondition, gameProgressConditionMax } from '../conditions'
 import { getTopCards, placeTile, productionChange } from '../effects'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
 import { card } from '../utils'
@@ -75,7 +75,7 @@ export const preludeCards: Card[] = [
 		cost: 12,
 		categories: [CardCategory.Space, CardCategory.Earth],
 		special: [CardSpecial.Prelude],
-		conditions: [cardCountCondition(CardCategory.Earth, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Earth, 2)],
 		playEffects: [productionChange('money', 4)],
 	}),
 ]

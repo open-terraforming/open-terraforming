@@ -1,15 +1,36 @@
 import { CardCategory, CardType } from '@shared/cards'
-import { cardResourceCondition } from '@shared/cards/conditions'
+import {
+	cardCategoryCountCondition,
+	cardResourceCondition,
+	cellTypeCondition,
+} from '@shared/cards/conditions'
 import {
 	cardResourceChange,
 	effectChoice,
 	joinedEffects,
 	otherCardResourceChange,
+	placeOcean,
 	playerResourceChange,
 	productionChange,
+	productionChangeForTags,
+	productionForPlayersTags,
 	resourceChange,
+	resourcesForTiles,
+	terraformRatingChange,
 } from '@shared/cards/effects'
-import { card } from '@shared/cards/utils'
+import { colonyTradePriceChange } from '@shared/cards/effects/colonyTradePriceChange'
+import { productionChangePerCardResource } from '@shared/cards/effects/productionChangePerCardResource'
+import { productionChangePerColony } from '@shared/cards/effects/productionChangePerColony'
+import { productionChangePerNoTags } from '@shared/cards/effects/productionChangePerNoTags'
+import { resourcePerCardResource } from '@shared/cards/effects/resourcePerCardResource'
+import { resourcesForColonies } from '@shared/cards/effects/resourcesForColonies'
+import {
+	cardResourcePerSelfTagPlayed,
+	resetCardPriceChange,
+} from '@shared/cards/passive-effects'
+import { card, withRightArrow } from '@shared/cards/utils'
+import { vpsForCardResources } from '@shared/cards/vps'
+import { GridCellContent } from '@shared/game'
 
 export const colonyCards = [
 	card({
@@ -55,6 +76,244 @@ export const colonyCards = [
 					]),
 				]),
 			]),
+		],
+	}),
+	card({
+		code: 'community-services',
+		cost: 13,
+		type: CardType.Building,
+		categories: [],
+		playEffects: [productionChangePerNoTags('money', 1)],
+		victoryPoints: 1,
+	}),
+	card({
+		code: 'conscription',
+		cost: 5,
+		type: CardType.Event,
+		categories: [CardCategory.Earth, CardCategory.Event],
+		conditions: [cardCategoryCountCondition(CardCategory.Earth, 2)],
+		passiveEffects: [resetCardPriceChange(-16)],
+	}),
+	card({
+		code: 'corona-extractor',
+		cost: 10,
+		type: CardType.Building,
+		categories: [CardCategory.Power, CardCategory.Space],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 4)],
+		playEffects: [productionChange('energy', 4)],
+	}),
+	card({
+		code: 'cryo-sleep',
+		cost: 10,
+		type: CardType.Action,
+		categories: [CardCategory.Science],
+		playEffects: [colonyTradePriceChange(-1)],
+		victoryPoints: 1,
+	}),
+	card({
+		code: 'earth-elevator',
+		cost: 43,
+		type: CardType.Building,
+		categories: [CardCategory.Earth, CardCategory.Space],
+		playEffects: [productionChange('titan', 3)],
+		victoryPoints: 4,
+	}),
+	card({
+		code: 'ecology-research',
+		cost: 21,
+		type: CardType.Building,
+		categories: [
+			CardCategory.Science,
+			CardCategory.Animal,
+			CardCategory.Microbe,
+			CardCategory.Plant,
+		],
+		playEffects: [
+			productionChangePerColony('plants', 1),
+			otherCardResourceChange('animals', 1),
+			otherCardResourceChange('microbes', 2),
+		],
+	}),
+	card({
+		code: 'floater-leasing',
+		cost: 3,
+		type: CardType.Building,
+		categories: [],
+		playEffects: [productionChangePerCardResource('money', 'floaters', 3)],
+	}),
+	card({
+		code: 'floater-prototypes',
+		cost: 2,
+		type: CardType.Event,
+		categories: [CardCategory.Science, CardCategory.Event],
+		playEffects: [otherCardResourceChange('floaters', 2)],
+	}),
+	card({
+		code: 'floater-technology',
+		cost: 7,
+		type: CardType.Action,
+		categories: [CardCategory.Science],
+		actionEffects: [cardResourceChange('floaters', 1)],
+	}),
+	card({
+		code: 'galilean-waystation',
+		cost: 15,
+		type: CardType.Building,
+		categories: [CardCategory.Space],
+		playEffects: [
+			productionForPlayersTags(CardCategory.Jupiter, 'money', 1, true),
+		],
+		victoryPoints: 1,
+	}),
+	card({
+		code: 'heavy-taxation',
+		cost: 3,
+		type: CardType.Building,
+		categories: [CardCategory.Earth],
+		conditions: [cardCategoryCountCondition(CardCategory.Earth, 2)],
+		playEffects: [productionChange('money', 2), resourceChange('money', 4)],
+		victoryPoints: -1,
+	}),
+	card({
+		code: 'ice-moon-colony',
+		cost: 23,
+		type: CardType.Building,
+		categories: [CardCategory.Space],
+		playEffects: [
+			placeOcean(),
+			// TODO:
+			// placeColony(),
+		],
+	}),
+	card({
+		code: 'impactor-swarm',
+		cost: 11,
+		type: CardType.Event,
+		categories: [CardCategory.Space, CardCategory.Event],
+		conditions: [cardCategoryCountCondition(CardCategory.Jupiter, 2)],
+		playEffects: [
+			resourceChange('heat', 12),
+			playerResourceChange('plants', -2, true),
+		],
+	}),
+	card({
+		code: 'interplanetary-colony-ship',
+		cost: 12,
+		type: CardType.Event,
+		categories: [CardCategory.Earth, CardCategory.Space, CardCategory.Event],
+		playEffects: [
+			// TODO: placeColony(),
+		],
+	}),
+	card({
+		code: 'jovian-lanterns',
+		cost: 20,
+		type: CardType.Action,
+		categories: [CardCategory.Jupiter],
+		conditions: [cardCategoryCountCondition(CardCategory.Jupiter, 1)],
+		resource: 'floaters',
+		victoryPointsCallback: vpsForCardResources('floaters', 2),
+		playEffects: [
+			terraformRatingChange(1),
+			otherCardResourceChange('floaters', 2),
+		],
+		actionEffects: [
+			withRightArrow(resourceChange('titan', -1)),
+			cardResourceChange('floaters', 2),
+		],
+	}),
+	card({
+		code: 'jupiter-floating-station',
+		cost: 9,
+		type: CardType.Action,
+		categories: [CardCategory.Jupiter],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 3)],
+		resource: 'floaters',
+		actionEffects: [
+			effectChoice([
+				otherCardResourceChange('floaters', 1, CardCategory.Jupiter),
+				resourcePerCardResource('money', 1, 'floaters', 4),
+			]),
+		],
+	}),
+	card({
+		code: 'luna-governor',
+		cost: 4,
+		type: CardType.Building,
+		categories: [CardCategory.Earth, CardCategory.Earth],
+		conditions: [cardCategoryCountCondition(CardCategory.Earth, 3)],
+		playEffects: [productionChange('money', 2)],
+	}),
+	card({
+		code: 'lunar-exports',
+		cost: 19,
+		type: CardType.Building,
+		categories: [CardCategory.Space, CardCategory.Earth],
+		playEffects: [
+			effectChoice([
+				productionChange('plants', 2),
+				productionChange('money', 5),
+			]),
+		],
+	}),
+	card({
+		code: 'lunar-mining',
+		cost: 11,
+		type: CardType.Building,
+		categories: [CardCategory.Earth],
+		playEffects: [productionChangeForTags('titan', 1, CardCategory.Earth, 2)],
+	}),
+	card({
+		code: 'market-manipulation',
+		cost: 1,
+		type: CardType.Event,
+		categories: [CardCategory.Earth, CardCategory.Event],
+		playEffects: [
+			// TODO:
+			// changeColonyIncomeStep(1),
+			// changeColonyIncomeStep(-1)
+		],
+	}),
+	card({
+		code: 'martian-zoo',
+		cost: 12,
+		type: CardType.Action,
+		categories: [CardCategory.Animal, CardCategory.Building],
+		conditions: [cellTypeCondition(GridCellContent.City, 2)],
+		passiveEffects: [
+			cardResourcePerSelfTagPlayed(CardCategory.Earth, 'animals', 1),
+		],
+		playEffects: [resourcePerCardResource('money', 1, 'animals')],
+		victoryPoints: 1,
+	}),
+	card({
+		code: 'mining-colony',
+		cost: 20,
+		type: CardType.Building,
+		categories: [CardCategory.Space],
+		playEffects: [
+			productionChange('titan', 1),
+			// TODO: placeColony()
+		],
+	}),
+	card({
+		code: 'minority-refuge',
+		cost: 5,
+		type: CardType.Building,
+		categories: [CardCategory.Space],
+		playEffects: [
+			productionChange('money', -2),
+			// TODO: placeColony()
+		],
+	}),
+	card({
+		code: 'molecular-printing',
+		cost: 11,
+		type: CardType.Building,
+		categories: [CardCategory.Science],
+		playEffects: [
+			resourcesForTiles(GridCellContent.City, 'money', 1, false),
+			resourcesForColonies('money', 1),
 		],
 	}),
 ]

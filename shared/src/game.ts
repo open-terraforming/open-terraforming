@@ -403,7 +403,7 @@ export interface ColonyState {
 	code: string
 	/** Trade income progress */
 	step: number
-	/** IDS of players at steps indicated by the array index */
+	/** Indexes of players at steps indicated by the array index */
 	playersAtSteps: number[]
 	/** If the colony can be colonized and has production */
 	active: boolean

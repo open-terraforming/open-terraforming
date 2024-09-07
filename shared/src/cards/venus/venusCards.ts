@@ -1,6 +1,6 @@
 import { GridCellContent, GridCellSpecial } from '../../game'
 import {
-	cardCountCondition,
+	cardCategoryCountCondition,
 	cardResourcesAnywhereCondition,
 	gameProgressConditionMax,
 	gameProgressConditionMin,
@@ -82,7 +82,7 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Venus, CardCategory.Science],
 		special: [CardSpecial.Venus],
 		victoryPoints: 2,
-		conditions: [cardCountCondition(CardCategory.Science, 3)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 3)],
 		playEffects: [getTopCards(2)],
 	}),
 	card({
@@ -91,7 +91,7 @@ export const venusCards: Card[] = [
 		cost: 22,
 		categories: [CardCategory.Venus, CardCategory.Science],
 		special: [CardSpecial.Venus],
-		conditions: [cardCountCondition(CardCategory.Science, 3)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 3)],
 		playEffects: [getTopCards(2)],
 	}),
 	card({
@@ -123,7 +123,7 @@ export const venusCards: Card[] = [
 		cost: 15,
 		categories: [CardCategory.Space, CardCategory.City],
 		special: [CardSpecial.Venus],
-		conditions: [cardCountCondition(CardCategory.Science, 4)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 4)],
 		playEffects: [
 			productionChange('energy', -1),
 			productionChange('titan', 1),
@@ -191,7 +191,7 @@ export const venusCards: Card[] = [
 		special: [CardSpecial.Venus],
 		resource: 'microbes',
 		victoryPointsCallback: vpsForCardResources('microbes', 3),
-		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
 		actionEffects: [otherCardResourceChange('microbes', 1)],
 	}),
 	card({
@@ -202,7 +202,7 @@ export const venusCards: Card[] = [
 		special: [CardSpecial.Venus],
 		resource: 'floaters',
 		victoryPointsCallback: vpsForCardResources('floaters', 2),
-		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
 		actionEffects: [
 			withRightArrow(playerResourceChange('money', -2)),
 			otherCardResourceChange('floaters', 1),
@@ -375,9 +375,9 @@ export const venusCards: Card[] = [
 		categories: [],
 		special: [CardSpecial.Venus],
 		conditions: [
-			cardCountCondition(CardCategory.Venus, 1),
-			cardCountCondition(CardCategory.Earth, 1),
-			cardCountCondition(CardCategory.Jupiter, 1),
+			cardCategoryCountCondition(CardCategory.Venus, 1),
+			cardCategoryCountCondition(CardCategory.Earth, 1),
+			cardCategoryCountCondition(CardCategory.Jupiter, 1),
 		],
 		victoryPoints: 2,
 	}),
@@ -407,9 +407,9 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Venus],
 		conditions: [
-			cardCountCondition(CardCategory.Venus, 1),
-			cardCountCondition(CardCategory.Earth, 1),
-			cardCountCondition(CardCategory.Jupiter, 1),
+			cardCategoryCountCondition(CardCategory.Venus, 1),
+			cardCategoryCountCondition(CardCategory.Earth, 1),
+			cardCategoryCountCondition(CardCategory.Jupiter, 1),
 		],
 		playEffects: [productionChange('ore', 2)],
 	}),
@@ -428,9 +428,9 @@ export const venusCards: Card[] = [
 		cost: 11,
 		categories: [CardCategory.Building],
 		conditions: [
-			cardCountCondition(CardCategory.Venus, 1),
-			cardCountCondition(CardCategory.Earth, 1),
-			cardCountCondition(CardCategory.Jupiter, 1),
+			cardCategoryCountCondition(CardCategory.Venus, 1),
+			cardCategoryCountCondition(CardCategory.Earth, 1),
+			cardCategoryCountCondition(CardCategory.Jupiter, 1),
 		],
 		playEffects: [terraformRatingChange(2)],
 	}),
@@ -475,8 +475,8 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Venus, CardCategory.Earth],
 		special: [CardSpecial.Venus],
 		conditions: [
-			cardCountCondition(CardCategory.Venus, 1),
-			cardCountCondition(CardCategory.Earth, 1),
+			cardCategoryCountCondition(CardCategory.Venus, 1),
+			cardCategoryCountCondition(CardCategory.Earth, 1),
 		],
 		playEffects: [productionChange('money', 3)],
 	}),
@@ -487,9 +487,9 @@ export const venusCards: Card[] = [
 		categories: [],
 		special: [CardSpecial.Venus],
 		conditions: [
-			cardCountCondition(CardCategory.Venus, 1),
-			cardCountCondition(CardCategory.Earth, 1),
-			cardCountCondition(CardCategory.Jupiter, 1),
+			cardCategoryCountCondition(CardCategory.Venus, 1),
+			cardCategoryCountCondition(CardCategory.Earth, 1),
+			cardCategoryCountCondition(CardCategory.Jupiter, 1),
 		],
 		playEffects: [getTopCards(2)],
 	}),
@@ -517,7 +517,7 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Venus, CardCategory.City],
 		special: [CardSpecial.Venus],
 		victoryPointsCallback: vpsForCardResources('floaters', 3),
-		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
 		playEffects: [
 			productionChange('money', 2),
 			placeTile({
@@ -612,7 +612,7 @@ export const venusCards: Card[] = [
 		cost: 4,
 		categories: [CardCategory.Venus, CardCategory.Venus],
 		special: [CardSpecial.Venus],
-		conditions: [cardCountCondition(CardCategory.Venus, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Venus, 2)],
 		playEffects: [productionChange('money', 2)],
 	}),
 	card({

@@ -67,7 +67,10 @@ export const cardAcceptsAnyResource = () =>
 		evaluate: ({ card }) => !!CardsLookupApi.get(card.code).resource,
 	})
 
-export const cardCountCondition = (category: CardCategory, value: number) =>
+export const cardCategoryCountCondition = (
+	category: CardCategory,
+	value: number,
+) =>
 	condition({
 		evaluate: ({ player }) =>
 			player.usedCards

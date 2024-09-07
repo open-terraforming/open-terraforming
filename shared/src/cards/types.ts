@@ -247,6 +247,9 @@ export enum SymbolType {
 	Venus,
 	AnyResource,
 	Equal,
+	CardWithNoTag,
+	ColonyTrade,
+	Colony,
 }
 
 export interface CardSymbol {
