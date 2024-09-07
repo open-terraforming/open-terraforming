@@ -27,4 +27,7 @@ export const newGameValidator = object({
 	map: enums([MapType.Elysium, MapType.Hellas, MapType.Standard]),
 	solarPhase: optional(boolean()),
 	fastBots: optional(boolean()),
+	disablePlayersAfterDisconnectingInSeconds: optional(
+		min(max(integer(), 216000), 5),
+	),
 })

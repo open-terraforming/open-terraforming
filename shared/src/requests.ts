@@ -13,4 +13,5 @@ export type NewGameRequest = {
 	draft?: boolean
 	solarPhase?: boolean
 	fastBots?: boolean
+	disablePlayersAfterDisconnectingInSeconds?: number
 }

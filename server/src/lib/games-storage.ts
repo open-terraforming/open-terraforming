@@ -2,10 +2,16 @@ import { GameState } from '@shared/game'
 import { mkdir, readdir, readFile, stat, unlink, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { fileCompression } from './file-compression'
+import { GameConfig } from '@shared/game/game'
 
 type Settings = {
 	path: string
 	useCompression: boolean
+}
+
+export type GameData = {
+	config: GameConfig
+	state: GameState
 }
 
 export class GamesStorage {
@@ -15,7 +21,7 @@ export class GamesStorage {
 		return join(this.settings.path, `${id}.json`)
 	}
 
-	private async encode(game: GameState) {
+	private async encode(game: GameData) {
 		if (this.settings.useCompression) {
 			return fileCompression.encode(JSON.stringify(game))
 		}
@@ -23,19 +29,19 @@ export class GamesStorage {
 		return JSON.stringify(game)
 	}
 
-	async put(game: GameState) {
+	async put(game: GameData) {
 		await mkdir(this.settings.path, { recursive: true })
-		await writeFile(this.gameFilename(game.id), await this.encode(game))
+		await writeFile(this.gameFilename(game.state.id), await this.encode(game))
 	}
 
 	async get(id: string) {
 		const contents = await readFile(this.gameFilename(id))
 
 		if (contents.toString('utf-8').startsWith('{')) {
-			return JSON.parse(contents.toString()) as GameState
+			return JSON.parse(contents.toString()) as GameData
 		}
 
-		return JSON.parse(await fileCompression.decode(contents)) as GameState
+		return JSON.parse(await fileCompression.decode(contents)) as GameData
 	}
 
 	async has(id: string) {
