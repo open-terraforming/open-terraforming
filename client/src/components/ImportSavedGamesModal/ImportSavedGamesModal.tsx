@@ -1,6 +1,7 @@
 import { setClientState } from '@/store/modules/client'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { useState } from 'react'
+import { Button } from '../Button/Button'
 import { Modal } from '../Modal/Modal'
 
 type Props = {
@@ -31,20 +32,30 @@ export const ImportSavedGamesModal = ({ onClose }: Props) => {
 					},
 				}),
 			)
-		} catch {
+
+			onClose()
+		} catch (e) {
+			console.error('Failed to parse contents', e)
 			alert('Invalid file')
 		}
 	}
 
 	return (
-		<Modal onClose={onClose} open header="Import saved sessions">
+		<Modal
+			onClose={onClose}
+			open
+			header="Import saved sessions"
+			contentStyle={{ width: '20rem' }}
+			footer={
+				<Button onClick={handleImport} disabled={!file}>
+					Import
+				</Button>
+			}
+		>
 			<input
 				type="file"
 				onChange={(e) => setFile(e.target.files?.[0] ?? undefined)}
 			/>
-			<button onClick={handleImport} disabled={!file}>
-				Import
-			</button>
 		</Modal>
 	)
 }
