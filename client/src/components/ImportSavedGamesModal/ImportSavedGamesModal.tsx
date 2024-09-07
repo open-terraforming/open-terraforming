@@ -1,5 +1,6 @@
 import { setClientState } from '@/store/modules/client'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { faUpload } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import { Button } from '../Button/Button'
 import { Modal } from '../Modal/Modal'
@@ -47,7 +48,7 @@ export const ImportSavedGamesModal = ({ onClose }: Props) => {
 			header="Import saved sessions"
 			contentStyle={{ width: '20rem' }}
 			footer={
-				<Button onClick={handleImport} disabled={!file}>
+				<Button onClick={handleImport} disabled={!file} icon={faUpload}>
 					Import
 				</Button>
 			}
