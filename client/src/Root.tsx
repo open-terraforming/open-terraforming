@@ -3,7 +3,6 @@ import { useCallback, useMemo } from 'react'
 import { Provider } from 'react-redux'
 import { StyleSheetManager } from 'styled-components'
 import { ApiContextProvider } from './context/ApiContext'
-import { EventsContextProvider } from './context/EventsContext'
 import { LocaleContextProvider } from './context/LocaleContext'
 import { App } from './pages/App/App'
 import { buildStore } from './store'
@@ -21,9 +20,7 @@ const RootComponent = () => {
 			<Provider store={store}>
 				<LocaleContextProvider language={'en'}>
 					<ApiContextProvider>
-						<EventsContextProvider>
-							<App />
-						</EventsContextProvider>
+						<App />
 					</ApiContextProvider>
 				</LocaleContextProvider>
 			</Provider>
