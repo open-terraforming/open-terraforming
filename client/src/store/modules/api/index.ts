@@ -15,6 +15,7 @@ const initialState = {
 	gameId: null as string | null,
 	state: ApiState.Ready,
 	info: null as ServerInfo | null,
+	reconnecting: false,
 }
 
 export default (state = initialState, action: Actions): State => {

@@ -1,4 +1,4 @@
-import { GamesStorage } from '@/lib/games-storage'
+import { GameData, GamesStorage } from '@/lib/games-storage'
 import { NodeLogger } from '@/lib/node-logger'
 import { debounce } from '@/utils/debounce'
 import { MyEvent } from '@/utils/events'
@@ -58,8 +58,16 @@ export class GameServer {
 		return this.game.state.id
 	}
 
-	load = (s: GameState) => {
-		this.game.load(s)
+	load = (s: GameData) => {
+		// Backwards compatibility with old format that didn't have config
+		if (!('config' in s) || !('state' in s)) {
+			s = {
+				config: this.game.config,
+				state: s as GameState,
+			}
+		}
+
+		this.game.load(s.state, s.config)
 	}
 
 	get acceptsConnections() {
@@ -134,7 +142,10 @@ export class GameServer {
 		}
 
 		try {
-			await this.storage.put(s)
+			await this.storage.put({
+				config: this.game.config,
+				state: s,
+			})
 		} catch (e) {
 			this.logger.error('Failed to save game state:', e)
 		}

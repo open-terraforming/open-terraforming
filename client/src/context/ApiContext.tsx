@@ -43,16 +43,21 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 			}
 		}
 
-		if (state === ApiState.Connecting) {
-			if (client) {
-				client.onClose = undefined
-				client.onOpen = undefined
-				client.disconnect()
-			}
+		if (state === ApiState.Connecting && gameId) {
+			if (!client || client.gameId !== gameId) {
+				if (client) {
+					client.onClose = undefined
+					client.onOpen = undefined
+					client.disconnect()
+				}
 
-			setClient(
-				new Client(getWebsocketUrl(gameId ? `game/${gameId}/socket` : '')),
-			)
+				setClient(
+					new Client(
+						getWebsocketUrl(gameId ? `game/${gameId}/socket` : ''),
+						gameId,
+					),
+				)
+			}
 		}
 	}, [state, gameId])
 
@@ -64,11 +69,7 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 
 		client.onClose = () => {
 			if (reconnectCount < 5) {
-				dispatch(
-					setApiState({
-						state: ApiState.Connecting,
-					}),
-				)
+				dispatch(setApiState({ reconnecting: true }))
 
 				setReconnectCount(reconnectCount + 1)
 
@@ -76,7 +77,7 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 					() => {
 						client.reconnect()
 					},
-					100 + reconnectCount * 300,
+					1 + reconnectCount * 300,
 				)
 			} else {
 				dispatch(

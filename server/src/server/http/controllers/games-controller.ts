@@ -83,6 +83,8 @@ export const gamesController = appController(
 				fastBots: request.fastBots,
 				draft,
 				solarPhase,
+				disablePlayersWhenDisconnectedForInSeconds:
+					request.disablePlayersAfterDisconnectingInSeconds,
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)

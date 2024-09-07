@@ -9,6 +9,7 @@ export const Flex = styled.div<{
 		| 'space-between'
 		| 'space-around'
 	direction?: 'row' | 'column'
+	gap?: string | number
 }>`
 	display: flex;
 	min-height: 0;
@@ -16,5 +17,6 @@ export const Flex = styled.div<{
 		align-items: ${props.align || 'center'};
 		justify-content: ${props.justify || 'flex-start'};
 		flex-direction: ${props.direction || 'row'};
+		gap: ${props.gap || '0'};
 	`}
 `

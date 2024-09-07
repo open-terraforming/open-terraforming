@@ -48,6 +48,17 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [bots, setBots] = useState(0)
 	const [solarPhase, setSolarPhase] = useState(true)
 	const [fastBots, setFastBots] = useState(false)
+
+	const [
+		disablePlayersAfterDisconnecting,
+		setDisablePlayersAfterDisconnecting,
+	] = useState(true)
+
+	const [
+		disablePlayersAfterDisconnectingInSeconds,
+		setDisablePlayersAfterDisconnectingInSeconds,
+	] = useState(60)
+
 	const serverInfo = useAppStore((app) => app.api.info)
 
 	const [expansions, setExpansions] = useState([
@@ -88,6 +99,10 @@ export const NewGameModal = ({ onClose }: Props) => {
 				draft,
 				solarPhase,
 				fastBots,
+				disablePlayersAfterDisconnectingInSeconds:
+					disablePlayersAfterDisconnecting
+						? disablePlayersAfterDisconnectingInSeconds
+						: undefined,
 			})
 
 			if (res.id) {
@@ -195,6 +210,29 @@ export const NewGameModal = ({ onClose }: Props) => {
 						onChange={(v) => setSpectators(v)}
 						label="Allow spectators"
 					/>
+
+					<Checkbox
+						checked={disablePlayersAfterDisconnecting}
+						onChange={(v) => setDisablePlayersAfterDisconnecting(v)}
+						label="Disable players after disconnecting - their turns will be automatically skipped"
+					/>
+
+					{disablePlayersAfterDisconnecting && (
+						<TimeoutField align="center" gap={'0.5rem'}>
+							<div>After</div>
+							<TimeoutInput
+								value={disablePlayersAfterDisconnectingInSeconds?.toString()}
+								onChange={(v) =>
+									setDisablePlayersAfterDisconnectingInSeconds(+v)
+								}
+								type="number"
+								step="1"
+								min="5"
+								max="216000"
+							/>
+							<div>seconds</div>
+						</TimeoutField>
+					)}
 				</Field>
 
 				<Field>
@@ -309,3 +347,11 @@ const SelectItemDesc = styled.div`
 const ExpansionsMultiSelect = styled(MultiSelect)`
 	max-width: 30rem;
 ` as typeof MultiSelect
+
+const TimeoutField = styled(Flex)`
+	margin-left: 1rem;
+`
+
+const TimeoutInput = styled(Input)`
+	width: 6rem;
+`
