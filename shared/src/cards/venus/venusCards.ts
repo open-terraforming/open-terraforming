@@ -330,7 +330,7 @@ export const venusCards: Card[] = [
 					cardResourceChange('floaters', 2),
 				]),
 				joinedEffects([
-					withRightArrow(otherCardResourceChange('floaters', 2)),
+					withRightArrow(cardResourceChange('floaters', -2)),
 					gameProcessChange('venus', 1),
 				]),
 			]),
