@@ -190,19 +190,28 @@ export const NewGameModal = ({ onClose }: Props) => {
 
 				<Field>
 					{bots > 0 && (
-						<Checkbox
-							checked={fastBots}
-							onChange={(v) => setFastBots(v)}
-							label="Fast bots"
-						/>
+						<>
+							<Checkbox
+								checked={fastBots}
+								onChange={(v) => setFastBots(v)}
+								label="Fast bots"
+							/>
+							<Hint>
+								Bots will execute their actions instantly without simulated
+								delay
+							</Hint>
+						</>
 					)}
 
 					{serverInfo?.publicGames.enabled && (
-						<Checkbox
-							checked={isPublic}
-							onChange={(v) => setPublic(v)}
-							label="Public (Allow players to join using server browser)"
-						/>
+						<>
+							<Checkbox
+								checked={isPublic}
+								onChange={(v) => setPublic(v)}
+								label="Public"
+							/>
+							<Hint>Public games will be visible in the server browser</Hint>
+						</>
 					)}
 
 					<Checkbox
@@ -211,11 +220,21 @@ export const NewGameModal = ({ onClose }: Props) => {
 						label="Allow spectators"
 					/>
 
+					<Hint>
+						{'Allows others to join and watch the game without playing'}
+					</Hint>
+
 					<Checkbox
 						checked={disablePlayersAfterDisconnecting}
 						onChange={(v) => setDisablePlayersAfterDisconnecting(v)}
-						label="Disable players after disconnecting - their turns will be automatically skipped"
+						label="Disable players after disconnecting"
 					/>
+
+					<Hint>
+						{
+							"When players disconnects, they'll be disabled and their turns skipped"
+						}
+					</Hint>
 
 					{disablePlayersAfterDisconnecting && (
 						<TimeoutField align="center" gap={'0.5rem'}>
@@ -354,4 +373,10 @@ const TimeoutField = styled(Flex)`
 
 const TimeoutInput = styled(Input)`
 	width: 6rem;
+`
+
+const Hint = styled.div`
+	margin-left: 1rem;
+	margin-bottom: 1rem;
+	opacity: 0.75;
 `
