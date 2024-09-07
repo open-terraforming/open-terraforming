@@ -164,7 +164,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 					<Field>
 						<label>Board</label>
 						<select
-							onChange={(e) => setMap(e.target.value as unknown as MapType)}
+							onChange={(e) => setMap(+(e.target.value as unknown as MapType))}
 						>
 							{MapsList.map((item) => (
 								<option key={item.type} value={item.type}>
