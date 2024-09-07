@@ -21,7 +21,6 @@ import {
 	otherPlayersGetTopCards,
 	placeCity,
 	placeTile,
-	playerResourceChange,
 	playerResourceChangeWithTagCondition,
 	productionChange,
 	productionChangeForTags,
@@ -204,7 +203,7 @@ export const venusCards: Card[] = [
 		victoryPointsCallback: vpsForCardResources('floaters', 2),
 		conditions: [cardCountCondition(CardCategory.Science, 2)],
 		actionEffects: [
-			withRightArrow(playerResourceChange('money', -2)),
+			withRightArrow(resourceChange('money', -2)),
 			otherCardResourceChange('floaters', 1),
 		],
 	}),
@@ -326,7 +325,7 @@ export const venusCards: Card[] = [
 		actionEffects: [
 			effectChoice([
 				joinedEffects([
-					withRightArrow(playerResourceChange('titan', -1)),
+					withRightArrow(resourceChange('titan', -1)),
 					cardResourceChange('floaters', 2),
 				]),
 				joinedEffects([
