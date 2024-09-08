@@ -30,7 +30,7 @@ import {
 	joinedEffects,
 	moneyOrResForOcean,
 	orePriceChange,
-	otherCardResourceChange,
+	anyCardResourceChange,
 	pickTopCards,
 	placeOcean,
 	placeTile,
@@ -279,8 +279,8 @@ export const baseCards: Card[] = [
 		playEffects: [
 			effectChoice([
 				resourceChange('plants', 3),
-				otherCardResourceChange('microbes', 1),
-				otherCardResourceChange('animals', 1),
+				anyCardResourceChange('microbes', 1),
+				anyCardResourceChange('animals', 1),
 			]),
 			placeOcean(),
 		],
@@ -366,7 +366,7 @@ export const baseCards: Card[] = [
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMin('temperature', -12 / 2)],
 		playEffects: [
-			otherCardResourceChange('animals', 1),
+			anyCardResourceChange('animals', 1),
 			resourceChange('plants', 3),
 			productionChange('money', 2),
 		],
@@ -1492,7 +1492,7 @@ export const baseCards: Card[] = [
 		cost: 4,
 		categories: [CardCategory.Microbe],
 		conditions: [gameProgressConditionMin('temperature', -14 / 2)],
-		actionEffects: [otherCardResourceChange('microbes', 1)],
+		actionEffects: [anyCardResourceChange('microbes', 1)],
 	}),
 	card({
 		code: 'extreme_cold_fungus',
@@ -1503,7 +1503,7 @@ export const baseCards: Card[] = [
 		actionEffects: [
 			effectChoice([
 				resourceChange('plants', 1),
-				otherCardResourceChange('microbes', 2),
+				anyCardResourceChange('microbes', 2),
 			]),
 		],
 	}),
@@ -1605,7 +1605,7 @@ export const baseCards: Card[] = [
 			getTopCards(2),
 			effectChoice([
 				resourceChange('plants', 5),
-				otherCardResourceChange('animals', 4),
+				anyCardResourceChange('animals', 4),
 			]),
 		],
 	}),
@@ -1792,8 +1792,8 @@ export const baseCards: Card[] = [
 		playEffects: [
 			terraformRatingChange(1),
 			resourceChange('plants', 4),
-			otherCardResourceChange('microbes', 3),
-			otherCardResourceChange('animals', 2),
+			anyCardResourceChange('microbes', 3),
+			anyCardResourceChange('animals', 2),
 		],
 	}),
 	card({
@@ -1864,7 +1864,7 @@ export const baseCards: Card[] = [
 		playEffects: [
 			productionChange('heat', 3),
 			productionChange('plants', 1),
-			otherCardResourceChange('microbes', 2),
+			anyCardResourceChange('microbes', 2),
 		],
 	}),
 	card({
@@ -2085,7 +2085,7 @@ export const baseCards: Card[] = [
 			resourceChange('heat', -5),
 			effectChoice([
 				resourceChange('plants', 4),
-				otherCardResourceChange('animals', 2),
+				anyCardResourceChange('animals', 2),
 			]),
 		],
 	}),
