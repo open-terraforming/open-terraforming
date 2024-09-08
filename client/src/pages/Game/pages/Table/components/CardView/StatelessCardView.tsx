@@ -147,6 +147,7 @@ export const StatelessCardView = ({
 				</Image>
 			) : (
 				<>
+					{state && <Resource card={card} state={state} onCorporation />}
 					{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
 					{card.victoryPointsCallback && (
 						<VP
@@ -162,7 +163,7 @@ export const StatelessCardView = ({
 				{played && <Played>Card already played this generation</Played>}
 				{(card.actionEffects.length > 0 ||
 					card.passiveEffects.filter((e) => e.description).length > 0) && (
-					<Action>
+					<Action $hasSymbols={symbols.length > 0}>
 						<ActionTitle>
 							{card.type === CardType.Action ? 'Action' : 'Effect'}
 						</ActionTitle>

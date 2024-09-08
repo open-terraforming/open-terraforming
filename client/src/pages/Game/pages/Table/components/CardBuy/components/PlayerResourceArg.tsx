@@ -39,6 +39,13 @@ export const PlayerResourceArg = ({ arg, onChange, card }: Props) => {
 		players[0] as PlayerState | undefined,
 	)
 
+	const maxAmount =
+		selectedPlayer && arg.maxAmount !== undefined
+			? typeof arg.maxAmount === 'number'
+				? arg.maxAmount
+				: arg.maxAmount({ player: selectedPlayer, card, game })
+			: undefined
+
 	useEffect(() => {
 		onChange([selectedPlayer ? selectedPlayer.id : -1, amount])
 	}, [selectedPlayer, amount])
@@ -64,7 +71,7 @@ export const PlayerResourceArg = ({ arg, onChange, card }: Props) => {
 				<ResourceInput
 					res={arg.resource as Resource}
 					max={Math.min(
-						arg.maxAmount || selectedPlayer[arg.resource as Resource],
+						maxAmount || selectedPlayer[arg.resource as Resource],
 						selectedPlayer[arg.resource as Resource],
 					)}
 					onChange={(v) => setAmount(v)}

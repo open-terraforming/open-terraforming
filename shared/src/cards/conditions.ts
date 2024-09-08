@@ -89,7 +89,8 @@ export const cardResourcesAnywhereCondition = (
 	amount: number,
 ) =>
 	condition({
-		description: `Has to have at least ${amount} of ${res} units anywhere`,
+		description: `Has to have at least ${withUnits(res, amount)} anywhere`,
+		symbols: [{ cardResource: res, count: amount }],
 		evaluate: ({ player }) => {
 			return player.usedCards.reduce((acc, c) => acc + c[res], 0) >= amount
 		},

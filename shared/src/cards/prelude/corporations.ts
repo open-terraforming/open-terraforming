@@ -8,6 +8,7 @@ import {
 	emptyEffect,
 	lowestProductionChange,
 	sponsorCompetitionForFree,
+	joinedEffects,
 } from '../effects'
 import { passiveEffect, asFirstAction } from '../passive-effects'
 import { CardCategory, CardSpecial, CardType } from '../types'
@@ -67,8 +68,13 @@ export const preludeCorporations = [
 			special: [CardSpecial.Prelude],
 			playEffects: [resourceChange('money', 47)],
 			actionEffects: [
-				withRightArrow(resourceChange('money', -4)),
-				lowestProductionChange(1),
+				joinedEffects(
+					[
+						withRightArrow(resourceChange('money', -4, true)),
+						lowestProductionChange(1),
+					],
+					'to',
+				),
 			],
 		}),
 	),

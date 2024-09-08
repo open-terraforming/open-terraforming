@@ -243,6 +243,13 @@ export const withRightArrow = <T extends { symbols: CardSymbol[] }>(
 	symbols: [...e.symbols, { symbol: SymbolType.RightArrow }],
 })
 
+export const prependRightArrow = <T extends { symbols: CardSymbol[] }>(
+	e: T,
+): T => ({
+	...e,
+	symbols: [{ symbol: SymbolType.RightArrow }, ...e.symbols],
+})
+
 export const progressSymbol: Record<GameProgress, Readonly<CardSymbol>> = {
 	oceans: { tile: GridCellContent.Ocean },
 	oxygen: { symbol: SymbolType.Oxygen },

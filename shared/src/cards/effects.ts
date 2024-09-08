@@ -72,11 +72,14 @@ import {
 	countTagsWithoutEvents,
 } from './utils'
 
-export const resourceChange = (res: Resource, change: number) =>
+export const resourceChange = (res: Resource, change: number, spend = false) =>
 	effect({
 		conditions: change < 0 ? [resourceCondition(res, -change)] : [],
-		description:
-			change > 0
+		description: spend
+			? change > 0
+				? `Gain ${withUnits(res, change)}`
+				: `Spend ${withUnits(res, -change)}`
+			: change > 0
 				? `+ ${withUnits(res, change)}`
 				: `- ${withUnits(res, -change)}`,
 		type: CardEffectType.Resource,
@@ -521,7 +524,7 @@ export const terraformRatingChange = (change: number) =>
 		},
 	})
 
-export const effectChoice = (effects: CardEffect[]) =>
+export const effectChoice = (effects: CardEffect[], smallSlash = false) =>
 	effect({
 		args: [effectChoiceArg(effects)],
 		conditions: [
@@ -549,7 +552,16 @@ export const effectChoice = (effects: CardEffect[]) =>
 			effects
 				.map((e) => e.symbols)
 				.filter((e) => e.length > 0)
-				.map((e, i) => (i === 0 ? e : [{ symbol: SymbolType.Slash }, ...e])),
+				.map((e, i) =>
+					i === 0
+						? e
+						: [
+								{
+									symbol: smallSlash ? SymbolType.SlashSmall : SymbolType.Slash,
+								},
+								...e,
+							],
+				),
 		),
 		description: effects.map((e) => e.description || '').join(' OR '),
 		perform: (ctx, args: [number, CardEffectArgumentType[]]) => {
@@ -565,10 +577,10 @@ export const effectChoice = (effects: CardEffect[]) =>
 		},
 	})
 
-export const joinedEffects = (effects: CardEffect[]) =>
+export const joinedEffects = (effects: CardEffect[], joinWord = 'and') =>
 	effect({
 		args: flatten(effects.map((e) => e.args)),
-		description: effects.map((e) => e.description || '').join(' and '),
+		description: effects.map((e) => e.description || '').join(` ${joinWord} `),
 		conditions: flatten(effects.map((e) => e.conditions)),
 		symbols: flatten(effects.map((e) => e.symbols)),
 		perform: (ctx, ...args) => {
@@ -583,7 +595,7 @@ export const joinedEffects = (effects: CardEffect[]) =>
 		},
 	})
 
-export const otherCardResourceChange = (
+export const anyCardResourceChange = (
 	res: CardResource,
 	amount: number,
 	requiredCategory?: CardCategory,
@@ -599,8 +611,8 @@ export const otherCardResourceChange = (
 				]),
 				descriptionPrefix:
 					amount > 0
-						? `Add ${amount} ${res} to`
-						: `Remove ${-amount} ${res} from`,
+						? `Add ${withUnits(res, amount)} to`
+						: `Remove ${withUnits(res, -amount)} from`,
 			},
 		],
 		conditions:
@@ -622,12 +634,12 @@ export const otherCardResourceChange = (
 					[],
 		description:
 			amount < 0
-				? `Remove ${-amount} ${res} from any other card${
+				? `Remove ${withUnits(res, -amount)} from any card${
 						requiredCategory
 							? ' with ' + CardCategory[requiredCategory] + ' tag'
 							: ''
 					}`
-				: `Add ${amount} ${res} to any other card${
+				: `Add ${withUnits(res, amount)} to any card${
 						requiredCategory
 							? ' with ' + CardCategory[requiredCategory] + ' tag'
 							: ''
@@ -652,7 +664,7 @@ export const otherCardResourceChange = (
 		},
 	})
 
-export const otherCardAnyResourceChange = (
+export const anyCardAnyResourceChange = (
 	amount: number,
 	requiredCategory?: CardCategory,
 ) =>
@@ -690,12 +702,12 @@ export const otherCardAnyResourceChange = (
 					[],
 		description:
 			amount < 0
-				? `Remove ${-amount} of any resource from any other card${
+				? `Remove ${-amount} of any resource from card${
 						requiredCategory
 							? ' with ' + CardCategory[requiredCategory] + ' tag'
 							: ''
 					}`
-				: `Add ${amount} of any resource to any other card${
+				: `Add ${amount} of any resource to card${
 						requiredCategory
 							? ' with ' + CardCategory[requiredCategory] + ' tag'
 							: ''
@@ -720,7 +732,7 @@ export const otherCardAnyResourceChange = (
 		},
 	})
 
-export const otherCardResourceChangePerTag = (
+export const anyCardResourceChangePerTag = (
 	res: CardResource,
 	amount: number,
 	tag: CardCategory,
@@ -737,8 +749,8 @@ export const otherCardResourceChangePerTag = (
 				]),
 				descriptionPrefix:
 					amount > 0
-						? `Add 1 per ${tag} of ${res} to`
-						: `Remove 1 per ${tag} of ${res} from`,
+						? `Add 1 per ${CardCategory[tag]} of ${res} to`
+						: `Remove 1 per ${CardCategory[tag]} of ${res} from`,
 			},
 		],
 		conditions:
@@ -768,12 +780,12 @@ export const otherCardResourceChangePerTag = (
 					],
 		description:
 			amount < 0
-				? `Remove 1 of ${res} per ${CardCategory[tag]} tag from any other card${
+				? `Remove ${withUnits(res, 1)} per ${CardCategory[tag]} tag from any card${
 						requiredCategory
 							? ' with ' + CardCategory[requiredCategory] + ' tag'
 							: ''
 					}`
-				: `Add 1 of ${res} per ${CardCategory[tag]} tag to any other card${
+				: `Add ${withUnits(res, 1)} per ${CardCategory[tag]} tag to any card${
 						requiredCategory
 							? ' with ' + CardCategory[requiredCategory] + ' tag'
 							: ''
@@ -802,8 +814,8 @@ export const cardResourceChange = (res: CardResource, amount: number) =>
 	effect({
 		description:
 			amount >= 0
-				? `Add ${amount} of ${res} units to this card`
-				: `Remove ${amount} of ${res} units from this card`,
+				? `Add ${withUnits(res, amount)} to this card`
+				: `Remove ${withUnits(res, -amount)} from this card`,
 		symbols: [{ cardResource: res, count: amount }],
 		conditions: amount < 0 ? [cardResourceCondition(res, -amount)] : [],
 		perform: ({ card }) => {
@@ -864,8 +876,8 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 				: [],
 		description:
 			amount < 0
-				? `Remove ${-amount} ${res} from any other player card`
-				: `Add ${amount} ${res} to any other player card`,
+				? `Remove ${withUnits(res, -amount)} from any other player card`
+				: `Add ${withUnits(res, amount)} to any other player card`,
 		symbols: [{ cardResource: res, count: amount, other: true }],
 		perform: ({ game }, args: [number, number]) => {
 			if (!Array.isArray(args)) {
@@ -940,7 +952,7 @@ export const convertTopCardToCardResource = (
 			{ resource: 'money' as const, count: 1 },
 			{ symbol: SymbolType.RightArrow },
 			{ tag: category },
-			{ symbol: SymbolType.RightArrow },
+			{ symbol: SymbolType.Colon },
 			{ cardResource: res, count: amount },
 		],
 		perform: ({ player, game, card }) => {
@@ -1022,6 +1034,7 @@ export const hasCardTagsVoidEffect = (category: CardCategory, count: number) =>
 	effect({
 		description: f('Have {0} {1} tags', count, CardCategory[category]),
 		conditions: [cardCountCondition(category, count)],
+		symbols: [{ tag: category, count }, { symbol: SymbolType.Colon }],
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		perform: () => {},
 	})
@@ -1160,7 +1173,7 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 				type: CardEffectTarget.Resource,
 				resource: res,
 				descriptionPrefix: `Use`,
-				descriptionPostfix: `of ${res} to pay`,
+				descriptionPostfix: `to pay`,
 			}),
 		],
 		conditions: [
@@ -1266,8 +1279,7 @@ export const orePriceChange = (change: number) =>
 		symbols: [
 			{ resource: 'ore' as const },
 			{ symbol: SymbolType.Colon },
-			{ symbol: SymbolType.Plus },
-			{ resource: 'money' as const, count: 1 },
+			{ resource: 'money' as const, count: 1, forceSign: true },
 		],
 		perform: ({ player }) => {
 			player.orePrice += change
@@ -1280,8 +1292,7 @@ export const titanPriceChange = (change: number) =>
 		symbols: [
 			{ resource: 'titan' as const },
 			{ symbol: SymbolType.Colon },
-			{ symbol: SymbolType.Plus },
-			{ resource: 'money' as const, count: 1 },
+			{ resource: 'money' as const, count: 1, forceSign: true },
 		],
 		perform: ({ player }) => {
 			player.titanPrice += change
@@ -1300,6 +1311,10 @@ export const cardExchange = () =>
 		],
 		description: `Discard a card from hand to draw a new card`,
 		conditions: [gameCardsCondition(1)],
+		symbols: [
+			{ symbol: SymbolType.Card, count: -1 },
+			{ symbol: SymbolType.Card, count: 1, forceSign: true },
+		],
 		perform: ({ player, game }, cardIndex: number) => {
 			if (cardIndex < 0 || cardIndex >= player.cards.length) {
 				throw new Error(`Invalid card index ${cardIndex}`)
