@@ -1,4 +1,5 @@
 import { Card } from '@/icons/card'
+import { venusIcon } from '@/icons/venus'
 import {
 	faArrowRight,
 	faThermometerHalf,
@@ -10,7 +11,6 @@ import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { TileIcon } from '../../TileIcon/TileIcon'
 import { Tag } from './Tag'
-import { venusIcon } from '@/icons/venus'
 
 type Props = {
 	symbols: CardSymbol[]
@@ -23,15 +23,17 @@ const symbolToIcon = (s: CardSymbol) => {
 			case SymbolType.Card:
 				return <Card />
 			case SymbolType.Minus:
-				return '-'
+				return <MinusSymbol />
 			case SymbolType.Plus:
-				return '+'
+				return <TextSymbol>+</TextSymbol>
 			case SymbolType.Slash:
-				return '/'
+				return <SlashSymbol />
+			case SymbolType.SlashSmall:
+				return <TextSymbol>/</TextSymbol>
 			case SymbolType.Colon:
-				return ':'
+				return <TextSymbol>:</TextSymbol>
 			case SymbolType.Equal:
-				return '='
+				return <TextSymbol>=</TextSymbol>
 			case SymbolType.X:
 				return <XSymbol>X</XSymbol>
 			case SymbolType.RightArrow:
@@ -43,9 +45,9 @@ const symbolToIcon = (s: CardSymbol) => {
 			case SymbolType.Temperature:
 				return <FontAwesomeIcon icon={faThermometerHalf} />
 			case SymbolType.MoreOrEqual:
-				return '\u2265'
+				return <TextSymbol>{'\u2265'}</TextSymbol>
 			case SymbolType.LessOrEqual:
-				return '\u2264'
+				return <TextSymbol>{'\u2264'}</TextSymbol>
 			case SymbolType.Venus:
 				return <FontAwesomeIcon icon={venusIcon} />
 			case SymbolType.AnyResource:
@@ -83,12 +85,21 @@ export const Symbols = ({ symbols, className }: Props) => {
 				const countStr =
 					s.count === undefined
 						? undefined
-						: (s.count < 0
-								? '-'
-								: s.symbol === SymbolType.Oxygen ||
-									  s.symbol === SymbolType.Temperature
-									? '+'
-									: '') + (Math.abs(s.count) !== 1 ? Math.abs(s.count) : '')
+						: Math.abs(s.count) !== 1
+							? Math.abs(s.count).toString()
+							: ''
+
+				const countSymbol =
+					s.count === undefined ? undefined : s.count < 0 ? (
+						countStr ? (
+							'-'
+						) : (
+							<MinusSymbol />
+						)
+					) : s.symbol === SymbolType.Oxygen ||
+					  s.symbol === SymbolType.Temperature ? (
+						'+'
+					) : undefined
 
 				return (
 					<S
@@ -102,10 +113,16 @@ export const Symbols = ({ symbols, className }: Props) => {
 							s.symbol === SymbolType.MoreOrEqual ||
 							s.symbol === SymbolType.Plus ||
 							s.symbol === SymbolType.Colon ||
-							s.symbol === SymbolType.Minus
+							s.symbol === SymbolType.Minus ||
+							s.symbol === SymbolType.SlashSmall
 						}
 					>
-						{countStr && countStr.length > 0 && <Count>{countStr}</Count>}
+						{((countStr && countStr.length > 0) || countSymbol) && (
+							<Count>
+								{countSymbol}
+								{countStr}
+							</Count>
+						)}
 						{symbolToIcon(s)}
 					</S>
 				)
@@ -135,7 +152,8 @@ const S = styled.div<{
 	${(props) =>
 		props.other &&
 		css`
-			border: 0.1rem solid #ff5555;
+			// border: 0.2rem solid #ff5555;
+			box-shadow: inset 0 0 0 0.2rem #ff5555;
 			margin: 0.2rem;
 		`}
 `
@@ -148,6 +166,9 @@ const XSymbol = styled.div`
 const Count = styled.div`
 	font-weight: bold;
 	margin-right: 0.2rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `
 
 const ResourceContainer = styled.div`
@@ -159,4 +180,25 @@ const ResourceContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	color: #000;
+`
+
+const TextSymbol = styled.div`
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+`
+
+const MinusSymbol = styled.div`
+	background-color: ${({ theme }) => theme.colors.text};
+	height: 3px;
+	width: 8px;
+`
+
+const SlashSymbol = styled.div`
+	background-color: ${({ theme }) => theme.colors.text};
+	height: 4px;
+	width: 20px;
+	transform: rotate(-60deg);
+	border-radius: 2px;
 `

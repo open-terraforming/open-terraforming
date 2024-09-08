@@ -247,6 +247,7 @@ export enum SymbolType {
 	Venus,
 	AnyResource,
 	Equal,
+	SlashSmall,
 }
 
 export interface CardSymbol {

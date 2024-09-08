@@ -460,11 +460,12 @@ export const venusCards: Card[] = [
 				// TODO: Use titan as payment instead of just choice (allowing to combine both)
 				// TODO: The price of titan is not accounted for here
 				joinedEffects([
-					withRightArrow(resourceChange('money', -6)),
-					cardResourceChange('asteroids', 1),
-				]),
-				joinedEffects([
-					withRightArrow(resourceChange('titan', -2)),
+					withRightArrow(
+						effectChoice(
+							[resourceChange('money', -6), resourceChange('titan', -2)],
+							true,
+						),
+					),
 					cardResourceChange('asteroids', 1),
 				]),
 				joinedEffects([

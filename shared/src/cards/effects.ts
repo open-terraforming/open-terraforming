@@ -521,7 +521,7 @@ export const terraformRatingChange = (change: number) =>
 		},
 	})
 
-export const effectChoice = (effects: CardEffect[]) =>
+export const effectChoice = (effects: CardEffect[], smallSlash = false) =>
 	effect({
 		args: [effectChoiceArg(effects)],
 		conditions: [
@@ -549,7 +549,16 @@ export const effectChoice = (effects: CardEffect[]) =>
 			effects
 				.map((e) => e.symbols)
 				.filter((e) => e.length > 0)
-				.map((e, i) => (i === 0 ? e : [{ symbol: SymbolType.Slash }, ...e])),
+				.map((e, i) =>
+					i === 0
+						? e
+						: [
+								{
+									symbol: smallSlash ? SymbolType.SlashSmall : SymbolType.Slash,
+								},
+								...e,
+							],
+				),
 		),
 		description: effects.map((e) => e.description || '').join(' OR '),
 		perform: (ctx, args: [number, CardEffectArgumentType[]]) => {
