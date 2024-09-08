@@ -17,7 +17,7 @@ export const withUnits = (
 		case 'titan':
 			return `${amount} titan`
 		case 'plants':
-			return `${amount} plants`
+			return quantized(amount as number, 'plant', 'plants')
 		case 'temperature':
 			return `${(amount as number) * 2}°C`
 		case 'oxygen':
