@@ -55,6 +55,7 @@ import {
 } from '../effects'
 import { exchangeProduction } from '../effects/exchange-production'
 import { productionForTags } from '../effects/production-for-tags'
+import { voidEffect } from '../effects/voidEffect'
 import {
 	cardExchangeEffect,
 	cardResourcePerAnybodyTilePlaced,
@@ -71,7 +72,7 @@ import {
 	resourcePerCardPlayed,
 	resourcePerPlacedTile,
 } from '../passive-effects'
-import { Card, CardCategory, CardSpecial, CardType } from '../types'
+import { Card, CardCategory, CardSpecial, CardType, SymbolType } from '../types'
 import { card, noDesc, withRightArrow } from '../utils'
 import {
 	minCardResourceToVP,
@@ -873,7 +874,10 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Building, CardCategory.Science],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
-		actionEffects: [effectChoice([doNothing(), cardExchange()])],
+		actionEffects: [
+			voidEffect([{ tag: CardCategory.Science }, { symbol: SymbolType.Colon }]),
+			effectChoice([doNothing(), cardExchange()]),
+		],
 		passiveEffects: [cardExchangeEffect(CardCategory.Science)],
 	}),
 	card({
@@ -910,8 +914,13 @@ export const baseCards: Card[] = [
 		cost: 3,
 		categories: [CardCategory.Space, CardCategory.Power],
 		actionEffects: [
-			withRightArrow(resourceChange('money', -7)),
-			productionChange('energy', 1),
+			joinedEffects(
+				[
+					withRightArrow(resourceChange('money', -7, true)),
+					productionChange('energy', 1),
+				],
+				'to',
+			),
 		],
 	}),
 	card({
@@ -1368,8 +1377,13 @@ export const baseCards: Card[] = [
 			}),
 		],
 		actionEffects: [
-			withRightArrow(resourceChange('money', -7)),
-			productionChange('ore', 1),
+			joinedEffects(
+				[
+					withRightArrow(resourceChange('money', -7, true)),
+					productionChange('ore', 1),
+				],
+				'to gain',
+			),
 		],
 	}),
 	card({
@@ -2175,8 +2189,10 @@ export const baseCards: Card[] = [
 			}),
 		],
 		actionEffects: [
-			withRightArrow(resourceChange('money', -2)),
-			getTopCards(1),
+			joinedEffects(
+				[withRightArrow(resourceChange('money', -2, true)), getTopCards(1)],
+				'to',
+			),
 		],
 	}),
 	card({
@@ -2209,8 +2225,13 @@ export const baseCards: Card[] = [
 		cost: 6,
 		categories: [CardCategory.Building],
 		actionEffects: [
-			withRightArrow(resourceChange('money', -10)),
-			productionChange('heat', 2),
+			joinedEffects(
+				[
+					withRightArrow(resourceChange('money', -10, true)),
+					productionChange('heat', 2),
+				],
+				'to gain',
+			),
 		],
 	}),
 	card({

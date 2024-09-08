@@ -26,6 +26,8 @@ const symbolToIcon = (s: CardSymbol) => {
 				return <MinusSymbol />
 			case SymbolType.Plus:
 				return <TextSymbol>+</TextSymbol>
+			case SymbolType.BigPlus:
+				return <BigPlus>+</BigPlus>
 			case SymbolType.Slash:
 				return <SlashSymbol />
 			case SymbolType.SlashSmall:
@@ -78,11 +80,9 @@ const symbolToIcon = (s: CardSymbol) => {
 	return null
 }
 
-const getCountSymbol = (
-	count: number | undefined,
-	symbol: SymbolType | undefined,
-	countStr: string | undefined,
-) => {
+const getCountSymbol = (symbol: CardSymbol, countStr: string | undefined) => {
+	const { count, symbol: symbolType, forceSign } = symbol
+
 	if (count === undefined) {
 		return undefined
 	}
@@ -95,7 +95,14 @@ const getCountSymbol = (
 		return <MinusSymbol />
 	}
 
-	if (symbol === SymbolType.Oxygen || symbol === SymbolType.Temperature) {
+	if (
+		symbolType === SymbolType.Oxygen ||
+		symbolType === SymbolType.Temperature
+	) {
+		return <BigPlus>+</BigPlus>
+	}
+
+	if (forceSign) {
 		return <BigPlus>+</BigPlus>
 	}
 
@@ -113,7 +120,7 @@ export const Symbols = ({ symbols, className }: Props) => {
 							? Math.abs(s.count).toString()
 							: ''
 
-				const countSymbol = getCountSymbol(s.count, s.symbol, countStr)
+				const countSymbol = getCountSymbol(s, countStr)
 
 				return (
 					<S
@@ -129,7 +136,8 @@ export const Symbols = ({ symbols, className }: Props) => {
 							s.symbol === SymbolType.Colon ||
 							s.symbol === SymbolType.Minus ||
 							s.symbol === SymbolType.SlashSmall ||
-							s.symbol === SymbolType.Slash
+							s.symbol === SymbolType.Slash ||
+							s.symbol === SymbolType.BigPlus
 						}
 					>
 						{((countStr && countStr.length > 0) || countSymbol) && (

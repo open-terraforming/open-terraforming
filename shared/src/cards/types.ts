@@ -250,6 +250,7 @@ export enum SymbolType {
 	AnyResource,
 	Equal,
 	SlashSmall,
+	BigPlus,
 }
 
 export interface CardSymbol {
@@ -263,4 +264,5 @@ export interface CardSymbol {
 	tileOther?: GridCellOther
 	tag?: CardCategory
 	text?: string
+	forceSign?: boolean
 }

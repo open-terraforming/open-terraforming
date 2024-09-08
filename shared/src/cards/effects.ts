@@ -1279,8 +1279,7 @@ export const orePriceChange = (change: number) =>
 		symbols: [
 			{ resource: 'ore' as const },
 			{ symbol: SymbolType.Colon },
-			{ symbol: SymbolType.Plus },
-			{ resource: 'money' as const, count: 1 },
+			{ resource: 'money' as const, count: 1, forceSign: true },
 		],
 		perform: ({ player }) => {
 			player.orePrice += change
@@ -1293,8 +1292,7 @@ export const titanPriceChange = (change: number) =>
 		symbols: [
 			{ resource: 'titan' as const },
 			{ symbol: SymbolType.Colon },
-			{ symbol: SymbolType.Plus },
-			{ resource: 'money' as const, count: 1 },
+			{ resource: 'money' as const, count: 1, forceSign: true },
 		],
 		perform: ({ player }) => {
 			player.titanPrice += change
@@ -1313,6 +1311,10 @@ export const cardExchange = () =>
 		],
 		description: `Discard a card from hand to draw a new card`,
 		conditions: [gameCardsCondition(1)],
+		symbols: [
+			{ symbol: SymbolType.Card, count: -1 },
+			{ symbol: SymbolType.Card, count: 1, forceSign: true },
+		],
 		perform: ({ player, game }, cardIndex: number) => {
 			if (cardIndex < 0 || cardIndex >= player.cards.length) {
 				throw new Error(`Invalid card index ${cardIndex}`)
