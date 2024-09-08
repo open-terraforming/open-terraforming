@@ -46,7 +46,23 @@ export const InYourFaceEvents = () => {
 			{current && (
 				<DisplayContainer>
 					<Inner>
+						{events.slice(1, 5).map((e, i) => (
+							<div
+								key={i}
+								style={{
+									position: 'absolute',
+									left: -(10 + i * 10),
+									opacity: 0.6 - i * 0.1,
+									transform: `scale(${1 - (i + 1) * 0.05})`,
+									transformOrigin: 'left',
+								}}
+							>
+								{renderEvent(e)}
+							</div>
+						))}
+
 						<div>{renderEvent(current)}</div>
+
 						<Flex align="center" justify="flex-end" gap="1rem">
 							<span>{events.length}</span>
 							<Button onClick={handleDismiss}>
@@ -73,4 +89,5 @@ const DisplayContainer = styled.div`
 const Inner = styled.div`
 	background-color: rgba(0, 0, 0, 0.5);
 	padding: 0.5rem;
+	position: relative;
 `
