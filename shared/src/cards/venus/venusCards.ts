@@ -524,6 +524,7 @@ export const venusCards: Card[] = [
 		special: [CardSpecial.Venus],
 		victoryPointsCallback: vpsForCardResources('floaters', 1 / 3),
 		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		resource: 'floaters',
 		playEffects: [
 			productionChange('money', 2),
 			placeTile({
