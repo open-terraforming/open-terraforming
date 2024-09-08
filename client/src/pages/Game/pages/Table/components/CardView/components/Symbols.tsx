@@ -78,6 +78,30 @@ const symbolToIcon = (s: CardSymbol) => {
 	return null
 }
 
+const getCountSymbol = (
+	count: number | undefined,
+	symbol: SymbolType | undefined,
+	countStr: string | undefined,
+) => {
+	if (count === undefined) {
+		return undefined
+	}
+
+	if (count < 0) {
+		if (countStr) {
+			return '-'
+		}
+
+		return <MinusSymbol />
+	}
+
+	if (symbol === SymbolType.Oxygen || symbol === SymbolType.Temperature) {
+		return <BigPlus>+</BigPlus>
+	}
+
+	return undefined
+}
+
 export const Symbols = ({ symbols, className }: Props) => {
 	return symbols.length > 0 ? (
 		<E className={className}>
@@ -89,17 +113,7 @@ export const Symbols = ({ symbols, className }: Props) => {
 							? Math.abs(s.count).toString()
 							: ''
 
-				const countSymbol =
-					s.count === undefined ? undefined : s.count < 0 ? (
-						countStr ? (
-							'-'
-						) : (
-							<MinusSymbol />
-						)
-					) : s.symbol === SymbolType.Oxygen ||
-					  s.symbol === SymbolType.Temperature ? (
-						<BigPlus>+</BigPlus>
-					) : undefined
+				const countSymbol = getCountSymbol(s.count, s.symbol, countStr)
 
 				return (
 					<S
