@@ -114,7 +114,8 @@ export const Symbols = ({ symbols, className }: Props) => {
 							s.symbol === SymbolType.Plus ||
 							s.symbol === SymbolType.Colon ||
 							s.symbol === SymbolType.Minus ||
-							s.symbol === SymbolType.SlashSmall
+							s.symbol === SymbolType.SlashSmall ||
+							s.symbol === SymbolType.Slash
 						}
 					>
 						{((countStr && countStr.length > 0) || countSymbol) && (
