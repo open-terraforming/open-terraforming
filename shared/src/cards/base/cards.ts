@@ -1937,8 +1937,13 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Building],
 		conditions: [gameProgressConditionMin('oceans', 2)],
 		actionEffects: [
-			withRightArrow(resourceChange('energy', -3)),
-			gameProcessChange('oxygen', 1),
+			joinedEffects(
+				[
+					withRightArrow(resourceChange('energy', -3, true)),
+					gameProcessChange('oxygen', 1),
+				],
+				'to',
+			),
 		],
 	}),
 	card({

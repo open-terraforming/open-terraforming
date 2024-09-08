@@ -72,11 +72,14 @@ import {
 	countTagsWithoutEvents,
 } from './utils'
 
-export const resourceChange = (res: Resource, change: number) =>
+export const resourceChange = (res: Resource, change: number, spend = false) =>
 	effect({
 		conditions: change < 0 ? [resourceCondition(res, -change)] : [],
-		description:
-			change > 0
+		description: spend
+			? change > 0
+				? `Gain ${withUnits(res, change)}`
+				: `Spend ${withUnits(res, -change)}`
+			: change > 0
 				? `+ ${withUnits(res, change)}`
 				: `- ${withUnits(res, -change)}`,
 		type: CardEffectType.Resource,
@@ -574,10 +577,10 @@ export const effectChoice = (effects: CardEffect[], smallSlash = false) =>
 		},
 	})
 
-export const joinedEffects = (effects: CardEffect[]) =>
+export const joinedEffects = (effects: CardEffect[], joinWord = 'and') =>
 	effect({
 		args: flatten(effects.map((e) => e.args)),
-		description: effects.map((e) => e.description || '').join(' and '),
+		description: effects.map((e) => e.description || '').join(` ${joinWord} `),
 		conditions: flatten(effects.map((e) => e.conditions)),
 		symbols: flatten(effects.map((e) => e.symbols)),
 		perform: (ctx, ...args) => {
