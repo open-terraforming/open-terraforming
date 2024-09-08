@@ -109,7 +109,7 @@ export const buildColors = ({
 		cards: {
 			[CardType.Action]: '#0F87E2',
 			[CardType.Building]: '#56BA1B',
-			[CardType.Effect]: '#0F87E2 ',
+			[CardType.Effect]: '#0F87E2',
 			[CardType.Event]: '#FF6868',
 			[CardType.Corporation]: '#BAC404',
 			[CardType.Prelude]: '#FF86C2',

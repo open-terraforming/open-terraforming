@@ -11,6 +11,7 @@ import {
 	Container,
 	Cost,
 	Description,
+	FadedSymbols,
 	Head,
 	HeadSymbols,
 	Image,
@@ -40,6 +41,7 @@ type Props = {
 	affordable?: boolean
 	conditionContext?: CardCallbackContext
 	calculatedVps?: number
+	highlightAction?: boolean
 }
 
 export const StatelessCardView = ({
@@ -57,6 +59,7 @@ export const StatelessCardView = ({
 	affordable,
 	conditionContext: condContext,
 	calculatedVps,
+	highlightAction,
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
@@ -112,6 +115,7 @@ export const StatelessCardView = ({
 				(!evaluate || (playable && affordable) ? 'playable' : 'unplayable') +
 				(className ? ` ${className}` : '')
 			}
+			$faded={!!highlightAction}
 		>
 			<Head>
 				{card.type !== CardType.Corporation &&
@@ -163,8 +167,8 @@ export const StatelessCardView = ({
 				{played && <Played>Card already played this generation</Played>}
 				{(card.actionEffects.length > 0 ||
 					card.passiveEffects.filter((e) => e.description).length > 0) && (
-					<Action $hasSymbols={symbols.length > 0}>
-						<ActionTitle>
+					<Action $hasSymbols={symbols.length > 0} $highlight={highlightAction}>
+						<ActionTitle $highlight={highlightAction}>
 							{card.type === CardType.Action ? 'Action' : 'Effect'}
 						</ActionTitle>
 
@@ -188,21 +192,35 @@ export const StatelessCardView = ({
 					</Action>
 				)}
 
-				<Symbols symbols={symbols} />
+				{highlightAction ? (
+					<FadedSymbols symbols={symbols} />
+				) : (
+					<Symbols symbols={symbols} />
+				)}
 
 				{card.conditions.map((c, i) => (
-					<Condition key={i} cond={c} ctx={condContext} evaluate={evaluate} />
+					<Condition
+						key={i}
+						cond={c}
+						ctx={condContext}
+						evaluate={evaluate}
+						faded={highlightAction}
+					/>
 				))}
+
 				{card.playEffects.map((e, i) => (
 					<PlayEffect
 						key={i}
 						effect={e}
 						ctx={condContext}
 						evaluate={evaluate}
+						faded={highlightAction}
 					/>
 				))}
 				{description.map((d, i) => (
-					<div key={i}>{d}</div>
+					<div style={highlightAction ? { opacity: 0.5 } : undefined} key={i}>
+						{d}
+					</div>
 				))}
 			</Description>
 		</Container>

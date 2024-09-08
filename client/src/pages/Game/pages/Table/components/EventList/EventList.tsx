@@ -13,6 +13,7 @@ import { IngameMenuModal } from './components/IngameMenuModal'
 import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
 import { TimeDisplay } from './components/TimeDisplay'
+import { InYourFaceEvents } from '../InYourFaceEvents/InYourFaceEvents'
 
 export const EventList = () => {
 	const player = useAppStore((state) => state.game.player)
@@ -55,6 +56,7 @@ export const EventList = () => {
 			<CardsPlayedDisplay events={events} />
 			<LastEventsDisplay events={events} />
 			<PopEventDisplay events={events} />
+			<InYourFaceEvents />
 			<Portal>
 				<TopButtons>
 					<DialogWrapper

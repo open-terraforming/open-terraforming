@@ -1,6 +1,6 @@
 import { media } from '@/styles/media'
 import { CardType } from '@shared/cards'
-import { rgba, lighten } from 'polished'
+import { rgba, lighten, darken } from 'polished'
 import styled, { css } from 'styled-components'
 import { Symbols } from './components/Symbols'
 import mars from '@/assets/mars-icon.png'
@@ -22,10 +22,22 @@ export const HeadSymbols = styled(Symbols)`
 	}
 `
 
-export const Action = styled.div<{ $hasSymbols: boolean }>`
-	background: ${({ theme }) => theme.colors.background};
+export const Action = styled.div<{
+	$hasSymbols: boolean
+	$highlight?: boolean
+}>`
 	padding: 0.5rem;
-	border: 0.1rem solid ${({ theme }) => theme.colors.border};
+
+	${({ theme, $highlight }) =>
+		$highlight
+			? css`
+					background: ${rgba(lighten(0.05, theme.colors.background), 1)};
+					border: 0.2rem solid ${lighten(0.1, theme.colors.border)};
+				`
+			: css`
+					border: 0.1rem solid ${theme.colors.border};
+					background: ${rgba(theme.colors.background, 1)};
+				`};
 
 	&& {
 		margin-bottom: ${({ $hasSymbols }) =>
@@ -33,16 +45,25 @@ export const Action = styled.div<{ $hasSymbols: boolean }>`
 	}
 `
 
-export const ActionTitle = styled.div`
+export const ActionTitle = styled.div<{ $highlight?: boolean }>`
 	margin-left: auto;
 	margin-right: auto;
 	width: 5rem;
 	margin-top: -1rem;
-	background: ${({ theme }) => theme.colors.background};
-	border: 0.1rem solid ${({ theme }) => theme.colors.border};
 	text-align: center;
 	padding: 0.1rem 0;
 	margin-bottom: 0.2rem;
+
+	${({ theme, $highlight }) =>
+		$highlight
+			? css`
+					background: ${rgba(lighten(0.05, theme.colors.background), 1)};
+					border: 0.2rem solid ${lighten(0.1, theme.colors.border)};
+				`
+			: css`
+					border: 0.1rem solid ${theme.colors.border};
+					background: ${rgba(theme.colors.background, 1)};
+				`};
 `
 
 export const Cost = styled.div<{ affordable: boolean }>`
@@ -154,10 +175,13 @@ type ContainerCtx = {
 	played: boolean
 	hover: boolean
 	type: CardType
+	$faded: boolean
 }
 
 export const Container = styled.div<ContainerCtx>`
-	border: 0.2rem solid ${(props) => props.theme.colors.cards[props.type]};
+	border: 0.2rem solid
+		${(props) =>
+			darken(props.$faded ? 0.2 : 0, props.theme.colors.cards[props.type])};
 	background: ${({ theme }) => rgba(theme.colors.background, 1)};
 	width: 240px;
 	flex-shrink: 0;
@@ -172,8 +196,17 @@ export const Container = styled.div<ContainerCtx>`
 	overflow: visible;
 
 	${Title} {
-		background: ${(props) => props.theme.colors.cards[props.type]};
+		background: ${(props) =>
+			darken(props.$faded ? 0.2 : 0, props.theme.colors.cards[props.type])};
 	}
+
+	${(props) =>
+		props.$faded &&
+		css`
+			${Categories}, ${Image}, ${Cost} {
+				opacity: 0.5;
+			}
+		`}
 
 	${media.medium} {
 		width: 150px;
@@ -231,4 +264,8 @@ export const Container = styled.div<ContainerCtx>`
 		css`
 			transform: rotate(1deg);
 		`}
+`
+
+export const FadedSymbols = styled(Symbols)`
+	opacity: 0.5;
 `
