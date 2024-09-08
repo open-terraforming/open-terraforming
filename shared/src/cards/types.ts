@@ -187,7 +187,7 @@ export interface CardEffectArgument {
 	resourceConditions: ResourceCondition[]
 	drawnCards?: number
 	amount?: number
-	maxAmount?: number
+	maxAmount?: number | MaxAmountCallback
 	optional: boolean
 	resource?: Resource
 	production?: Production
@@ -195,6 +195,8 @@ export interface CardEffectArgument {
 	effects?: CardEffect[]
 	minAmount?: number
 }
+
+export type MaxAmountCallback = (ctx: CardCallbackContext) => number
 
 export type ResourceCondition = (
 	context: { player: PlayerState; game: GameState },

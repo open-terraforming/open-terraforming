@@ -35,6 +35,7 @@ import { resourceAsPaymentForTags } from '../effects/resourceAsPaymentForTags'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
 import { card, prependRightArrow, withRightArrow } from '../utils'
 import { vpsForCardResources } from '../vps'
+import { moneyOrResPayment } from '../effects/moneyOrResPayment'
 
 export const venusCards: Card[] = [
 	card({
@@ -210,8 +211,13 @@ export const venusCards: Card[] = [
 		victoryPointsCallback: vpsForCardResources('floaters', 1 / 2),
 		conditions: [cardCountCondition(CardCategory.Science, 2)],
 		actionEffects: [
-			withRightArrow(resourceChange('money', -2)),
-			anyCardResourceChange('floaters', 1),
+			joinedEffects(
+				[
+					withRightArrow(resourceChange('money', -2, true)),
+					anyCardResourceChange('floaters', 1),
+				],
+				'to',
+			),
 		],
 	}),
 	card({
@@ -457,15 +463,8 @@ export const venusCards: Card[] = [
 		resource: 'asteroids',
 		actionEffects: [
 			effectChoice([
-				// TODO: Use titan as payment instead of just choice (allowing to combine both)
-				// TODO: The price of titan is not accounted for here
 				joinedEffects([
-					withRightArrow(
-						effectChoice(
-							[resourceChange('money', -6), resourceChange('titan', -2)],
-							true,
-						),
-					),
+					withRightArrow(moneyOrResPayment('titan', 6)),
 					cardResourceChange('asteroids', 1),
 				]),
 				joinedEffects([

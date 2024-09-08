@@ -43,5 +43,5 @@ export const ResourceInput = ({
 const E = styled.div`
 	display: inline-flex;
 	align-items: center;
-	margin-right: 0.5rem;
+	margin: 0 0.4rem;
 `

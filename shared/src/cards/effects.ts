@@ -952,7 +952,7 @@ export const convertTopCardToCardResource = (
 			{ resource: 'money' as const, count: 1 },
 			{ symbol: SymbolType.RightArrow },
 			{ tag: category },
-			{ symbol: SymbolType.RightArrow },
+			{ symbol: SymbolType.Colon },
 			{ cardResource: res, count: amount },
 		],
 		perform: ({ player, game, card }) => {
@@ -1173,7 +1173,7 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 				type: CardEffectTarget.Resource,
 				resource: res,
 				descriptionPrefix: `Use`,
-				descriptionPostfix: `of ${res} to pay`,
+				descriptionPostfix: `to pay`,
 			}),
 		],
 		conditions: [

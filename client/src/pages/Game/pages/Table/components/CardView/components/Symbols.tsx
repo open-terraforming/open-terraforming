@@ -98,7 +98,7 @@ export const Symbols = ({ symbols, className }: Props) => {
 						)
 					) : s.symbol === SymbolType.Oxygen ||
 					  s.symbol === SymbolType.Temperature ? (
-						'+'
+						<BigPlus>+</BigPlus>
 					) : undefined
 
 				return (
@@ -202,4 +202,9 @@ const SlashSymbol = styled.div`
 	width: 20px;
 	transform: rotate(-60deg);
 	border-radius: 2px;
+`
+
+const BigPlus = styled.div`
+	font-size: 150%;
+	font-weight: bold;
 `
