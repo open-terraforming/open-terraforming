@@ -46,12 +46,12 @@ export const PlayerHover = ({ player, x, y }: Props) => {
 					<InfoItem>{actionCards} actions</InfoItem>
 				</Info>
 				<Resources>
-					<ResItem resource="money" player={player} />
-					<ResItem resource="ore" player={player} />
-					<ResItem resource="titan" player={player} />
-					<ResItem resource="plants" player={player} />
-					<ResItem resource="energy" player={player} />
-					<ResItem resource="heat" player={player} />
+					<ResItem player={player} resource="money" />
+					<ResItem player={player} resource="ore" />
+					<ResItem player={player} resource="titan" />
+					<ResItem player={player} resource="plants" />
+					<ResItem player={player} resource="energy" />
+					<ResItem player={player} resource="heat" />
 				</Resources>
 				<TagInfo>
 					{tagsWithCount.map(([tag, count]) => (
@@ -78,10 +78,8 @@ const ResItem = ({ resource, player }: ResItemProps) => {
 			<ResItemV>
 				{player[resource]} <ResourceIcon res={resource} />
 			</ResItemV>
-			<ResItemP>
-				{production >= 0 && '+'}
-				{production}
-			</ResItemP>
+			<ResItemP>{production >= 0 && '+'}</ResItemP>
+			{production}
 		</ResItemC>
 	)
 }
