@@ -28,6 +28,7 @@ export type CardResource =
 	| 'fighters'
 	| 'floaters'
 	| 'asteroids'
+	| 'camps'
 
 export type GameProgress = 'oxygen' | 'temperature' | 'oceans' | 'venus'
 
@@ -206,6 +207,7 @@ export type ResourceCondition = (
 export interface CardPassiveEffect {
 	description: string
 	symbols: CardSymbol[]
+	onPlay?: (ctx: CardCallbackContext) => void
 	onGenerationStarted?: (ctx: CardCallbackContext, generation: number) => void
 	onTilePlaced?: (
 		ctx: CardCallbackContext,
@@ -252,6 +254,7 @@ export enum SymbolType {
 	CardWithNoTag,
 	ColonyTrade,
 	Colony,
+	TradeFleet,
 	SlashSmall,
 	BigPlus,
 }

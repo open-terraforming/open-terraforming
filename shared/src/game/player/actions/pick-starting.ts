@@ -130,15 +130,14 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 		this.player.usedCards.push(card)
 		this.player.corporation = card.code
 
-		this.runCardEffects(
-			corp.playEffects,
-			{
-				card,
-				game: this.game,
-				player: this.player,
-			},
-			[],
-		)
+		const ctx = {
+			card,
+			game: this.game,
+			player: this.player,
+		}
+
+		this.runCardEffects(corp.playEffects, ctx, [])
+		this.runCardPassiveEffectsOnBuy(corp.passiveEffects, ctx)
 
 		this.parent.onCardPlayed.emit({
 			card: corp,

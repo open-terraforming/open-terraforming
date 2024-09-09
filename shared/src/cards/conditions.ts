@@ -242,3 +242,9 @@ export const terraformRatingMin = (value: number) =>
 		symbols: [{ symbol: SymbolType.TerraformingRating, count: value }],
 		description: `Requires ${value} TR`,
 	})
+
+export const tradeFleeCountCondition = (value: number) =>
+	condition({
+		evaluate: ({ player }) => player.tradeFleets >= value,
+		description: `Requires ${value} trade fleets`,
+	})

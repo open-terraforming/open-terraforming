@@ -198,7 +198,7 @@ export const venusCards: Card[] = [
 		special: [CardSpecial.Venus],
 		resource: 'microbes',
 		victoryPointsCallback: vpsForCardResources('microbes', 1 / 3),
-		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
 		actionEffects: [prependRightArrow(anyCardResourceChange('microbes', 1))],
 	}),
 	card({
@@ -209,7 +209,7 @@ export const venusCards: Card[] = [
 		special: [CardSpecial.Venus],
 		resource: 'floaters',
 		victoryPointsCallback: vpsForCardResources('floaters', 1 / 2),
-		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
 		actionEffects: [
 			joinedEffects(
 				[
@@ -523,7 +523,7 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Venus, CardCategory.City],
 		special: [CardSpecial.Venus],
 		victoryPointsCallback: vpsForCardResources('floaters', 1 / 3),
-		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
 		resource: 'floaters',
 		playEffects: [
 			productionChange('money', 2),

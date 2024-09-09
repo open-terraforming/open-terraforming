@@ -5,10 +5,11 @@ import {
 	cellTypeCondition,
 } from '@shared/cards/conditions'
 import {
+	anyCardResourceChange,
 	cardResourceChange,
 	effectChoice,
+	getTopCards,
 	joinedEffects,
-	otherCardResourceChange,
 	placeOcean,
 	playerResourceChange,
 	productionChange,
@@ -18,9 +19,9 @@ import {
 	resourcesForTiles,
 	terraformRatingChange,
 } from '@shared/cards/effects'
-import { colonyTradePriceChange } from '@shared/cards/effects/colonyTradePriceChange'
 import { productionChangePerCardResource } from '@shared/cards/effects/productionChangePerCardResource'
-import { productionChangePerColony } from '@shared/cards/effects/productionChangePerColony'
+import { productionChangePerOwnedColony } from '@shared/cards/effects/productionChangePerOwnedColony'
+import { productionChangePerColonyInPlay } from '@shared/cards/effects/productionChangePerColonyInPlay'
 import { productionChangePerNoTags } from '@shared/cards/effects/productionChangePerNoTags'
 import { resourcePerCardResource } from '@shared/cards/effects/resourcePerCardResource'
 import { resourcesForColonies } from '@shared/cards/effects/resourcesForColonies'
@@ -28,9 +29,12 @@ import {
 	cardResourcePerSelfTagPlayed,
 	resetCardPriceChange,
 } from '@shared/cards/passive-effects'
-import { card, withRightArrow } from '@shared/cards/utils'
+import { card, prependRightArrow, withRightArrow } from '@shared/cards/utils'
 import { vpsForCardResources } from '@shared/cards/vps'
 import { GridCellContent } from '@shared/game'
+import { colonyTradePriceChange } from '@shared/cards/passive-effects/colonyTradePriceChange'
+import { cardPriceChange } from '@shared/cards/passive-effects/cardPriceChange'
+import { tradeFleetCountChange } from '@shared/cards/effects/tradeFleetCountChange'
 
 export const colonyCards = [
 	card({
@@ -41,7 +45,7 @@ export const colonyCards = [
 		conditions: [cardResourceCondition('floaters', 3)],
 		playEffects: [
 			productionChange('money', 2),
-			otherCardResourceChange('microbes', 2),
+			anyCardResourceChange('microbes', 2),
 		],
 		victoryPoints: 1,
 	}),
@@ -52,7 +56,7 @@ export const colonyCards = [
 		categories: [CardCategory.Event],
 		playEffects: [
 			// TODO: Is this required?
-			otherCardResourceChange('microbes', -1),
+			anyCardResourceChange('microbes', -1),
 			playerResourceChange('money', -5),
 			resourceChange('money', 5),
 		],
@@ -63,7 +67,7 @@ export const colonyCards = [
 		type: CardType.Building,
 		categories: [],
 		resource: 'floaters',
-		playEffects: [otherCardResourceChange('floaters', 2)],
+		playEffects: [anyCardResourceChange('floaters', 2)],
 		actionEffects: [
 			effectChoice([
 				cardResourceChange('floaters', 1),
@@ -107,7 +111,7 @@ export const colonyCards = [
 		cost: 10,
 		type: CardType.Action,
 		categories: [CardCategory.Science],
-		playEffects: [colonyTradePriceChange(-1)],
+		passiveEffects: [colonyTradePriceChange(-1)],
 		victoryPoints: 1,
 	}),
 	card({
@@ -129,9 +133,9 @@ export const colonyCards = [
 			CardCategory.Plant,
 		],
 		playEffects: [
-			productionChangePerColony('plants', 1),
-			otherCardResourceChange('animals', 1),
-			otherCardResourceChange('microbes', 2),
+			productionChangePerOwnedColony('plants', 1),
+			anyCardResourceChange('animals', 1),
+			anyCardResourceChange('microbes', 2),
 		],
 	}),
 	card({
@@ -146,7 +150,7 @@ export const colonyCards = [
 		cost: 2,
 		type: CardType.Event,
 		categories: [CardCategory.Science, CardCategory.Event],
-		playEffects: [otherCardResourceChange('floaters', 2)],
+		playEffects: [anyCardResourceChange('floaters', 2)],
 	}),
 	card({
 		code: 'floater-technology',
@@ -215,7 +219,7 @@ export const colonyCards = [
 		victoryPointsCallback: vpsForCardResources('floaters', 2),
 		playEffects: [
 			terraformRatingChange(1),
-			otherCardResourceChange('floaters', 2),
+			anyCardResourceChange('floaters', 2),
 		],
 		actionEffects: [
 			withRightArrow(resourceChange('titan', -1)),
@@ -231,7 +235,7 @@ export const colonyCards = [
 		resource: 'floaters',
 		actionEffects: [
 			effectChoice([
-				otherCardResourceChange('floaters', 1, CardCategory.Jupiter),
+				anyCardResourceChange('floaters', 1, CardCategory.Jupiter),
 				resourcePerCardResource('money', 1, 'floaters', 4),
 			]),
 		],
@@ -315,6 +319,108 @@ export const colonyCards = [
 			resourcesForTiles(GridCellContent.City, 'money', 1, false),
 			resourcesForColonies('money', 1),
 		],
+	}),
+	card({
+		code: 'nitrogen-from-titan',
+		cost: 25,
+		type: CardType.Building,
+		categories: [CardCategory.Jupiter, CardCategory.Space],
+		playEffects: [
+			terraformRatingChange(2),
+			anyCardResourceChange('floaters', 2, CardCategory.Jupiter),
+		],
+	}),
+	card({
+		code: 'pioneer-settlement',
+		cost: 13,
+		type: CardType.Building,
+		categories: [],
+		conditions: [
+			// TODO: playerMaxColonyCountCondition(1),
+		],
+		playEffects: [
+			productionChange('money', -2),
+			// TODO: placeColony()
+		],
+	}),
+	card({
+		code: 'productive-outpost',
+		cost: 0,
+		type: CardType.Building,
+		categories: [],
+		playEffects: [
+			// TODO: Gain all your colonies bonuses
+		],
+	}),
+	card({
+		code: 'quantum-communications',
+		cost: 8,
+		type: CardType.Building,
+		categories: [],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 4)],
+		playEffects: [productionChangePerColonyInPlay('money', 1)],
+		victoryPoints: 1,
+	}),
+	card({
+		code: 'red-spot-observatory',
+		cost: 17,
+		type: CardType.Action,
+		categories: [CardCategory.Science, CardCategory.Jupiter],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 3)],
+		playEffects: [getTopCards(2)],
+		actionEffects: [
+			effectChoice([
+				prependRightArrow(anyCardResourceChange('floaters', 1)),
+				joinedEffects([
+					withRightArrow(cardResourceChange('floaters', -1)),
+					getTopCards(1),
+				]),
+			]),
+		],
+		victoryPoints: 2,
+	}),
+	card({
+		code: 'refugee-camps',
+		cost: 10,
+		type: CardType.Action,
+		categories: [CardCategory.Earth],
+		resource: 'camps',
+		actionEffects: [
+			joinedEffects(
+				[
+					prependRightArrow(playerResourceChange('money', -1)),
+					anyCardResourceChange('camps', 1),
+				],
+				'to',
+			),
+		],
+		victoryPointsCallback: vpsForCardResources('camps', 1),
+	}),
+	card({
+		code: 'research-colony',
+		cost: 20,
+		type: CardType.Building,
+		categories: [CardCategory.Science, CardCategory.Space],
+		playEffects: [
+			// TODO: placeColony (ALLOWS MORE THAN 1 COLONY PER COLONY)
+			getTopCards(2),
+		],
+	}),
+	card({
+		code: 'rim-freighters',
+		cost: 4,
+		type: CardType.Action,
+		categories: [CardCategory.Space],
+		passiveEffects: [colonyTradePriceChange(-1)],
+	}),
+	card({
+		code: 'sky-docks',
+		cost: 18,
+		type: CardType.Building,
+		categories: [CardCategory.Earth, CardCategory.Space],
+		conditions: [cardCategoryCountCondition(CardCategory.Earth, 2)],
+		playEffects: [tradeFleetCountChange(1)],
+		passiveEffects: [cardPriceChange(-1)],
 	}),
 ]
 

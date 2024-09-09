@@ -68,15 +68,14 @@ export class PickPreludesAction extends PlayerBaseAction<Args> {
 				if (usedCards.includes(c)) {
 					const card = CardsLookupApi.get(c.code)
 
-					this.runCardEffects(
-						card.playEffects,
-						{
-							game: this.game,
-							player: this.player,
-							card: c,
-						},
-						[],
-					)
+					const ctx = {
+						game: this.game,
+						player: this.player,
+						card: c,
+					}
+
+					this.runCardEffects(card.playEffects, ctx, [])
+					this.runCardPassiveEffectsOnBuy(card.passiveEffects, ctx)
 				}
 			})
 		}

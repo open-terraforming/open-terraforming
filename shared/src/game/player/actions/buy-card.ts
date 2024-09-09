@@ -118,6 +118,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 		updatePlayerResource(this.player, 'ore', -useOre)
 
 		this.runCardEffects(card.playEffects, ctx, args)
+		this.runCardPassiveEffectsOnBuy(card.passiveEffects, ctx)
 
 		this.player.usedCards.push(cardState)
 		this.player.cards.splice(index, 1)

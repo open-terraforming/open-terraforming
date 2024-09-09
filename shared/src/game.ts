@@ -364,6 +364,8 @@ export interface UsedCardState {
 	floaters: number
 	/** Asteroids */
 	asteroids: number
+	/** Number of camps on the card */
+	camps: number
 
 	/** Index of card that triggered last passive effect */
 	triggeredByCard?: number

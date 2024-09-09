@@ -1038,7 +1038,7 @@ export const discardCard = () =>
 export const hasCardTagsVoidEffect = (category: CardCategory, count: number) =>
 	effect({
 		description: f('Have {0} {1} tags', count, CardCategory[category]),
-		conditions: [cardCountCondition(category, count)],
+		conditions: [cardCategoryCountCondition(category, count)],
 		symbols: [{ tag: category, count }, { symbol: SymbolType.Colon }],
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		perform: () => {},

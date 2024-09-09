@@ -159,10 +159,6 @@ const E = styled.div`
 	justify-content: center;
 `
 
-const TextSymbol = styled.span`
-	font-weight: bold;
-`
-
 const S = styled.div<{
 	production?: boolean
 	other?: boolean
