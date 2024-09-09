@@ -129,6 +129,10 @@ export const getBestArgs = (
 ) => {
 	const possibleArguments = getPossibleArgs(player, game, effects, cardState)
 
+	if (possibleArguments === null) {
+		return null
+	}
+
 	const evalEffect = (
 		effectIndex: number,
 		effectArgs: CardEffectArgumentType[][],

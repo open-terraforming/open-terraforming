@@ -8,6 +8,10 @@ export const playCardScore = ({ player, game }: ScoringContext, card: Card) => {
 
 	const best = getBestArgs(game, player, cardState, card.playEffects)
 
+	if (!best) {
+		return null
+	}
+
 	return {
 		score: best.score - moneyCostScore(player, card.cost),
 		args: best.args,

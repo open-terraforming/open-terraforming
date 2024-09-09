@@ -11,6 +11,7 @@ import { range, shuffle, CardsCollection, flatten } from '@shared/utils'
 import { emptyCardState, resources } from '@shared/cards/utils'
 import { getBestArgs } from '../utils'
 import { assertNever } from '@shared/utils/assertNever'
+import { isNotNull } from '@shared/utils/collections'
 
 export const cardsList = (list: (string | UsedCardState)[]) => {
 	return new CardsCollection(
@@ -148,8 +149,11 @@ const getPossibleOptions = (
 				)
 				.map((e) => [
 					effects.indexOf(e),
-					getBestArgs(game, player, card, [e]).args[0],
+					getBestArgs(game, player, card, [e])
+						?.args[0] as CardEffectArgumentType[],
 				])
+				.filter(([index, args]) => (args !== undefined ? [index, args] : null))
+				.filter(isNotNull)
 		}
 
 		case CardEffectTarget.Cell: {
@@ -184,10 +188,26 @@ export const getPossibleArgs = (
 	game: GameState,
 	effects: CardEffect[],
 	card: UsedCardState,
-): CardEffectArgumentType[][][] => {
-	return effects.map((e) =>
-		e.args.length > 0
-			? e.args.map((a) => shuffle(getPossibleOptions(player, game, a, card)))
-			: [[]],
-	)
+): CardEffectArgumentType[][][] | null => {
+	const args = effects.map((e) => {
+		const computedArgs =
+			e.args.length > 0
+				? e.args.map((a) => shuffle(getPossibleOptions(player, game, a, card)))
+				: [[]]
+
+		// If we can't determine proper argument we shouldn't score the card at all
+		for (const [index, arg] of e.args.entries()) {
+			if (!arg.optional && !computedArgs[index].length) {
+				return null
+			}
+		}
+
+		return computedArgs
+	})
+
+	if (args.some((a) => a === null)) {
+		return null
+	}
+
+	return args.filter(isNotNull)
 }

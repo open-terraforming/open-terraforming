@@ -254,6 +254,16 @@ export class Bot extends Player {
 					CardsLookupApi.get(card.code).actionEffects,
 				)
 
+				if (!args) {
+					this.logger.error(
+						'No possible args found for',
+						card.code,
+						"that's in pending actions",
+					)
+
+					return this.performAction(playerPass(true))
+				}
+
 				return this.performAction(playCard(card.code, a.cardIndex, args.args))
 			}
 
@@ -448,41 +458,45 @@ export class Bot extends Player {
 						.forEach((c) => {
 							const score = playCardScore(this.scoringContext, c)
 
-							this.logger.log(
-								c.code,
-								'score',
-								score.score,
-								'with',
-								JSON.stringify(score.args),
-							)
+							if (score !== null) {
+								this.logger.log(
+									c.code,
+									'score',
+									score.score,
+									'with',
+									JSON.stringify(score.args),
+								)
 
-							actions.push([
-								score.score,
-								() => {
-									try {
-										this.performAction(
-											buyCard(
-												c.code,
-												this.state.cards.indexOf(c.code),
-												c.categories.includes(CardCategory.Building)
-													? this.state.ore
-													: 0,
-												c.categories.includes(CardCategory.Space)
-													? this.state.titan
-													: 0,
-												{},
-												score.args,
-											),
-										)
-									} catch (e) {
-										this.logger.log(
-											`Failed to play ${c.code} with ${score.args}`,
-										)
+								actions.push([
+									score.score,
+									() => {
+										try {
+											this.performAction(
+												buyCard(
+													c.code,
+													this.state.cards.indexOf(c.code),
+													c.categories.includes(CardCategory.Building)
+														? this.state.ore
+														: 0,
+													c.categories.includes(CardCategory.Space)
+														? this.state.titan
+														: 0,
+													{},
+													score.args,
+												),
+											)
+										} catch (e) {
+											this.logger.log(
+												`Failed to play ${c.code} with ${score.args}`,
+											)
 
-										throw e
-									}
-								},
-							])
+											throw e
+										}
+									},
+								])
+							} else {
+								this.logger.error('No score for', c.code)
+							}
 						})
 
 					this.state.usedCards
@@ -498,20 +512,22 @@ export class Bot extends Player {
 						.forEach((c) => {
 							const score = useCardScore(this.scoringContext, c)
 
-							actions.push([
-								score.score,
-								() => {
-									try {
-										this.performAction(playCard(c.code, c.index, score.args))
-									} catch (e) {
-										this.logger.log(
-											`Failed to use ${c.code} with ${score.args}`,
-										)
+							if (score !== null) {
+								actions.push([
+									score.score,
+									() => {
+										try {
+											this.performAction(playCard(c.code, c.index, score.args))
+										} catch (e) {
+											this.logger.log(
+												`Failed to use ${c.code} with ${score.args}`,
+											)
 
-										throw e
-									}
-								},
-							])
+											throw e
+										}
+									},
+								])
+							}
 						})
 				}
 
