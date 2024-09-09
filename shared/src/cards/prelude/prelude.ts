@@ -6,7 +6,7 @@ import {
 	placeTile,
 	getTopCards,
 	changeProgressConditionBonus,
-	cardPriceChange,
+	deprecatedCardPriceChange,
 	getTopCardsWithTag,
 	placeOcean,
 	gameProcessChange,
@@ -118,7 +118,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [],
 		special: [CardSpecial.Prelude],
-		playEffects: [noDesc(cardPriceChange(-25))],
+		playEffects: [noDesc(deprecatedCardPriceChange(-25))],
 		passiveEffects: [resetCardPriceChange(-25)],
 	}),
 	card({

@@ -1,3 +1,4 @@
+import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
 import { GridCellContent } from '../game'
 import { progressResToStr, withUnits } from '../units'
 import { CardsLookupApi } from './lookup'
@@ -247,4 +248,11 @@ export const tradeFleeCountCondition = (value: number) =>
 	condition({
 		evaluate: ({ player }) => player.tradeFleets >= value,
 		description: `Requires ${value} trade fleets`,
+	})
+
+export const playerColonyCountCondition = (value: number) =>
+	condition({
+		evaluate: ({ player, game }) =>
+			getPlayerColoniesCount({ player, game }) >= value,
+		description: `Requires ${value} colonies`,
 	})

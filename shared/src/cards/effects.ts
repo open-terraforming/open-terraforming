@@ -1229,7 +1229,8 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 		},
 	})
 
-export const cardPriceChange = (change: number) =>
+/** @deprecated use cardPriceChange passive effect */
+export const deprecatedCardPriceChange = (change: number) =>
 	effect({
 		description: `Effect: When you play a card, you pay ${withUnits(
 			'money',
@@ -1240,13 +1241,16 @@ export const cardPriceChange = (change: number) =>
 		},
 	})
 
+/** @deprecated use tagPriceChange passiveEffect */
 export const spaceCardPriceChange = (change: number) =>
-	tagPriceChange(CardCategory.Space, change)
+	deprecatedTagPriceChange(CardCategory.Space, change)
 
+/** @deprecated use tagPriceChange passiveEffect */
 export const earthCardPriceChange = (change: number) =>
-	tagPriceChange(CardCategory.Earth, change)
+	deprecatedTagPriceChange(CardCategory.Earth, change)
 
-export const tagPriceChange = (tag: CardCategory, change: number) =>
+/** @deprecated use tagPriceChange passiveEffect */
+export const deprecatedTagPriceChange = (tag: CardCategory, change: number) =>
 	effect({
 		description: `Effect: When you play a ${
 			CardCategory[tag]

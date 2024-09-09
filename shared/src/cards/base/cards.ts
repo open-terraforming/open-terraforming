@@ -13,7 +13,7 @@ import {
 import {
 	addResourceToCard,
 	cardExchange,
-	cardPriceChange,
+	deprecatedCardPriceChange,
 	cardResourceChange,
 	cardsForResource,
 	changeProgressConditionBonus,
@@ -297,7 +297,7 @@ export const baseCards: Card[] = [
 		],
 		special: [CardSpecial.CorporationsEra],
 		playEffects: [
-			cardPriceChange(-1),
+			deprecatedCardPriceChange(-1),
 			placeTile({
 				type: GridCellContent.City,
 				conditions: [PlacementCode.NoOceans, PlacementCode.Isolated],
@@ -846,7 +846,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Earth],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 2,
-		playEffects: [cardPriceChange(-2)],
+		playEffects: [deprecatedCardPriceChange(-2)],
 	}),
 	card({
 		code: 'advanced_alloys',
@@ -1688,7 +1688,7 @@ export const baseCards: Card[] = [
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 3,
 		conditions: [cardCategoryCountCondition(CardCategory.Science, 7)],
-		playEffects: [cardPriceChange(-2)],
+		playEffects: [deprecatedCardPriceChange(-2)],
 	}),
 	card({
 		code: 'investment_loan',
@@ -2147,7 +2147,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Event],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: -1,
-		playEffects: [noDesc(cardPriceChange(-8))],
+		playEffects: [noDesc(deprecatedCardPriceChange(-8))],
 		passiveEffects: [resetCardPriceChange(-8)],
 	}),
 	card({

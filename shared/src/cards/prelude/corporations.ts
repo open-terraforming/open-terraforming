@@ -4,7 +4,7 @@ import {
 	pickPreludes,
 	productionChange,
 	resourceChange,
-	tagPriceChange,
+	deprecatedTagPriceChange,
 	emptyEffect,
 	lowestProductionChange,
 	sponsorCompetitionForFree,
@@ -26,7 +26,7 @@ export const preludeCorporations = [
 			playEffects: [
 				productionChange('money', 3),
 				resourceChange('money', 44),
-				tagPriceChange(CardCategory.Building, -2),
+				deprecatedTagPriceChange(CardCategory.Building, -2),
 			],
 		}),
 	),
@@ -87,7 +87,7 @@ export const preludeCorporations = [
 			special: [CardSpecial.Prelude],
 			playEffects: [
 				resourceChange('money', 37),
-				tagPriceChange(CardCategory.Science, -2),
+				deprecatedTagPriceChange(CardCategory.Science, -2),
 				emptyEffect(
 					'As your first action, draw 3 prelude cards, pick 1 and discard the rest',
 				),

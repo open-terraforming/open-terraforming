@@ -27,7 +27,7 @@ import {
 	resourceChange,
 	resourceChangeByArg,
 	resourcesForTiles,
-	tagPriceChange,
+	deprecatedTagPriceChange,
 	terraformRatingChange,
 } from '../effects'
 import { cardResourcePerCardPlayed } from '../passive-effects'
@@ -653,7 +653,7 @@ export const venusCards: Card[] = [
 		cost: 9,
 		categories: [CardCategory.Venus, CardCategory.Space],
 		special: [CardSpecial.Venus],
-		playEffects: [tagPriceChange(CardCategory.Venus, -2)],
+		playEffects: [deprecatedTagPriceChange(CardCategory.Venus, -2)],
 	}),
 	card({
 		code: 'venusian_animals',
