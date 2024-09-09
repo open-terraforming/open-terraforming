@@ -18,6 +18,7 @@ import { PlayerActionType } from '@shared/player-actions'
 import { pendingActions } from '@shared/utils'
 import { lighten } from 'polished'
 import { Tooltip } from '@/components'
+import { PlayerHover } from './PlayerHover'
 
 // TODO: Map pending actions to strings too
 
@@ -69,6 +70,8 @@ export const Player = ({
 	onClick: () => void
 }) => {
 	const [container, setContainer] = useState(null as HTMLDivElement | null)
+	const [showHover, setShowHover] = useState(false)
+
 	const position = useElementPosition(container)
 	const state = player
 	const isPlaying = state.state === PlayerStateValue.Playing
@@ -85,6 +88,8 @@ export const Player = ({
 			onClick={onClick}
 			isPlaying={isPlaying}
 			ref={(e) => setContainer(e)}
+			onMouseOver={() => setShowHover(true)}
+			onMouseOut={() => setShowHover(false)}
 		>
 			<Rating>{state.terraformRating}</Rating>
 			<InfoContainer>
@@ -150,6 +155,14 @@ export const Player = ({
 				x={position ? position.left + position.width : 0}
 				y={position ? position.top : 0}
 			/>
+
+			{showHover && (
+				<PlayerHover
+					player={player}
+					x={position ? position.left + position.width : 0}
+					y={position ? position.top : 0}
+				/>
+			)}
 		</Container>
 	)
 }
