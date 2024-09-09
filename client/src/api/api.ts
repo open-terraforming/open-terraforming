@@ -9,13 +9,15 @@ import { encode, decode } from 'msgpack-lite'
 export class Client {
 	server: string
 	socket?: WebSocket
+	gameId?: string
 
 	onOpen?: () => void
 	onClose?: () => void
 	onMessage?: (data: GameMessage) => void
 
-	constructor(server: string) {
+	constructor(server: string, gameId: string) {
 		this.server = server
+		this.gameId = gameId
 		this.connect()
 	}
 

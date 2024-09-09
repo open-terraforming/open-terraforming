@@ -188,6 +188,12 @@ export class Player {
 	}
 
 	handleDisconnect() {
+		if (
+			this.game.config.disablePlayersWhenDisconnectedForInSeconds === undefined
+		) {
+			return
+		}
+
 		if (this.disconnectTimeout) {
 			clearTimeout(this.disconnectTimeout)
 		}
@@ -195,7 +201,7 @@ export class Player {
 		this.disconnectTimeout = setTimeout(() => {
 			this.state.connected = false
 			this.updated()
-		}, 10000)
+		}, this.game.config.disablePlayersWhenDisconnectedForInSeconds * 1000)
 	}
 
 	finishGame() {

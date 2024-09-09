@@ -1,6 +1,6 @@
 import {
 	getTopCardsWithTag,
-	otherCardResourceChange,
+	anyCardResourceChange,
 	productionChange,
 	resourceChange,
 } from '../effects'
@@ -35,8 +35,8 @@ export const venusCorporations: Card[] = [
 			resourceChange('money', 42),
 			getTopCardsWithTag(2, CardCategory.Venus),
 		],
-		actionEffects: [otherCardResourceChange('floaters', 1)],
-		victoryPointsCallback: vpsForCardResources('floaters', 3),
+		actionEffects: [anyCardResourceChange('floaters', 1)],
+		victoryPointsCallback: vpsForCardResources('floaters', 1 / 3),
 	}),
 	card({
 		code: 'manutech',

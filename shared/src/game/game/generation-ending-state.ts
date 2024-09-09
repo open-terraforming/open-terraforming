@@ -42,7 +42,7 @@ export class GenerationEndingState extends BaseGameState {
 
 			if (lock) {
 				this.clearLock()
-				this.game.load(lock)
+				this.game.load(lock, this.game.config)
 				this.onEnter()
 			}
 		}

@@ -22,12 +22,14 @@ export const HeadSymbols = styled(Symbols)`
 	}
 `
 
-export const Action = styled.div`
+export const Action = styled.div<{ $hasSymbols: boolean }>`
 	background: ${({ theme }) => theme.colors.background};
 	padding: 0.5rem;
 	border: 0.1rem solid ${({ theme }) => theme.colors.border};
+
 	&& {
-		margin-bottom: 1rem;
+		margin-bottom: ${({ $hasSymbols }) =>
+			$hasSymbols ? '0.25rem' : '0.75rem'};
 	}
 `
 

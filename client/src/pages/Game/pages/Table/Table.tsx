@@ -22,24 +22,6 @@ const Table = () => {
 	const spectating = useAppStore((state) => state.game.spectating)
 	const [pickerHidden, setPickerHidden] = useState(false)
 
-	/*
-	const events = useEvents()
-	const lastEvent = useRef<RealtimeEventEmit | null>()
-
-	useAnimationFrame(() => {
-		if (lastEvent.current) {
-			events.send(lastEvent.current)
-			lastEvent.current = null
-		}
-	})
-
-	useWindowEvent('mousemove', (e: MouseEvent) => {
-		const pos = [e.clientX / window.innerWidth, e.clientY / window.innerHeight]
-
-		lastEvent.current = mouseMoveEvent(pos[0], pos[1])
-	})
-	*/
-
 	useEffect(() => {
 		if (
 			pending?.type !== PlayerActionType.PickCards &&

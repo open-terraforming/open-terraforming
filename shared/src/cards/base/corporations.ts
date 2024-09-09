@@ -59,7 +59,7 @@ export const baseCorporations = [
 			passiveEffects: [
 				passiveEffect({
 					description: f(
-						'Effect: When you play a card or a standard project with basic cost of {0} or more, you gain {1}',
+						'When you play a card or a standard project with basic cost of {0} or more, you gain {1}',
 						withUnits('money', 20),
 						withUnits('money', 4),
 					),

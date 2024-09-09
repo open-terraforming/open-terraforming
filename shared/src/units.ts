@@ -1,7 +1,8 @@
-import { Resource, GameProgress } from './cards'
+import { Resource, GameProgress, CardResource } from './cards'
+import { quantized } from './utils/quantized'
 
 export const withUnits = (
-	res: Resource | GameProgress,
+	res: Resource | GameProgress | CardResource,
 	amount: number | string,
 ) => {
 	switch (res) {
@@ -16,13 +17,25 @@ export const withUnits = (
 		case 'titan':
 			return `${amount} titan`
 		case 'plants':
-			return `${amount} plants`
+			return quantized(amount as number, 'plant', 'plants')
 		case 'temperature':
 			return `${(amount as number) * 2}°C`
 		case 'oxygen':
 			return `${amount} %`
 		case 'venus':
-			return `${(amount as number) * 2} steps`
+			return `${(amount as number) * 2} %`
+		case 'microbes':
+			return quantized(amount as number, 'microbe', 'microbes')
+		case 'animals':
+			return quantized(amount as number, 'animal', 'animals')
+		case 'science':
+			return quantized(amount as number, 'science', 'sciences')
+		case 'fighters':
+			return quantized(amount as number, 'fighter', 'fighters')
+		case 'floaters':
+			return quantized(amount as number, 'floater', 'floaters')
+		case 'asteroids':
+			return quantized(amount as number, 'asteroid', 'asteroids')
 		default:
 			return amount.toString()
 	}

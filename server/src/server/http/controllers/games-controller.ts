@@ -84,6 +84,8 @@ export const gamesController = appController(
 				draft,
 				solarPhase,
 				everybodyIsAdmin: globalConfig.everybodyIsAdmin,
+				disablePlayersWhenDisconnectedForInSeconds:
+					request.disablePlayersAfterDisconnectingInSeconds,
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)

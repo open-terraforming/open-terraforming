@@ -12,8 +12,11 @@ import {
 	pickCards,
 	pickPreludes,
 	playerPass,
+	solarPhaseTerraform,
 	UpdateDeepPartial,
 } from '@shared/index'
+import { Logger } from '@shared/lib/logger'
+import { StateMachine } from '@shared/lib/state-machine'
 import { MapType } from '@shared/map'
 import { Maps } from '@shared/maps'
 import { GameModes } from '@shared/modes'
@@ -22,6 +25,9 @@ import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState } from '@shared/states'
 import { f, isMarsTerraformed, range, shuffle } from '@shared/utils'
+import { deepExtend } from '@shared/utils/collections'
+import { MyEvent } from '@shared/utils/events'
+import { randomPassword } from '@shared/utils/password'
 import { v4 as uuidv4 } from 'uuid'
 import { Bot } from './bot'
 import { BotNames } from './bot-names'
@@ -33,6 +39,7 @@ import { GenerationInProgressGameState } from './game/generation-in-progress-gam
 import { GenerationStartGameState } from './game/generation-start-game-state'
 import { PreludeGameState } from './game/prelude-game-state'
 import { ResearchPhaseGameState } from './game/research-phase-game-state'
+import { SolarPhaseGameState } from './game/solar-phase-game-state'
 import { StartingGameState } from './game/starting-game-state'
 import { WaitingForPlayersGameState } from './game/waiting-for-players-game-state'
 import {
@@ -42,18 +49,10 @@ import {
 	ProjectBought,
 	TilePlacedEvent,
 } from './player'
-import { SolarPhaseGameState } from './game/solar-phase-game-state'
-import { randomPassword } from '@shared/utils/password'
-import { deepExtend } from '@shared/utils/collections'
-import { MyEvent } from '@shared/utils/events'
-import { StateMachine } from '@shared/lib/state-machine'
-import { Logger } from '@shared/lib/logger'
 import { ColoniesProductionGameState } from './game/colonies-production-game-state'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 
 export interface GameConfig {
-	lockSystem: GameLockSystem
-
 	bots: number
 	adminPassword: string
 	mode: GameModeType
@@ -69,6 +68,8 @@ export interface GameConfig {
 	fastProduction: boolean
 
 	everybodyIsAdmin: boolean
+	/** Disable players (skip their turn) when they're disconnected for specified number of seconds */
+	disablePlayersWhenDisconnectedForInSeconds?: number
 }
 
 export interface GameLockSystem {
@@ -87,7 +88,7 @@ export class Game {
 		return this.baseLogger.duplicate(`Game(${shortId})`)
 	}
 
-	config: Omit<GameConfig, 'lockSystem'>
+	config: GameConfig
 
 	state = initialGameState(uuidv4())
 
@@ -121,6 +122,7 @@ export class Game {
 			draft: false,
 			solarPhase: false,
 			everybodyIsAdmin: false,
+			disablePlayersWhenDisconnectedForInSeconds: 30,
 			...config,
 		}
 
@@ -204,7 +206,9 @@ export class Game {
 		return this.botNames.pop() || `Bot ${id}`
 	}
 
-	load = (state: GameState) => {
+	load = (state: GameState, config: GameConfig) => {
+		this.config = config
+
 		this.state = state
 		this.players = []
 
@@ -486,7 +490,15 @@ export class Game {
 				try {
 					if (!p.state.connected) {
 						if (p.state.state !== PlayerStateValue.Playing) {
-							if (p.state.pendingActions.length > 0) {
+							if (p.state.state === PlayerStateValue.SolarPhaseTerraform) {
+								const availableProgressValues = (
+									['oceans', 'temperature', 'oxygen'] as const
+								).filter(
+									(progress) => this.state[progress] < this.state.map[progress],
+								)
+
+								p.performAction(solarPhaseTerraform(availableProgressValues[0]))
+							} else if (p.state.pendingActions.length > 0) {
 								p.state.pendingActions.forEach((a) => {
 									if (a.type === PlayerActionType.PickStarting) {
 										// Starting pick can stall others!
@@ -503,6 +515,8 @@ export class Game {
 									if (a.type === PlayerActionType.DraftCard) {
 										p.performAction(draftCard([0]))
 									}
+
+									// TODO: Tons of other actions here
 								})
 							}
 						}

@@ -15,13 +15,12 @@ import {
 	getTopCards,
 	hasCardTagsVoidEffect,
 	joinedEffects,
-	otherCardAnyResourceChange,
-	otherCardResourceChange,
-	otherCardResourceChangePerTag,
+	anyCardAnyResourceChange,
+	anyCardResourceChange,
+	anyCardResourceChangePerTag,
 	otherPlayersGetTopCards,
 	placeCity,
 	placeTile,
-	playerResourceChange,
 	playerResourceChangeWithTagCondition,
 	productionChange,
 	productionChangeForTags,
@@ -34,8 +33,9 @@ import {
 import { cardResourcePerCardPlayed } from '../passive-effects'
 import { resourceAsPaymentForTags } from '../effects/resourceAsPaymentForTags'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
-import { card, withRightArrow } from '../utils'
+import { card, prependRightArrow, withRightArrow } from '../utils'
 import { vpsForCardResources } from '../vps'
+import { moneyOrResPayment } from '../effects/moneyOrResPayment'
 
 export const venusCards: Card[] = [
 	card({
@@ -48,8 +48,11 @@ export const venusCards: Card[] = [
 		victoryPoints: 1,
 		actionEffects: [
 			effectChoice([
-				withRightArrow(otherCardResourceChange('floaters', 1)),
-				joinedEffects([cardResourceChange('floaters', -1), getTopCards(1)]),
+				prependRightArrow(anyCardResourceChange('floaters', 1)),
+				joinedEffects([
+					withRightArrow(cardResourceChange('floaters', -1)),
+					getTopCards(1),
+				]),
 			]),
 		],
 	}),
@@ -72,7 +75,7 @@ export const venusCards: Card[] = [
 		special: [CardSpecial.Venus],
 		playEffects: [
 			gameProcessChange('venus', 1),
-			otherCardResourceChange('floaters', 3, CardCategory.Venus),
+			anyCardResourceChange('floaters', 3, CardCategory.Venus),
 		],
 	}),
 	card({
@@ -114,7 +117,7 @@ export const venusCards: Card[] = [
 		playEffects: [
 			productionChange('money', 2),
 			// TODO: Is this just cards in your hand? Or is it card in anybody hand? It should be only in your hand
-			otherCardAnyResourceChange(1, CardCategory.Venus),
+			anyCardAnyResourceChange(1, CardCategory.Venus),
 		],
 	}),
 	card({
@@ -142,7 +145,7 @@ export const venusCards: Card[] = [
 		resource: 'floaters',
 		actionEffects: [
 			effectChoice([
-				cardResourceChange('floaters', 1),
+				prependRightArrow(cardResourceChange('floaters', 1)),
 				joinedEffects([
 					withRightArrow(cardResourceChange('floaters', -1)),
 					productionChange('energy', 1),
@@ -157,7 +160,11 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Venus],
 		special: [CardSpecial.Venus],
 		resource: 'floaters',
-		actionEffects: [otherCardResourceChange('floaters', 1, CardCategory.Venus)],
+		actionEffects: [
+			prependRightArrow(
+				anyCardResourceChange('floaters', 1, CardCategory.Venus),
+			),
+		],
 		playEffects: [
 			resourceAsPaymentForTags('floaters', 3, [CardCategory.Venus]),
 		],
@@ -175,7 +182,7 @@ export const venusCards: Card[] = [
 		resource: 'floaters',
 		actionEffects: [
 			effectChoice([
-				cardResourceChange('floaters', 1),
+				prependRightArrow(cardResourceChange('floaters', 1)),
 				joinedEffects([
 					withRightArrow(cardResourceChange('floaters', -2)),
 					gameProcessChange('venus', 1),
@@ -190,9 +197,9 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Venus, CardCategory.Microbe],
 		special: [CardSpecial.Venus],
 		resource: 'microbes',
-		victoryPointsCallback: vpsForCardResources('microbes', 3),
-		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
-		actionEffects: [otherCardResourceChange('microbes', 1)],
+		victoryPointsCallback: vpsForCardResources('microbes', 1 / 3),
+		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		actionEffects: [prependRightArrow(anyCardResourceChange('microbes', 1))],
 	}),
 	card({
 		code: 'floating_habs',
@@ -201,11 +208,16 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Venus],
 		special: [CardSpecial.Venus],
 		resource: 'floaters',
-		victoryPointsCallback: vpsForCardResources('floaters', 2),
-		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
+		victoryPointsCallback: vpsForCardResources('floaters', 1 / 2),
+		conditions: [cardCountCondition(CardCategory.Science, 2)],
 		actionEffects: [
-			withRightArrow(playerResourceChange('money', -2)),
-			otherCardResourceChange('floaters', 1),
+			joinedEffects(
+				[
+					withRightArrow(resourceChange('money', -2, true)),
+					anyCardResourceChange('floaters', 1),
+				],
+				'to',
+			),
 		],
 	}),
 	card({
@@ -215,7 +227,7 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Venus],
 		special: [CardSpecial.Venus],
 		resource: 'floaters',
-		playEffects: [
+		actionEffects: [
 			effectChoice([
 				joinedEffects([
 					withRightArrow(resourceChange('money', -2)),
@@ -237,8 +249,8 @@ export const venusCards: Card[] = [
 		conditions: [gameProgressConditionMin('venus', 10)],
 		playEffects: [
 			effectChoice([
-				otherCardResourceChange('microbes', 2, CardCategory.Venus),
-				otherCardResourceChange('animals', 2, CardCategory.Venus),
+				anyCardResourceChange('microbes', 2, CardCategory.Venus),
+				anyCardResourceChange('animals', 2, CardCategory.Venus),
 			]),
 			productionChange('energy', -1),
 			productionChange('money', 2),
@@ -246,11 +258,11 @@ export const venusCards: Card[] = [
 	}),
 	card({
 		code: 'ghg_import_from_venus',
-		type: CardType.Effect,
+		type: CardType.Event,
 		cost: 23,
 		categories: [CardCategory.Venus, CardCategory.Space, CardCategory.Event],
 		special: [CardSpecial.Venus],
-		actionEffects: [gameProcessChange('venus', 1), productionChange('heat', 3)],
+		playEffects: [gameProcessChange('venus', 1), productionChange('heat', 3)],
 	}),
 	card({
 		code: 'giant_solar_shade',
@@ -258,7 +270,7 @@ export const venusCards: Card[] = [
 		cost: 27,
 		categories: [CardCategory.Venus, CardCategory.Space],
 		special: [CardSpecial.Venus],
-		actionEffects: [gameProcessChange('venus', 3)],
+		playEffects: [gameProcessChange('venus', 3)],
 	}),
 	card({
 		code: 'gyropolis',
@@ -281,7 +293,7 @@ export const venusCards: Card[] = [
 		special: [CardSpecial.Venus],
 		playEffects: [
 			gameProcessChange('venus', 1),
-			otherCardResourceChangePerTag(
+			anyCardResourceChangePerTag(
 				'floaters',
 				1,
 				CardCategory.Jupiter,
@@ -326,11 +338,11 @@ export const venusCards: Card[] = [
 		actionEffects: [
 			effectChoice([
 				joinedEffects([
-					withRightArrow(playerResourceChange('titan', -1)),
+					withRightArrow(resourceChange('titan', -1)),
 					cardResourceChange('floaters', 2),
 				]),
 				joinedEffects([
-					withRightArrow(otherCardResourceChange('floaters', 2)),
+					withRightArrow(cardResourceChange('floaters', -2)),
 					gameProcessChange('venus', 1),
 				]),
 			]),
@@ -390,7 +402,7 @@ export const venusCards: Card[] = [
 		conditions: [gameProgressConditionMin('venus', 6)],
 		actionEffects: [
 			// TODO: Is this just cards in your hand? Or is it card in anybody hand? It should be only in your hand
-			otherCardAnyResourceChange(1, CardCategory.Venus),
+			anyCardAnyResourceChange(1, CardCategory.Venus),
 		],
 		playEffects: [
 			productionChange('energy', -1),
@@ -451,14 +463,8 @@ export const venusCards: Card[] = [
 		resource: 'asteroids',
 		actionEffects: [
 			effectChoice([
-				// TODO: Use titan as payment instead of just choice (allowing to combine both)
-				// TODO: The price of titan is not accounted for here
 				joinedEffects([
-					withRightArrow(resourceChange('money', -6)),
-					cardResourceChange('asteroids', 1),
-				]),
-				joinedEffects([
-					withRightArrow(resourceChange('titan', -2)),
+					withRightArrow(moneyOrResPayment('titan', 6)),
 					cardResourceChange('asteroids', 1),
 				]),
 				joinedEffects([
@@ -516,8 +522,9 @@ export const venusCards: Card[] = [
 		cost: 22,
 		categories: [CardCategory.Venus, CardCategory.City],
 		special: [CardSpecial.Venus],
-		victoryPointsCallback: vpsForCardResources('floaters', 3),
-		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
+		victoryPointsCallback: vpsForCardResources('floaters', 1 / 3),
+		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		resource: 'floaters',
 		playEffects: [
 			productionChange('money', 2),
 			placeTile({
@@ -525,7 +532,7 @@ export const venusCards: Card[] = [
 				special: [GridCellSpecial.Stratopolis],
 			}),
 		],
-		actionEffects: [otherCardResourceChange('floaters', 2, CardCategory.Venus)],
+		actionEffects: [anyCardResourceChange('floaters', 2, CardCategory.Venus)],
 	}),
 	card({
 		code: 'stratospheric_birds',
@@ -537,7 +544,7 @@ export const venusCards: Card[] = [
 		victoryPointsCallback: vpsForCardResources('animals', 1),
 		conditions: [gameProgressConditionMin('venus', 6)],
 		actionEffects: [cardResourceChange('animals', 1)],
-		playEffects: [otherCardResourceChange('floaters', -1)],
+		playEffects: [anyCardResourceChange('floaters', -1)],
 	}),
 	card({
 		code: 'sulphur_exports',
@@ -590,7 +597,7 @@ export const venusCards: Card[] = [
 		conditions: [gameProgressConditionMin('venus', 3)],
 		actionEffects: [
 			effectChoice([
-				otherCardResourceChange('microbes', 1, CardCategory.Venus),
+				anyCardResourceChange('microbes', 1, CardCategory.Venus),
 				joinedEffects([
 					withRightArrow(cardResourceChange('microbes', -2)),
 					gameProcessChange('venus', 1),
@@ -634,10 +641,10 @@ export const venusCards: Card[] = [
 		cost: 20,
 		categories: [CardCategory.Venus, CardCategory.Plant],
 		special: [CardSpecial.Venus],
-		actionEffects: [
+		playEffects: [
 			gameProcessChange('venus', 1),
 			productionChange('plants', 1),
-			otherCardResourceChange('microbes', 2),
+			anyCardResourceChange('microbes', 2),
 		],
 	}),
 	card({
@@ -670,7 +677,7 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Venus, CardCategory.Microbe],
 		special: [CardSpecial.Venus],
 		resource: 'microbes',
-		victoryPointsCallback: vpsForCardResources('microbes', 2),
+		victoryPointsCallback: vpsForCardResources('microbes', 1 / 2),
 		conditions: [gameProgressConditionMin('venus', 6)],
 		actionEffects: [cardResourceChange('microbes', 1)],
 	}),
@@ -684,8 +691,8 @@ export const venusCards: Card[] = [
 		playEffects: [
 			gameProcessChange('venus', 1),
 			effectChoice([
-				otherCardResourceChange('microbes', 1, CardCategory.Venus),
-				otherCardResourceChange('animals', 1, CardCategory.Venus),
+				anyCardResourceChange('microbes', 1, CardCategory.Venus),
+				anyCardResourceChange('animals', 1, CardCategory.Venus),
 			]),
 		],
 	}),
