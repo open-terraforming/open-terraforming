@@ -103,9 +103,9 @@ export const Cell = ({
 			? cell.other && otherToStr(cell.other)
 			: cell.content && tileToStr(cell.content),
 		cell.ownerId !== undefined && cell.content !== GridCellContent.Ocean
-			? ` placed by ${playerMap[cell.ownerId].name}`
+			? ` placed by ${playerMap[cell.ownerId]?.name}`
 			: cell.claimantId !== undefined
-				? `Claimed by ${playerMap[cell.claimantId].name}`
+				? `Claimed by ${playerMap[cell.claimantId]?.name}`
 				: undefined,
 	].filter((i) => i !== undefined)
 
