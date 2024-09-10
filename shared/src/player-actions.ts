@@ -14,6 +14,9 @@ export enum PlayerActionType {
 	SolarPhaseTerraform,
 	AddCardResource,
 	DiscardCards,
+	BuildColony,
+	ChangeColonyStep,
+	FreeTradeWithColony,
 }
 
 export const placeTileAction = (state: PlacementState, anonymous = false) =>
@@ -103,6 +106,25 @@ export const discardCardsAction = (count: number) =>
 		data: { count },
 	}) as const
 
+export const buildColonyAction = (data: {
+	allowMoreColoniesPerColony: boolean
+}) =>
+	({
+		type: PlayerActionType.BuildColony,
+		data,
+	}) as const
+
+export const changeColonyStepAction = (data: { change: number }) =>
+	({
+		type: PlayerActionType.ChangeColonyStep,
+		data,
+	}) as const
+
+export const freeTradeWithColonyAction = () =>
+	({
+		type: PlayerActionType.FreeTradeWithColony,
+	}) as const
+
 export type PlayerAction =
 	| ReturnType<typeof placeTileAction>
 	| ReturnType<typeof pickCardsAction>
@@ -115,3 +137,6 @@ export type PlayerAction =
 	| ReturnType<typeof solarPhaseTerraformAction>
 	| ReturnType<typeof addCardResourceAction>
 	| ReturnType<typeof discardCardsAction>
+	| ReturnType<typeof buildColonyAction>
+	| ReturnType<typeof changeColonyStepAction>
+	| ReturnType<typeof freeTradeWithColonyAction>

@@ -4,7 +4,8 @@ import {
 	cardResourceCondition,
 	cellTypeCondition,
 	gameProgressConditionMin,
-	playerColonyCountCondition,
+	playerMaxColonyCountCondition,
+	playerMinColonyCountCondition,
 } from '@shared/cards/conditions'
 import {
 	anyCardResourceChange,
@@ -23,7 +24,11 @@ import {
 	resourcesForTiles,
 	terraformRatingChange,
 } from '@shared/cards/effects'
+import { changeColonyStep } from '@shared/cards/effects/changeColonyStep'
+import { freeTradeWithColony } from '@shared/cards/effects/freeTradeWithColony'
+import { gainAllColonyIncomeBonuses } from '@shared/cards/effects/gainAllColonyIncomeBonuses'
 import { getTopCardsByTagCount } from '@shared/cards/effects/getTopCardsByTagCount'
+import { placeColony } from '@shared/cards/effects/placeColony'
 import { productionChangePerCardResource } from '@shared/cards/effects/productionChangePerCardResource'
 import { productionChangePerColonyInPlay } from '@shared/cards/effects/productionChangePerColonyInPlay'
 import { productionChangePerNoTags } from '@shared/cards/effects/productionChangePerNoTags'
@@ -33,6 +38,8 @@ import { resourcesForColonies } from '@shared/cards/effects/resourcesForColonies
 import { tradeFleetCountChange } from '@shared/cards/effects/tradeFleetCountChange'
 import {
 	cardResourcePerSelfTagPlayed,
+	drawCardWhenBuyingCard,
+	increaseIncomeStepBeforeTrading,
 	resetCardPriceChange,
 } from '@shared/cards/passive-effects'
 import { cardPriceChange } from '@shared/cards/passive-effects/cardPriceChange'
@@ -189,11 +196,7 @@ export const colonyCards = [
 		cost: 23,
 		type: CardType.Building,
 		categories: [CardCategory.Space],
-		playEffects: [
-			placeOcean(),
-			// TODO:
-			// placeColony(),
-		],
+		playEffects: [placeOcean(), placeColony()],
 	}),
 	card({
 		code: 'impactor-swarm',
@@ -211,9 +214,7 @@ export const colonyCards = [
 		cost: 12,
 		type: CardType.Event,
 		categories: [CardCategory.Earth, CardCategory.Space, CardCategory.Event],
-		playEffects: [
-			// TODO: placeColony(),
-		],
+		playEffects: [placeColony()],
 	}),
 	card({
 		code: 'jovian-lanterns',
@@ -278,11 +279,7 @@ export const colonyCards = [
 		cost: 1,
 		type: CardType.Event,
 		categories: [CardCategory.Earth, CardCategory.Event],
-		playEffects: [
-			// TODO:
-			// changeColonyIncomeStep(1),
-			// changeColonyIncomeStep(-1)
-		],
+		playEffects: [changeColonyStep(1), changeColonyStep(-1)],
 	}),
 	card({
 		code: 'martian-zoo',
@@ -301,20 +298,14 @@ export const colonyCards = [
 		cost: 20,
 		type: CardType.Building,
 		categories: [CardCategory.Space],
-		playEffects: [
-			productionChange('titan', 1),
-			// TODO: placeColony()
-		],
+		playEffects: [productionChange('titan', 1), placeColony()],
 	}),
 	card({
 		code: 'minority-refuge',
 		cost: 5,
 		type: CardType.Building,
 		categories: [CardCategory.Space],
-		playEffects: [
-			productionChange('money', -2),
-			// TODO: placeColony()
-		],
+		playEffects: [productionChange('money', -2), placeColony()],
 	}),
 	card({
 		code: 'molecular-printing',
@@ -341,22 +332,15 @@ export const colonyCards = [
 		cost: 13,
 		type: CardType.Building,
 		categories: [],
-		conditions: [
-			// TODO: playerMaxColonyCountCondition(1),
-		],
-		playEffects: [
-			productionChange('money', -2),
-			// TODO: placeColony()
-		],
+		conditions: [playerMaxColonyCountCondition(1)],
+		playEffects: [productionChange('money', -2), placeColony()],
 	}),
 	card({
 		code: 'productive-outpost',
 		cost: 0,
 		type: CardType.Building,
 		categories: [],
-		playEffects: [
-			// TODO: Gain all your colonies bonuses
-		],
+		playEffects: [gainAllColonyIncomeBonuses()],
 	}),
 	card({
 		code: 'quantum-communications',
@@ -408,7 +392,7 @@ export const colonyCards = [
 		type: CardType.Building,
 		categories: [CardCategory.Science, CardCategory.Space],
 		playEffects: [
-			// TODO: placeColony (ALLOWS MORE THAN 1 COLONY PER COLONY)
+			placeColony({ allowMoreColoniesPerColony: true }),
 			getTopCards(2),
 		],
 	}),
@@ -449,7 +433,7 @@ export const colonyCards = [
 		cost: 22,
 		type: CardType.Building,
 		categories: [CardCategory.City, CardCategory.Building],
-		conditions: [playerColonyCountCondition(1)],
+		conditions: [playerMinColonyCountCondition(1)],
 		playEffects: [
 			productionChange('energy', -1),
 			productionChange('money', 4),
@@ -462,9 +446,9 @@ export const colonyCards = [
 		cost: 27,
 		type: CardType.Building,
 		categories: [CardCategory.Space],
-		conditions: [playerColonyCountCondition(1)],
+		conditions: [playerMinColonyCountCondition(1)],
 		playEffects: [
-			// TODO: placeColony() - CAN BE PLACED ON COLONY WHERE ALREADY HAVE A COLONY
+			placeColony({ allowMoreColoniesPerColony: true }),
 			tradeFleetCountChange(1),
 		],
 		victoryPointsCallback: vpsForColoniesInPlay(1 / 2),
@@ -475,9 +459,7 @@ export const colonyCards = [
 		type: CardType.Building,
 		categories: [CardCategory.Building],
 		playEffects: [productionChange('money', 2)],
-		passiveEffects: [
-			// TODO: (Effect: WHEN PLAYING A CARD WITH A BASIC COST OF 20MC OR MORE, draw a card.)
-		],
+		passiveEffects: [drawCardWhenBuyingCard(20)],
 	}),
 	card({
 		code: 'sub-zero-salt-fish',
@@ -529,7 +511,7 @@ export const colonyCards = [
 				joinedEffects(
 					[
 						withRightArrow(cardResourceChange('floaters', -1)),
-						// TODO: Free trade with colony
+						freeTradeWithColony(),
 					],
 					'to',
 				),
@@ -557,21 +539,15 @@ export const colonyCards = [
 		cost: 6,
 		type: CardType.Action,
 		categories: [],
-		passiveEffects: [
-			// TODO: When you trade, you may first increase that Colony Tile track 1 step.
-		],
+		passiveEffects: [increaseIncomeStepBeforeTrading(1)],
 	}),
 	card({
 		code: 'trading-colony',
 		cost: 18,
 		type: CardType.Action,
 		categories: [CardCategory.Space],
-		actionEffects: [
-			// TODO: placeColony()
-		],
-		passiveEffects: [
-			// TODO: When you trade, you may first increase that Colony Tile track 1 step.
-		],
+		actionEffects: [placeColony()],
+		passiveEffects: [increaseIncomeStepBeforeTrading(1)],
 	}),
 	card({
 		code: 'urban-decomposers',
@@ -580,7 +556,7 @@ export const colonyCards = [
 		categories: [CardCategory.Microbe],
 		conditions: [
 			cellTypeCondition(GridCellContent.City, 1),
-			playerColonyCountCondition(1),
+			playerMinColonyCountCondition(1),
 		],
 		playEffects: [
 			playerProductionChange('plants', 1),

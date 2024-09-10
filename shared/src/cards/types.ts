@@ -6,6 +6,7 @@ import {
 	PlayerState,
 	GridCellContent,
 	GridCellOther,
+	ColonyState,
 } from '../game'
 import { StandardProject } from '../projects'
 
@@ -219,6 +220,7 @@ export interface CardPassiveEffect {
 		playedCard: Card,
 		playedCardIndex: number,
 		playedBy: PlayerState,
+		moneyCost: number,
 	) => void
 	onStandardProject?: (
 		ctx: CardCallbackContext,
@@ -232,6 +234,11 @@ export interface CardPassiveEffect {
 		player: PlayerState,
 		production: Production,
 		change: number,
+	) => void
+	onBeforeColonyTrade?: (
+		ctx: CardCallbackContext,
+		tradingPlayer: PlayerState,
+		colony: ColonyState,
 	) => void
 }
 

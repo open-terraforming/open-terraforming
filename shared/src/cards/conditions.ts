@@ -14,6 +14,7 @@ import {
 	CardType,
 } from './types'
 import { countGridContent, resourceProduction, progressSymbol } from './utils'
+import { getPlayerUsedFleets } from '@shared/expansions/colonies/utils/getPlayerUsedFleets'
 
 export const condition = <T extends (CardEffectArgumentType | undefined)[]>(
 	c: WithOptional<CardCondition<T>, 'symbols'>,
@@ -250,9 +251,23 @@ export const tradeFleeCountCondition = (value: number) =>
 		description: `Requires ${value} trade fleets`,
 	})
 
-export const playerColonyCountCondition = (value: number) =>
+export const playerMinColonyCountCondition = (value: number) =>
 	condition({
 		evaluate: ({ player, game }) =>
 			getPlayerColoniesCount({ player, game }) >= value,
 		description: `Requires ${value} colonies`,
+	})
+
+export const playerMaxColonyCountCondition = (value: number) =>
+	condition({
+		evaluate: ({ player, game }) =>
+			getPlayerColoniesCount({ player, game }) <= value,
+		description: `Requires at most ${value} colonies`,
+	})
+
+export const playerHasUnusedFleet = () =>
+	condition({
+		evaluate: ({ player, game }) =>
+			getPlayerUsedFleets(game, player).length < player.tradeFleets,
+		description: `Requires unused trade fleet`,
 	})

@@ -29,6 +29,12 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 			throw new Error(check.error)
 		}
 
+		this.parent.onBeforeColonyTrade.emit({
+			colony,
+			player: this.parent,
+			resource,
+		})
+
 		const colonyData = ColoniesLookupApi.get(colony.code)
 
 		for (const colonyOfPlayerIndex of colony.playersAtSteps) {

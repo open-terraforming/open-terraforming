@@ -43,10 +43,11 @@ import { SolarPhaseGameState } from './game/solar-phase-game-state'
 import { StartingGameState } from './game/starting-game-state'
 import { WaitingForPlayersGameState } from './game/waiting-for-players-game-state'
 import {
+	BeforeColonyTradeEvent,
 	CardPlayedEvent,
 	Player,
 	ProductionChangedEvent,
-	ProjectBought,
+	ProjectBoughtEvent,
 	TilePlacedEvent,
 } from './player'
 import { ColoniesProductionGameState } from './game/colonies-production-game-state'
@@ -266,12 +267,34 @@ export class Game {
 		player.onTilePlaced.on(this.handleTilePlaced)
 		player.onProjectBought.on(this.handleProjectBought)
 		player.onProductionChanged.on(this.handlePlayerProductionChanged)
+		player.onBeforeColonyTrade.on(this.handleBeforeColonyTrade)
 
 		this.logger.log(`Player ${player.name} (${player.id}) added to the game`)
 
 		if (triggerUpdate) {
 			this.updated()
 		}
+	}
+	handleBeforeColonyTrade = (evt: BeforeColonyTradeEvent) => {
+		this.state.players.forEach((player) => {
+			player.usedCards
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
+					c.passiveEffects.forEach(
+						(e) =>
+							e.onBeforeColonyTrade &&
+							e.onBeforeColonyTrade(
+								{
+									card: s,
+									game: this.state,
+									player,
+								},
+								evt.player.state,
+								evt.colony,
+							),
+					)
+				})
+		})
 	}
 
 	remove(player: Player) {
@@ -304,7 +327,7 @@ export class Game {
 		})
 	}
 
-	handleProjectBought = ({ player: playedBy, project }: ProjectBought) => {
+	handleProjectBought = ({ player: playedBy, project }: ProjectBoughtEvent) => {
 		this.state.players.forEach((player) => {
 			player.usedCards
 				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
@@ -330,6 +353,7 @@ export class Game {
 		player: playedBy,
 		card,
 		cardIndex: playedCardIndex,
+		moneyCost,
 	}: CardPlayedEvent) => {
 		this.state.players.forEach((player) => {
 			player.usedCards
@@ -347,6 +371,7 @@ export class Game {
 								card,
 								playedCardIndex,
 								playedBy.state,
+								moneyCost,
 							),
 					)
 				})
@@ -509,7 +534,7 @@ export class Game {
 									}
 
 									if (a.type === PlayerActionType.PickPreludes) {
-										p.performAction(pickPreludes(range(0, a.limit)))
+										p.performAction(pickPreludes(range(0, 2)))
 									}
 
 									if (a.type === PlayerActionType.DraftCard) {

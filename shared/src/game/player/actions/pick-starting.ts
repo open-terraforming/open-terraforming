@@ -143,6 +143,7 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 			card: corp,
 			cardIndex: -1,
 			player: this.parent,
+			moneyCost: 0,
 		})
 	}
 }

@@ -1,5 +1,10 @@
-import { Card, CardsLookupApi, Production } from '@shared/cards'
-import { GridCell, GridCellContent, PlayerState } from '@shared/game'
+import { Card, CardsLookupApi, Production, Resource } from '@shared/cards'
+import {
+	ColonyState,
+	GridCell,
+	GridCellContent,
+	PlayerState,
+} from '@shared/game'
 import { GameMessage, PLAYER_PRODUCTION_FIELDS } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import {
@@ -27,6 +32,7 @@ export interface CardPlayedEvent {
 	player: Player
 	card: Card
 	cardIndex: number
+	moneyCost: number
 }
 export interface TilePlacedEvent {
 	player: Player
@@ -39,9 +45,15 @@ export interface ProductionChangedEvent {
 	change: number
 }
 
-export interface ProjectBought {
+export interface ProjectBoughtEvent {
 	project: StandardProject
 	player: Player
+}
+
+export interface BeforeColonyTradeEvent {
+	player: Player
+	colony: ColonyState
+	resource: Resource
 }
 
 export class Player {
@@ -56,7 +68,8 @@ export class Player {
 	onStateChanged = new MyEvent<Readonly<PlayerState>>()
 	onCardPlayed = new MyEvent<Readonly<CardPlayedEvent>>()
 	onTilePlaced = new MyEvent<Readonly<TilePlacedEvent>>()
-	onProjectBought = new MyEvent<Readonly<ProjectBought>>()
+	onBeforeColonyTrade = new MyEvent<Readonly<BeforeColonyTradeEvent>>()
+	onProjectBought = new MyEvent<Readonly<ProjectBoughtEvent>>()
 	onProductionChanged = new MyEvent<Readonly<ProductionChangedEvent>>()
 
 	previousState: PlayerState | undefined

@@ -127,6 +127,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 			card,
 			cardIndex: ctx.card.index,
 			player: this.parent,
+			moneyCost: Math.max(0, cost),
 		})
 
 		this.parent.game.checkMilestones()

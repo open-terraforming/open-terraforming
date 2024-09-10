@@ -1,9 +1,10 @@
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { PLAYER_PRODUCTION_TO_RESOURCE } from '../constants'
 import { GridCellContent, GridCellOther, StandardProjectType } from '../game'
 import { playCardAction } from '../player-actions'
 import { tileWithArticle } from '../texts'
 import { withUnits } from '../units'
-import { adjacentCells, f, pushPendingAction, range } from '../utils'
+import { adjacentCells, drawCard, f, pushPendingAction, range } from '../utils'
 import { effectArg } from './args'
 import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
@@ -445,5 +446,35 @@ export const resourceForProductionChange = (amount = 1) =>
 			const resource = PLAYER_PRODUCTION_TO_RESOURCE[production]
 
 			updatePlayerResource(player, resource, amount * change)
+		},
+	})
+
+export const drawCardWhenBuyingCard = (minCardCost: number) =>
+	passiveEffect({
+		description: `When playing card with basic cost of ${minCardCost}$ or more, draw a card`,
+		symbols: [
+			{ resource: 'money', count: minCardCost },
+			{ symbol: SymbolType.Colon },
+			{ symbol: SymbolType.Card },
+		],
+		onCardPlayed: ({ player, game }, card) => {
+			if (card.cost >= minCardCost) {
+				player.cards.push(...drawCard(game))
+			}
+		},
+	})
+
+export const increaseIncomeStepBeforeTrading = (amount: number) =>
+	passiveEffect({
+		description: `Increase income step by ${amount} before trading with a colony`,
+		onBeforeColonyTrade: ({ player: currentPlayer }, playedBy, colony) => {
+			if (playedBy.id !== currentPlayer.id) {
+				return
+			}
+
+			colony.step = Math.min(
+				ColoniesLookupApi.get(colony.code).tradeIncome.slots.length - 1,
+				colony.step + amount,
+			)
 		},
 	})
