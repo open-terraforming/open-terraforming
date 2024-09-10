@@ -81,6 +81,10 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 
 		this.player[costResource] -= cost
 
-		this.actionPlayed()
+		if (pendingAction) {
+			this.popAction()
+		} else {
+			this.actionPlayed()
+		}
 	}
 }

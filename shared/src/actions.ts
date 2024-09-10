@@ -67,6 +67,7 @@ export enum MessageType {
 	DiscardCards,
 	ColonizeColony,
 	TradeWithColony,
+	ChangeColonyStep,
 }
 
 export const handshakeRequest = (version: string) =>
@@ -308,6 +309,12 @@ export const tradeWithColony = (
 		data: { colonyIndex, resource },
 	}) as const
 
+export const changeColonyStep = (colonyIndex: number) =>
+	({
+		type: MessageType.ChangeColonyStep,
+		data: { colonyIndex },
+	}) as const
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -342,3 +349,4 @@ export type GameMessage =
 	| ReturnType<typeof discardCards>
 	| ReturnType<typeof colonizeColony>
 	| ReturnType<typeof tradeWithColony>
+	| ReturnType<typeof changeColonyStep>
