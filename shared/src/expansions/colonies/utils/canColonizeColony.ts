@@ -8,12 +8,16 @@ type Params = {
 	game: GameState
 	player: PlayerState
 	colony: ColonyState
+	forFree?: boolean
+	allowDuplicates?: boolean
 }
 
 export const canColonizeColony = ({
 	player,
 	game,
 	colony,
+	forFree,
+	allowDuplicates,
 }: Params): OkOrFailure<{ cost: number }, string> => {
 	if (!colony.active) {
 		return failure('Colony is not active')
@@ -25,9 +29,12 @@ export const canColonizeColony = ({
 
 	const playerIndex = getPlayerIndex(game, player.id)
 
-	// TODO: There will be exceptions to this
-	if (colony.playersAtSteps.includes(playerIndex)) {
+	if (!allowDuplicates && colony.playersAtSteps.includes(playerIndex)) {
 		return failure('You already have a colony here')
+	}
+
+	if (forFree) {
+		return ok({ cost: 0 })
 	}
 
 	const cost = 17

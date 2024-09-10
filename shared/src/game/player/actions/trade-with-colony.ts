@@ -1,9 +1,14 @@
 import { tradeWithColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
-import { canTradeWithColonyUsingResource } from '@shared/expansions/colonies/utils'
+import {
+	canTradeWithColony,
+	canTradeWithColonyUsingResource,
+} from '@shared/expansions/colonies/utils'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
 import { isFailure } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
+import { PlayerActionType } from '@shared/player-actions'
+import { Resource } from '@shared/cards'
 
 type Args = ReturnType<typeof tradeWithColony>['data']
 
@@ -16,17 +21,36 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 			throw new Error('Invalid resource')
 		}
 
+		let cost = 0
+		let costResource: Resource = resource
+
 		const colony = this.game.colonies[colonyIndex]
+		const pendingAction = this.pendingAction
 
-		const check = canTradeWithColonyUsingResource({
-			player: this.player,
-			game: this.game,
-			colony,
-			resource,
-		})
+		if (pendingAction?.type === PlayerActionType.TradeWithColony) {
+			const check = canTradeWithColony({
+				player: this.player,
+				game: this.game,
+				colony,
+			})
 
-		if (isFailure(check)) {
-			throw new Error(check.error)
+			if (isFailure(check)) {
+				throw new Error(check.error)
+			}
+		} else {
+			const check = canTradeWithColonyUsingResource({
+				player: this.player,
+				game: this.game,
+				colony,
+				resource,
+			})
+
+			if (isFailure(check)) {
+				throw new Error(check.error)
+			}
+
+			cost = check.value.cost
+			costResource = check.value.resource
 		}
 
 		this.parent.onBeforeColonyTrade.emit({
@@ -55,7 +79,7 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 		// Returns the colony indicator to the left
 		colony.step = Math.max(0, colony.playersAtSteps.length)
 
-		this.player[check.value.resource] -= check.value.cost
+		this.player[costResource] -= cost
 
 		this.actionPlayed()
 	}

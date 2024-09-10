@@ -4,6 +4,7 @@ import { GameStateValue, PlayerStateValue } from '@shared/game'
 import { getPlayerIndex, isOk } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
 import { canColonizeColony } from '../../../expansions/colonies/utils'
+import { PlayerActionType } from '@shared/player-actions'
 
 type Args = ReturnType<typeof colonizeColony>['data']
 
@@ -13,11 +14,16 @@ export class ColonizeColonyAction extends PlayerBaseAction<Args> {
 
 	perform({ colonyIndex }: Args): void {
 		const colony = this.game.colonies[colonyIndex]
+		const pendingAction = this.pendingAction
 
 		const check = canColonizeColony({
 			game: this.game,
 			player: this.player,
 			colony,
+			forFree: pendingAction?.type === PlayerActionType.BuildColony,
+			allowDuplicates:
+				pendingAction?.type === PlayerActionType.BuildColony &&
+				pendingAction.data.allowMoreColoniesPerColony,
 		})
 
 		if (!isOk(check)) {

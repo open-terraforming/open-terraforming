@@ -1,4 +1,4 @@
-import { freeTradeWithColonyAction } from '@shared/player-actions'
+import { tradeWithColonyAction } from '@shared/player-actions'
 import { pushPendingAction } from '@shared/utils'
 import { SymbolType } from '../types'
 import { effect } from './types'
@@ -10,6 +10,6 @@ export const freeTradeWithColony = () =>
 		symbols: [{ symbol: SymbolType.Colony }],
 		conditions: [playerHasUnusedFleet()],
 		perform: ({ player }) => {
-			pushPendingAction(player, freeTradeWithColonyAction())
+			pushPendingAction(player, tradeWithColonyAction())
 		},
 	})
