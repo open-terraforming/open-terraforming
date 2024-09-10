@@ -2,7 +2,7 @@ import { Button, Tooltip } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore, useToggle } from '@/utils/hooks'
-import { colonizeColony } from '@shared/actions'
+import { colonizeColony, tradeWithColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import {
 	canColonizeColony,
@@ -22,9 +22,24 @@ import { faCaretUp } from '@fortawesome/free-solid-svg-icons'
 type Props = {
 	index: number
 	colony: ColonyState
+	freeTradePick?: boolean
+	freeColonizePick?: boolean
+	allowDuplicateColonies?: boolean
+	customAction?: (colonyIndex: number) => {
+		enabled: boolean
+		perform: () => void
+		label: string
+	}
 }
 
-export const ColonyDisplay = ({ index, colony }: Props) => {
+export const ColonyDisplay = ({
+	freeTradePick,
+	freeColonizePick,
+	allowDuplicateColonies,
+	index,
+	colony,
+	customAction,
+}: Props) => {
 	const game = useAppStore((s) => s.game.state)
 	const player = useAppStore((s) => s.game.player)
 	const players = game.players
@@ -42,10 +57,18 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 		game,
 		player,
 		colony,
+		forFree: freeColonizePick,
+		allowDuplicates: allowDuplicateColonies,
 	})
+
+	const customActionRendered = customAction && customAction(index)
 
 	const handleColonize = () => {
 		api.send(colonizeColony(index))
+	}
+
+	const handleFreeTrade = () => {
+		api.send(tradeWithColony(index, 'money'))
 	}
 
 	return (
@@ -126,30 +149,52 @@ export const ColonyDisplay = ({ index, colony }: Props) => {
 			</Slots>
 
 			<Actions>
-				<Action
-					disabled={!isOk(canTrade)}
-					tooltip={isFailure(canTrade) ? canTrade.error : undefined}
-					onClick={toggleTrading}
-					noClip
-				>
-					<Flex>
-						{getColonyTradeCostSymbols({ player, game, colony }).map((s, i) => (
-							<Fragment key={i}>
-								{i !== 0 && ' / '}
-								<Symbols symbols={[s]} />
-							</Fragment>
-						))}
-						Trade
-					</Flex>
-				</Action>{' '}
-				<Action
-					disabled={!isOk(canColonize)}
-					tooltip={isFailure(canColonize) ? canColonize.error : undefined}
-					onClick={handleColonize}
-					noClip
-				>
-					<Symbols symbols={[{ resource: 'money', count: 17 }]} /> Colonize
-				</Action>
+				{customActionRendered ? (
+					<Action
+						disabled={!customActionRendered.enabled}
+						onClick={customActionRendered.perform}
+						noClip
+					>
+						{customActionRendered.label}
+					</Action>
+				) : (
+					<>
+						{!freeColonizePick && (
+							<Action
+								disabled={!isOk(canTrade)}
+								tooltip={isFailure(canTrade) ? canTrade.error : undefined}
+								onClick={freeTradePick ? handleFreeTrade : toggleTrading}
+								noClip
+							>
+								<Flex>
+									{!freeTradePick &&
+										getColonyTradeCostSymbols({ player, game, colony }).map(
+											(s, i) => (
+												<Fragment key={i}>
+													{i !== 0 && ' / '}
+													<Symbols symbols={[s]} />
+												</Fragment>
+											),
+										)}
+									Trade
+								</Flex>
+							</Action>
+						)}{' '}
+						{!freeTradePick && (
+							<Action
+								disabled={!isOk(canColonize)}
+								tooltip={isFailure(canColonize) ? canColonize.error : undefined}
+								onClick={handleColonize}
+								noClip
+							>
+								{!freeColonizePick && (
+									<Symbols symbols={[{ resource: 'money', count: 17 }]} />
+								)}{' '}
+								Colonize
+							</Action>
+						)}
+					</>
+				)}
 			</Actions>
 		</Container>
 	)

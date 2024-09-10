@@ -16,11 +16,17 @@ import { Players } from './components/Players/Players'
 import { Spectator } from './components/Spectator/Spectator'
 import { StartPicker } from './components/StartPicker/StartPicker'
 import { SolarPhaseTerraformPicker } from './components/SolarPhaseTerraformPicker/SolarPhaseTerraformPicker'
+import { ColoniesModal } from './components/ColoniesModal/ColoniesModal'
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { useApi } from '@/context/ApiContext'
+import { changeColonyStep } from '@shared/actions'
 
 const Table = () => {
 	const pending = useAppStore((state) => state.game.pendingAction)
 	const spectating = useAppStore((state) => state.game.spectating)
 	const [pickerHidden, setPickerHidden] = useState(false)
+	const colonies = useAppStore((state) => state.game.state.colonies)
+	const api = useApi()
 
 	useEffect(() => {
 		if (
@@ -59,9 +65,45 @@ const Table = () => {
 			{pending?.type === PlayerActionType.SolarPhaseTerraform && (
 				<SolarPhaseTerraformPicker action={pending} />
 			)}
+
 			{pending?.type === PlayerActionType.SponsorCompetition && (
 				<CompetitionsModal freePick onClose={() => null} />
 			)}
+
+			{pending?.type === PlayerActionType.BuildColony && (
+				<ColoniesModal
+					freeColonizePick
+					allowDuplicateColonies={pending.data.allowMoreColoniesPerColony}
+					onClose={() => null}
+				/>
+			)}
+
+			{pending?.type === PlayerActionType.TradeWithColony && (
+				<ColoniesModal freeTradePick onClose={() => null} />
+			)}
+
+			{pending?.type === PlayerActionType.ChangeColonyStep && (
+				<ColoniesModal
+					customAction={(index) => {
+						const colony = colonies[index]
+						const colonyInfo = ColoniesLookupApi.get(colony.code)
+						const change = pending.data.change
+
+						return {
+							enabled:
+								change > 0
+									? colony.step < colonyInfo.tradeIncome.slots.length - 1
+									: colony.step > 0,
+							label: change > 0 ? `+${change} step` : `-${change} step`,
+							perform: () => {
+								api.send(changeColonyStep(index))
+							},
+						}
+					}}
+					onClose={() => null}
+				/>
+			)}
+
 			<GameContainer>
 				<Header />
 				<Players />

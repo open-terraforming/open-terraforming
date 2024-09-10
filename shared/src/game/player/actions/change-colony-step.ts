@@ -2,6 +2,7 @@ import { colonizeColony } from '@shared/actions'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
 import { PlayerActionType } from '@shared/player-actions'
 import { PlayerBaseAction } from '../action'
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 
 type Args = ReturnType<typeof colonizeColony>['data']
 
@@ -22,7 +23,18 @@ export class ChangeColonyStep extends PlayerBaseAction<Args> {
 			throw new Error('Invalid colony')
 		}
 
-		colony.step += pendingAction.data.change
+		const colonyInfo = ColoniesLookupApi.get(colony.code)
+		const change = pendingAction.data.change
+
+		if (change < 0 && colony.step === 0) {
+			throw new Error('Colony step already at 0')
+		}
+
+		if (change > 0 && colony.step >= colonyInfo.tradeIncome.slots.length - 1) {
+			throw new Error('Colony step already at max')
+		}
+
+		colony.step += change
 
 		this.popAction()
 	}
