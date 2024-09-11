@@ -806,7 +806,9 @@ export const anyCardResourceChangePerTag = (
 					throw new Error(`${card.code} doesn't accept ${res}`)
 				}
 
-				cardState[res] += amount
+				const tags = countTagsWithoutEvents(player.usedCards, tag)
+
+				cardState[res] += amount * tags
 			}
 		},
 	})
