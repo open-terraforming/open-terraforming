@@ -1,4 +1,6 @@
-import { baseColonies } from '@shared/expansions/colonies/baseColonies'
+import { CardSpecial } from '@shared/cards/types'
+import { Cards } from '@shared/cards/list'
+import { coloniesColonies } from '@shared/expansions/colonies/coloniesColonies'
 import { expansion, ExpansionType } from './types'
 
 export const coloniesExpansion = expansion({
@@ -6,8 +8,11 @@ export const coloniesExpansion = expansion({
 	name: 'Colonies',
 
 	initialize(game) {
-		game.colonyCards.push(...baseColonies.map((c) => c.code))
+		game.colonyCards.push(...coloniesColonies.map((c) => c.code))
 	},
 
-	getCards: () => [],
+	getCards: () =>
+		Cards.filter(
+			(c) => c.special.length === 0 || c.special.includes(CardSpecial.Colonies),
+		),
 })

@@ -1,4 +1,4 @@
-import { CardCategory, CardType } from '@shared/cards'
+import { CardCategory, CardSpecial, CardType } from '@shared/cards/types'
 import {
 	cardCategoryCountCondition,
 	cardResourceCondition,
@@ -49,7 +49,7 @@ import { card, prependRightArrow, withRightArrow } from '@shared/cards/utils'
 import { vpsForCardResources, vpsForColoniesInPlay } from '@shared/cards/vps'
 import { GridCellContent } from '@shared/game'
 
-export const colonyCards = [
+export const coloniesCards = [
 	card({
 		code: 'airliners',
 		cost: 11,
@@ -61,6 +61,7 @@ export const colonyCards = [
 			anyCardResourceChange('microbes', 2),
 		],
 		victoryPoints: 1,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'air-raid',
@@ -73,6 +74,7 @@ export const colonyCards = [
 			playerResourceChange('money', -5),
 			resourceChange('money', 5),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'atmo-collectors',
@@ -94,6 +96,7 @@ export const colonyCards = [
 				]),
 			]),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'community-services',
@@ -102,6 +105,7 @@ export const colonyCards = [
 		categories: [],
 		playEffects: [productionChangePerNoTags('money', 1)],
 		victoryPoints: 1,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'conscription',
@@ -110,6 +114,7 @@ export const colonyCards = [
 		categories: [CardCategory.Earth, CardCategory.Event],
 		conditions: [cardCategoryCountCondition(CardCategory.Earth, 2)],
 		passiveEffects: [resetCardPriceChange(-16)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'corona-extractor',
@@ -118,6 +123,7 @@ export const colonyCards = [
 		categories: [CardCategory.Power, CardCategory.Space],
 		conditions: [cardCategoryCountCondition(CardCategory.Science, 4)],
 		playEffects: [productionChange('energy', 4)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'cryo-sleep',
@@ -126,6 +132,7 @@ export const colonyCards = [
 		categories: [CardCategory.Science],
 		passiveEffects: [colonyTradePriceChange(-1)],
 		victoryPoints: 1,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'earth-elevator',
@@ -134,6 +141,7 @@ export const colonyCards = [
 		categories: [CardCategory.Earth, CardCategory.Space],
 		playEffects: [productionChange('titan', 3)],
 		victoryPoints: 4,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'ecology-research',
@@ -150,6 +158,7 @@ export const colonyCards = [
 			anyCardResourceChange('animals', 1),
 			anyCardResourceChange('microbes', 2),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'floater-leasing',
@@ -157,6 +166,7 @@ export const colonyCards = [
 		type: CardType.Building,
 		categories: [],
 		playEffects: [productionChangePerCardResource('money', 'floaters', 3)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'floater-prototypes',
@@ -164,6 +174,7 @@ export const colonyCards = [
 		type: CardType.Event,
 		categories: [CardCategory.Science, CardCategory.Event],
 		playEffects: [anyCardResourceChange('floaters', 2)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'floater-technology',
@@ -171,6 +182,7 @@ export const colonyCards = [
 		type: CardType.Action,
 		categories: [CardCategory.Science],
 		actionEffects: [cardResourceChange('floaters', 1)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'galilean-waystation',
@@ -181,6 +193,7 @@ export const colonyCards = [
 			productionForPlayersTags(CardCategory.Jupiter, 'money', 1, true),
 		],
 		victoryPoints: 1,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'heavy-taxation',
@@ -190,6 +203,7 @@ export const colonyCards = [
 		conditions: [cardCategoryCountCondition(CardCategory.Earth, 2)],
 		playEffects: [productionChange('money', 2), resourceChange('money', 4)],
 		victoryPoints: -1,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'ice-moon-colony',
@@ -197,6 +211,7 @@ export const colonyCards = [
 		type: CardType.Building,
 		categories: [CardCategory.Space],
 		playEffects: [placeOcean(), placeColony()],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'impactor-swarm',
@@ -208,6 +223,7 @@ export const colonyCards = [
 			resourceChange('heat', 12),
 			playerResourceChange('plants', -2, true),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'interplanetary-colony-ship',
@@ -215,6 +231,7 @@ export const colonyCards = [
 		type: CardType.Event,
 		categories: [CardCategory.Earth, CardCategory.Space, CardCategory.Event],
 		playEffects: [placeColony()],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'jovian-lanterns',
@@ -232,6 +249,7 @@ export const colonyCards = [
 			withRightArrow(resourceChange('titan', -1)),
 			cardResourceChange('floaters', 2),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'jupiter-floating-station',
@@ -246,6 +264,7 @@ export const colonyCards = [
 				resourcePerCardResource('money', 1, 'floaters', 4),
 			]),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'luna-governor',
@@ -254,6 +273,7 @@ export const colonyCards = [
 		categories: [CardCategory.Earth, CardCategory.Earth],
 		conditions: [cardCategoryCountCondition(CardCategory.Earth, 3)],
 		playEffects: [productionChange('money', 2)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'lunar-exports',
@@ -266,6 +286,7 @@ export const colonyCards = [
 				productionChange('money', 5),
 			]),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'lunar-mining',
@@ -273,6 +294,7 @@ export const colonyCards = [
 		type: CardType.Building,
 		categories: [CardCategory.Earth],
 		playEffects: [productionChangeForTags('titan', 1, CardCategory.Earth, 2)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'market-manipulation',
@@ -280,6 +302,7 @@ export const colonyCards = [
 		type: CardType.Event,
 		categories: [CardCategory.Earth, CardCategory.Event],
 		playEffects: [changeColonyStep(1), changeColonyStep(-1)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'martian-zoo',
@@ -292,6 +315,7 @@ export const colonyCards = [
 		],
 		playEffects: [resourcePerCardResource('money', 1, 'animals')],
 		victoryPoints: 1,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'mining-colony',
@@ -299,6 +323,7 @@ export const colonyCards = [
 		type: CardType.Building,
 		categories: [CardCategory.Space],
 		playEffects: [productionChange('titan', 1), placeColony()],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'minority-refuge',
@@ -306,6 +331,7 @@ export const colonyCards = [
 		type: CardType.Building,
 		categories: [CardCategory.Space],
 		playEffects: [productionChange('money', -2), placeColony()],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'molecular-printing',
@@ -316,6 +342,7 @@ export const colonyCards = [
 			resourcesForTiles(GridCellContent.City, 'money', 1, false),
 			resourcesForColonies('money', 1),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'nitrogen-from-titan',
@@ -326,6 +353,7 @@ export const colonyCards = [
 			terraformRatingChange(2),
 			anyCardResourceChange('floaters', 2, CardCategory.Jupiter),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'pioneer-settlement',
@@ -334,6 +362,7 @@ export const colonyCards = [
 		categories: [],
 		conditions: [playerMaxColonyCountCondition(1)],
 		playEffects: [productionChange('money', -2), placeColony()],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'productive-outpost',
@@ -341,6 +370,7 @@ export const colonyCards = [
 		type: CardType.Building,
 		categories: [],
 		playEffects: [gainAllColonyIncomeBonuses()],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'quantum-communications',
@@ -350,6 +380,7 @@ export const colonyCards = [
 		conditions: [cardCategoryCountCondition(CardCategory.Science, 4)],
 		playEffects: [productionChangePerColonyInPlay('money', 1)],
 		victoryPoints: 1,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'red-spot-observatory',
@@ -368,6 +399,7 @@ export const colonyCards = [
 			]),
 		],
 		victoryPoints: 2,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'refugee-camps',
@@ -385,6 +417,7 @@ export const colonyCards = [
 			),
 		],
 		victoryPointsCallback: vpsForCardResources('camps', 1),
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'research-colony',
@@ -395,6 +428,7 @@ export const colonyCards = [
 			placeColony({ allowMoreColoniesPerColony: true }),
 			getTopCards(2),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'rim-freighters',
@@ -402,6 +436,7 @@ export const colonyCards = [
 		type: CardType.Action,
 		categories: [CardCategory.Space],
 		passiveEffects: [colonyTradePriceChange(-1)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'sky-docks',
@@ -412,6 +447,7 @@ export const colonyCards = [
 		playEffects: [tradeFleetCountChange(1)],
 		passiveEffects: [cardPriceChange(-1)],
 		victoryPoints: 2,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'solar-probe',
@@ -420,6 +456,7 @@ export const colonyCards = [
 		categories: [CardCategory.Science, CardCategory.Space, CardCategory.Event],
 		playEffects: [getTopCardsByTagCount(CardCategory.Science, 3)],
 		victoryPoints: 1,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'solar-reflectors',
@@ -427,6 +464,7 @@ export const colonyCards = [
 		type: CardType.Building,
 		categories: [CardCategory.Space],
 		playEffects: [productionChange('heat', 5)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'space-port',
@@ -440,6 +478,7 @@ export const colonyCards = [
 			placeCity(),
 			tradeFleetCountChange(1),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'space-port-colony',
@@ -452,6 +491,7 @@ export const colonyCards = [
 			tradeFleetCountChange(1),
 		],
 		victoryPointsCallback: vpsForColoniesInPlay(1 / 2),
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'spin-off-department',
@@ -460,6 +500,7 @@ export const colonyCards = [
 		categories: [CardCategory.Building],
 		playEffects: [productionChange('money', 2)],
 		passiveEffects: [drawCardWhenBuyingCard(20)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'sub-zero-salt-fish',
@@ -471,6 +512,7 @@ export const colonyCards = [
 		playEffects: [playerProductionChange('plants', -1)],
 		victoryPointsCallback: vpsForCardResources('animals', 1 / 2),
 		resource: 'animals',
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'titanium-air-scrapping',
@@ -497,6 +539,7 @@ export const colonyCards = [
 			]),
 		],
 		victoryPoints: 2,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'titan-floating-launch-pad',
@@ -517,6 +560,7 @@ export const colonyCards = [
 				),
 			]),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'titan-shuttles',
@@ -533,6 +577,7 @@ export const colonyCards = [
 			]),
 		],
 		victoryPoints: 1,
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'trade-envoys',
@@ -540,6 +585,7 @@ export const colonyCards = [
 		type: CardType.Action,
 		categories: [],
 		passiveEffects: [increaseIncomeStepBeforeTrading(1)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'trading-colony',
@@ -548,6 +594,7 @@ export const colonyCards = [
 		categories: [CardCategory.Space],
 		actionEffects: [placeColony()],
 		passiveEffects: [increaseIncomeStepBeforeTrading(1)],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'urban-decomposers',
@@ -562,6 +609,7 @@ export const colonyCards = [
 			playerProductionChange('plants', 1),
 			anyCardResourceChange('microbes', 2),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'warp-drive',
@@ -571,5 +619,6 @@ export const colonyCards = [
 		conditions: [cardCategoryCountCondition(CardCategory.Science, 5)],
 		passiveEffects: [tagPriceChange(CardCategory.Space, -4)],
 		victoryPoints: 2,
+		special: [CardSpecial.Colonies],
 	}),
 ]

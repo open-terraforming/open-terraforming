@@ -1,6 +1,7 @@
 import {
 	CardCategory,
 	CardsLookupApi,
+	CardSpecial,
 	CardType,
 	SymbolType,
 } from '@shared/cards'
@@ -19,7 +20,7 @@ import {
 import { card, prependRightArrow } from '@shared/cards/utils'
 import { vpsForCardResources } from '@shared/cards/vps'
 
-export const colonyCorporations = [
+export const coloniesCorporations = [
 	card({
 		code: 'aridor',
 		type: CardType.Corporation,
@@ -66,6 +67,7 @@ export const colonyCorporations = [
 				},
 			}),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'arklight',
@@ -82,6 +84,7 @@ export const colonyCorporations = [
 			),
 		],
 		victoryPointsCallback: vpsForCardResources('animals', 1 / 2),
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'polyphemos',
@@ -106,6 +109,7 @@ export const colonyCorporations = [
 				},
 			}),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'poseidon',
@@ -127,6 +131,7 @@ export const colonyCorporations = [
 				},
 			}),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 	card({
 		code: 'storm_craft',
@@ -142,5 +147,6 @@ export const colonyCorporations = [
 				exchangeCardResourceForResource('floaters', 'heat', 2),
 			]),
 		],
+		special: [CardSpecial.Colonies],
 	}),
 ]

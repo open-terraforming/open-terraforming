@@ -22,7 +22,7 @@ const EUROPA_INCOMES: Resource[] = [
 	'plants',
 ]
 
-export const baseColonies: Colony[] = [
+export const coloniesColonies: Colony[] = [
 	resourceColony({
 		code: 'triton',
 		resource: 'titan',

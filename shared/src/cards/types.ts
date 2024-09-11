@@ -85,6 +85,7 @@ export enum CardSpecial {
 	StartingCorporation,
 	Prelude,
 	Venus,
+	Colonies,
 }
 
 export interface CardVictoryPointsCallback {

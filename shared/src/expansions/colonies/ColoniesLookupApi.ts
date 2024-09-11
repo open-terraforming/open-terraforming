@@ -1,7 +1,7 @@
 import { Colony } from '@shared/game'
-import { baseColonies } from './baseColonies'
+import { coloniesColonies } from './coloniesColonies'
 
-export const COLONIES_LIST = [...baseColonies]
+export const COLONIES_LIST = [...coloniesColonies]
 
 export class ColoniesLookupApi {
 	static list = COLONIES_LIST
