@@ -113,7 +113,8 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 		this.logger.log(f('Picked cards: {0}', pickedCards.join(', ')))
 
 		// Remove money
-		this.player.money -= picked.length * this.game.cardPrice
+		this.player.money -=
+			picked.length * (this.player.sponsorCost ?? this.game.cardPrice)
 
 		// Put cards into player hands
 		this.player.cards = [...this.player.cards, ...pickedCards]
