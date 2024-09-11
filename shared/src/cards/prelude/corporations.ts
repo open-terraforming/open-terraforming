@@ -42,7 +42,7 @@ export const preludeCorporations = [
 				passiveEffect({
 					description:
 						'When you play an Earth tag, including this, draw a card',
-					onCardPlayed: (
+					onCardBought: (
 						{ player, game },
 						playedCard,
 						_cardIndex,
@@ -109,7 +109,7 @@ export const preludeCorporations = [
 						'When you play a card with non-negative victory points, gain {0}',
 						withUnits('money', 3),
 					),
-					onCardPlayed: ({ player }, playedCard, _cardIndex, playedBy) => {
+					onCardBought: ({ player }, playedCard, _cardIndex, playedBy) => {
 						if (
 							playedBy.id === player.id &&
 							(playedCard.victoryPoints > 0 || playedCard.victoryPointsCallback)

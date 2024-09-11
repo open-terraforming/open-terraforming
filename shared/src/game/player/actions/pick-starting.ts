@@ -139,7 +139,7 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 		this.runCardEffects(corp.playEffects, ctx, [])
 		this.runCardPassiveEffectsOnBuy(corp.passiveEffects, ctx)
 
-		this.parent.onCardPlayed.emit({
+		this.parent.onCardBought.emit({
 			card: corp,
 			cardIndex: -1,
 			player: this.parent,

@@ -1,4 +1,9 @@
-import { CardsLookupApi, GameProgress } from '@shared/cards'
+import {
+	CardCallbackContext,
+	CardPassiveEffect,
+	CardsLookupApi,
+	GameProgress,
+} from '@shared/cards'
 import { ExpansionType } from '@shared/expansions/types'
 import { GameInfo } from '@shared/extra'
 import {
@@ -44,7 +49,8 @@ import { StartingGameState } from './game/starting-game-state'
 import { WaitingForPlayersGameState } from './game/waiting-for-players-game-state'
 import {
 	BeforeColonyTradeEvent,
-	CardPlayedEvent,
+	CardBoughtEvent,
+	ColonyBuiltEvent,
 	Player,
 	ProductionChangedEvent,
 	ProjectBoughtEvent,
@@ -263,11 +269,12 @@ export class Game {
 		player.onStateChanged.on(this.updated)
 
 		// Dispatch passive events on player events
-		player.onCardPlayed.on(this.handleCardPlayed)
+		player.onCardBought.on(this.handleCardBought)
 		player.onTilePlaced.on(this.handleTilePlaced)
 		player.onProjectBought.on(this.handleProjectBought)
 		player.onProductionChanged.on(this.handlePlayerProductionChanged)
 		player.onBeforeColonyTrade.on(this.handleBeforeColonyTrade)
+		player.onColonyBuilt.on(this.handleColonyBuilt)
 
 		this.logger.log(`Player ${player.name} (${player.id}) added to the game`)
 
@@ -275,6 +282,40 @@ export class Game {
 			this.updated()
 		}
 	}
+
+	triggerPassiveEffects = <TEffectKey extends keyof CardPassiveEffect>(
+		effect: TEffectKey,
+		args: NonNullable<CardPassiveEffect[TEffectKey]> extends (
+			...args: [CardCallbackContext, ...infer TArgs]
+		) => void
+			? TArgs
+			: never,
+	) => {
+		this.state.players.forEach((player) => {
+			player.usedCards
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
+					c.passiveEffects.forEach(
+						(e) =>
+							typeof e[effect] === 'function' &&
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+							(e[effect] as Function).apply(null, [
+								{
+									card: s,
+									game: this.state,
+									player,
+								},
+								...args,
+							]),
+					)
+				})
+		})
+	}
+
+	handleColonyBuilt = (evt: ColonyBuiltEvent) => {
+		this.triggerPassiveEffects('onColonyBuilt', [evt.player.state, evt.colony])
+	}
+
 	handleBeforeColonyTrade = (evt: BeforeColonyTradeEvent) => {
 		this.state.players.forEach((player) => {
 			player.usedCards
@@ -349,20 +390,20 @@ export class Game {
 		})
 	}
 
-	handleCardPlayed = ({
+	handleCardBought = ({
 		player: playedBy,
 		card,
 		cardIndex: playedCardIndex,
 		moneyCost,
-	}: CardPlayedEvent) => {
+	}: CardBoughtEvent) => {
 		this.state.players.forEach((player) => {
 			player.usedCards
 				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
 						(e) =>
-							e.onCardPlayed &&
-							e.onCardPlayed(
+							e.onCardBought &&
+							e.onCardBought(
 								{
 									card: s,
 									game: this.state,

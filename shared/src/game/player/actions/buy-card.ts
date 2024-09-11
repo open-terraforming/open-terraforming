@@ -123,7 +123,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 		this.player.usedCards.push(cardState)
 		this.player.cards.splice(index, 1)
 
-		this.parent.onCardPlayed.emit({
+		this.parent.onCardBought.emit({
 			card,
 			cardIndex: ctx.card.index,
 			player: this.parent,

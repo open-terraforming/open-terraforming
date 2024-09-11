@@ -89,7 +89,7 @@ export const resourcePerCardPlayed = (
 			{ symbol: SymbolType.Colon },
 			{ resource: res, count: amount },
 		],
-		onCardPlayed: ({ player }, card, _cardIndex, playedBy) => {
+		onCardBought: ({ player }, card, _cardIndex, playedBy) => {
 			// TODO: This is probably fine, since we're using AND and it's always about EVENT cards
 			if (
 				playedBy.id === player.id &&
@@ -114,7 +114,7 @@ export const cardResourcePerCardPlayed = (
 			{ symbol: SymbolType.Colon },
 			{ cardResource: res, count: amount },
 		],
-		onCardPlayed: ({ card: cardState, player }, card, _cardIndex, playedBy) => {
+		onCardBought: ({ card: cardState, player }, card, _cardIndex, playedBy) => {
 			if (playedBy.id === player.id) {
 				const matchingTags = card.categories.filter((c) =>
 					categories.includes(c),
@@ -166,29 +166,32 @@ export const cardResourcePerAnybodyTilePlaced = (
 	})
 
 export const cardResourcePerSelfTagPlayed = (
-	tag: CardCategory,
+	tag: CardCategory | CardCategory[],
 	res: CardResource,
 	amount: number,
-) =>
-	passiveEffect({
-		description: `When you play ${CardCategory[tag]}, place ${amount > 1 ? `${amount} of ${res}` : res} on this card`,
+) => {
+	const tags = Array.isArray(tag) ? tag : [tag]
+
+	return passiveEffect({
+		description: `When you play ${tags.map((tag) => CardCategory[tag]).join(' or ')}, place ${amount > 1 ? `${amount} of ${res}` : res} on this card`,
 		symbols: [
-			{ tag },
+			...tags.map((tag) => ({ tag })),
 			{ symbol: SymbolType.Colon },
 			{ cardResource: res, count: amount },
 		],
-		onCardPlayed: ({ player, card }, playedCard, _, playedBy) => {
+		onCardBought: ({ player, card }, playedCard, _, playedBy) => {
 			if (playedBy.id !== player.id) {
 				return
 			}
 
-			const matches = playedCard.categories.filter((t) => t === tag).length
+			const matches = playedCard.categories.filter((t) =>
+				tags.includes(t),
+			).length
 
-			if (playedCard.categories.includes(tag)) {
-				card[res] += matches * amount
-			}
+			card[res] += matches * amount
 		},
 	})
+}
 
 export const productionChangeAfterPlace = (
 	amount: number,
@@ -218,7 +221,7 @@ export const productionChangeAfterPlace = (
 export const cardExchangeEffect = (tag: CardCategory) =>
 	passiveEffect({
 		description: `Action is triggered when you play a ${CardCategory[tag]} tag`,
-		onCardPlayed: (
+		onCardBought: (
 			{ player, card },
 			playedCard,
 			_playedCardIndex,
@@ -241,7 +244,7 @@ export const playWhenCard = (tags: CardCategory[]) =>
 		description: `Action triggered when you play ${tags
 			.map((t) => CardCategory[t])
 			.join(' or ')} tag`,
-		onCardPlayed: (
+		onCardBought: (
 			{ player, card: cardState },
 			playedCard,
 			playedCardIndex,
@@ -315,7 +318,7 @@ export const resetProgressBonus = (amount: number) =>
 						amount,
 					)
 				: 'Ignore global requirements for the next card you play this generation.',
-		onCardPlayed: ({ player, card }, playedCard, _cardIndex, playedBy) => {
+		onCardBought: ({ player, card }, playedCard, _cardIndex, playedBy) => {
 			if (
 				playedBy.id === player.id &&
 				card.code !== playedCard.code &&
@@ -339,7 +342,7 @@ export const resetCardPriceChange = (amount: number) =>
 			`The next card you play this generation costs {0} MC less.`,
 			-amount,
 		),
-		onCardPlayed: ({ player, card }, playedCard, _cardIndex, playedBy) => {
+		onCardBought: ({ player, card }, playedCard, _cardIndex, playedBy) => {
 			if (
 				playedBy.id === player.id &&
 				card.code !== playedCard.code &&
@@ -457,7 +460,7 @@ export const drawCardWhenBuyingCard = (minCardCost: number) =>
 			{ symbol: SymbolType.Colon },
 			{ symbol: SymbolType.Card },
 		],
-		onCardPlayed: ({ player, game }, card) => {
+		onCardBought: ({ player, game }, card) => {
 			if (card.cost >= minCardCost) {
 				player.cards.push(...drawCard(game))
 			}

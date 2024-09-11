@@ -215,7 +215,7 @@ export interface CardPassiveEffect {
 		cell: GridCell,
 		placedBy: PlayerState,
 	) => void
-	onCardPlayed?: (
+	onCardBought?: (
 		ctx: CardCallbackContext,
 		playedCard: Card,
 		playedCardIndex: number,
@@ -238,6 +238,11 @@ export interface CardPassiveEffect {
 	onBeforeColonyTrade?: (
 		ctx: CardCallbackContext,
 		tradingPlayer: PlayerState,
+		colony: ColonyState,
+	) => void
+	onColonyBuilt?: (
+		ctx: CardCallbackContext,
+		builtBy: PlayerState,
 		colony: ColonyState,
 	) => void
 }
@@ -264,6 +269,7 @@ export enum SymbolType {
 	TradeFleet,
 	SlashSmall,
 	BigPlus,
+	AnyTag,
 }
 
 export interface CardSymbol {

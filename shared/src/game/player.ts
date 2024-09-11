@@ -28,7 +28,7 @@ import { generateSession } from '../utils/generate-session'
 import { Game } from './game'
 import { PlayerActions } from './player/actions'
 
-export interface CardPlayedEvent {
+export interface CardBoughtEvent {
 	player: Player
 	card: Card
 	cardIndex: number
@@ -56,6 +56,11 @@ export interface BeforeColonyTradeEvent {
 	resource: Resource
 }
 
+export interface ColonyBuiltEvent {
+	player: Player
+	colony: ColonyState
+}
+
 export class Player {
 	static idCounter = 1
 
@@ -66,9 +71,10 @@ export class Player {
 	state = initialPlayerState(Player.idCounter++, uuidv4())
 
 	onStateChanged = new MyEvent<Readonly<PlayerState>>()
-	onCardPlayed = new MyEvent<Readonly<CardPlayedEvent>>()
+	onCardBought = new MyEvent<Readonly<CardBoughtEvent>>()
 	onTilePlaced = new MyEvent<Readonly<TilePlacedEvent>>()
 	onBeforeColonyTrade = new MyEvent<Readonly<BeforeColonyTradeEvent>>()
+	onColonyBuilt = new MyEvent<Readonly<ColonyBuiltEvent>>()
 	onProjectBought = new MyEvent<Readonly<ProjectBoughtEvent>>()
 	onProductionChanged = new MyEvent<Readonly<ProductionChangedEvent>>()
 

@@ -51,6 +51,11 @@ export class ColonizeColonyAction extends PlayerBaseAction<Args> {
 
 		this.player.money -= check.value.cost
 
+		this.parent.onColonyBuilt.emit({
+			colony,
+			player: this.parent,
+		})
+
 		if (pendingAction) {
 			this.popAction()
 		} else {
