@@ -54,6 +54,18 @@ const symbolToIcon = (s: CardSymbol) => {
 				return <FontAwesomeIcon icon={venusIcon} />
 			case SymbolType.AnyResource:
 				return <ResourceContainer>?</ResourceContainer>
+			// TODO: Implement
+			case SymbolType.Colony:
+				return <ResourceContainer>C</ResourceContainer>
+			// TODO: Implement
+			case SymbolType.ColonyTrade:
+				return <ResourceContainer>CT</ResourceContainer>
+			// TODO: Implement
+			case SymbolType.TradeFleet:
+				return <ResourceContainer>TF</ResourceContainer>
+			// TODO: Implement
+			case SymbolType.CardWithNoTag:
+				return <TextSymbol>NTG</TextSymbol>
 		}
 	}
 
