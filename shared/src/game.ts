@@ -323,6 +323,9 @@ export interface PlayerState {
 
 	/** Change of standard colony trade cost */
 	colonyTradeResourceCostChange?: number
+
+	/** Override of cost of sponsoring a card (buying it into hand) */
+	sponsorCost?: number
 }
 
 export enum VictoryPointsSource {

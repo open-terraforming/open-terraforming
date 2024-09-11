@@ -6,15 +6,17 @@ import {
 } from '@shared/cards'
 import {
 	anyCardResourceChange,
+	effectChoice,
 	productionChange,
 	resourceChange,
 } from '@shared/cards/effects'
+import { exchangeCardResourceForResource } from '@shared/cards/effects/exchangeCardResourceForResource'
 import { placeColony } from '@shared/cards/effects/placeColony'
 import {
 	cardResourcePerSelfTagPlayed,
 	passiveEffect,
 } from '@shared/cards/passive-effects'
-import { card, withRightArrow } from '@shared/cards/utils'
+import { card, prependRightArrow } from '@shared/cards/utils'
 import { vpsForCardResources } from '@shared/cards/vps'
 
 export const colonyCorporations = [
@@ -92,7 +94,17 @@ export const colonyCorporations = [
 			resourceChange('titan', 5),
 		],
 		passiveEffects: [
-			// TODO: Sponsoring projects costs $5 instead of $3 (including starting hand)
+			passiveEffect({
+				description: 'Sponsoring a project costs $5 instead of $3',
+				symbols: [
+					{ symbol: SymbolType.Card },
+					{ symbol: SymbolType.Colon },
+					{ resource: 'money', count: 5 },
+				],
+				onPlay(ctx) {
+					ctx.player.sponsorCost = 5
+				},
+			}),
 		],
 	}),
 	card({
@@ -123,9 +135,12 @@ export const colonyCorporations = [
 		categories: [],
 		playEffects: [resourceChange('money', 45), productionChange('money', 2)],
 		resource: 'floaters',
-		actionEffects: [withRightArrow(anyCardResourceChange('floaters', 1))],
-		passiveEffects: [
-			// TODO: Floaters on this card may be used as 2 heat each
+		actionEffects: [
+			effectChoice([
+				prependRightArrow(anyCardResourceChange('floaters', 1)),
+				// TODO: The original is: You can use the floaters as 2 heat each for anything - so it's not limited to one action per turn - but that'd be so complicated to implement, I'm not sure it's worth it.
+				exchangeCardResourceForResource('floaters', 'heat', 2),
+			]),
 		],
 	}),
 ]
