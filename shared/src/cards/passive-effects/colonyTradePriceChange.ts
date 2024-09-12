@@ -3,12 +3,12 @@ import { SymbolType } from '../types'
 
 export const colonyTradePriceChange = (change: number) =>
 	passiveEffect({
-		description: `Effect: When you trade, you pay ${-change} less for it.`,
+		description: `When you trade, you pay ${-change} less for it.`,
 		symbols: [
 			{ symbol: SymbolType.ColonyTrade },
 			{ symbol: SymbolType.Colon },
 			// TODO: Maybe better symbol for this?
-			{ count: change },
+			{ text: change.toString() },
 		],
 		onPlay: ({ player }) => {
 			player.colonyTradeResourceCostChange =

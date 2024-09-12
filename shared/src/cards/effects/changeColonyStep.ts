@@ -8,11 +8,11 @@ export const changeColonyStep = (change: number) =>
 		description:
 			change > 0
 				? f(
-						'Increase trade income step of a colony by {0}',
+						'Increase trade income of a colony by {0}',
 						quantized(change, 'step', 'steps'),
 					)
 				: f(
-						'Decrease trade income step of a colony by {0}',
+						'Decrease trade income of a colony by {0}',
 						quantized(-change, 'step', 'steps'),
 					),
 		perform: ({ player }) => {

@@ -32,7 +32,7 @@ export const coloniesCorporations = [
 				description:
 					'When you get a new type of tag in play (excluding event cards), increase your money production 1 step.',
 				symbols: [
-					{ symbol: SymbolType.AnyTag },
+					{ tag: CardCategory.Any },
 					{ symbol: SymbolType.Colon },
 					{ resource: 'money', production: true, count: 1 },
 				],
@@ -122,7 +122,7 @@ export const coloniesCorporations = [
 				description:
 					'When any colony is placed, increase your money production 1 step.',
 				symbols: [
-					{ symbol: SymbolType.Colon, other: true },
+					{ symbol: SymbolType.Colony, other: true },
 					{ symbol: SymbolType.Colon },
 					{ resource: 'money', production: true, count: 1 },
 				],

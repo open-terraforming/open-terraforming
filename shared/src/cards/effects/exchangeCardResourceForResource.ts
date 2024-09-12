@@ -27,6 +27,7 @@ export const exchangeCardResourceForResource = (
 			{ symbol: SymbolType.X },
 			{ cardResource: srcRes },
 			{ symbol: SymbolType.RightArrow },
+			{ symbol: SymbolType.X },
 			{ resource: dstRes, count: dstResCount },
 		],
 		perform: ({ player, card }, amount: number) => {

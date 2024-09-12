@@ -11,6 +11,10 @@ import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { TileIcon } from '../../TileIcon/TileIcon'
 import { Tag } from './Tag'
+import { ColonyTradeSymbol } from './ColonyTradeSymbol'
+import { ColonyBuildSymbol } from './ColonyBuildSymbol'
+import { ColonyFleetSymbol } from './ColonyFleetSymbol'
+import { CardWithNoTagSymbol } from './CardWithNoTagSymbol'
 
 type Props = {
 	symbols: CardSymbol[]
@@ -54,18 +58,17 @@ const symbolToIcon = (s: CardSymbol) => {
 				return <FontAwesomeIcon icon={venusIcon} />
 			case SymbolType.AnyResource:
 				return <ResourceContainer>?</ResourceContainer>
-			// TODO: Implement
 			case SymbolType.Colony:
-				return <ResourceContainer>C</ResourceContainer>
-			// TODO: Implement
+				return <ColonyBuildSymbol />
 			case SymbolType.ColonyTrade:
-				return <ResourceContainer>CT</ResourceContainer>
-			// TODO: Implement
+				return <ColonyTradeSymbol />
 			case SymbolType.TradeFleet:
-				return <ResourceContainer>TF</ResourceContainer>
+				return <ColonyFleetSymbol />
 			// TODO: Implement
 			case SymbolType.CardWithNoTag:
-				return <TextSymbol>NTG</TextSymbol>
+				return <CardWithNoTagSymbol />
+			default:
+				console.warn('Unknown symbol', SymbolType[s.symbol])
 		}
 	}
 

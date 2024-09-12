@@ -165,7 +165,7 @@ export const StatelessCardView = ({
 					card.passiveEffects.filter((e) => e.description).length > 0) && (
 					<Action $hasSymbols={symbols.length > 0}>
 						<ActionTitle>
-							{card.type === CardType.Action ? 'Action' : 'Effect'}
+							{card.actionEffects.length ? 'Action' : 'Effect'}
 						</ActionTitle>
 
 						<Symbols symbols={actionSymbols} />

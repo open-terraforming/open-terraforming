@@ -270,7 +270,6 @@ export enum SymbolType {
 	TradeFleet,
 	SlashSmall,
 	BigPlus,
-	AnyTag,
 }
 
 export interface CardSymbol {

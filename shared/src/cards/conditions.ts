@@ -1,4 +1,5 @@
 import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
+import { getPlayerUsedFleets } from '@shared/expansions/colonies/utils/getPlayerUsedFleets'
 import { GridCellContent } from '../game'
 import { progressResToStr, withUnits } from '../units'
 import { CardsLookupApi } from './lookup'
@@ -7,14 +8,13 @@ import {
 	CardCondition,
 	CardEffectArgumentType,
 	CardResource,
+	CardType,
 	GameProgress,
 	Resource,
-	WithOptional,
 	SymbolType,
-	CardType,
+	WithOptional,
 } from './types'
-import { countGridContent, resourceProduction, progressSymbol } from './utils'
-import { getPlayerUsedFleets } from '@shared/expansions/colonies/utils/getPlayerUsedFleets'
+import { countGridContent, progressSymbol, resourceProduction } from './utils'
 
 export const condition = <T extends (CardEffectArgumentType | undefined)[]>(
 	c: WithOptional<CardCondition<T>, 'symbols'>,
@@ -34,10 +34,22 @@ export const playerCardsInHandCondition = (amount: number) =>
 
 export const cardResourceCondition = (res: CardResource, amount: number) =>
 	condition({
-		description: `Card has to have at least ${amount} of ${res} units`,
+		description: `Card has to have at least ${withUnits(res, amount)}`,
 		evaluate: ({ card }) => {
 			return card[res] >= amount
 		},
+	})
+
+export const cardResourceAnywhereCondition = (
+	res: CardResource,
+	amount: number,
+) =>
+	condition({
+		description: `You have have least ${withUnits(res, amount)}`,
+		evaluate: ({ player }) => {
+			return player.usedCards.reduce((acc, c) => acc + c[res], 0) >= amount
+		},
+		symbols: [{ cardResource: res, count: amount }],
 	})
 
 export const cardAnyResourceCondition = (amount: number) =>
@@ -249,6 +261,7 @@ export const tradeFleeCountCondition = (value: number) =>
 	condition({
 		evaluate: ({ player }) => player.tradeFleets >= value,
 		description: `Requires ${value} trade fleets`,
+		symbols: [{ symbol: SymbolType.TradeFleet, count: value }],
 	})
 
 export const playerMinColonyCountCondition = (value: number) =>
@@ -256,6 +269,7 @@ export const playerMinColonyCountCondition = (value: number) =>
 		evaluate: ({ player, game }) =>
 			getPlayerColoniesCount({ player, game }) >= value,
 		description: `Requires ${value} colonies`,
+		symbols: [{ symbol: SymbolType.Colony, count: value }],
 	})
 
 export const playerMaxColonyCountCondition = (value: number) =>
@@ -263,6 +277,11 @@ export const playerMaxColonyCountCondition = (value: number) =>
 		evaluate: ({ player, game }) =>
 			getPlayerColoniesCount({ player, game }) <= value,
 		description: `Requires at most ${value} colonies`,
+		symbols: [
+			{ symbol: SymbolType.Colony },
+			{ symbol: SymbolType.LessOrEqual },
+			{ text: value.toString() },
+		],
 	})
 
 export const playerHasUnusedFleet = () =>
