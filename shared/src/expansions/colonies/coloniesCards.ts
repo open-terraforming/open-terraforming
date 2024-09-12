@@ -79,7 +79,7 @@ export const coloniesCards = [
 	card({
 		code: 'atmo_collectors',
 		cost: 15,
-		type: CardType.Building,
+		type: CardType.Action,
 		categories: [],
 		resource: 'floaters',
 		playEffects: [anyCardResourceChange('floaters', 2)],
@@ -115,6 +115,7 @@ export const coloniesCards = [
 		conditions: [cardCategoryCountCondition(CardCategory.Earth, 2)],
 		passiveEffects: [resetCardPriceChange(-16)],
 		special: [CardSpecial.Colonies],
+		victoryPoints: -2,
 	}),
 	card({
 		code: 'corona_extractor',
@@ -128,7 +129,7 @@ export const coloniesCards = [
 	card({
 		code: 'cryo_sleep',
 		cost: 10,
-		type: CardType.Action,
+		type: CardType.Effect,
 		categories: [CardCategory.Science],
 		passiveEffects: [colonyTradePriceChange(-1)],
 		victoryPoints: 1,
@@ -181,7 +182,7 @@ export const coloniesCards = [
 		cost: 7,
 		type: CardType.Action,
 		categories: [CardCategory.Science],
-		actionEffects: [cardResourceChange('floaters', 1)],
+		actionEffects: [anyCardResourceChange('floaters', 1)],
 		special: [CardSpecial.Colonies],
 	}),
 	card({
@@ -307,7 +308,7 @@ export const coloniesCards = [
 	card({
 		code: 'martian_zoo',
 		cost: 12,
-		type: CardType.Action,
+		type: CardType.Effect,
 		categories: [CardCategory.Animal, CardCategory.Building],
 		conditions: [cellTypeCondition(GridCellContent.City, 2)],
 		passiveEffects: [
@@ -433,7 +434,7 @@ export const coloniesCards = [
 	card({
 		code: 'rim_freighters',
 		cost: 4,
-		type: CardType.Action,
+		type: CardType.Effect,
 		categories: [CardCategory.Space],
 		passiveEffects: [colonyTradePriceChange(-1)],
 		special: [CardSpecial.Colonies],
@@ -441,7 +442,7 @@ export const coloniesCards = [
 	card({
 		code: 'sky_docks',
 		cost: 18,
-		type: CardType.Building,
+		type: CardType.Effect,
 		categories: [CardCategory.Earth, CardCategory.Space],
 		conditions: [cardCategoryCountCondition(CardCategory.Earth, 2)],
 		playEffects: [tradeFleetCountChange(1)],
@@ -496,7 +497,7 @@ export const coloniesCards = [
 	card({
 		code: 'spin_off_department',
 		cost: 10,
-		type: CardType.Building,
+		type: CardType.Effect,
 		categories: [CardCategory.Building],
 		playEffects: [productionChange('money', 2)],
 		passiveEffects: [drawCardWhenBuyingCard(20)],
@@ -582,7 +583,7 @@ export const coloniesCards = [
 	card({
 		code: 'trade_envoys',
 		cost: 6,
-		type: CardType.Action,
+		type: CardType.Effect,
 		categories: [],
 		passiveEffects: [increaseIncomeStepBeforeTrading(1)],
 		special: [CardSpecial.Colonies],
@@ -590,7 +591,7 @@ export const coloniesCards = [
 	card({
 		code: 'trading_colony',
 		cost: 18,
-		type: CardType.Action,
+		type: CardType.Effect,
 		categories: [CardCategory.Space],
 		playEffects: [placeColony()],
 		passiveEffects: [increaseIncomeStepBeforeTrading(1)],
@@ -614,7 +615,7 @@ export const coloniesCards = [
 	card({
 		code: 'warp_drive',
 		cost: 14,
-		type: CardType.Action,
+		type: CardType.Effect,
 		categories: [CardCategory.Space],
 		conditions: [cardCategoryCountCondition(CardCategory.Science, 5)],
 		passiveEffects: [tagPriceChange(CardCategory.Space, -4)],
