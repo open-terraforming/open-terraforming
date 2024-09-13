@@ -9,7 +9,11 @@ type Params = {
 
 export const placeColony = ({ allowMoreColoniesPerColony }: Params = {}) =>
 	effect({
-		description: 'Place a colony',
+		description:
+			'Place a colony' +
+			(allowMoreColoniesPerColony
+				? ' (even if you already have one there)'
+				: ''),
 		symbols: [{ symbol: SymbolType.Colony }],
 		conditions: [
 			{

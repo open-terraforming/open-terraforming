@@ -268,7 +268,7 @@ export const playerMinColonyCountCondition = (value: number) =>
 	condition({
 		evaluate: ({ player, game }) =>
 			getPlayerColoniesCount({ player, game }) >= value,
-		description: `Requires ${value} colonies`,
+		description: `Requires ${value} owned colonies`,
 		symbols: [{ symbol: SymbolType.Colony, count: value }],
 	})
 
@@ -276,7 +276,7 @@ export const playerMaxColonyCountCondition = (value: number) =>
 	condition({
 		evaluate: ({ player, game }) =>
 			getPlayerColoniesCount({ player, game }) <= value,
-		description: `Requires at most ${value} colonies`,
+		description: `Requires at most ${value} owned colonies`,
 		symbols: [
 			{ symbol: SymbolType.Colony },
 			{ symbol: SymbolType.LessOrEqual },

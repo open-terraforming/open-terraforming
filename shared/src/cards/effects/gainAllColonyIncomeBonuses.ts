@@ -20,7 +20,7 @@ export const gainAllColonyIncomeBonuses = () =>
 				const incomeBonus = ColoniesLookupApi.get(colony.code).incomeBonus
 
 				// TODO: Should this happen multiple times if player has more than 1 colony? Rules aren't clear about that
-				range(0, ownedColonies + 1).forEach(() =>
+				range(0, ownedColonies).forEach(() =>
 					incomeBonus.perform({ game, player, colony }),
 				)
 			}

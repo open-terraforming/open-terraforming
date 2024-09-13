@@ -87,12 +87,15 @@ export const coloniesCards = [
 			effectChoice([
 				cardResourceChange('floaters', 1),
 				joinedEffects([
-					cardResourceChange('floaters', -1),
-					effectChoice([
-						resourceChange('titan', 2),
-						resourceChange('energy', 3),
-						resourceChange('heat', 4),
-					]),
+					withRightArrow(cardResourceChange('floaters', -1)),
+					effectChoice(
+						[
+							resourceChange('titan', 2),
+							resourceChange('energy', 3),
+							resourceChange('heat', 4),
+						],
+						true,
+					),
 				]),
 			]),
 		],
@@ -310,13 +313,14 @@ export const coloniesCards = [
 	card({
 		code: 'martian_zoo',
 		cost: 12,
-		type: CardType.Effect,
+		type: CardType.Action,
 		categories: [CardCategory.Animal, CardCategory.Building],
 		conditions: [cellTypeCondition(GridCellContent.City, 2)],
 		passiveEffects: [
 			cardResourcePerSelfTagPlayed(CardCategory.Earth, 'animals', 1),
 		],
-		playEffects: [resourcePerCardResource('money', 1, 'animals')],
+		resource: 'animals',
+		actionEffects: [resourcePerCardResource('money', 1, 'animals')],
 		victoryPoints: 1,
 		special: [CardSpecial.Colonies],
 	}),
@@ -346,6 +350,7 @@ export const coloniesCards = [
 			resourcesForColonies('money', 1),
 		],
 		special: [CardSpecial.Colonies],
+		victoryPoints: 1,
 	}),
 	card({
 		code: 'nitrogen_from_titan',
@@ -357,6 +362,7 @@ export const coloniesCards = [
 			anyCardResourceChange('floaters', 2, CardCategory.Jupiter),
 		],
 		special: [CardSpecial.Colonies],
+		victoryPoints: 1,
 	}),
 	card({
 		code: 'pioneer_settlement',
@@ -401,6 +407,7 @@ export const coloniesCards = [
 				]),
 			]),
 		],
+		resource: 'floaters',
 		victoryPoints: 2,
 		special: [CardSpecial.Colonies],
 	}),
@@ -413,8 +420,8 @@ export const coloniesCards = [
 		actionEffects: [
 			joinedEffects(
 				[
-					prependRightArrow(playerResourceChange('money', -1)),
-					anyCardResourceChange('camps', 1),
+					withRightArrow(productionChange('money', -1)),
+					cardResourceChange('camps', 1),
 				],
 				'to',
 			),

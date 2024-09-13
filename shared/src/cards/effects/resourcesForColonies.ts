@@ -11,10 +11,10 @@ export const resourcesForColonies = (
 ) =>
 	effect({
 		type: CardEffectType.Resource,
-		description: `+ ${withUnits(resource, amount)} for each colony${selfOnly ? ' you have' : ' in play'}`,
+		description: `Gain ${withUnits(resource, amount)} for each colony${selfOnly ? ' you have' : ' in play'}`,
 		symbols: [
 			{ resource, count: amount },
-			{ symbol: SymbolType.Slash },
+			{ symbol: SymbolType.SlashSmall },
 			{ symbol: SymbolType.Colony, other: !selfOnly },
 		],
 		perform: ({ player, game }) => {

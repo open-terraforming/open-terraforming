@@ -1,3 +1,4 @@
+import { withUnits } from '@shared/units'
 import { CardEffectType, CardResource, Resource, SymbolType } from '../types'
 import { effect } from './types'
 
@@ -9,10 +10,10 @@ export const resourcePerCardResource = (
 ) =>
 	effect({
 		type: CardEffectType.Resource,
-		description: `+ ${count} ${resource} per ${cardResource} on this card${maxCount ? ` (max ${maxCount})` : ''}`,
+		description: `+ ${count} ${resource} per ${withUnits(cardResource, 1)} on this card${maxCount ? ` (max ${maxCount})` : ''}`,
 		symbols: [
 			{ resource, count },
-			{ symbol: SymbolType.Slash },
+			{ symbol: SymbolType.SlashSmall },
 			{ cardResource },
 		],
 		conditions: [

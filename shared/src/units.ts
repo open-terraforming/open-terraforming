@@ -36,6 +36,8 @@ export const withUnits = (
 			return quantized(amount as number, 'floater', 'floaters')
 		case 'asteroids':
 			return quantized(amount as number, 'asteroid', 'asteroids')
+		case 'camps':
+			return quantized(amount as number, 'camp', 'camps')
 		default:
 			return amount.toString()
 	}

@@ -94,7 +94,7 @@ const Table = () => {
 								change > 0
 									? colony.step < colonyInfo.tradeIncome.slots.length - 1
 									: colony.step > 0,
-							label: change > 0 ? `+${change} step` : `-${change} step`,
+							label: change > 0 ? `+${change} step` : `${change} step`,
 							perform: () => {
 								api.send(changeColonyStep(index))
 							},

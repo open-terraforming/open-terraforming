@@ -920,9 +920,9 @@ export const productionChangeForTags = (
 	return effect({
 		description: `Increase your ${res} production by ${change} for ${tagCount > 1 ? tagCount : 'each'} ${CardCategory[tag]} tag you played`,
 		symbols: [
-			{ tag },
-			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: change, production: true },
+			{ symbol: SymbolType.Colon },
+			{ tag, count: tagCount },
 		],
 		perform: ({ player }) => {
 			updatePlayerProduction(
@@ -1137,6 +1137,11 @@ export const resourcesForTiles = (
 						GridCellContent[tile]
 					}${onMarsOnly ? ' on Mars' : ' in play'}`
 		}`,
+		symbols: [
+			{ resource: res, count: resPerTile },
+			{ symbol: SymbolType.SlashSmall },
+			{ tile },
+		],
 		perform: ({ player, game }) => {
 			updatePlayerResource(
 				player,
