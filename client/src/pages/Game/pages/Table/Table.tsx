@@ -20,6 +20,7 @@ import { ColoniesModal } from './components/ColoniesModal/ColoniesModal'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { useApi } from '@/context/ApiContext'
 import { changeColonyStep } from '@shared/actions'
+import { AddCardResourceModal } from './components/Controls/components/AddCardResourceModal'
 
 const Table = () => {
 	const pending = useAppStore((state) => state.game.pendingAction)
@@ -50,7 +51,9 @@ const Table = () => {
 	return (
 		<TableContainer>
 			<Mouses />
+
 			{pending?.type === PlayerActionType.PickStarting && <StartPicker />}
+
 			{!pickerHidden &&
 				(pending?.type === PlayerActionType.PickCards ||
 					pending?.type === PlayerActionType.PickPreludes ||
@@ -62,6 +65,7 @@ const Table = () => {
 						onClose={() => setPickerHidden(true)}
 					/>
 				)}
+
 			{pending?.type === PlayerActionType.SolarPhaseTerraform && (
 				<SolarPhaseTerraformPicker action={pending} />
 			)}
@@ -102,6 +106,10 @@ const Table = () => {
 					}}
 					onClose={() => null}
 				/>
+			)}
+
+			{pending?.type === PlayerActionType.AddCardResource && (
+				<AddCardResourceModal pendingAction={pending} />
 			)}
 
 			<GameContainer>
