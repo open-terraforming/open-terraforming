@@ -241,7 +241,7 @@ export const coloniesCards = [
 		categories: [CardCategory.Jupiter],
 		conditions: [cardCategoryCountCondition(CardCategory.Jupiter, 1)],
 		resource: 'floaters',
-		victoryPointsCallback: vpsForCardResources('floaters', 2),
+		victoryPointsCallback: vpsForCardResources('floaters', 1 / 2),
 		playEffects: [
 			terraformRatingChange(1),
 			anyCardResourceChange('floaters', 2),
@@ -261,7 +261,9 @@ export const coloniesCards = [
 		resource: 'floaters',
 		actionEffects: [
 			effectChoice([
-				anyCardResourceChange('floaters', 1, CardCategory.Jupiter),
+				prependRightArrow(
+					anyCardResourceChange('floaters', 1, CardCategory.Jupiter),
+				),
 				resourcePerCardResource('money', 1, 'floaters', 4),
 			]),
 		],

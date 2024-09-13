@@ -15,6 +15,14 @@ export const resourcePerCardResource = (
 			{ symbol: SymbolType.Slash },
 			{ cardResource },
 		],
+		conditions: [
+			{
+				symbols: [{ cardResource }],
+				evaluate: ({ card }) => {
+					return card[cardResource] > 0
+				},
+			},
+		],
 		perform: ({ player, card }) => {
 			const resourcesCount = Math.min(maxCount ?? Infinity, card[cardResource])
 

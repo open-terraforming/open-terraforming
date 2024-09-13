@@ -4,6 +4,8 @@ import { CheatsProduction } from './components/CheatsProduction'
 import { CheatsProgress } from './components/CheatsProgress'
 import { CheatsCards } from './components/CheatsCards'
 import { CheatsCorporation } from './components/CheatsCorporation'
+import { CheatsCardResources } from './components/CheatsCardResources'
+import { CheatsCardPlayed } from './components/CheatsCardPlayed'
 
 type Props = {
 	open: boolean
@@ -19,6 +21,8 @@ export const CheatsModal = ({ open, onClose }: Props) => {
 			<CheatsCorporation />
 			<CheatsResources />
 			<CheatsProduction />
+			<CheatsCardResources />
+			<CheatsCardPlayed />
 		</Modal>
 	)
 }
