@@ -4,7 +4,7 @@ import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { adminChange } from '@shared/actions'
 import { CardsLookupApi } from '@shared/cards'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export const CheatsCardPlayed = () => {
 	const api = useApi()
@@ -13,6 +13,16 @@ export const CheatsCardPlayed = () => {
 	const [playerIndex, setPlayerIndex] = useState(0)
 	const [cardIndex, setCardIndex] = useState(0)
 	const [value, setValue] = useState(false)
+
+	const cards = useMemo(
+		() =>
+			game.players[playerIndex].usedCards
+				.map((card, i) => ({ card, i }))
+				.filter(
+					({ card }) => CardsLookupApi.get(card.code).actionEffects.length > 0,
+				),
+		[game, playerIndex],
+	)
 
 	const selectedCard = game.players[playerIndex].usedCards[cardIndex]
 
@@ -41,6 +51,10 @@ export const CheatsCardPlayed = () => {
 	}
 
 	useEffect(() => {
+		setCardIndex(cards[0].i)
+	}, [cards])
+
+	useEffect(() => {
 		if (!selectedCard) {
 			return
 		}
@@ -59,17 +73,11 @@ export const CheatsCardPlayed = () => {
 				))}
 			</select>
 			<select onChange={(e) => setCardIndex(parseInt(e.target.value))}>
-				{game.players[playerIndex].usedCards
-					.map((card, i) => ({ card, i }))
-					.filter(
-						({ card }) =>
-							CardsLookupApi.get(card.code).actionEffects.length > 0,
-					)
-					.map(({ card, i }) => (
-						<option key={i} value={i}>
-							{card.code}
-						</option>
-					))}
+				{cards.map(({ card, i }) => (
+					<option key={i} value={i}>
+						{card.code}
+					</option>
+				))}
 			</select>
 			<label>
 				<input

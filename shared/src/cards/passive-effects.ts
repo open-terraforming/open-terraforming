@@ -462,7 +462,7 @@ export const drawCardWhenBuyingCard = (minCardCost: number) =>
 		],
 		onCardBought: ({ player, game }, card) => {
 			if (card.cost >= minCardCost) {
-				player.cards.push(...drawCard(game))
+				player.cards.push(drawCard(game))
 			}
 		},
 	})

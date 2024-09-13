@@ -5,6 +5,7 @@ import { PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { PlayerBaseAction } from '../action'
+import { simulateCardPassiveEffectsOnStart } from '@shared/utils/simulateCardPassiveEffectsOnStart'
 
 type Args = ReturnType<typeof pickStarting>['data']
 
@@ -57,7 +58,14 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 			corp.playEffects,
 		)
 
-		const cost = cards.length * this.game.cardPrice
+		// We have to see what effects corporation has to properly evaluate if player can afford projects and preludes
+		const { player: simulatedPassive } = simulateCardPassiveEffectsOnStart(
+			corporation,
+			corp.passiveEffects,
+		)
+
+		const cost =
+			cards.length * (simulatedPassive.sponsorCost ?? this.game.cardPrice)
 
 		if (cost > simulated.money) {
 			throw new Error("You don't have money for that")

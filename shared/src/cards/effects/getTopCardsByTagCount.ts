@@ -2,6 +2,7 @@ import { drawCards } from '@shared/utils'
 import { CardCategory, SymbolType } from '../types'
 import { countTagsWithoutEvents } from '../utils'
 import { effect } from './types'
+import { CardsLookupApi } from '../lookup'
 
 export const getTopCardsByTagCount = (
 	tag: CardCategory,
@@ -14,8 +15,14 @@ export const getTopCardsByTagCount = (
 			{ symbol: SymbolType.Slash },
 			{ tag, count: tagCountPerCard },
 		],
-		perform: ({ player, game }) => {
-			const tagCount = countTagsWithoutEvents(player.cards, tag)
+		perform: ({ card, player, game }) => {
+			const thisCardCount = CardsLookupApi.get(card.code).categories.filter(
+				(cat) => cat === tag,
+			).length
+
+			const tagCount =
+				countTagsWithoutEvents(player.usedCards, tag) + thisCardCount
+
 			const cards = drawCards(game, Math.floor(tagCount / tagCountPerCard))
 
 			player.cards.push(...cards)

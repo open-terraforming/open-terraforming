@@ -556,10 +556,12 @@ export const coloniesCards = [
 		cost: 18,
 		type: CardType.Action,
 		categories: [CardCategory.Jupiter],
+		resource: 'floaters',
+		playEffects: [anyCardResourceChange('floaters', 2, CardCategory.Jupiter)],
 		actionEffects: [
 			effectChoice([
 				prependRightArrow(
-					anyCardResourceChange('floaters', 2, CardCategory.Jupiter),
+					anyCardResourceChange('floaters', 1, CardCategory.Jupiter),
 				),
 				joinedEffects(
 					[
