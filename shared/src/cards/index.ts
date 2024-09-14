@@ -9,10 +9,12 @@ import { preludePreludes } from './prelude/prelude'
 import { venusCards } from './venus/venusCards'
 import { venusCorporations } from './venus/venusCorporations'
 
-Cards.push(...baseCorporations)
-Cards.push(...preludeCorporations)
-Cards.push(...baseCards)
-Cards.push(...preludeCards)
-Cards.push(...preludePreludes)
-Cards.push(...venusCards)
-Cards.push(...venusCorporations)
+if (Cards.length === 0) {
+	Cards.push(...baseCorporations)
+	Cards.push(...preludeCorporations)
+	Cards.push(...baseCards)
+	Cards.push(...preludeCards)
+	Cards.push(...preludePreludes)
+	Cards.push(...venusCards)
+	Cards.push(...venusCorporations)
+}
