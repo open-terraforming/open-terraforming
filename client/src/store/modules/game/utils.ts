@@ -220,6 +220,10 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 
 	if (diff.colonies) {
 		Object.entries(diff.colonies).forEach(([colonyIndex, colony]) => {
+			if (!lastGame.colonies[+colonyIndex]) {
+				return
+			}
+
 			if (colony.playersAtSteps) {
 				const players = Object.entries(colony.playersAtSteps)
 
