@@ -27,6 +27,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { generateSession } from '../utils/generate-session'
 import { Game } from './game'
 import { PlayerActions } from './player/actions'
+import { mapCards } from '@shared/utils/mapCards'
 
 export interface CardBoughtEvent {
 	player: Player
@@ -180,6 +181,16 @@ export class Player {
 
 	filterPendingActions() {
 		this.state.pendingActions = this.state.pendingActions.filter((p) => {
+			// This shouldn't happen, but just to be sure
+			if (
+				p.type === PlayerActionType.AddCardResource &&
+				!mapCards(this.state.usedCards).some(
+					(c) => c.info.resource === p.data.cardResource,
+				)
+			) {
+				return false
+			}
+
 			if (p.type !== PlayerActionType.PlaceTile) {
 				return true
 			}

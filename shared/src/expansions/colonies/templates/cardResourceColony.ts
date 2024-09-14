@@ -3,6 +3,7 @@ import { addCardResourceAction } from '@shared/player-actions'
 import { range, pushPendingAction } from '@shared/utils'
 import { colonyCardResourceBonus } from '../bonuses/colonyCardResourceBonus'
 import { colony } from './colony'
+import { mapCards } from '@shared/utils/mapCards'
 
 type Params = {
 	code: string
@@ -37,6 +38,10 @@ export const cardResourceColony = ({
 				count: i,
 				forceCount: true,
 			})),
+			condition: ({ player }) =>
+				mapCards(player.usedCards).some(
+					(c) => c.info.resource === cardResource,
+				),
 			perform: ({ player, colony }) => {
 				const count = tradeIncome[colony.step]
 

@@ -433,6 +433,7 @@ export interface Colony {
 export interface ColonyBonus {
 	description?: string
 	symbols: CardSymbol[]
+	condition?: (ctx: ColonyCallbackContext) => boolean
 	perform: (ctx: ColonyCallbackContext) => void
 }
 
@@ -440,6 +441,7 @@ export interface ColonyIncome {
 	description?: string
 	slots: CardSymbol[]
 	symbols: CardSymbol[]
+	condition?: (ctx: ColonyCallbackContext) => boolean
 	perform: (ctx: ColonyCallbackContext) => void
 }
 

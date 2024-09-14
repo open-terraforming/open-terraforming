@@ -3,6 +3,7 @@ import { getPlayerIndex } from '../../../utils'
 import { OkOrFailure } from '../../../utils/okOrFailure'
 import { ok } from '../../../utils/ok'
 import { failure } from '../../../utils/failure'
+import { ColoniesLookupApi } from '../ColoniesLookupApi'
 
 type Params = {
 	game: GameState
@@ -25,8 +26,23 @@ export const canColonizeColony = ({
 		)
 	}
 
+	const info = ColoniesLookupApi.get(colony.code)
+
 	if (colony.playersAtSteps.length >= 3) {
 		return failure('Colony is already full')
+	}
+
+	const colonizeBonus = info.colonizeBonus[colony.playersAtSteps.length]
+
+	if (
+		colonizeBonus?.condition &&
+		!colonizeBonus.condition({
+			colony,
+			game,
+			player,
+		})
+	) {
+		return failure('Cannot build colony here')
 	}
 
 	const playerIndex = getPlayerIndex(game, player.id)
