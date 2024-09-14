@@ -97,19 +97,23 @@ export const ColonyDisplay = ({
 
 			<Info>
 				<div>
-					<Flex>
-						<div>Trade bonus:</div>
-						<div>
-							<Symbols symbols={info.incomeBonus.symbols} />
-						</div>
-					</Flex>
+					<Tooltip content="Bonus which every player with colony here receives if somebody trades with this colony">
+						<Flex>
+							<div>Trade bonus:</div>
+							<div>
+								<Symbols symbols={info.incomeBonus.symbols} />
+							</div>
+						</Flex>
+					</Tooltip>
 
-					<Flex>
-						<div>Trade income:</div>
-						<div>
-							<Symbols symbols={info.tradeIncome.symbols} />
-						</div>
-					</Flex>
+					<Tooltip content="Income you'll receive when trading with this colony, determined by the current trade step below">
+						<Flex>
+							<div>Trade income:</div>
+							<div>
+								<Symbols symbols={info.tradeIncome.symbols} />
+							</div>
+						</Flex>
+					</Tooltip>
 				</div>
 				<div style={{ marginLeft: 'auto' }}>
 					{typeof colony.currentlyTradingPlayer === 'number' && (
@@ -132,28 +136,40 @@ export const ColonyDisplay = ({
 			<Slots>
 				{info.tradeIncome.slots.map((s, i) => (
 					<Slot key={i}>
-						<SlotRect $isStarting={i === (info.startingStep ?? 1)}>
-							{colony.playersAtSteps[i] !== undefined ? (
-								<Tooltip content={players[colony.playersAtSteps[i]].name}>
-									<PlayerColony
-										style={{
-											backgroundColor: players[colony.playersAtSteps[i]].color,
-											borderColor: darken(
-												0.2,
-												players[colony.playersAtSteps[i]].color,
-											),
-										}}
-									/>
-								</Tooltip>
-							) : (
-								info.colonizeBonus[i] && (
-									<Symbols symbols={info.colonizeBonus[i].symbols} />
-								)
-							)}
-						</SlotRect>
-						<SlotLabel $isCurrent={i === colony.step}>
-							<Symbols symbols={[s]} />
-						</SlotLabel>
+						{i < 3 && (
+							<SlotRect>
+								{colony.playersAtSteps[i] !== undefined ? (
+									<Tooltip content={players[colony.playersAtSteps[i]].name}>
+										<PlayerColony
+											style={{
+												backgroundColor:
+													players[colony.playersAtSteps[i]].color,
+												borderColor: darken(
+													0.2,
+													players[colony.playersAtSteps[i]].color,
+												),
+											}}
+										/>
+									</Tooltip>
+								) : (
+									info.colonizeBonus[i] && (
+										<Tooltip content="You'll receive this bonus when placing colony here">
+											<Symbols symbols={info.colonizeBonus[i].symbols} />
+										</Tooltip>
+									)
+								)}
+							</SlotRect>
+						)}
+						<Tooltip
+							content={
+								i === colony.step &&
+								"Current trade step, you'll receive this when trading with this colony"
+							}
+						>
+							<SlotLabel $isCurrent={i === colony.step}>
+								<Symbols symbols={[s]} />
+							</SlotLabel>
+						</Tooltip>
 					</Slot>
 				))}
 			</Slots>
@@ -224,6 +240,7 @@ const Container = styled.div`
 const Title = styled.div`
 	background-color: ${({ theme }) => theme.colors.border};
 	display: flex;
+	text-transform: uppercase;
 `
 
 const TitleName = styled.div`
@@ -240,36 +257,32 @@ const Action = styled(Button)`
 	padding: 0.1rem 0.5rem;
 `
 
-const SlotRect = styled.div<{ $isStarting?: boolean }>`
+const SlotRect = styled.div`
 	border: 2px solid ${({ theme }) => theme.colors.border};
-	border-right-width: 0;
+	border-left-width: 0;
 	width: 3rem;
 	height: 2.5rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	position: relative;
-
-	${({ $isStarting, theme }) =>
-		$isStarting &&
-		css`
-			background-color: ${darken(0.05, theme.colors.border)};
-		`}
 `
 
 const Slot = styled.div`
-	&:last-child ${SlotRect} {
-		border-right-width: 2px;
+	&:first-child ${SlotRect} {
+		border-left-width: 2px;
 	}
 `
 
 const Slots = styled(Flex)`
 	padding: 0 0.5rem;
+	align-items: flex-end;
 `
 
 const SlotLabel = styled.div<{ $isCurrent: boolean }>`
 	margin-left: 2px;
 	margin-top: 2px;
+	border: 2px solid transparent;
 
 	${({ $isCurrent, theme }) =>
 		$isCurrent &&

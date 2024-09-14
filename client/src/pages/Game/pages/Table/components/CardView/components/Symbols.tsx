@@ -131,7 +131,7 @@ export const Symbols = ({ symbols, className }: Props) => {
 				const countStr =
 					s.count === undefined
 						? undefined
-						: Math.abs(s.count) !== 1
+						: Math.abs(s.count) !== 1 || s.forceCount
 							? Math.abs(s.count).toString()
 							: ''
 

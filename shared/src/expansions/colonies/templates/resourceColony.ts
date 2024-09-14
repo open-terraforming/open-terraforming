@@ -34,7 +34,7 @@ export const resourceColony = ({
 		),
 		tradeIncome: {
 			symbols: [{ symbol: SymbolType.X }, { resource }],
-			slots: incomes.map((i) => ({ text: i.toString() })),
+			slots: incomes.map((i) => ({ resource, count: i, forceCount: true })),
 			perform: ({ player, colony }) => {
 				player[resource] += incomes[colony.step]
 			},

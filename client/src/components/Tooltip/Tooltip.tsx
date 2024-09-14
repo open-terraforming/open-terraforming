@@ -116,7 +116,7 @@ export const Tooltip = ({
 				{children}
 			</Trigger>
 
-			{(opened || (shown && !showOnHover)) && (
+			{(opened || (shown && !showOnHover)) && content && (
 				<Portal>
 					<Container
 						className={className}

@@ -38,7 +38,7 @@ export const coloniesColonies: Colony[] = [
 			colonyTileBonus(GridCellContent.Ocean),
 		),
 		tradeIncome: {
-			symbols: [],
+			symbols: [{ text: 'X' }],
 			slots: EUROPA_INCOMES.map((res) => ({
 				production: true,
 				resource: res,

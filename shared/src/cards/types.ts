@@ -284,4 +284,5 @@ export interface CardSymbol {
 	tag?: CardCategory
 	text?: string
 	forceSign?: boolean
+	forceCount?: boolean
 }
