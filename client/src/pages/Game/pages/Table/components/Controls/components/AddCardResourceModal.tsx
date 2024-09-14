@@ -1,19 +1,18 @@
 import { Button } from '@/components'
+import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
+import { useLocale } from '@/context/LocaleContext'
 import { cardsToCardList } from '@/utils/cards'
 import { useGameState, usePlayerState, useToggle } from '@/utils/hooks'
 import { addCardResource } from '@shared/actions'
 import { cardAcceptsResource } from '@shared/cards/conditions'
 import { addCardResourceAction } from '@shared/player-actions'
 import { useState } from 'react'
-import { CardInfo } from '../../CardDisplay/CardDisplay'
+import { styled } from 'styled-components'
 import { CardSelector } from '../../CardSelector/CardSelector'
-import { useLocale } from '@/context/LocaleContext'
 import { CardView } from '../../CardView/CardView'
 import { Symbols } from '../../CardView/components/Symbols'
-import { Flex } from '@/components/Flex/Flex'
-import { styled } from 'styled-components'
 
 type Props = {
 	pendingAction: ReturnType<typeof addCardResourceAction>
@@ -24,7 +23,6 @@ export const AddCardResourceModal = ({ pendingAction }: Props) => {
 	const game = useGameState()
 	const api = useApi()
 	const [picking, togglePicking] = useToggle()
-	const [selected, setSelected] = useState(undefined as CardInfo | undefined)
 	const t = useLocale()
 
 	const cards = cardsToCardList(
@@ -35,6 +33,8 @@ export const AddCardResourceModal = ({ pendingAction }: Props) => {
 			player,
 		},
 	)
+
+	const [selected, setSelected] = useState(cards[0])
 
 	const handleConfirm = () => {
 		if (!selected) {
@@ -76,7 +76,12 @@ export const AddCardResourceModal = ({ pendingAction }: Props) => {
 			</Flex>
 
 			{selected && (
-				<CardView card={selected.card} onClick={togglePicking} hover={false} />
+				<CardView
+					card={selected.card}
+					onClick={togglePicking}
+					hover={false}
+					evaluate={false}
+				/>
 			)}
 
 			<ChangeContainer justify="center">

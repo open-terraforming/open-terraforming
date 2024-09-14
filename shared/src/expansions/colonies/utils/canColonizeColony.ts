@@ -42,7 +42,7 @@ export const canColonizeColony = ({
 			player,
 		})
 	) {
-		return failure('Cannot build colony here')
+		return failure('Cannot build colony')
 	}
 
 	const playerIndex = getPlayerIndex(game, player.id)
