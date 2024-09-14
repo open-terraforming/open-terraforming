@@ -16,7 +16,9 @@ export const canTradeWithColony = ({
 	colony,
 }: Params): OkOrFailure<never, string> => {
 	if (!colony.active) {
-		return failure('Colony is not active')
+		return failure(
+			'Colony is not active, you have to first play a card that accepts its resources',
+		)
 	}
 
 	if (typeof colony.currentlyTradingPlayer === 'number') {

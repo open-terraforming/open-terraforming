@@ -148,15 +148,16 @@ const Container = styled.div<{ disableStyle?: boolean }>`
 			background: ${rgba(props.theme.colors.background, 1)};
 			color: #ddd;
 			padding: 10px;
+			border: 2px solid ${({ theme }) => rgba(theme.colors.border, 1)};
 
 			&::before {
 				content: ' ';
 				position: absolute;
-				bottom: -10px;
-				left: 50%;
+				bottom: -14px;
+				left: 15px;
 				margin-left: -5px;
-				border: 5px solid transparent;
-				border-top-color: ${props.theme.colors.background};
+				border: 7px solid transparent;
+				border-top-color: ${rgba(props.theme.colors.border, 1)};
 			}
 		`}
 `

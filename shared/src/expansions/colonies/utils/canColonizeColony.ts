@@ -20,7 +20,9 @@ export const canColonizeColony = ({
 	allowDuplicates,
 }: Params): OkOrFailure<{ cost: number }, string> => {
 	if (!colony.active) {
-		return failure('Colony is not active')
+		return failure(
+			'Colony is not active, you have to first play a card that accepts its resources',
+		)
 	}
 
 	if (colony.playersAtSteps.length >= 3) {
