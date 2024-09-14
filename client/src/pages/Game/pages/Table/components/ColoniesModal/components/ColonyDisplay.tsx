@@ -260,7 +260,7 @@ const PlayerColony = styled.div`
 
 const Container = styled.div`
 	border: 2px solid ${({ theme }) => theme.colors.border};
-	margin: 0.5rem 0;
+	margin: 0.5rem;
 `
 
 const Title = styled.div`
