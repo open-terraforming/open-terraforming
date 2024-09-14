@@ -21,8 +21,6 @@ export const Controls = () => {
 	const pendingAction = useAppStore((state) => state.game.pendingAction)
 	const pendingActionIndex = usePlayerState().pendingActions.length
 
-	console.log(pendingAction)
-
 	const buyingCardIndex = useAppStore((state) => state.table.buyingCardIndex)
 	const playingCardIndex = useAppStore((state) => state.table.playingCardIndex)
 	const state = player

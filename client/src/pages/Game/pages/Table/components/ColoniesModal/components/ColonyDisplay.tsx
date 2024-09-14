@@ -7,6 +7,7 @@ import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi
 import {
 	canColonizeColony,
 	canTradeWithColony,
+	canTradeWithColonyUsingResource,
 	getColonyTradeCostSymbols,
 } from '@shared/expansions/colonies/utils'
 import { ColonyState } from '@shared/game'
@@ -62,6 +63,18 @@ export const ColonyDisplay = ({
 		game,
 		colony,
 	})
+
+	const canTradeWithAnyResource = (['money', 'titan', 'energy'] as const).some(
+		(res) =>
+			isOk(
+				canTradeWithColonyUsingResource({
+					player,
+					game,
+					colony,
+					resource: res,
+				}),
+			),
+	)
 
 	const canColonize = canColonizeColony({
 		game,
@@ -190,8 +203,18 @@ export const ColonyDisplay = ({
 					<>
 						{!freeColonizePick && (
 							<Action
-								disabled={!canTradeCurrently || !isOk(canTrade)}
-								tooltip={isFailure(canTrade) ? canTrade.error : undefined}
+								disabled={
+									!canTradeWithAnyResource ||
+									!canTradeCurrently ||
+									!isOk(canTrade)
+								}
+								tooltip={
+									isFailure(canTrade)
+										? canTrade.error
+										: !canTradeWithAnyResource
+											? 'No resources to trade with'
+											: undefined
+								}
 								onClick={freeTradePick ? handleFreeTrade : toggleTrading}
 								noClip
 							>
