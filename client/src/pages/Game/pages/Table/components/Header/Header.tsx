@@ -7,6 +7,7 @@ import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { ColoniesButton } from './components/ColoniesButton'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
+import { ExpansionType } from '@shared/expansions/types'
 
 export const Header = () => {
 	const game = useGameState()
@@ -51,9 +52,11 @@ export const Header = () => {
 						)}
 					</DialogWrapper>
 				</Flex>
-				<Flex justify="center">
-					<ColoniesButton />
-				</Flex>
+				{game.expansions.includes(ExpansionType.Colonies) && (
+					<Flex justify="center">
+						<ColoniesButton />
+					</Flex>
+				)}
 			</E>
 			<HeaderEventDisplay />
 		</>
