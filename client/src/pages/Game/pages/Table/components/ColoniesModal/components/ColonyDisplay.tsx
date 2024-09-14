@@ -261,6 +261,8 @@ const PlayerColony = styled.div`
 const Container = styled.div`
 	border: 2px solid ${({ theme }) => theme.colors.border};
 	margin: 0.5rem;
+	display: flex;
+	flex-direction: column;
 `
 
 const Title = styled.div`
@@ -287,7 +289,7 @@ const SlotRect = styled.div`
 	border: 2px solid ${({ theme }) => theme.colors.border};
 	border-left-width: 0;
 	width: 3rem;
-	height: 2.5rem;
+	height: 2rem;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -325,6 +327,7 @@ const SlotLabel = styled.div<{ $isCurrent: boolean; $isDisabled: boolean }>`
 
 const Info = styled(Flex)`
 	padding: 0.5rem;
+	flex: 1;
 `
 
 const FleetDisplay = styled.div`
