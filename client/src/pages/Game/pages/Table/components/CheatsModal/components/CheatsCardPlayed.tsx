@@ -51,7 +51,7 @@ export const CheatsCardPlayed = () => {
 	}
 
 	useEffect(() => {
-		setCardIndex(cards[0].i)
+		setCardIndex(cards[0]?.i)
 	}, [cards])
 
 	useEffect(() => {

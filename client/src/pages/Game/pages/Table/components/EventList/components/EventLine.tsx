@@ -12,6 +12,7 @@ import styled, { css, keyframes } from 'styled-components'
 import { EventType, GameEvent } from '../types'
 import { CardModal } from './CardModal'
 import { useLocale } from '@/context/LocaleContext'
+import { assertNever } from '@shared/utils/assertNever'
 
 type Props = {
 	event: GameEvent
@@ -42,6 +43,7 @@ const CardSpan = memo(({ card }: { card: string }) => {
 export const EventLine = ({ event, animated, onDone }: Props) => {
 	const locale = useLocale()
 	const players = useAppStore((state) => state.game.playerMap)
+	const game = useAppStore((state) => state.game.state)
 	const doneRef = useRef(onDone)
 	doneRef.current = onDone
 
@@ -162,7 +164,50 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						<CardSpan card={event.card} />
 					</>
 				)
+			case EventType.ColonyActivated:
+				// TODO: Should open Colonies Modal when clicked
+				return (
+					<>{locale.colonies[game.colonies[event.colony].code]} activated</>
+				)
+			case EventType.ColonyBuilt:
+				return (
+					<>
+						<PlayerSpan player={game.players[event.playerIndex]} /> built colony
+						on {locale.colonies[game.colonies[event.colony].code]}
+					</>
+				)
+			case EventType.ColonyTrading:
+				return (
+					<>
+						<PlayerSpan player={game.players[event.playerIndex]} /> traded with{' '}
+						{locale.colonies[game.colonies[event.colony].code]}
+					</>
+				)
+			case EventType.ColonyTradingStepChanged:
+				return (
+					<>
+						{locale.colonies[game.colonies[event.colony].code]} trading step{' '}
+						{event.change < 0 ? 'decreased' : 'increased'} by{' '}
+						{Math.abs(event.change)}
+					</>
+				)
+			case EventType.PlayerTradeFleetsChange:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} />{' '}
+						{event.amount > 0 ? 'acquired extra' : 'lost'}{' '}
+						{Math.abs(event.amount)} trade fleets
+					</>
+				)
+			case EventType.NewGeneration:
+				return <></>
+			case EventType.PlayingChanged:
+				return <></>
+			case EventType.ProductionPhase:
+				return <></>
 		}
+
+		assertNever(event)
 	}, [event, players])
 
 	return <E animation={animated}>{content}</E>

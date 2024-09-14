@@ -166,7 +166,10 @@ export const ColonyDisplay = ({
 								"Current trade step, you'll receive this when trading with this colony"
 							}
 						>
-							<SlotLabel $isCurrent={i === colony.step}>
+							<SlotLabel
+								$isCurrent={i === colony.step}
+								$isDisabled={i < colony.playersAtSteps.length}
+							>
 								<Symbols symbols={[s]} />
 							</SlotLabel>
 						</Tooltip>
@@ -279,7 +282,7 @@ const Slots = styled(Flex)`
 	align-items: flex-end;
 `
 
-const SlotLabel = styled.div<{ $isCurrent: boolean }>`
+const SlotLabel = styled.div<{ $isCurrent: boolean; $isDisabled: boolean }>`
 	margin-left: 2px;
 	margin-top: 2px;
 	border: 2px solid transparent;
@@ -288,6 +291,12 @@ const SlotLabel = styled.div<{ $isCurrent: boolean }>`
 		$isCurrent &&
 		css`
 			background-color: ${theme.colors.border};
+		`}
+
+	${({ $isDisabled }) =>
+		$isDisabled &&
+		css`
+			opacity: 0.5;
 		`}
 `
 

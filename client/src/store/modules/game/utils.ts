@@ -153,6 +153,18 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 						})
 					}
 				}
+
+				if (gameChanges.tradeFleets) {
+					const diff = newPlayer.tradeFleets - player.tradeFleets
+
+					if (diff > 0) {
+						newEvents.push({
+							type: EventType.PlayerTradeFleetsChange,
+							playerId: player.id,
+							amount: diff,
+						})
+					}
+				}
 			}
 		})
 	}
@@ -203,6 +215,45 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 	if (diff.state === GameStateValue.GenerationEnding) {
 		newEvents.push({
 			type: EventType.ProductionPhase,
+		})
+	}
+
+	if (diff.colonies) {
+		Object.entries(diff.colonies).forEach(([colonyIndex, colony]) => {
+			if (colony.playersAtSteps) {
+				const players = Object.entries(colony.playersAtSteps)
+
+				for (const [, playerIndex] of players) {
+					newEvents.push({
+						type: EventType.ColonyBuilt,
+						playerIndex,
+						colony: +colonyIndex,
+					})
+				}
+			}
+
+			if (colony.active) {
+				newEvents.push({
+					type: EventType.ColonyActivated,
+					colony: +colonyIndex,
+				})
+			}
+
+			if (colony.currentlyTradingPlayer) {
+				newEvents.push({
+					type: EventType.ColonyTrading,
+					playerIndex: colony.currentlyTradingPlayer,
+					colony: +colonyIndex,
+				})
+			}
+
+			if (colony.step) {
+				newEvents.push({
+					type: EventType.ColonyTradingStepChanged,
+					colony: +colonyIndex,
+					change: colony.step - lastGame.colonies[+colonyIndex].step,
+				})
+			}
 		})
 	}
 
