@@ -1,13 +1,12 @@
 import { Button, DialogWrapper } from '@/components'
+import { Flex } from '@/components/Flex/Flex'
 import { useGameState } from '@/utils/hooks'
 import styled from 'styled-components'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
+import { ColoniesButton } from './components/ColoniesButton'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
-import { DialogButton } from '@/components/DialogButton/DialogButton'
-import { ColoniesModal } from '../ColoniesModal/ColoniesModal'
-import { Flex } from '@/components/Flex/Flex'
 
 export const Header = () => {
 	const game = useGameState()
@@ -53,9 +52,7 @@ export const Header = () => {
 					</DialogWrapper>
 				</Flex>
 				<Flex justify="center">
-					<DialogButton dialog={(close) => <ColoniesModal onClose={close} />}>
-						Colonies
-					</DialogButton>
+					<ColoniesButton />
 				</Flex>
 			</E>
 			<HeaderEventDisplay />
@@ -76,6 +73,8 @@ const StyledButton = styled(Button)`
 	background-color: ${({ theme }) => theme.colors.background};
 	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0 0.8rem;
+	width: 10rem;
+
 	> span {
 		padding: 0.5rem 0.2rem;
 	}
@@ -84,6 +83,7 @@ const StyledButton = styled(Button)`
 const StandardButton = styled(StyledButton)`
 	margin: 0 0.5rem;
 	padding: 1rem;
+	width: 12rem;
 `
 
 const Counter = styled.div`

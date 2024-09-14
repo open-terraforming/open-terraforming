@@ -19,6 +19,7 @@ import { ColonyTradeModal } from './ColonyTradeModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretUp } from '@fortawesome/free-solid-svg-icons'
 import { useLocale } from '@/context/LocaleContext'
+import { PlayerActionType } from '@shared/player-actions'
 
 type Props = {
 	index: number
@@ -43,11 +44,18 @@ export const ColonyDisplay = ({
 }: Props) => {
 	const game = useAppStore((s) => s.game.state)
 	const player = useAppStore((s) => s.game.player)
+	const pending = useAppStore((s) => s.game.pendingAction)
 	const players = game.players
 	const info = ColoniesLookupApi.get(colony.code)
 	const api = useApi()
 	const [isTrading, toggleTrading] = useToggle()
 	const t = useLocale()
+
+	const canTradeCurrently =
+		!pending || pending.type === PlayerActionType.TradeWithColony
+
+	const canColonizeCurrently =
+		!pending || pending.type === PlayerActionType.BuildColony
 
 	const canTrade = canTradeWithColony({
 		player,
@@ -163,7 +171,7 @@ export const ColonyDisplay = ({
 					<>
 						{!freeColonizePick && (
 							<Action
-								disabled={!isOk(canTrade)}
+								disabled={!canTradeCurrently || !isOk(canTrade)}
 								tooltip={isFailure(canTrade) ? canTrade.error : undefined}
 								onClick={freeTradePick ? handleFreeTrade : toggleTrading}
 								noClip
@@ -184,7 +192,7 @@ export const ColonyDisplay = ({
 						)}{' '}
 						{!freeTradePick && (
 							<Action
-								disabled={!isOk(canColonize)}
+								disabled={!canColonizeCurrently || !isOk(canColonize)}
 								tooltip={isFailure(canColonize) ? canColonize.error : undefined}
 								onClick={handleColonize}
 								noClip
