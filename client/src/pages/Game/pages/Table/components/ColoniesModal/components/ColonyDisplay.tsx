@@ -18,6 +18,7 @@ import { Symbols } from '../../CardView/components/Symbols'
 import { ColonyTradeModal } from './ColonyTradeModal'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCaretUp } from '@fortawesome/free-solid-svg-icons'
+import { useLocale } from '@/context/LocaleContext'
 
 type Props = {
 	index: number
@@ -46,6 +47,7 @@ export const ColonyDisplay = ({
 	const info = ColoniesLookupApi.get(colony.code)
 	const api = useApi()
 	const [isTrading, toggleTrading] = useToggle()
+	const t = useLocale()
 
 	const canTrade = canTradeWithColony({
 		player,
@@ -82,7 +84,7 @@ export const ColonyDisplay = ({
 			)}
 
 			<Title>
-				<TitleName>{info.code}</TitleName>
+				<TitleName>{t.colonies[info.code]}</TitleName>
 			</Title>
 
 			<Info>
