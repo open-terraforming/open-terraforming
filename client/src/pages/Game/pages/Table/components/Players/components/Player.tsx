@@ -32,6 +32,11 @@ const pendingToStr = {
 	[PlayerActionType.DraftCard]: 'Picking card',
 	[PlayerActionType.SponsorCompetition]: 'Selecting competition',
 	[PlayerActionType.SolarPhaseTerraform]: 'WG Terraforming',
+	[PlayerActionType.ChangeColonyStep]: 'Changing colony step',
+	[PlayerActionType.AddCardResource]: 'Adding card resource',
+	[PlayerActionType.TradeWithColony]: 'Trading with colony',
+	[PlayerActionType.BuildColony]: 'Building colony',
+	[PlayerActionType.DiscardCards]: 'Discarding ',
 }
 
 const stateToStr = {
