@@ -394,6 +394,10 @@ export const mod = (n: number, m: number) => {
 	return ((n % m) + m) % m
 }
 
+export const pickRandom = <T>(array: T[]) => {
+	return array[Math.round(Math.random() * (array.length - 1))]
+}
+
 export * from './ok'
 export * from './okOrFailure'
 export * from './failure'
