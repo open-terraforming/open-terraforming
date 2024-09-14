@@ -41,7 +41,7 @@ export const canColonizeColony = ({
 
 	const cost = 17
 
-	if (player.money <= cost) {
+	if (player.money < cost) {
 		return failure('You cannot afford to colonize')
 	}
 

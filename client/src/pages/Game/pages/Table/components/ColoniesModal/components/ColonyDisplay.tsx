@@ -10,7 +10,7 @@ import {
 	canTradeWithColonyUsingResource,
 	getColonyTradeCostSymbols,
 } from '@shared/expansions/colonies/utils'
-import { ColonyState } from '@shared/game'
+import { ColonyState, PlayerStateValue } from '@shared/game'
 import { isFailure, isOk } from '@shared/utils'
 import { darken } from 'polished'
 import { Fragment } from 'react'
@@ -53,10 +53,12 @@ export const ColonyDisplay = ({
 	const t = useLocale()
 
 	const canTradeCurrently =
-		!pending || pending.type === PlayerActionType.TradeWithColony
+		player.state === PlayerStateValue.Playing &&
+		(!pending || pending.type === PlayerActionType.TradeWithColony)
 
 	const canColonizeCurrently =
-		!pending || pending.type === PlayerActionType.BuildColony
+		player.state === PlayerStateValue.Playing &&
+		(!pending || pending.type === PlayerActionType.BuildColony)
 
 	const canTrade = canTradeWithColony({
 		player,
