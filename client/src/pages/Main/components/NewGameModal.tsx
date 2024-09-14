@@ -37,7 +37,7 @@ const EXPANSIONS_OPTIONS = [
 	{
 		value: ExpansionType.Colonies,
 		label: 'Colonies',
-		description: 'TODO: Adds colonies',
+		description: 'Adds Colonies which can be used to boost your economy.',
 	},
 ]
 
