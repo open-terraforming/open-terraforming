@@ -84,7 +84,9 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 		if (pendingAction) {
 			this.popAction()
 		} else {
-			this.actionPlayed()
+			if (!this.pendingAction) {
+				this.actionPlayed()
+			}
 		}
 	}
 }
