@@ -1,7 +1,10 @@
 import { Button, Tooltip } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { useApi } from '@/context/ApiContext'
+import { useLocale } from '@/context/LocaleContext'
 import { useAppStore, useToggle } from '@/utils/hooks'
+import { faBuilding, faSpaceShuttle } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { colonizeColony, tradeWithColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import {
@@ -11,16 +14,12 @@ import {
 	getColonyTradeCostSymbols,
 } from '@shared/expansions/colonies/utils'
 import { ColonyState, PlayerStateValue } from '@shared/game'
+import { PlayerActionType } from '@shared/player-actions'
 import { isFailure, isOk } from '@shared/utils'
-import { darken } from 'polished'
 import { Fragment } from 'react'
 import styled, { css } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { ColonyTradeModal } from './ColonyTradeModal'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCaretUp } from '@fortawesome/free-solid-svg-icons'
-import { useLocale } from '@/context/LocaleContext'
-import { PlayerActionType } from '@shared/player-actions'
 
 type Props = {
 	index: number
@@ -139,7 +138,7 @@ export const ColonyDisplay = ({
 										color: players[colony.currentlyTradingPlayer].color,
 									}}
 								>
-									<FontAwesomeIcon icon={faCaretUp} />
+									<FontAwesomeIcon icon={faSpaceShuttle} />
 								</FleetIcon>
 								{players[colony.currentlyTradingPlayer].name}
 							</FleetDisplay>
@@ -157,14 +156,11 @@ export const ColonyDisplay = ({
 									<Tooltip content={players[colony.playersAtSteps[i]].name}>
 										<PlayerColony
 											style={{
-												backgroundColor:
-													players[colony.playersAtSteps[i]].color,
-												borderColor: darken(
-													0.2,
-													players[colony.playersAtSteps[i]].color,
-												),
+												color: players[colony.playersAtSteps[i]].color,
 											}}
-										/>
+										>
+											<FontAwesomeIcon icon={faBuilding} />
+										</PlayerColony>
 									</Tooltip>
 								) : (
 									info.colonizeBonus[i] && (
@@ -257,7 +253,6 @@ export const ColonyDisplay = ({
 const PlayerColony = styled.div`
 	width: 1rem;
 	height: 1rem;
-	border: 2px solid #000;
 `
 
 const Container = styled.div`
@@ -340,5 +335,5 @@ const FleetDisplay = styled.div`
 `
 
 const FleetIcon = styled.div`
-	font-size: 200%;
+	font-size: 150%;
 `
