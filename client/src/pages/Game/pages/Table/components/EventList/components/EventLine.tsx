@@ -1,7 +1,7 @@
-import { useAppStore } from '@/utils/hooks'
+import { useAppStore, useToggle } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
-import { PlayerState } from '@shared/index'
+import { ColonyState, PlayerState } from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
@@ -13,6 +13,8 @@ import { EventType, GameEvent } from '../types'
 import { CardModal } from './CardModal'
 import { useLocale } from '@/context/LocaleContext'
 import { assertNever } from '@shared/utils/assertNever'
+import { quantized } from '@shared/utils/quantized'
+import { ColoniesModal } from '../../ColoniesModal/ColoniesModal'
 
 type Props = {
 	event: GameEvent
@@ -39,6 +41,20 @@ const CardSpan = memo(({ card }: { card: string }) => {
 		</>
 	)
 })
+
+const ColonySpan = ({ colony }: { colony: ColonyState }) => {
+	const locale = useLocale()
+	const [shown, toggleShow] = useToggle()
+
+	return (
+		<>
+			{shown && <ColoniesModal onClose={toggleShow} />}
+			<ColoniesSpanE onClick={toggleShow}>
+				{locale.colonies[colony.code]}
+			</ColoniesSpanE>
+		</>
+	)
+}
 
 export const EventLine = ({ event, animated, onDone }: Props) => {
 	const locale = useLocale()
@@ -165,30 +181,31 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					</>
 				)
 			case EventType.ColonyActivated:
-				// TODO: Should open Colonies Modal when clicked
 				return (
-					<>{locale.colonies[game.colonies[event.colony].code]} activated</>
+					<>
+						<ColonySpan colony={game.colonies[event.colony]} /> activated
+					</>
 				)
 			case EventType.ColonyBuilt:
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} /> built colony on{' '}
-						{locale.colonies[game.colonies[event.colony].code]}
+						<ColonySpan colony={game.colonies[event.colony]} />
 					</>
 				)
 			case EventType.ColonyTrading:
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} /> traded with{' '}
-						{locale.colonies[game.colonies[event.colony].code]}
+						<ColonySpan colony={game.colonies[event.colony]} />
 					</>
 				)
 			case EventType.ColonyTradingStepChanged:
 				return (
 					<>
-						{locale.colonies[game.colonies[event.colony].code]} trading step{' '}
-						{event.change < 0 ? 'decreased' : 'increased'} by{' '}
-						{Math.abs(event.change)}
+						<ColonySpan colony={game.colonies[event.colony]} />:{' '}
+						{event.change > 0 ? '+' : ''}
+						{quantized(event.change, 'income step', 'income steps')}
 					</>
 				)
 			case EventType.PlayerTradeFleetsChange:
@@ -243,4 +260,13 @@ const CardSpanE = styled.span`
 
 const ResourceE = styled.span<{ positive: boolean }>`
 	color: ${(props) => (props.positive ? '#86F09B' : '#F5AF7C')};
+`
+
+const ColoniesSpanE = styled.span`
+	cursor: pointer;
+	color: #e46868;
+
+	&:hover {
+		text-decoration: underline;
+	}
 `

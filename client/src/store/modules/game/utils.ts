@@ -243,7 +243,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 				})
 			}
 
-			if (colony.currentlyTradingPlayer !== undefined) {
+			if (typeof colony.currentlyTradingPlayer === 'number') {
 				newEvents.push({
 					type: EventType.ColonyTrading,
 					playerId: colony.currentlyTradingPlayer,
@@ -251,7 +251,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 				})
 			}
 
-			if (colony.step) {
+			if (typeof colony.step === 'number') {
 				newEvents.push({
 					type: EventType.ColonyTradingStepChanged,
 					colony: +colonyIndex,

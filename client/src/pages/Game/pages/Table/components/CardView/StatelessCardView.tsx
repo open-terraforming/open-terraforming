@@ -164,7 +164,9 @@ export const StatelessCardView = ({
 			<Description>
 				{played && <Played>Card already played this generation</Played>}
 
-				{card.actionEffects.length > 0 && (
+				{card.actionEffects.filter(
+					(a) => a.description?.length || a.symbols.length,
+				).length > 0 && (
 					<Action $hasSymbols={symbols.length > 0}>
 						<ActionTitle>Action</ActionTitle>
 

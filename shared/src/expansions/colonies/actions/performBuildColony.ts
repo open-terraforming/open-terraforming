@@ -1,5 +1,5 @@
 import { GameState, PlayerState } from '@shared/game'
-import { getPlayerIndex, isOk } from '@shared/utils'
+import { isOk } from '@shared/utils'
 import { ColoniesLookupApi } from '../ColoniesLookupApi'
 import { canColonizeColony } from '../utils/canColonizeColony'
 
@@ -34,7 +34,7 @@ export const performBuildColony = ({
 
 	const colonyData = ColoniesLookupApi.get(colony.code)
 
-	colony.playersAtSteps.push(getPlayerIndex(game, player.id))
+	colony.playersAtSteps.push(player.id)
 
 	if (colony.step < colony.playersAtSteps.length) {
 		colony.step = colony.playersAtSteps.length

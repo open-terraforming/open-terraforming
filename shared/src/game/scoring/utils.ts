@@ -64,17 +64,17 @@ const computePendingActionScore = (
 				(c) => placeTileScore({ player: p, game: g }, a.state, c),
 			)
 		case PlayerActionType.BuildColony:
-			return a.data.allowMoreColoniesPerColony ? 0.5 : 0.4
+			return a.data.allowMoreColoniesPerColony ? 1.5 : 1
 		case PlayerActionType.AddCardResource:
-			return a.data.amount * 0.1
+			return a.data.amount * 0.5
 		case PlayerActionType.ChangeColonyStep:
-			return 0.1
+			return 1
 		case PlayerActionType.TradeWithColony:
-			return 0.5
+			return 2
 		case PlayerActionType.SponsorCompetition:
 			return 0.2
 		case PlayerActionType.PlayCard:
-			return 0.1
+			return 1
 		case PlayerActionType.DraftCard:
 			return a.limit * 0.5
 		default:
@@ -134,8 +134,8 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 			(acc, a) => acc + computePendingActionScore(g, p, a),
 			0,
 		) +
-		(p.tradeFleets - getPlayerUsedFleets(g, p).length) * 0.5 +
-		getPlayerColoniesCount({ game: g, player: p }) * 0.5
+		(p.tradeFleets - getPlayerUsedFleets(g, p).length) +
+		getPlayerColoniesCount({ game: g, player: p })
 	)
 }
 
