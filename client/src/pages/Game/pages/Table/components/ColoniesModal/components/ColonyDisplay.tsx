@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { buildColony, tradeWithColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import {
-	canColonizeColony,
+	canBuildColony,
 	canTradeWithColony,
 	canTradeWithColonyUsingResource,
 	getColonyTradeCostSymbols,
@@ -77,7 +77,7 @@ export const ColonyDisplay = ({
 			),
 	)
 
-	const canColonize = canColonizeColony({
+	const canColonize = canBuildColony({
 		game,
 		player,
 		colony,

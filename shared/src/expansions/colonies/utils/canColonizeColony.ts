@@ -12,7 +12,7 @@ type Params = {
 	allowDuplicates?: boolean
 }
 
-export const canColonizeColony = ({
+export const canBuildColony = ({
 	player,
 	game,
 	colony,

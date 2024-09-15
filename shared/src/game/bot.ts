@@ -8,7 +8,7 @@ import {
 import { Competitions } from '@shared/competitions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import {
-	canColonizeColony,
+	canBuildColony,
 	canTradeWithColonyUsingResource,
 } from '@shared/expansions/colonies/utils'
 import {
@@ -327,7 +327,7 @@ export class Bot extends Player {
 					...this.game.state.colonies.entries(),
 				].filter(([, colony]) =>
 					isOk(
-						canColonizeColony({
+						canBuildColony({
 							player: this.state,
 							game: this.game.state,
 							colony,
@@ -639,7 +639,7 @@ export class Bot extends Player {
 							}
 						}
 
-						const canBuild = canColonizeColony({
+						const canBuild = canBuildColony({
 							player: this.state,
 							game: this.game.state,
 							colony,

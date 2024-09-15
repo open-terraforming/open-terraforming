@@ -1,7 +1,7 @@
 import { GameState, PlayerState } from '@shared/game'
 import { isOk } from '@shared/utils'
 import { ColoniesLookupApi } from '../ColoniesLookupApi'
-import { canColonizeColony } from '../utils/canColonizeColony'
+import { canBuildColony } from '../utils/canColonizeColony'
 
 type Params = {
 	game: GameState
@@ -20,7 +20,7 @@ export const performBuildColony = ({
 }: Params) => {
 	const colony = game.colonies[colonyIndex]
 
-	const check = canColonizeColony({
+	const check = canBuildColony({
 		game: game,
 		player: player,
 		colony,
