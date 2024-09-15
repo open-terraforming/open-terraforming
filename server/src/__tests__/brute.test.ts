@@ -5,6 +5,7 @@ import { ExpansionType } from '@shared/expansions/types'
 import { DummyGameLockSystem } from '@/lib/dummy-game-lock-system'
 import { Bot } from '@shared/game/bot'
 import { NullLogger } from '@shared/lib/null-logger'
+import { deduplicate } from '@shared/utils/deduplicate'
 
 describe('brute', () => {
 	it('bots can run for 5 generations', async () => {
@@ -38,5 +39,6 @@ describe('brute', () => {
 		}
 
 		expect(game.state.generation).toBeGreaterThan(5)
+		expect(deduplicate(game.state.cards).length).toBe(game.state.cards.length)
 	}, 15000)
 })
