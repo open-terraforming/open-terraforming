@@ -21,20 +21,27 @@ export const useAppDispatch = useDispatch as () => AppDispatch
 export const usePlayerState = () => useAppStore((state) => state.game.player)
 export const useGameState = () => useAppStore((state) => state.game.state)
 
-export const useWindowEvent = <E extends Event>(
-	event: string,
-	callback: (e: E) => void,
+export const useWindowEvent = <EType extends keyof WindowEventMap>(
+	event: EType,
+	callback: (e: WindowEventMap[EType]) => void,
 	cancelBubble = false,
 ) => useEvent(window, event, callback, cancelBubble)
 
-export const useDocumentEvent = <E extends Event>(
-	event: string,
-	callback: (e: E) => void,
+export const useDocumentEvent = <EType extends keyof DocumentEventMap>(
+	event: EType,
+	callback: (e: DocumentEventMap[EType]) => void,
 	cancelBubble = false,
 ) => useEvent(document, event, callback, cancelBubble)
 
+export const useElementEvent = <EType extends keyof HTMLElementEventMap>(
+	element: HTMLElement | null,
+	event: EType,
+	callback: (e: HTMLElementEventMap[EType]) => void,
+	cancelBubble = false,
+) => useEvent(element, event, callback, cancelBubble)
+
 export const useEvent = <E extends Event>(
-	target: EventTarget,
+	target: EventTarget | null,
 	event: string,
 	callback: (e: E) => void,
 	cancelBubble = false,
@@ -44,18 +51,20 @@ export const useEvent = <E extends Event>(
 	callbackRef.current = callback
 
 	useEffect(() => {
-		// Since we use ref, .current will always be correct callback
-		const listener = (e: any) => {
-			if (callbackRef.current) {
-				callbackRef.current(e as E)
+		if (target) {
+			// Since we use ref, .current will always be correct callback
+			const listener = (e: any) => {
+				if (callbackRef.current) {
+					callbackRef.current(e as E)
+				}
 			}
+
+			// Add our listener on mount
+			target.addEventListener(event, listener, cancelBubble)
+
+			// Remove it on dismount
+			return () => target.removeEventListener(event, listener)
 		}
-
-		// Add our listener on mount
-		target.addEventListener(event, listener, cancelBubble)
-
-		// Remove it on dismount
-		return () => target.removeEventListener(event, listener)
 	}, [])
 }
 

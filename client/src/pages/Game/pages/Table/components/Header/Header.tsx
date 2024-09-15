@@ -8,21 +8,36 @@ import { StandardProjectModal } from '../StandardProjectModal/StandardProjectMod
 import { ColoniesButton } from './components/ColoniesButton'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
 import { ExpansionType } from '@shared/expansions/types'
+import { usePopout } from '@/components/Popout/Popout'
+import { useState } from 'react'
+import { MilestonesDisplay } from '../MilestonesModal/components/MilestonesDisplay'
 
 export const Header = () => {
 	const game = useGameState()
 	const milestones = game.milestones
 	const competitions = game.competitions
 
+	const [milestonesButton, setMilestonesButton] = useState<HTMLElement | null>(
+		null,
+	)
+
+	const milestonesPopout = usePopout({
+		trigger: milestonesButton,
+		position: 'bottom-right',
+		content: <MilestonesDisplay />,
+	})
+
 	return (
 		<>
 			<E>
+				{milestonesPopout}
+
 				<Flex align="flex-start">
 					<DialogWrapper
 						dialog={(close) => <MilestonesModal onClose={close} />}
 					>
 						{(open) => (
-							<StyledButton noClip onClick={open}>
+							<StyledButton noClip onClick={open} ref={setMilestonesButton}>
 								<Counter>
 									{milestones.length}/{game.milestonesLimit}
 								</Counter>
