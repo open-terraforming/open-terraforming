@@ -134,7 +134,12 @@ export const Tooltip = ({
 							maxHeight: calculatedPosition.maxHeight,
 						}}
 					>
-						<Caret style={{ left: calculatedPosition.caretOffset }} />
+						{position === Position.Bottom && (
+							<BottomCaret style={{ left: calculatedPosition.caretOffset }} />
+						)}
+						{position === Position.Top && (
+							<TopCaret style={{ left: calculatedPosition.caretOffset }} />
+						)}
 						{content}
 					</Container>
 				</Portal>
@@ -148,11 +153,20 @@ const Trigger = styled.span``
 const Caret = styled.div`
 	content: ' ';
 	position: absolute;
+`
+
+const TopCaret = styled(Caret)`
 	bottom: -14px;
-	left: 15px;
 	margin-left: -5px;
 	border: 7px solid transparent;
 	border-top-color: ${({ theme }) => rgba(theme.colors.border, 1)};
+`
+
+const BottomCaret = styled(Caret)`
+	top: -14px;
+	margin-left: -5px;
+	border: 7px solid transparent;
+	border-bottom-color: ${({ theme }) => rgba(theme.colors.border, 1)};
 `
 
 const Container = styled.div<{ disableStyle?: boolean }>`
