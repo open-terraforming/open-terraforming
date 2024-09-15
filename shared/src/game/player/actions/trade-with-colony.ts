@@ -1,14 +1,14 @@
 import { tradeWithColony } from '@shared/actions'
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { Resource } from '@shared/cards'
+import { performTradeWithColony } from '@shared/expansions/colonies/actions/performTradeWithColony'
 import {
 	canTradeWithColony,
 	canTradeWithColonyUsingResource,
 } from '@shared/expansions/colonies/utils'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
+import { PlayerActionType } from '@shared/player-actions'
 import { isFailure } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
-import { PlayerActionType } from '@shared/player-actions'
-import { Resource } from '@shared/cards'
 
 type Args = ReturnType<typeof tradeWithColony>['data']
 
@@ -59,27 +59,13 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 			resource,
 		})
 
-		const colonyData = ColoniesLookupApi.get(colony.code)
-
-		for (const colonyOfPlayerIndex of colony.playersAtSteps) {
-			colonyData.incomeBonus.perform({
-				colony,
-				game: this.game,
-				player: this.game.players[colonyOfPlayerIndex],
-			})
-		}
-
-		colonyData.tradeIncome.perform({
-			colony,
+		performTradeWithColony({
 			game: this.game,
 			player: this.player,
+			colonyIndex,
+			cost,
+			costResource,
 		})
-
-		colony.currentlyTradingPlayer = this.player.id
-		// Returns the colony indicator to the left
-		colony.step = Math.max(0, colony.playersAtSteps.length)
-
-		this.player[costResource] -= cost
 
 		if (pendingAction) {
 			this.popAction()
