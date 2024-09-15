@@ -65,6 +65,7 @@ const SubTitle = styled.div`
 const SubValue = styled.div`
 	padding: 0.3rem 0.5rem;
 	border-bottom: 2px solid ${({ theme }) => theme.colors.border};
+	background: ${({ theme }) => theme.colors.background};
 `
 
 const Separator = styled.div`
