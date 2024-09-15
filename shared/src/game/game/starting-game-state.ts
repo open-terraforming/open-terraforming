@@ -9,12 +9,18 @@ import { ExpansionType } from '@shared/expansions/types'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { hasExpansion } from '@shared/utils/hasExpansion'
 import { initialColonyState } from '@shared/expansions/colonies/states'
+import { deduplicate } from '@shared/utils/deduplicate'
+import { Cards } from '@shared/cards/list'
 
 export class StartingGameState extends BaseGameState {
 	name = GameStateValue.Starting
 
 	onEnter() {
 		this.logger.log(`Game starting`)
+
+		if (deduplicate(Cards.map((c) => c.code)).length !== Cards.length) {
+			this.logger.error('Duplicate cards in Cards array!')
+		}
 
 		// Initial game progress
 		this.state.started = new Date().toISOString()
@@ -50,11 +56,22 @@ export class StartingGameState extends BaseGameState {
 
 		this.state.expansions.forEach((e) => {
 			cards = cards.concat(Expansions[e].getCards(this.state))
+
+			if (deduplicate(cards).length !== cards.length) {
+				this.logger.error(
+					'Duplicate cards found after adding',
+					ExpansionType[e],
+				)
+			}
 		})
 
 		// Pick cards based on the game mode
 		if (this.game.mode.filterCards) {
 			cards = this.game.mode.filterCards(cards)
+		}
+
+		if (deduplicate(cards).length !== cards.length) {
+			this.logger.error('Duplicate cards found after filterCards')
 		}
 
 		// Pick corporations
@@ -74,6 +91,13 @@ export class StartingGameState extends BaseGameState {
 		// Initialize expansions
 		this.state.expansions.forEach((e) => {
 			Expansions[e].initialize(this.state)
+
+			if (deduplicate(this.state.cards).length !== this.state.cards.length) {
+				this.logger.error(
+					'Duplicate cards found after initializing',
+					ExpansionType[e],
+				)
+			}
 		})
 
 		// Initialize colonies if the expansion is enabled
@@ -88,9 +112,17 @@ export class StartingGameState extends BaseGameState {
 				.map((code) => initialColonyState(ColoniesLookupApi.get(code)))
 		}
 
+		if (deduplicate(this.state.cards).length !== this.state.cards.length) {
+			this.logger.error('Duplicate cards found after initialization')
+		}
+
 		// Start picking corporations or whatever the mode desires
 		if (this.game.mode.onGameStart) {
 			this.game.mode.onGameStart(this.state)
+		}
+
+		if (deduplicate(this.state.cards).length !== this.state.cards.length) {
+			this.logger.error('Duplicate cards found after game mode start')
 		}
 	}
 

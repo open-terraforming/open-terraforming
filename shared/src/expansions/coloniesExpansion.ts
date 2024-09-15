@@ -11,8 +11,5 @@ export const coloniesExpansion = expansion({
 		game.colonyCards.push(...coloniesColonies.map((c) => c.code))
 	},
 
-	getCards: () =>
-		Cards.filter(
-			(c) => c.special.length === 0 || c.special.includes(CardSpecial.Colonies),
-		),
+	getCards: () => Cards.filter((c) => c.special.includes(CardSpecial.Colonies)),
 })
