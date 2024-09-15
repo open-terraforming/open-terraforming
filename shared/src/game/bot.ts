@@ -18,7 +18,7 @@ import {
 	buyStandardProject,
 	changeColonyStep,
 	claimTile,
-	colonizeColony,
+	buildColony,
 	discardCards,
 	draftCard,
 	pickCards,
@@ -334,7 +334,7 @@ export class Bot extends Player {
 				// TODO: Scoring?
 				const colony = pickRandom(availableColonies)
 
-				return this.performAction(colonizeColony(colony[0]))
+				return this.performAction(buildColony(colony[0]))
 			}
 
 			case PlayerActionType.ChangeColonyStep: {

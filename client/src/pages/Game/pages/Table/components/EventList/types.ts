@@ -120,7 +120,7 @@ type ProductionPhase = {
 
 type ColonyBuilt = {
 	type: typeof EventType.ColonyBuilt
-	playerIndex: number
+	playerId: number
 	colony: number
 }
 
@@ -132,7 +132,7 @@ type ColonyActivated = {
 type ColonyTrading = {
 	type: typeof EventType.ColonyTrading
 	colony: number
-	playerIndex: number
+	playerId: number
 }
 
 type ColonyTradingStepChanged = {

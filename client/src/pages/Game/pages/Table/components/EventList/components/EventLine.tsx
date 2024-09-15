@@ -172,14 +172,14 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 			case EventType.ColonyBuilt:
 				return (
 					<>
-						<PlayerSpan player={game.players[event.playerIndex]} /> built colony
-						on {locale.colonies[game.colonies[event.colony].code]}
+						<PlayerSpan player={players[event.playerId]} /> built colony on{' '}
+						{locale.colonies[game.colonies[event.colony].code]}
 					</>
 				)
 			case EventType.ColonyTrading:
 				return (
 					<>
-						<PlayerSpan player={game.players[event.playerIndex]} /> traded with{' '}
+						<PlayerSpan player={players[event.playerId]} /> traded with{' '}
 						{locale.colonies[game.colonies[event.colony].code]}
 					</>
 				)

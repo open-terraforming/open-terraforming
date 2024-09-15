@@ -1,16 +1,14 @@
-import { getPlayerIndex, range } from '@shared/utils'
-import { effect } from './types'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { range } from '@shared/utils'
+import { effect } from './types'
 
 export const gainAllColonyIncomeBonuses = () =>
 	effect({
 		description: 'Gain all your colonies income bonuses',
 		perform: ({ game, player }) => {
-			const playerIndex = getPlayerIndex(game, player.id)
-
 			for (const colony of game.colonies) {
 				const ownedColonies = colony.playersAtSteps.filter(
-					(index) => index === playerIndex,
+					(index) => index === player.id,
 				).length
 
 				if (ownedColonies === 0) {

@@ -227,10 +227,10 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 			if (colony.playersAtSteps) {
 				const players = Object.entries(colony.playersAtSteps)
 
-				for (const [, playerIndex] of players) {
+				for (const [, playerId] of players) {
 					newEvents.push({
 						type: EventType.ColonyBuilt,
-						playerIndex,
+						playerId,
 						colony: +colonyIndex,
 					})
 				}
@@ -246,7 +246,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 			if (colony.currentlyTradingPlayer !== undefined) {
 				newEvents.push({
 					type: EventType.ColonyTrading,
-					playerIndex: colony.currentlyTradingPlayer,
+					playerId: colony.currentlyTradingPlayer,
 					colony: +colonyIndex,
 				})
 			}

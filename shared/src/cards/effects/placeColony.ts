@@ -1,7 +1,7 @@
-import { getPlayerIndex, pushPendingAction } from '@shared/utils'
+import { buildColonyAction } from '@shared/player-actions'
+import { pushPendingAction } from '@shared/utils'
 import { SymbolType } from '../types'
 import { effect } from './types'
-import { buildColonyAction } from '@shared/player-actions'
 
 type Params = {
 	allowMoreColoniesPerColony?: boolean
@@ -19,13 +19,11 @@ export const placeColony = ({ allowMoreColoniesPerColony }: Params = {}) =>
 			{
 				symbols: [],
 				evaluate: ({ game, player }) => {
-					const playerIndex = getPlayerIndex(game, player.id)
-
 					return game.colonies.some(
 						(c) =>
 							c.playersAtSteps.length < 3 &&
 							(allowMoreColoniesPerColony ||
-								c.playersAtSteps.includes(playerIndex)),
+								c.playersAtSteps.includes(player.id)),
 					)
 				},
 			},

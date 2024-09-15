@@ -1,10 +1,10 @@
-import { colonizeColony } from '@shared/actions'
+import { buildColony } from '@shared/actions'
 import { GameStateValue, PlayerStateValue } from '@shared/game'
 import { PlayerActionType } from '@shared/player-actions'
 import { PlayerBaseAction } from '../action'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 
-type Args = ReturnType<typeof colonizeColony>['data']
+type Args = ReturnType<typeof buildColony>['data']
 
 export class ChangeColonyStep extends PlayerBaseAction<Args> {
 	states = [PlayerStateValue.Playing]

@@ -75,7 +75,7 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 			player: this.player,
 		})
 
-		colony.currentlyTradingPlayer = this.playerIndex
+		colony.currentlyTradingPlayer = this.player.id
 		// Returns the colony indicator to the left
 		colony.step = Math.max(0, colony.playersAtSteps.length)
 

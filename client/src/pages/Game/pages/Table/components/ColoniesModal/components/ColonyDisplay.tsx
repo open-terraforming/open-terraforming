@@ -5,7 +5,7 @@ import { useLocale } from '@/context/LocaleContext'
 import { useAppStore, useToggle } from '@/utils/hooks'
 import { faBuilding, faSpaceShuttle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { colonizeColony, tradeWithColony } from '@shared/actions'
+import { buildColony, tradeWithColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import {
 	canColonizeColony,
@@ -45,7 +45,7 @@ export const ColonyDisplay = ({
 	const game = useAppStore((s) => s.game.state)
 	const player = useAppStore((s) => s.game.player)
 	const pending = useAppStore((s) => s.game.pendingAction)
-	const players = game.players
+	const players = useAppStore((s) => s.game.playerMap)
 	const info = ColoniesLookupApi.get(colony.code)
 	const api = useApi()
 	const [isTrading, toggleTrading] = useToggle()
@@ -88,7 +88,7 @@ export const ColonyDisplay = ({
 	const customActionRendered = customAction && customAction(index)
 
 	const handleColonize = () => {
-		api.send(colonizeColony(index))
+		api.send(buildColony(index))
 	}
 
 	const handleFreeTrade = () => {

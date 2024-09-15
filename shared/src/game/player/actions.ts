@@ -23,7 +23,7 @@ import { SponsorCompetitionAction } from './actions/sponsor-competition'
 import { StartGameAction } from './actions/start-game'
 import { ToggleReadyAction } from './actions/toggle-ready'
 import { TradeWithColonyAction } from './actions/trade-with-colony'
-import { ColonizeColonyAction } from './actions/colonize-colony'
+import { BuildColonyAction } from './actions/build-colony'
 import { ChangeColonyStep } from './actions/change-colony-step'
 
 export class PlayerActions {
@@ -71,7 +71,7 @@ export class PlayerActions {
 			[MessageType.AddCardResource]: new AddCardResourceAction(this.player),
 			[MessageType.DiscardCards]: new DiscardCardsAction(this.player),
 			[MessageType.TradeWithColony]: new TradeWithColonyAction(this.player),
-			[MessageType.ColonizeColony]: new ColonizeColonyAction(this.player),
+			[MessageType.BuildColony]: new BuildColonyAction(this.player),
 			[MessageType.ChangeColonyStep]: new ChangeColonyStep(this.player),
 		}
 	}

@@ -1,8 +1,7 @@
 import { ColonyState, GameState, PlayerState } from '@shared/game'
-import { getPlayerIndex } from '../../../utils'
-import { OkOrFailure } from '../../../utils/okOrFailure'
-import { ok } from '../../../utils/ok'
 import { failure } from '../../../utils/failure'
+import { ok } from '../../../utils/ok'
+import { OkOrFailure } from '../../../utils/okOrFailure'
 import { ColoniesLookupApi } from '../ColoniesLookupApi'
 
 type Params = {
@@ -45,9 +44,7 @@ export const canColonizeColony = ({
 		return failure('Cannot build colony')
 	}
 
-	const playerIndex = getPlayerIndex(game, player.id)
-
-	if (!allowDuplicates && colony.playersAtSteps.includes(playerIndex)) {
+	if (!allowDuplicates && colony.playersAtSteps.includes(player.id)) {
 		return failure('You already have a colony here')
 	}
 
