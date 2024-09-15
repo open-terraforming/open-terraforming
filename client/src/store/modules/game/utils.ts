@@ -75,17 +75,6 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 							} else {
 								const card = CardsLookupApi.get(oldCard.code)
 
-								if (card.resource && cardChanges[card.resource]) {
-									newEvents.push({
-										type: EventType.CardResourceChanged,
-										playerId: player.id,
-										card: oldCard.code,
-										resource: card.resource,
-										index: parseInt(cardIndex),
-										amount: cardChanges[card.resource] - oldCard[card.resource],
-									})
-								}
-
 								if (
 									cardChanges.played === true &&
 									card.type === CardType.Action
@@ -95,6 +84,17 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 										playerId: player.id,
 										card: oldCard.code,
 										index: parseInt(cardIndex),
+									})
+								}
+
+								if (card.resource && cardChanges[card.resource]) {
+									newEvents.push({
+										type: EventType.CardResourceChanged,
+										playerId: player.id,
+										card: oldCard.code,
+										resource: card.resource,
+										index: parseInt(cardIndex),
+										amount: cardChanges[card.resource] - oldCard[card.resource],
 									})
 								}
 							}
@@ -110,17 +110,21 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 					})
 				}
 
+				const resourceChanges = resources
+					.filter((res) => gameChanges[res] !== undefined)
+					.map((res) => [res, gameChanges[res] - player[res]])
+					.filter((res) => res[1] !== 0)
+
+				if (resourceChanges.length > 0) {
+					newEvents.push({
+						type: EventType.ResourcesChanged,
+						playerId: player.id,
+						resources: Object.fromEntries(resourceChanges),
+					})
+				}
+
 				resources.forEach((res) => {
 					const prod = resourceProduction[res]
-
-					if (gameChanges[res] !== undefined) {
-						newEvents.push({
-							type: EventType.ResourceChanged,
-							playerId: player.id,
-							resource: res,
-							amount: gameChanges[res] - player[res],
-						})
-					}
 
 					if (gameChanges[prod] !== undefined) {
 						newEvents.push({
