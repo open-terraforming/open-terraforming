@@ -65,7 +65,7 @@ export const useEvent = <E extends Event>(
 			// Remove it on dismount
 			return () => target.removeEventListener(event, listener)
 		}
-	}, [])
+	}, [target])
 }
 
 /**

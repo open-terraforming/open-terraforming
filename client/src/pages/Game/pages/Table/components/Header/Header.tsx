@@ -1,16 +1,18 @@
 import { Button, DialogWrapper } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
+import { usePopout } from '@/components/Popout/Popout'
 import { useGameState } from '@/utils/hooks'
+import { ExpansionType } from '@shared/expansions/types'
+import { useState } from 'react'
 import styled from 'styled-components'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
+import { CompetitionsList } from '../CompetitionsModal/components/CompetitionsList'
+import { MilestonesDisplay } from '../MilestonesModal/components/MilestonesDisplay'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { ColoniesButton } from './components/ColoniesButton'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
-import { ExpansionType } from '@shared/expansions/types'
-import { usePopout } from '@/components/Popout/Popout'
-import { useState } from 'react'
-import { MilestonesDisplay } from '../MilestonesModal/components/MilestonesDisplay'
+import { StandardProjectsList } from '../StandardProjectModal/components/StandardProjectsList'
 
 export const Header = () => {
 	const game = useGameState()
@@ -21,16 +23,39 @@ export const Header = () => {
 		null,
 	)
 
+	const [competitionsButton, setCompetitionsButton] =
+		useState<HTMLElement | null>(null)
+
+	const [standardProjectsButton, setStandardProjectsButton] =
+		useState<HTMLElement | null>(null)
+
 	const milestonesPopout = usePopout({
 		trigger: milestonesButton,
 		position: 'bottom-right',
 		content: <MilestonesDisplay />,
+		sticky: true,
+	})
+
+	const competitionsPopout = usePopout({
+		trigger: competitionsButton,
+		position: 'bottom-left',
+		content: <CompetitionsList />,
+		sticky: true,
+	})
+
+	const standardProjectsPopout = usePopout({
+		trigger: standardProjectsButton,
+		position: 'bottom-center',
+		content: <StandardProjectsList />,
+		sticky: true,
 	})
 
 	return (
 		<>
 			<E>
 				{milestonesPopout}
+				{competitionsPopout}
+				{standardProjectsPopout}
 
 				<Flex align="flex-start">
 					<DialogWrapper
@@ -49,7 +74,11 @@ export const Header = () => {
 						dialog={(close) => <StandardProjectModal onClose={close} />}
 					>
 						{(open) => (
-							<StandardButton noClip onClick={open}>
+							<StandardButton
+								noClip
+								onClick={open}
+								ref={setStandardProjectsButton}
+							>
 								Standard projects
 							</StandardButton>
 						)}
@@ -58,7 +87,7 @@ export const Header = () => {
 						dialog={(close) => <CompetitionsModal onClose={close} />}
 					>
 						{(open) => (
-							<StyledButton noClip onClick={open}>
+							<StyledButton noClip onClick={open} ref={setCompetitionsButton}>
 								<span>Competitions</span>
 								<Counter>
 									{competitions.length}/{game.competitionsLimit}
