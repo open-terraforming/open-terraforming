@@ -173,13 +173,26 @@ export const ColonyDisplay = ({
 						)}
 						<Tooltip
 							content={
-								i === colony.step &&
-								"Current trade step, you'll receive this when trading with this colony"
+								<>
+									{i === colony.step && (
+										<div>
+											{
+												"Current trade step, you'll receive this when trading with this colony"
+											}
+										</div>
+									)}
+									{i === colony.playersAtSteps.length && (
+										<div>
+											{'The colony income step will never go below this value'}
+										</div>
+									)}
+								</>
 							}
 						>
 							<SlotLabel
 								$isCurrent={i === colony.step}
 								$isDisabled={i < colony.playersAtSteps.length}
+								$isStop={i === colony.playersAtSteps.length}
 							>
 								<Symbols symbols={[s]} />
 							</SlotLabel>
@@ -304,10 +317,16 @@ const Slots = styled(Flex)`
 	align-items: flex-end;
 `
 
-const SlotLabel = styled.div<{ $isCurrent: boolean; $isDisabled: boolean }>`
+const SlotLabel = styled.div<{
+	$isCurrent: boolean
+	$isDisabled: boolean
+	$isStop: boolean
+}>`
 	margin-left: 2px;
 	margin-top: 2px;
 	border: 2px solid transparent;
+	width: 3rem;
+	box-sizing: border-box;
 
 	${({ $isCurrent, theme }) =>
 		$isCurrent &&
@@ -319,6 +338,12 @@ const SlotLabel = styled.div<{ $isCurrent: boolean; $isDisabled: boolean }>`
 		$isDisabled &&
 		css`
 			opacity: 0.5;
+		`}
+
+		${({ $isStop, theme }) =>
+		$isStop &&
+		css`
+			border: 2px solid ${theme.colors.border};
 		`}
 `
 
