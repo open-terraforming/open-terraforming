@@ -31,7 +31,7 @@ import {
 	resourceTypeArg,
 } from './args'
 import {
-	cardCountCondition,
+	cardCategoryCountCondition,
 	cardAcceptsResource,
 	cardResourceCondition,
 	cellTypeCondition,
@@ -70,6 +70,7 @@ import {
 	updatePlayerProduction,
 	updatePlayerResource,
 	countTagsWithoutEvents,
+	countGridContent,
 } from './utils'
 
 export const resourceChange = (res: Resource, change: number, spend = false) =>
@@ -262,9 +263,9 @@ export const playerResourceChangeWithTagCondition = (
 											optional ? 1 : -change,
 										) as PlayerCondition,
 										unprotectedPlayerResource(res) as PlayerCondition,
-										cardCountCondition(tag, tagCount),
+										cardCategoryCountCondition(tag, tagCount),
 									]
-								: [cardCountCondition(tag, tagCount)],
+								: [cardCategoryCountCondition(tag, tagCount)],
 					})
 				: effectArg({
 						descriptionPrefix: change > 0 ? 'Give to' : `Remove from`,
@@ -280,9 +281,9 @@ export const playerResourceChangeWithTagCondition = (
 											optional ? 1 : -change,
 										) as PlayerCondition,
 										unprotectedPlayerResource(res) as PlayerCondition,
-										cardCountCondition(tag, tagCount),
+										cardCategoryCountCondition(tag, tagCount),
 									]
-								: [cardCountCondition(tag, tagCount)],
+								: [cardCategoryCountCondition(tag, tagCount)],
 					}),
 		],
 		conditions:
@@ -914,29 +915,33 @@ export const productionChangeForTags = (
 	res: Resource,
 	change: number,
 	tag: CardCategory,
+	tagCount: number = 1,
 ) => {
 	return effect({
-		description: `Increase your ${res} production by ${change} for each ${CardCategory[tag]} tag you played`,
+		description: `Increase your ${res} production by ${change} for ${tagCount > 1 ? tagCount : 'each'} ${CardCategory[tag]} tag you played`,
 		symbols: [
-			{ tag },
-			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: change, production: true },
+			{ symbol: SymbolType.Colon },
+			{ tag, count: tagCount },
 		],
 		perform: ({ player }) => {
 			updatePlayerProduction(
 				player,
 				res,
 				change *
-					player.usedCards
-						.map((c) => CardsLookupApi.get(c.code))
-						.filter((c) => c.type !== CardType.Event)
-						.reduce(
-							(acc, c) =>
-								acc +
-								c.categories.filter((c) => c === tag || c === CardCategory.Any)
-									.length,
-							0,
-						),
+					Math.floor(
+						player.usedCards
+							.map((c) => CardsLookupApi.get(c.code))
+							.filter((c) => c.type !== CardType.Event)
+							.reduce(
+								(acc, c) =>
+									acc +
+									c.categories.filter(
+										(c) => c === tag || c === CardCategory.Any,
+									).length,
+								0,
+							) / tagCount,
+					),
 			)
 		},
 	})
@@ -1035,7 +1040,7 @@ export const discardCard = () =>
 export const hasCardTagsVoidEffect = (category: CardCategory, count: number) =>
 	effect({
 		description: f('Have {0} {1} tags', count, CardCategory[category]),
-		conditions: [cardCountCondition(category, count)],
+		conditions: [cardCategoryCountCondition(category, count)],
 		symbols: [{ tag: category, count }, { symbol: SymbolType.Colon }],
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		perform: () => {},
@@ -1120,22 +1125,32 @@ export const resourcesForTiles = (
 	tile: GridCellContent,
 	res: Resource,
 	resPerTile: number,
+	onMarsOnly = true,
 ) =>
 	effect({
 		description: `Gain ${
 			resPerTile > 1
 				? `${withUnits(res, resPerTile)} for each ${
 						GridCellContent[tile]
-					} on Mars`
+					}${onMarsOnly ? ' on Mars' : ' in play'}`
 				: `${withUnits(res, 1)} per ${Math.ceil(1 / resPerTile)} ${
 						GridCellContent[tile]
-					} on Mars`
+					}${onMarsOnly ? ' on Mars' : ' in play'}`
 		}`,
+		symbols: [
+			{ resource: res, count: resPerTile },
+			{ symbol: SymbolType.SlashSmall },
+			{ tile },
+		],
 		perform: ({ player, game }) => {
 			updatePlayerResource(
 				player,
 				res,
-				Math.floor(countGridContentOnMars(game, tile) * resPerTile),
+				Math.floor(
+					(onMarsOnly
+						? countGridContentOnMars(game, tile)
+						: countGridContent(game, tile)) * resPerTile,
+				),
 			)
 		},
 	})
@@ -1221,7 +1236,8 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 		},
 	})
 
-export const cardPriceChange = (change: number) =>
+/** @deprecated use cardPriceChange passive effect */
+export const deprecatedCardPriceChange = (change: number) =>
 	effect({
 		description: `Effect: When you play a card, you pay ${withUnits(
 			'money',
@@ -1232,13 +1248,16 @@ export const cardPriceChange = (change: number) =>
 		},
 	})
 
+/** @deprecated use tagPriceChange passiveEffect */
 export const spaceCardPriceChange = (change: number) =>
-	tagPriceChange(CardCategory.Space, change)
+	deprecatedTagPriceChange(CardCategory.Space, change)
 
+/** @deprecated use tagPriceChange passiveEffect */
 export const earthCardPriceChange = (change: number) =>
-	tagPriceChange(CardCategory.Earth, change)
+	deprecatedTagPriceChange(CardCategory.Earth, change)
 
-export const tagPriceChange = (tag: CardCategory, change: number) =>
+/** @deprecated use tagPriceChange passiveEffect */
+export const deprecatedTagPriceChange = (tag: CardCategory, change: number) =>
 	effect({
 		description: `Effect: When you play a ${
 			CardCategory[tag]
@@ -1262,7 +1281,7 @@ export const productionChangeIfTags = (
 ) =>
 	effect({
 		...productionChange(res, amount),
-		conditions: [cardCountCondition(tag, tagCount)],
+		conditions: [cardCategoryCountCondition(tag, tagCount)],
 		description: `+ ${amount} production if you have ${tagCount} ${CardCategory[tag]} tags`,
 	})
 

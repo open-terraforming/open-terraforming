@@ -4,7 +4,7 @@ import {
 	pickPreludes,
 	productionChange,
 	resourceChange,
-	tagPriceChange,
+	deprecatedTagPriceChange,
 	emptyEffect,
 	lowestProductionChange,
 	sponsorCompetitionForFree,
@@ -26,7 +26,7 @@ export const preludeCorporations = [
 			playEffects: [
 				productionChange('money', 3),
 				resourceChange('money', 44),
-				tagPriceChange(CardCategory.Building, -2),
+				deprecatedTagPriceChange(CardCategory.Building, -2),
 			],
 		}),
 	),
@@ -42,7 +42,7 @@ export const preludeCorporations = [
 				passiveEffect({
 					description:
 						'When you play an Earth tag, including this, draw a card',
-					onCardPlayed: (
+					onCardBought: (
 						{ player, game },
 						playedCard,
 						_cardIndex,
@@ -87,7 +87,7 @@ export const preludeCorporations = [
 			special: [CardSpecial.Prelude],
 			playEffects: [
 				resourceChange('money', 37),
-				tagPriceChange(CardCategory.Science, -2),
+				deprecatedTagPriceChange(CardCategory.Science, -2),
 				emptyEffect(
 					'As your first action, draw 3 prelude cards, pick 1 and discard the rest',
 				),
@@ -109,7 +109,7 @@ export const preludeCorporations = [
 						'When you play a card with non-negative victory points, gain {0}',
 						withUnits('money', 3),
 					),
-					onCardPlayed: ({ player }, playedCard, _cardIndex, playedBy) => {
+					onCardBought: ({ player }, playedCard, _cardIndex, playedBy) => {
 						if (
 							playedBy.id === player.id &&
 							(playedCard.victoryPoints > 0 || playedCard.victoryPointsCallback)

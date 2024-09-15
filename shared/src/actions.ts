@@ -63,6 +63,11 @@ export enum MessageType {
 	DraftCard,
 	PickStarting,
 	SolarPhaseTerraform,
+	AddCardResource,
+	DiscardCards,
+	BuildColony,
+	TradeWithColony,
+	ChangeColonyStep,
 }
 
 export const handshakeRequest = (version: string) =>
@@ -277,6 +282,39 @@ export const solarPhaseTerraform = (progress: GameProgress) =>
 		data: { progress },
 	}) as const
 
+export const addCardResource = (cardIndex: number) =>
+	({
+		type: MessageType.AddCardResource,
+		data: { cardIndex },
+	}) as const
+
+export const discardCards = (cardIndexes: number[]) =>
+	({
+		type: MessageType.DiscardCards,
+		data: { cardIndexes },
+	}) as const
+
+export const buildColony = (colonyIndex: number) =>
+	({
+		type: MessageType.BuildColony,
+		data: { colonyIndex },
+	}) as const
+
+export const tradeWithColony = (
+	colonyIndex: number,
+	resource: 'money' | 'energy' | 'titan',
+) =>
+	({
+		type: MessageType.TradeWithColony,
+		data: { colonyIndex, resource },
+	}) as const
+
+export const changeColonyStep = (colonyIndex: number) =>
+	({
+		type: MessageType.ChangeColonyStep,
+		data: { colonyIndex },
+	}) as const
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -307,3 +345,8 @@ export type GameMessage =
 	| ReturnType<typeof draftCard>
 	| ReturnType<typeof pickStarting>
 	| ReturnType<typeof solarPhaseTerraform>
+	| ReturnType<typeof addCardResource>
+	| ReturnType<typeof discardCards>
+	| ReturnType<typeof buildColony>
+	| ReturnType<typeof tradeWithColony>
+	| ReturnType<typeof changeColonyStep>

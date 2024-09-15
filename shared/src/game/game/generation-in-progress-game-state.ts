@@ -1,6 +1,6 @@
-import { BaseGameState } from './base-game-state'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { f } from '@shared/utils'
+import { BaseGameState } from './base-game-state'
 
 export class GenerationInProgressGameState extends BaseGameState {
 	name = GameStateValue.GenerationInProgress
@@ -42,6 +42,10 @@ export class GenerationInProgressGameState extends BaseGameState {
 					this.game.state.oceans < this.game.state.map.oceans)
 			) {
 				return GameStateValue.SolarPhase
+			}
+
+			if (this.game.state.colonies.length > 0) {
+				return GameStateValue.ColoniesProduction
 			}
 
 			return GameStateValue.GenerationEnding

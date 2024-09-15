@@ -3,6 +3,7 @@ import { CardResource, CardVictoryPointsCallback, CardCategory } from './types'
 import { CardsLookupApi } from './lookup'
 import { allCells, adjacentCells } from '../utils'
 import { countGridContent } from './utils'
+import { getColoniesCount } from '@shared/expansions/colonies/utils/getColoniesCount'
 
 export const vpCb = (cb: CardVictoryPointsCallback) => cb
 
@@ -73,5 +74,18 @@ export const vpsForTiles = (type: GridCellContent, perTile: number) =>
 					} tiles in game`,
 		compute: ({ game }) => {
 			return Math.floor(countGridContent(game, type) * perTile)
+		},
+	})
+
+export const vpsForColoniesInPlay = (vpPerColony: number) =>
+	vpCb({
+		description:
+			vpPerColony >= 1
+				? `${vpPerColony} VPs for each colony in play`
+				: `1 VPs for every ${Math.ceil(1 / vpPerColony)} colony tiles in play`,
+		compute: ({ game }) => {
+			const colonies = getColoniesCount({ game })
+
+			return Math.floor(colonies * vpPerColony)
 		},
 	})

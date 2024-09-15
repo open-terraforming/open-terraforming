@@ -1,5 +1,10 @@
-import { Card, CardsLookupApi, Production } from '@shared/cards'
-import { GridCell, GridCellContent, PlayerState } from '@shared/game'
+import { Card, CardsLookupApi, Production, Resource } from '@shared/cards'
+import {
+	ColonyState,
+	GridCell,
+	GridCellContent,
+	PlayerState,
+} from '@shared/game'
 import { GameMessage, PLAYER_PRODUCTION_FIELDS } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import {
@@ -22,11 +27,13 @@ import { v4 as uuidv4 } from 'uuid'
 import { generateSession } from '../utils/generate-session'
 import { Game } from './game'
 import { PlayerActions } from './player/actions'
+import { mapCards } from '@shared/utils/mapCards'
 
-export interface CardPlayedEvent {
+export interface CardBoughtEvent {
 	player: Player
 	card: Card
 	cardIndex: number
+	moneyCost: number
 }
 export interface TilePlacedEvent {
 	player: Player
@@ -39,9 +46,20 @@ export interface ProductionChangedEvent {
 	change: number
 }
 
-export interface ProjectBought {
+export interface ProjectBoughtEvent {
 	project: StandardProject
 	player: Player
+}
+
+export interface BeforeColonyTradeEvent {
+	player: Player
+	colony: ColonyState
+	resource: Resource
+}
+
+export interface ColonyBuiltEvent {
+	player: Player
+	colony: ColonyState
 }
 
 export class Player {
@@ -54,9 +72,11 @@ export class Player {
 	state = initialPlayerState(Player.idCounter++, uuidv4())
 
 	onStateChanged = new MyEvent<Readonly<PlayerState>>()
-	onCardPlayed = new MyEvent<Readonly<CardPlayedEvent>>()
+	onCardBought = new MyEvent<Readonly<CardBoughtEvent>>()
 	onTilePlaced = new MyEvent<Readonly<TilePlacedEvent>>()
-	onProjectBought = new MyEvent<Readonly<ProjectBought>>()
+	onBeforeColonyTrade = new MyEvent<Readonly<BeforeColonyTradeEvent>>()
+	onColonyBuilt = new MyEvent<Readonly<ColonyBuiltEvent>>()
+	onProjectBought = new MyEvent<Readonly<ProjectBoughtEvent>>()
 	onProductionChanged = new MyEvent<Readonly<ProductionChangedEvent>>()
 
 	previousState: PlayerState | undefined
@@ -100,8 +120,7 @@ export class Player {
 
 		this.state.session = generateSession()
 
-		// TODO: everybodyIsAdmin config should be somehow passed here?
-		this.state.admin = false
+		this.state.admin = game.config.everybodyIsAdmin
 
 		this.actions = new PlayerActions(this)
 	}
@@ -162,6 +181,16 @@ export class Player {
 
 	filterPendingActions() {
 		this.state.pendingActions = this.state.pendingActions.filter((p) => {
+			// This shouldn't happen, but just to be sure
+			if (
+				p.type === PlayerActionType.AddCardResource &&
+				!mapCards(this.state.usedCards).some(
+					(c) => c.info.resource === p.data.cardResource,
+				)
+			) {
+				return false
+			}
+
 			if (p.type !== PlayerActionType.PlaceTile) {
 				return true
 			}

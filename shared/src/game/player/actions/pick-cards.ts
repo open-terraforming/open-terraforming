@@ -35,7 +35,8 @@ export class PickCardsAction extends PlayerBaseAction<Args> {
 		}
 
 		if (!top.free) {
-			const cost = cards.length * this.game.cardPrice
+			const cost =
+				cards.length * (this.player.sponsorCost ?? this.game.cardPrice)
 
 			if (cost > this.player.money) {
 				throw new Error("You don't have money for that")

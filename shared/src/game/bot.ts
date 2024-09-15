@@ -6,16 +6,26 @@ import {
 	minimalCardPrice,
 } from '@shared/cards/utils'
 import { Competitions } from '@shared/competitions'
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import {
+	canBuildColony,
+	canTradeWithColonyUsingResource,
+} from '@shared/expansions/colonies/utils'
 import {
 	GameStateValue,
 	PlayerStateValue,
 	StandardProjectType,
 } from '@shared/game'
 import {
+	addCardResource,
+	buildColony,
 	buyCard,
 	buyMilestone,
 	buyStandardProject,
+	changeColonyStep,
 	claimTile,
+	COLONY_TRADE_RESOURCES,
+	discardCards,
 	draftCard,
 	pickCards,
 	pickPreludes,
@@ -26,19 +36,31 @@ import {
 	playerReady,
 	solarPhaseTerraform,
 	sponsorCompetition,
+	tradeWithColony,
 } from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { canPlace, isClaimable } from '@shared/placements'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import { Projects } from '@shared/projects'
-import { allCells, competitionPrice, f, shuffle } from '@shared/utils'
+import {
+	allCells,
+	competitionPrice,
+	f,
+	isOk,
+	pickRandom,
+	shuffle,
+} from '@shared/utils'
+import { assertNever } from '@shared/utils/assertNever'
+import { mapCards } from '@shared/utils/mapCards'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { Game } from './game'
 import { Player } from './player'
+import { buildColonyScore } from './scoring/buildColonyScore'
 import { claimTileScore } from './scoring/claim-tile-score'
 import { placeTileScore } from './scoring/place-tile-score'
 import { playCardScore } from './scoring/play-card-score'
 import { standardProjectScore } from './scoring/standard-project-score'
+import { tradeWithColonyScore } from './scoring/tradeWithColonyScore'
 import { ScoringContext } from './scoring/types'
 import { useCardScore } from './scoring/use-card-score'
 import { computeScore, getBestArgs, pickBest } from './scoring/utils'
@@ -287,7 +309,79 @@ export class Bot extends Player {
 
 				return this.performAction(solarPhaseTerraform(progress))
 			}
+
+			case PlayerActionType.AddCardResource: {
+				// TODO: Implement
+				const cardsWithResources = mapCards(this.state.usedCards).filter(
+					(c) => c.info.resource === a.data.cardResource,
+				)
+
+				// TODO: Pick by score
+				const card = pickRandom(cardsWithResources)
+
+				return this.performAction(addCardResource(card.index))
+			}
+
+			case PlayerActionType.BuildColony: {
+				const availableColonies = [
+					...this.game.state.colonies.entries(),
+				].filter(([, colony]) =>
+					isOk(
+						canBuildColony({
+							player: this.state,
+							game: this.game.state,
+							colony,
+							allowDuplicates: a.data.allowMoreColoniesPerColony,
+							forFree: true,
+						}),
+					),
+				)
+
+				// TODO: Scoring?
+				const colony = pickRandom(availableColonies)
+
+				return this.performAction(buildColony(colony[0]))
+			}
+
+			case PlayerActionType.ChangeColonyStep: {
+				const availableColonies = [
+					...this.game.state.colonies.entries(),
+				].filter(([, colony]) =>
+					a.data.change > 0
+						? colony.step <
+							ColoniesLookupApi.get(colony.code).tradeIncome.slots.length - 1
+						: colony.step > 0,
+				)
+
+				// TODO: Scoring
+				const colony = pickRandom(availableColonies)
+
+				return this.performAction(changeColonyStep(colony[0]))
+			}
+
+			case PlayerActionType.DiscardCards: {
+				// TODO: Scoring!
+				const cards = shuffle(this.state.usedCards.map((_c, i) => i)).slice(
+					0,
+					a.data.count,
+				)
+
+				return this.performAction(discardCards(cards))
+			}
+
+			case PlayerActionType.TradeWithColony: {
+				// TODO: Better scoring
+				const coloniesForTrade = [...this.game.state.colonies.entries()].sort(
+					([, a], [, b]) => b.step - a.step,
+				)
+
+				return this.performAction(
+					tradeWithColony(coloniesForTrade[0][0], 'money'),
+				)
+			}
 		}
+
+		assertNever(a)
 	}
 
 	doSomething() {
@@ -513,6 +607,60 @@ export class Bot extends Player {
 								},
 							])
 						})
+
+					this.game.state.colonies.forEach((colony, colonyIndex) => {
+						if (!colony.active) {
+							return
+						}
+
+						for (const resource of COLONY_TRADE_RESOURCES) {
+							const canTrade = canTradeWithColonyUsingResource({
+								colony,
+								game: this.game.state,
+								player: this.state,
+								resource,
+							})
+
+							if (isOk(canTrade)) {
+								const score = tradeWithColonyScore(
+									{ game: this.game.state, player: this.state },
+									colonyIndex,
+									resource,
+								)
+
+								if (score >= 0) {
+									actions.push([
+										score,
+										() => {
+											this.performAction(tradeWithColony(colonyIndex, resource))
+										},
+									])
+								}
+							}
+						}
+
+						const canBuild = canBuildColony({
+							player: this.state,
+							game: this.game.state,
+							colony,
+						})
+
+						if (isOk(canBuild)) {
+							const score = buildColonyScore(
+								{ game: this.game.state, player: this.state },
+								colonyIndex,
+							)
+
+							if (score >= 0) {
+								actions.push([
+									score,
+									() => {
+										this.performAction(buildColony(colonyIndex))
+									},
+								])
+							}
+						}
+					})
 				}
 
 				break

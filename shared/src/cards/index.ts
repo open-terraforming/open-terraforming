@@ -1,5 +1,7 @@
 export { CardsLookupApi } from './lookup'
 export * from './types'
+import { coloniesCorporations } from '@shared/expansions/colonies/coloniesCorporations'
+import { coloniesCards } from '@shared/expansions/colonies/coloniesCards'
 import { baseCards } from './base/cards'
 import { baseCorporations } from './base/corporations'
 import { Cards } from './list'
@@ -17,4 +19,6 @@ if (Cards.length === 0) {
 	Cards.push(...preludePreludes)
 	Cards.push(...venusCards)
 	Cards.push(...venusCorporations)
+	Cards.push(...coloniesCards)
+	Cards.push(...coloniesCorporations)
 }

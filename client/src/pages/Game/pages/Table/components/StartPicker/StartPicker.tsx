@@ -7,6 +7,7 @@ import { pickStarting } from '@shared/actions'
 import { CardsLookupApi } from '@shared/cards'
 import { PlayerActionType } from '@shared/player-actions'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
+import { simulateCardPassiveEffectsOnStart } from '@shared/utils/simulateCardPassiveEffectsOnStart'
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { CardPicker, PickerType } from '../CardPicker/CardPicker'
@@ -47,6 +48,21 @@ export const StartPicker = () => {
 		return player.money
 	}, [corporation])
 
+	const sponsorCost = useMemo(() => {
+		if (!corporation) {
+			return 40
+		}
+
+		const detail = CardsLookupApi.get(corporation)
+
+		const { player } = simulateCardPassiveEffectsOnStart(
+			corporation,
+			detail.passiveEffects,
+		)
+
+		return player.sponsorCost ?? game.cardPrice
+	}, [corporation])
+
 	const handlePicker = (type: Section) => () => {
 		setModal(type)
 	}
@@ -68,7 +84,7 @@ export const StartPicker = () => {
 		return <></>
 	}
 
-	const affordable = cards.length * game.cardPrice <= availableMoney
+	const affordable = sponsorCost <= availableMoney
 
 	const hasPreludes =
 		preludes.length > 0 || !game.prelude || pendingAction.preludes.length === 0
@@ -170,6 +186,7 @@ export const StartPicker = () => {
 					type={PickerType.Cards}
 					cards={pendingAction.cards}
 					moneyOverride={availableMoney}
+					overrideCardPrice={sponsorCost}
 					closeable
 					selected={cards}
 					onClose={handleModalClose}

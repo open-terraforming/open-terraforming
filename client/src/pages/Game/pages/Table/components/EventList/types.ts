@@ -19,6 +19,11 @@ export enum EventType {
 	PlayingChanged,
 	NewGeneration,
 	ProductionPhase,
+	ColonyBuilt,
+	ColonyActivated,
+	ColonyTrading,
+	ColonyTradingStepChanged,
+	PlayerTradeFleetsChange,
 }
 
 export type CardPlayed = {
@@ -113,6 +118,35 @@ type ProductionPhase = {
 	type: typeof EventType.ProductionPhase
 }
 
+type ColonyBuilt = {
+	type: typeof EventType.ColonyBuilt
+	playerId: number
+	colony: number
+}
+
+type ColonyActivated = {
+	type: typeof EventType.ColonyActivated
+	colony: number
+}
+
+type ColonyTrading = {
+	type: typeof EventType.ColonyTrading
+	colony: number
+	playerId: number
+}
+
+type ColonyTradingStepChanged = {
+	type: typeof EventType.ColonyTradingStepChanged
+	colony: number
+	change: number
+}
+
+type PlayerTradeFleetsChange = {
+	type: typeof EventType.PlayerTradeFleetsChange
+	playerId: number
+	amount: number
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -129,6 +163,11 @@ export type GameEvent =
 	| PlayingChanged
 	| NewGeneration
 	| ProductionPhase
+	| ColonyBuilt
+	| ColonyActivated
+	| ColonyTrading
+	| ColonyTradingStepChanged
+	| PlayerTradeFleetsChange
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

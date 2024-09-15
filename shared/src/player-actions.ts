@@ -1,3 +1,4 @@
+import { CardResource } from './cards'
 import { PlacementState } from './placements'
 
 export enum PlayerActionType {
@@ -11,6 +12,11 @@ export enum PlayerActionType {
 	SponsorCompetition,
 	PickStarting,
 	SolarPhaseTerraform,
+	AddCardResource,
+	DiscardCards,
+	BuildColony,
+	ChangeColonyStep,
+	TradeWithColony,
 }
 
 export const placeTileAction = (state: PlacementState, anonymous = false) =>
@@ -85,6 +91,40 @@ export const solarPhaseTerraformAction = () =>
 		type: PlayerActionType.SolarPhaseTerraform,
 	}) as const
 
+export const addCardResourceAction = (
+	cardResource: CardResource,
+	amount: number,
+) =>
+	({
+		type: PlayerActionType.AddCardResource,
+		data: { cardResource, amount },
+	}) as const
+
+export const discardCardsAction = (count: number) =>
+	({
+		type: PlayerActionType.DiscardCards,
+		data: { count },
+	}) as const
+
+export const buildColonyAction = (data: {
+	allowMoreColoniesPerColony: boolean
+}) =>
+	({
+		type: PlayerActionType.BuildColony,
+		data,
+	}) as const
+
+export const changeColonyStepAction = (data: { change: number }) =>
+	({
+		type: PlayerActionType.ChangeColonyStep,
+		data,
+	}) as const
+
+export const tradeWithColonyAction = () =>
+	({
+		type: PlayerActionType.TradeWithColony,
+	}) as const
+
 export type PlayerAction =
 	| ReturnType<typeof placeTileAction>
 	| ReturnType<typeof pickCardsAction>
@@ -95,3 +135,8 @@ export type PlayerAction =
 	| ReturnType<typeof draftCardAction>
 	| ReturnType<typeof pickStartingAction>
 	| ReturnType<typeof solarPhaseTerraformAction>
+	| ReturnType<typeof addCardResourceAction>
+	| ReturnType<typeof discardCardsAction>
+	| ReturnType<typeof buildColonyAction>
+	| ReturnType<typeof changeColonyStepAction>
+	| ReturnType<typeof tradeWithColonyAction>

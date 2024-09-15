@@ -6,6 +6,7 @@ import {
 	PlayerState,
 	GridCellContent,
 	GridCellOther,
+	ColonyState,
 } from '../game'
 import { StandardProject } from '../projects'
 
@@ -28,6 +29,7 @@ export type CardResource =
 	| 'fighters'
 	| 'floaters'
 	| 'asteroids'
+	| 'camps'
 
 export type GameProgress = 'oxygen' | 'temperature' | 'oceans' | 'venus'
 
@@ -83,6 +85,7 @@ export enum CardSpecial {
 	StartingCorporation,
 	Prelude,
 	Venus,
+	Colonies,
 }
 
 export interface CardVictoryPointsCallback {
@@ -206,17 +209,19 @@ export type ResourceCondition = (
 export interface CardPassiveEffect {
 	description: string
 	symbols: CardSymbol[]
+	onPlay?: (ctx: CardCallbackContext) => void
 	onGenerationStarted?: (ctx: CardCallbackContext, generation: number) => void
 	onTilePlaced?: (
 		ctx: CardCallbackContext,
 		cell: GridCell,
 		placedBy: PlayerState,
 	) => void
-	onCardPlayed?: (
+	onCardBought?: (
 		ctx: CardCallbackContext,
 		playedCard: Card,
 		playedCardIndex: number,
 		playedBy: PlayerState,
+		moneyCost: number,
 	) => void
 	onStandardProject?: (
 		ctx: CardCallbackContext,
@@ -230,6 +235,16 @@ export interface CardPassiveEffect {
 		player: PlayerState,
 		production: Production,
 		change: number,
+	) => void
+	onBeforeColonyTrade?: (
+		ctx: CardCallbackContext,
+		tradingPlayer: PlayerState,
+		colony: ColonyState,
+	) => void
+	onColonyBuilt?: (
+		ctx: CardCallbackContext,
+		builtBy: PlayerState,
+		colony: ColonyState,
 	) => void
 }
 
@@ -249,6 +264,10 @@ export enum SymbolType {
 	Venus,
 	AnyResource,
 	Equal,
+	CardWithNoTag,
+	ColonyTrade,
+	Colony,
+	TradeFleet,
 	SlashSmall,
 	BigPlus,
 }
@@ -265,4 +284,5 @@ export interface CardSymbol {
 	tag?: CardCategory
 	text?: string
 	forceSign?: boolean
+	forceCount?: boolean
 }

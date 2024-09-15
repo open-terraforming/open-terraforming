@@ -1,5 +1,6 @@
 import {
 	faAtom,
+	faCampground,
 	faCloud,
 	faFighterJet,
 	faMicroscope,
@@ -22,6 +23,7 @@ const resourceToColor: Record<CardResource, string> = {
 	science: '#fff',
 	floaters: '#b3b149',
 	asteroids: '#fff',
+	camps: '#c7a50f',
 }
 
 export const CardResourceIcon = ({ res }: Props) => {
@@ -40,6 +42,8 @@ export const CardResourceIcon = ({ res }: Props) => {
 			case 'asteroids':
 				// TODO: Better icon
 				return <FontAwesomeIcon icon={faRocket} color="#000" />
+			case 'camps':
+				return <FontAwesomeIcon icon={faCampground} color="#000" />
 		}
 	}, [res])
 

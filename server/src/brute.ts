@@ -19,6 +19,7 @@ async function main() {
 			ExpansionType.Base,
 			ExpansionType.Prelude,
 			ExpansionType.Venus,
+			ExpansionType.Colonies,
 		],
 	})
 

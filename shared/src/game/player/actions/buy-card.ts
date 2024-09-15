@@ -118,14 +118,16 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 		updatePlayerResource(this.player, 'ore', -useOre)
 
 		this.runCardEffects(card.playEffects, ctx, args)
+		this.runCardPassiveEffectsOnBuy(card.passiveEffects, ctx)
 
 		this.player.usedCards.push(cardState)
 		this.player.cards.splice(index, 1)
 
-		this.parent.onCardPlayed.emit({
+		this.parent.onCardBought.emit({
 			card,
 			cardIndex: ctx.card.index,
 			player: this.parent,
+			moneyCost: Math.max(0, cost),
 		})
 
 		this.parent.game.checkMilestones()
