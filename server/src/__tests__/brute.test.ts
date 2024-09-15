@@ -16,6 +16,7 @@ describe('brute', () => {
 				ExpansionType.Base,
 				ExpansionType.Prelude,
 				ExpansionType.Venus,
+				ExpansionType.Colonies,
 			],
 			solarPhase: true,
 		})
