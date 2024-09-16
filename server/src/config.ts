@@ -6,6 +6,10 @@ import { raise } from './utils/raise'
 configDotenv({ path: ['.env.local', '.env'] })
 
 export const globalConfig = {
+	cardEditor: {
+		targetPath: process.env.OT_CARD_EDITOR_TARGET_PATH,
+		iframeUrl: process.env.OT_CARD_EDITOR_IFRAME_URL,
+	},
 	metrics: {
 		enabled: process.env.METRICS_ENABLED === 'true',
 		endpoint: process.env.METRICS_ENDPOINT ?? '/metrics',
