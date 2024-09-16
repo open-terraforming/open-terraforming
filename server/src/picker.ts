@@ -1,3 +1,6 @@
+import 'module-alias/register'
+import 'source-map-support/register'
+
 import { globalConfig } from '@/config'
 import { Card, CardsLookupApi } from '@shared/cards'
 import bodyParser from 'body-parser'
