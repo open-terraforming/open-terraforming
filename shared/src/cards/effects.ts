@@ -1022,18 +1022,20 @@ export const getTopCards = (count: number) =>
 export const discardCard = () =>
 	effect({
 		args: [
-			// TODO: This allows player to pick the card that's being played
 			effectArg({
 				type: CardEffectTarget.Card,
 				fromHand: true,
+				descriptionPrefix: 'Discard',
+				skipCurrentCard: true,
 			}),
 		],
 		description: `Discard ${1} card(s)`,
 		conditions: [playerCardsInHandCondition(1)],
 		symbols: [{ symbol: SymbolType.Card, count: 1 }],
-		perform: ({ player, game }, cardIndex: number) => {
-			const [pickedCard] = player.cards.splice(cardIndex, 1)
-			game.discarded.push(pickedCard)
+		perform: ({ player }, cardIndex: number) => {
+			// const [pickedCard] = player.cards.splice(cardIndex, 1)
+			// game.discarded.push(pickedCard)
+			player.cardsToDiscard = [...(player.cardsToDiscard ?? []), cardIndex]
 		},
 	})
 
@@ -1076,15 +1078,14 @@ export const otherPlayersGetTopCards = (count: number) =>
 		description: `All opponents draw ${count} card(s)`,
 		// TODO: This is wrong, it should be players * count
 		conditions: [gameCardsCondition(count)],
-		// TODO: Symbol for other?
-		symbols: [{ symbol: SymbolType.Card, count }],
+		symbols: [{ symbol: SymbolType.Card, count, other: true }],
 		perform: ({ player, game }) => {
 			game.players.forEach((otherPlayer) => {
 				if (otherPlayer.id === player.id) {
 					return
 				}
 
-				player.cards.push(...drawCards(game, count))
+				otherPlayer.cards.push(...drawCards(game, count))
 			})
 		},
 	})

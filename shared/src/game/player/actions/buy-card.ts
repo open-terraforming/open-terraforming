@@ -123,6 +123,20 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 		this.player.usedCards.push(cardState)
 		this.player.cards.splice(index, 1)
 
+		const toDiscard = this.player.cardsToDiscard?.map((i) =>
+			i > index ? i - 1 : i,
+		)
+
+		if (toDiscard) {
+			this.game.discarded.push(...toDiscard.map((i) => this.player.cards[i]))
+
+			this.player.cards = this.player.cards.filter(
+				(_, i) => !toDiscard.includes(i),
+			)
+
+			this.player.cardsToDiscard = []
+		}
+
 		this.parent.onCardBought.emit({
 			card,
 			cardIndex: ctx.card.index,

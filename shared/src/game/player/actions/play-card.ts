@@ -62,6 +62,18 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 
 		this.runCardEffects(card.actionEffects, ctx, args)
 
+		const toDiscard = this.player.cardsToDiscard
+
+		if (toDiscard) {
+			this.game.discarded.push(...toDiscard.map((i) => this.player.cards[i]))
+
+			this.player.cards = this.player.cards.filter(
+				(_, i) => !toDiscard.includes(i),
+			)
+
+			this.player.cardsToDiscard = []
+		}
+
 		this.parent.game.checkMilestones()
 
 		if (top) {

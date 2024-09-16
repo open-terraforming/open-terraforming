@@ -197,6 +197,7 @@ export interface CardEffectArgument {
 	fromHand?: boolean
 	effects?: CardEffect[]
 	minAmount?: number
+	skipCurrentCard?: boolean
 }
 
 export type MaxAmountCallback = (ctx: CardCallbackContext) => number
