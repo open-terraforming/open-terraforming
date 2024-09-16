@@ -11,6 +11,7 @@ type Props = {
 	onClose: () => void
 	title?: string
 	filters?: boolean
+	includeCurrent?: boolean
 }
 
 export const CardSelector = ({

@@ -748,6 +748,7 @@ export const anyCardResourceChangePerTag = (
 						? [cardResourceCondition(res, -amount)]
 						: [cardAcceptsResource(res)]),
 				]),
+				allowSelfCard: true,
 				descriptionPrefix:
 					amount > 0
 						? `Add 1 per ${CardCategory[tag]} of ${res} to`
