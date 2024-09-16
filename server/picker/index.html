@@ -48,7 +48,7 @@
 		const getNextCard = async () => {
 			const card = await fetch('/api/card/next');
 			const cardJson = await card.json();
-			return cardJson.card.code;
+			return cardJson.card;
 		}
 
 		const saveCardImage = async (code, imageAsBase64, cutX, cutY, cutW, cutH) => {
@@ -77,8 +77,12 @@
 			$progress.innerText = `${progress.done.length} / ${progress.all.length}`;
 		}
 
+		let currentCard = null;
+
 		const loadCard = async () => {
-			const cardCode = await getNextCard();
+			currentCard = await getNextCard();
+			
+			const cardCode = card.code
 			cardTitle.innerText = cardCode
 			fileInput.value = ''
 
@@ -103,7 +107,7 @@
 					}
 
 					croppr = new Croppr(image, {
-						aspectRatio: 0.5,
+						aspectRatio: currentCard.type === 5 ? 1 : 0.5,
 						onCropEnd: async (data) => {
 							currentCrop = {...data}
 						}
