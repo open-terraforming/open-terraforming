@@ -1,3 +1,4 @@
+import { enqueueForDiscard } from '@shared/utils/enqueueForDiscard'
 import { GridCellContent, GridCellOther, GridCellSpecial } from '../game'
 import {
 	canPlace,
@@ -1026,16 +1027,23 @@ export const discardCard = () =>
 				type: CardEffectTarget.Card,
 				fromHand: true,
 				descriptionPrefix: 'Discard',
+				// TODO: This param doesn't work!
 				skipCurrentCard: true,
 			}),
 		],
 		description: `Discard ${1} card(s)`,
 		conditions: [playerCardsInHandCondition(1)],
 		symbols: [{ symbol: SymbolType.Card, count: 1 }],
-		perform: ({ player }, cardIndex: number) => {
-			// const [pickedCard] = player.cards.splice(cardIndex, 1)
-			// game.discarded.push(pickedCard)
-			player.cardsToDiscard = [...(player.cardsToDiscard ?? []), cardIndex]
+		perform: ({ player, cardHandIndex }, cardIndex: number) => {
+			if (typeof cardIndex !== 'number') {
+				throw new Error('Invalid card index')
+			}
+
+			if (cardHandIndex === cardIndex) {
+				throw new Error("You can't discard the card that's being played")
+			}
+
+			enqueueForDiscard(player, cardIndex)
 		},
 	})
 

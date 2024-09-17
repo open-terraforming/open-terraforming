@@ -3,6 +3,7 @@ import { GameStateValue, playCard, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
+import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
 
 type Args = ReturnType<typeof playCard>['data']
 
@@ -62,17 +63,7 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 
 		this.runCardEffects(card.actionEffects, ctx, args)
 
-		const toDiscard = this.player.cardsToDiscard
-
-		if (toDiscard) {
-			this.game.discarded.push(...toDiscard.map((i) => this.player.cards[i]))
-
-			this.player.cards = this.player.cards.filter(
-				(_, i) => !toDiscard.includes(i),
-			)
-
-			this.player.cardsToDiscard = []
-		}
+		processCardsToDiscard(this.game, this.player)
 
 		this.parent.game.checkMilestones()
 

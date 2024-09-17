@@ -41,6 +41,8 @@ export interface CardCallbackContext {
 	card: UsedCardState
 	/** used by joinedEffects, includes all args sent to the action */
 	allArgs?: unknown[]
+	/** used for playEffect, it's the index in players hand */
+	cardHandIndex?: number
 }
 
 export interface PlayerCallbackContext {
