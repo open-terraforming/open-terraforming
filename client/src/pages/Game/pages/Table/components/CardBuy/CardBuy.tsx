@@ -256,6 +256,7 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 							key={i}
 							effect={e}
 							card={card.code}
+							handCardIndex={index}
 							cardState={cardState || emptyCardState(card.code)}
 							onChange={(v) => {
 								const updated = [...effectsArgs]

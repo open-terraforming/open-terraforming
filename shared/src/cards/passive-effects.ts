@@ -442,7 +442,7 @@ export const resourceForProductionChange = (amount = 1) =>
 			production,
 			change,
 		) => {
-			if (player.id !== currentPlayer.id) {
+			if (player.id !== currentPlayer.id || change <= 0) {
 				return
 			}
 

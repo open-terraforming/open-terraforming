@@ -1,3 +1,4 @@
+import { enqueueForDiscard } from '@shared/utils/enqueueForDiscard'
 import { GridCellContent, GridCellOther, GridCellSpecial } from '../game'
 import {
 	canPlace,
@@ -918,6 +919,7 @@ export const productionChangeForTags = (
 	tagCount: number = 1,
 ) => {
 	return effect({
+		type: CardEffectType.Production,
 		description: `Increase your ${res} production by ${change} for ${tagCount > 1 ? tagCount : 'each'} ${CardCategory[tag]} tag you played`,
 		symbols: [
 			{ resource: res, count: change, production: true },
@@ -1022,18 +1024,27 @@ export const getTopCards = (count: number) =>
 export const discardCard = () =>
 	effect({
 		args: [
-			// TODO: This allows player to pick the card that's being played
 			effectArg({
 				type: CardEffectTarget.Card,
 				fromHand: true,
+				descriptionPrefix: 'Discard',
+				// TODO: This param doesn't work!
+				skipCurrentCard: true,
 			}),
 		],
 		description: `Discard ${1} card(s)`,
 		conditions: [playerCardsInHandCondition(1)],
 		symbols: [{ symbol: SymbolType.Card, count: 1 }],
-		perform: ({ player, game }, cardIndex: number) => {
-			const [pickedCard] = player.cards.splice(cardIndex, 1)
-			game.discarded.push(pickedCard)
+		perform: ({ player, cardHandIndex }, cardIndex: number) => {
+			if (typeof cardIndex !== 'number') {
+				throw new Error('Invalid card index')
+			}
+
+			if (cardHandIndex === cardIndex) {
+				throw new Error("You can't discard the card that's being played")
+			}
+
+			enqueueForDiscard(player, cardIndex)
 		},
 	})
 
@@ -1076,15 +1087,14 @@ export const otherPlayersGetTopCards = (count: number) =>
 		description: `All opponents draw ${count} card(s)`,
 		// TODO: This is wrong, it should be players * count
 		conditions: [gameCardsCondition(count)],
-		// TODO: Symbol for other?
-		symbols: [{ symbol: SymbolType.Card, count }],
+		symbols: [{ symbol: SymbolType.Card, count, other: true }],
 		perform: ({ player, game }) => {
 			game.players.forEach((otherPlayer) => {
 				if (otherPlayer.id === player.id) {
 					return
 				}
 
-				player.cards.push(...drawCards(game, count))
+				otherPlayer.cards.push(...drawCards(game, count))
 			})
 		},
 	})
@@ -1649,6 +1659,7 @@ export const emptyEffect = (description: string, symbols: CardSymbol[] = []) =>
 
 export const lowestProductionChange = (amount: number) =>
 	effect({
+		type: CardEffectType.Production,
 		description: `Increase your lowest production by ${amount}`,
 		args: [
 			effectArg({
