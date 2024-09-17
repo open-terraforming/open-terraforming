@@ -1,5 +1,5 @@
 import { useAppStore, useToggle } from '@/utils/hooks'
-import { CardsLookupApi } from '@shared/cards'
+import { CardsLookupApi, Resource } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
 import { ColonyState, PlayerState } from '@shared/index'
 import { Milestones } from '@shared/milestones'
@@ -110,14 +110,16 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						}`}
 					</>
 				)
-			case EventType.ResourceChanged:
+			case EventType.ResourcesChanged:
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} />
-						<ResourceE positive={event.amount > 0}>
-							{event.amount > 0 ? ' +' : ' -'}
-							{withUnits(event.resource, Math.abs(event.amount))}
-						</ResourceE>
+						{Object.entries(event.resources).map(([resource, amount], i) => (
+							<ResourceE positive={amount > 0} key={i}>
+								{amount > 0 ? ' +' : ' -'}
+								{withUnits(resource as Resource, Math.abs(amount))}
+							</ResourceE>
+						))}
 					</>
 				)
 			case EventType.ProductionChanged:
@@ -217,11 +219,15 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					</>
 				)
 			case EventType.NewGeneration:
-				return <></>
+				return <PhaseSpanE>{event.generation}. generation started</PhaseSpanE>
 			case EventType.PlayingChanged:
-				return <></>
+				return (
+					<>
+						<PlayerSpan player={game.players[event.playing]} /> is playing
+					</>
+				)
 			case EventType.ProductionPhase:
-				return <></>
+				return <PhaseSpanE>Production phase</PhaseSpanE>
 		}
 
 		assertNever(event)
@@ -256,6 +262,10 @@ const CardSpanE = styled.span`
 	&:hover {
 		text-decoration: underline;
 	}
+`
+
+const PhaseSpanE = styled.span`
+	color: #f5af7c;
 `
 
 const ResourceE = styled.span<{ positive: boolean }>`
