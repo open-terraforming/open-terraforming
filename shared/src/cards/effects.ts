@@ -919,6 +919,7 @@ export const productionChangeForTags = (
 	tagCount: number = 1,
 ) => {
 	return effect({
+		type: CardEffectType.Production,
 		description: `Increase your ${res} production by ${change} for ${tagCount > 1 ? tagCount : 'each'} ${CardCategory[tag]} tag you played`,
 		symbols: [
 			{ resource: res, count: change, production: true },
@@ -1658,6 +1659,7 @@ export const emptyEffect = (description: string, symbols: CardSymbol[] = []) =>
 
 export const lowestProductionChange = (amount: number) =>
 	effect({
+		type: CardEffectType.Production,
 		description: `Increase your lowest production by ${amount}`,
 		args: [
 			effectArg({
