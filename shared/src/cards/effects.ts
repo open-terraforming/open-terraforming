@@ -631,8 +631,15 @@ export const anyCardResourceChange = (
 									),
 						}),
 					]
-				: // TODO: Add condition that requires player to own card with that resource?
-					[],
+				: [
+						condition({
+							description: `Player has to have a card that accepts ${res}`,
+							evaluate: ({ player }) =>
+								!!player.usedCards
+									.map((c) => ({ card: CardsLookupApi.get(c.code), state: c }))
+									.find(({ card }) => card.resource === res),
+						}),
+					],
 		description:
 			amount < 0
 				? `Remove ${withUnits(res, -amount)} from any card${
@@ -748,6 +755,7 @@ export const anyCardResourceChangePerTag = (
 						? [cardResourceCondition(res, -amount)]
 						: [cardAcceptsResource(res)]),
 				]),
+				allowSelfCard: true,
 				descriptionPrefix:
 					amount > 0
 						? `Add 1 per ${CardCategory[tag]} of ${res} to`
