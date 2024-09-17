@@ -52,7 +52,7 @@ import {
 	terraformRatingForTags,
 	titanPriceChange,
 	triggerCardResourceChange,
-} from '../effects'
+} from '../effectsGrouped'
 import { exchangeProduction } from '../effects/exchange-production'
 import { productionForTags } from '../effects/production-for-tags'
 import { voidEffect } from '../effects/voidEffect'

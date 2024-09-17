@@ -1,6 +1,6 @@
 import { prepareTestState } from '../../../test/utils'
 import { emptyCardState } from '../../utils'
-import { terraformRatingForTags } from '../../effects'
+import { terraformRatingForTags } from '../../effectsGrouped'
 import { CardCategory } from '../../types'
 
 test('terraformRatingForTags should change production based on tag count', () => {

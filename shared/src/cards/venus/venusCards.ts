@@ -29,7 +29,7 @@ import {
 	resourcesForTiles,
 	deprecatedTagPriceChange,
 	terraformRatingChange,
-} from '../effects'
+} from '../effectsGrouped'
 import { cardResourcePerCardPlayed } from '../passive-effects'
 import { resourceAsPaymentForTags } from '../effects/resourceAsPaymentForTags'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'

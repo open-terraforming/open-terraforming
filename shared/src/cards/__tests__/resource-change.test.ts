@@ -1,5 +1,5 @@
 import { prepareTestState } from '../../test/utils'
-import { resourceChange } from '../effects'
+import { resourceChange } from '../effectsGrouped'
 import { emptyCardState } from '../utils'
 import { Resource } from '../types'
 

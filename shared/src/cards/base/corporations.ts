@@ -11,7 +11,7 @@ import {
 	productionChange,
 	resourceChange,
 	titanPriceChange,
-} from '../effects'
+} from '../effectsGrouped'
 import { asFirstAction, passiveEffect } from '../passive-effects'
 import { Card, CardCategory, CardSpecial, CardType, SymbolType } from '../types'
 import {

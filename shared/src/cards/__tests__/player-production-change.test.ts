@@ -1,5 +1,5 @@
 import { prepareTestState } from '../../test/utils'
-import { playerProductionChange } from '../effects'
+import { playerProductionChange } from '../effectsGrouped'
 import { emptyCardState } from '../utils'
 
 test('playerProductionChange should change production of right player', () => {
