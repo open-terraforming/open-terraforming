@@ -66,7 +66,9 @@ export const CardArg = ({
 						arg.fromHand
 							? handCards.map((c) => emptyCardState(c))
 							: arg.allowSelfCard
-								? [...usedCards, emptyCardState(cardState.code)]
+								? // Add the bought card itself as last (to not corrupt indexes), use -13 to mark it
+									// By putting the card through cardsToCardList, we ensure it's only shown when compatible with the action
+									[...usedCards, emptyCardState(cardState.code, -13)]
 								: usedCards,
 						arg.cardConditions,
 						{
@@ -77,8 +79,8 @@ export const CardArg = ({
 				: []
 
 		// when allowSelfCard is true, we've pushed the card itself to the end, but it has incorrect index
-		// -1 is a special value that means the card itself
-		if (arg.allowSelfCard && result[result.length - 1].state?.index === -1) {
+		// -13 is special value that indicates it's indeed the card we added, -1 is a special value that means the card itself
+		if (arg.allowSelfCard && result[result.length - 1].state?.index === -13) {
 			result[result.length - 1].index = -1
 		}
 
