@@ -75,7 +75,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 							} else {
 								const card = CardsLookupApi.get(oldCard.code)
 
-								if (card.resource && cardChanges[card.resource]) {
+								if (card.resource && cardChanges[card.resource] !== undefined) {
 									newEvents.push({
 										type: EventType.CardResourceChanged,
 										playerId: player.id,
