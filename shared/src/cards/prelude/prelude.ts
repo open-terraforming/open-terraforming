@@ -12,7 +12,7 @@ import {
 	gameProcessChange,
 	terraformRatingChange,
 	placeCity,
-} from '../effects'
+} from '../effectsGrouped'
 import { GridCellContent } from '../../game'
 import { resetProgressBonus, resetCardPriceChange } from '../passive-effects'
 

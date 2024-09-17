@@ -615,6 +615,7 @@ export const anyCardResourceChange = (
 					amount > 0
 						? `Add ${withUnits(res, amount)} to`
 						: `Remove ${withUnits(res, -amount)} from`,
+				allowSelfCard: true,
 			},
 		],
 		conditions:
@@ -654,7 +655,20 @@ export const anyCardResourceChange = (
 							: ''
 					}`,
 		symbols: [{ cardResource: res, count: amount }],
-		perform: ({ player }, cardIndex: number) => {
+		perform: ({ player, card }, cardIndex: number) => {
+			// Play on self
+			if (cardIndex === -1) {
+				const cardInfo = CardsLookupApi.get(card.code)
+
+				if (cardInfo.resource !== res) {
+					throw new Error(`${card.code} doesn't accept ${res}`)
+				}
+
+				card[res] += amount
+
+				return
+			}
+
 			if (typeof cardIndex === 'number' && cardIndex >= 0) {
 				const cardState = player.usedCards[cardIndex]
 
@@ -756,7 +770,6 @@ export const anyCardResourceChangePerTag = (
 						? [cardResourceCondition(res, -amount)]
 						: [cardAcceptsResource(res)]),
 				]),
-				allowSelfCard: true,
 				descriptionPrefix:
 					amount > 0
 						? `Add 1 per ${CardCategory[tag]} of ${res} to`

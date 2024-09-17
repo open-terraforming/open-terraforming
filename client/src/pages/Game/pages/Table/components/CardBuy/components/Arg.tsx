@@ -44,7 +44,12 @@ export const Arg = ({
 			)
 		case CardEffectTarget.Card:
 			return (
-				<CardArg arg={arg} onChange={onChange} handCardIndex={handCardIndex} />
+				<CardArg
+					arg={arg}
+					onChange={onChange}
+					handCardIndex={handCardIndex}
+					cardState={cardState}
+				/>
 			)
 		case CardEffectTarget.PlayerCardResource:
 			return (
@@ -53,6 +58,7 @@ export const Arg = ({
 					onChange={onChange}
 					handCardIndex={handCardIndex}
 					otherPlayer={true}
+					cardState={cardState}
 				/>
 			)
 		case CardEffectTarget.PlayerResource:
