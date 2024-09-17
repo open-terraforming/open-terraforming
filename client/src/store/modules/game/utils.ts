@@ -53,6 +53,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 
 			if (gameChanges) {
 				if (gameChanges.usedCards) {
+					// First add "card played" event before any other changes
 					Object.entries(gameChanges.usedCards).forEach(
 						([cardIndex, cardChanges]) => {
 							if (!cardChanges) {
@@ -86,6 +87,21 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 										index: parseInt(cardIndex),
 									})
 								}
+							}
+						},
+					)
+
+					// Next add card resource changes
+					Object.entries(gameChanges.usedCards).forEach(
+						([cardIndex, cardChanges]) => {
+							if (!cardChanges) {
+								return
+							}
+
+							const oldCard = player.usedCards[parseInt(cardIndex)]
+
+							if (oldCard) {
+								const card = CardsLookupApi.get(oldCard.code)
 
 								if (card.resource && cardChanges[card.resource]) {
 									newEvents.push({
@@ -213,6 +229,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 	if (diff.generation !== undefined) {
 		newEvents.push({
 			type: EventType.NewGeneration,
+			generation: diff.generation,
 		})
 	}
 

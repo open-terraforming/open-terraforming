@@ -219,11 +219,15 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					</>
 				)
 			case EventType.NewGeneration:
-				return <></>
+				return <PhaseSpanE>{event.generation}. generation started</PhaseSpanE>
 			case EventType.PlayingChanged:
-				return <></>
+				return (
+					<>
+						<PlayerSpan player={game.players[event.playing]} /> is playing
+					</>
+				)
 			case EventType.ProductionPhase:
-				return <></>
+				return <PhaseSpanE>Production phase</PhaseSpanE>
 		}
 
 		assertNever(event)
@@ -258,6 +262,10 @@ const CardSpanE = styled.span`
 	&:hover {
 		text-decoration: underline;
 	}
+`
+
+const PhaseSpanE = styled.span`
+	color: #f5af7c;
 `
 
 const ResourceE = styled.span<{ positive: boolean }>`

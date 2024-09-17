@@ -111,6 +111,7 @@ type PlayingChanged = {
 
 type NewGeneration = {
 	type: typeof EventType.NewGeneration
+	generation: number
 }
 
 type ProductionPhase = {
