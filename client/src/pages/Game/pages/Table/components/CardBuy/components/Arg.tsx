@@ -17,10 +17,17 @@ type Props = {
 	arg: CardEffectArgument
 	card: string
 	cardState: UsedCardState
+	handCardIndex?: number
 	onChange: (v: CardEffectArgumentType) => void
 }
 
-export const Arg = ({ arg, cardState, card, onChange }: Props) => {
+export const Arg = ({
+	arg,
+	cardState,
+	card,
+	onChange,
+	handCardIndex,
+}: Props) => {
 	switch (arg.type) {
 		case CardEffectTarget.Player:
 			return <PlayerArg arg={arg} card={cardState} onChange={onChange} />
@@ -36,9 +43,18 @@ export const Arg = ({ arg, cardState, card, onChange }: Props) => {
 				/>
 			)
 		case CardEffectTarget.Card:
-			return <CardArg arg={arg} onChange={onChange} />
+			return (
+				<CardArg arg={arg} onChange={onChange} handCardIndex={handCardIndex} />
+			)
 		case CardEffectTarget.PlayerCardResource:
-			return <CardArg arg={arg} onChange={onChange} otherPlayer={true} />
+			return (
+				<CardArg
+					arg={arg}
+					onChange={onChange}
+					handCardIndex={handCardIndex}
+					otherPlayer={true}
+				/>
+			)
 		case CardEffectTarget.PlayerResource:
 			return (
 				<PlayerResourceArg card={cardState} arg={arg} onChange={onChange} />

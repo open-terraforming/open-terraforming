@@ -1,4 +1,5 @@
 import { Button } from '@/components'
+import { useLocale } from '@/context/LocaleContext'
 import { cardsToCardList } from '@/utils/cards'
 import { useAppStore } from '@/utils/hooks'
 import { CardEffectArgument } from '@shared/cards'
@@ -7,15 +8,20 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CardInfo } from '../../CardDisplay/CardDisplay'
 import { CardSelector } from '../../CardSelector/CardSelector'
 import { ArgContainer } from './ArgContainer'
-import { useLocale } from '@/context/LocaleContext'
 
 type Props = {
 	arg: CardEffectArgument
+	handCardIndex?: number
 	otherPlayer?: boolean
 	onChange: (v: number | [number, number]) => void
 }
 
-export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
+export const CardArg = ({
+	arg,
+	handCardIndex,
+	onChange,
+	otherPlayer,
+}: Props) => {
 	const locale = useLocale()
 
 	const [picking, setPicking] = useState(false)
@@ -37,11 +43,15 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 							cards: cardsToCardList(p.usedCards, arg.cardConditions, {
 								game,
 								player: p,
-							}),
+							}).filter((c) =>
+								arg.skipCurrentCard
+									? p.id !== player.id || c.index !== handCardIndex
+									: true,
+							),
 						}))
 						.filter(({ cards }) => cards.length > 0)
 				: [],
-		[otherPlayer, game, arg],
+		[otherPlayer, game, arg, handCardIndex],
 	)
 
 	const [selectedPlayer, setSelectedPlayer] = useState(0)
@@ -80,7 +90,15 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 		[onChange, selectedPlayer],
 	)
 
-	const choice = !otherPlayer ? cards : players[selectedPlayer].cards
+	const choice = useMemo(
+		() =>
+			!otherPlayer
+				? cards.filter((c) =>
+						arg.skipCurrentCard ? c.index !== handCardIndex : true,
+					)
+				: players[selectedPlayer].cards,
+		[handCardIndex, otherPlayer, arg, players],
+	)
 
 	useEffect(() => {
 		if (!choice.find((c) => c.index === selected?.index)) {

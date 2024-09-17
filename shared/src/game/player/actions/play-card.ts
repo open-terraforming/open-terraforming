@@ -3,6 +3,7 @@ import { GameStateValue, playCard, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
+import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
 
 type Args = ReturnType<typeof playCard>['data']
 
@@ -61,6 +62,8 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 		this.logger.log(`Played ${card.code} with`, JSON.stringify(args))
 
 		this.runCardEffects(card.actionEffects, ctx, args)
+
+		processCardsToDiscard(this.game, this.player)
 
 		this.parent.game.checkMilestones()
 
