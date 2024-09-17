@@ -4,7 +4,6 @@ import { cardsToCardList } from '@/utils/cards'
 import { useAppStore } from '@/utils/hooks'
 import { CardEffectArgument } from '@shared/cards'
 import { emptyCardState } from '@shared/cards/utils'
-import { UsedCardState } from '@shared/game'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CardInfo } from '../../CardDisplay/CardDisplay'
 import { CardSelector } from '../../CardSelector/CardSelector'
@@ -12,12 +11,17 @@ import { ArgContainer } from './ArgContainer'
 
 type Props = {
 	arg: CardEffectArgument
-	cardState: UsedCardState
+	handCardIndex?: number
 	otherPlayer?: boolean
 	onChange: (v: number | [number, number]) => void
 }
 
-export const CardArg = ({ arg, cardState, onChange, otherPlayer }: Props) => {
+export const CardArg = ({
+	arg,
+	handCardIndex,
+	onChange,
+	otherPlayer,
+}: Props) => {
 	const locale = useLocale()
 
 	const [picking, setPicking] = useState(false)
@@ -41,13 +45,13 @@ export const CardArg = ({ arg, cardState, onChange, otherPlayer }: Props) => {
 								player: p,
 							}).filter((c) =>
 								arg.skipCurrentCard
-									? p.id !== player.id || c.index !== cardState.index
+									? p.id !== player.id || c.index !== handCardIndex
 									: true,
 							),
 						}))
 						.filter(({ cards }) => cards.length > 0)
 				: [],
-		[otherPlayer, game, arg],
+		[otherPlayer, game, arg, handCardIndex],
 	)
 
 	const [selectedPlayer, setSelectedPlayer] = useState(0)
@@ -90,17 +94,11 @@ export const CardArg = ({ arg, cardState, onChange, otherPlayer }: Props) => {
 		() =>
 			!otherPlayer
 				? cards.filter((c) =>
-						arg.skipCurrentCard ? c.index !== cardState.index : true,
+						arg.skipCurrentCard ? c.index !== handCardIndex : true,
 					)
 				: players[selectedPlayer].cards,
-		[],
+		[handCardIndex, otherPlayer, arg, players],
 	)
-
-	console.log({
-		choice,
-		skipCurrentCard: arg.skipCurrentCard,
-		cardStateIndex: cardState.index,
-	})
 
 	useEffect(() => {
 		if (!choice.find((c) => c.index === selected?.index)) {
