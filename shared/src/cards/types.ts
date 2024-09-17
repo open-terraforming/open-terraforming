@@ -199,6 +199,8 @@ export interface CardEffectArgument {
 	fromHand?: boolean
 	effects?: CardEffect[]
 	minAmount?: number
+	/** Allow selecting the card being played as the target - used for CARD inside playEffects */
+	allowSelfCard?: boolean
 	skipCurrentCard?: boolean
 }
 

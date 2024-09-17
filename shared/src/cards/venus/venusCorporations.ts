@@ -3,7 +3,7 @@ import {
 	anyCardResourceChange,
 	productionChange,
 	resourceChange,
-} from '../effects'
+} from '../effectsGrouped'
 import { changeProgressConditionBonusPerTag } from '../effects/changeProgressConditionBonusPerTag'
 import { markCardAsUnplayed } from '../effects/mark-card-as-unplayed'
 import {

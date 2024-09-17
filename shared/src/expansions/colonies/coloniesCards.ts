@@ -22,7 +22,7 @@ import {
 	resourceChange,
 	resourcesForTiles,
 	terraformRatingChange,
-} from '@shared/cards/effects'
+} from '@shared/cards/effectsGrouped'
 import { changeColonyStep } from '@shared/cards/effects/changeColonyStep'
 import { freeTradeWithColony } from '@shared/cards/effects/freeTradeWithColony'
 import { gainAllColonyIncomeBonuses } from '@shared/cards/effects/gainAllColonyIncomeBonuses'

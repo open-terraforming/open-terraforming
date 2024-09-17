@@ -615,6 +615,7 @@ export const anyCardResourceChange = (
 					amount > 0
 						? `Add ${withUnits(res, amount)} to`
 						: `Remove ${withUnits(res, -amount)} from`,
+				allowSelfCard: true,
 			},
 		],
 		conditions:
@@ -632,8 +633,15 @@ export const anyCardResourceChange = (
 									),
 						}),
 					]
-				: // TODO: Add condition that requires player to own card with that resource?
-					[],
+				: [
+						condition({
+							description: `Player has to have a card that accepts ${res}`,
+							evaluate: ({ player }) =>
+								!!player.usedCards
+									.map((c) => ({ card: CardsLookupApi.get(c.code), state: c }))
+									.find(({ card }) => card.resource === res),
+						}),
+					],
 		description:
 			amount < 0
 				? `Remove ${withUnits(res, -amount)} from any card${
@@ -647,7 +655,20 @@ export const anyCardResourceChange = (
 							: ''
 					}`,
 		symbols: [{ cardResource: res, count: amount }],
-		perform: ({ player }, cardIndex: number) => {
+		perform: ({ player, card }, cardIndex: number) => {
+			// Play on self
+			if (cardIndex === -1) {
+				const cardInfo = CardsLookupApi.get(card.code)
+
+				if (cardInfo.resource !== res) {
+					throw new Error(`${card.code} doesn't accept ${res}`)
+				}
+
+				card[res] += amount
+
+				return
+			}
+
 			if (typeof cardIndex === 'number' && cardIndex >= 0) {
 				const cardState = player.usedCards[cardIndex]
 
