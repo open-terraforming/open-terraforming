@@ -301,6 +301,9 @@ export interface PlayerState {
 	/** Cards picked during draft */
 	draftedCards: string[]
 
+	/** List of indexes of cards in hand to be discarded after effects are evaluated - internal use */
+	cardsToDiscard?: number[]
+
 	/** List of used cards */
 	usedCards: UsedCardState[]
 

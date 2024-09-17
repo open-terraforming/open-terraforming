@@ -1,4 +1,9 @@
-import { Resource, CardEffectTarget, SymbolType } from '../types'
+import {
+	Resource,
+	CardEffectTarget,
+	SymbolType,
+	CardEffectType,
+} from '../types'
 import { effectArg } from '../args'
 import { withUnits } from '../../units'
 import { productionCondition } from '../conditions'
@@ -20,6 +25,7 @@ export const exchangeProduction = (srcRes: Resource, dstRes: Resource) =>
 			'X',
 		)} production`,
 		conditions: [productionCondition(srcRes, 1)],
+		type: CardEffectType.Production,
 		symbols: [
 			{ symbol: SymbolType.X },
 			{ resource: srcRes, production: true },
