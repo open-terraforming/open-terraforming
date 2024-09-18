@@ -1,4 +1,6 @@
-import { useAppStore, useToggle } from '@/utils/hooks'
+import { useGameModals } from '@/context/GameModalsContext'
+import { useLocale } from '@/context/LocaleContext'
+import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi, Resource } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
 import { ColonyState, PlayerState } from '@shared/index'
@@ -6,15 +8,12 @@ import { Milestones } from '@shared/milestones'
 import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
 import { ucFirst } from '@shared/utils'
-import { lighten } from 'polished'
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
-import styled, { css, keyframes } from 'styled-components'
-import { EventType, GameEvent } from '../types'
-import { CardModal } from './CardModal'
-import { useLocale } from '@/context/LocaleContext'
 import { assertNever } from '@shared/utils/assertNever'
 import { quantized } from '@shared/utils/quantized'
-import { ColoniesModal } from '../../ColoniesModal/ColoniesModal'
+import { lighten } from 'polished'
+import { memo, useEffect, useMemo, useRef } from 'react'
+import styled, { css, keyframes } from 'styled-components'
+import { EventType, GameEvent } from '../types'
 
 type Props = {
 	event: GameEvent
@@ -30,12 +29,11 @@ const PlayerSpan = ({ player }: { player: PlayerState }) => (
 
 const CardSpan = memo(({ card }: { card: string }) => {
 	const locale = useLocale()
-	const [shown, setShown] = useState(false)
+	const { openCardModal } = useGameModals()
 
 	return (
 		<>
-			{shown && <CardModal card={card} onClose={() => setShown(false)} />}
-			<CardSpanE onClick={() => setShown(true)}>
+			<CardSpanE onClick={() => openCardModal(card)}>
 				{locale.cards[CardsLookupApi.get(card).code]}
 			</CardSpanE>
 		</>
@@ -44,12 +42,11 @@ const CardSpan = memo(({ card }: { card: string }) => {
 
 const ColonySpan = ({ colony }: { colony: ColonyState }) => {
 	const locale = useLocale()
-	const [shown, toggleShow] = useToggle()
+	const { openColoniesModal } = useGameModals()
 
 	return (
 		<>
-			{shown && <ColoniesModal onClose={toggleShow} />}
-			<ColoniesSpanE onClick={toggleShow}>
+			<ColoniesSpanE onClick={() => openColoniesModal()}>
 				{locale.colonies[colony.code]}
 			</ColoniesSpanE>
 		</>

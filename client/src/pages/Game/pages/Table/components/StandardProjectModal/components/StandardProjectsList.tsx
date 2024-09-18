@@ -1,5 +1,6 @@
 import { Button } from '@/components'
 import { useApi } from '@/context/ApiContext'
+import { useGameModals } from '@/context/GameModalsContext'
 import { useAppStore } from '@/utils/hooks'
 import { buyStandardProject, StandardProjectType } from '@shared/index'
 import {
@@ -7,10 +8,9 @@ import {
 	StandardProject,
 	StandardProjectContext,
 } from '@shared/projects'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 import { ProjectDescription } from './ProjectDescription'
-import { SellCardsModal } from './SellCardsModal'
 
 type Props = {
 	onClose?: () => void
@@ -26,7 +26,7 @@ export const StandardProjectsList = ({ onClose }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 	const player = useAppStore((state) => state.game.player)
 	const playing = useAppStore((state) => state.game.playing)
-	const [selling, setSelling] = useState(false)
+	const { openSellCardsModal } = useGameModals()
 
 	const projects = game.standardProjects
 		.filter((p) => !HIDDEN_PROJECTS.includes(p))
@@ -43,7 +43,7 @@ export const StandardProjectsList = ({ onClose }: Props) => {
 
 	const handleSubmit = (p: StandardProject) => {
 		if (p.type === StandardProjectType.SellPatents) {
-			setSelling(true)
+			openSellCardsModal()
 		} else {
 			api.send(buyStandardProject(p.type))
 			onClose?.()
@@ -69,7 +69,6 @@ export const StandardProjectsList = ({ onClose }: Props) => {
 					<ProjectDescription project={p} cost={p.cost(ctx)} />
 				</Project>
 			))}
-			{selling && <SellCardsModal onClose={onClose ?? (() => null)} />}
 		</>
 	)
 }
