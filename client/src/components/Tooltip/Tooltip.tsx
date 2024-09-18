@@ -37,6 +37,7 @@ export const Tooltip = ({
 	const [calculatedPosition, setCalculatedPosition] = useState({
 		left: -1000 as number | undefined,
 		top: -1000 as number | undefined,
+		caretOffset: -15 as number | undefined,
 		maxHeight: undefined as number | undefined,
 	})
 
@@ -55,6 +56,7 @@ export const Tooltip = ({
 		let top = undefined as number | undefined
 		let left = undefined as number | undefined
 		let maxHeight = undefined as number | undefined
+		let caretOffset = undefined as number | undefined
 
 		const viewHeight = Math.max(
 			document.documentElement.clientHeight,
@@ -69,31 +71,35 @@ export const Tooltip = ({
 				case Position.Top: {
 					left = rect.left
 					top = rect.top - 5 - contentRect.height
+					caretOffset = rect.width / 2 - 3
 					break
 				}
 
 				case Position.Left: {
 					left = rect.left - contentRect.width - 15
 					top = rect.top - 15
+					caretOffset = rect.height / 2
 					break
 				}
 
 				case Position.BottomLeft: {
 					left = rect.right - contentRect.width
 					top = rect.bottom
+					caretOffset = rect.width / 2
 					break
 				}
 
 				case Position.Bottom: {
 					left = rect.left
 					top = rect.bottom + 5
+					caretOffset = rect.width / 2
 					break
 				}
 			}
 
 			maxHeight = viewHeight - top - 15
 
-			setCalculatedPosition({ left, top, maxHeight })
+			setCalculatedPosition({ left, top, maxHeight, caretOffset })
 		}
 	}
 
@@ -111,11 +117,12 @@ export const Tooltip = ({
 				onMouseLeave={showOnHover ? handleMouseLeave : undefined}
 				ref={triggerRef}
 				style={styleTrigger}
+				className="tooltip-trigger"
 			>
 				{children}
 			</Trigger>
 
-			{(opened || (shown && !showOnHover)) && (
+			{(opened || (shown && !showOnHover)) && content && (
 				<Portal>
 					<Container
 						className={className}
@@ -127,6 +134,12 @@ export const Tooltip = ({
 							maxHeight: calculatedPosition.maxHeight,
 						}}
 					>
+						{position === Position.Bottom && (
+							<BottomCaret style={{ left: calculatedPosition.caretOffset }} />
+						)}
+						{position === Position.Top && (
+							<TopCaret style={{ left: calculatedPosition.caretOffset }} />
+						)}
 						{content}
 					</Container>
 				</Portal>
@@ -137,8 +150,28 @@ export const Tooltip = ({
 
 const Trigger = styled.span``
 
+const Caret = styled.div`
+	content: ' ';
+	position: absolute;
+`
+
+const TopCaret = styled(Caret)`
+	bottom: -14px;
+	margin-left: -5px;
+	border: 7px solid transparent;
+	border-top-color: ${({ theme }) => rgba(theme.colors.border, 1)};
+`
+
+const BottomCaret = styled(Caret)`
+	top: -14px;
+	margin-left: -5px;
+	border: 7px solid transparent;
+	border-bottom-color: ${({ theme }) => rgba(theme.colors.border, 1)};
+`
+
 const Container = styled.div<{ disableStyle?: boolean }>`
 	position: absolute;
+	z-index: 999999;
 
 	${(props) =>
 		!props.disableStyle &&
@@ -146,15 +179,6 @@ const Container = styled.div<{ disableStyle?: boolean }>`
 			background: ${rgba(props.theme.colors.background, 1)};
 			color: #ddd;
 			padding: 10px;
-
-			&::before {
-				content: ' ';
-				position: absolute;
-				bottom: -10px;
-				left: 50%;
-				margin-left: -5px;
-				border: 5px solid transparent;
-				border-top-color: ${props.theme.colors.background};
-			}
+			border: 2px solid ${({ theme }) => rgba(theme.colors.border, 1)};
 		`}
 `

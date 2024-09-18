@@ -1,4 +1,9 @@
-import { CardsLookupApi, GameProgress } from '@shared/cards'
+import {
+	CardCallbackContext,
+	CardPassiveEffect,
+	CardsLookupApi,
+	GameProgress,
+} from '@shared/cards'
 import { ExpansionType } from '@shared/expansions/types'
 import { GameInfo } from '@shared/extra'
 import {
@@ -43,12 +48,16 @@ import { SolarPhaseGameState } from './game/solar-phase-game-state'
 import { StartingGameState } from './game/starting-game-state'
 import { WaitingForPlayersGameState } from './game/waiting-for-players-game-state'
 import {
-	CardPlayedEvent,
+	BeforeColonyTradeEvent,
+	CardBoughtEvent,
+	ColonyBuiltEvent,
 	Player,
 	ProductionChangedEvent,
-	ProjectBought,
+	ProjectBoughtEvent,
 	TilePlacedEvent,
 } from './player'
+import { ColoniesProductionGameState } from './game/colonies-production-game-state'
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 
 export interface GameConfig {
 	bots: number
@@ -65,6 +74,7 @@ export interface GameConfig {
 	fastBots: boolean
 	fastProduction: boolean
 
+	everybodyIsAdmin: boolean
 	/** Disable players (skip their turn) when they're disconnected for specified number of seconds */
 	disablePlayersWhenDisconnectedForInSeconds?: number
 }
@@ -118,6 +128,7 @@ export class Game {
 			fastProduction: false,
 			draft: false,
 			solarPhase: false,
+			everybodyIsAdmin: false,
 			disablePlayersWhenDisconnectedForInSeconds: 30,
 			...config,
 		}
@@ -160,6 +171,7 @@ export class Game {
 			.addState(new DraftGameState(this))
 			.addState(new PreludeGameState(this))
 			.addState(new SolarPhaseGameState(this))
+			.addState(new ColoniesProductionGameState(this))
 
 		this.sm.setState(GameStateValue.WaitingForPlayers)
 	}
@@ -257,16 +269,73 @@ export class Game {
 		player.onStateChanged.on(this.updated)
 
 		// Dispatch passive events on player events
-		player.onCardPlayed.on(this.handleCardPlayed)
+		player.onCardBought.on(this.handleCardBought)
 		player.onTilePlaced.on(this.handleTilePlaced)
 		player.onProjectBought.on(this.handleProjectBought)
 		player.onProductionChanged.on(this.handlePlayerProductionChanged)
+		player.onBeforeColonyTrade.on(this.handleBeforeColonyTrade)
+		player.onColonyBuilt.on(this.handleColonyBuilt)
 
 		this.logger.log(`Player ${player.name} (${player.id}) added to the game`)
 
 		if (triggerUpdate) {
 			this.updated()
 		}
+	}
+
+	triggerPassiveEffects = <TEffectKey extends keyof CardPassiveEffect>(
+		effect: TEffectKey,
+		args: NonNullable<CardPassiveEffect[TEffectKey]> extends (
+			...args: [CardCallbackContext, ...infer TArgs]
+		) => void
+			? TArgs
+			: never,
+	) => {
+		this.state.players.forEach((player) => {
+			player.usedCards
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
+					c.passiveEffects.forEach(
+						(e) =>
+							typeof e[effect] === 'function' &&
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+							(e[effect] as Function).apply(null, [
+								{
+									card: s,
+									game: this.state,
+									player,
+								},
+								...args,
+							]),
+					)
+				})
+		})
+	}
+
+	handleColonyBuilt = (evt: ColonyBuiltEvent) => {
+		this.triggerPassiveEffects('onColonyBuilt', [evt.player.state, evt.colony])
+	}
+
+	handleBeforeColonyTrade = (evt: BeforeColonyTradeEvent) => {
+		this.state.players.forEach((player) => {
+			player.usedCards
+				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
+				.forEach(([s, c]) => {
+					c.passiveEffects.forEach(
+						(e) =>
+							e.onBeforeColonyTrade &&
+							e.onBeforeColonyTrade(
+								{
+									card: s,
+									game: this.state,
+									player,
+								},
+								evt.player.state,
+								evt.colony,
+							),
+					)
+				})
+		})
 	}
 
 	remove(player: Player) {
@@ -299,7 +368,7 @@ export class Game {
 		})
 	}
 
-	handleProjectBought = ({ player: playedBy, project }: ProjectBought) => {
+	handleProjectBought = ({ player: playedBy, project }: ProjectBoughtEvent) => {
 		this.state.players.forEach((player) => {
 			player.usedCards
 				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
@@ -321,19 +390,20 @@ export class Game {
 		})
 	}
 
-	handleCardPlayed = ({
+	handleCardBought = ({
 		player: playedBy,
 		card,
 		cardIndex: playedCardIndex,
-	}: CardPlayedEvent) => {
+		moneyCost,
+	}: CardBoughtEvent) => {
 		this.state.players.forEach((player) => {
 			player.usedCards
 				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {
 					c.passiveEffects.forEach(
 						(e) =>
-							e.onCardPlayed &&
-							e.onCardPlayed(
+							e.onCardBought &&
+							e.onCardBought(
 								{
 									card: s,
 									game: this.state,
@@ -342,6 +412,7 @@ export class Game {
 								card,
 								playedCardIndex,
 								playedBy.state,
+								moneyCost,
 							),
 					)
 				})
@@ -443,6 +514,15 @@ export class Game {
 
 			this.currentProgress[progress] = value
 		}
+
+		for (const colony of this.state.colonies) {
+			if (!colony.active) {
+				ColoniesLookupApi.get(colony.code).activationCallback?.({
+					game: this.state,
+					colony,
+				})
+			}
+		}
 	}
 
 	handleProgressChanged(progress: GameProgress) {
@@ -495,7 +575,7 @@ export class Game {
 									}
 
 									if (a.type === PlayerActionType.PickPreludes) {
-										p.performAction(pickPreludes(range(0, a.limit)))
+										p.performAction(pickPreludes(range(0, 2)))
 									}
 
 									if (a.type === PlayerActionType.DraftCard) {

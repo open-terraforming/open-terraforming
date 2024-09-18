@@ -81,11 +81,13 @@ export const StatelessCardView = ({
 		[card],
 	)
 
-	const actionSymbols = useMemo(
-		() =>
-			flatten(card.actionEffects.map((e) => e.symbols)).concat(
-				flatten(card.passiveEffects.map((e) => e.symbols)),
-			),
+	const playActionSymbols = useMemo(
+		() => flatten(card.actionEffects.map((e) => e.symbols)),
+		[card],
+	)
+
+	const passiveSymbols = useMemo(
+		() => flatten(card.passiveEffects.map((e) => e.symbols)),
 		[card],
 	)
 
@@ -165,14 +167,14 @@ export const StatelessCardView = ({
 			)}
 			<Description>
 				{played && <Played>Card already played this generation</Played>}
-				{(card.actionEffects.length > 0 ||
-					card.passiveEffects.filter((e) => e.description).length > 0) && (
-					<Action $hasSymbols={symbols.length > 0} $highlight={highlightAction}>
-						<ActionTitle $highlight={highlightAction}>
-							{card.type === CardType.Action ? 'Action' : 'Effect'}
-						</ActionTitle>
 
-						<Symbols symbols={actionSymbols} />
+				{card.actionEffects.filter(
+					(a) => a.description?.length || a.symbols.length,
+				).length > 0 && (
+					<Action $hasSymbols={symbols.length > 0} $highlight={highlightAction}>
+						<ActionTitle $highlight={highlightAction}>Action</ActionTitle>
+
+						<Symbols symbols={playActionSymbols} />
 
 						{card.actionEffects.map((e, i) => (
 							<PlayEffect
@@ -182,6 +184,14 @@ export const StatelessCardView = ({
 								evaluate={evaluate}
 							/>
 						))}
+					</Action>
+				)}
+
+				{card.passiveEffects.filter((e) => e.description).length > 0 && (
+					<Action $hasSymbols={symbols.length > 0} $highlight={highlightAction}>
+						<ActionTitle $highlight={highlightAction}>Effect</ActionTitle>
+
+						<Symbols symbols={passiveSymbols} />
 
 						{card.passiveEffects
 							.map((e) => e.description)

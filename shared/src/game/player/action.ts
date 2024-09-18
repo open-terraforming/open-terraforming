@@ -4,9 +4,10 @@ import {
 	CardCondition,
 	CardEffect,
 	CardEffectArgumentType,
+	CardPassiveEffect,
 } from '@shared/cards'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
-import { f } from '@shared/utils'
+import { f, getPlayerIndex } from '@shared/utils'
 import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
 
@@ -24,6 +25,16 @@ export abstract class PlayerBaseAction<Args = unknown> {
 
 	get game() {
 		return this.parent.game.state
+	}
+
+	private _playerIndex: number | undefined
+
+	get playerIndex() {
+		if (this._playerIndex !== undefined) {
+			return this._playerIndex
+		}
+
+		return (this._playerIndex = getPlayerIndex(this.game, this.player.id))
 	}
 
 	parent: Player
@@ -140,6 +151,17 @@ export abstract class PlayerBaseAction<Args = unknown> {
 	) {
 		effects.forEach((e, i) => {
 			e.perform(ctx, ...(playArguments[i] || []))
+		})
+
+		this.parent.filterPendingActions()
+	}
+
+	runCardPassiveEffectsOnBuy(
+		effects: CardPassiveEffect[],
+		ctx: CardCallbackContext,
+	) {
+		effects.forEach((e) => {
+			e.onPlay?.(ctx)
 		})
 
 		this.parent.filterPendingActions()

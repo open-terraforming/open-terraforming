@@ -7,7 +7,7 @@ export enum EventType {
 	CardPlayed = 1,
 	CardUsed,
 	CardsReceived,
-	ResourceChanged,
+	ResourcesChanged,
 	ProductionChanged,
 	CardResourceChanged,
 	GameProgressChanged,
@@ -19,6 +19,11 @@ export enum EventType {
 	PlayingChanged,
 	NewGeneration,
 	ProductionPhase,
+	ColonyBuilt,
+	ColonyActivated,
+	ColonyTrading,
+	ColonyTradingStepChanged,
+	PlayerTradeFleetsChange,
 }
 
 export type CardPlayed = {
@@ -40,10 +45,9 @@ type CardsReceived = {
 	amount: number
 }
 
-type ResourceChanged = {
-	type: typeof EventType.ResourceChanged
-	resource: Resource
-	amount: number
+type ResourcesChanged = {
+	type: typeof EventType.ResourcesChanged
+	resources: Record<Resource, number>
 	playerId: number
 }
 
@@ -107,17 +111,47 @@ type PlayingChanged = {
 
 type NewGeneration = {
 	type: typeof EventType.NewGeneration
+	generation: number
 }
 
 type ProductionPhase = {
 	type: typeof EventType.ProductionPhase
 }
 
+type ColonyBuilt = {
+	type: typeof EventType.ColonyBuilt
+	playerId: number
+	colony: number
+}
+
+type ColonyActivated = {
+	type: typeof EventType.ColonyActivated
+	colony: number
+}
+
+type ColonyTrading = {
+	type: typeof EventType.ColonyTrading
+	colony: number
+	playerId: number
+}
+
+type ColonyTradingStepChanged = {
+	type: typeof EventType.ColonyTradingStepChanged
+	colony: number
+	change: number
+}
+
+type PlayerTradeFleetsChange = {
+	type: typeof EventType.PlayerTradeFleetsChange
+	playerId: number
+	amount: number
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
 	| CardUsed
-	| ResourceChanged
+	| ResourcesChanged
 	| ProductionChanged
 	| CardResourceChanged
 	| GameProgressChanged
@@ -129,6 +163,11 @@ export type GameEvent =
 	| PlayingChanged
 	| NewGeneration
 	| ProductionPhase
+	| ColonyBuilt
+	| ColonyActivated
+	| ColonyTrading
+	| ColonyTradingStepChanged
+	| PlayerTradeFleetsChange
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

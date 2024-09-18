@@ -108,6 +108,12 @@ const Container = styled.button<{
 	border-width: 1px;
 	border-style: solid;
 
+	> span.tooltip-trigger {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
 	${(props) =>
 		!props.noClip &&
 		css`

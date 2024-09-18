@@ -83,6 +83,7 @@ export const gamesController = appController(
 				fastBots: request.fastBots,
 				draft,
 				solarPhase,
+				everybodyIsAdmin: globalConfig.everybodyIsAdmin,
 				disablePlayersWhenDisconnectedForInSeconds:
 					request.disablePlayersAfterDisconnectingInSeconds,
 			})

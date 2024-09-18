@@ -12,6 +12,12 @@ export const markCardAsUnplayed = effect({
 			},
 		]),
 	],
+	conditions: [
+		{
+			symbols: [],
+			evaluate: ({ player }) => player.usedCards.some((card) => card.played),
+		},
+	],
 	perform: ({ player }, cardIndex) => {
 		player.usedCards[cardIndex as number].played = false
 	},

@@ -1,7 +1,7 @@
-import { useAppStore } from '@/utils/hooks'
-import { CardsLookupApi } from '@shared/cards'
+import { useAppStore, useToggle } from '@/utils/hooks'
+import { CardsLookupApi, Resource } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
-import { PlayerState } from '@shared/index'
+import { ColonyState, PlayerState } from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
@@ -12,6 +12,9 @@ import styled, { css, keyframes } from 'styled-components'
 import { EventType, GameEvent } from '../types'
 import { CardModal } from './CardModal'
 import { useLocale } from '@/context/LocaleContext'
+import { assertNever } from '@shared/utils/assertNever'
+import { quantized } from '@shared/utils/quantized'
+import { ColoniesModal } from '../../ColoniesModal/ColoniesModal'
 
 type Props = {
 	event: GameEvent
@@ -39,9 +42,24 @@ const CardSpan = memo(({ card }: { card: string }) => {
 	)
 })
 
+const ColonySpan = ({ colony }: { colony: ColonyState }) => {
+	const locale = useLocale()
+	const [shown, toggleShow] = useToggle()
+
+	return (
+		<>
+			{shown && <ColoniesModal onClose={toggleShow} />}
+			<ColoniesSpanE onClick={toggleShow}>
+				{locale.colonies[colony.code]}
+			</ColoniesSpanE>
+		</>
+	)
+}
+
 export const EventLine = ({ event, animated, onDone }: Props) => {
 	const locale = useLocale()
 	const players = useAppStore((state) => state.game.playerMap)
+	const game = useAppStore((state) => state.game.state)
 	const doneRef = useRef(onDone)
 	doneRef.current = onDone
 
@@ -92,14 +110,16 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						}`}
 					</>
 				)
-			case EventType.ResourceChanged:
+			case EventType.ResourcesChanged:
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} />
-						<ResourceE positive={event.amount > 0}>
-							{event.amount > 0 ? ' +' : ' -'}
-							{withUnits(event.resource, Math.abs(event.amount))}
-						</ResourceE>
+						{Object.entries(event.resources).map(([resource, amount], i) => (
+							<ResourceE positive={amount > 0} key={i}>
+								{amount > 0 ? ' +' : ' -'}
+								{withUnits(resource as Resource, Math.abs(amount))}
+							</ResourceE>
+						))}
 					</>
 				)
 			case EventType.ProductionChanged:
@@ -158,11 +178,59 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						<PlayerSpan player={players[event.playerId]} />{' '}
 						{event.amount > 0 ? '+' : '-'}
 						{Math.abs(event.amount)} {event.resource}
-						{' to '}
+						{event.amount > 0 ? ' to ' : ' from '}
 						<CardSpan card={event.card} />
 					</>
 				)
+			case EventType.ColonyActivated:
+				return (
+					<>
+						<ColonySpan colony={game.colonies[event.colony]} /> activated
+					</>
+				)
+			case EventType.ColonyBuilt:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} /> built colony on{' '}
+						<ColonySpan colony={game.colonies[event.colony]} />
+					</>
+				)
+			case EventType.ColonyTrading:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} /> traded with{' '}
+						<ColonySpan colony={game.colonies[event.colony]} />
+					</>
+				)
+			case EventType.ColonyTradingStepChanged:
+				return (
+					<>
+						<ColonySpan colony={game.colonies[event.colony]} />:{' '}
+						{event.change > 0 ? '+' : ''}
+						{quantized(event.change, 'income step', 'income steps')}
+					</>
+				)
+			case EventType.PlayerTradeFleetsChange:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} />{' '}
+						{event.amount > 0 ? 'acquired extra' : 'lost'}{' '}
+						{Math.abs(event.amount)} trade fleets
+					</>
+				)
+			case EventType.NewGeneration:
+				return <PhaseSpanE>{event.generation}. generation started</PhaseSpanE>
+			case EventType.PlayingChanged:
+				return (
+					<>
+						<PlayerSpan player={game.players[event.playing]} /> is playing
+					</>
+				)
+			case EventType.ProductionPhase:
+				return <PhaseSpanE>Production phase</PhaseSpanE>
 		}
+
+		assertNever(event)
 	}, [event, players])
 
 	return <E animation={animated}>{content}</E>
@@ -196,6 +264,19 @@ const CardSpanE = styled.span`
 	}
 `
 
+const PhaseSpanE = styled.span`
+	color: #f5af7c;
+`
+
 const ResourceE = styled.span<{ positive: boolean }>`
 	color: ${(props) => (props.positive ? '#86F09B' : '#F5AF7C')};
+`
+
+const ColoniesSpanE = styled.span`
+	cursor: pointer;
+	color: #e46868;
+
+	&:hover {
+		text-decoration: underline;
+	}
 `

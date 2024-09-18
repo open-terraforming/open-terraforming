@@ -174,6 +174,7 @@ export const emptyCardState = (cardCode: string, index = -1) => ({
 	science: 0,
 	floaters: 0,
 	asteroids: 0,
+	camps: 0,
 })
 
 export const minimalCardPrice = (card: Card, player: PlayerGameState) =>

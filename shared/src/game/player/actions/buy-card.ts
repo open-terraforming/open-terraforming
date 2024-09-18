@@ -6,6 +6,7 @@ import {
 } from '@shared/cards/utils'
 import { buyCard, GameStateValue, PlayerStateValue } from '@shared/index'
 import { PlayerBaseAction } from '../action'
+import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
 
 type Args = ReturnType<typeof buyCard>['data']
 
@@ -107,6 +108,7 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 			player: this.player,
 			game: this.game,
 			card: cardState,
+			cardHandIndex: index,
 		}
 
 		this.checkCardConditions(card, ctx, args)
@@ -118,14 +120,18 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 		updatePlayerResource(this.player, 'ore', -useOre)
 
 		this.runCardEffects(card.playEffects, ctx, args)
+		this.runCardPassiveEffectsOnBuy(card.passiveEffects, ctx)
 
 		this.player.usedCards.push(cardState)
 		this.player.cards.splice(index, 1)
 
-		this.parent.onCardPlayed.emit({
+		processCardsToDiscard(this.game, this.player, index)
+
+		this.parent.onCardBought.emit({
 			card,
 			cardIndex: ctx.card.index,
 			player: this.parent,
+			moneyCost: Math.max(0, cost),
 		})
 
 		this.parent.game.checkMilestones()

@@ -1,4 +1,4 @@
-import { CardCategory } from './cards'
+import { CardCategory, CardSymbol } from './cards'
 import { CompetitionType } from './competitions'
 import { MilestoneType } from './milestones'
 import { GameModeType } from './modes/types'
@@ -29,6 +29,8 @@ export enum GameStateValue {
 	Prelude,
 	/** After production phase this phase allows the current player to increase one progress */
 	SolarPhase,
+	/** After solar phase or at the end of generation, colonies increase one step */
+	ColoniesProduction,
 }
 
 export enum PlayerStateValue {
@@ -86,6 +88,11 @@ export interface GameState {
 	prelude: boolean
 	preludeCards: string[]
 	preludeDiscarded: string[]
+
+	/** Currently active colonies */
+	colonies: ColonyState[]
+	/** Shuffled colonies in draft */
+	colonyCards: string[]
 
 	draft: boolean
 
@@ -294,6 +301,9 @@ export interface PlayerState {
 	/** Cards picked during draft */
 	draftedCards: string[]
 
+	/** List of indexes of cards in hand to be discarded after effects are evaluated - internal use */
+	cardsToDiscard?: number[]
+
 	/** List of used cards */
 	usedCards: UsedCardState[]
 
@@ -310,6 +320,15 @@ export interface PlayerState {
 
 	/** Protects plants/microbes/animals */
 	protectedHabitat: boolean
+
+	/** Number of available trade fleets */
+	tradeFleets: number
+
+	/** Change of standard colony trade cost */
+	colonyTradeResourceCostChange?: number
+
+	/** Override of cost of sponsoring a card (buying it into hand) */
+	sponsorCost?: number
 }
 
 export enum VictoryPointsSource {
@@ -351,6 +370,8 @@ export interface UsedCardState {
 	floaters: number
 	/** Asteroids */
 	asteroids: number
+	/** Number of camps on the card */
+	camps: number
 
 	/** Index of card that triggered last passive effect */
 	triggeredByCard?: number
@@ -384,4 +405,51 @@ export interface ProgressMilestoneItem {
 	type: ProgressMilestoneType
 	value: number
 	used: boolean
+}
+
+export interface ColonyState {
+	code: string
+	/** Trade income progress */
+	step: number
+	/** Ids of players at steps indicated by the array index */
+	playersAtSteps: number[]
+	/** If the colony can be colonized and has production */
+	active: boolean
+	/** Id of player that's currently trading with this colony */
+	currentlyTradingPlayer?: number
+}
+
+export interface Colony {
+	code: string
+	/** Bonus player receives when they build colony on this colony */
+	colonizeBonus: ColonyBonus[]
+	/** Income all players with colonies on this colony receive when somebody trades with the colony */
+	incomeBonus: ColonyBonus
+	/** Income player receives when they trade with the colony */
+	tradeIncome: ColonyIncome
+	/** Logic for activation - makes colony not active at the start */
+	activationCallback?: (ctx: { game: GameState; colony: ColonyState }) => void
+	/** Override default starting step (=1) */
+	startingStep?: number
+}
+
+export interface ColonyBonus {
+	description?: string
+	symbols: CardSymbol[]
+	condition?: (ctx: ColonyCallbackContext) => boolean
+	perform: (ctx: ColonyCallbackContext) => void
+}
+
+export interface ColonyIncome {
+	description?: string
+	slots: CardSymbol[]
+	symbols: CardSymbol[]
+	condition?: (ctx: ColonyCallbackContext) => boolean
+	perform: (ctx: ColonyCallbackContext) => void
+}
+
+export interface ColonyCallbackContext {
+	game: GameState
+	player: PlayerGameState
+	colony: ColonyState
 }

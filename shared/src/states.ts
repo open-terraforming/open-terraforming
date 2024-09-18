@@ -60,6 +60,8 @@ export const initialGameState = (
 		StandardProjectType.GreeneryForPlants,
 		StandardProjectType.TemperatureForHeat,
 	],
+	colonies: [],
+	colonyCards: [],
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
@@ -102,4 +104,6 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	victoryPoints: [],
 	pendingActions: [],
 	protectedHabitat: false,
+	tradeFleets: 1,
+	colonyTradeResourceCostChange: 0,
 })

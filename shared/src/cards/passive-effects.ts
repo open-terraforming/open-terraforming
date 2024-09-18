@@ -1,9 +1,10 @@
+import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { PLAYER_PRODUCTION_TO_RESOURCE } from '../constants'
 import { GridCellContent, GridCellOther, StandardProjectType } from '../game'
 import { playCardAction } from '../player-actions'
 import { tileWithArticle } from '../texts'
 import { withUnits } from '../units'
-import { adjacentCells, f, pushPendingAction, range } from '../utils'
+import { adjacentCells, drawCard, f, pushPendingAction, range } from '../utils'
 import { effectArg } from './args'
 import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
@@ -88,7 +89,7 @@ export const resourcePerCardPlayed = (
 			{ symbol: SymbolType.Colon },
 			{ resource: res, count: amount },
 		],
-		onCardPlayed: ({ player }, card, _cardIndex, playedBy) => {
+		onCardBought: ({ player }, card, _cardIndex, playedBy) => {
 			// TODO: This is probably fine, since we're using AND and it's always about EVENT cards
 			if (
 				playedBy.id === player.id &&
@@ -113,7 +114,7 @@ export const cardResourcePerCardPlayed = (
 			{ symbol: SymbolType.Colon },
 			{ cardResource: res, count: amount },
 		],
-		onCardPlayed: ({ card: cardState, player }, card, _cardIndex, playedBy) => {
+		onCardBought: ({ card: cardState, player }, card, _cardIndex, playedBy) => {
 			if (playedBy.id === player.id) {
 				const matchingTags = card.categories.filter((c) =>
 					categories.includes(c),
@@ -164,6 +165,34 @@ export const cardResourcePerAnybodyTilePlaced = (
 		},
 	})
 
+export const cardResourcePerSelfTagPlayed = (
+	tag: CardCategory | CardCategory[],
+	res: CardResource,
+	amount: number,
+) => {
+	const tags = Array.isArray(tag) ? tag : [tag]
+
+	return passiveEffect({
+		description: `When you play ${tags.map((tag) => CardCategory[tag]).join(' or ')}, place ${amount > 1 ? `${amount} of ${res}` : res} on this card`,
+		symbols: [
+			...tags.map((tag) => ({ tag })),
+			{ symbol: SymbolType.Colon },
+			{ cardResource: res, count: amount },
+		],
+		onCardBought: ({ player, card }, playedCard, _, playedBy) => {
+			if (playedBy.id !== player.id) {
+				return
+			}
+
+			const matches = playedCard.categories.filter((t) =>
+				tags.includes(t),
+			).length
+
+			card[res] += matches * amount
+		},
+	})
+}
+
 export const productionChangeAfterPlace = (
 	amount: number,
 	type: GridCellOther,
@@ -192,7 +221,7 @@ export const productionChangeAfterPlace = (
 export const cardExchangeEffect = (tag: CardCategory) =>
 	passiveEffect({
 		description: `Action is triggered when you play a ${CardCategory[tag]} tag`,
-		onCardPlayed: (
+		onCardBought: (
 			{ player, card },
 			playedCard,
 			_playedCardIndex,
@@ -215,7 +244,7 @@ export const playWhenCard = (tags: CardCategory[]) =>
 		description: `Action triggered when you play ${tags
 			.map((t) => CardCategory[t])
 			.join(' or ')} tag`,
-		onCardPlayed: (
+		onCardBought: (
 			{ player, card: cardState },
 			playedCard,
 			playedCardIndex,
@@ -289,7 +318,7 @@ export const resetProgressBonus = (amount: number) =>
 						amount,
 					)
 				: 'Ignore global requirements for the next card you play this generation.',
-		onCardPlayed: ({ player, card }, playedCard, _cardIndex, playedBy) => {
+		onCardBought: ({ player, card }, playedCard, _cardIndex, playedBy) => {
 			if (
 				playedBy.id === player.id &&
 				card.code !== playedCard.code &&
@@ -313,7 +342,7 @@ export const resetCardPriceChange = (amount: number) =>
 			`The next card you play this generation costs {0} MC less.`,
 			-amount,
 		),
-		onCardPlayed: ({ player, card }, playedCard, _cardIndex, playedBy) => {
+		onCardBought: ({ player, card }, playedCard, _cardIndex, playedBy) => {
 			if (
 				playedBy.id === player.id &&
 				card.code !== playedCard.code &&
@@ -413,12 +442,42 @@ export const resourceForProductionChange = (amount = 1) =>
 			production,
 			change,
 		) => {
-			if (player.id !== currentPlayer.id) {
+			if (player.id !== currentPlayer.id || change <= 0) {
 				return
 			}
 
 			const resource = PLAYER_PRODUCTION_TO_RESOURCE[production]
 
 			updatePlayerResource(player, resource, amount * change)
+		},
+	})
+
+export const drawCardWhenBuyingCard = (minCardCost: number) =>
+	passiveEffect({
+		description: `When playing card with basic cost of ${minCardCost}$ or more, draw a card`,
+		symbols: [
+			{ resource: 'money', count: minCardCost },
+			{ symbol: SymbolType.Colon },
+			{ symbol: SymbolType.Card },
+		],
+		onCardBought: ({ player, game }, card) => {
+			if (card.cost >= minCardCost) {
+				player.cards.push(drawCard(game))
+			}
+		},
+	})
+
+export const increaseIncomeStepBeforeTrading = (amount: number) =>
+	passiveEffect({
+		description: `Increase income step by ${amount} before trading with a colony`,
+		onBeforeColonyTrade: ({ player: currentPlayer }, playedBy, colony) => {
+			if (playedBy.id !== currentPlayer.id) {
+				return
+			}
+
+			colony.step = Math.min(
+				ColoniesLookupApi.get(colony.code).tradeIncome.slots.length - 1,
+				colony.step + amount,
+			)
 		},
 	})

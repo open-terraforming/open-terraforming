@@ -5,6 +5,7 @@ import { PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { PlayerBaseAction } from '../action'
+import { simulateCardPassiveEffectsOnStart } from '@shared/utils/simulateCardPassiveEffectsOnStart'
 
 type Args = ReturnType<typeof pickStarting>['data']
 
@@ -57,7 +58,14 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 			corp.playEffects,
 		)
 
-		const cost = cards.length * this.game.cardPrice
+		// We have to see what effects corporation has to properly evaluate if player can afford projects and preludes
+		const { player: simulatedPassive } = simulateCardPassiveEffectsOnStart(
+			corporation,
+			corp.passiveEffects,
+		)
+
+		const cost =
+			cards.length * (simulatedPassive.sponsorCost ?? this.game.cardPrice)
 
 		if (cost > simulated.money) {
 			throw new Error("You don't have money for that")
@@ -113,7 +121,8 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 		this.logger.log(f('Picked cards: {0}', pickedCards.join(', ')))
 
 		// Remove money
-		this.player.money -= picked.length * this.game.cardPrice
+		this.player.money -=
+			picked.length * (this.player.sponsorCost ?? this.game.cardPrice)
 
 		// Put cards into player hands
 		this.player.cards = [...this.player.cards, ...pickedCards]
@@ -130,20 +139,20 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 		this.player.usedCards.push(card)
 		this.player.corporation = card.code
 
-		this.runCardEffects(
-			corp.playEffects,
-			{
-				card,
-				game: this.game,
-				player: this.player,
-			},
-			[],
-		)
+		const ctx = {
+			card,
+			game: this.game,
+			player: this.player,
+		}
 
-		this.parent.onCardPlayed.emit({
+		this.runCardEffects(corp.playEffects, ctx, [])
+		this.runCardPassiveEffectsOnBuy(corp.passiveEffects, ctx)
+
+		this.parent.onCardBought.emit({
 			card: corp,
 			cardIndex: -1,
 			player: this.parent,
+			moneyCost: 0,
 		})
 	}
 }

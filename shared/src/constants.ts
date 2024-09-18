@@ -33,3 +33,6 @@ export const GAME_PROGRESS_VALUES = [
 	'oceans',
 	'venus',
 ] as const
+
+/** Resources that can be used to trade with a colony */
+export const COLONY_TRADE_RESOURCES = ['money', 'energy', 'titan'] as const

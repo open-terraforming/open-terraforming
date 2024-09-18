@@ -101,6 +101,7 @@ export const Categories = styled.div`
 	margin-left: auto;
 	display: flex;
 	align-items: center;
+	z-index: 2;
 `
 
 export const Title = styled.div`
@@ -109,6 +110,8 @@ export const Title = styled.div`
 	color: #f0f0f0;
 	text-transform: uppercase;
 	font-size: 100%;
+	margin-left: -1px;
+	margin-right: -1px;
 `
 
 export const Description = styled.div`
@@ -223,6 +226,8 @@ export const Container = styled.div<ContainerCtx>`
 
 			${Title} {
 				float: left;
+				margin-left: -1px;
+				margin-top: -1px;
 			}
 
 			${Head} {

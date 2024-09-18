@@ -6,13 +6,13 @@ import {
 	placeTile,
 	getTopCards,
 	changeProgressConditionBonus,
-	cardPriceChange,
+	deprecatedCardPriceChange,
 	getTopCardsWithTag,
 	placeOcean,
 	gameProcessChange,
 	terraformRatingChange,
 	placeCity,
-} from '../effects'
+} from '../effectsGrouped'
 import { GridCellContent } from '../../game'
 import { resetProgressBonus, resetCardPriceChange } from '../passive-effects'
 
@@ -118,7 +118,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [],
 		special: [CardSpecial.Prelude],
-		playEffects: [noDesc(cardPriceChange(-25))],
+		playEffects: [noDesc(deprecatedCardPriceChange(-25))],
 		passiveEffects: [resetCardPriceChange(-25)],
 	}),
 	card({

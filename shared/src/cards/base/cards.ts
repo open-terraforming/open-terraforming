@@ -2,7 +2,7 @@ import { GridCellContent, GridCellOther, GridCellSpecial } from '../../game'
 import { LavaCells } from '../../map'
 import { OtherPlacement, PlacementCode } from '../../placements'
 import {
-	cardCountCondition,
+	cardCategoryCountCondition,
 	cellTypeCondition,
 	gameProgressConditionMax,
 	gameProgressConditionMin,
@@ -13,7 +13,7 @@ import {
 import {
 	addResourceToCard,
 	cardExchange,
-	cardPriceChange,
+	deprecatedCardPriceChange,
 	cardResourceChange,
 	cardsForResource,
 	changeProgressConditionBonus,
@@ -52,7 +52,7 @@ import {
 	terraformRatingForTags,
 	titanPriceChange,
 	triggerCardResourceChange,
-} from '../effects'
+} from '../effectsGrouped'
 import { exchangeProduction } from '../effects/exchange-production'
 import { productionForTags } from '../effects/production-for-tags'
 import { voidEffect } from '../effects/voidEffect'
@@ -297,7 +297,7 @@ export const baseCards: Card[] = [
 		],
 		special: [CardSpecial.CorporationsEra],
 		playEffects: [
-			cardPriceChange(-1),
+			deprecatedCardPriceChange(-1),
 			placeTile({
 				type: GridCellContent.City,
 				conditions: [PlacementCode.NoOceans, PlacementCode.Isolated],
@@ -379,7 +379,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Event, CardCategory.Space, CardCategory.Earth],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 4,
-		conditions: [cardCountCondition(CardCategory.Science, 5)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 5)],
 	}),
 	card({
 		code: 'security_fleet',
@@ -593,7 +593,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Power],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
-		conditions: [cardCountCondition(CardCategory.Science, 3)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 3)],
 		playEffects: [productionChange('energy', 1), productionChange('money', 1)],
 	}),
 	card({
@@ -710,7 +710,7 @@ export const baseCards: Card[] = [
 		cost: 32,
 		categories: [CardCategory.Power, CardCategory.Space, CardCategory.Jupiter],
 		victoryPoints: 1,
-		conditions: [cardCountCondition(CardCategory.Jupiter, 1)],
+		conditions: [cardCategoryCountCondition(CardCategory.Jupiter, 1)],
 		playEffects: [productionChange('heat', 3), productionChange('energy', 3)],
 	}),
 	card({
@@ -846,7 +846,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Earth],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 2,
-		playEffects: [cardPriceChange(-2)],
+		playEffects: [deprecatedCardPriceChange(-2)],
 	}),
 	card({
 		code: 'advanced_alloys',
@@ -943,7 +943,7 @@ export const baseCards: Card[] = [
 		cost: 13,
 		categories: [CardCategory.Power, CardCategory.Science],
 		special: [CardSpecial.CorporationsEra],
-		conditions: [cardCountCondition(CardCategory.Science, 4)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 4)],
 		playEffects: [productionChange('energy', 4), spaceCardPriceChange(-2)],
 	}),
 	card({
@@ -1057,7 +1057,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Science],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 2,
-		conditions: [cardCountCondition(CardCategory.Science, 3)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 3)],
 		playEffects: [productionChange('money', 2)],
 	}),
 	card({
@@ -1083,7 +1083,7 @@ export const baseCards: Card[] = [
 		cost: 8,
 		categories: [CardCategory.Power, CardCategory.Science],
 		special: [CardSpecial.CorporationsEra],
-		conditions: [cardCountCondition(CardCategory.Science, 5)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 5)],
 		playEffects: [spaceCardPriceChange(-2), productionChange('energy', 6)],
 	}),
 	card({
@@ -1497,7 +1497,7 @@ export const baseCards: Card[] = [
 			CardCategory.Power,
 			CardCategory.Science,
 		],
-		conditions: [cardCountCondition(CardCategory.Power, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Power, 2)],
 		playEffects: [productionChange('energy', 3)],
 	}),
 	card({
@@ -1637,7 +1637,7 @@ export const baseCards: Card[] = [
 		cost: 18,
 		categories: [CardCategory.Building, CardCategory.Power],
 		victoryPoints: 1,
-		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
 		playEffects: [productionChange('energy', 3)],
 	}),
 	card({
@@ -1687,8 +1687,8 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Science],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 3,
-		conditions: [cardCountCondition(CardCategory.Science, 7)],
-		playEffects: [cardPriceChange(-2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 7)],
+		playEffects: [deprecatedCardPriceChange(-2)],
 	}),
 	card({
 		code: 'investment_loan',
@@ -2129,7 +2129,7 @@ export const baseCards: Card[] = [
 		type: CardType.Building,
 		cost: 15,
 		categories: [CardCategory.Plant],
-		conditions: [cardCountCondition(CardCategory.Science, 2)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 2)],
 		playEffects: [placeTile({ type: GridCellContent.Forest })],
 	}),
 	card({
@@ -2147,7 +2147,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Event],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: -1,
-		playEffects: [noDesc(cardPriceChange(-8))],
+		playEffects: [noDesc(deprecatedCardPriceChange(-8))],
 		passiveEffects: [resetCardPriceChange(-8)],
 	}),
 	card({
@@ -2280,7 +2280,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Building, CardCategory.Science],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 1,
-		conditions: [cardCountCondition(CardCategory.Science, 3)],
+		conditions: [cardCategoryCountCondition(CardCategory.Science, 3)],
 		playEffects: [productionChange('energy', -1)],
 		actionEffects: [getTopCards(2)],
 	}),

@@ -26,6 +26,7 @@ type Props = {
 	cards: string[]
 	onSelect: (cards: number[]) => void
 
+	overrideCardPrice?: number
 	selected?: number[]
 	moneyOverride?: number
 	loading?: boolean
@@ -48,6 +49,7 @@ export const CardPicker = ({
 	onClose,
 	loading,
 	moneyOverride,
+	overrideCardPrice,
 }: Props) => {
 	const player = useAppStore((state) => state.game.player)
 	const game = useAppStore((state) => state.game.state)
@@ -60,7 +62,11 @@ export const CardPicker = ({
 
 	const [selected, setSelected] = useState(preSelected)
 
-	const price = isFree ? 0 : selected.length * game.cardPrice
+	const price = isFree
+		? 0
+		: selected.length *
+			(overrideCardPrice ?? player.sponsorCost ?? game.cardPrice)
+
 	const canAfford = state && price <= (moneyOverride ?? state.money)
 
 	const handleConfirm = () => {

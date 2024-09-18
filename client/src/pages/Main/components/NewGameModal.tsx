@@ -34,6 +34,11 @@ const EXPANSIONS_OPTIONS = [
 		description:
 			'Adds a new global parameter to increase: Venus scale. It also adds new cards and corporations.',
 	},
+	{
+		value: ExpansionType.Colonies,
+		label: 'Colonies',
+		description: 'Adds Colonies which can be used to boost your economy.',
+	},
 ]
 
 export const NewGameModal = ({ onClose }: Props) => {
@@ -64,6 +69,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [expansions, setExpansions] = useState([
 		ExpansionType.Prelude,
 		ExpansionType.Venus,
+		ExpansionType.Colonies,
 	])
 
 	const [loading, setLoading] = useState(false)

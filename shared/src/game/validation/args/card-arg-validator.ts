@@ -4,7 +4,9 @@ import { ValidatorContext } from './types'
 export const cardArgValidator = ({ a, ctx, value }: ValidatorContext) => {
 	const selected = a.fromHand
 		? emptyCardState(ctx.player.cards[value as number])
-		: ctx.player.usedCards[value as number]
+		: a.allowSelfCard && value === -1
+			? ctx.card
+			: ctx.player.usedCards[value as number]
 
 	const errors = a.cardConditions.filter(
 		(c) =>

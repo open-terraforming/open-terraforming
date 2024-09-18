@@ -11,7 +11,7 @@ import {
 	productionChange,
 	resourceChange,
 	titanPriceChange,
-} from '../effects'
+} from '../effectsGrouped'
 import { asFirstAction, passiveEffect } from '../passive-effects'
 import { Card, CardCategory, CardSpecial, CardType, SymbolType } from '../types'
 import {
@@ -63,7 +63,7 @@ export const baseCorporations = [
 						withUnits('money', 20),
 						withUnits('money', 4),
 					),
-					onCardPlayed: (
+					onCardBought: (
 						{ player },
 						playedCard,
 						_playedCardIndex,
@@ -149,7 +149,7 @@ export const baseCorporations = [
 						'When you play an Event card, you receive {0}',
 						withUnits('money', 2),
 					),
-					onCardPlayed: (
+					onCardBought: (
 						{ player },
 						playedCard,
 						_playedCardIndex,
@@ -300,7 +300,7 @@ export const baseCorporations = [
 						'When any card with {0} tag is played, your money production will increase by 1',
 						CardCategory[CardCategory.Jupiter],
 					),
-					onCardPlayed: ({ player }, playedCard) => {
+					onCardBought: ({ player }, playedCard) => {
 						if (playedCard.categories.includes(CardCategory.Jupiter)) {
 							updatePlayerProduction(player, 'money', 1)
 						}

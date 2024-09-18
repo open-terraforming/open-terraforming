@@ -1,6 +1,11 @@
 import { useLocale } from '@/context/LocaleContext'
 import { StatelessCardView } from '@/pages/Game/pages/Table/components/CardView/StatelessCardView'
-import { CardCategory, CardsLookupApi, CardSpecial } from '@shared/cards'
+import {
+	CardCategory,
+	CardsLookupApi,
+	CardSpecial,
+	CardType,
+} from '@shared/cards'
 import { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { useDebouncedValue } from '../../utils/useDebouncedValue'
@@ -9,6 +14,7 @@ import { Modal } from '../Modal/Modal'
 import { CardsSpecialFilter } from './components/CardsSpecialFilter'
 import { CardsTagsFilter } from './components/CardsTagsFilter'
 import { media } from '@/styles/media'
+import { CardsTypeFilter } from './components/CardsTypeFilter'
 
 type Props = {
 	onClose: () => void
@@ -19,6 +25,7 @@ export const CardsViewer = ({ onClose }: Props) => {
 	const [search, setSearch] = useState('')
 	const [tags, setTags] = useState<CardCategory[]>([])
 	const [specials, setSpecials] = useState<CardSpecial[]>([])
+	const [types, setTypes] = useState<CardType[]>([])
 
 	const debouncedSearch = useDebouncedValue(search, 100)
 
@@ -26,33 +33,61 @@ export const CardsViewer = ({ onClose }: Props) => {
 
 	const filteredCards = useMemo(
 		() =>
-			allCards.filter((card) => {
-				if (
-					debouncedSearch.length > 0 &&
-					!locale.cards[card.code]
-						.toLowerCase()
-						.includes(debouncedSearch.toLowerCase())
-				) {
-					return false
-				}
+			allCards
+				.filter((card) => {
+					if (
+						debouncedSearch.length > 0 &&
+						!locale.cards[card.code]
+							.toLowerCase()
+							.includes(debouncedSearch.toLowerCase())
+					) {
+						return false
+					}
 
-				if (
-					tags.length > 0 &&
-					!card.categories.some((cat) => tags.includes(cat))
-				) {
-					return false
-				}
+					if (
+						tags.length > 0 &&
+						!card.categories.some((cat) => tags.includes(cat))
+					) {
+						return false
+					}
 
-				if (
-					specials.length > 0 &&
-					!card.special.some((s) => specials.includes(s))
-				) {
-					return false
-				}
+					if (
+						specials.length > 0 &&
+						!card.special.some((s) => specials.includes(s))
+					) {
+						return false
+					}
 
-				return true
-			}),
-		[allCards, debouncedSearch, tags, specials],
+					if (types.length > 0 && !types.includes(card.type)) {
+						return false
+					}
+
+					return true
+				})
+				.sort((a, b) => {
+					const typeToScore = (type: CardType) => {
+						switch (type) {
+							case CardType.Corporation:
+								return 0
+							case CardType.Prelude:
+								return 1
+							default:
+								return 2
+						}
+					}
+
+					const aTypeScore = typeToScore(a.type)
+					const bTypeScore = typeToScore(b.type)
+
+					const diff = bTypeScore - aTypeScore
+
+					if (diff !== 0) {
+						return diff
+					}
+
+					return locale.cards[a.code].localeCompare(locale.cards[b.code])
+				}),
+		[allCards, debouncedSearch, tags, specials, types],
 	)
 
 	return (
@@ -70,6 +105,8 @@ export const CardsViewer = ({ onClose }: Props) => {
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 					/>
+
+					<CardsTypeFilter types={types} setTypes={setTypes} />
 				</div>
 
 				<div>

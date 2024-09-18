@@ -5,6 +5,7 @@ export enum ExpansionType {
 	Base = 1,
 	Prelude,
 	Venus,
+	Colonies,
 }
 
 export interface Expansion {

@@ -16,6 +16,8 @@ import { adjTilesList, allCells, shuffle, sortBy, tiles } from '@shared/utils'
 import { getPossibleArgs } from './args/get-possible-args'
 import { placeTileScore } from './place-tile-score'
 import { deepCopy } from '@shared/utils/collections'
+import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
+import { getPlayerUsedFleets } from '@shared/expansions/colonies/utils/getPlayerUsedFleets'
 
 export const pickBest = <T>(values: T[], scoring: (v: T) => number) => {
 	if (values.length === 0) {
@@ -61,6 +63,20 @@ const computePendingActionScore = (
 				allCells(g).filter((c) => canPlace(g, p, c, a.state)),
 				(c) => placeTileScore({ player: p, game: g }, a.state, c),
 			)
+		case PlayerActionType.BuildColony:
+			return a.data.allowMoreColoniesPerColony ? 1.5 : 1
+		case PlayerActionType.AddCardResource:
+			return a.data.amount * 0.5
+		case PlayerActionType.ChangeColonyStep:
+			return 1
+		case PlayerActionType.TradeWithColony:
+			return 2
+		case PlayerActionType.SponsorCompetition:
+			return 0.2
+		case PlayerActionType.PlayCard:
+			return 1
+		case PlayerActionType.DraftCard:
+			return a.limit * 0.5
 		default:
 			return 0
 	}
@@ -117,7 +133,9 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 		p.pendingActions.reduce(
 			(acc, a) => acc + computePendingActionScore(g, p, a),
 			0,
-		)
+		) +
+		(p.tradeFleets - getPlayerUsedFleets(g, p).length) +
+		getPlayerColoniesCount({ game: g, player: p })
 	)
 }
 
