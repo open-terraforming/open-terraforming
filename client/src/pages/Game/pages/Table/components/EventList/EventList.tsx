@@ -6,14 +6,13 @@ import { PlayerStateValue } from '@shared/index'
 import { useEffect } from 'react'
 import styled from 'styled-components'
 import { CheatsModal } from '../CheatsModal/CheatsModal'
-import { CardsPlayedDisplay } from './components/CardsPlayedDisplay'
+import { InYourFaceEvents } from '../InYourFaceEvents/InYourFaceEvents'
 import { EventsModal } from './components/EventsModal'
 import { EventSounds } from './components/EventSounds'
 import { IngameMenuModal } from './components/IngameMenuModal'
 import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
 import { TimeDisplay } from './components/TimeDisplay'
-import { InYourFaceEvents } from '../InYourFaceEvents/InYourFaceEvents'
 
 export const EventList = () => {
 	const player = useAppStore((state) => state.game.player)
@@ -53,7 +52,6 @@ export const EventList = () => {
 	return (
 		<Centered>
 			<EventSounds events={events} />
-			<CardsPlayedDisplay events={events} />
 			<LastEventsDisplay events={events} />
 			<PopEventDisplay events={events} />
 			<InYourFaceEvents />

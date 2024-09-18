@@ -57,21 +57,22 @@ export const InYourFaceEvents = () => {
 			{current && (
 				<DisplayContainer>
 					<Inner>
-						{events.slice(1, 5).map((e, i) => (
+						{/*events.slice(1, 5).map((e, i) => (
 							<FakeContainer
 								key={i}
 								style={{
 									position: 'absolute',
-									left: -(10 + i * 10),
-									opacity: 0.6 - i * 0.1,
-									// transform: `scale(${1 - (i + 1) * 0.05})`,
-									transformOrigin: 'left',
+									opacity: 0.8,
+									transform: `translate(-50%, -50%) scale(${1 - (i + 1) * 0.1})`,
+									left: '50%',
+									top: '50%',
 									zIndex: -1,
+									filter: `saturate(50%) blur(1px)`,
 								}}
 							>
 								{renderEvent(e)}
 							</FakeContainer>
-						))}
+						))*/}
 
 						<div>{renderEvent(current)}</div>
 
@@ -105,9 +106,11 @@ const DisplayContainer = styled.div`
 	background-color: rgba(0, 0, 0, 0.5);
 `
 
+/*
 const FakeContainer = styled.div`
 	background: ${({ theme }) => theme.colors.modalBackground};
 	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
 	position: relative;
 `
+*/
