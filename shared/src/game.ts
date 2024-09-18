@@ -125,7 +125,13 @@ export interface GameState {
 	competitionRewards: number[]
 
 	/** Available standard projects */
-	standardProjects: StandardProjectType[]
+	standardProjects: StandardProjectState[]
+}
+
+export interface StandardProjectState {
+	type: StandardProjectType
+	/** Tracks which players already used the project, used mainly for events */
+	usedByPlayerIds: number[]
 }
 
 export interface MilestoneState {
@@ -375,6 +381,9 @@ export interface UsedCardState {
 
 	/** Index of card that triggered last passive effect */
 	triggeredByCard?: number
+
+	/** Number of times the card was triggered */
+	triggered?: number
 
 	/** Extra data used by card effects to save something */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

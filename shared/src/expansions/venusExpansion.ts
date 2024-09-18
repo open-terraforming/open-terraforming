@@ -1,3 +1,4 @@
+import { initialStandardProjectState } from '@shared/states'
 import { CardsLookupApi, CardSpecial } from '../cards'
 import { CompetitionType } from '../competitions'
 import { venusExtraCells } from '../extraCells/venusExtraCells'
@@ -16,7 +17,10 @@ export const venusExpansion = expansion({
 		game.map.venus = 15
 		game.map.milestones.push(MilestoneType.Hoverlord)
 		game.map.competitions.push(CompetitionType.Venuphile)
-		game.standardProjects.push(StandardProjectType.AirScrapping)
+
+		game.standardProjects.push(
+			initialStandardProjectState(StandardProjectType.AirScrapping),
+		)
 	},
 
 	getCards: () =>

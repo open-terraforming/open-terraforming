@@ -1,6 +1,10 @@
 import { CardResource, GameProgress, Resource } from '@shared/cards'
 import { CompetitionType } from '@shared/competitions'
-import { GridCellContent, GridCellOther } from '@shared/index'
+import {
+	GridCellContent,
+	GridCellOther,
+	StandardProjectType,
+} from '@shared/index'
 import { MilestoneType } from '@shared/milestones'
 
 export enum EventType {
@@ -24,12 +28,14 @@ export enum EventType {
 	ColonyTrading,
 	ColonyTradingStepChanged,
 	PlayerTradeFleetsChange,
+	StandardProjectBought,
 }
 
 export type CardPlayed = {
 	type: typeof EventType.CardPlayed
 	playerId: number
 	card: string
+	changes?: GameEvent[]
 }
 
 export type CardUsed = {
@@ -37,28 +43,29 @@ export type CardUsed = {
 	playerId: number
 	card: string
 	index: number
+	changes?: GameEvent[]
 }
 
-type CardsReceived = {
+export type CardsReceived = {
 	type: typeof EventType.CardsReceived
 	playerId: number
 	amount: number
 }
 
-type ResourcesChanged = {
+export type ResourcesChanged = {
 	type: typeof EventType.ResourcesChanged
 	resources: Record<Resource, number>
 	playerId: number
 }
 
-type ProductionChanged = {
+export type ProductionChanged = {
 	type: typeof EventType.ProductionChanged
 	playerId: number
 	resource: Resource
 	amount: number
 }
 
-type CardResourceChanged = {
+export type CardResourceChanged = {
 	type: typeof EventType.CardResourceChanged
 	playerId: number
 	card: string
@@ -67,26 +74,26 @@ type CardResourceChanged = {
 	amount: number
 }
 
-type GameProgressChanged = {
+export type GameProgressChanged = {
 	type: typeof EventType.GameProgressChanged
 	progress: GameProgress
 	amount: number
 }
 
-type TilePlaced = {
+export type TilePlaced = {
 	type: typeof EventType.TilePlaced
 	tile: GridCellContent
 	other?: GridCellOther
 	playerId: number
 }
 
-type CorporationPicked = {
+export type CorporationPicked = {
 	type: typeof EventType.CorporationPicked
 	playerId: number
 	corporation: string
 }
 
-type RatingChanged = {
+export type RatingChanged = {
 	type: typeof EventType.RatingChanged
 	playerId: number
 	amount: number
@@ -104,47 +111,53 @@ export type MilestoneBought = {
 	playerId: number
 }
 
-type PlayingChanged = {
+export type PlayingChanged = {
 	type: typeof EventType.PlayingChanged
 	playing: number
 }
 
-type NewGeneration = {
+export type NewGeneration = {
 	type: typeof EventType.NewGeneration
 	generation: number
 }
 
-type ProductionPhase = {
+export type ProductionPhase = {
 	type: typeof EventType.ProductionPhase
 }
 
-type ColonyBuilt = {
+export type ColonyBuilt = {
 	type: typeof EventType.ColonyBuilt
 	playerId: number
 	colony: number
 }
 
-type ColonyActivated = {
+export type ColonyActivated = {
 	type: typeof EventType.ColonyActivated
 	colony: number
 }
 
-type ColonyTrading = {
+export type ColonyTrading = {
 	type: typeof EventType.ColonyTrading
 	colony: number
 	playerId: number
 }
 
-type ColonyTradingStepChanged = {
+export type ColonyTradingStepChanged = {
 	type: typeof EventType.ColonyTradingStepChanged
 	colony: number
 	change: number
 }
 
-type PlayerTradeFleetsChange = {
+export type PlayerTradeFleetsChange = {
 	type: typeof EventType.PlayerTradeFleetsChange
 	playerId: number
 	amount: number
+}
+
+export type StandardProjectBought = {
+	type: typeof EventType.StandardProjectBought
+	playerId: number
+	project: StandardProjectType
 }
 
 export type GameEvent =
@@ -168,6 +181,7 @@ export type GameEvent =
 	| ColonyTrading
 	| ColonyTradingStepChanged
 	| PlayerTradeFleetsChange
+	| StandardProjectBought
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

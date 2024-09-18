@@ -184,7 +184,7 @@ type ContainerCtx = {
 export const Container = styled.div<ContainerCtx>`
 	border: 0.2rem solid
 		${(props) =>
-			darken(props.$faded ? 0.2 : 0, props.theme.colors.cards[props.type])};
+			darken(props.$faded ? 0.3 : 0, props.theme.colors.cards[props.type])};
 	background: ${({ theme }) => rgba(theme.colors.background, 1)};
 	width: 240px;
 	flex-shrink: 0;
@@ -206,8 +206,8 @@ export const Container = styled.div<ContainerCtx>`
 	${(props) =>
 		props.$faded &&
 		css`
-			${Categories}, ${Image}, ${Cost} {
-				opacity: 0.5;
+			${Categories}, ${Image}, ${Cost}, ${Title} {
+				opacity: 0.2;
 			}
 		`}
 

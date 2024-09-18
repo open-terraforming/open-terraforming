@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { EventType, GameEvent } from '../EventList/types'
 import { CardPlayedEvent } from './components/CardPlayedEvent'
 import { CardUsedEvent } from './components/CardUsedEvent'
+import { NewGenerationEvent } from './components/NewGenerationEvent'
 
 const PROCESSABLE_EVENTS = [EventType.CardPlayed, EventType.CardUsed]
 
@@ -32,6 +33,8 @@ export const InYourFaceEvents = () => {
 				return <CardPlayedEvent event={event} />
 			case EventType.CardUsed:
 				return <CardUsedEvent event={event} />
+			case EventType.NewGeneration:
+				return <NewGenerationEvent event={event} />
 			default:
 				return null
 		}
@@ -55,6 +58,7 @@ export const InYourFaceEvents = () => {
 									opacity: 0.6 - i * 0.1,
 									transform: `scale(${1 - (i + 1) * 0.05})`,
 									transformOrigin: 'left',
+									zIndex: -1,
 								}}
 							>
 								{renderEvent(e)}
@@ -87,7 +91,8 @@ const DisplayContainer = styled.div`
 `
 
 const Inner = styled.div`
-	background-color: rgba(0, 0, 0, 0.5);
+	background: ${({ theme }) => theme.colors.modalBackground};
+	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
 	position: relative;
 `

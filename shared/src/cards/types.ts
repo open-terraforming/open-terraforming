@@ -275,6 +275,7 @@ export enum SymbolType {
 	TradeFleet,
 	SlashSmall,
 	BigPlus,
+	Player,
 }
 
 export interface CardSymbol {
@@ -290,4 +291,6 @@ export interface CardSymbol {
 	text?: string
 	forceSign?: boolean
 	forceCount?: boolean
+	color?: string
+	title?: string
 }

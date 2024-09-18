@@ -184,7 +184,7 @@ const S = styled.div<{
 	${(props) =>
 		!props.noSpacing &&
 		css`
-			padding: 0.3rem 0.3rem;
+			padding: 0.3em 0.3em;
 		`}
 
 	${(props) =>
@@ -197,13 +197,13 @@ const S = styled.div<{
 `
 
 const XSymbol = styled.div`
-	padding-left: 0.3rem;
-	margin-right: -0.25rem;
+	padding-left: 0.3em;
+	margin-right: -0.25em;
 `
 
 const Count = styled.div`
 	font-weight: bold;
-	margin-right: 0.2rem;
+	margin-right: 0.2em;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -211,9 +211,9 @@ const Count = styled.div`
 
 const ResourceContainer = styled.div`
 	background-color: #fff;
-	border-radius: 0.1rem;
-	width: 1.1rem;
-	height: 1.1rem;
+	border-radius: 0.1em;
+	width: 1.1em;
+	height: 1.1em;
 	display: flex;
 	justify-content: center;
 	align-items: center;

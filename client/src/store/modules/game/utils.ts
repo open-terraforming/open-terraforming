@@ -18,6 +18,17 @@ const resources: Resource[] = [
 
 const progress: GameProgress[] = ['oxygen', 'temperature', 'venus']
 
+const EVENTS_ATE_BY_CARD_CHANGES = [
+	EventType.CardsReceived,
+	EventType.ResourcesChanged,
+	EventType.ProductionChanged,
+	EventType.CardResourceChanged,
+	EventType.GameProgressChanged,
+	EventType.RatingChanged,
+	EventType.ColonyActivated,
+	EventType.PlayerTradeFleetsChange,
+]
+
 export const getEvents = (lastGame: GameState, game: GameState) => {
 	const diff = objDiff(lastGame, game) as GameState
 	const newEvents = [] as GameEvent[]
@@ -36,6 +47,69 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 					})
 				}
 			})
+		})
+	}
+
+	if (diff.colonies) {
+		Object.entries(diff.colonies).forEach(([colonyIndex, colony]) => {
+			if (!lastGame.colonies[+colonyIndex]) {
+				return
+			}
+
+			if (colony.playersAtSteps) {
+				const players = Object.entries(colony.playersAtSteps)
+
+				for (const [, playerId] of players) {
+					newEvents.push({
+						type: EventType.ColonyBuilt,
+						playerId,
+						colony: +colonyIndex,
+					})
+				}
+			}
+
+			if (colony.active) {
+				newEvents.push({
+					type: EventType.ColonyActivated,
+					colony: +colonyIndex,
+				})
+			}
+
+			if (typeof colony.currentlyTradingPlayer === 'number') {
+				newEvents.push({
+					type: EventType.ColonyTrading,
+					playerId: colony.currentlyTradingPlayer,
+					colony: +colonyIndex,
+				})
+			}
+
+			if (typeof colony.step === 'number') {
+				newEvents.push({
+					type: EventType.ColonyTradingStepChanged,
+					colony: +colonyIndex,
+					change: colony.step - lastGame.colonies[+colonyIndex].step,
+				})
+			}
+		})
+	}
+
+	if (diff.standardProjects) {
+		Object.entries(diff.standardProjects).forEach(([index, project]) => {
+			const oldProject = lastGame.standardProjects[+index]
+
+			if (!oldProject) {
+				return
+			}
+
+			if (project.usedByPlayerIds) {
+				Object.values(project.usedByPlayerIds).forEach((playerId) => {
+					newEvents.push({
+						type: EventType.StandardProjectBought,
+						playerId,
+						project: oldProject.type,
+					})
+				})
+			}
 		})
 	}
 
@@ -239,47 +313,20 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 		})
 	}
 
-	if (diff.colonies) {
-		Object.entries(diff.colonies).forEach(([colonyIndex, colony]) => {
-			if (!lastGame.colonies[+colonyIndex]) {
-				return
-			}
+	const cardPlayedEvent = newEvents.find((e) => e.type === EventType.CardPlayed)
 
-			if (colony.playersAtSteps) {
-				const players = Object.entries(colony.playersAtSteps)
+	if (cardPlayedEvent) {
+		cardPlayedEvent.changes = newEvents.filter((e) =>
+			EVENTS_ATE_BY_CARD_CHANGES.includes(e.type),
+		)
+	}
 
-				for (const [, playerId] of players) {
-					newEvents.push({
-						type: EventType.ColonyBuilt,
-						playerId,
-						colony: +colonyIndex,
-					})
-				}
-			}
+	const cardUsedEvent = newEvents.find((e) => e.type === EventType.CardUsed)
 
-			if (colony.active) {
-				newEvents.push({
-					type: EventType.ColonyActivated,
-					colony: +colonyIndex,
-				})
-			}
-
-			if (typeof colony.currentlyTradingPlayer === 'number') {
-				newEvents.push({
-					type: EventType.ColonyTrading,
-					playerId: colony.currentlyTradingPlayer,
-					colony: +colonyIndex,
-				})
-			}
-
-			if (typeof colony.step === 'number') {
-				newEvents.push({
-					type: EventType.ColonyTradingStepChanged,
-					colony: +colonyIndex,
-					change: colony.step - lastGame.colonies[+colonyIndex].step,
-				})
-			}
-		})
+	if (cardUsedEvent) {
+		cardUsedEvent.changes = newEvents.filter((e) =>
+			EVENTS_ATE_BY_CARD_CHANGES.includes(e.type),
+		)
 	}
 
 	return newEvents

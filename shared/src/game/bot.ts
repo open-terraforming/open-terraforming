@@ -512,7 +512,7 @@ export class Bot extends Player {
 					}
 
 					this.game.state.standardProjects
-						.map((p) => Projects[p])
+						.map((p) => Projects[p.type])
 						.forEach((p) => {
 							if (
 								p.conditions.every((c) =>

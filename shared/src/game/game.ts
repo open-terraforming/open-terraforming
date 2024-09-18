@@ -11,6 +11,7 @@ import {
 	GameStateValue,
 	PlayerStateValue,
 	ProgressMilestoneType,
+	StandardProjectType,
 } from '@shared/game'
 import {
 	draftCard,
@@ -28,7 +29,7 @@ import { GameModes } from '@shared/modes'
 import { GameModeType } from '@shared/modes/types'
 import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
-import { initialGameState } from '@shared/states'
+import { initialGameState, initialStandardProjectState } from '@shared/states'
 import { f, isMarsTerraformed, range, shuffle } from '@shared/utils'
 import { deepExtend } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
@@ -214,6 +215,14 @@ export class Game {
 	}
 
 	load = (state: GameState, config: GameConfig) => {
+		// Backwards compatibility with old format that didn't have project state
+		if (typeof state.standardProjects[0] === 'number') {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			state.standardProjects = (state as any).standardProjects.map(
+				(p: StandardProjectType) => initialStandardProjectState(p),
+			)
+		}
+
 		this.config = config
 
 		this.state = state

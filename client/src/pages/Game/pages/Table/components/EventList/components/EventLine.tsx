@@ -1,7 +1,7 @@
 import { useAppStore, useToggle } from '@/utils/hooks'
 import { CardsLookupApi, Resource } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
-import { ColonyState, PlayerState } from '@shared/index'
+import { ColonyState, PlayerState, StandardProjectType } from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
@@ -177,7 +177,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					<>
 						<PlayerSpan player={players[event.playerId]} />{' '}
 						{event.amount > 0 ? '+' : '-'}
-						{Math.abs(event.amount)} {event.resource}
+						{withUnits(event.resource, Math.abs(event.amount))}
 						{event.amount > 0 ? ' to ' : ' from '}
 						<CardSpan card={event.card} />
 					</>
@@ -228,6 +228,13 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				)
 			case EventType.ProductionPhase:
 				return <PhaseSpanE>Production phase</PhaseSpanE>
+			case EventType.StandardProjectBought:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} /> bought{' '}
+						{StandardProjectType[event.project]}
+					</>
+				)
 		}
 
 		assertNever(event)

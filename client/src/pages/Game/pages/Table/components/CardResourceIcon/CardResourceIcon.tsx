@@ -51,8 +51,8 @@ export const CardResourceIcon = ({ res }: Props) => {
 }
 
 const E = styled.div`
-	width: 1.25rem;
-	height: 1.25rem;
+	width: 1.25em;
+	height: 1.25em;
 	display: flex;
 	justify-content: center;
 	align-items: center;
