@@ -32,6 +32,15 @@ export enum EventType {
 	PlayerTradeFleetsChange,
 	StandardProjectBought,
 	TileAcquired,
+	StartingSetup,
+}
+
+export type StartingSetup = {
+	type: typeof EventType.StartingSetup
+	playerId: number
+	corporation: string
+	preludes: string[]
+	changes: GameEvent[]
 }
 
 export type CardPlayed = {
@@ -198,6 +207,7 @@ export type GameEvent =
 	| PlayerTradeFleetsChange
 	| StandardProjectBought
 	| TileAcquired
+	| StartingSetup
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

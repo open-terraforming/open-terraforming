@@ -252,6 +252,8 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						{tileToStr(event.tile)}
 					</>
 				)
+			case EventType.StartingSetup:
+				return <></>
 		}
 
 		assertNever(event)

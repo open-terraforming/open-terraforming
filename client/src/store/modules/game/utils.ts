@@ -131,6 +131,8 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 	}
 
 	if (diff.players) {
+		const isInitialSetup = game.state === GameStateValue.Starting
+
 		Object.entries(diff.players).forEach(([playerIndex, changes]) => {
 			const player = lastGame.players[parseInt(playerIndex)]
 			const newPlayer = game.players[parseInt(playerIndex)]
@@ -139,6 +141,8 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 			if (!player) {
 				return
 			}
+
+			const playerEvents = [] as GameEvent[]
 
 			const gameChanges = changes
 
@@ -157,9 +161,10 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 							if (!oldCard) {
 								if (
 									CardsLookupApi.get(cardChanges.code).type !==
-									CardType.Corporation
+										CardType.Corporation &&
+									CardsLookupApi.get(cardChanges.code).type !== CardType.Prelude
 								) {
-									newEvents.push({
+									playerEvents.push({
 										type: EventType.CardPlayed,
 										playerId: player.id,
 										card: cardChanges.code,
@@ -173,7 +178,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 									cardChanges.played === true &&
 									card.type === CardType.Action
 								) {
-									newEvents.push({
+									playerEvents.push({
 										type: EventType.CardUsed,
 										playerId: player.id,
 										card: oldCard.code,
@@ -201,7 +206,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 								const card = CardsLookupApi.get(oldCard.code)
 
 								if (card.resource && cardChanges[card.resource] !== undefined) {
-									newEvents.push({
+									playerEvents.push({
 										type: EventType.CardResourceChanged,
 										playerId: player.id,
 										card: oldCard.code,
@@ -216,7 +221,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 				}
 
 				if (gameChanges.terraformRating) {
-					newEvents.push({
+					playerEvents.push({
 						type: EventType.RatingChanged,
 						playerId: player.id,
 						amount: gameChanges.terraformRating - player.terraformRating,
@@ -229,7 +234,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 					.filter((res) => res[1] !== 0)
 
 				if (resourceChanges.length > 0) {
-					newEvents.push({
+					playerEvents.push({
 						type: EventType.ResourcesChanged,
 						playerId: player.id,
 						resources: Object.fromEntries(resourceChanges),
@@ -240,7 +245,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 					const prod = resourceProduction[res]
 
 					if (gameChanges[prod] !== undefined) {
-						newEvents.push({
+						playerEvents.push({
 							type: EventType.ProductionChanged,
 							playerId: player.id,
 							resource: res,
@@ -250,7 +255,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 				})
 
 				if (gameChanges.corporation) {
-					newEvents.push({
+					playerEvents.push({
 						type: EventType.CorporationPicked,
 						playerId: player.id,
 						corporation: gameChanges.corporation,
@@ -263,7 +268,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 					).length
 
 					if (diff > 0) {
-						newEvents.push({
+						playerEvents.push({
 							type: EventType.CardsReceived,
 							playerId: player.id,
 							amount: diff,
@@ -275,7 +280,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 					const diff = newPlayer.tradeFleets - player.tradeFleets
 
 					if (diff > 0) {
-						newEvents.push({
+						playerEvents.push({
 							type: EventType.PlayerTradeFleetsChange,
 							playerId: player.id,
 							amount: diff,
@@ -284,8 +289,6 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 				}
 
 				if (gameChanges.pendingActions) {
-					console.log(gameChanges.pendingActions)
-
 					for (const [, action] of Object.entries(gameChanges.pendingActions)) {
 						if (!action) {
 							continue
@@ -293,7 +296,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 
 						switch (action.type) {
 							case PlayerActionType.PlaceTile: {
-								newEvents.push({
+								playerEvents.push({
 									type: EventType.TileAcquired,
 									playerId: player.id,
 									tile: action.state.type,
@@ -304,6 +307,24 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 						}
 					}
 				}
+
+				if (isInitialSetup) {
+					playerEvents.push({
+						type: EventType.StartingSetup,
+						playerId: player.id,
+						changes: playerEvents.filter((e) =>
+							EVENTS_ATE_BY_CARD_CHANGES.includes(e.type),
+						),
+						corporation: newPlayer.corporation,
+						preludes: newPlayer.usedCards
+							.filter(
+								(c) => CardsLookupApi.get(c.code).type === CardType.Prelude,
+							)
+							.map((c) => c.code),
+					})
+				}
+
+				newEvents.push(...playerEvents)
 			}
 		})
 	}
