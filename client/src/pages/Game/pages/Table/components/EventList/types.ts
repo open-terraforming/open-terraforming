@@ -4,6 +4,7 @@ import {
 	GridCellContent,
 	GridCellOther,
 	StandardProjectType,
+	UsedCardState,
 } from '@shared/index'
 import { MilestoneType } from '@shared/milestones'
 
@@ -29,6 +30,7 @@ export enum EventType {
 	ColonyTradingStepChanged,
 	PlayerTradeFleetsChange,
 	StandardProjectBought,
+	TileAcquired,
 }
 
 export type CardPlayed = {
@@ -44,6 +46,7 @@ export type CardUsed = {
 	card: string
 	index: number
 	changes: GameEvent[]
+	state: UsedCardState
 }
 
 export type CardsReceived = {
@@ -161,6 +164,12 @@ export type StandardProjectBought = {
 	changes: GameEvent[]
 }
 
+export type TileAcquired = {
+	type: typeof EventType.TileAcquired
+	tile: GridCellContent
+	playerId: number
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -183,6 +192,7 @@ export type GameEvent =
 	| ColonyTradingStepChanged
 	| PlayerTradeFleetsChange
 	| StandardProjectBought
+	| TileAcquired
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

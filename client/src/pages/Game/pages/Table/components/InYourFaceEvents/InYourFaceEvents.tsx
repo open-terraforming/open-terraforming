@@ -10,7 +10,12 @@ import { CardUsedEvent } from './components/CardUsedEvent'
 import { NewGenerationEvent } from './components/NewGenerationEvent'
 import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
 
-const PROCESSABLE_EVENTS = [EventType.CardPlayed, EventType.CardUsed]
+const PROCESSABLE_EVENTS = [
+	EventType.CardPlayed,
+	EventType.CardUsed,
+	EventType.NewGeneration,
+	EventType.StandardProjectBought,
+]
 
 export const InYourFaceEvents = () => {
 	const player = useAppStore((state) => state.game.player)

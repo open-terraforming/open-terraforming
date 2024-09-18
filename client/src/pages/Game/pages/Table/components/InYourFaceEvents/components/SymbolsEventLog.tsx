@@ -1,11 +1,11 @@
 import { useLocale } from '@/context/LocaleContext'
 import { useAppStore } from '@/utils/hooks'
-import { CardResource, CardSymbol, Resource, SymbolType } from '@shared/cards'
+import { CardResource, Resource, SymbolType } from '@shared/cards'
 import { GridCellContent } from '@shared/game'
 import { Fragment } from 'react'
+import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { EventType, GameEvent } from '../../EventList/types'
-import styled from 'styled-components'
 
 type Props = {
 	events: GameEvent[]
@@ -35,22 +35,21 @@ export const SymbolsEventLog = ({
 	const eventToSymbols = (e: GameEvent) => {
 		switch (e.type) {
 			case EventType.ResourcesChanged: {
-				return (
+				return Object.entries(e.resources).map(([resource, amount]) => (
 					<Symbols
+						key={resource}
 						symbols={[
 							...playerSymbol(e.playerId),
-							...Object.entries(e.resources).map(
-								([resource, amount]): CardSymbol => ({
-									resource: resource as Resource,
-									count: amount,
-									forceCount: true,
-									forceSign: true,
-									other: e.playerId !== currentPlayerId,
-								}),
-							),
+							{
+								resource: resource as Resource,
+								count: amount,
+								forceCount: true,
+								forceSign: true,
+								other: e.playerId !== currentPlayerId,
+							},
 						]}
 					/>
-				)
+				))
 			}
 
 			case EventType.CardResourceChanged: {
@@ -126,7 +125,12 @@ export const SymbolsEventLog = ({
 					<Symbols
 						symbols={[
 							...playerSymbol(e.playerId),
-							{ symbol: SymbolType.TerraformingRating, count: e.amount },
+							{
+								symbol: SymbolType.TerraformingRating,
+								count: e.amount,
+								forceCount: true,
+								forceSign: true,
+							},
 						]}
 					/>
 				)
@@ -164,6 +168,12 @@ export const SymbolsEventLog = ({
 			case EventType.ColonyActivated: {
 				// TODO: Symbol for this?
 				return
+			}
+
+			case EventType.TileAcquired: {
+				return (
+					<Symbols symbols={[...playerSymbol(e.playerId), { tile: e.tile }]} />
+				)
 			}
 		}
 	}

@@ -6,6 +6,7 @@ import { objDiff } from '@/utils/collections'
 import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
 import { GameState, GameStateValue } from '@shared/index'
+import { PlayerActionType } from '@shared/player-actions'
 
 const resources: Resource[] = [
 	'money',
@@ -27,6 +28,7 @@ const EVENTS_ATE_BY_CARD_CHANGES = [
 	EventType.RatingChanged,
 	EventType.ColonyActivated,
 	EventType.PlayerTradeFleetsChange,
+	EventType.TileAcquired,
 ]
 
 const EVENTS_WITH_CHANGES = [
@@ -142,6 +144,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 							}
 
 							const oldCard = player.usedCards[parseInt(cardIndex)]
+							const newCard = newPlayer.usedCards[parseInt(cardIndex)]
 
 							if (!oldCard) {
 								if (
@@ -168,6 +171,9 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 										card: oldCard.code,
 										index: parseInt(cardIndex),
 										changes: [],
+										state: {
+											...newCard,
+										},
 									})
 								}
 							}
@@ -266,6 +272,28 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 							playerId: player.id,
 							amount: diff,
 						})
+					}
+				}
+
+				if (gameChanges.pendingActions) {
+					console.log(gameChanges.pendingActions)
+
+					for (const [, action] of Object.entries(gameChanges.pendingActions)) {
+						if (!action) {
+							continue
+						}
+
+						switch (action.type) {
+							case PlayerActionType.PlaceTile: {
+								newEvents.push({
+									type: EventType.TileAcquired,
+									playerId: player.id,
+									tile: action.state.type,
+								})
+
+								break
+							}
+						}
 					}
 				}
 			}

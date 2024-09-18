@@ -13,18 +13,28 @@ export const StandardProjectBoughtEvent = ({ event }: Props) => {
 
 	return (
 		<>
-			<PlayerDidHeader playerId={event.playerId} thing={'bought'} />
-			<ProjectCentered>{project.description}</ProjectCentered>
-			{event.changes && (
-				<SymbolsEventLog
-					events={event.changes}
-					currentPlayerId={event.playerId}
-				/>
-			)}
+			<PlayerDidHeader
+				playerId={event.playerId}
+				thing={' realized standard project'}
+			/>
+			<Container>
+				<ProjectCentered>{project.description}</ProjectCentered>
+				{event.changes && (
+					<SymbolsEventLog
+						events={event.changes}
+						currentPlayerId={event.playerId}
+					/>
+				)}
+			</Container>
 		</>
 	)
 }
 
+const Container = styled.div`
+	margin: 3rem 0;
+`
+
 const ProjectCentered = styled.div`
 	font-size: 125%;
+	text-align: center;
 `

@@ -1,6 +1,5 @@
 import { CardsLookupApi } from '@shared/cards'
 import { StatelessCardView } from '../../CardView/StatelessCardView'
-import { EventLine } from '../../EventList/components/EventLine'
 import { CardUsed } from '../../EventList/types'
 import { PlayerDidHeader } from './PlayerDidHeader'
 import { SymbolsEventLog } from './SymbolsEventLog'
@@ -19,6 +18,7 @@ export const CardUsedEvent = ({ event }: Props) => {
 				hover={false}
 				highlightAction
 				affordable
+				state={event.state}
 			/>
 			<div>
 				{event.changes && (
@@ -29,9 +29,9 @@ export const CardUsedEvent = ({ event }: Props) => {
 					/>
 				)}
 
-				{event.changes?.map((c, i) => (
+				{/*event.changes?.map((c, i) => (
 					<EventLine key={i} event={c} animated={false} />
-				))}
+				))*/}
 			</div>
 		</>
 	)

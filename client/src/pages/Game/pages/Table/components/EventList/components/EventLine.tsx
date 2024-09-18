@@ -245,6 +245,13 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						{StandardProjectType[event.project]}
 					</>
 				)
+			case EventType.TileAcquired:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} /> got{' '}
+						{tileToStr(event.tile)}
+					</>
+				)
 		}
 
 		assertNever(event)

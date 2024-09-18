@@ -206,8 +206,13 @@ export const Container = styled.div<ContainerCtx>`
 	${(props) =>
 		props.$faded &&
 		css`
-			${Categories}, ${Image}, ${Cost}, ${Title} {
+			${Categories}, ${Cost}, ${Title} {
 				opacity: 0.2;
+			}
+
+			${Image} {
+				background-color: rgba(0, 0, 0, 0.8);
+				background-blend-mode: darken;
 			}
 		`}
 
