@@ -32,6 +32,7 @@ export const StandardProjectBoughtEvent = ({ event }: Props) => {
 
 const Container = styled.div`
 	margin: 3rem 0;
+	min-width: 15rem;
 `
 
 const ProjectCentered = styled.div`

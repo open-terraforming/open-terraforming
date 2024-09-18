@@ -15,7 +15,7 @@ export const NewGenerationEvent = ({ event }: Props) => {
 }
 
 const Container = styled.div`
-	min-height: 20rem;
+	margin: 3rem 0;
 	display: flex;
 	justify-content: center;
 	flex-direction: column;
@@ -25,7 +25,7 @@ const Container = styled.div`
 const Title = styled.div`
 	font-size: 125%;
 	text-align: center;
-	margin: 1rem;
+	margin: 0.5rem 3rem;
 `
 
 const Count = styled.div`
