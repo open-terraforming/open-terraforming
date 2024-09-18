@@ -15,6 +15,8 @@ import { useLocale } from '@/context/LocaleContext'
 import { assertNever } from '@shared/utils/assertNever'
 import { quantized } from '@shared/utils/quantized'
 import { ColoniesModal } from '../../ColoniesModal/ColoniesModal'
+import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
+import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 
 type Props = {
 	event: GameEvent
@@ -117,7 +119,8 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						{Object.entries(event.resources).map(([resource, amount], i) => (
 							<ResourceE positive={amount > 0} key={i}>
 								{amount > 0 ? ' +' : ' -'}
-								{withUnits(resource as Resource, Math.abs(amount))}
+								{Math.abs(amount)}
+								<ResourceIcon key={i} res={resource as Resource} />
 							</ResourceE>
 						))}
 					</>
@@ -128,8 +131,12 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						<PlayerSpan player={players[event.playerId]} />
 						<ResourceE positive={event.amount > 0}>
 							{event.amount > 0 ? ' +' : ' -'}
-							{withUnits(event.resource, Math.abs(event.amount))}
-							{' production'}
+							{Math.abs(event.amount)}
+							<ResourceIcon
+								res={event.resource as Resource}
+								production
+								fixedHeight
+							/>
 						</ResourceE>
 					</>
 				)
@@ -176,8 +183,11 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} />{' '}
-						{event.amount > 0 ? '+' : '-'}
-						{withUnits(event.resource, Math.abs(event.amount))}
+						<CardResourceE positive={event.amount > 0}>
+							{event.amount > 0 ? '+' : '-'}
+							{Math.abs(event.amount)}
+							<CardResourceIcon res={event.resource} fixedHeight />
+						</CardResourceE>
 						{event.amount > 0 ? ' to ' : ' from '}
 						<CardSpan card={event.card} />
 					</>
@@ -276,6 +286,16 @@ const PhaseSpanE = styled.span`
 `
 
 const ResourceE = styled.span<{ positive: boolean }>`
+	display: inline-flex;
+	margin: 0 0.25rem;
+	gap: 0.2rem;
+	color: ${(props) => (props.positive ? '#86F09B' : '#F5AF7C')};
+`
+
+const CardResourceE = styled.span<{ positive: boolean }>`
+	display: inline-flex;
+	margin: 0 0.25rem;
+	gap: 0.2rem;
 	color: ${(props) => (props.positive ? '#86F09B' : '#F5AF7C')};
 `
 

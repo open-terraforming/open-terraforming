@@ -3,6 +3,7 @@ import { venusIcon } from '@/icons/venus'
 import {
 	faArrowRight,
 	faThermometerHalf,
+	faUser,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardSymbol, SymbolType } from '@shared/cards'
@@ -67,6 +68,8 @@ const symbolToIcon = (s: CardSymbol) => {
 			// TODO: Implement
 			case SymbolType.CardWithNoTag:
 				return <CardWithNoTagSymbol />
+			case SymbolType.Player:
+				return <FontAwesomeIcon icon={faUser} />
 			default:
 				console.warn('Unknown symbol', SymbolType[s.symbol])
 		}
@@ -142,6 +145,8 @@ export const Symbols = ({ symbols, className }: Props) => {
 						key={i}
 						production={s.production}
 						other={s.other}
+						style={{ color: s.color }}
+						title={s.title}
 						noSpacing={
 							s.symbol === SymbolType.X ||
 							s.symbol === SymbolType.RightArrow ||
@@ -152,7 +157,8 @@ export const Symbols = ({ symbols, className }: Props) => {
 							s.symbol === SymbolType.Minus ||
 							s.symbol === SymbolType.SlashSmall ||
 							s.symbol === SymbolType.Slash ||
-							s.symbol === SymbolType.BigPlus
+							s.symbol === SymbolType.BigPlus ||
+							s.symbol === SymbolType.Player
 						}
 					>
 						{((countStr && countStr.length > 0) || countSymbol) && (

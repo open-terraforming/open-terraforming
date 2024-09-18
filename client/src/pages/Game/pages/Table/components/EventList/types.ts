@@ -35,7 +35,7 @@ export type CardPlayed = {
 	type: typeof EventType.CardPlayed
 	playerId: number
 	card: string
-	changes?: GameEvent[]
+	changes: GameEvent[]
 }
 
 export type CardUsed = {
@@ -43,7 +43,7 @@ export type CardUsed = {
 	playerId: number
 	card: string
 	index: number
-	changes?: GameEvent[]
+	changes: GameEvent[]
 }
 
 export type CardsReceived = {
@@ -158,6 +158,7 @@ export type StandardProjectBought = {
 	type: typeof EventType.StandardProjectBought
 	playerId: number
 	project: StandardProjectType
+	changes: GameEvent[]
 }
 
 export type GameEvent =

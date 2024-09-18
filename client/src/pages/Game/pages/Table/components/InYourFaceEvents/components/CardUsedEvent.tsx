@@ -1,24 +1,18 @@
-import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { StatelessCardView } from '../../CardView/StatelessCardView'
 import { EventLine } from '../../EventList/components/EventLine'
 import { CardUsed } from '../../EventList/types'
+import { PlayerDidHeader } from './PlayerDidHeader'
 import { SymbolsEventLog } from './SymbolsEventLog'
-import styled from 'styled-components'
 
 type Props = {
 	event: CardUsed
 }
 
 export const CardUsedEvent = ({ event }: Props) => {
-	const player = useAppStore((state) => state.game.playerMap[event.playerId])
-
 	return (
 		<>
-			<Header>
-				<span style={{ color: player?.color }}>{player?.name}</span>
-				{' activated project'}
-			</Header>
+			<PlayerDidHeader playerId={event.playerId} thing={' activated project'} />
 			<StatelessCardView
 				card={CardsLookupApi.get(event.card)}
 				evaluate={false}
@@ -42,8 +36,3 @@ export const CardUsedEvent = ({ event }: Props) => {
 		</>
 	)
 }
-
-const Header = styled.div`
-	text-align: center;
-	margin: 0.25rem 0 1rem 0;
-`

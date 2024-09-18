@@ -8,6 +8,7 @@ import { EventType, GameEvent } from '../EventList/types'
 import { CardPlayedEvent } from './components/CardPlayedEvent'
 import { CardUsedEvent } from './components/CardUsedEvent'
 import { NewGenerationEvent } from './components/NewGenerationEvent'
+import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
 
 const PROCESSABLE_EVENTS = [EventType.CardPlayed, EventType.CardUsed]
 
@@ -35,6 +36,8 @@ export const InYourFaceEvents = () => {
 				return <CardUsedEvent event={event} />
 			case EventType.NewGeneration:
 				return <NewGenerationEvent event={event} />
+			case EventType.StandardProjectBought:
+				return <StandardProjectBoughtEvent event={event} />
 			default:
 				return null
 		}
@@ -50,19 +53,19 @@ export const InYourFaceEvents = () => {
 				<DisplayContainer>
 					<Inner>
 						{events.slice(1, 5).map((e, i) => (
-							<div
+							<FakeContainer
 								key={i}
 								style={{
 									position: 'absolute',
 									left: -(10 + i * 10),
 									opacity: 0.6 - i * 0.1,
-									transform: `scale(${1 - (i + 1) * 0.05})`,
+									// transform: `scale(${1 - (i + 1) * 0.05})`,
 									transformOrigin: 'left',
 									zIndex: -1,
 								}}
 							>
 								{renderEvent(e)}
-							</div>
+							</FakeContainer>
 						))}
 
 						<div>{renderEvent(current)}</div>
@@ -80,6 +83,13 @@ export const InYourFaceEvents = () => {
 	)
 }
 
+const Inner = styled.div`
+	position: relative;
+	background: ${({ theme }) => theme.colors.modalBackground};
+	border: 2px solid ${({ theme }) => theme.colors.border};
+	padding: 0.5rem;
+`
+
 const DisplayContainer = styled.div`
 	position: fixed;
 	inset: 0;
@@ -90,7 +100,7 @@ const DisplayContainer = styled.div`
 	background-color: rgba(0, 0, 0, 0.5);
 `
 
-const Inner = styled.div`
+const FakeContainer = styled.div`
 	background: ${({ theme }) => theme.colors.modalBackground};
 	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;

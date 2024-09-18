@@ -20,6 +20,7 @@ type Props = {
 	production?: boolean
 	fixedWidth?: boolean
 	margin?: boolean
+	fixedHeight?: boolean
 }
 
 export const ResourceIcon = ({
@@ -27,6 +28,7 @@ export const ResourceIcon = ({
 	size,
 	production,
 	fixedWidth,
+	fixedHeight,
 	margin,
 }: Props) => {
 	const icon = useMemo(() => {
@@ -76,13 +78,23 @@ export const ResourceIcon = ({
 	}, [res, size])
 
 	return (
-		<E production={production} res={res} margin={margin}>
+		<E
+			production={production}
+			res={res}
+			margin={margin}
+			$fixedHeight={fixedHeight}
+		>
 			{icon}
 		</E>
 	)
 }
 
-const E = styled.div<{ production?: boolean; res: Resource; margin?: boolean }>`
+const E = styled.div<{
+	production?: boolean
+	res: Resource
+	margin?: boolean
+	$fixedHeight?: boolean
+}>`
 	display: inline-block;
 
 	${(props) =>
@@ -97,8 +109,21 @@ const E = styled.div<{ production?: boolean; res: Resource; margin?: boolean }>`
 					background: ${resourceColors[props.res]};
 					color: ${readableColor(resourceColors[props.res])};
 					border-radius: 50%;
-					width: 1.25em;
-					height: 1.25em;
+
+					${props.$fixedHeight
+						? css`
+								width: 1em;
+								height: 1em;
+
+								.svg-inline--fa {
+									font-size: 65%;
+								}
+							`
+						: css`
+								width: 1.25em;
+								height: 1.25em;
+							`}
+
 					display: inline-flex;
 					justify-content: center;
 					align-items: center;

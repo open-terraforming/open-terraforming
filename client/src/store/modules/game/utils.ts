@@ -1,11 +1,11 @@
-import { Resource, GameProgress, CardsLookupApi, CardType } from '@shared/cards'
-import { GameState, GameStateValue } from '@shared/index'
-import { objDiff } from '@/utils/collections'
 import {
-	GameEvent,
 	EventType,
+	GameEvent,
 } from '@/pages/Game/pages/Table/components/EventList/types'
+import { objDiff } from '@/utils/collections'
+import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
+import { GameState, GameStateValue } from '@shared/index'
 
 const resources: Resource[] = [
 	'money',
@@ -28,6 +28,12 @@ const EVENTS_ATE_BY_CARD_CHANGES = [
 	EventType.ColonyActivated,
 	EventType.PlayerTradeFleetsChange,
 ]
+
+const EVENTS_WITH_CHANGES = [
+	EventType.CardPlayed,
+	EventType.CardUsed,
+	EventType.StandardProjectBought,
+] as const
 
 export const getEvents = (lastGame: GameState, game: GameState) => {
 	const diff = objDiff(lastGame, game) as GameState
@@ -107,6 +113,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 						type: EventType.StandardProjectBought,
 						playerId,
 						project: oldProject.type,
+						changes: [],
 					})
 				})
 			}
@@ -145,6 +152,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 										type: EventType.CardPlayed,
 										playerId: player.id,
 										card: cardChanges.code,
+										changes: [],
 									})
 								}
 							} else {
@@ -159,6 +167,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 										playerId: player.id,
 										card: oldCard.code,
 										index: parseInt(cardIndex),
+										changes: [],
 									})
 								}
 							}
@@ -313,20 +322,18 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 		})
 	}
 
-	const cardPlayedEvent = newEvents.find((e) => e.type === EventType.CardPlayed)
+	const changes = newEvents.filter((e) =>
+		EVENTS_ATE_BY_CARD_CHANGES.includes(e.type),
+	)
 
-	if (cardPlayedEvent) {
-		cardPlayedEvent.changes = newEvents.filter((e) =>
-			EVENTS_ATE_BY_CARD_CHANGES.includes(e.type),
+	for (const eventTypeWithChanges of EVENTS_WITH_CHANGES) {
+		const eventWithChanges = newEvents.find(
+			(e) => e.type === eventTypeWithChanges,
 		)
-	}
 
-	const cardUsedEvent = newEvents.find((e) => e.type === EventType.CardUsed)
-
-	if (cardUsedEvent) {
-		cardUsedEvent.changes = newEvents.filter((e) =>
-			EVENTS_ATE_BY_CARD_CHANGES.includes(e.type),
-		)
+		if (eventWithChanges && 'changes' in eventWithChanges) {
+			eventWithChanges.changes = changes
+		}
 	}
 
 	return newEvents

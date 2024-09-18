@@ -43,6 +43,9 @@ export const SymbolsEventLog = ({
 								([resource, amount]): CardSymbol => ({
 									resource: resource as Resource,
 									count: amount,
+									forceCount: true,
+									forceSign: true,
+									other: e.playerId !== currentPlayerId,
 								}),
 							),
 						]}
@@ -62,6 +65,9 @@ export const SymbolsEventLog = ({
 							{
 								cardResource: e.resource as CardResource,
 								count: e.amount,
+								forceCount: true,
+								forceSign: true,
+								other: e.playerId !== currentPlayerId,
 							},
 						]}
 					/>
@@ -141,7 +147,15 @@ export const SymbolsEventLog = ({
 				return (
 					<Symbols
 						symbols={[
-							{ resource: e.resource, production: true, count: e.amount },
+							...playerSymbol(e.playerId),
+							{
+								resource: e.resource,
+								production: true,
+								count: e.amount,
+								forceCount: true,
+								forceSign: true,
+								other: e.playerId !== currentPlayerId,
+							},
 						]}
 					/>
 				)
@@ -168,6 +182,7 @@ const E = styled.div`
 	gap: 0.6rem;
 	flex-wrap: wrap;
 	justify-content: center;
-	margin: 1rem 0;
 	font-size: 125%;
+	max-width: 15rem;
+	margin: 1rem auto;
 `
