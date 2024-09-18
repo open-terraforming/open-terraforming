@@ -7,7 +7,7 @@ export enum EventType {
 	CardPlayed = 1,
 	CardUsed,
 	CardsReceived,
-	ResourceChanged,
+	ResourcesChanged,
 	ProductionChanged,
 	CardResourceChanged,
 	GameProgressChanged,
@@ -45,10 +45,9 @@ type CardsReceived = {
 	amount: number
 }
 
-type ResourceChanged = {
-	type: typeof EventType.ResourceChanged
-	resource: Resource
-	amount: number
+type ResourcesChanged = {
+	type: typeof EventType.ResourcesChanged
+	resources: Record<Resource, number>
 	playerId: number
 }
 
@@ -112,6 +111,7 @@ type PlayingChanged = {
 
 type NewGeneration = {
 	type: typeof EventType.NewGeneration
+	generation: number
 }
 
 type ProductionPhase = {
@@ -151,7 +151,7 @@ export type GameEvent =
 	| CardPlayed
 	| CardsReceived
 	| CardUsed
-	| ResourceChanged
+	| ResourcesChanged
 	| ProductionChanged
 	| CardResourceChanged
 	| GameProgressChanged

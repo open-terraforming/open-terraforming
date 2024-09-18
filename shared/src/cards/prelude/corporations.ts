@@ -9,7 +9,7 @@ import {
 	lowestProductionChange,
 	sponsorCompetitionForFree,
 	joinedEffects,
-} from '../effects'
+} from '../effectsGrouped'
 import { passiveEffect, asFirstAction } from '../passive-effects'
 import { CardCategory, CardSpecial, CardType } from '../types'
 import { card, withRightArrow, updatePlayerResource } from '../utils'

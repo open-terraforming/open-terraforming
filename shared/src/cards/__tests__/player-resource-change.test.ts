@@ -1,5 +1,5 @@
 import { prepareTestState } from '../../test/utils'
-import { playerResourceChange } from '../effects'
+import { playerResourceChange } from '../effectsGrouped'
 import { emptyCardState } from '../utils'
 
 test('playerResourceChange should change resources of right player', () => {
