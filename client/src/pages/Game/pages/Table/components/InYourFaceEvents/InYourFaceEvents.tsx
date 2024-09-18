@@ -9,12 +9,21 @@ import { CardPlayedEvent } from './components/CardPlayedEvent'
 import { CardUsedEvent } from './components/CardUsedEvent'
 import { NewGenerationEvent } from './components/NewGenerationEvent'
 import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
+import { PlayerDidHeader } from './components/PlayerDidHeader'
+import { MilestoneBoughtEvent } from './components/MilestoneBoughtEvent'
+import { CompetitionSponsoredEvent } from './components/CompetitionSponsoredEvent'
+import { ColonyBuiltEvent } from './components/ColonyBuiltEvent'
+import { ColonyTradingEvent } from './components/ColonyTradingEvent'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
 	EventType.CardUsed,
 	EventType.NewGeneration,
 	EventType.StandardProjectBought,
+	EventType.MilestoneBought,
+	EventType.CompetitionSponsored,
+	EventType.ColonyBuilt,
+	EventType.ColonyTrading,
 ]
 
 export const InYourFaceEvents = () => {
@@ -33,6 +42,71 @@ export const InYourFaceEvents = () => {
 		}
 	})
 
+	const renderEventHead = useCallback((event: GameEvent) => {
+		switch (event.type) {
+			case EventType.CardPlayed:
+				return (
+					<PlayerDidHeader
+						noSpacing
+						playerId={event.playerId}
+						thing=" played card"
+					/>
+				)
+			case EventType.CardUsed:
+				return (
+					<PlayerDidHeader
+						noSpacing
+						playerId={event.playerId}
+						thing=" used card"
+					/>
+				)
+			case EventType.CompetitionSponsored:
+				return (
+					<PlayerDidHeader
+						noSpacing
+						playerId={event.playerId}
+						thing=" sponsored competition"
+					/>
+				)
+			case EventType.MilestoneBought:
+				return (
+					<PlayerDidHeader
+						noSpacing
+						playerId={event.playerId}
+						thing=" bought milestone"
+					/>
+				)
+			case EventType.ColonyBuilt:
+				return (
+					<PlayerDidHeader
+						noSpacing
+						playerId={event.playerId}
+						thing=" built colony"
+					/>
+				)
+			case EventType.ColonyTrading:
+				return (
+					<PlayerDidHeader
+						noSpacing
+						playerId={event.playerId}
+						thing=" traded with colony"
+					/>
+				)
+			case EventType.NewGeneration:
+				return <div style={{ textAlign: 'center' }}>New generation</div>
+			case EventType.StandardProjectBought:
+				return (
+					<PlayerDidHeader
+						playerId={event.playerId}
+						noSpacing
+						thing=" bought standard project"
+					/>
+				)
+			default:
+				return null
+		}
+	}, [])
+
 	const renderEvent = useCallback((event: GameEvent) => {
 		switch (event.type) {
 			case EventType.CardPlayed:
@@ -43,6 +117,14 @@ export const InYourFaceEvents = () => {
 				return <NewGenerationEvent event={event} />
 			case EventType.StandardProjectBought:
 				return <StandardProjectBoughtEvent event={event} />
+			case EventType.MilestoneBought:
+				return <MilestoneBoughtEvent event={event} />
+			case EventType.CompetitionSponsored:
+				return <CompetitionSponsoredEvent event={event} />
+			case EventType.ColonyBuilt:
+				return <ColonyBuiltEvent event={event} />
+			case EventType.ColonyTrading:
+				return <ColonyTradingEvent event={event} />
 			default:
 				return null
 		}
@@ -57,22 +139,29 @@ export const InYourFaceEvents = () => {
 			{current && (
 				<DisplayContainer>
 					<Inner>
-						{/*events.slice(1, 5).map((e, i) => (
-							<FakeContainer
-								key={i}
-								style={{
-									position: 'absolute',
-									opacity: 0.8,
-									transform: `translate(-50%, -50%) scale(${1 - (i + 1) * 0.1})`,
-									left: '50%',
-									top: '50%',
-									zIndex: -1,
-									filter: `saturate(50%) blur(1px)`,
-								}}
-							>
-								{renderEvent(e)}
-							</FakeContainer>
-						))*/}
+						<NextEvents>
+							{events
+								.slice(1, 5)
+								.reverse()
+								.map((e, i, a) => {
+									const indexReversed = a.length - 1 - i
+
+									return (
+										<NextEvent
+											key={`${i}-${e.type}`}
+											style={{
+												/*transform: `scale(${1 - (Math.min(4, events.length + 1) - i + 1) * 0.1})`,*/
+												fontSize: `${1 - (indexReversed + 1) * 0.1}rem`,
+												opacity: 1 - (indexReversed + 1) * 0.2,
+												marginLeft: `${(indexReversed + 1) * 0.5}rem`,
+												marginRight: `${(indexReversed + 1) * 0.5}rem`,
+											}}
+										>
+											{renderEventHead(e)}
+										</NextEvent>
+									)
+								})}
+						</NextEvents>
 
 						<div>{renderEvent(current)}</div>
 
@@ -106,11 +195,14 @@ const DisplayContainer = styled.div`
 	background-color: rgba(0, 0, 0, 0.5);
 `
 
-/*
-const FakeContainer = styled.div`
+const NextEvent = styled.div`
 	background: ${({ theme }) => theme.colors.modalBackground};
 	border: 2px solid ${({ theme }) => theme.colors.border};
-	padding: 0.5rem;
-	position: relative;
 `
-*/
+
+const NextEvents = styled.div`
+	position: absolute;
+	bottom: 100%;
+	left: 0;
+	right: 0;
+`

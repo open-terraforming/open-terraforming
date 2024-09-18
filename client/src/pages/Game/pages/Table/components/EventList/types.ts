@@ -1,6 +1,7 @@
 import { CardResource, GameProgress, Resource } from '@shared/cards'
 import { CompetitionType } from '@shared/competitions'
 import {
+	ColonyState,
 	GridCellContent,
 	GridCellOther,
 	StandardProjectType,
@@ -132,6 +133,8 @@ export type ColonyBuilt = {
 	type: typeof EventType.ColonyBuilt
 	playerId: number
 	colony: number
+	state: ColonyState
+	changes: GameEvent[]
 }
 
 export type ColonyActivated = {
@@ -143,6 +146,8 @@ export type ColonyTrading = {
 	type: typeof EventType.ColonyTrading
 	colony: number
 	playerId: number
+	state: ColonyState
+	changes: GameEvent[]
 }
 
 export type ColonyTradingStepChanged = {

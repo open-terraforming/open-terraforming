@@ -15,7 +15,7 @@ import {
 } from '@shared/expansions/colonies/utils'
 import { ColonyState, PlayerStateValue } from '@shared/game'
 import { PlayerActionType } from '@shared/player-actions'
-import { isFailure, isOk } from '@shared/utils'
+import { failure, isFailure, isOk } from '@shared/utils'
 import { Fragment } from 'react'
 import styled, { css } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
@@ -27,6 +27,7 @@ type Props = {
 	freeTradePick?: boolean
 	freeColonizePick?: boolean
 	allowDuplicateColonies?: boolean
+	noActions?: boolean
 	customAction?: (colonyIndex: number) => {
 		enabled: boolean
 		perform: () => void
@@ -41,6 +42,7 @@ export const ColonyDisplay = ({
 	index,
 	colony,
 	customAction,
+	noActions,
 }: Props) => {
 	const game = useAppStore((s) => s.game.state)
 	const player = useAppStore((s) => s.game.player)
@@ -59,14 +61,17 @@ export const ColonyDisplay = ({
 		player.state === PlayerStateValue.Playing &&
 		(!pending || pending.type === PlayerActionType.BuildColony)
 
-	const canTrade = canTradeWithColony({
-		player,
-		game,
-		colony,
-	})
+	const canTrade = noActions
+		? failure('')
+		: canTradeWithColony({
+				player,
+				game,
+				colony,
+			})
 
-	const canTradeWithAnyResource = (['money', 'titan', 'energy'] as const).some(
-		(res) =>
+	const canTradeWithAnyResource =
+		!noActions &&
+		(['money', 'titan', 'energy'] as const).some((res) =>
 			isOk(
 				canTradeWithColonyUsingResource({
 					player,
@@ -75,15 +80,17 @@ export const ColonyDisplay = ({
 					resource: res,
 				}),
 			),
-	)
+		)
 
-	const canColonize = canBuildColony({
-		game,
-		player,
-		colony,
-		forFree: freeColonizePick,
-		allowDuplicates: allowDuplicateColonies,
-	})
+	const canColonize = noActions
+		? failure('')
+		: canBuildColony({
+				game,
+				player,
+				colony,
+				forFree: freeColonizePick,
+				allowDuplicates: allowDuplicateColonies,
+			})
 
 	const customActionRendered = customAction && customAction(index)
 
@@ -201,64 +208,68 @@ export const ColonyDisplay = ({
 				))}
 			</Slots>
 
-			<Actions>
-				{customActionRendered ? (
-					<Action
-						disabled={!customActionRendered.enabled}
-						onClick={customActionRendered.perform}
-						noClip
-					>
-						{customActionRendered.label}
-					</Action>
-				) : (
-					<>
-						{!freeColonizePick && (
-							<Action
-								disabled={
-									!canTradeWithAnyResource ||
-									!canTradeCurrently ||
-									!isOk(canTrade)
-								}
-								tooltip={
-									isFailure(canTrade)
-										? canTrade.error
-										: !canTradeWithAnyResource
-											? 'No resources to trade with'
-											: undefined
-								}
-								onClick={freeTradePick ? handleFreeTrade : toggleTrading}
-								noClip
-							>
-								<Flex>
-									{!freeTradePick &&
-										getColonyTradeCostSymbols({ player, game, colony }).map(
-											(s, i) => (
-												<Fragment key={i}>
-													{i !== 0 && ' / '}
-													<Symbols symbols={[s]} />
-												</Fragment>
-											),
-										)}
-									Trade
-								</Flex>
-							</Action>
-						)}{' '}
-						{!freeTradePick && (
-							<Action
-								disabled={!canColonizeCurrently || !isOk(canColonize)}
-								tooltip={isFailure(canColonize) ? canColonize.error : undefined}
-								onClick={handleColonize}
-								noClip
-							>
-								{!freeColonizePick && (
-									<Symbols symbols={[{ resource: 'money', count: 17 }]} />
-								)}{' '}
-								Colonize
-							</Action>
-						)}
-					</>
-				)}
-			</Actions>
+			{!noActions && (
+				<Actions>
+					{customActionRendered ? (
+						<Action
+							disabled={!customActionRendered.enabled}
+							onClick={customActionRendered.perform}
+							noClip
+						>
+							{customActionRendered.label}
+						</Action>
+					) : (
+						<>
+							{!freeColonizePick && (
+								<Action
+									disabled={
+										!canTradeWithAnyResource ||
+										!canTradeCurrently ||
+										!isOk(canTrade)
+									}
+									tooltip={
+										isFailure(canTrade)
+											? canTrade.error
+											: !canTradeWithAnyResource
+												? 'No resources to trade with'
+												: undefined
+									}
+									onClick={freeTradePick ? handleFreeTrade : toggleTrading}
+									noClip
+								>
+									<Flex>
+										{!freeTradePick &&
+											getColonyTradeCostSymbols({ player, game, colony }).map(
+												(s, i) => (
+													<Fragment key={i}>
+														{i !== 0 && ' / '}
+														<Symbols symbols={[s]} />
+													</Fragment>
+												),
+											)}
+										Trade
+									</Flex>
+								</Action>
+							)}{' '}
+							{!freeTradePick && (
+								<Action
+									disabled={!canColonizeCurrently || !isOk(canColonize)}
+									tooltip={
+										isFailure(canColonize) ? canColonize.error : undefined
+									}
+									onClick={handleColonize}
+									noClip
+								>
+									{!freeColonizePick && (
+										<Symbols symbols={[{ resource: 'money', count: 17 }]} />
+									)}{' '}
+									Colonize
+								</Action>
+							)}
+						</>
+					)}
+				</Actions>
+			)}
 		</Container>
 	)
 }

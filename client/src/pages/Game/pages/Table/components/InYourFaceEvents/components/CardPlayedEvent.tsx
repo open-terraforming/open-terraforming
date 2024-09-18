@@ -1,4 +1,4 @@
-import { CardsLookupApi } from '@shared/cards'
+import { CardsLookupApi, CardType } from '@shared/cards'
 import { StatelessCardView } from '../../CardView/StatelessCardView'
 import { CardPlayed } from '../../EventList/types'
 import { PlayerDidHeader } from './PlayerDidHeader'
@@ -9,11 +9,20 @@ type Props = {
 }
 
 export const CardPlayedEvent = ({ event }: Props) => {
+	const cardInfo = CardsLookupApi.get(event.card)
+
 	return (
 		<>
-			<PlayerDidHeader playerId={event.playerId} thing={' realized project'} />
+			<PlayerDidHeader
+				playerId={event.playerId}
+				thing={
+					cardInfo.type === CardType.Prelude
+						? ' picked prelude'
+						: ' realized project'
+				}
+			/>
 			<StatelessCardView
-				card={CardsLookupApi.get(event.card)}
+				card={cardInfo}
 				evaluate={false}
 				hover={false}
 				affordable
@@ -25,10 +34,6 @@ export const CardPlayedEvent = ({ event }: Props) => {
 						currentPlayerId={event.playerId}
 					/>
 				)}
-
-				{/*event.changes?.map((c, i) => (
-					<EventLine key={i} event={c} animated={false} />
-				))*/}
 			</div>
 		</>
 	)

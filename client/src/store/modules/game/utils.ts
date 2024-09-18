@@ -35,6 +35,8 @@ const EVENTS_WITH_CHANGES = [
 	EventType.CardPlayed,
 	EventType.CardUsed,
 	EventType.StandardProjectBought,
+	EventType.ColonyBuilt,
+	EventType.ColonyTrading,
 ] as const
 
 export const getEvents = (lastGame: GameState, game: GameState) => {
@@ -64,6 +66,8 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 				return
 			}
 
+			const newColony = game.colonies[+colonyIndex]
+
 			if (colony.playersAtSteps) {
 				const players = Object.entries(colony.playersAtSteps)
 
@@ -72,6 +76,8 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 						type: EventType.ColonyBuilt,
 						playerId,
 						colony: +colonyIndex,
+						state: { ...newColony },
+						changes: [],
 					})
 				}
 			}
@@ -88,6 +94,8 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 					type: EventType.ColonyTrading,
 					playerId: colony.currentlyTradingPlayer,
 					colony: +colonyIndex,
+					state: { ...newColony },
+					changes: [],
 				})
 			}
 
