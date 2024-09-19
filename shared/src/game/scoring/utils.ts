@@ -92,7 +92,7 @@ export const computeScore = (g: GameState, p: PlayerState) => {
 			(acc, p) => (acc ?? 0) + (p ?? 0),
 			0,
 		) ?? 0) +
-		p.cards.length * 0.5 +
+		p.cards.length * 0.3 +
 		resources.reduce(
 			(acc, r) =>
 				acc +
