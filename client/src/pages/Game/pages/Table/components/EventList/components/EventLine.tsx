@@ -248,11 +248,13 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 			case EventType.TileAcquired:
 				return (
 					<>
-						<PlayerSpan player={players[event.playerId]} /> got{' '}
+						<PlayerSpan player={players[event.playerId]} /> is building{' '}
 						{tileToStr(event.tile)}
 					</>
 				)
 			case EventType.StartingSetup:
+				return <></>
+			case EventType.ProductionDone:
 				return <></>
 		}
 

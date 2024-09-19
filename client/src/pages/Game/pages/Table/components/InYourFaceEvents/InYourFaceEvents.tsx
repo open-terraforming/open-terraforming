@@ -14,6 +14,7 @@ import { MilestoneBoughtEvent } from './components/MilestoneBoughtEvent'
 import { PlayerDidHeader } from './components/PlayerDidHeader'
 import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
 import { StartingSetupEvent } from './components/StartingSetupEvent'
+import { ProductionDoneEvent } from './components/ProductionDoneEvent'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -24,6 +25,7 @@ const PROCESSABLE_EVENTS = [
 	EventType.ColonyBuilt,
 	EventType.ColonyTrading,
 	EventType.StartingSetup,
+	EventType.ProductionDone,
 ]
 
 export const InYourFaceEvents = () => {
@@ -108,6 +110,8 @@ export const InYourFaceEvents = () => {
 						thing=" picked their starting setup"
 					/>
 				)
+			case EventType.ProductionDone:
+				return <CenterText>Production</CenterText>
 			default:
 				return null
 		}
@@ -131,6 +135,8 @@ export const InYourFaceEvents = () => {
 				return <ColonyTradingEvent event={event} />
 			case EventType.StartingSetup:
 				return <StartingSetupEvent event={event} />
+			case EventType.ProductionDone:
+				return <ProductionDoneEvent event={event} />
 			default:
 				return null
 		}
@@ -211,4 +217,8 @@ const NextEvents = styled.div`
 	bottom: 100%;
 	left: 0;
 	right: 0;
+`
+
+const CenterText = styled.div`
+	text-align: center;
 `

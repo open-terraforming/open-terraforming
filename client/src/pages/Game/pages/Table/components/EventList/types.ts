@@ -33,6 +33,7 @@ export enum EventType {
 	StandardProjectBought,
 	TileAcquired,
 	StartingSetup,
+	ProductionDone,
 }
 
 export type StartingSetup = {
@@ -184,6 +185,11 @@ export type TileAcquired = {
 	playerId: number
 }
 
+export type ProductionDone = {
+	type: EventType.ProductionDone
+	players: ResourcesChanged[]
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -200,6 +206,7 @@ export type GameEvent =
 	| PlayingChanged
 	| NewGeneration
 	| ProductionPhase
+	| ProductionDone
 	| ColonyBuilt
 	| ColonyActivated
 	| ColonyTrading

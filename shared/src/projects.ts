@@ -132,7 +132,7 @@ const ProjectsList = [
 	}),
 	project({
 		type: StandardProjectType.GreeneryForPlants,
-		description: 'Greenery bought using 8 pants',
+		description: 'Greenery using pants',
 		cost: ({ player }) => player.greeneryCost,
 		resource: 'plants',
 		conditions: [canPlaceTile(GridCellContent.Forest)],
@@ -147,7 +147,7 @@ const ProjectsList = [
 	}),
 	project({
 		type: StandardProjectType.TemperatureForHeat,
-		description: 'Temperature increase using 8 heat',
+		description: 'Temperature increase using heat',
 		cost: () => 8,
 		resource: 'heat',
 		conditions: [({ game }) => game.temperature < game.map.temperature],

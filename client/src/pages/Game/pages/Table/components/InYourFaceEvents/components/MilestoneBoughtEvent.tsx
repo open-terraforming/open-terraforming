@@ -14,7 +14,7 @@ export const MilestoneBoughtEvent = ({ event }: Props) => {
 		<>
 			<PlayerDidHeader playerId={event.playerId} thing={' bought milestone'} />
 			<Container>
-				<CenteredTitle>{milestone.description}</CenteredTitle>
+				<CenteredTitle>{milestone.title}</CenteredTitle>
 				<CenteredDescription>{milestone.description}</CenteredDescription>
 			</Container>
 		</>

@@ -132,6 +132,7 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 
 	if (diff.players) {
 		const isInitialSetup = game.state === GameStateValue.Starting
+		const isProductionStep = diff.state === GameStateValue.ResearchPhase
 
 		Object.entries(diff.players).forEach(([playerIndex, changes]) => {
 			const player = lastGame.players[parseInt(playerIndex)]
@@ -327,6 +328,15 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 				newEvents.push(...playerEvents)
 			}
 		})
+
+		if (isProductionStep) {
+			console.log('isProductionStep', newEvents)
+
+			newEvents.push({
+				type: EventType.ProductionDone,
+				players: newEvents.filter((e) => e.type === EventType.ResourcesChanged),
+			})
+		}
 	}
 
 	progress.forEach((p) => {

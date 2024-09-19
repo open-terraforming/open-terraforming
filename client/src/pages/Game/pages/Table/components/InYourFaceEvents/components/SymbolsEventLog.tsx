@@ -11,12 +11,14 @@ type Props = {
 	events: GameEvent[]
 	currentPlayerId: number
 	currentUsedCardIndex?: number
+	maxWidth?: string
 }
 
 export const SymbolsEventLog = ({
 	events,
 	currentPlayerId,
 	currentUsedCardIndex,
+	maxWidth = '15rem',
 }: Props) => {
 	const players = useAppStore((state) => state.game.playerMap)
 	const t = useLocale()
@@ -78,7 +80,11 @@ export const SymbolsEventLog = ({
 					<Symbols
 						symbols={[
 							...playerSymbol(e.playerId),
-							{ symbol: SymbolType.Card, count: e.amount },
+							{
+								symbol: SymbolType.Card,
+								count: e.amount,
+								other: e.playerId !== currentPlayerId,
+							},
 						]}
 					/>
 				)
@@ -179,7 +185,7 @@ export const SymbolsEventLog = ({
 	}
 
 	return (
-		<E>
+		<E style={{ maxWidth }}>
 			{events.map((e, i) => (
 				<Fragment key={i}>{eventToSymbols(e)}</Fragment>
 			))}
