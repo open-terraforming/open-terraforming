@@ -45,6 +45,7 @@ import {
 	cardAcceptsAnyResource,
 	cardAnyResourceCondition,
 	playerCardsInHandCondition,
+	unprotectedCard,
 } from './conditions'
 import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
@@ -893,8 +894,12 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 				? [
 						condition({
 							evaluate: ({ game }) =>
-								!!game.players.find(
-									(p) => !!p.usedCards.find((c) => c[res] >= -amount),
+								game.players.some((p) =>
+									p.usedCards.some(
+										(c) =>
+											c[res] >= -amount &&
+											unprotectedCard().evaluate({ game, player: p, card: c }),
+									),
 								),
 						}),
 					]

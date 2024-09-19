@@ -118,7 +118,7 @@ export const CardArg = ({
 				? cards.filter((c) =>
 						arg.skipCurrentCard ? c.index !== handCardIndex : true,
 					)
-				: players[selectedPlayer].cards,
+				: (players[selectedPlayer]?.cards ?? []),
 		[handCardIndex, otherPlayer, arg, players],
 	)
 
