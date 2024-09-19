@@ -1,7 +1,7 @@
 import { media } from '@/styles/media'
 import { CardType } from '@shared/cards'
 import { rgba, lighten, darken } from 'polished'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from './components/Symbols'
 import mars from '@/assets/mars-icon.png'
 
@@ -33,6 +33,9 @@ export const Action = styled.div<{
 			? css`
 					background: ${rgba(lighten(0.05, theme.colors.background), 1)};
 					border: 0.2rem solid ${lighten(0.1, theme.colors.border)};
+					animation-name: ${actionPop};
+					animation-duration: 0.5s;
+					animation-iteration-count: 1;
 				`
 			: css`
 					border: 0.1rem solid ${theme.colors.border};
@@ -42,6 +45,18 @@ export const Action = styled.div<{
 	&& {
 		margin-bottom: ${({ $hasSymbols }) =>
 			$hasSymbols ? '0.25rem' : '0.75rem'};
+	}
+`
+
+const actionPop = keyframes`
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.05);
+	}
+	100% {
+		transform: scale(1);
 	}
 `
 

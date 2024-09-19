@@ -7,19 +7,17 @@ import styled from 'styled-components'
 import { EventType, GameEvent } from '../EventList/types'
 import { CardPlayedEvent } from './components/CardPlayedEvent'
 import { CardUsedEvent } from './components/CardUsedEvent'
-import { NewGenerationEvent } from './components/NewGenerationEvent'
-import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
-import { PlayerDidHeader } from './components/PlayerDidHeader'
-import { MilestoneBoughtEvent } from './components/MilestoneBoughtEvent'
-import { CompetitionSponsoredEvent } from './components/CompetitionSponsoredEvent'
 import { ColonyBuiltEvent } from './components/ColonyBuiltEvent'
 import { ColonyTradingEvent } from './components/ColonyTradingEvent'
+import { CompetitionSponsoredEvent } from './components/CompetitionSponsoredEvent'
+import { MilestoneBoughtEvent } from './components/MilestoneBoughtEvent'
+import { PlayerDidHeader } from './components/PlayerDidHeader'
+import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
 import { StartingSetupEvent } from './components/StartingSetupEvent'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
 	EventType.CardUsed,
-	EventType.NewGeneration,
 	EventType.StandardProjectBought,
 	EventType.MilestoneBought,
 	EventType.CompetitionSponsored,
@@ -94,8 +92,6 @@ export const InYourFaceEvents = () => {
 						thing=" traded with colony"
 					/>
 				)
-			case EventType.NewGeneration:
-				return <div style={{ textAlign: 'center' }}>New generation</div>
 			case EventType.StandardProjectBought:
 				return (
 					<PlayerDidHeader
@@ -123,8 +119,6 @@ export const InYourFaceEvents = () => {
 				return <CardPlayedEvent event={event} />
 			case EventType.CardUsed:
 				return <CardUsedEvent event={event} />
-			case EventType.NewGeneration:
-				return <NewGenerationEvent event={event} />
 			case EventType.StandardProjectBought:
 				return <StandardProjectBoughtEvent event={event} />
 			case EventType.MilestoneBought:

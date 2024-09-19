@@ -196,9 +196,8 @@ const S = styled.div<{
 	${(props) =>
 		props.other &&
 		css`
-			// border: 0.2rem solid #ff5555;
-			box-shadow: inset 0 0 0 0.2rem #ff5555;
-			margin: 0.2rem;
+			filter: drop-shadow(-2px 0px 2px #c93939) drop-shadow(2px 0px 2px #c93939)
+				drop-shadow(0px -2px 2px #c93939) drop-shadow(0px 2px 2px #c93939);
 		`}
 `
 
