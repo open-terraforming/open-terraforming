@@ -389,7 +389,7 @@ export class Bot extends Player {
 
 		switch (this.state.state) {
 			case PlayerStateValue.Waiting: {
-				actions.push([0, () => this.performAction(playerReady(true))])
+				actions.push([Infinity, () => this.performAction(playerReady(true))])
 				break
 			}
 
@@ -397,7 +397,7 @@ export class Bot extends Player {
 				const pending = this.pendingAction
 
 				if (pending) {
-					actions.push([0, () => this.performPending(pending)])
+					actions.push([Infinity, () => this.performPending(pending)])
 				} else {
 					this.logger.error('Nothing to do, yet I have to pick something...')
 				}
@@ -432,7 +432,7 @@ export class Bot extends Player {
 				const pending = this.pendingAction
 
 				if (pending) {
-					actions.push([0, () => this.performPending(pending)])
+					actions.push([Infinity, () => this.performPending(pending)])
 				}
 
 				break
@@ -442,7 +442,7 @@ export class Bot extends Player {
 				const pending = this.pendingAction
 
 				if (pending) {
-					actions.push([0, () => this.performPending(pending)])
+					actions.push([Infinity, () => this.performPending(pending)])
 				}
 
 				break
@@ -452,7 +452,7 @@ export class Bot extends Player {
 				const pending = this.pendingAction
 
 				if (pending) {
-					actions.push([0, () => this.performPending(pending)])
+					actions.push([Infinity, () => this.performPending(pending)])
 				} else {
 					if (
 						this.game.state.milestones.length < this.game.state.milestonesLimit
@@ -667,7 +667,9 @@ export class Bot extends Player {
 			}
 		}
 
-		actions = actions.filter(([s]) => s >= 0)
+		const currentScore = computeScore(this.game.state, this.state)
+
+		actions = actions.filter(([s]) => s >= currentScore)
 
 		this.logger.log(f('{0} actions available', actions.length))
 
