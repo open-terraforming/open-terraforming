@@ -96,6 +96,11 @@ export const StatelessCardView = ({
 		[card],
 	)
 
+	const allConditionsOk =
+		!evaluate ||
+		!condContext ||
+		card.conditions.every((c) => c.evaluate(condContext))
+
 	const cardImagesUrl = settings.cardImagesUrl ?? CARD_IMAGES_URL
 	const cardImageFileName = card.code.replace(/'/g, "\\'")
 
@@ -127,7 +132,7 @@ export const StatelessCardView = ({
 						</Cost>
 					)}
 				{conditionSymbols.length > 0 && (
-					<HeadSymbols symbols={conditionSymbols} />
+					<HeadSymbols $ok={!!allConditionsOk} symbols={conditionSymbols} />
 				)}
 				<Categories>
 					{card.categories.map((c, i) => (

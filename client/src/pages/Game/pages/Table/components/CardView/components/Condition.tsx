@@ -18,10 +18,13 @@ export const Condition = ({ cond, ctx, evaluate = true, faded }: Props) => {
 
 const Container = styled.div<{ fine: boolean; $faded?: boolean }>`
 	${(props) =>
-		!props.fine &&
-		css`
-			color: #da5a67;
-		`}
+		!props.fine
+			? css`
+					color: #da5a67;
+				`
+			: css`
+					color: #c1ffd4;
+				`}
 	${(props) =>
 		props.$faded &&
 		css`

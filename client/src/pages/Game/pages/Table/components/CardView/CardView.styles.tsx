@@ -11,10 +11,11 @@ export const Head = styled.div`
 	height: 2rem;
 `
 
-export const HeadSymbols = styled(Symbols)`
-	border: 0.2rem solid #ff3333;
+export const HeadSymbols = styled(Symbols)<{ $ok?: boolean }>`
+	border: 0.2rem solid ${({ $ok }) => ($ok ? '#225e34' : '#ff3333')};
 	margin-left: 2.5rem;
-	background-color: rgba(255, 0, 0, 0.5);
+	background-color: ${({ $ok }) =>
+		$ok ? rgba(0, 255, 0, 0.1) : 'rgba(255, 0, 0, 0.5)'};
 
 	> div {
 		padding-top: 0.1rem;
