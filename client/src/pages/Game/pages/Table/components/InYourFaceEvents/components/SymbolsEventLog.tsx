@@ -1,11 +1,10 @@
 import { useLocale } from '@/context/LocaleContext'
 import { useAppStore } from '@/utils/hooks'
-import { CardResource, Resource, SymbolType } from '@shared/cards'
-import { GridCellContent } from '@shared/index'
-import { Fragment } from 'react'
-import styled from 'styled-components'
-import { Symbols } from '../../CardView/components/Symbols'
-import { EventType, GameEvent } from '@shared/index'
+import { CardResource, CardSymbol, Resource, SymbolType } from '@shared/cards'
+import { EventType, GameEvent, GridCellContent } from '@shared/index'
+import { useMemo } from 'react'
+import styled, { keyframes } from 'styled-components'
+import { SymbolDisplay } from '../../CardView/components/SymbolDisplay'
 
 type Props = {
 	events: GameEvent[]
@@ -34,176 +33,136 @@ export const SymbolsEventLog = ({
 					},
 				]
 
-	const eventToSymbols = (e: GameEvent) => {
+	const eventToSymbols = (e: GameEvent): CardSymbol[] => {
 		switch (e.type) {
 			case EventType.ResourcesChanged: {
-				return Object.entries(e.resources).map(([resource, amount]) => (
-					<Symbols
-						key={resource}
-						symbols={[
-							...playerSymbol(e.playerId),
-							{
-								resource: resource as Resource,
-								count: amount,
-								forceCount: true,
-								forceSign: true,
-								other: e.playerId !== currentPlayerId,
-							},
-						]}
-					/>
-				))
+				return Object.entries(e.resources).flatMap(([resource, amount]) => [
+					...playerSymbol(e.playerId),
+					{
+						resource: resource as Resource,
+						count: amount,
+						forceCount: true,
+						forceSign: true,
+						other: e.playerId !== currentPlayerId,
+					},
+				])
 			}
 
 			case EventType.CardResourceChanged: {
 				// TODO: What if the card index is different?
-				return (
-					<Symbols
-						symbols={[
-							...playerSymbol(e.playerId),
-							...(e.index !== currentUsedCardIndex
-								? [{ text: t.cards[e.card] }]
-								: []),
-							{
-								cardResource: e.resource as CardResource,
-								count: e.amount,
-								forceCount: true,
-								forceSign: true,
-								other: e.playerId !== currentPlayerId,
-							},
-						]}
-					/>
-				)
+				return [
+					...playerSymbol(e.playerId),
+					...(e.index !== currentUsedCardIndex
+						? [{ text: t.cards[e.card] }]
+						: []),
+					{
+						cardResource: e.resource as CardResource,
+						count: e.amount,
+						forceCount: true,
+						forceSign: true,
+						other: e.playerId !== currentPlayerId,
+					},
+				]
 			}
 
 			case EventType.CardsReceived: {
-				return (
-					<Symbols
-						symbols={[
-							...playerSymbol(e.playerId),
-							{
-								symbol: SymbolType.Card,
-								count: e.amount,
-								other: e.playerId !== currentPlayerId,
-							},
-						]}
-					/>
-				)
+				return [
+					...playerSymbol(e.playerId),
+					{
+						symbol: SymbolType.Card,
+						count: e.amount,
+						other: e.playerId !== currentPlayerId,
+					},
+				]
 			}
 
 			case EventType.GameProgressChanged: {
 				if (e.progress === 'temperature') {
-					return (
-						<Symbols
-							symbols={[{ symbol: SymbolType.Temperature, count: e.amount }]}
-						/>
-					)
+					return [{ symbol: SymbolType.Temperature, count: e.amount }]
 				}
 
 				if (e.progress === 'oxygen') {
-					return (
-						<Symbols
-							symbols={[{ symbol: SymbolType.Oxygen, count: e.amount }]}
-						/>
-					)
+					return [{ symbol: SymbolType.Oxygen, count: e.amount }]
 				}
 
 				if (e.progress === 'oceans') {
-					return (
-						<Symbols
-							symbols={[{ tile: GridCellContent.Ocean, count: e.amount }]}
-						/>
-					)
+					return [{ tile: GridCellContent.Ocean, count: e.amount }]
 				}
 
 				if (e.progress === 'venus') {
-					return (
-						<Symbols
-							symbols={[{ symbol: SymbolType.Venus, count: e.amount }]}
-						/>
-					)
+					return [{ symbol: SymbolType.Venus, count: e.amount }]
 				}
 
-				return
+				return []
 			}
 
 			case EventType.RatingChanged: {
-				return (
-					<Symbols
-						symbols={[
-							...playerSymbol(e.playerId),
-							{
-								symbol: SymbolType.TerraformingRating,
-								count: e.amount,
-								forceCount: true,
-								forceSign: true,
-							},
-						]}
-					/>
-				)
+				return [
+					...playerSymbol(e.playerId),
+					{
+						symbol: SymbolType.TerraformingRating,
+						count: e.amount,
+						forceCount: true,
+						forceSign: true,
+					},
+				]
 			}
 
 			case EventType.PlayerTradeFleetsChange: {
-				return (
-					<Symbols
-						symbols={[
-							...playerSymbol(e.playerId),
-							{ symbol: SymbolType.TradeFleet, count: e.amount },
-						]}
-					/>
-				)
+				return [
+					...playerSymbol(e.playerId),
+					{ symbol: SymbolType.TradeFleet, count: e.amount },
+				]
 			}
 
 			case EventType.ProductionChanged: {
-				return (
-					<Symbols
-						symbols={[
-							...playerSymbol(e.playerId),
-							{
-								resource: e.resource,
-								production: true,
-								count: e.amount,
-								forceCount: true,
-								forceSign: true,
-								other: e.playerId !== currentPlayerId,
-							},
-						]}
-					/>
-				)
+				return [
+					...playerSymbol(e.playerId),
+					{
+						resource: e.resource,
+						production: true,
+						count: e.amount,
+						forceCount: true,
+						forceSign: true,
+						other: e.playerId !== currentPlayerId,
+					},
+				]
 			}
 
 			case EventType.ColonyActivated: {
 				// TODO: Symbol for this?
-				return
+				return []
 			}
 
 			case EventType.TileAcquired: {
-				return (
-					<Symbols
-						symbols={[
-							...playerSymbol(e.playerId),
-							{ tile: e.tile, tileOther: e.other },
-						]}
-					/>
-				)
+				return [
+					...playerSymbol(e.playerId),
+					{ tile: e.tile, tileOther: e.other },
+				]
 			}
 
 			case EventType.TilePlaced: {
-				return (
-					<Symbols
-						symbols={[
-							...playerSymbol(e.playerId),
-							{ tile: e.tile, tileOther: e.other },
-						]}
-					/>
-				)
+				return [
+					...playerSymbol(e.playerId),
+					{ tile: e.tile, tileOther: e.other },
+				]
 			}
 		}
+
+		return []
 	}
+
+	const allSymbols = useMemo(
+		() => events.flatMap((e) => eventToSymbols(e)),
+		[events],
+	)
 
 	return (
 		<E style={{ maxWidth }}>
-			{events.map((e, i) => (
-				<Fragment key={i}>{eventToSymbols(e)}</Fragment>
+			{allSymbols.map((s, i) => (
+				<SymbolContainer key={i} style={{ animationDelay: `${i * 200}ms` }}>
+					<SymbolDisplay key={i} symbol={s} />
+				</SymbolContainer>
 			))}
 		</E>
 	)
@@ -217,4 +176,20 @@ const E = styled.div`
 	font-size: 125%;
 	max-width: 15rem;
 	margin: 1rem auto;
+`
+
+const popIn = keyframes`
+	0% { transform: scale(0); }
+	100% { transform: scale(1); }
+`
+
+const SymbolContainer = styled.div`
+	animation-name: ${popIn};
+	animation-duration: 0.2s;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+	animation-timing-function: cubic-bezier(0.82, 0.19, 0.68, 1.43);
+	transform: scale(0);
+	display: flex;
+	align-items: center;
 `
