@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { EventType, CardPlayed, CardUsed } from '../types'
 import { CardView } from '../../CardView/CardView'
 import { CardsLookupApi } from '@shared/cards'
 import styled, { keyframes, css } from 'styled-components'
 import { useAppStore } from '@/utils/hooks'
 import { rgba } from 'polished'
+import { CardPlayed, CardUsed, EventType } from '@shared/index'
 
 export type CardEvent = (CardPlayed | CardUsed) & { id: number }
 

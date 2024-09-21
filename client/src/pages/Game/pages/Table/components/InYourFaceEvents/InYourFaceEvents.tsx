@@ -1,4 +1,4 @@
-import { Button } from '@/components'
+import { Button, Portal } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { useAppStore } from '@/utils/hooks'
 import { useGameEventsHandler } from '@/utils/useGameEventsHandler'
@@ -163,40 +163,42 @@ export const InYourFaceEvents = () => {
 	return (
 		<>
 			{current && (
-				<DisplayContainer>
-					<Inner>
-						<NextEvents>
-							{events
-								.slice(1, 5)
-								.reverse()
-								.map((e, i, a) => {
-									const indexReversed = a.length - 1 - i
+				<Portal>
+					<DisplayContainer>
+						<Inner>
+							<NextEvents>
+								{events
+									.slice(1, 5)
+									.reverse()
+									.map((e, i, a) => {
+										const indexReversed = a.length - 1 - i
 
-									return (
-										<NextEvent
-											key={`${i}-${e.type}`}
-											style={{
-												/*transform: `scale(${1 - (Math.min(4, events.length + 1) - i + 1) * 0.1})`,*/
-												fontSize: `${1 - (indexReversed + 1) * 0.1}rem`,
-												opacity: 1 - (indexReversed + 1) * 0.2,
-												marginLeft: `${(indexReversed + 1) * 0.5}rem`,
-												marginRight: `${(indexReversed + 1) * 0.5}rem`,
-											}}
-										>
-											{renderEventHead(e)}
-										</NextEvent>
-									)
-								})}
-						</NextEvents>
-						<Flex align="center" justify="flex-end" gap="1rem">
-							<span>{events.length}</span>
-							<Button onClick={handleDismiss}>
-								{events.length > 1 ? 'Next' : 'Dismiss'}
-							</Button>
-						</Flex>
-						<Event>{renderEvent(current)}</Event>
-					</Inner>
-				</DisplayContainer>
+										return (
+											<NextEvent
+												key={`${i}-${e.type}`}
+												style={{
+													/*transform: `scale(${1 - (Math.min(4, events.length + 1) - i + 1) * 0.1})`,*/
+													fontSize: `${1 - (indexReversed + 1) * 0.1}rem`,
+													opacity: 1 - (indexReversed + 1) * 0.2,
+													marginLeft: `${(indexReversed + 1) * 0.5}rem`,
+													marginRight: `${(indexReversed + 1) * 0.5}rem`,
+												}}
+											>
+												{renderEventHead(e)}
+											</NextEvent>
+										)
+									})}
+							</NextEvents>
+							<Flex align="center" justify="flex-end" gap="1rem">
+								<span>{events.length}</span>
+								<Button onClick={handleDismiss}>
+									{events.length > 1 ? 'Next' : 'Dismiss'}
+								</Button>
+							</Flex>
+							<Event>{renderEvent(current)}</Event>
+						</Inner>
+					</DisplayContainer>
+				</Portal>
 			)}
 		</>
 	)
@@ -220,7 +222,7 @@ const Event = styled.div`
 const DisplayContainer = styled.div`
 	position: fixed;
 	inset: 0;
-	z-index: 100;
+	z-index: 9999;
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;

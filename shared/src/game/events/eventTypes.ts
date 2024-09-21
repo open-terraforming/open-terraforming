@@ -35,6 +35,7 @@ export enum EventType {
 	StartingSetup,
 	ProductionDone,
 	TileClaimed,
+	WorldGovernmentTerraforming,
 }
 
 export type StartingSetup = {
@@ -197,6 +198,12 @@ export type TileClaimed = {
 	playerId: number
 }
 
+export type WorldGovernmentTerraforming = {
+	type: EventType.WorldGovernmentTerraforming
+	progress: GameProgress
+	playerId: number
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -223,6 +230,7 @@ export type GameEvent =
 	| TileAcquired
 	| StartingSetup
 	| TileClaimed
+	| WorldGovernmentTerraforming
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

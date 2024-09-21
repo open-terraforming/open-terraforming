@@ -60,7 +60,7 @@ import {
 import { ColoniesProductionGameState } from './game/colonies-production-game-state'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { buildEvents } from './events/buildEvents'
-import { GameEvent } from './events/types'
+import { GameEvent } from './events/eventTypes'
 
 export interface GameConfig {
 	bots: number

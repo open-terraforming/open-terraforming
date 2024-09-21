@@ -11,7 +11,7 @@ type Props = {
 }
 
 export const PopEventDisplay = ({ events }: Props) => {
-	const [processed, setProcessed] = useState(0)
+	const [processed, setProcessed] = useState(events.length)
 	const [popEvents, setPopEvents] = useState([] as PopEvent[])
 
 	const handleDone = useCallback(() => {

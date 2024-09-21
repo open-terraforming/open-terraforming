@@ -5,7 +5,7 @@ import { GameModeType } from './modes/types'
 import { PlayerAction } from './player-actions'
 import { MapType } from './map'
 import { ExpansionType } from './expansions/types'
-import { GameEvent } from './game/events/types'
+import { GameEvent } from './game/events/eventTypes'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
@@ -249,8 +249,12 @@ export interface GridCell {
 	content?: GridCellContent
 	other?: GridCellOther
 
+	/** id of player who owns the tile */
 	ownerId?: number
 	ownerCard?: number
+
+	/** id of player who placed this tile */
+	placedById?: number
 
 	claimantId?: number
 }

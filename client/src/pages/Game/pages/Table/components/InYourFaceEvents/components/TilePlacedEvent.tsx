@@ -1,6 +1,7 @@
 import { TilePlaced } from '@shared/index'
+import styled from 'styled-components'
+import { Symbols } from '../../CardView/components/Symbols'
 import { PlayerDidHeader } from './PlayerDidHeader'
-import { SymbolsEventLog } from './SymbolsEventLog'
 
 type Props = {
 	event: TilePlaced
@@ -11,7 +12,13 @@ export const TilePlacedEvent = ({ event }: Props) => {
 		<>
 			<PlayerDidHeader playerId={event.playerId} thing=" placed tile" />
 
-			<SymbolsEventLog currentPlayerId={event.playerId} events={[event]} />
+			<BigSymbols>
+				<Symbols symbols={[{ tile: event.tile, tileOther: event.other }]} />
+			</BigSymbols>
 		</>
 	)
 }
+
+const BigSymbols = styled.div`
+	font-size: 200%;
+`

@@ -2,7 +2,7 @@ import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
 import { GameState, GameStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { EventType, GameEvent } from './types'
+import { EventType, GameEvent } from './eventTypes'
 import { objDiff } from '@shared/utils/collections'
 
 const resources: Resource[] = [
@@ -48,7 +48,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 				if (cellChange.content) {
 					newEvents.push({
 						type: EventType.TilePlaced,
-						playerId: cellChange.ownerId as number,
+						playerId: cellChange.placedById as number,
 						tile: cellChange.content,
 						other: cellChange.other,
 					})

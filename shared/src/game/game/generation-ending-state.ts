@@ -1,7 +1,7 @@
 import { GameStateValue } from '@shared/index'
 import { BaseGameState } from './base-game-state'
 import { deepCopy } from '@shared/utils/collections'
-import { EventType } from '../events/types'
+import { EventType } from '../events/eventTypes'
 import { buildEvents } from '../events/buildEvents'
 
 export class GenerationEndingState extends BaseGameState {

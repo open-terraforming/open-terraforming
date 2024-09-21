@@ -10,7 +10,7 @@ import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { f, getPlayerIndex } from '@shared/utils'
 import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
-import { GameEvent } from '../events/types'
+import { GameEvent } from '../events/eventTypes'
 
 export abstract class PlayerBaseAction<Args = unknown> {
 	abstract states: PlayerStateValue[]
