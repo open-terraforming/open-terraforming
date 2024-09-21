@@ -189,12 +189,14 @@ export const InYourFaceEvents = () => {
 										)
 									})}
 							</NextEvents>
-							<Flex align="center" justify="flex-end" gap="1rem">
-								<span>{events.length}</span>
-								<Button onClick={handleDismiss}>
-									{events.length > 1 ? 'Next' : 'Dismiss'}
-								</Button>
-							</Flex>
+							<Actions>
+								<ActionsInner align="center" justify="flex-end" gap="1rem">
+									<span>{events.length}</span>
+									<Button onClick={handleDismiss}>
+										{events.length > 1 ? 'Next' : 'Dismiss'}
+									</Button>
+								</ActionsInner>
+							</Actions>
 							<Event>{renderEvent(current)}</Event>
 						</Inner>
 					</DisplayContainer>
@@ -209,8 +211,15 @@ const Inner = styled.div`
 	background: ${({ theme }) => theme.colors.modalBackground};
 	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
-	width: 30rem;
 	max-height: 80%;
+`
+
+const Actions = styled.div`
+	width: 30rem;
+`
+
+const ActionsInner = styled(Flex)`
+	margin: 0 auto;
 `
 
 const Event = styled.div`

@@ -215,8 +215,8 @@ export const useElementPosition = (
 export const useProcessed = (
 	callback: (events: (GameEvent & { id: number })[], processed: number) => void,
 ) => {
-	const [processed, setProcessed] = useState(0)
 	const events = useAppStore((state) => state.game.events)
+	const [processed, setProcessed] = useState(events.length)
 
 	useEffect(() => {
 		if (events.length > processed) {
