@@ -181,6 +181,17 @@ export const SymbolsEventLog = ({
 					<Symbols symbols={[...playerSymbol(e.playerId), { tile: e.tile }]} />
 				)
 			}
+
+			case EventType.TilePlaced: {
+				return (
+					<Symbols
+						symbols={[
+							...playerSymbol(e.playerId),
+							{ tile: e.tile, tileOther: e.other },
+						]}
+					/>
+				)
+			}
 		}
 	}
 

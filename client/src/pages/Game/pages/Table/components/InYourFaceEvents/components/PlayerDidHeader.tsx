@@ -12,11 +12,13 @@ export const PlayerDidHeader = ({ playerId, thing, noSpacing }: Props) => {
 	const players = useAppStore((state) => state.game.playerMap)
 	const currentPlayerId = useAppStore((state) => state.game.playerId)
 	const player = players[playerId]
-	const displayName = playerId === currentPlayerId ? 'You' : player.name
+
+	const displayName =
+		(playerId === currentPlayerId ? 'You' : player?.name) ?? 'Unknown player'
 
 	return (
 		<Header $noSpacing={noSpacing}>
-			<span style={{ color: player.color }}>{displayName}</span>
+			<span style={{ color: player?.color }}>{displayName}</span>
 			{thing}
 		</Header>
 	)

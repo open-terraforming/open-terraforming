@@ -15,6 +15,7 @@ import { PlayerDidHeader } from './components/PlayerDidHeader'
 import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
 import { StartingSetupEvent } from './components/StartingSetupEvent'
 import { ProductionDoneEvent } from './components/ProductionDoneEvent'
+import { TilePlacedEvent } from './components/TilePlacedEvent'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -26,6 +27,7 @@ const PROCESSABLE_EVENTS = [
 	EventType.ColonyTrading,
 	EventType.StartingSetup,
 	EventType.ProductionDone,
+	EventType.TilePlaced,
 ]
 
 export const InYourFaceEvents = () => {
@@ -110,6 +112,14 @@ export const InYourFaceEvents = () => {
 						thing=" picked their starting setup"
 					/>
 				)
+			case EventType.TilePlaced:
+				return (
+					<PlayerDidHeader
+						playerId={event.playerId}
+						noSpacing
+						thing=" placed tile"
+					/>
+				)
 			case EventType.ProductionDone:
 				return <CenterText>Production</CenterText>
 			default:
@@ -137,6 +147,8 @@ export const InYourFaceEvents = () => {
 				return <StartingSetupEvent event={event} />
 			case EventType.ProductionDone:
 				return <ProductionDoneEvent event={event} />
+			case EventType.TilePlaced:
+				return <TilePlacedEvent event={event} />
 			default:
 				return null
 		}
@@ -174,15 +186,13 @@ export const InYourFaceEvents = () => {
 									)
 								})}
 						</NextEvents>
-
-						<div>{renderEvent(current)}</div>
-
 						<Flex align="center" justify="flex-end" gap="1rem">
 							<span>{events.length}</span>
 							<Button onClick={handleDismiss}>
 								{events.length > 1 ? 'Next' : 'Dismiss'}
 							</Button>
 						</Flex>
+						<Event>{renderEvent(current)}</Event>
 					</Inner>
 				</DisplayContainer>
 			)}
@@ -195,6 +205,14 @@ const Inner = styled.div`
 	background: ${({ theme }) => theme.colors.modalBackground};
 	border: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
+	width: 30rem;
+	max-height: 80%;
+`
+
+const Event = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 `
 
 const DisplayContainer = styled.div`
@@ -203,8 +221,9 @@ const DisplayContainer = styled.div`
 	z-index: 100;
 	display: flex;
 	justify-content: center;
-	align-items: center;
+	align-items: flex-start;
 	background-color: rgba(0, 0, 0, 0.5);
+	padding-top: 20%;
 `
 
 const NextEvent = styled.div`

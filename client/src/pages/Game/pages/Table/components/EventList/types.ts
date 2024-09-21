@@ -34,6 +34,7 @@ export enum EventType {
 	TileAcquired,
 	StartingSetup,
 	ProductionDone,
+	TileClaimed,
 }
 
 export type StartingSetup = {
@@ -190,6 +191,12 @@ export type ProductionDone = {
 	players: ResourcesChanged[]
 }
 
+export type TileClaimed = {
+	type: EventType.TileClaimed
+	tile: { x: number; y: number }
+	playerId: number
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -215,6 +222,7 @@ export type GameEvent =
 	| StandardProjectBought
 	| TileAcquired
 	| StartingSetup
+	| TileClaimed
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

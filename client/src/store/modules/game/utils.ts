@@ -46,14 +46,22 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 	const tiles = diff.map?.grid
 
 	if (tiles) {
-		Object.entries(tiles).forEach(([, row]) => {
-			Object.entries(row).forEach(([, cellChange]) => {
+		Object.entries(tiles).forEach(([y, row]) => {
+			Object.entries(row).forEach(([x, cellChange]) => {
 				if (cellChange.content) {
 					newEvents.push({
 						type: EventType.TilePlaced,
 						playerId: cellChange.ownerId as number,
 						tile: cellChange.content,
 						other: cellChange.other,
+					})
+				}
+
+				if (cellChange.claimantId !== undefined) {
+					newEvents.push({
+						type: EventType.TileClaimed,
+						playerId: cellChange.ownerId as number,
+						tile: game.map.grid[+y][+x],
 					})
 				}
 			})

@@ -252,6 +252,12 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						{tileToStr(event.tile)}
 					</>
 				)
+			case EventType.TileClaimed:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} /> claimed tile
+					</>
+				)
 			case EventType.StartingSetup:
 				return <></>
 			case EventType.ProductionDone:
