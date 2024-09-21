@@ -1,3 +1,4 @@
+import { useLocale } from '@/context/LocaleContext'
 import { useAppStore, useToggle } from '@/utils/hooks'
 import { CardsLookupApi, Resource } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
@@ -12,16 +13,15 @@ import { Milestones } from '@shared/milestones'
 import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
 import { ucFirst } from '@shared/utils'
+import { assertNever } from '@shared/utils/assertNever'
+import { quantized } from '@shared/utils/quantized'
 import { lighten } from 'polished'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
-import { CardModal } from './CardModal'
-import { useLocale } from '@/context/LocaleContext'
-import { assertNever } from '@shared/utils/assertNever'
-import { quantized } from '@shared/utils/quantized'
+import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 import { ColoniesModal } from '../../ColoniesModal/ColoniesModal'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
-import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
+import { CardModal } from './CardModal'
 
 type Props = {
 	event: GameEvent
@@ -266,6 +266,8 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 			case EventType.StartingSetup:
 				return <></>
 			case EventType.ProductionDone:
+				return <></>
+			case EventType.WorldGovernmentTerraforming:
 				return <></>
 		}
 
