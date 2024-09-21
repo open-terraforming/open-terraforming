@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
-import { PopEvent, EventType, GameEvent } from '../../types'
+import { PopEvent } from '../../types'
 import { PlayingChanged } from './components/PlayingChanged'
 import { GenerationChanged } from './components/GenerationChanged'
 import { filterEvents } from '../../utils'
 import { ProductionPhase } from './components/ProductionPhase'
+import { GameEvent, EventType } from '@shared/index'
 
 type Props = {
 	events: GameEvent[]

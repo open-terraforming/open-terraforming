@@ -1,6 +1,6 @@
 import { CardsLookupApi } from '@shared/cards'
 import { StatelessCardView } from '../../CardView/StatelessCardView'
-import { StartingSetup } from '../../EventList/types'
+import { StartingSetup } from '@shared/index'
 import { PlayerDidHeader } from './PlayerDidHeader'
 import { SymbolsEventLog } from './SymbolsEventLog'
 import { Flex } from '@/components/Flex/Flex'

@@ -1,4 +1,4 @@
-import { GridCellContent, GridCellSpecial } from '../../game'
+import { GridCellContent, GridCellSpecial } from '../../gameState'
 import {
 	cardCategoryCountCondition,
 	cardResourcesAnywhereCondition,

@@ -1,12 +1,9 @@
-import {
-	EventType,
-	GameEvent,
-} from '@/pages/Game/pages/Table/components/EventList/types'
-import { objDiff } from '@/utils/collections'
 import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
 import { GameState, GameStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
+import { EventType, GameEvent } from './types'
+import { objDiff } from '@shared/utils/collections'
 
 const resources: Resource[] = [
 	'money',
@@ -39,7 +36,7 @@ const EVENTS_WITH_CHANGES = [
 	EventType.ColonyTrading,
 ] as const
 
-export const getEvents = (lastGame: GameState, game: GameState) => {
+export const buildEvents = (lastGame: GameState, game: GameState) => {
 	const diff = objDiff(lastGame, game) as GameState
 	const newEvents = [] as GameEvent[]
 
@@ -139,9 +136,6 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 	}
 
 	if (diff.players) {
-		const isInitialSetup = game.state === GameStateValue.Starting
-		const isProductionStep = diff.state === GameStateValue.ResearchPhase
-
 		Object.entries(diff.players).forEach(([playerIndex, changes]) => {
 			const player = lastGame.players[parseInt(playerIndex)]
 			const newPlayer = game.players[parseInt(playerIndex)]
@@ -317,34 +311,9 @@ export const getEvents = (lastGame: GameState, game: GameState) => {
 					}
 				}
 
-				if (isInitialSetup) {
-					playerEvents.push({
-						type: EventType.StartingSetup,
-						playerId: player.id,
-						changes: playerEvents.filter((e) =>
-							EVENTS_ATE_BY_CARD_CHANGES.includes(e.type),
-						),
-						corporation: newPlayer.corporation,
-						preludes: newPlayer.usedCards
-							.filter(
-								(c) => CardsLookupApi.get(c.code).type === CardType.Prelude,
-							)
-							.map((c) => c.code),
-					})
-				}
-
 				newEvents.push(...playerEvents)
 			}
 		})
-
-		if (isProductionStep) {
-			console.log('isProductionStep', newEvents)
-
-			newEvents.push({
-				type: EventType.ProductionDone,
-				players: newEvents.filter((e) => e.type === EventType.ResourcesChanged),
-			})
-		}
 	}
 
 	progress.forEach((p) => {

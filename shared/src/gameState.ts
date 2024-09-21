@@ -5,6 +5,7 @@ import { GameModeType } from './modes/types'
 import { PlayerAction } from './player-actions'
 import { MapType } from './map'
 import { ExpansionType } from './expansions/types'
+import { GameEvent } from './game/events/types'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
@@ -126,6 +127,9 @@ export interface GameState {
 
 	/** Available standard projects */
 	standardProjects: StandardProjectState[]
+
+	/** List of events that occurred during the game */
+	events: GameEvent[]
 }
 
 export interface StandardProjectState {

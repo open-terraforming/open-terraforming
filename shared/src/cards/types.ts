@@ -7,7 +7,7 @@ import {
 	GridCellContent,
 	GridCellOther,
 	ColonyState,
-} from '../game'
+} from '../gameState'
 import { StandardProject } from '../projects'
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &

@@ -1,4 +1,4 @@
-import { GameState } from '@shared/game'
+import { GameState } from '@shared/index'
 import { deepCopy } from './collections'
 
 const clearArray = (a: string[], cards?: Record<string, string>) =>

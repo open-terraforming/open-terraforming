@@ -1,5 +1,5 @@
 import { ColonyDisplay } from '../../ColoniesModal/components/ColonyDisplay'
-import { ColonyBuilt } from '../../EventList/types'
+import { ColonyBuilt } from '@shared/index'
 import { PlayerDidHeader } from './PlayerDidHeader'
 import { SymbolsEventLog } from './SymbolsEventLog'
 

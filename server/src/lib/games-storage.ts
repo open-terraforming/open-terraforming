@@ -1,4 +1,4 @@
-import { GameState } from '@shared/game'
+import { GameState } from '@shared/index'
 import { mkdir, readdir, readFile, stat, unlink, writeFile } from 'fs/promises'
 import { join } from 'path'
 import { fileCompression } from './file-compression'

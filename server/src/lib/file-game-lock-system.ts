@@ -1,5 +1,5 @@
 import { GameLockSystem } from '@shared/game/game'
-import { GameState } from '@shared/game'
+import { GameState } from '@shared/index'
 import { mkdirSync, readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { join } from 'path'
 

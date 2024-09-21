@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
+import { GameEvent } from '@shared/index'
 import { StoreState } from '@/store'
 import { AppDispatch } from '@/store/utils'
 import {

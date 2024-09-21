@@ -13,7 +13,7 @@ import {
 	canTradeWithColonyUsingResource,
 	getColonyTradeCostSymbols,
 } from '@shared/expansions/colonies/utils'
-import { ColonyState, PlayerStateValue } from '@shared/game'
+import { ColonyState, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { failure, isFailure, isOk } from '@shared/utils'
 import { Fragment } from 'react'

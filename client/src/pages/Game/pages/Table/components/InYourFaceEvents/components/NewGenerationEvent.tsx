@@ -1,5 +1,5 @@
 import { styled } from 'styled-components'
-import { NewGeneration } from '../../EventList/types'
+import { NewGeneration } from '@shared/index'
 
 type Props = {
 	event: NewGeneration

@@ -7,7 +7,7 @@ import {
 	canTradeWithColonyUsingResource,
 	getColonyTradeCostSymbols,
 } from '@shared/expansions/colonies/utils'
-import { ColonyState } from '@shared/game'
+import { ColonyState } from '@shared/index'
 import { isFailure } from '@shared/utils'
 import { Symbols } from '../../CardView/components/Symbols'
 import { useLocale } from '@/context/LocaleContext'

@@ -1,6 +1,6 @@
 import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
 import { getPlayerUsedFleets } from '@shared/expansions/colonies/utils/getPlayerUsedFleets'
-import { GridCellContent } from '../game'
+import { GridCellContent } from '../gameState'
 import { progressResToStr, withUnits } from '../units'
 import { CardsLookupApi } from './lookup'
 import {

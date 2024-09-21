@@ -3,7 +3,7 @@ import {
 	GridCellLocation,
 	GridCellSpecial,
 	GridCellType,
-} from '../game'
+} from '../gameState'
 import { cell } from '../maps/utils'
 
 export const venusExtraCells: GridCell[] = [

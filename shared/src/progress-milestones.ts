@@ -3,7 +3,7 @@ import {
 	GameState,
 	PlayerState,
 	ProgressMilestoneType,
-} from './game'
+} from './gameState'
 import { drawCards, keyMap, pushPendingAction } from './utils'
 import { placeTileAction } from './player-actions'
 

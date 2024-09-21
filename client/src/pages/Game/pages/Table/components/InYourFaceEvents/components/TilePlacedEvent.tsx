@@ -1,4 +1,4 @@
-import { TilePlaced } from '../../EventList/types'
+import { TilePlaced } from '@shared/index'
 import { PlayerDidHeader } from './PlayerDidHeader'
 import { SymbolsEventLog } from './SymbolsEventLog'
 

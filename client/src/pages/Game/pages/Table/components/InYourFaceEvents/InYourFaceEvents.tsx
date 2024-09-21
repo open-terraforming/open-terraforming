@@ -4,7 +4,6 @@ import { useAppStore } from '@/utils/hooks'
 import { useGameEventsHandler } from '@/utils/useGameEventsHandler'
 import { useCallback, useState } from 'react'
 import styled from 'styled-components'
-import { EventType, GameEvent } from '../EventList/types'
 import { CardPlayedEvent } from './components/CardPlayedEvent'
 import { CardUsedEvent } from './components/CardUsedEvent'
 import { ColonyBuiltEvent } from './components/ColonyBuiltEvent'
@@ -16,6 +15,7 @@ import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEv
 import { StartingSetupEvent } from './components/StartingSetupEvent'
 import { ProductionDoneEvent } from './components/ProductionDoneEvent'
 import { TilePlacedEvent } from './components/TilePlacedEvent'
+import { EventType, GameEvent } from '@shared/index'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -157,6 +157,8 @@ export const InYourFaceEvents = () => {
 	const handleDismiss = useCallback(() => {
 		setEvents((events) => events.slice(1))
 	}, [])
+
+	console.log({ current })
 
 	return (
 		<>

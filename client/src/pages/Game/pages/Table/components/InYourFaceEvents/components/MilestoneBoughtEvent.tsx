@@ -1,6 +1,6 @@
 import { Milestones } from '@shared/milestones'
 import { styled } from 'styled-components'
-import { MilestoneBought } from '../../EventList/types'
+import { MilestoneBought } from '@shared/index'
 import { PlayerDidHeader } from './PlayerDidHeader'
 
 type Props = {

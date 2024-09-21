@@ -1,6 +1,6 @@
 import { Competitions } from '@shared/competitions'
 import { styled } from 'styled-components'
-import { CompetitionSponsored } from '../../EventList/types'
+import { CompetitionSponsored } from '@shared/index'
 import { PlayerDidHeader } from './PlayerDidHeader'
 
 type Props = {

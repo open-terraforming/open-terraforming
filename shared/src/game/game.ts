@@ -12,7 +12,7 @@ import {
 	PlayerStateValue,
 	ProgressMilestoneType,
 	StandardProjectType,
-} from '@shared/game'
+} from '@shared/gameState'
 import {
 	draftCard,
 	pickCards,
@@ -31,7 +31,7 @@ import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState, initialStandardProjectState } from '@shared/states'
 import { f, isMarsTerraformed, range, shuffle } from '@shared/utils'
-import { deepExtend } from '@shared/utils/collections'
+import { deepCopy, deepExtend } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
 import { randomPassword } from '@shared/utils/password'
 import { v4 as uuidv4 } from 'uuid'
@@ -59,6 +59,8 @@ import {
 } from './player'
 import { ColoniesProductionGameState } from './game/colonies-production-game-state'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { buildEvents } from './events/buildEvents'
+import { GameEvent } from './events/types'
 
 export interface GameConfig {
 	bots: number
@@ -110,6 +112,8 @@ export class Game {
 	sm = new StateMachine<GameStateValue>()
 
 	botNames = shuffle([...BotNames])
+
+	private lastGameState: GameState | null = null
 
 	constructor(
 		readonly lockSystem: GameLockSystem,
@@ -248,12 +252,30 @@ export class Game {
 
 	updated = () => {
 		this.checkState()
+		this.buildEventsAfterStateChange()
 
 		if (this.sm.update()) {
 			this.updated()
 		} else {
 			this.onStateUpdated.emit(this.state)
 		}
+	}
+
+	buildEventsAfterStateChange() {
+		if (this.lastGameState === null) {
+			// TODO: Better cloning logic?
+			this.lastGameState = deepCopy(this.state)
+		} else {
+			const events = buildEvents(this.lastGameState, this.state)
+			this.state.events.push(...events)
+
+			this.lastGameState = deepCopy(this.state)
+		}
+	}
+
+	pushEvent(event: GameEvent) {
+		this.state.events.push(event)
+		this.onStateUpdated.emit(this.state)
 	}
 
 	add(player: Player, triggerUpdate = true) {

@@ -1,6 +1,6 @@
 import { Projects } from '@shared/projects'
 import { styled } from 'styled-components'
-import { StandardProjectBought } from '../../EventList/types'
+import { StandardProjectBought } from '@shared/index'
 import { PlayerDidHeader } from './PlayerDidHeader'
 import { SymbolsEventLog } from './SymbolsEventLog'
 

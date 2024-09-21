@@ -6,6 +6,9 @@ import { f } from '@shared/utils'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { PlayerBaseAction } from '../action'
 import { simulateCardPassiveEffectsOnStart } from '@shared/utils/simulateCardPassiveEffectsOnStart'
+import { EventType } from '@shared/game/events/types'
+import { deepCopy } from '@shared/utils/collections'
+import { buildEvents } from '@shared/game/events/buildEvents'
 
 type Args = ReturnType<typeof pickStarting>['data']
 
@@ -89,11 +92,21 @@ export class PickStartingAction extends PlayerBaseAction<Args> {
 				),
 			)
 
+		const beforeApply = deepCopy(this.game)
+
 		this.pickCorporation(corporation)
 		this.pickCards(top.cards, cards)
 		this.pickPreludes(top.preludes, preludes)
 
 		this.popAction()
+
+		this.pushEvent({
+			type: EventType.StartingSetup,
+			playerId: this.player.id,
+			changes: buildEvents(beforeApply, this.game),
+			corporation: this.player.corporation,
+			preludes: preludes.map((c) => top.preludes[c]),
+		})
 	}
 
 	pickPreludes(choices: string[], picked: number[]) {

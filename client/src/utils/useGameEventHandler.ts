@@ -1,7 +1,7 @@
 import {
 	EventType,
 	GameEvent,
-} from '@/pages/Game/pages/Table/components/EventList/types'
+} from '@shared/index'
 import { useAppStore } from './hooks'
 import { useEffect, useRef, useState } from 'react'
 

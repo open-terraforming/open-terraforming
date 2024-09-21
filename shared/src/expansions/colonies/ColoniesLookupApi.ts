@@ -1,4 +1,4 @@
-import { Colony } from '@shared/game'
+import { Colony } from '@shared/gameState'
 import { coloniesColonies } from './coloniesColonies'
 
 export const COLONIES_LIST = [...coloniesColonies]

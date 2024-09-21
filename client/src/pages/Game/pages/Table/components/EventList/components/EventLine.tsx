@@ -1,7 +1,13 @@
 import { useAppStore, useToggle } from '@/utils/hooks'
 import { CardsLookupApi, Resource } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
-import { ColonyState, PlayerState, StandardProjectType } from '@shared/index'
+import {
+	ColonyState,
+	EventType,
+	GameEvent,
+	PlayerState,
+	StandardProjectType,
+} from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
@@ -9,7 +15,6 @@ import { ucFirst } from '@shared/utils'
 import { lighten } from 'polished'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
-import { EventType, GameEvent } from '../types'
 import { CardModal } from './CardModal'
 import { useLocale } from '@/context/LocaleContext'
 import { assertNever } from '@shared/utils/assertNever'

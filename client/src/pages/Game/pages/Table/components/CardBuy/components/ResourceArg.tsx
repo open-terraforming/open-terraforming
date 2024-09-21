@@ -3,7 +3,7 @@ import { CardEffectArgument, Resource } from '@shared/cards'
 import { useEffect } from 'react'
 import { ArgContainer } from './ArgContainer'
 import { ResourceInput } from './ResourceInput'
-import { UsedCardState } from '@shared/game'
+import { UsedCardState } from '@shared/index'
 
 type Props = {
 	arg: CardEffectArgument

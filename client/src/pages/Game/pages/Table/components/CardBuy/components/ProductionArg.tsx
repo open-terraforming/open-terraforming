@@ -4,7 +4,7 @@ import { resourceProduction } from '@shared/cards/utils'
 import { useEffect, useState } from 'react'
 import { ArgContainer } from './ArgContainer'
 import { ResourceInput } from './ResourceInput'
-import { UsedCardState } from '@shared/game'
+import { UsedCardState } from '@shared/index'
 
 type Props = {
 	arg: CardEffectArgument

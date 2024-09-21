@@ -5,7 +5,7 @@ import {
 	GridCellContent,
 	PlayerState,
 	StandardProjectType,
-} from './game'
+} from './gameState'
 import { canPlaceAnywhere } from './placements'
 import { placeTileAction } from './player-actions'
 import { keyMap, pushPendingAction } from './utils'

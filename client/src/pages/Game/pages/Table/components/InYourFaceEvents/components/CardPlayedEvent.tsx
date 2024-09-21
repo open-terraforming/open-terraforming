@@ -1,6 +1,6 @@
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { StatelessCardView } from '../../CardView/StatelessCardView'
-import { CardPlayed } from '../../EventList/types'
+import { CardPlayed } from '@shared/index'
 import { PlayerDidHeader } from './PlayerDidHeader'
 import { SymbolsEventLog } from './SymbolsEventLog'
 

@@ -6,7 +6,7 @@ import {
 	PlayerState,
 	VictoryPoints,
 	VictoryPointsSource,
-} from './game'
+} from './gameState'
 import { adjacentCells, allCells } from './utils'
 
 export const getCardVictoryPoints = (game: GameState, player: PlayerState) => {

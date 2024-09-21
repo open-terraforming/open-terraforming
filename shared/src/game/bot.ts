@@ -15,7 +15,7 @@ import {
 	GameStateValue,
 	PlayerStateValue,
 	StandardProjectType,
-} from '@shared/game'
+} from '@shared/gameState'
 import {
 	addCardResource,
 	buildColony,

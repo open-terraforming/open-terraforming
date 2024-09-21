@@ -1,8 +1,7 @@
 import { GameState, PlayerState, PlayerStateValue } from '@shared/index'
 import { keyMap, pendingActions } from '@shared/utils'
 import { initialGameState, initialPlayerState } from '@shared/states'
-import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
-import { getEvents } from './utils'
+import { GameEvent } from '@shared/index'
 import { GameInfo } from '@shared/extra'
 import { PlayerAction } from '@shared/player-actions'
 import { objDiff } from '@/utils/collections'
@@ -29,11 +28,6 @@ export default (state = initialState, action: Action): State => {
 				? undefined
 				: action.state.players.find((p) => p.id === state.playerId)
 
-			const events =
-				state.state.id === action.state.id
-					? getEvents(state.state, action.state)
-					: []
-
 			const pendingAction = player && pendingActions(player)[0]
 
 			console.groupCollapsed('Game changed')
@@ -49,7 +43,7 @@ export default (state = initialState, action: Action): State => {
 				pendingAction,
 				playing: player?.state === PlayerStateValue.Playing && !pendingAction,
 				interrupted: !!pendingAction,
-				events: events.length > 0 ? [...state.events, ...events] : state.events,
+				events: action.state.events,
 			}
 		}
 

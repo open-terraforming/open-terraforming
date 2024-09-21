@@ -1,5 +1,5 @@
 import { CardCategory, CardsLookupApi, CardType } from './cards'
-import { GameState, GridCellContent, PlayerState } from './game'
+import { GameState, GridCellContent, PlayerState } from './gameState'
 import { allCells, allTiles, keyMap } from './utils'
 
 export enum CompetitionType {

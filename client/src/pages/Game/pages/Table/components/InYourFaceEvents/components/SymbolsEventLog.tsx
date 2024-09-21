@@ -1,11 +1,11 @@
 import { useLocale } from '@/context/LocaleContext'
 import { useAppStore } from '@/utils/hooks'
 import { CardResource, Resource, SymbolType } from '@shared/cards'
-import { GridCellContent } from '@shared/game'
+import { GridCellContent } from '@shared/index'
 import { Fragment } from 'react'
 import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
-import { EventType, GameEvent } from '../../EventList/types'
+import { EventType, GameEvent } from '@shared/index'
 
 type Props = {
 	events: GameEvent[]

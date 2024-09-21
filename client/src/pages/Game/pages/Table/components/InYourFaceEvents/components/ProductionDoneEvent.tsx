@@ -1,5 +1,5 @@
 import styled, { keyframes } from 'styled-components'
-import { ProductionDone } from '../../EventList/types'
+import { ProductionDone } from '@shared/index'
 import { PlayerDidHeader } from './PlayerDidHeader'
 import { SymbolsEventLog } from './SymbolsEventLog'
 import { useAppStore } from '@/utils/hooks'

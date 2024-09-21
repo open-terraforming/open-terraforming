@@ -7,7 +7,7 @@ import {
 	GridCellOther,
 	GridCellSpecial,
 	PlayerState,
-} from './game'
+} from './gameState'
 import { adjacentCells, allCells } from './utils'
 
 const placement = (c: PlacementCondition) => c

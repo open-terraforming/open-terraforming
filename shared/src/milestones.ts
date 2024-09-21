@@ -1,4 +1,4 @@
-import { GameState, PlayerState, GridCellContent } from './game'
+import { GameState, PlayerState, GridCellContent } from './gameState'
 import { allCells, keyMap, voidReduce, tiles } from './utils'
 import { CardsLookupApi, CardCategory, CardType } from './cards'
 import { resources, resourceProduction } from './cards/utils'

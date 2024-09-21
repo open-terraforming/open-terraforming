@@ -1,4 +1,4 @@
-import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
+import { GameEvent } from '@shared/index'
 import { useEffect, useRef, useState } from 'react'
 import { useAppStore } from './hooks'
 
