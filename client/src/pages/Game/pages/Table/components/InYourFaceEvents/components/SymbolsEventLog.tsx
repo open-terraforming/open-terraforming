@@ -160,7 +160,7 @@ export const SymbolsEventLog = ({
 	return (
 		<E style={{ maxWidth }}>
 			{allSymbols.map((s, i) => (
-				<SymbolContainer key={i} style={{ animationDelay: `${i * 200}ms` }}>
+				<SymbolContainer key={i} style={{ animationDelay: `${i * 300}ms` }}>
 					<SymbolDisplay key={i} symbol={s} />
 				</SymbolContainer>
 			))}
@@ -188,7 +188,7 @@ const SymbolContainer = styled.div`
 	animation-duration: 0.2s;
 	animation-iteration-count: 1;
 	animation-fill-mode: forwards;
-	animation-timing-function: cubic-bezier(0.82, 0.19, 0.68, 1.43);
+	animation-timing-function: cubic-bezier(0.82, 0.19, 0.7, 1.58);
 	transform: scale(0);
 	display: flex;
 	align-items: center;

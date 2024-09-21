@@ -16,10 +16,11 @@ import {
 import { ColonyState, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { failure, isFailure, isOk } from '@shared/utils'
-import { Fragment } from 'react'
+import { Fragment, ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { ColonyTradeModal } from './ColonyTradeModal'
+import { lighten } from 'polished'
 
 type Props = {
 	index: number
@@ -104,6 +105,34 @@ export const ColonyDisplay = ({
 		api.send(tradeWithColony(index, 'money'))
 	}
 
+	const getStepTooltipContent = (i: number) => {
+		const content: ReactNode[] = []
+
+		if (i === colony.step) {
+			content.push(
+				<div key={0}>
+					{
+						"Current trade step, you'll receive this when trading with this colony"
+					}
+				</div>,
+			)
+		}
+
+		if (i === colony.playersAtSteps.length) {
+			content.push(
+				<div key={1}>
+					{'The colony income step will never go below this value'}
+				</div>,
+			)
+		}
+
+		if (i === highlightStep) {
+			content.push(<div key={2}>{'The step traded right now'}</div>)
+		}
+
+		return content.length > 0 ? <>{content}</> : undefined
+	}
+
 	return (
 		<Container>
 			{isTrading && (
@@ -180,24 +209,7 @@ export const ColonyDisplay = ({
 								)}
 							</SlotRect>
 						)}
-						<Tooltip
-							content={
-								<>
-									{i === colony.step && (
-										<div>
-											{
-												"Current trade step, you'll receive this when trading with this colony"
-											}
-										</div>
-									)}
-									{i === colony.playersAtSteps.length && (
-										<div>
-											{'The colony income step will never go below this value'}
-										</div>
-									)}
-								</>
-							}
-						>
+						<Tooltip content={getStepTooltipContent(i)}>
 							<SlotLabel
 								$isCurrent={i === colony.step}
 								$isDisabled={i < colony.playersAtSteps.length}
@@ -336,7 +348,7 @@ const popOut = keyframes`
 		transform: scale(1);
 	}
 	50% {
-		transform: scale(1.05);
+		transform: scale(1.2);
 	}
 	100% {
 		transform: scale(1);
@@ -376,7 +388,7 @@ const SlotLabel = styled.div<{
 	${({ $isHighlighted, theme }) =>
 		$isHighlighted &&
 		css`
-			background-color: ${theme.colors.border};
+			background-color: ${lighten(0.1, theme.colors.border)};
 			animation-name: ${popOut};
 			animation-duration: 0.5s;
 			animation-iteration-count: 1;

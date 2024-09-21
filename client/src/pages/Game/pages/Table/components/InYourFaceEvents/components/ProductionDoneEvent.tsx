@@ -53,7 +53,7 @@ const fadeIn = keyframes`
 const ProductionContainer = styled.div`
 	position: relative;
 	animation-name: ${fadeIn};
-	animation-duration: 0.5s;
+	animation-duration: 0.25s;
 	animation-iteration-count: 1;
 	animation-fill-mode: forwards;
 	opacity: 0;
