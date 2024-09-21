@@ -17,7 +17,7 @@ import { ColonyState, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { failure, isFailure, isOk } from '@shared/utils'
 import { Fragment } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { ColonyTradeModal } from './ColonyTradeModal'
 
@@ -28,6 +28,7 @@ type Props = {
 	freeColonizePick?: boolean
 	allowDuplicateColonies?: boolean
 	noActions?: boolean
+	highlightStep?: number
 	customAction?: (colonyIndex: number) => {
 		enabled: boolean
 		perform: () => void
@@ -43,6 +44,7 @@ export const ColonyDisplay = ({
 	colony,
 	customAction,
 	noActions,
+	highlightStep,
 }: Props) => {
 	const game = useAppStore((s) => s.game.state)
 	const player = useAppStore((s) => s.game.player)
@@ -200,6 +202,7 @@ export const ColonyDisplay = ({
 								$isCurrent={i === colony.step}
 								$isDisabled={i < colony.playersAtSteps.length}
 								$isStop={i === colony.playersAtSteps.length}
+								$isHighlighted={i === highlightStep}
 							>
 								<Symbols symbols={[s]} />
 							</SlotLabel>
@@ -328,10 +331,23 @@ const Slots = styled(Flex)`
 	align-items: flex-end;
 `
 
+const popOut = keyframes`
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.05);
+	}
+	100% {
+		transform: scale(1);
+	}
+`
+
 const SlotLabel = styled.div<{
 	$isCurrent: boolean
 	$isDisabled: boolean
 	$isStop: boolean
+	$isHighlighted: boolean
 }>`
 	margin-left: 2px;
 	margin-top: 2px;
@@ -351,10 +367,19 @@ const SlotLabel = styled.div<{
 			opacity: 0.5;
 		`}
 
-		${({ $isStop, theme }) =>
+	${({ $isStop, theme }) =>
 		$isStop &&
 		css`
 			border: 2px solid ${theme.colors.border};
+		`}
+
+	${({ $isHighlighted, theme }) =>
+		$isHighlighted &&
+		css`
+			background-color: ${theme.colors.border};
+			animation-name: ${popOut};
+			animation-duration: 0.5s;
+			animation-iteration-count: 1;
 		`}
 `
 

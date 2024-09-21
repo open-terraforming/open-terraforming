@@ -158,6 +158,7 @@ export type ColonyTrading = {
 	type: typeof EventType.ColonyTrading
 	colony: number
 	playerId: number
+	at: number
 	state: ColonyState
 	changes: GameEvent[]
 }
@@ -184,6 +185,7 @@ export type StandardProjectBought = {
 export type TileAcquired = {
 	type: typeof EventType.TileAcquired
 	tile: GridCellContent
+	other?: GridCellOther
 	playerId: number
 }
 

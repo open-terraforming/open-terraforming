@@ -71,6 +71,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 				return
 			}
 
+			const oldColony = lastGame.colonies[+colonyIndex]
 			const newColony = game.colonies[+colonyIndex]
 
 			if (colony.playersAtSteps) {
@@ -99,6 +100,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 					type: EventType.ColonyTrading,
 					playerId: colony.currentlyTradingPlayer,
 					colony: +colonyIndex,
+					at: oldColony.step,
 					state: { ...newColony },
 					changes: [],
 				})
@@ -303,6 +305,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 									type: EventType.TileAcquired,
 									playerId: player.id,
 									tile: action.state.type,
+									other: action.state.other,
 								})
 
 								break

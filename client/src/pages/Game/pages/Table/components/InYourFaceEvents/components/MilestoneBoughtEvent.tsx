@@ -1,6 +1,7 @@
+import { MilestoneBought } from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { styled } from 'styled-components'
-import { MilestoneBought } from '@shared/index'
+import { MilestoneDisplay } from '../../MilestonesModal/components/MilestoneDisplay'
 import { PlayerDidHeader } from './PlayerDidHeader'
 
 type Props = {
@@ -14,8 +15,14 @@ export const MilestoneBoughtEvent = ({ event }: Props) => {
 		<>
 			<PlayerDidHeader playerId={event.playerId} thing={' bought milestone'} />
 			<Container>
-				<CenteredTitle>{milestone.title}</CenteredTitle>
-				<CenteredDescription>{milestone.description}</CenteredDescription>
+				<MilestoneDisplay
+					milestone={milestone}
+					canAfford={false}
+					onBuy={() => {}}
+					playing={false}
+					currentPlayerId={event.playerId}
+					ownerId={event.playerId}
+				/>
 			</Container>
 		</>
 	)
@@ -24,13 +31,4 @@ export const MilestoneBoughtEvent = ({ event }: Props) => {
 const Container = styled.div`
 	margin: 3rem 0;
 	min-width: 15rem;
-`
-
-const CenteredTitle = styled.div`
-	font-size: 125%;
-	text-align: center;
-`
-
-const CenteredDescription = styled.div`
-	text-align: center;
 `

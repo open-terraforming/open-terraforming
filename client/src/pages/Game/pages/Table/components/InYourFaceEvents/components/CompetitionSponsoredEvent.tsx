@@ -1,6 +1,7 @@
 import { Competitions } from '@shared/competitions'
-import { styled } from 'styled-components'
 import { CompetitionSponsored } from '@shared/index'
+import { styled } from 'styled-components'
+import { CompetitionDisplay } from '../../CompetitionsModal/components/CompetitionDisplay'
 import { PlayerDidHeader } from './PlayerDidHeader'
 
 type Props = {
@@ -17,8 +18,14 @@ export const CompetitionSponsoredEvent = ({ event }: Props) => {
 				thing={' sponsored competition'}
 			/>
 			<Container>
-				<CenteredTitle>{competition.title}</CenteredTitle>
-				<CenteredDescription>{competition.description}</CenteredDescription>
+				<CompetitionDisplay
+					competition={competition}
+					canAfford={false}
+					onBuy={() => {}}
+					playing={false}
+					cost={0}
+					sponsoredId={event.playerId}
+				/>
 			</Container>
 		</>
 	)
@@ -27,13 +34,4 @@ export const CompetitionSponsoredEvent = ({ event }: Props) => {
 const Container = styled.div`
 	margin: 3rem 0;
 	min-width: 15rem;
-`
-
-const CenteredTitle = styled.div`
-	font-size: 125%;
-	text-align: center;
-`
-
-const CenteredDescription = styled.div`
-	text-align: center;
 `

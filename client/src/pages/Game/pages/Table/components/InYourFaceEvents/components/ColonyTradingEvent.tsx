@@ -14,7 +14,12 @@ export const ColonyTradingEvent = ({ event }: Props) => {
 				playerId={event.playerId}
 				thing={' traded with colony'}
 			/>
-			<ColonyDisplay colony={event.state} index={-1} noActions />
+			<ColonyDisplay
+				colony={event.state}
+				index={-1}
+				noActions
+				highlightStep={event.at}
+			/>
 			<SymbolsEventLog
 				events={event.changes}
 				currentPlayerId={event.playerId}

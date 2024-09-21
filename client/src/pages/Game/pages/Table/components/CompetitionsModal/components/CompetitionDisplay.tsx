@@ -10,7 +10,7 @@ type Props = {
 	competition: Competition
 	canAfford: boolean
 	freePick?: boolean
-	sponsored?: PlayerState
+	sponsoredId?: number
 	cost: number
 	playing: boolean
 	onBuy: (competition: Competition) => void
@@ -20,13 +20,15 @@ export const CompetitionDisplay = ({
 	competition,
 	canAfford,
 	onBuy,
-	sponsored,
+	sponsoredId,
 	playing,
 	cost,
 	freePick: pendingAction,
 }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 	const playerId = useAppStore((state) => state.game.playerId)
+	const players = useAppStore((state) => state.game.playerMap)
+	const sponsored = sponsoredId ? players[sponsoredId] : null
 
 	const score = useMemo(
 		() =>
