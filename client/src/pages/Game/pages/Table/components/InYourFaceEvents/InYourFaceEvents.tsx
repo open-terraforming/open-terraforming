@@ -33,6 +33,7 @@ const PROCESSABLE_EVENTS = [
 export const InYourFaceEvents = () => {
 	const player = useAppStore((state) => state.game.player)
 	const [events, setEvents] = useState<GameEvent[]>([])
+	const [opacity, setOpacity] = useState(1)
 
 	const current = events[0]
 
@@ -148,7 +149,7 @@ export const InYourFaceEvents = () => {
 			case EventType.ProductionDone:
 				return <ProductionDoneEvent event={event} />
 			case EventType.TilePlaced:
-				return <TilePlacedEvent event={event} />
+				return <TilePlacedEvent event={event} onOpacityChange={setOpacity} />
 			default:
 				return null
 		}
@@ -164,7 +165,7 @@ export const InYourFaceEvents = () => {
 		<>
 			{current && (
 				<Portal>
-					<DisplayContainer>
+					<DisplayContainer style={{ opacity }}>
 						<Inner>
 							<NextEvents>
 								{events

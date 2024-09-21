@@ -16,6 +16,8 @@ type Props = {
 	claiming?: boolean
 	delayFunction: number
 	onClick: () => void
+	highlighted?: boolean
+	faded?: boolean
 }
 
 const hexPoints = '-8.5,4.4 -8.5,-4.5 0,-9.5 8.5,-4.5 8.5,4.5 0,9.5'
@@ -58,6 +60,7 @@ export const Cell = ({
 	onClick,
 	claiming,
 	delayFunction,
+	faded,
 }: Props) => {
 	const [hover, setHover] = useState(false)
 	const [container, setContainer] = useState(null as SVGElement | null)
@@ -151,6 +154,7 @@ export const Cell = ({
 			transform={`translate(${pos.x},${pos.y})`}
 			onClick={active ? onClick : undefined}
 			ref={(e) => setContainer(e)}
+			style={{ ...(faded && { opacity: 0.5 }) }}
 		>
 			<polygon
 				style={{

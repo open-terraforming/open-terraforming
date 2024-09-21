@@ -100,6 +100,7 @@ export type TilePlaced = {
 	type: typeof EventType.TilePlaced
 	tile: GridCellContent
 	other?: GridCellOther
+	cell: { x: number; y: number }
 	playerId: number
 }
 

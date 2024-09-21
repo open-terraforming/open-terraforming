@@ -45,12 +45,15 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 	if (tiles) {
 		Object.entries(tiles).forEach(([y, row]) => {
 			Object.entries(row).forEach(([x, cellChange]) => {
+				const currentCell = game.map.grid[+y][+x]
+
 				if (cellChange.content) {
 					newEvents.push({
 						type: EventType.TilePlaced,
 						playerId: cellChange.placedById as number,
 						tile: cellChange.content,
 						other: cellChange.other,
+						cell: { x: currentCell.x, y: currentCell.y },
 					})
 				}
 
@@ -58,7 +61,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 					newEvents.push({
 						type: EventType.TileClaimed,
 						playerId: cellChange.ownerId as number,
-						tile: game.map.grid[+y][+x],
+						tile: { x: currentCell.x, y: currentCell.y },
 					})
 				}
 			})

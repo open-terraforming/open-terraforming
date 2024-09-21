@@ -19,6 +19,7 @@ const initialState = {
 	interrupted: false,
 	spectating: false,
 	events: [] as GameEvent[],
+	highlightedCell: undefined as { x: number; y: number } | undefined,
 }
 
 export default (state = initialState, action: Action): State => {
@@ -71,6 +72,13 @@ export default (state = initialState, action: Action): State => {
 			}
 		}
 
+		case SET_GAME_HIGHLIGHTED_CELL: {
+			return {
+				...state,
+				highlightedCell: action.highlightedCell,
+			}
+		}
+
 		default:
 			return state
 	}
@@ -79,6 +87,7 @@ export default (state = initialState, action: Action): State => {
 const SET_GAME_STATE = 'SET_GAME_STATE'
 const SET_GAME_PLAYER = 'SET_GAME_PLAYER'
 const SET_GAME_INFO = 'SET_GAME_INFO'
+const SET_GAME_HIGHLIGHTED_CELL = 'SET_GAME_HIGHLIGHTED_CELL'
 
 export const setGameState = (state: GameState) =>
 	({
@@ -99,7 +108,16 @@ export const setGameInfo = (info: GameInfo) =>
 		info,
 	}) as const
 
+export const setGameHighlightedCell = (
+	cell: { x: number; y: number } | undefined,
+) =>
+	({
+		type: SET_GAME_HIGHLIGHTED_CELL,
+		highlightedCell: cell,
+	}) as const
+
 type Action =
 	| ReturnType<typeof setGameState>
 	| ReturnType<typeof setGamePlayer>
 	| ReturnType<typeof setGameInfo>
+	| ReturnType<typeof setGameHighlightedCell>

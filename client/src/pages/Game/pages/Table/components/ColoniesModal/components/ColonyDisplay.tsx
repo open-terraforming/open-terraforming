@@ -3,7 +3,11 @@ import { Flex } from '@/components/Flex/Flex'
 import { useApi } from '@/context/ApiContext'
 import { useLocale } from '@/context/LocaleContext'
 import { useAppStore, useToggle } from '@/utils/hooks'
-import { faBuilding, faSpaceShuttle } from '@fortawesome/free-solid-svg-icons'
+import {
+	faArrowLeft,
+	faBuilding,
+	faSpaceShuttle,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { buildColony, tradeWithColony } from '@shared/actions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
@@ -16,11 +20,11 @@ import {
 import { ColonyState, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { failure, isFailure, isOk } from '@shared/utils'
+import { darken } from 'polished'
 import { Fragment, ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { ColonyTradeModal } from './ColonyTradeModal'
-import { lighten } from 'polished'
 
 type Props = {
 	index: number
@@ -29,7 +33,7 @@ type Props = {
 	freeColonizePick?: boolean
 	allowDuplicateColonies?: boolean
 	noActions?: boolean
-	highlightStep?: number
+	justTradedStep?: number
 	customAction?: (colonyIndex: number) => {
 		enabled: boolean
 		perform: () => void
@@ -45,7 +49,7 @@ export const ColonyDisplay = ({
 	colony,
 	customAction,
 	noActions,
-	highlightStep,
+	justTradedStep,
 }: Props) => {
 	const game = useAppStore((s) => s.game.state)
 	const player = useAppStore((s) => s.game.player)
@@ -126,7 +130,7 @@ export const ColonyDisplay = ({
 			)
 		}
 
-		if (i === highlightStep) {
+		if (i === justTradedStep) {
 			content.push(<div key={2}>{'The step traded right now'}</div>)
 		}
 
@@ -214,9 +218,19 @@ export const ColonyDisplay = ({
 								$isCurrent={i === colony.step}
 								$isDisabled={i < colony.playersAtSteps.length}
 								$isStop={i === colony.playersAtSteps.length}
-								$isHighlighted={i === highlightStep}
+								$isHighlighted={i === justTradedStep}
 							>
 								<Symbols symbols={[s]} />
+								{i === justTradedStep && (
+									<ShiftArrow>
+										<FontAwesomeIcon icon={faArrowLeft} />{' '}
+										<ShiftArrowLine
+											style={{
+												width: (justTradedStep - colony.step - 1) * 3 + 'rem',
+											}}
+										/>
+									</ShiftArrow>
+								)}
 							</SlotLabel>
 						</Tooltip>
 					</Slot>
@@ -366,6 +380,7 @@ const SlotLabel = styled.div<{
 	border: 2px solid transparent;
 	width: 3rem;
 	box-sizing: border-box;
+	position: relative;
 
 	${({ $isCurrent, theme }) =>
 		$isCurrent &&
@@ -388,7 +403,8 @@ const SlotLabel = styled.div<{
 	${({ $isHighlighted, theme }) =>
 		$isHighlighted &&
 		css`
-			background-color: ${lighten(0.1, theme.colors.border)};
+			border: 2px solid ${darken(0.05, theme.colors.border)};
+			background-color: ${darken(0.1, theme.colors.border)};
 			animation-name: ${popOut};
 			animation-duration: 0.5s;
 			animation-iteration-count: 1;
@@ -409,4 +425,18 @@ const FleetDisplay = styled.div`
 
 const FleetIcon = styled.div`
 	font-size: 150%;
+`
+
+const ShiftArrow = styled.div`
+	position: absolute;
+	right: 100%;
+	top: 100%;
+	transform: translate(0, -50%);
+	display: flex;
+	align-items: center;
+`
+
+const ShiftArrowLine = styled.div`
+	height: 2px;
+	background: ${({ theme }) => theme.colors.text};
 `

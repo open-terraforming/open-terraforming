@@ -18,7 +18,7 @@ export const ColonyTradingEvent = ({ event }: Props) => {
 				colony={event.state}
 				index={-1}
 				noActions
-				highlightStep={event.at}
+				justTradedStep={event.at}
 			/>
 			<SymbolsEventLog
 				events={event.changes}

@@ -17,9 +17,11 @@ type Props = {
 	width: number
 	height: number
 	placing?: PlacementState
+	highlighted?: boolean
+	faded?: boolean
 }
 
-export const CellOverlay = ({ cell, pos, width, height }: Props) => {
+export const CellOverlay = ({ cell, pos, width, height, faded }: Props) => {
 	return (
 		<HexOverlay
 			style={{
@@ -27,6 +29,7 @@ export const CellOverlay = ({ cell, pos, width, height }: Props) => {
 				left: `${pos.x * 100}%`,
 				width: `${width * 100}%`,
 				height: `${height * 100}%`,
+				...(faded && { opacity: 0.5 }),
 			}}
 		>
 			{cell.type === GridCellType.PhobosSpaceHaven && <Phobos />}
