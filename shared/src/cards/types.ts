@@ -293,4 +293,5 @@ export interface CardSymbol {
 	forceCount?: boolean
 	color?: string
 	title?: string
+	noRightSpacing?: boolean
 }

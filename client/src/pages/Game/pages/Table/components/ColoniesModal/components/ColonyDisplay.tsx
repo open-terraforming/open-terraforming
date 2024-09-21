@@ -430,7 +430,7 @@ const FleetIcon = styled.div`
 const ShiftArrow = styled.div`
 	position: absolute;
 	right: 100%;
-	top: 100%;
+	top: 50%;
 	transform: translate(0, -50%);
 	display: flex;
 	align-items: center;

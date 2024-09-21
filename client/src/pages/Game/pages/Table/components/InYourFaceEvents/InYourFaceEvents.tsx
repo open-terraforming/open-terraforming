@@ -159,8 +159,6 @@ export const InYourFaceEvents = () => {
 		setEvents((events) => events.slice(1))
 	}, [])
 
-	console.log({ current })
-
 	return (
 		<>
 			{current && (
@@ -198,7 +196,10 @@ export const InYourFaceEvents = () => {
 									</Button>
 								</ActionsInner>
 							</Actions>
-							<Event>{renderEvent(current)}</Event>
+							{/* TODO: Hotfix to reset animations for new events even when they're the same type - better solution? */}
+							<Event key={JSON.stringify(current)}>
+								{renderEvent(current)}
+							</Event>
 						</Inner>
 					</DisplayContainer>
 				</Portal>

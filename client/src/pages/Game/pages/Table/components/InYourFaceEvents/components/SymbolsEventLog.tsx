@@ -22,7 +22,7 @@ export const SymbolsEventLog = ({
 	const players = useAppStore((state) => state.game.playerMap)
 	const t = useLocale()
 
-	const playerSymbol = (playerId: number) =>
+	const playerSymbol = (playerId: number): CardSymbol[] =>
 		playerId === currentPlayerId
 			? []
 			: [
@@ -30,6 +30,7 @@ export const SymbolsEventLog = ({
 						symbol: SymbolType.Player,
 						color: players[playerId].color,
 						title: players[playerId].name,
+						noRightSpacing: true,
 					},
 				]
 

@@ -140,7 +140,7 @@ export const SymbolDisplay = ({ symbol: s }: Props) => {
 		<S
 			production={s.production}
 			other={s.other}
-			style={{ color: s.color }}
+			style={{ color: s.color, ...(s.noRightSpacing && { paddingRight: 0 }) }}
 			title={s.title}
 			noSpacing={
 				s.symbol === SymbolType.X ||
