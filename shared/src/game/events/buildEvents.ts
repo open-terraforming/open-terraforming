@@ -43,8 +43,6 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 	const tiles = diff.map?.grid
 
-	let oceanPlaced = false
-
 	if (tiles) {
 		Object.entries(tiles).forEach(([y, row]) => {
 			Object.entries(row).forEach(([x, cellChange]) => {
@@ -58,10 +56,6 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 						other: cellChange.other,
 						cell: { x: currentCell.x, y: currentCell.y },
 					})
-
-					if (cellChange.content === GridCellContent.Ocean) {
-						oceanPlaced = true
-					}
 				}
 
 				if (cellChange.claimantId !== undefined) {
@@ -330,7 +324,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 	}
 
 	if (
-		(progress.some((p) => p in diff) || oceanPlaced) &&
+		!game.events.some((e) => e.type === EventType.MarsTerraformed) &&
 		isMarsTerraformed(game)
 	) {
 		newEvents.push({
