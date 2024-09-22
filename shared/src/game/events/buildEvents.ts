@@ -1,10 +1,10 @@
 import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
-import { GameState, GameStateValue, GridCellContent } from '@shared/index'
+import { GameState, GameStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { EventType, GameEvent } from './eventTypes'
-import { objDiff } from '@shared/utils/collections'
 import { isMarsTerraformed } from '@shared/utils'
+import { objDiff } from '@shared/utils/collections'
+import { EventType, GameEvent } from './eventTypes'
 
 const resources: Resource[] = [
 	'money',
