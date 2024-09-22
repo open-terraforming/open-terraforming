@@ -22,12 +22,15 @@ export const buildColors = ({
 	danger,
 	warn,
 }: Props) => {
+	const modalBackground = rgba(rgba(application, 0.8), 0.95)
+
 	return {
 		application,
 		text,
 
 		background: rgba(application, 0.8),
-		modalBackground: rgba(rgba(application, 0.8), 0.95),
+		modalBackground,
+
 		border: rgba(lighten(0.1, application), 0.8),
 
 		button: {

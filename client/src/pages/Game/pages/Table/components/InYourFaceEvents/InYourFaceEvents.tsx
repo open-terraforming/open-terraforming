@@ -1,9 +1,12 @@
 import { Button, Portal } from '@/components'
+import { ClippedBox } from '@/components/ClippedBox'
 import { Flex } from '@/components/Flex/Flex'
-import { useAppStore } from '@/utils/hooks'
+import { useAppStore, useToggle } from '@/utils/hooks'
 import { useGameEventsHandler } from '@/utils/useGameEventsHandler'
-import { useCallback, useState } from 'react'
-import styled from 'styled-components'
+import { faBell, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { EventType, GameEvent } from '@shared/index'
+import { useCallback, useEffect, useState } from 'react'
+import styled, { css, keyframes } from 'styled-components'
 import { CardPlayedEvent } from './components/CardPlayedEvent'
 import { CardUsedEvent } from './components/CardUsedEvent'
 import { ColonyBuiltEvent } from './components/ColonyBuiltEvent'
@@ -11,11 +14,10 @@ import { ColonyTradingEvent } from './components/ColonyTradingEvent'
 import { CompetitionSponsoredEvent } from './components/CompetitionSponsoredEvent'
 import { MilestoneBoughtEvent } from './components/MilestoneBoughtEvent'
 import { PlayerDidHeader } from './components/PlayerDidHeader'
+import { ProductionDoneEvent } from './components/ProductionDoneEvent'
 import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
 import { StartingSetupEvent } from './components/StartingSetupEvent'
-import { ProductionDoneEvent } from './components/ProductionDoneEvent'
 import { TilePlacedEvent } from './components/TilePlacedEvent'
-import { EventType, GameEvent } from '@shared/index'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -32,6 +34,8 @@ const PROCESSABLE_EVENTS = [
 
 export const InYourFaceEvents = () => {
 	const player = useAppStore((state) => state.game.player)
+	const [shown, toggleShown, setShown] = useToggle()
+	const [rendered, setRendered] = useState(false)
 	const [events, setEvents] = useState<GameEvent[]>([])
 	const [opacity, setOpacity] = useState(1)
 
@@ -46,6 +50,16 @@ export const InYourFaceEvents = () => {
 			setEvents((events) => [...events, event])
 		}
 	})
+
+	useEffect(() => {
+		if (!shown) {
+			const timeout = setTimeout(() => setRendered(false), 200)
+
+			return () => clearTimeout(timeout)
+		} else {
+			setRendered(true)
+		}
+	}, [shown])
 
 	const renderEventHead = useCallback((event: GameEvent) => {
 		switch (event.type) {
@@ -159,11 +173,18 @@ export const InYourFaceEvents = () => {
 		setEvents((events) => events.slice(1))
 	}, [])
 
+	useEffect(() => {
+		setShown(true)
+	}, [events])
+
 	return (
 		<>
-			{current && (
+			<MinimizedButton icon={faBell} onClick={toggleShown} noClip>
+				{events.length}
+			</MinimizedButton>
+			{current && rendered && (
 				<Portal>
-					<DisplayContainer style={{ opacity }}>
+					<DisplayContainer style={{ opacity }} $shown={shown}>
 						<Inner>
 							<NextEvents>
 								{events
@@ -176,7 +197,6 @@ export const InYourFaceEvents = () => {
 											<NextEvent
 												key={`${i}-${e.type}`}
 												style={{
-													/*transform: `scale(${1 - (Math.min(4, events.length + 1) - i + 1) * 0.1})`,*/
 													fontSize: `${1 - (indexReversed + 1) * 0.1}rem`,
 													opacity: 1 - (indexReversed + 1) * 0.2,
 													marginLeft: `${(indexReversed + 1) * 0.5}rem`,
@@ -189,7 +209,13 @@ export const InYourFaceEvents = () => {
 									})}
 							</NextEvents>
 							<Actions>
-								<ActionsInner align="center" justify="flex-end" gap="1rem">
+								<ActionsInner align="center" gap="1rem">
+									<Button
+										icon={faChevronDown}
+										onClick={toggleShown}
+										schema="transparent"
+									/>
+									<ActionsSpacer />
 									<span>{events.length}</span>
 									<Button onClick={handleDismiss}>
 										{events.length > 1 ? 'Next' : 'Dismiss'}
@@ -200,6 +226,7 @@ export const InYourFaceEvents = () => {
 							<Event key={JSON.stringify(current)}>
 								{renderEvent(current)}
 							</Event>
+							<div></div>
 						</Inner>
 					</DisplayContainer>
 				</Portal>
@@ -208,12 +235,18 @@ export const InYourFaceEvents = () => {
 	)
 }
 
-const Inner = styled.div`
-	position: relative;
-	background: ${({ theme }) => theme.colors.modalBackground};
-	border: 2px solid ${({ theme }) => theme.colors.border};
-	padding: 0.5rem;
-	max-height: 80%;
+const popAnimation = keyframes`
+	0% { max-width: 0rem; }
+	100% { max-width: 35rem; }
+`
+
+const Inner = styled(ClippedBox)`
+	> .inner {
+		position: relative;
+		max-height: 80%;
+		box-sizing: border-box;
+		padding: 0.5rem;
+	}
 `
 
 const Actions = styled.div`
@@ -224,13 +257,22 @@ const ActionsInner = styled(Flex)`
 	margin: 0 auto;
 `
 
+const ActionsSpacer = styled.div`
+	flex: 1;
+`
+
 const Event = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 `
 
-const DisplayContainer = styled.div`
+const minimizeToTopLeft = keyframes`
+	0% { transform: translate(-50%, -50%) scale(1); left: 50%; top: 50%; }
+	100% { transform: translate(-50%, -50%) scale(0); left: 0; top: 0; }
+`
+
+const DisplayContainer = styled.div<{ $shown: boolean }>`
 	position: fixed;
 	inset: 0;
 	z-index: 9999;
@@ -239,6 +281,30 @@ const DisplayContainer = styled.div`
 	align-items: flex-start;
 	background-color: rgba(0, 0, 0, 0.5);
 	padding-top: 20%;
+	transition: background-color 0.2s;
+
+	${(props) =>
+		!props.$shown
+			? css`
+					background-color: rgba(0, 0, 0, 0);
+					pointer-events: none;
+
+					${Inner} {
+						position: absolute;
+						animation-name: ${minimizeToTopLeft};
+						animation-duration: 0.2s;
+						animation-iteration-count: 1;
+						animation-fill-mode: forwards;
+						transform: translate(-50%, -50%);
+					}
+				`
+			: css`
+					${Inner} {
+						animation-name: ${popAnimation};
+						animation-duration: 0.2s;
+						animation-iteration-count: 1;
+					}
+				`}
 `
 
 const NextEvent = styled.div`
@@ -255,4 +321,8 @@ const NextEvents = styled.div`
 
 const CenterText = styled.div`
 	text-align: center;
+`
+
+const MinimizedButton = styled(Button)`
+	margin-top: 0.2rem;
 `

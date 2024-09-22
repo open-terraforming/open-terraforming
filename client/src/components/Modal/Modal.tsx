@@ -1,7 +1,9 @@
+import { media } from '@/styles/media'
+import { stripedBackground } from '@/styles/mixins'
+import { optionalAnimation } from '@/styles/optionalAnimation'
 import { useWindowEvent } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { darken } from 'polished'
 import {
 	CSSProperties,
 	MouseEvent,
@@ -12,8 +14,6 @@ import {
 import ReactDOM from 'react-dom'
 import styled, { css, keyframes, useTheme } from 'styled-components'
 import { Body, Footer, Header } from './styles'
-import { media } from '@/styles/media'
-import { optionalAnimation } from '@/styles/optionalAnimation'
 
 type Keyframes = ReturnType<typeof keyframes>
 
@@ -212,24 +212,7 @@ const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	padding: 0px;
 	border-radius: 0px;
 
-	${({
-		theme: {
-			colors: { modalBackground: background },
-		},
-	}) => css`
-		background-color: ${background};
-		background: linear-gradient(
-			45deg,
-			${darken(0.01, background)} 25%,
-			${background} 25%,
-			${background} 50%,
-			${darken(0.01, background)} 50%,
-			${darken(0.01, background)} 75%,
-			${background} 75%,
-			${background}
-		);
-	`}
-	background-size: 40px 40px;
+	${stripedBackground()}
 
 	min-width: 200px;
 	max-width: 80%;

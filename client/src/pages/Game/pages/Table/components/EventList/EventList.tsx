@@ -13,6 +13,7 @@ import { IngameMenuModal } from './components/IngameMenuModal'
 import { LastEventsDisplay } from './components/LastEventsDisplay'
 import { PopEventDisplay } from './components/PopEventDisplay/PopEventDisplay'
 import { TimeDisplay } from './components/TimeDisplay'
+import { Flex } from '@/components/Flex/Flex'
 
 export const EventList = () => {
 	const player = useAppStore((state) => state.game.player)
@@ -54,28 +55,41 @@ export const EventList = () => {
 			<EventSounds events={events} />
 			<LastEventsDisplay events={events} />
 			<PopEventDisplay events={events} />
-			<InYourFaceEvents />
 			<Portal>
 				<TopButtons>
-					<DialogWrapper
-						dialog={(close) => <IngameMenuModal onClose={close} />}
-					>
-						{(open) => <Button onClick={open} icon={faBars}></Button>}
-					</DialogWrapper>
-					<Button onClick={handleFullscreen} icon={faExpand} />
-					<DialogWrapper
-						dialog={(close) => <EventsModal events={events} onClose={close} />}
-					>
-						{(open) => <Button onClick={open}>Event log</Button>}
-					</DialogWrapper>
-					{isAdmin && (
+					<Flex gap={'0.2rem'}>
 						<DialogWrapper
-							dialog={(close) => <CheatsModal open onClose={close} />}
+							dialog={(close) => <IngameMenuModal onClose={close} />}
 						>
-							{(open) => <Button onClick={open}>Cheats</Button>}
+							{(open) => <Button noClip onClick={open} icon={faBars}></Button>}
 						</DialogWrapper>
-					)}
-					<TimeDisplay />
+						<Button noClip onClick={handleFullscreen} icon={faExpand} />
+						<DialogWrapper
+							dialog={(close) => (
+								<EventsModal events={events} onClose={close} />
+							)}
+						>
+							{(open) => (
+								<Button noClip onClick={open}>
+									Event log
+								</Button>
+							)}
+						</DialogWrapper>
+						{isAdmin && (
+							<DialogWrapper
+								dialog={(close) => <CheatsModal open onClose={close} />}
+							>
+								{(open) => (
+									<Button noClip onClick={open}>
+										Cheats
+									</Button>
+								)}
+							</DialogWrapper>
+						)}
+						<TimeDisplay />
+					</Flex>
+
+					<InYourFaceEvents />
 				</TopButtons>
 			</Portal>
 		</Centered>
@@ -105,10 +119,4 @@ const TopButtons = styled.div`
 	position: absolute;
 	top: 0.2rem;
 	left: 0.2rem;
-	display: flex;
-	gap: 0.2rem;
-
-	> button {
-		clip-path: none;
-	}
 `
