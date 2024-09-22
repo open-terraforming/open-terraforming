@@ -38,4 +38,5 @@ const Container = styled.div`
 const ProjectCentered = styled.div`
 	font-size: 125%;
 	text-align: center;
+	text-transform: uppercase;
 `

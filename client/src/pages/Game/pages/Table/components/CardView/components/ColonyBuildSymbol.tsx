@@ -15,8 +15,8 @@ export const ColonyBuildSymbol = () => {
 
 const Container = styled.div`
 	position: relative;
-	width: 1.7rem;
-	height: 1.5rem;
+	width: 1.7em;
+	height: 1.5em;
 	color: #fff;
 	display: flex;
 	justify-content: center;
@@ -29,7 +29,7 @@ const Icon = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin-top: 0.5rem;
+	margin-top: 0.5em;
 	font-size: 80%;
 `
 
@@ -39,7 +39,7 @@ const Background = styled.div`
 	left: 0;
 	width: 0;
 	height: 0;
-	border-left: 0.9rem solid transparent;
-	border-right: 0.9rem solid transparent;
-	border-bottom: 1.5rem solid #555;
+	border-left: 0.9em solid transparent;
+	border-right: 0.9em solid transparent;
+	border-bottom: 1.5em solid #555;
 `

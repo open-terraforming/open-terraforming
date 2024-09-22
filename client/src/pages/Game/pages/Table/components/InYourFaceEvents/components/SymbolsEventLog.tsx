@@ -54,7 +54,7 @@ export const SymbolsEventLog = ({
 				return [
 					...playerSymbol(e.playerId),
 					...(e.index !== currentUsedCardIndex
-						? [{ text: t.cards[e.card] }]
+						? [{ text: t.cards[e.card], noRightSpacing: true }]
 						: []),
 					{
 						cardResource: e.resource as CardResource,
@@ -171,7 +171,7 @@ export const SymbolsEventLog = ({
 
 const E = styled.div`
 	display: flex;
-	gap: 0.6rem;
+	gap: 0.2rem;
 	flex-wrap: wrap;
 	justify-content: center;
 	font-size: 125%;

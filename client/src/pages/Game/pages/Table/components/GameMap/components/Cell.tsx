@@ -61,6 +61,7 @@ export const Cell = ({
 	claiming,
 	delayFunction,
 	faded,
+	highlighted,
 }: Props) => {
 	const [hover, setHover] = useState(false)
 	const [container, setContainer] = useState(null as SVGElement | null)
@@ -155,18 +156,21 @@ export const Cell = ({
 			onClick={active ? onClick : undefined}
 			ref={(e) => setContainer(e)}
 			style={{ ...(faded && { opacity: 0.5 }) }}
+			highlighted={highlighted}
 		>
 			<polygon
 				style={{
 					animationDelay:
-						delayFunctions[delayFunction](
-							game.map.width,
-							game.map.height,
-							cell.x,
-							cell.y,
-						) *
-							50 +
-						'ms',
+						highlighted === true
+							? '0ms'
+							: delayFunctions[delayFunction](
+									game.map.width,
+									game.map.height,
+									cell.x,
+									cell.y,
+								) *
+									50 +
+								'ms',
 				}}
 				stroke={'rgba(255,255,255,0.3)'}
 				fill="transparent"
@@ -270,11 +274,18 @@ const highlightAnimation = keyframes`
 	6% { stroke: rgba(255,255,255,0.3); stroke-width: 0.5; }
 `
 
+const highlightedAnimation = keyframes`
+	0% { stroke: rgba(255,255,255,0.3); stroke-width: 0.5; }
+	50% { stroke: rgba(255,255,255,0.5); stroke-width: 5; }
+	100% { stroke: rgba(255,255,255,0.3); stroke-width: 0.5; }
+`
+
 const StyledHex = styled.g<{
 	gridType: GridCellType
 	gridContent?: GridCellContent
 	gridActive?: boolean
 	gridHover?: boolean
+	highlighted?: boolean
 }>`
 	${(props) =>
 		props.gridActive === false &&
@@ -283,9 +294,18 @@ const StyledHex = styled.g<{
 		`}
 
 	polygon:first-child {
-		animation-name: ${highlightAnimation};
-		animation-duration: 15000ms;
-		animation-iteration-count: infinite;
+		${(props) =>
+			props.highlighted === true
+				? css`
+						animation-name: ${highlightedAnimation};
+						animation-duration: 1s;
+						animation-iteration-count: infinite;
+					`
+				: css`
+						animation-name: ${highlightAnimation};
+						animation-duration: 15000ms;
+						animation-iteration-count: infinite;
+					`}
 
 		transition:
 			stroke 0.2s,

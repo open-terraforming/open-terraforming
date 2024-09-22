@@ -36,10 +36,18 @@ export const TilePlacedEvent = ({ event, onOpacityChange }: Props) => {
 			<BigSymbols onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave}>
 				<Symbols symbols={[{ tile: event.tile, tileOther: event.other }]} />
 			</BigSymbols>
+
+			<Note>Hover over title to see its location</Note>
 		</>
 	)
 }
 
 const BigSymbols = styled.div`
 	font-size: 200%;
+`
+
+const Note = styled.div`
+	font-size: 80%;
+	opacity: 0.8;
+	margin: 0.5rem 0;
 `
