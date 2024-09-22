@@ -4,6 +4,7 @@ import { GameState, GameStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { EventType, GameEvent } from './eventTypes'
 import { objDiff } from '@shared/utils/collections'
+import { isMarsTerraformed } from '@shared/utils'
 
 const resources: Resource[] = [
 	'money',
@@ -319,6 +320,12 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 				newEvents.push(...playerEvents)
 			}
+		})
+	}
+
+	if (progress.some((p) => p in diff) && isMarsTerraformed(game)) {
+		newEvents.push({
+			type: EventType.MarsTerraformed,
 		})
 	}
 

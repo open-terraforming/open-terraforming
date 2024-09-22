@@ -19,6 +19,7 @@ import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEv
 import { StartingSetupEvent } from './components/StartingSetupEvent'
 import { TilePlacedEvent } from './components/TilePlacedEvent'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { MarsTerraformedEvent } from './components/MarsTerraformedEvent'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -31,6 +32,7 @@ const PROCESSABLE_EVENTS = [
 	EventType.StartingSetup,
 	EventType.ProductionDone,
 	EventType.TilePlaced,
+	EventType.MarsTerraformed,
 ]
 
 export const InYourFaceEvents = () => {
@@ -138,6 +140,8 @@ export const InYourFaceEvents = () => {
 				)
 			case EventType.ProductionDone:
 				return <CenterText>Production</CenterText>
+			case EventType.MarsTerraformed:
+				return <CenterText>Mars terraformed</CenterText>
 			default:
 				return null
 		}
@@ -165,6 +169,8 @@ export const InYourFaceEvents = () => {
 				return <ProductionDoneEvent event={event} />
 			case EventType.TilePlaced:
 				return <TilePlacedEvent event={event} onOpacityChange={setOpacity} />
+			case EventType.MarsTerraformed:
+				return <MarsTerraformedEvent />
 			default:
 				return null
 		}
@@ -257,6 +263,7 @@ const Inner = styled(ClippedBox)`
 
 const Actions = styled.div`
 	width: 30rem;
+	margin: 0 auto;
 `
 
 const ActionsInner = styled(Flex)`

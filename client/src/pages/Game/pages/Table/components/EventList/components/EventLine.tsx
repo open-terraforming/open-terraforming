@@ -269,6 +269,8 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return <></>
 			case EventType.WorldGovernmentTerraforming:
 				return <></>
+			case EventType.MarsTerraformed:
+				return <>Mars terraformed</>
 		}
 
 		assertNever(event)

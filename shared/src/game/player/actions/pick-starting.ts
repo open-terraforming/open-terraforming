@@ -1,12 +1,16 @@
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { emptyCardState } from '@shared/cards/utils'
-import { GameStateValue, pickStarting, PlayerStateValue } from '@shared/index'
+import {
+	EventType,
+	GameStateValue,
+	pickStarting,
+	PlayerStateValue,
+} from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { PlayerBaseAction } from '../action'
 import { simulateCardPassiveEffectsOnStart } from '@shared/utils/simulateCardPassiveEffectsOnStart'
-import { EventType } from '@shared/game/events/types'
 import { deepCopy } from '@shared/utils/collections'
 import { buildEvents } from '@shared/game/events/buildEvents'
 
