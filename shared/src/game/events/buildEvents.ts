@@ -1,6 +1,6 @@
 import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
-import { GameState, GameStateValue } from '@shared/index'
+import { GameState, GameStateValue, GridCellContent } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { EventType, GameEvent } from './eventTypes'
 import { objDiff } from '@shared/utils/collections'
@@ -43,6 +43,8 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 	const tiles = diff.map?.grid
 
+	let oceanPlaced = false
+
 	if (tiles) {
 		Object.entries(tiles).forEach(([y, row]) => {
 			Object.entries(row).forEach(([x, cellChange]) => {
@@ -56,6 +58,10 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 						other: cellChange.other,
 						cell: { x: currentCell.x, y: currentCell.y },
 					})
+
+					if (cellChange.content === GridCellContent.Ocean) {
+						oceanPlaced = true
+					}
 				}
 
 				if (cellChange.claimantId !== undefined) {
@@ -323,7 +329,10 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 		})
 	}
 
-	if (progress.some((p) => p in diff) && isMarsTerraformed(game)) {
+	if (
+		(progress.some((p) => p in diff) || oceanPlaced) &&
+		isMarsTerraformed(game)
+	) {
 		newEvents.push({
 			type: EventType.MarsTerraformed,
 		})
