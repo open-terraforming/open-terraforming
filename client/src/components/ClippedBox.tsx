@@ -1,16 +1,17 @@
 import { stripedBackground } from '@/styles/mixins'
-import { ReactNode } from 'react'
+import { CSSProperties, ReactNode } from 'react'
 import { styled } from 'styled-components'
 
 type Props = {
 	className?: string
 	outerClassName?: string
 	children: ReactNode
+	style?: CSSProperties
 }
 
-export const ClippedBox = ({ className, children }: Props) => {
+export const ClippedBox = ({ className, children, style }: Props) => {
 	return (
-		<OuterBorder className={className}>
+		<OuterBorder className={className} style={style}>
 			<Inner className="inner">{children}</Inner>
 		</OuterBorder>
 	)

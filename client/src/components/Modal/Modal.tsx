@@ -1,5 +1,4 @@
 import { media } from '@/styles/media'
-import { stripedBackground } from '@/styles/mixins'
 import { optionalAnimation } from '@/styles/optionalAnimation'
 import { useWindowEvent } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -13,6 +12,7 @@ import {
 } from 'react'
 import ReactDOM from 'react-dom'
 import styled, { css, keyframes, useTheme } from 'styled-components'
+import { ClippedBox } from '../ClippedBox'
 import { Body, Footer, Header } from './styles'
 
 type Keyframes = ReturnType<typeof keyframes>
@@ -205,6 +205,51 @@ const popOut = keyframes`
 	100% { transform: perspective(400px) rotate3d(1, 0, 0, -70deg) scale(0.5); opacity: 0; }
 `
 
+const Popup = styled(ClippedBox)<{
+	closing?: boolean
+	closeAnimation?: Keyframes
+}>`
+	position: relative;
+	margin: 5% auto 5% auto;
+
+	min-width: 200px;
+	max-width: 80%;
+	max-height: 80%;
+
+	display: flex;
+	flex-direction: column;
+
+	.inner {
+		overflow: auto;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
+
+	${media.medium} {
+		max-width: 100%;
+		max-height: 100%;
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+
+	${optionalAnimation((props) =>
+		props.closing
+			? css`
+					animation-name: ${props.closeAnimation || popOut};
+					animation-duration: 150ms;
+					animation-timing-function: ease-out;
+					animation-fill-mode: forwards;
+				`
+			: css`
+					animation-name: ${popIn};
+					animation-duration: 150ms;
+					animation-timing-function: ease-out;
+				`,
+	)}
+`
+
+/*
 const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 	position: relative;
 	margin: 5% auto 5% auto;
@@ -243,6 +288,7 @@ const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
 				`,
 	)}
 `
+*/
 
 const Dialog = styled.div`
 	overflow: auto;

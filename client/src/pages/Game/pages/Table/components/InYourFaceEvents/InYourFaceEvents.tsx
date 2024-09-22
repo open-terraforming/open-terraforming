@@ -18,6 +18,7 @@ import { ProductionDoneEvent } from './components/ProductionDoneEvent'
 import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
 import { StartingSetupEvent } from './components/StartingSetupEvent'
 import { TilePlacedEvent } from './components/TilePlacedEvent'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -179,8 +180,11 @@ export const InYourFaceEvents = () => {
 
 	return (
 		<>
-			<MinimizedButton icon={faBell} onClick={toggleShown} noClip>
-				{events.length}
+			<MinimizedButton onClick={toggleShown} noClip>
+				<ButtonIcon>
+					<FontAwesomeIcon icon={faBell} />
+				</ButtonIcon>
+				<ButtonCount>{events.length}</ButtonCount>
 			</MinimizedButton>
 			{current && rendered && (
 				<Portal>
@@ -299,6 +303,15 @@ const DisplayContainer = styled.div<{ $shown: boolean }>`
 						animation-fill-mode: forwards;
 						transform: translate(-50%, -50%);
 					}
+
+					${NextEvents} {
+						position: absolute;
+						animation-name: ${minimizeToTopLeft};
+						animation-duration: 0.2s;
+						animation-iteration-count: 1;
+						animation-fill-mode: forwards;
+						transform: translate(-50%, -50%);
+					}
 				`
 			: css`
 					${Inner} {
@@ -327,4 +340,20 @@ const CenterText = styled.div`
 
 const MinimizedButton = styled(Button)`
 	margin-top: 0.2rem;
+	border: 2px solid ${({ theme }) => theme.colors.border};
+	background-color: ${({ theme }) => theme.colors.background};
+	display: flex;
+	gap: 0.2rem;
+	padding: 0;
+`
+
+const ButtonIcon = styled.div`
+	background-color: ${({ theme }) => theme.colors.border};
+	padding: 0.5rem;
+	margin: 0;
+`
+
+const ButtonCount = styled.div`
+	margin: 0;
+	padding: 0.5rem;
 `
