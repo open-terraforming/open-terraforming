@@ -185,29 +185,31 @@ export const InYourFaceEvents = () => {
 			{current && rendered && (
 				<Portal>
 					<DisplayContainer style={{ opacity }} $shown={shown}>
-						<Inner>
-							<NextEvents>
-								{events
-									.slice(1, 5)
-									.reverse()
-									.map((e, i, a) => {
-										const indexReversed = a.length - 1 - i
+						<NextEvents
+							style={{ marginTop: `-${events.slice(1, 5).length * 0.85}rem` }}
+						>
+							{events
+								.slice(1, 5)
+								.reverse()
+								.map((e, i, a) => {
+									const indexReversed = a.length - 1 - i
 
-										return (
-											<NextEvent
-												key={`${i}-${e.type}`}
-												style={{
-													fontSize: `${1 - (indexReversed + 1) * 0.1}rem`,
-													opacity: 1 - (indexReversed + 1) * 0.2,
-													marginLeft: `${(indexReversed + 1) * 0.5}rem`,
-													marginRight: `${(indexReversed + 1) * 0.5}rem`,
-												}}
-											>
-												{renderEventHead(e)}
-											</NextEvent>
-										)
-									})}
-							</NextEvents>
+									return (
+										<NextEvent
+											key={`${i}-${e.type}`}
+											style={{
+												fontSize: `${1 - (indexReversed + 1) * 0.1}rem`,
+												opacity: 1 - (indexReversed + 1) * 0.2,
+												marginLeft: `${(indexReversed + 1) * 0.5}rem`,
+												marginRight: `${(indexReversed + 1) * 0.5}rem`,
+											}}
+										>
+											{renderEventHead(e)}
+										</NextEvent>
+									)
+								})}
+						</NextEvents>
+						<Inner>
 							<Actions>
 								<ActionsInner align="center" gap="1rem">
 									<Button
@@ -280,7 +282,7 @@ const DisplayContainer = styled.div<{ $shown: boolean }>`
 	justify-content: center;
 	align-items: flex-start;
 	background-color: rgba(0, 0, 0, 0.5);
-	padding-top: 20%;
+	padding-top: 20vh;
 	transition: background-color 0.2s;
 
 	${(props) =>
@@ -310,13 +312,13 @@ const DisplayContainer = styled.div<{ $shown: boolean }>`
 const NextEvent = styled.div`
 	background: ${({ theme }) => theme.colors.modalBackground};
 	border: 2px solid ${({ theme }) => theme.colors.border};
+	border-bottom: none;
 `
 
 const NextEvents = styled.div`
 	position: absolute;
-	bottom: 100%;
-	left: 0;
-	right: 0;
+	margin-top: -1rem;
+	width: 30rem;
 `
 
 const CenterText = styled.div`

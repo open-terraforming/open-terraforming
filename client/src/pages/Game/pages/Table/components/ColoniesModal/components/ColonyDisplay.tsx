@@ -403,7 +403,7 @@ const SlotLabel = styled.div<{
 	${({ $isHighlighted, theme }) =>
 		$isHighlighted &&
 		css`
-			border: 2px solid ${darken(0.05, theme.colors.border)};
+			border: 2px solid ${theme.colors.text};
 			background-color: ${darken(0.1, theme.colors.border)};
 			animation-name: ${popOut};
 			animation-duration: 0.5s;

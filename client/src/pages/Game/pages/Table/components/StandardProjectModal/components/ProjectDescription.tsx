@@ -1,12 +1,8 @@
-import { StandardProject } from '@shared/projects'
-import { GridCellContent, StandardProjectType } from '@shared/index'
-import styled from 'styled-components'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Card } from '@/icons/card'
-import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
-import { Symbols } from '../../CardView/components/Symbols'
 import { SymbolType } from '@shared/cards'
+import { GridCellContent, StandardProjectType } from '@shared/index'
+import { StandardProject } from '@shared/projects'
+import styled from 'styled-components'
+import { Symbols } from '../../CardView/components/Symbols'
 
 type Props = {
 	project: StandardProject
