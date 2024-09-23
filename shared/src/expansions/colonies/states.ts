@@ -1,4 +1,4 @@
-import { Colony, ColonyState } from '@shared/game'
+import { Colony, ColonyState } from '@shared/gameState'
 
 export const initialColonyState = (colony: Colony): ColonyState => ({
 	code: colony.code,

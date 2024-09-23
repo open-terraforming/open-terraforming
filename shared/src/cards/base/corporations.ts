@@ -1,4 +1,4 @@
-import { GridCellContent } from '../../game'
+import { GridCellContent } from '../../gameState'
 import { withUnits } from '../../units'
 import { f } from '../../utils'
 import { condition } from '../conditions'

@@ -11,6 +11,7 @@ import {
 	Container,
 	Cost,
 	Description,
+	FadedSymbols,
 	Head,
 	HeadSymbols,
 	Image,
@@ -40,6 +41,7 @@ type Props = {
 	affordable?: boolean
 	conditionContext?: CardCallbackContext
 	calculatedVps?: number
+	highlightAction?: boolean
 }
 
 export const StatelessCardView = ({
@@ -57,6 +59,7 @@ export const StatelessCardView = ({
 	affordable,
 	conditionContext: condContext,
 	calculatedVps,
+	highlightAction,
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
@@ -93,6 +96,11 @@ export const StatelessCardView = ({
 		[card],
 	)
 
+	const allConditionsOk =
+		!evaluate ||
+		!condContext ||
+		card.conditions.every((c) => c.evaluate(condContext))
+
 	const cardImagesUrl = settings.cardImagesUrl ?? CARD_IMAGES_URL
 	const cardImageFileName = card.code.replace(/'/g, "\\'")
 
@@ -114,6 +122,7 @@ export const StatelessCardView = ({
 				(!evaluate || (playable && affordable) ? 'playable' : 'unplayable') +
 				(className ? ` ${className}` : '')
 			}
+			$faded={!!highlightAction}
 		>
 			<Head>
 				{card.type !== CardType.Corporation &&
@@ -123,7 +132,7 @@ export const StatelessCardView = ({
 						</Cost>
 					)}
 				{conditionSymbols.length > 0 && (
-					<HeadSymbols symbols={conditionSymbols} />
+					<HeadSymbols $ok={!!allConditionsOk} symbols={conditionSymbols} />
 				)}
 				<Categories>
 					{card.categories.map((c, i) => (
@@ -167,8 +176,8 @@ export const StatelessCardView = ({
 				{card.actionEffects.filter(
 					(a) => a.description?.length || a.symbols.length,
 				).length > 0 && (
-					<Action $hasSymbols={symbols.length > 0}>
-						<ActionTitle>Action</ActionTitle>
+					<Action $hasSymbols={symbols.length > 0} $highlight={highlightAction}>
+						<ActionTitle $highlight={highlightAction}>Action</ActionTitle>
 
 						<Symbols symbols={playActionSymbols} />
 
@@ -185,7 +194,7 @@ export const StatelessCardView = ({
 
 				{card.passiveEffects.filter((e) => e.description).length > 0 && (
 					<Action $hasSymbols={symbols.length > 0}>
-						<ActionTitle>Effect</ActionTitle>
+						<ActionTitle $highlight={highlightAction}>Effect</ActionTitle>
 
 						<Symbols symbols={passiveSymbols} />
 
@@ -198,21 +207,35 @@ export const StatelessCardView = ({
 					</Action>
 				)}
 
-				<Symbols symbols={symbols} />
+				{highlightAction ? (
+					<FadedSymbols symbols={symbols} />
+				) : (
+					<Symbols symbols={symbols} />
+				)}
 
 				{card.conditions.map((c, i) => (
-					<Condition key={i} cond={c} ctx={condContext} evaluate={evaluate} />
+					<Condition
+						key={i}
+						cond={c}
+						ctx={condContext}
+						evaluate={evaluate}
+						faded={highlightAction}
+					/>
 				))}
+
 				{card.playEffects.map((e, i) => (
 					<PlayEffect
 						key={i}
 						effect={e}
 						ctx={condContext}
 						evaluate={evaluate}
+						faded={highlightAction}
 					/>
 				))}
 				{description.map((d, i) => (
-					<div key={i}>{d}</div>
+					<div style={highlightAction ? { opacity: 0.5 } : undefined} key={i}>
+						{d}
+					</div>
 				))}
 			</Description>
 		</Container>

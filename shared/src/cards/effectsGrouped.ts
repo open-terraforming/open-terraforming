@@ -1,5 +1,5 @@
 import { enqueueForDiscard } from '@shared/utils/enqueueForDiscard'
-import { GridCellContent, GridCellOther, GridCellSpecial } from '../game'
+import { GridCellContent, GridCellOther, GridCellSpecial } from '../gameState'
 import {
 	canPlace,
 	PlacementCode,

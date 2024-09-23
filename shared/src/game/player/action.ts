@@ -10,6 +10,7 @@ import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { f, getPlayerIndex } from '@shared/utils'
 import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
+import { GameEvent } from '../events/eventTypes'
 
 export abstract class PlayerBaseAction<Args = unknown> {
 	abstract states: PlayerStateValue[]
@@ -217,6 +218,10 @@ export abstract class PlayerBaseAction<Args = unknown> {
 		if (this.player.actionsPlayed >= 2) {
 			this.setState(PlayerStateValue.WaitingForTurn)
 		}
+	}
+
+	pushEvent(event: GameEvent) {
+		this.parent.game.pushEvent(event)
 	}
 
 	abstract perform(args: Args): void

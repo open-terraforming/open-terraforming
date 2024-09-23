@@ -1,4 +1,4 @@
-import { PlayerState } from '@shared/game'
+import { PlayerState } from '@shared/gameState'
 
 export const enqueueForDiscard = (
 	player: PlayerState,

@@ -47,7 +47,7 @@ import { tagPriceChange } from '@shared/cards/passive-effects/tagPriceChange'
 import { CardCategory, CardSpecial, CardType } from '@shared/cards/types'
 import { card, prependRightArrow, withRightArrow } from '@shared/cards/utils'
 import { vpsForCardResources, vpsForColoniesInPlay } from '@shared/cards/vps'
-import { GridCellContent } from '@shared/game'
+import { GridCellContent } from '@shared/gameState'
 
 export const coloniesCards = [
 	card({

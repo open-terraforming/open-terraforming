@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GameEvent } from '@/pages/Game/pages/Table/components/EventList/types'
+import { GameEvent } from '@shared/index'
 import { StoreState } from '@/store'
 import { AppDispatch } from '@/store/utils'
 import {
@@ -215,8 +215,8 @@ export const useElementPosition = (
 export const useProcessed = (
 	callback: (events: (GameEvent & { id: number })[], processed: number) => void,
 ) => {
-	const [processed, setProcessed] = useState(0)
 	const events = useAppStore((state) => state.game.events)
+	const [processed, setProcessed] = useState(events.length)
 
 	useEffect(() => {
 		if (events.length > processed) {

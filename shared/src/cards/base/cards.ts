@@ -1,4 +1,4 @@
-import { GridCellContent, GridCellOther, GridCellSpecial } from '../../game'
+import { GridCellContent, GridCellOther, GridCellSpecial } from '../../gameState'
 import { LavaCells } from '../../map'
 import { OtherPlacement, PlacementCode } from '../../placements'
 import {

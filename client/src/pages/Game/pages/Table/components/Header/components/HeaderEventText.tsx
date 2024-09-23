@@ -8,7 +8,7 @@ import {
 	CompetitionSponsored,
 	EventType,
 	MilestoneBought,
-} from '../../EventList/types'
+} from '@shared/index'
 
 export type HeaderEvent = (MilestoneBought | CompetitionSponsored) & {
 	id: number

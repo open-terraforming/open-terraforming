@@ -40,7 +40,7 @@ const ButtonComponent = ({
 	className,
 	noClip = false,
 }: ButtonProps) => {
-	const hasContent = !!children
+	const hasContent = children !== null && children !== undefined
 
 	let iconToShow = icon
 

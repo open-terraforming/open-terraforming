@@ -15,7 +15,7 @@ import {
 	GameStateValue,
 	PlayerStateValue,
 	StandardProjectType,
-} from '@shared/game'
+} from '@shared/gameState'
 import {
 	addCardResource,
 	buildColony,
@@ -124,7 +124,7 @@ export class Bot extends Player {
 						}
 					}
 				},
-				this.options.fast ? 10 : 3000 + Math.random() * 2000,
+				this.options.fast ? 200 : 2000 + Math.random() * 1000,
 			)
 		}
 
@@ -163,26 +163,32 @@ export class Bot extends Player {
 					CardsLookupApi.get(corporation).playEffects,
 				)
 
-				return this.performAction(
-					pickStarting(
-						shuffle(a.corporations.slice(0))[0],
-						shuffle(a.cards.map((_c, i) => i)).slice(
-							0,
-							Math.max(
-								0,
-								Math.floor(
-									((simulatedPlayer.money *
-										(this.game.state.state === GameStateValue.Starting
-											? 0.8
-											: 0.3)) /
-										this.game.state.cardPrice) *
-										(0.6 + 0.4 * Math.random()),
+				setTimeout(
+					() =>
+						this.performAction(
+							pickStarting(
+								shuffle(a.corporations.slice(0))[0],
+								shuffle(a.cards.map((_c, i) => i)).slice(
+									0,
+									Math.max(
+										0,
+										Math.floor(
+											((simulatedPlayer.money *
+												(this.game.state.state === GameStateValue.Starting
+													? 0.8
+													: 0.3)) /
+												this.game.state.cardPrice) *
+												(0.6 + 0.4 * Math.random()),
+										),
+									),
 								),
+								pickedPreludes,
 							),
 						),
-						pickedPreludes,
-					),
+					this.options.fast ? 200 : 2000 + Math.random() * 1000,
 				)
+
+				return
 			}
 
 			case PlayerActionType.PickCards: {
@@ -512,7 +518,7 @@ export class Bot extends Player {
 					}
 
 					this.game.state.standardProjects
-						.map((p) => Projects[p])
+						.map((p) => Projects[p.type])
 						.forEach((p) => {
 							if (
 								p.conditions.every((c) =>

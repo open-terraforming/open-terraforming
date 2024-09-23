@@ -13,7 +13,7 @@ import {
 	terraformRatingChange,
 	placeCity,
 } from '../effectsGrouped'
-import { GridCellContent } from '../../game'
+import { GridCellContent } from '../../gameState'
 import { resetProgressBonus, resetCardPriceChange } from '../passive-effects'
 
 export const preludePreludes: Card[] = [

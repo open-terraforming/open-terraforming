@@ -1,7 +1,8 @@
+import { media } from '@/styles/media'
+import { optionalAnimation } from '@/styles/optionalAnimation'
 import { useWindowEvent } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { darken } from 'polished'
 import {
 	CSSProperties,
 	MouseEvent,
@@ -11,9 +12,8 @@ import {
 } from 'react'
 import ReactDOM from 'react-dom'
 import styled, { css, keyframes, useTheme } from 'styled-components'
+import { ClippedBox } from '../ClippedBox'
 import { Body, Footer, Header } from './styles'
-import { media } from '@/styles/media'
-import { optionalAnimation } from '@/styles/optionalAnimation'
 
 type Keyframes = ReturnType<typeof keyframes>
 
@@ -205,38 +205,26 @@ const popOut = keyframes`
 	100% { transform: perspective(400px) rotate3d(1, 0, 0, -70deg) scale(0.5); opacity: 0; }
 `
 
-const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
+const Popup = styled(ClippedBox)<{
+	closing?: boolean
+	closeAnimation?: Keyframes
+}>`
 	position: relative;
 	margin: 5% auto 5% auto;
-	border: 2px solid ${({ theme }) => theme.colors.border};
-	padding: 0px;
-	border-radius: 0px;
-
-	${({
-		theme: {
-			colors: { modalBackground: background },
-		},
-	}) => css`
-		background-color: ${background};
-		background: linear-gradient(
-			45deg,
-			${darken(0.01, background)} 25%,
-			${background} 25%,
-			${background} 50%,
-			${darken(0.01, background)} 50%,
-			${darken(0.01, background)} 75%,
-			${background} 75%,
-			${background}
-		);
-	`}
-	background-size: 40px 40px;
 
 	min-width: 200px;
 	max-width: 80%;
 	max-height: 80%;
-	overflow: auto;
+
 	display: flex;
 	flex-direction: column;
+
+	.inner {
+		overflow: auto;
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
 
 	${media.medium} {
 		max-width: 100%;

@@ -1,6 +1,6 @@
 import { useProcessed } from '@/utils/hooks'
 import { useState } from 'react'
-import { EventType } from '../../EventList/types'
+import { EventType } from '@shared/index'
 import { filterEvents } from '../../EventList/utils'
 import { HeaderEvent, HeaderEventText } from './HeaderEventText'
 

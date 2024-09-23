@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { GameEvent } from '../types'
 import { EventLine } from './EventLine'
 import { useInterval } from '@/utils/hooks'
+import { GameEvent } from '@shared/index'
 
 type Props = {
 	events: GameEvent[]
@@ -14,7 +14,7 @@ type DisplayedEvent = {
 
 export const LastEventsDisplay = ({ events }: Props) => {
 	const [displayedEvents, setDisplayedEvents] = useState([] as DisplayedEvent[])
-	const [lastDisplayed, setLastDisplayed] = useState(0 as number)
+	const [lastDisplayed, setLastDisplayed] = useState(events.length)
 
 	useInterval(() => {
 		if (lastDisplayed < events.length) {

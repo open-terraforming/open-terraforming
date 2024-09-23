@@ -1,7 +1,7 @@
 import { CardEffectArgument, CardResource, CardsLookupApi } from '@shared/cards'
 import { useEffect, useState } from 'react'
 import { ArgContainer } from './ArgContainer'
-import { UsedCardState } from '@shared/game'
+import { UsedCardState } from '@shared/index'
 import { CardResourceInput } from './CardResourceInput'
 
 type Props = {

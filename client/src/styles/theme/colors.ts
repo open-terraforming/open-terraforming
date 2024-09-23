@@ -22,12 +22,15 @@ export const buildColors = ({
 	danger,
 	warn,
 }: Props) => {
+	const modalBackground = rgba(rgba(application, 0.8), 0.95)
+
 	return {
 		application,
 		text,
 
 		background: rgba(application, 0.8),
-		modalBackground: rgba(rgba(application, 0.8), 0.95),
+		modalBackground,
+
 		border: rgba(lighten(0.1, application), 0.8),
 
 		button: {
@@ -109,7 +112,7 @@ export const buildColors = ({
 		cards: {
 			[CardType.Action]: '#0F87E2',
 			[CardType.Building]: '#56BA1B',
-			[CardType.Effect]: '#0F87E2 ',
+			[CardType.Effect]: '#0F87E2',
 			[CardType.Event]: '#FF6868',
 			[CardType.Corporation]: '#BAC404',
 			[CardType.Prelude]: '#FF86C2',

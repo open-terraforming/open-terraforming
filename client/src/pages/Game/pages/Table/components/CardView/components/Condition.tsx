@@ -5,20 +5,29 @@ type Props = {
 	cond: CardCondition
 	ctx: CardCallbackContext | undefined
 	evaluate?: boolean
+	faded?: boolean
 }
 
-export const Condition = ({ cond, ctx, evaluate = true }: Props) => {
+export const Condition = ({ cond, ctx, evaluate = true, faded }: Props) => {
 	return (
-		<Container fine={!ctx || !evaluate || cond.evaluate(ctx)}>
+		<Container fine={!ctx || !evaluate || cond.evaluate(ctx)} $faded={faded}>
 			{cond.description}
 		</Container>
 	)
 }
 
-const Container = styled.div<{ fine: boolean }>`
+const Container = styled.div<{ fine: boolean; $faded?: boolean }>`
 	${(props) =>
-		!props.fine &&
+		!props.fine
+			? css`
+					color: #da5a67;
+				`
+			: css`
+					color: #c1ffd4;
+				`}
+	${(props) =>
+		props.$faded &&
 		css`
-			color: #f12e41;
+			opacity: 0.5;
 		`}
 `

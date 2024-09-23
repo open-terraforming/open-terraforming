@@ -6,7 +6,7 @@ import { Game } from '../../shared/src/game/game'
 import { DummyGameLockSystem } from './lib/dummy-game-lock-system'
 import { NodeLogger } from './lib/node-logger'
 import { ExpansionType } from '@shared/expansions/types'
-import { GameStateValue } from '@shared/game'
+import { GameStateValue } from '@shared/index'
 import { wait } from '@shared/utils/async'
 
 async function main() {

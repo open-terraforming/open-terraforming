@@ -1,5 +1,5 @@
 import { Resource } from '@shared/cards'
-import { ColonyState, GameState, PlayerState } from '@shared/game'
+import { ColonyState, GameState, PlayerState } from '@shared/gameState'
 import { failure } from '../../../utils/failure'
 import { isFailure } from '../../../utils/isFailure'
 import { ok } from '../../../utils/ok'

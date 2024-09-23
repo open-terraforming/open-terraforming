@@ -1,6 +1,6 @@
 import { buildColony } from '@shared/actions'
 import { performBuildColony } from '@shared/expansions/colonies/actions/performBuildColony'
-import { GameStateValue, PlayerStateValue } from '@shared/game'
+import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerActionType } from '@shared/player-actions'
 import { PlayerBaseAction } from '../action'
 

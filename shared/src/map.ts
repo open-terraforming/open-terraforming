@@ -1,4 +1,4 @@
-import { MapState, GridCellSpecial } from './game'
+import { MapState, GridCellSpecial } from './gameState'
 
 export enum MapType {
 	Standard = 1,

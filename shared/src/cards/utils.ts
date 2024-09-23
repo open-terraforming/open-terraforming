@@ -5,7 +5,7 @@ import {
 	GridCellLocation,
 	PlayerGameState,
 	UsedCardState,
-} from '../game'
+} from '../gameState'
 import { withUnits } from '../units'
 import { allCells, tiles } from '../utils'
 import { CardsLookupApi } from './lookup'

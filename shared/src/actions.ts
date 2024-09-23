@@ -1,7 +1,7 @@
 import { CardEffectArgumentType, GameProgress } from './cards'
 import { CompetitionType } from './competitions'
 import { GameInfo } from './extra'
-import { GameState, GridCellLocation, StandardProjectType } from './game'
+import { GameState, GridCellLocation, StandardProjectType } from './gameState'
 import { MilestoneType } from './milestones'
 
 /**

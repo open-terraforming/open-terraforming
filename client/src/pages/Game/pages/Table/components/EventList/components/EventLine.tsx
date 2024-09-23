@@ -1,20 +1,27 @@
+import { useLocale } from '@/context/LocaleContext'
 import { useAppStore, useToggle } from '@/utils/hooks'
 import { CardsLookupApi, Resource } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
-import { ColonyState, PlayerState } from '@shared/index'
+import {
+	ColonyState,
+	EventType,
+	GameEvent,
+	PlayerState,
+	StandardProjectType,
+} from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
 import { ucFirst } from '@shared/utils'
+import { assertNever } from '@shared/utils/assertNever'
+import { quantized } from '@shared/utils/quantized'
 import { lighten } from 'polished'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
-import { EventType, GameEvent } from '../types'
-import { CardModal } from './CardModal'
-import { useLocale } from '@/context/LocaleContext'
-import { assertNever } from '@shared/utils/assertNever'
-import { quantized } from '@shared/utils/quantized'
+import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 import { ColoniesModal } from '../../ColoniesModal/ColoniesModal'
+import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
+import { CardModal } from './CardModal'
 
 type Props = {
 	event: GameEvent
@@ -117,7 +124,8 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						{Object.entries(event.resources).map(([resource, amount], i) => (
 							<ResourceE positive={amount > 0} key={i}>
 								{amount > 0 ? ' +' : ' -'}
-								{withUnits(resource as Resource, Math.abs(amount))}
+								{Math.abs(amount)}
+								<ResourceIcon key={i} res={resource as Resource} />
 							</ResourceE>
 						))}
 					</>
@@ -128,8 +136,12 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						<PlayerSpan player={players[event.playerId]} />
 						<ResourceE positive={event.amount > 0}>
 							{event.amount > 0 ? ' +' : ' -'}
-							{withUnits(event.resource, Math.abs(event.amount))}
-							{' production'}
+							{Math.abs(event.amount)}
+							<ResourceIcon
+								res={event.resource as Resource}
+								production
+								fixedHeight
+							/>
 						</ResourceE>
 					</>
 				)
@@ -176,8 +188,11 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} />{' '}
-						{event.amount > 0 ? '+' : '-'}
-						{Math.abs(event.amount)} {event.resource}
+						<CardResourceE positive={event.amount > 0}>
+							{event.amount > 0 ? '+' : '-'}
+							{Math.abs(event.amount)}
+							<CardResourceIcon res={event.resource} fixedHeight />
+						</CardResourceE>
 						{event.amount > 0 ? ' to ' : ' from '}
 						<CardSpan card={event.card} />
 					</>
@@ -228,6 +243,34 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				)
 			case EventType.ProductionPhase:
 				return <PhaseSpanE>Production phase</PhaseSpanE>
+			case EventType.StandardProjectBought:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} /> bought{' '}
+						{StandardProjectType[event.project]}
+					</>
+				)
+			case EventType.TileAcquired:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} /> is building{' '}
+						{tileToStr(event.tile)}
+					</>
+				)
+			case EventType.TileClaimed:
+				return (
+					<>
+						<PlayerSpan player={players[event.playerId]} /> claimed tile
+					</>
+				)
+			case EventType.StartingSetup:
+				return <></>
+			case EventType.ProductionDone:
+				return <></>
+			case EventType.WorldGovernmentTerraforming:
+				return <></>
+			case EventType.MarsTerraformed:
+				return <>Mars terraformed</>
 		}
 
 		assertNever(event)
@@ -269,6 +312,16 @@ const PhaseSpanE = styled.span`
 `
 
 const ResourceE = styled.span<{ positive: boolean }>`
+	display: inline-flex;
+	margin: 0 0.25rem;
+	gap: 0.2rem;
+	color: ${(props) => (props.positive ? '#86F09B' : '#F5AF7C')};
+`
+
+const CardResourceE = styled.span<{ positive: boolean }>`
+	display: inline-flex;
+	margin: 0 0.25rem;
+	gap: 0.2rem;
 	color: ${(props) => (props.positive ? '#86F09B' : '#F5AF7C')};
 `
 

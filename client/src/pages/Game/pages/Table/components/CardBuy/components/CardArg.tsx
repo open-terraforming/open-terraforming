@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CardInfo } from '../../CardDisplay/CardDisplay'
 import { CardSelector } from '../../CardSelector/CardSelector'
 import { ArgContainer } from './ArgContainer'
-import { UsedCardState } from '@shared/game'
+import { UsedCardState } from '@shared/index'
 
 type Props = {
 	arg: CardEffectArgument

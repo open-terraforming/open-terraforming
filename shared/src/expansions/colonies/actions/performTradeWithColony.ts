@@ -1,5 +1,5 @@
 import { Resource } from '@shared/cards'
-import { GameState, PlayerState } from '@shared/game'
+import { GameState, PlayerState } from '@shared/gameState'
 import { getPlayerById } from '@shared/utils/getPlayerById'
 import { ColoniesLookupApi } from '../ColoniesLookupApi'
 

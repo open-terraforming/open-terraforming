@@ -1,4 +1,4 @@
-import { ColonyState, GameState, PlayerState } from '@shared/game'
+import { ColonyState, GameState, PlayerState } from '@shared/gameState'
 
 type Params = {
 	player: PlayerState

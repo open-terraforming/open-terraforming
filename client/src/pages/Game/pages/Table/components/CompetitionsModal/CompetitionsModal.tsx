@@ -17,7 +17,6 @@ type Props = {
 export const CompetitionsModal = ({ onClose, freePick }: Props) => {
 	const api = useApi()
 	const game = useGameState()
-	const players = game.players
 	const sponsored = game.competitions
 
 	const playing =
@@ -71,9 +70,7 @@ export const CompetitionsModal = ({ onClose, freePick }: Props) => {
 			</Info>
 			{competitions.map((c) => (
 				<CompetitionDisplay
-					sponsored={players.find(
-						(p) => p.id === sponsored.find((i) => i.type === c.type)?.playerId,
-					)}
+					sponsoredId={sponsored.find((i) => i.type === c.type)?.playerId}
 					cost={cost}
 					playing={playing}
 					competition={c}
