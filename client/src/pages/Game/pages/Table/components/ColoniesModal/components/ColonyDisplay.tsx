@@ -223,7 +223,7 @@ export const ColonyDisplay = ({
 								$isHighlighted={i === justTradedStep}
 							>
 								<Symbols symbols={[s]} />
-								{i === justTradedStep && (
+								{i === justTradedStep && justTradedStep !== colony.step && (
 									<ShiftArrow>
 										<FontAwesomeIcon icon={faArrowLeft} />{' '}
 										<ShiftArrowLine
