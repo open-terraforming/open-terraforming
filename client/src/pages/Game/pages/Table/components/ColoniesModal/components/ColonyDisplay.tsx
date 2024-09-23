@@ -20,7 +20,7 @@ import {
 import { ColonyState, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { failure, isFailure, isOk } from '@shared/utils'
-import { darken } from 'polished'
+import { darken, lighten } from 'polished'
 import { Fragment, ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
@@ -34,6 +34,7 @@ type Props = {
 	allowDuplicateColonies?: boolean
 	noActions?: boolean
 	justTradedStep?: number
+	justBuiltColonyIndex?: number
 	customAction?: (colonyIndex: number) => {
 		enabled: boolean
 		perform: () => void
@@ -50,6 +51,7 @@ export const ColonyDisplay = ({
 	customAction,
 	noActions,
 	justTradedStep,
+	justBuiltColonyIndex,
 }: Props) => {
 	const game = useAppStore((s) => s.game.state)
 	const player = useAppStore((s) => s.game.player)
@@ -193,7 +195,7 @@ export const ColonyDisplay = ({
 				{info.tradeIncome.slots.map((s, i) => (
 					<Slot key={i}>
 						{i < 3 && (
-							<SlotRect>
+							<SlotRect $highlighted={i === justBuiltColonyIndex}>
 								{colony.playersAtSteps[i] !== undefined ? (
 									<Tooltip content={players[colony.playersAtSteps[i]].name}>
 										<PlayerColony
@@ -335,7 +337,7 @@ const Action = styled(Button)`
 	padding: 0.1rem 0.5rem;
 `
 
-const SlotRect = styled.div`
+const SlotRect = styled.div<{ $highlighted: boolean }>`
 	border: 2px solid ${({ theme }) => theme.colors.border};
 	border-left-width: 0;
 	width: 3rem;
@@ -344,6 +346,16 @@ const SlotRect = styled.div`
 	align-items: center;
 	justify-content: center;
 	position: relative;
+
+	${({ $highlighted, theme }) =>
+		$highlighted &&
+		css`
+			border-color: ${lighten(0.5, theme.colors.border)};
+			background-color: ${lighten(0.1, theme.colors.background)};
+			animation-name: ${popOut};
+			animation-duration: 0.5s;
+			animation-iteration-count: 1;
+		`}
 `
 
 const Slot = styled.div`
