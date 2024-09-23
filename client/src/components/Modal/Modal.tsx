@@ -249,47 +249,6 @@ const Popup = styled(ClippedBox)<{
 	)}
 `
 
-/*
-const Popup = styled.div<{ closing?: boolean; closeAnimation?: Keyframes }>`
-	position: relative;
-	margin: 5% auto 5% auto;
-	border: 2px solid ${({ theme }) => theme.colors.border};
-	padding: 0px;
-	border-radius: 0px;
-
-	${stripedBackground()}
-
-	min-width: 200px;
-	max-width: 80%;
-	max-height: 80%;
-	overflow: auto;
-	display: flex;
-	flex-direction: column;
-
-	${media.medium} {
-		max-width: 100%;
-		max-height: 100%;
-		margin-top: 0;
-		margin-bottom: 0;
-	}
-
-	${optionalAnimation((props) =>
-		props.closing
-			? css`
-					animation-name: ${props.closeAnimation || popOut};
-					animation-duration: 150ms;
-					animation-timing-function: ease-out;
-					animation-fill-mode: forwards;
-				`
-			: css`
-					animation-name: ${popIn};
-					animation-duration: 150ms;
-					animation-timing-function: ease-out;
-				`,
-	)}
-`
-*/
-
 const Dialog = styled.div`
 	overflow: auto;
 	display: flex;
