@@ -4,7 +4,7 @@ import { range } from '@shared/utils'
 import { CardsLookupApi, CardEffectTarget } from '@shared/cards'
 import { getPossibleArgs } from '../args/get-possible-args'
 import { emptyCardState } from '@shared/cards/utils'
-import { getBestArgs } from '../utils'
+import { getBestArgs } from '../getBestArgs'
 import { inspect } from 'util'
 
 const prepareGame = () => {
