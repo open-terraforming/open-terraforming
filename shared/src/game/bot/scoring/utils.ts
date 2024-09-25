@@ -1,5 +1,5 @@
 import { GameState, PlayerState } from '@shared/index'
-import { shuffle } from '@shared/utils'
+import { pickRandom, shuffle } from '@shared/utils'
 import { deepCopy } from '@shared/utils/collections'
 
 export const pickBest = <T>(values: T[], scoring: (v: T) => number) => {
@@ -7,9 +7,19 @@ export const pickBest = <T>(values: T[], scoring: (v: T) => number) => {
 		return undefined
 	}
 
-	return shuffle(values)
+	// Sort values based on score
+	const sortedValues = values
 		.map((v) => [scoring(v), v] as const)
-		.sort(([a], [b]) => b - a)[0][1]
+		.sort(([a], [b]) => b - a)
+
+	// Pick best score
+	const bestScore = sortedValues[0][0]
+
+	// Pick all values with the best score (if there's more than 1)
+	const bestValues = sortedValues.filter(([score]) => score === bestScore)
+
+	// Pick a random value from the best values
+	return pickRandom(bestValues)[1]
 }
 
 export const pickBestScore = <T>(values: T[], scoring: (v: T) => number) => {
