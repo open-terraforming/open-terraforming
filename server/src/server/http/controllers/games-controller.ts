@@ -87,6 +87,7 @@ export const gamesController = appController(
 				everybodyIsAdmin: globalConfig.everybodyIsAdmin,
 				disablePlayersWhenDisconnectedForInSeconds:
 					request.disablePlayersAfterDisconnectingInSeconds,
+				maxBots: globalConfig.bots.max,
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)

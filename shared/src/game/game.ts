@@ -74,6 +74,7 @@ export interface GameConfig {
 	draft: boolean
 	solarPhase: boolean
 
+	maxBots: number
 	fastBots: boolean
 	fastProduction: boolean
 	debugBots: boolean
@@ -137,6 +138,7 @@ export class Game {
 			solarPhase: false,
 			everybodyIsAdmin: false,
 			disablePlayersWhenDisconnectedForInSeconds: 30,
+			maxBots: 5,
 			...config,
 		}
 
@@ -206,6 +208,10 @@ export class Game {
 		}
 
 		return player
+	}
+
+	get bots() {
+		return this.players.filter((p) => p.state.bot)
 	}
 
 	get mode() {
@@ -281,6 +287,10 @@ export class Game {
 	pushEvent(event: GameEvent) {
 		this.state.events.push(event)
 		this.onStateUpdated.emit(this.state)
+	}
+
+	addBot() {
+		this.add(new Bot(this, { fast: this.config.fastBots }))
 	}
 
 	add(player: Player, triggerUpdate = true) {

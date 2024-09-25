@@ -25,6 +25,7 @@ import { ToggleReadyAction } from './actions/toggle-ready'
 import { TradeWithColonyAction } from './actions/trade-with-colony'
 import { BuildColonyAction } from './actions/build-colony'
 import { ChangeColonyStep } from './actions/change-colony-step'
+import { AddBotAction } from './actions/add-bot'
 
 export class PlayerActions {
 	player: Player
@@ -73,6 +74,7 @@ export class PlayerActions {
 			[MessageType.TradeWithColony]: new TradeWithColonyAction(this.player),
 			[MessageType.BuildColony]: new BuildColonyAction(this.player),
 			[MessageType.ChangeColonyStep]: new ChangeColonyStep(this.player),
+			[MessageType.AddBot]: new AddBotAction(this.player),
 		}
 	}
 

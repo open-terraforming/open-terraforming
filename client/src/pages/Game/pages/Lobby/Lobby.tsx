@@ -6,8 +6,9 @@ import {
 	faCheck,
 	faTimes,
 	faChevronRight,
+	faPlus,
 } from '@fortawesome/free-solid-svg-icons'
-import { playerReady, PlayerStateValue, startGame } from '@shared/index'
+import { addBot, playerReady, PlayerStateValue, startGame } from '@shared/index'
 import styled from 'styled-components'
 import { Player } from './components/Player'
 import { Modal } from '@/components/Modal/Modal'
@@ -17,6 +18,7 @@ import { LobbyInviteLink } from './components/LobbyInviteLink'
 
 const Lobby = () => {
 	const api = useApi()
+	const serverInfo = useAppStore((app) => app.api.info)
 	const players = useAppStore((state) => state.game.state?.players)
 	const player = useAppStore((state) => state.game.player)
 	const info = useAppStore((state) => state.game.info)
@@ -25,12 +27,18 @@ const Lobby = () => {
 	const allReady =
 		players.find((p) => p.state !== PlayerStateValue.Ready) === undefined
 
+	const botsCount = players.filter((p) => p.bot).length
+
 	const handleReady = () => {
 		api.send(playerReady(!isReady))
 	}
 
 	const handleStart = () => {
 		api.send(startGame())
+	}
+
+	const handleAddBot = () => {
+		api.send(addBot())
 	}
 
 	return (
@@ -72,6 +80,12 @@ const Lobby = () => {
 								ready={p.state === PlayerStateValue.Ready}
 							/>
 						))}
+
+						{serverInfo?.bots.enabled && serverInfo.bots.max > botsCount && (
+							<AddBotButton icon={faPlus} onClick={handleAddBot}>
+								Add bot
+							</AddBotButton>
+						)}
 					</Players>
 					{info && <Info info={info} />}
 				</Flex>
@@ -87,6 +101,10 @@ const Players = styled.div`
 
 const Waiting = styled.div`
 	margin-right: auto;
+`
+
+const AddBotButton = styled(Button)`
+	margin: 1rem auto;
 `
 
 export default Lobby
