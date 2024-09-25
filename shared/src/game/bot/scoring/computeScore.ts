@@ -45,16 +45,17 @@ export const computeScore = (
 		.map((c) => ({ state: c, info: CardsLookupApi.get(c.code) }))
 		.reduce((acc, { info, state }) => {
 			const victoryPoints =
-				info.victoryPoints +
-				(info.victoryPointsCallback
-					? // TODO: This is not good score when deciding if card is worth playing - the VPs usually come later...
-						info.victoryPointsCallback.compute({
-							player: p,
-							game: g,
-							card: state,
-						})
-					: 0) *
-					s.usedCards.victoryPoints
+				(info.victoryPoints +
+					(info.victoryPointsCallback
+						? // TODO: This is not good score when deciding if card is worth playing - the VPs usually come later.
+							// Currently we compensate this by adding some resources (6) when computing the score of card to be bought
+							info.victoryPointsCallback.compute({
+								player: p,
+								game: g,
+								card: state,
+							})
+						: 0)) *
+				s.usedCards.victoryPoints
 
 			const tags = info.categories.reduce(
 				(acc, c) => (s.usedCards.tags[c] ?? 0) + acc,

@@ -22,7 +22,7 @@ export const defaultScoringCoefficients = () => ({
 	cardCount: 0.3,
 
 	usedCards: {
-		victoryPoints: 1,
+		victoryPoints: 3,
 		uniqueTags: 0.2,
 		action: 1,
 		passiveEffect: 1,
