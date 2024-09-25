@@ -35,7 +35,7 @@ import { deepCopy, deepExtend } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
 import { randomPassword } from '@shared/utils/password'
 import { v4 as uuidv4 } from 'uuid'
-import { Bot } from './bot'
+import { Bot } from './bot/bot'
 import { BotNames } from './bot-names'
 import { DraftGameState } from './game/draft-game-state'
 import { EndedGameState } from './game/ended-game-state'
@@ -76,6 +76,7 @@ export interface GameConfig {
 
 	fastBots: boolean
 	fastProduction: boolean
+	debugBots: boolean
 
 	everybodyIsAdmin: boolean
 	/** Disable players (skip their turn) when they're disconnected for specified number of seconds */
@@ -130,6 +131,7 @@ export class Game {
 			spectatorsAllowed: true,
 			expansions: [ExpansionType.Base, ExpansionType.Prelude],
 			fastBots: false,
+			debugBots: false,
 			fastProduction: false,
 			draft: false,
 			solarPhase: false,
@@ -234,7 +236,10 @@ export class Game {
 
 		state.players.forEach((p) => {
 			const player = p.bot
-				? new Bot(this, { fast: this.config.fastBots })
+				? new Bot(this, {
+						fast: this.config.fastBots,
+						debug: this.config.debugBots,
+					})
 				: new Player(this)
 
 			player.state = p

@@ -3,9 +3,9 @@ import { Game } from '../../../shared/src/game/game'
 import { wait } from '../utils/async'
 import { ExpansionType } from '@shared/expansions/types'
 import { DummyGameLockSystem } from '@/lib/dummy-game-lock-system'
-import { Bot } from '@shared/game/bot'
 import { NullLogger } from '@shared/lib/null-logger'
 import { deduplicate } from '@shared/utils/deduplicate'
+import { Bot } from '@shared/game/bot/bot'
 
 describe('brute', () => {
 	it('bots can run for 5 generations', async () => {

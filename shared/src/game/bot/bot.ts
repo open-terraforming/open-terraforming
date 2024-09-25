@@ -6,7 +6,7 @@ import {
 	isCardPlayable,
 	minimalCardPrice,
 } from '@shared/cards/utils'
-import { Competitions } from '@shared/competitions'
+import { Competitions, CompetitionType } from '@shared/competitions'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import {
 	canBuildColony,
@@ -35,7 +35,7 @@ import {
 	sponsorCompetition,
 	tradeWithColony,
 } from '@shared/index'
-import { Milestones } from '@shared/milestones'
+import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, isClaimable } from '@shared/placements'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import { Projects } from '@shared/projects'
@@ -50,8 +50,8 @@ import {
 import { assertNever } from '@shared/utils/assertNever'
 import { mapCards } from '@shared/utils/mapCards'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
-import { Game } from './game'
-import { Player } from './player'
+import { Game } from '../game'
+import { Player } from '../player'
 import { buildColonyScore } from './scoring/buildColonyScore'
 import { claimTileScore } from './scoring/claim-tile-score'
 import {
@@ -67,16 +67,43 @@ import { useCardScore } from './scoring/use-card-score'
 import { pickBest } from './scoring/utils'
 import { getBestArgs } from './scoring/getBestArgs'
 import { computeScore } from './scoring/computeScore'
+import { Logger } from '@shared/lib/logger'
+import { BotAction } from './botTypes'
+
+export type BotOptions = ReturnType<typeof defaultOptions>
 
 const defaultOptions = () => ({
 	fast: false,
+	debug: false,
 })
 
-export type BotOptions = ReturnType<typeof defaultOptions>
+const action = (
+	description: string,
+	score: number,
+	perform: () => void,
+): BotAction => ({
+	description,
+	score,
+	perform,
+})
 
 export class Bot extends Player {
 	stopped = false
 	doing?: ReturnType<typeof setTimeout>
+
+	private debugLogger?: Logger
+
+	get debug() {
+		if (this.options.debug) {
+			if (this.debugLogger) {
+				return this.debugLogger
+			}
+
+			return (this.debugLogger = this.game.logger.child(this.state.name))
+		}
+
+		return null
+	}
 
 	options: BotOptions
 
@@ -497,13 +524,18 @@ export class Bot extends Player {
 	}
 
 	doSomething() {
-		let actions = [] as [number, () => void][]
+		let actions: BotAction[] = []
 
 		const currentScore = computeScore(this.scoring, this.game.state, this.state)
 
 		switch (this.state.state) {
 			case PlayerStateValue.Waiting: {
-				actions.push([Infinity, () => this.performAction(playerReady(true))])
+				actions.push(
+					action('ready', Infinity, () =>
+						this.performAction(playerReady(true)),
+					),
+				)
+
 				break
 			}
 
@@ -511,7 +543,11 @@ export class Bot extends Player {
 				const pending = this.pendingAction
 
 				if (pending) {
-					actions.push([Infinity, () => this.performPending(pending)])
+					actions.push(
+						action('performPending', Infinity, () =>
+							this.performPending(pending),
+						),
+					)
 				} else {
 					this.logger.error('Nothing to do, yet I have to pick something...')
 				}
@@ -531,11 +567,11 @@ export class Bot extends Player {
 					)
 
 					if (tile) {
-						actions.push([
-							0,
-							() =>
+						actions.push(
+							action('placeTile', Infinity, () =>
 								this.performAction(placeTile(tile.x, tile.y, tile.location)),
-						])
+							),
+						)
 					}
 				}
 
@@ -546,7 +582,9 @@ export class Bot extends Player {
 				const pending = this.pendingAction
 
 				if (pending) {
-					actions.push([Infinity, () => this.performPending(pending)])
+					actions.push(
+						action('pickPrelude', Infinity, () => this.performPending(pending)),
+					)
 				}
 
 				break
@@ -556,7 +594,9 @@ export class Bot extends Player {
 				const pending = this.pendingAction
 
 				if (pending) {
-					actions.push([Infinity, () => this.performPending(pending)])
+					actions.push(
+						action('wgTerraform', Infinity, () => this.performPending(pending)),
+					)
 				}
 
 				break
@@ -566,7 +606,9 @@ export class Bot extends Player {
 				const pending = this.pendingAction
 
 				if (pending) {
-					actions.push([Infinity, () => this.performPending(pending)])
+					actions.push(
+						action('pending', Infinity, () => this.performPending(pending)),
+					)
 				} else {
 					if (
 						this.game.state.milestones.length < this.game.state.milestonesLimit
@@ -582,12 +624,13 @@ export class Bot extends Player {
 									this.state.money >= this.game.state.milestonePrice &&
 									m.getValue(this.game.state, this.state) >= m.limit
 								) {
-									actions.push([
-										computeScore(this.scoring, this.game.state, this.state) + 5,
-										() => {
-											this.performAction(buyMilestone(m.type))
-										},
-									])
+									actions.push(
+										action(
+											'buyMilestone ' + MilestoneType[m.type],
+											currentScore + this.scoring.victoryPoints,
+											() => this.performAction(buyMilestone(m.type)),
+										),
+									)
 								}
 							})
 					}
@@ -615,12 +658,14 @@ export class Bot extends Player {
 											}, 0) &&
 									this.game.state.generation > 5
 								) {
-									actions.push([
-										0,
-										() => {
-											this.performAction(sponsorCompetition(c.type))
-										},
-									])
+									// TODO: Proper score, currently not possible to be executed
+									actions.push(
+										action(
+											'sponsorCompetition ' + CompetitionType[c.type],
+											0,
+											() => this.performAction(sponsorCompetition(c.type)),
+										),
+									)
 								}
 							})
 					}
@@ -633,21 +678,14 @@ export class Bot extends Player {
 									c({ game: this.game.state, player: this.state }),
 								)
 							) {
-								this.logger.info(
-									StandardProjectType[p.type],
-									'score',
-									standardProjectScore(this.scoringContext, p),
-									'current',
-									currentScore,
-								)
-
 								if (p.type !== StandardProjectType.SellPatents) {
-									actions.push([
-										standardProjectScore(this.scoringContext, p),
-										() => {
-											this.performAction(buyStandardProject(p.type, []))
-										},
-									])
+									actions.push(
+										action(
+											'buyStandardProject ' + StandardProjectType[p.type],
+											standardProjectScore(this.scoringContext, p),
+											() => this.performAction(buyStandardProject(p.type, [])),
+										),
+									)
 								}
 							}
 						})
@@ -664,41 +702,38 @@ export class Bot extends Player {
 						.forEach((c) => {
 							const score = playCardScore(this.scoringContext, c)
 
-							this.logger.log(
-								c.code,
-								'score',
-								score.score,
-								'with',
-								JSON.stringify(score.args),
+							actions.push(
+								action(
+									`buyCard ${c.code} with ${JSON.stringify(score.args)}`,
+									score.score,
+									() => {
+										try {
+											this.performAction(
+												buyCard(
+													c.code,
+													this.state.cards.indexOf(c.code),
+													// TODO: Evaluate which resources to use
+													c.categories.includes(CardCategory.Building)
+														? this.state.ore
+														: 0,
+													// TODO: Evaluate which resources to use
+													c.categories.includes(CardCategory.Space)
+														? this.state.titan
+														: 0,
+													{},
+													score.args,
+												),
+											)
+										} catch (e) {
+											this.logger.log(
+												`Failed to play ${c.code} with ${score.args}`,
+											)
+
+											throw e
+										}
+									},
+								),
 							)
-
-							actions.push([
-								score.score,
-								() => {
-									try {
-										this.performAction(
-											buyCard(
-												c.code,
-												this.state.cards.indexOf(c.code),
-												c.categories.includes(CardCategory.Building)
-													? this.state.ore
-													: 0,
-												c.categories.includes(CardCategory.Space)
-													? this.state.titan
-													: 0,
-												{},
-												score.args,
-											),
-										)
-									} catch (e) {
-										this.logger.log(
-											`Failed to play ${c.code} with ${score.args}`,
-										)
-
-										throw e
-									}
-								},
-							])
 						})
 
 					this.state.usedCards
@@ -714,20 +749,23 @@ export class Bot extends Player {
 						.forEach((c) => {
 							const score = useCardScore(this.scoringContext, c)
 
-							actions.push([
-								score.score,
-								() => {
-									try {
-										this.performAction(playCard(c.code, c.index, score.args))
-									} catch (e) {
-										this.logger.log(
-											`Failed to use ${c.code} with ${score.args}`,
-										)
+							actions.push(
+								action(
+									`playCard ${c.code} with ${JSON.stringify(score.args)}`,
+									score.score,
+									() => {
+										try {
+											this.performAction(playCard(c.code, c.index, score.args))
+										} catch (e) {
+											this.logger.log(
+												`Failed to use ${c.code} with ${score.args}`,
+											)
 
-										throw e
-									}
-								},
-							])
+											throw e
+										}
+									},
+								),
+							)
 						})
 
 					this.game.state.colonies.forEach((colony, colonyIndex) => {
@@ -751,12 +789,16 @@ export class Bot extends Player {
 								)
 
 								if (score >= 0) {
-									actions.push([
-										score,
-										() => {
-											this.performAction(tradeWithColony(colonyIndex, resource))
-										},
-									])
+									actions.push(
+										action(
+											`tradeWithColony ${colony.code} using ${resource}`,
+											score,
+											() =>
+												this.performAction(
+													tradeWithColony(colonyIndex, resource),
+												),
+										),
+									)
 								}
 							}
 						}
@@ -771,12 +813,11 @@ export class Bot extends Player {
 							const score = buildColonyScore(this.scoringContext, colonyIndex)
 
 							if (score >= 0) {
-								actions.push([
-									score,
-									() => {
-										this.performAction(buildColony(colonyIndex))
-									},
-								])
+								actions.push(
+									action(`buildColony ${colony.code}`, score, () =>
+										this.performAction(buildColony(colonyIndex)),
+									),
+								)
 							}
 						}
 					})
@@ -786,10 +827,26 @@ export class Bot extends Player {
 			}
 		}
 
-		// TODO: Threshold should be configurable? Percentage?
-		actions = actions.filter(([s]) => s >= currentScore - 5)
+		actions.sort(({ score: a }, { score: b }) => b - a)
 
-		this.logger.log(f('{0} actions available', actions.length))
+		// TODO: Threshold should be configurable? Percentage?
+		const actionDiscardScoreThreshold = currentScore - 5
+
+		this.debug?.log(f('{0} actions available:', actions.length))
+
+		for (const action of actions) {
+			if (action.score < actionDiscardScoreThreshold) {
+				this.debug?.log(
+					`  ${action.score.toFixed(2)} ${action.description} (discarded)`,
+				)
+			} else {
+				this.debug?.log(`  ${action.score.toFixed(2)} ${action.description}`)
+			}
+		}
+
+		actions = actions.filter(
+			({ score }) => score >= actionDiscardScoreThreshold,
+		)
 
 		if (actions.length === 0) {
 			if (
@@ -800,9 +857,9 @@ export class Bot extends Player {
 				this.performAction(playerPass(false))
 			}
 		} else {
-			const sorted = actions.sort(([a], [b]) => b - a)
-
-			shuffle(sorted.filter((s) => s[0] === sorted[0][0]))[0][1]()
+			// In case there's multiple actions with the same top score, pick one randomly
+			const bestActions = actions.filter((s) => s.score === actions[0].score)
+			pickRandom(bestActions).perform()
 		}
 	}
 }

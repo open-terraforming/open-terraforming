@@ -385,7 +385,12 @@ export const playerProductionChange = (res: Resource, change: number) => {
 			change > 0
 				? `Increase ${res} production of any player by ${change}`
 				: `Decrease ${res} production of any player by ${-change}`,
-		perform: ({ game }, playerId: number) => {
+		perform: ({ game }, playerId?: number) => {
+			// Note: This happens when bot tries to score cards
+			if (playerId === undefined) {
+				return
+			}
+
 			const player = gamePlayer(game, playerId)
 
 			updatePlayerProduction(player, res, change)

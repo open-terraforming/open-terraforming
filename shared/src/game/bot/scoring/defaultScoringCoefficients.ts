@@ -14,6 +14,7 @@ export const defaultScoringCoefficients = () => ({
 	},
 
 	terraformingRating: 8,
+	victoryPoints: 7,
 	titanPrice: 3,
 	orePrice: 2,
 	cardPriceChange: 1,
@@ -25,6 +26,7 @@ export const defaultScoringCoefficients = () => ({
 		uniqueTags: 0.2,
 		action: 1,
 		passiveEffect: 1,
+		resourceAsMoney: 1,
 		tags: {
 			[CardCategory.Science]: 0.25,
 			[CardCategory.Space]: 0.25,

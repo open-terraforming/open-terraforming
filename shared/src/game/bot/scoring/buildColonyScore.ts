@@ -1,4 +1,4 @@
-import { performBuildColony } from '../../expansions/colonies/actions/performBuildColony'
+import { performBuildColony } from '../../../expansions/colonies/actions/performBuildColony'
 import { ScoringContext } from './types'
 import { copyGame } from './utils'
 import { computeScore } from './computeScore'

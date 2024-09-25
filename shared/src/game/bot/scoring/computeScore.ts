@@ -68,7 +68,21 @@ export const computeScore = (
 			const passiveEffect =
 				info.passiveEffects.length > 0 ? s.usedCards.passiveEffect : 0
 
-			return acc + victoryPoints + tags + uniqueTags + action + passiveEffect
+			const canBeUsedAsMoney = info.resourcesUsableAsMoney
+				? (1 / info.resourcesUsableAsMoney.amount) *
+					(info.resourcesUsableAsMoney.categories?.length ?? 5) *
+					s.usedCards.resourceAsMoney
+				: 0
+
+			return (
+				acc +
+				victoryPoints +
+				tags +
+				uniqueTags +
+				action +
+				passiveEffect +
+				canBeUsedAsMoney
+			)
 		}, 0)
 
 	score +=
