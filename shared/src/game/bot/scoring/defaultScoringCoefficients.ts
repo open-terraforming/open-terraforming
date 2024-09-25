@@ -53,7 +53,7 @@ export const defaultScoringCoefficients = () => ({
 		ore: 0.7,
 		titan: 0.7,
 		plants: 1,
-		heatWhenBelowGlobalTemperature: 1,
+		heatWhenBelowGlobalTemperature: 0.75,
 		heatWhenAboveGlobalTemperature: 0,
 		energyWhenBelowGlobalTemperature: 0.8,
 		energyWhenAboveGlobalTemperature: 0.2,
