@@ -9,6 +9,8 @@ import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerActionType } from '@shared/player-actions'
 import { isFailure } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
+import { deepCopy } from '@shared/utils/collections'
+import { EventType } from '@shared/index'
 
 type Args = ReturnType<typeof tradeWithColony>['data']
 
@@ -53,6 +55,9 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 			costResource = check.value.resource
 		}
 
+		const stepBeforeTrade = colony.step
+		const collector = this.startCollectingEvents()
+
 		this.parent.onBeforeColonyTrade.emit({
 			colony,
 			player: this.parent,
@@ -65,6 +70,15 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 			colonyIndex,
 			cost,
 			costResource,
+		})
+
+		this.pushEvent({
+			type: EventType.ColonyTrading,
+			playerId: this.player.id,
+			colony: +colonyIndex,
+			at: stepBeforeTrade,
+			state: deepCopy(colony),
+			changes: collector.collect(),
 		})
 
 		if (pendingAction) {

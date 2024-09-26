@@ -1,4 +1,4 @@
-import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
+import { CardsLookupApi, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
 import { GameState, GameStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
@@ -30,9 +30,6 @@ const EVENTS_ATE_BY_CARD_CHANGES = [
 ]
 
 const EVENTS_WITH_CHANGES = [
-	EventType.CardPlayed,
-	EventType.CardUsed,
-	EventType.StandardProjectBought,
 	EventType.ColonyBuilt,
 	EventType.ColonyTrading,
 ] as const
@@ -75,38 +72,10 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 				return
 			}
 
-			const oldColony = lastGame.colonies[+colonyIndex]
-			const newColony = game.colonies[+colonyIndex]
-
-			if (colony.playersAtSteps) {
-				const players = Object.entries(colony.playersAtSteps)
-
-				for (const [, playerId] of players) {
-					newEvents.push({
-						type: EventType.ColonyBuilt,
-						playerId,
-						colony: +colonyIndex,
-						state: { ...newColony },
-						changes: [],
-					})
-				}
-			}
-
 			if (colony.active) {
 				newEvents.push({
 					type: EventType.ColonyActivated,
 					colony: +colonyIndex,
-				})
-			}
-
-			if (typeof colony.currentlyTradingPlayer === 'number') {
-				newEvents.push({
-					type: EventType.ColonyTrading,
-					playerId: colony.currentlyTradingPlayer,
-					colony: +colonyIndex,
-					at: oldColony.step,
-					state: { ...newColony },
-					changes: [],
 				})
 			}
 
@@ -115,27 +84,6 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 					type: EventType.ColonyTradingStepChanged,
 					colony: +colonyIndex,
 					change: colony.step - lastGame.colonies[+colonyIndex].step,
-				})
-			}
-		})
-	}
-
-	if (diff.standardProjects) {
-		Object.entries(diff.standardProjects).forEach(([index, project]) => {
-			const oldProject = lastGame.standardProjects[+index]
-
-			if (!oldProject) {
-				return
-			}
-
-			if (project.usedByPlayerIds) {
-				Object.values(project.usedByPlayerIds).forEach((playerId) => {
-					newEvents.push({
-						type: EventType.StandardProjectBought,
-						playerId,
-						project: oldProject.type,
-						changes: [],
-					})
 				})
 			}
 		})
@@ -157,51 +105,6 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 			if (gameChanges) {
 				if (gameChanges.usedCards) {
-					// First add "card played" event before any other changes
-					Object.entries(gameChanges.usedCards).forEach(
-						([cardIndex, cardChanges]) => {
-							if (!cardChanges) {
-								return
-							}
-
-							const oldCard = player.usedCards[parseInt(cardIndex)]
-							const newCard = newPlayer.usedCards[parseInt(cardIndex)]
-
-							if (!oldCard) {
-								if (
-									CardsLookupApi.get(cardChanges.code).type !==
-										CardType.Corporation &&
-									CardsLookupApi.get(cardChanges.code).type !== CardType.Prelude
-								) {
-									playerEvents.push({
-										type: EventType.CardPlayed,
-										playerId: player.id,
-										card: cardChanges.code,
-										changes: [],
-									})
-								}
-							} else {
-								const card = CardsLookupApi.get(oldCard.code)
-
-								if (
-									cardChanges.played === true &&
-									card.type === CardType.Action
-								) {
-									playerEvents.push({
-										type: EventType.CardUsed,
-										playerId: player.id,
-										card: oldCard.code,
-										index: parseInt(cardIndex),
-										changes: [],
-										state: {
-											...newCard,
-										},
-									})
-								}
-							}
-						},
-					)
-
 					// Next add card resource changes
 					Object.entries(gameChanges.usedCards).forEach(
 						([cardIndex, cardChanges]) => {
