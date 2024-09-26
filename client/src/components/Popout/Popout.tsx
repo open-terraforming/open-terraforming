@@ -18,6 +18,7 @@ interface Props {
 	className?: string
 	sticky?: boolean
 	stickyTimeout?: number
+	openDelay?: number
 }
 
 export const usePopout = ({
@@ -28,10 +29,12 @@ export const usePopout = ({
 	className,
 	sticky,
 	stickyTimeout = 200,
+	openDelay = 0,
 }: Props) => {
 	const [triggerHovered, setTriggerHovered] = useState(false)
 	const [contentHovered, setContentHovered] = useState(false)
 
+	const showTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
 	const stickyTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
 
 	const [calculatedPosition, setCalculatedPosition] = useState({
@@ -99,17 +102,29 @@ export const usePopout = ({
 	}, [triggerHovered])
 
 	useElementEvent(trigger, 'mouseover', () => {
-		console.log('triggerHovered', triggerHovered)
-
 		if (stickyTimeoutRef.current) {
 			clearTimeout(stickyTimeoutRef.current)
 			stickyTimeoutRef.current = undefined
 		}
 
-		setTriggerHovered(true)
+		if (openDelay === 0) {
+			setTriggerHovered(true)
+		} else {
+			if (!showTimeoutRef.current) {
+				showTimeoutRef.current = setTimeout(() => {
+					setTriggerHovered(true)
+					showTimeoutRef.current = undefined
+				}, openDelay)
+			}
+		}
 	})
 
 	useElementEvent(trigger, 'mouseleave', () => {
+		if (showTimeoutRef.current) {
+			clearTimeout(showTimeoutRef.current)
+			showTimeoutRef.current = undefined
+		}
+
 		if (!sticky) {
 			setTriggerHovered(false)
 

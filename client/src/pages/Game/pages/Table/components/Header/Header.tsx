@@ -34,6 +34,7 @@ export const Header = () => {
 		position: 'bottom-right',
 		content: <MilestonesDisplay />,
 		sticky: true,
+		openDelay: 300,
 	})
 
 	const competitionsPopout = usePopout({
@@ -41,6 +42,7 @@ export const Header = () => {
 		position: 'bottom-left',
 		content: <CompetitionsList />,
 		sticky: true,
+		openDelay: 300,
 	})
 
 	const standardProjectsPopout = usePopout({
@@ -48,6 +50,7 @@ export const Header = () => {
 		position: 'bottom-center',
 		content: <StandardProjectsList />,
 		sticky: true,
+		openDelay: 300,
 	})
 
 	return (
