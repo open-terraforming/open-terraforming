@@ -1,7 +1,5 @@
 import { Modal } from '@/components/Modal/Modal'
-import { useAppStore } from '@/utils/hooks'
-import { ColonyDisplay } from './components/ColonyDisplay'
-import styled from 'styled-components'
+import { ColoniesList } from './components/ColoniesList'
 
 type Props = {
 	freeTradePick?: boolean
@@ -22,29 +20,14 @@ export const ColoniesModal = ({
 	customAction,
 	onClose,
 }: Props) => {
-	const colonies = useAppStore((app) => app.game.state.colonies)
-
 	return (
 		<Modal header="Colonies" onClose={onClose} open>
-			<Container>
-				{colonies.map((colony, index) => (
-					<ColonyDisplay
-						key={colony.code}
-						index={index}
-						colony={colony}
-						freeTradePick={freeTradePick}
-						freeColonizePick={freeColonizePick}
-						allowDuplicateColonies={allowDuplicateColonies}
-						customAction={customAction}
-					/>
-				))}
-			</Container>
+			<ColoniesList
+				freeTradePick={freeTradePick}
+				freeColonizePick={freeColonizePick}
+				allowDuplicateColonies={allowDuplicateColonies}
+				customAction={customAction}
+			/>
 		</Modal>
 	)
 }
-
-const Container = styled.div`
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: center;
-`

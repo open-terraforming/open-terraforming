@@ -1,7 +1,7 @@
 import { useElementEvent, useWindowEvent } from '@/utils/hooks'
 import { rgba } from 'polished'
 import { ReactNode, useEffect, useRef, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { Portal } from '../Portal/Portal'
 
 export type PopoutPosition =
@@ -177,6 +177,17 @@ export const usePopout = ({
 	)
 }
 
+const inAnimation = keyframes`
+	0% {
+		opacity: 0;
+		transform: translateY(-10px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+`
+
 const Caret = styled.div`
 	content: ' ';
 	position: absolute;
@@ -199,6 +210,8 @@ const BottomCaret = styled(Caret)`
 const Container = styled.div<{ disableStyle?: boolean }>`
 	position: absolute;
 	z-index: 999999;
+	animation-name: ${inAnimation};
+	animation-duration: 0.15s;
 
 	${(props) =>
 		!props.disableStyle &&

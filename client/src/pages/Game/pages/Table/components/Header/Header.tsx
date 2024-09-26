@@ -1,18 +1,19 @@
 import { Button, DialogWrapper } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
-import { usePopout } from '@/components/Popout/Popout'
 import { useGameState } from '@/utils/hooks'
 import { ExpansionType } from '@shared/expansions/types'
 import { useState } from 'react'
 import styled from 'styled-components'
+import { ColoniesList } from '../ColoniesModal/components/ColoniesList'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
 import { CompetitionsList } from '../CompetitionsModal/components/CompetitionsList'
 import { MilestonesDisplay } from '../MilestonesModal/components/MilestonesDisplay'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
+import { StandardProjectsList } from '../StandardProjectModal/components/StandardProjectsList'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { ColoniesButton } from './components/ColoniesButton'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
-import { StandardProjectsList } from '../StandardProjectModal/components/StandardProjectsList'
+import { usePopout } from '@/components/Popout/usePopout'
 
 export const Header = () => {
 	const game = useGameState()
@@ -28,6 +29,8 @@ export const Header = () => {
 
 	const [standardProjectsButton, setStandardProjectsButton] =
 		useState<HTMLElement | null>(null)
+
+	const [coloniesButton, setColoniesButton] = useState<HTMLElement | null>(null)
 
 	const milestonesPopout = usePopout({
 		trigger: milestonesButton,
@@ -53,12 +56,21 @@ export const Header = () => {
 		openDelay: 300,
 	})
 
+	const coloniesPopout = usePopout({
+		trigger: coloniesButton,
+		position: 'bottom-center',
+		content: <ColoniesList />,
+		sticky: true,
+		openDelay: 300,
+	})
+
 	return (
 		<>
 			<E>
 				{milestonesPopout}
 				{competitionsPopout}
 				{standardProjectsPopout}
+				{coloniesPopout}
 
 				<Flex align="flex-start">
 					<DialogWrapper
@@ -101,7 +113,7 @@ export const Header = () => {
 				</Flex>
 				{game.expansions.includes(ExpansionType.Colonies) && (
 					<Flex justify="center">
-						<ColoniesButton />
+						<ColoniesButton ref={setColoniesButton} />
 					</Flex>
 				)}
 			</E>
