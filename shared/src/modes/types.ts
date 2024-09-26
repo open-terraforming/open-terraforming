@@ -1,4 +1,4 @@
-import { GameState } from '../game'
+import { GameState } from '../gameState'
 import { Card } from '../cards'
 
 export enum GameModeType {

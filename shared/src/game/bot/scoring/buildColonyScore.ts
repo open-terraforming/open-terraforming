@@ -1,6 +1,7 @@
-import { performBuildColony } from '../../expansions/colonies/actions/performBuildColony'
+import { performBuildColony } from '../../../expansions/colonies/actions/performBuildColony'
 import { ScoringContext } from './types'
-import { computeScore, copyGame } from './utils'
+import { copyGame } from './utils'
+import { computeScore } from './computeScore'
 
 export const buildColonyScore = (ctx: ScoringContext, colonyIndex: number) => {
 	const { gameCopy, playerCopy } = copyGame(ctx.game, ctx.player)
@@ -13,5 +14,5 @@ export const buildColonyScore = (ctx: ScoringContext, colonyIndex: number) => {
 		allowDuplicates: false,
 	})
 
-	return computeScore(gameCopy, playerCopy)
+	return computeScore(ctx.scoring, gameCopy, playerCopy)
 }

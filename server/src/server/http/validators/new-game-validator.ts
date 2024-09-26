@@ -1,3 +1,4 @@
+import { globalConfig } from '@/config'
 import { ExpansionType } from '@shared/expansions/types'
 import { MapType } from '@shared/map'
 import { GameModeType } from '@shared/modes/types'
@@ -25,7 +26,7 @@ export const newGameValidator = object({
 			ExpansionType.Colonies,
 		]),
 	),
-	bots: max(min(integer(), 0), 4),
+	bots: max(min(integer(), 0), globalConfig.bots.max),
 	public: optional(boolean()),
 	spectatorsAllowed: optional(boolean()),
 	draft: optional(boolean()),

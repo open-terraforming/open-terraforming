@@ -1,6 +1,6 @@
 import { Modal } from '@/components/Modal/Modal'
-import { GameEvent } from '../types'
 import { EventLine } from './EventLine'
+import { GameEvent } from '@shared/index'
 
 type Props = {
 	events: GameEvent[]

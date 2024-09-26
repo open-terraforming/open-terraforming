@@ -1,5 +1,5 @@
 import { CardsLookupApi, CardSpecial } from '../cards'
-import { GameState, PlayerStateValue } from '../game'
+import { GameState, PlayerStateValue } from '../gameState'
 import { pickStartingAction } from '../player-actions'
 import {
 	drawCards,

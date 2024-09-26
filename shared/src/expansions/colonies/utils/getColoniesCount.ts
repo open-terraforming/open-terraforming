@@ -1,4 +1,4 @@
-import { GameState } from '@shared/game'
+import { GameState } from '@shared/gameState'
 
 type Params = {
 	game: GameState

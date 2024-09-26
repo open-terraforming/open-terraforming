@@ -1,4 +1,4 @@
-import { GameState } from '@shared/game'
+import { GameState } from '@shared/gameState'
 
 export const getPlayerById = (game: GameState, playerId: number) => {
 	const player = game.players.find((p) => p.id === playerId)

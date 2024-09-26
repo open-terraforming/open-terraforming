@@ -5,6 +5,7 @@ import { GameModeType } from './modes/types'
 import { PlayerAction } from './player-actions'
 import { MapType } from './map'
 import { ExpansionType } from './expansions/types'
+import { GameEvent } from './game/events/eventTypes'
 
 export enum GameStateValue {
 	/** Waiting for all players to connect */
@@ -125,7 +126,16 @@ export interface GameState {
 	competitionRewards: number[]
 
 	/** Available standard projects */
-	standardProjects: StandardProjectType[]
+	standardProjects: StandardProjectState[]
+
+	/** List of events that occurred during the game */
+	events: GameEvent[]
+}
+
+export interface StandardProjectState {
+	type: StandardProjectType
+	/** Tracks which players already used the project, used mainly for events */
+	usedByPlayerIds: number[]
 }
 
 export interface MilestoneState {
@@ -239,8 +249,12 @@ export interface GridCell {
 	content?: GridCellContent
 	other?: GridCellOther
 
+	/** id of player who owns the tile */
 	ownerId?: number
 	ownerCard?: number
+
+	/** id of player who placed this tile */
+	placedById?: number
 
 	claimantId?: number
 }
@@ -375,6 +389,9 @@ export interface UsedCardState {
 
 	/** Index of card that triggered last passive effect */
 	triggeredByCard?: number
+
+	/** Number of times the card was triggered */
+	triggered?: number
 
 	/** Extra data used by card effects to save something */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any

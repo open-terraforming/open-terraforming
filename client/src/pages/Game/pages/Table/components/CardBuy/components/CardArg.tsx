@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CardInfo } from '../../CardDisplay/CardDisplay'
 import { CardSelector } from '../../CardSelector/CardSelector'
 import { ArgContainer } from './ArgContainer'
-import { UsedCardState } from '@shared/game'
+import { UsedCardState } from '@shared/index'
 
 type Props = {
 	arg: CardEffectArgument
@@ -118,7 +118,7 @@ export const CardArg = ({
 				? cards.filter((c) =>
 						arg.skipCurrentCard ? c.index !== handCardIndex : true,
 					)
-				: players[selectedPlayer].cards,
+				: (players[selectedPlayer]?.cards ?? []),
 		[handCardIndex, otherPlayer, arg, players],
 	)
 

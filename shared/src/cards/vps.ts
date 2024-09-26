@@ -1,4 +1,4 @@
-import { GridCellContent } from '../game'
+import { GridCellContent } from '../gameState'
 import { CardResource, CardVictoryPointsCallback, CardCategory } from './types'
 import { CardsLookupApi } from './lookup'
 import { allCells, adjacentCells } from '../utils'

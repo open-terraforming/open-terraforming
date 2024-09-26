@@ -51,8 +51,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
 		}: ButtonProps,
 		ref,
 	) => {
-		const hasContent = !!children
-
+		const hasContent = children !== null && children !== undefined
 		let iconToShow = icon
 
 		if (isLoading) {

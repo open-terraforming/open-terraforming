@@ -1,7 +1,7 @@
 import { CardEffectArgumentType, GameProgress } from './cards'
 import { CompetitionType } from './competitions'
 import { GameInfo } from './extra'
-import { GameState, GridCellLocation, StandardProjectType } from './game'
+import { GameState, GridCellLocation, StandardProjectType } from './gameState'
 import { MilestoneType } from './milestones'
 
 /**
@@ -68,6 +68,7 @@ export enum MessageType {
 	BuildColony,
 	TradeWithColony,
 	ChangeColonyStep,
+	AddBot,
 }
 
 export const handshakeRequest = (version: string) =>
@@ -315,6 +316,12 @@ export const changeColonyStep = (colonyIndex: number) =>
 		data: { colonyIndex },
 	}) as const
 
+export const addBot = () =>
+	({
+		type: MessageType.AddBot,
+		data: {},
+	}) as const
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -350,3 +357,4 @@ export type GameMessage =
 	| ReturnType<typeof buildColony>
 	| ReturnType<typeof tradeWithColony>
 	| ReturnType<typeof changeColonyStep>
+	| ReturnType<typeof addBot>

@@ -1,5 +1,5 @@
 import { CardSymbol } from '@shared/cards'
-import { ColonyState, GameState, PlayerState } from '@shared/game'
+import { ColonyState, GameState, PlayerState } from '@shared/gameState'
 import { getColonyTradeCost } from './getColonyTradeCost'
 
 type Params = {

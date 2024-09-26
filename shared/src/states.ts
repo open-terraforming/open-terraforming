@@ -3,6 +3,7 @@ import {
 	GameStateValue,
 	PlayerState,
 	PlayerStateValue,
+	StandardProjectState,
 	StandardProjectType,
 } from '.'
 import { CardCategory } from './cards'
@@ -51,17 +52,18 @@ export const initialGameState = (
 	expansions: [ExpansionType.Base],
 	solarPhase: true,
 	standardProjects: [
-		StandardProjectType.SellPatents,
-		StandardProjectType.PowerPlant,
-		StandardProjectType.Asteroid,
-		StandardProjectType.Aquifer,
-		StandardProjectType.Greenery,
-		StandardProjectType.City,
-		StandardProjectType.GreeneryForPlants,
-		StandardProjectType.TemperatureForHeat,
+		initialStandardProjectState(StandardProjectType.SellPatents),
+		initialStandardProjectState(StandardProjectType.PowerPlant),
+		initialStandardProjectState(StandardProjectType.Asteroid),
+		initialStandardProjectState(StandardProjectType.Aquifer),
+		initialStandardProjectState(StandardProjectType.Greenery),
+		initialStandardProjectState(StandardProjectType.City),
+		initialStandardProjectState(StandardProjectType.GreeneryForPlants),
+		initialStandardProjectState(StandardProjectType.TemperatureForHeat),
 	],
 	colonies: [],
 	colonyCards: [],
+	events: [],
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
@@ -106,4 +108,11 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	protectedHabitat: false,
 	tradeFleets: 1,
 	colonyTradeResourceCostChange: 0,
+})
+
+export const initialStandardProjectState = (
+	type: StandardProjectType,
+): StandardProjectState => ({
+	type,
+	usedByPlayerIds: [],
 })

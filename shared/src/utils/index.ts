@@ -7,7 +7,7 @@ import {
 	PlayerState,
 	PlayerStateValue,
 	UsedCardState,
-} from '../game'
+} from '../gameState'
 import { PlayerAction, PlayerActionType } from '../player-actions'
 
 export const allCells = (game: GameState) => {

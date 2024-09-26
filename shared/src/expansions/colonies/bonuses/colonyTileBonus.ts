@@ -1,4 +1,4 @@
-import { GridCellContent } from '@shared/game'
+import { GridCellContent } from '@shared/gameState'
 import { placeTileAction } from '@shared/player-actions'
 import { pushPendingAction } from '@shared/utils'
 import { colonyBonus } from '../templates/colonyBonus'

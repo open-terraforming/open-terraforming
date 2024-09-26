@@ -1,6 +1,6 @@
 import { addCardResource } from '@shared/actions'
 import { CardsLookupApi } from '@shared/cards'
-import { GameStateValue, PlayerStateValue } from '@shared/game'
+import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerActionType } from '@shared/player-actions'
 import { PlayerBaseAction } from '../action'
 

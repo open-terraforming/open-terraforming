@@ -4,7 +4,7 @@ import {
 	ProgressMilestoneType,
 	GridCell,
 	GridCellType,
-} from '../game'
+} from '../gameState'
 import { MapInfo } from '../map'
 
 export const milestoneItem = (

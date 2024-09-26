@@ -57,6 +57,7 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 		cell.content = pendingTile.type
 		cell.other = pendingTile.other
 		cell.ownerCard = pendingTile.ownerCard
+		cell.placedById = this.player.id
 
 		if (!top.anonymous) {
 			cell.ownerId = this.player.id

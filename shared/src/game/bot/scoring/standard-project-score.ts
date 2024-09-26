@@ -1,6 +1,7 @@
 import { StandardProject } from '@shared/projects'
+import { computeScore } from './computeScore'
 import { ScoringContext } from './types'
-import { computeScore, copyGame, moneyCostScore } from './utils'
+import { copyGame } from './utils'
 
 export const standardProjectScore = (
 	ctx: ScoringContext,
@@ -10,10 +11,9 @@ export const standardProjectScore = (
 
 	project.execute({ game: gameCopy, player: playerCopy }, [])
 
-	return (
-		computeScore(gameCopy, playerCopy) -
-		(project.resource === 'money'
-			? moneyCostScore(ctx.player, project.cost(ctx))
-			: 0)
-	)
+	const cost = project.cost({ game: gameCopy, player: playerCopy })
+
+	playerCopy[project.resource] -= cost
+
+	return computeScore(ctx.scoring, gameCopy, playerCopy)
 }

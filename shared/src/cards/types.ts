@@ -7,7 +7,7 @@ import {
 	GridCellContent,
 	GridCellOther,
 	ColonyState,
-} from '../game'
+} from '../gameState'
 import { StandardProject } from '../projects'
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &
@@ -275,6 +275,7 @@ export enum SymbolType {
 	TradeFleet,
 	SlashSmall,
 	BigPlus,
+	Player,
 }
 
 export interface CardSymbol {
@@ -290,4 +291,7 @@ export interface CardSymbol {
 	text?: string
 	forceSign?: boolean
 	forceCount?: boolean
+	color?: string
+	title?: string
+	noRightSpacing?: boolean
 }

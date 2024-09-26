@@ -1,3 +1,3 @@
-import { Colony } from '@shared/game'
+import { Colony } from '@shared/gameState'
 
 export const colony = (c: Colony) => c

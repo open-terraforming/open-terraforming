@@ -1,5 +1,5 @@
 import { enqueueForDiscard } from '@shared/utils/enqueueForDiscard'
-import { GridCellContent, GridCellOther, GridCellSpecial } from '../game'
+import { GridCellContent, GridCellOther, GridCellSpecial } from '../gameState'
 import {
 	canPlace,
 	PlacementCode,
@@ -45,6 +45,7 @@ import {
 	cardAcceptsAnyResource,
 	cardAnyResourceCondition,
 	playerCardsInHandCondition,
+	unprotectedCard,
 } from './conditions'
 import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
@@ -384,7 +385,12 @@ export const playerProductionChange = (res: Resource, change: number) => {
 			change > 0
 				? `Increase ${res} production of any player by ${change}`
 				: `Decrease ${res} production of any player by ${-change}`,
-		perform: ({ game }, playerId: number) => {
+		perform: ({ game }, playerId?: number) => {
+			// Note: This happens when bot tries to score cards
+			if (playerId === undefined) {
+				return
+			}
+
 			const player = gamePlayer(game, playerId)
 
 			updatePlayerProduction(player, res, change)
@@ -893,8 +899,12 @@ export const playerCardResourceChange = (res: CardResource, amount: number) =>
 				? [
 						condition({
 							evaluate: ({ game }) =>
-								!!game.players.find(
-									(p) => !!p.usedCards.find((c) => c[res] >= -amount),
+								game.players.some((p) =>
+									p.usedCards.some(
+										(c) =>
+											c[res] >= -amount &&
+											unprotectedCard().evaluate({ game, player: p, card: c }),
+									),
 								),
 						}),
 					]

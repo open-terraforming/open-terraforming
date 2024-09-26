@@ -1,5 +1,5 @@
 import { CompetitionType } from '../competitions'
-import { GridCell, GridCellSpecial, GridCellType, MapState } from '../game'
+import { GridCell, GridCellSpecial, GridCellType, MapState } from '../gameState'
 import { MapType } from '../map'
 import { MilestoneType } from '../milestones'
 import { generateGrid, heatAt, mapInfo, oceanAt, temperatureAt } from './utils'
