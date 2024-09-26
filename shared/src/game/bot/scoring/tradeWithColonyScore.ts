@@ -2,7 +2,8 @@ import { performTradeWithColony } from '@shared/expansions/colonies/actions/perf
 import { canTradeWithColonyUsingResource } from '@shared/expansions/colonies/utils'
 import { isFailure } from '@shared/utils'
 import { ScoringContext } from './types'
-import { computeScore, copyGame } from './utils'
+import { copyGame } from './utils'
+import { computeScore } from './computeScore'
 
 export const tradeWithColonyScore = (
 	ctx: ScoringContext,
@@ -32,5 +33,5 @@ export const tradeWithColonyScore = (
 		costResource: check.value.resource,
 	})
 
-	return computeScore(gameCopy, playerCopy)
+	return computeScore(ctx.scoring, gameCopy, playerCopy)
 }

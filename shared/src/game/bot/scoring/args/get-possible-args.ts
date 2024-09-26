@@ -9,8 +9,9 @@ import {
 import { GameState, PlayerState, UsedCardState } from '@shared/index'
 import { range, shuffle, CardsCollection, flatten } from '@shared/utils'
 import { emptyCardState, resources } from '@shared/cards/utils'
-import { getBestArgs } from '../utils'
+import { getBestArgs } from '../getBestArgs'
 import { assertNever } from '@shared/utils/assertNever'
+import { AiScoringCoefficients } from '../defaultScoringCoefficients'
 
 export const cardsList = (list: (string | UsedCardState)[]) => {
 	return new CardsCollection(
@@ -31,6 +32,7 @@ export const cardsList = (list: (string | UsedCardState)[]) => {
 }
 
 const getPossibleOptions = (
+	s: AiScoringCoefficients,
 	player: PlayerState,
 	game: GameState,
 	a: CardEffectArgument,
@@ -148,7 +150,7 @@ const getPossibleOptions = (
 				)
 				.map((e) => [
 					effects.indexOf(e),
-					getBestArgs(game, player, card, [e]).args[0],
+					getBestArgs(s, game, player, card, [e]).args[0],
 				])
 		}
 
@@ -180,6 +182,7 @@ const getPossibleOptions = (
 }
 
 export const getPossibleArgs = (
+	s: AiScoringCoefficients,
 	player: PlayerState,
 	game: GameState,
 	effects: CardEffect[],
@@ -187,7 +190,7 @@ export const getPossibleArgs = (
 ): CardEffectArgumentType[][][] => {
 	return effects.map((e) =>
 		e.args.length > 0
-			? e.args.map((a) => shuffle(getPossibleOptions(player, game, a, card)))
+			? e.args.map((a) => shuffle(getPossibleOptions(s, player, game, a, card)))
 			: [[]],
 	)
 }
