@@ -1,17 +1,17 @@
-import { startGame } from '@shared/actions'
-import { Game } from '../../../shared/src/game/game'
-import { wait } from '../utils/async'
-import { ExpansionType } from '@shared/expansions/types'
 import { DummyGameLockSystem } from '@/lib/dummy-game-lock-system'
+import { startGame } from '@shared/actions'
+import { ExpansionType } from '@shared/expansions/types'
+import { Bot } from '@shared/game/bot/bot'
 import { NullLogger } from '@shared/lib/null-logger'
 import { deduplicate } from '@shared/utils/deduplicate'
-import { Bot } from '@shared/game/bot/bot'
+import { Game } from '../../../shared/src/game/game'
+import { wait } from '../utils/async'
 
 describe('brute', () => {
 	it('bots can run for 5 generations', async () => {
 		const game = new Game(new DummyGameLockSystem(), new NullLogger(), {
 			bots: 2,
-			fastBots: true,
+			instantBots: true,
 			fastProduction: true,
 			expansions: [
 				ExpansionType.Base,

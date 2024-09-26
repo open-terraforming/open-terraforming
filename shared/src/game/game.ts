@@ -77,6 +77,7 @@ export interface GameConfig {
 	maxBots: number
 	fastBots: boolean
 	fastProduction: boolean
+	instantBots: boolean
 	debugBots: boolean
 
 	everybodyIsAdmin: boolean
@@ -134,6 +135,7 @@ export class Game {
 			fastBots: false,
 			debugBots: false,
 			fastProduction: false,
+			instantBots: false,
 			draft: false,
 			solarPhase: false,
 			everybodyIsAdmin: false,
@@ -150,7 +152,14 @@ export class Game {
 		this.state.expansions = [...this.config.expansions]
 
 		range(0, this.config.bots).forEach(() => {
-			this.add(new Bot(this, { fast: config?.fastBots }), false)
+			this.add(
+				new Bot(this, {
+					fast: config?.fastBots,
+					debug: config?.debugBots,
+					instant: config?.instantBots,
+				}),
+				false,
+			)
 		})
 
 		this.sm.onStateChanged.on(({ old, current }) => {
@@ -245,6 +254,7 @@ export class Game {
 				? new Bot(this, {
 						fast: this.config.fastBots,
 						debug: this.config.debugBots,
+						instant: this.config.instantBots,
 					})
 				: new Player(this)
 
@@ -290,7 +300,13 @@ export class Game {
 	}
 
 	addBot() {
-		this.add(new Bot(this, { fast: this.config.fastBots }))
+		this.add(
+			new Bot(this, {
+				fast: this.config.fastBots,
+				instant: this.config.instantBots,
+				debug: this.config.debugBots,
+			}),
+		)
 	}
 
 	add(player: Player, triggerUpdate = true) {

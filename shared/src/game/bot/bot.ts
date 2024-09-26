@@ -74,6 +74,7 @@ export type BotOptions = ReturnType<typeof defaultOptions>
 
 const defaultOptions = () => ({
 	fast: false,
+	instant: false,
 	debug: false,
 })
 
@@ -158,7 +159,11 @@ export class Bot extends Player {
 						}
 					}
 				},
-				this.options.fast ? 200 : 2000 + Math.random() * 1000,
+				this.options.instant
+					? 0
+					: this.options.fast
+						? 200
+						: 2000 + Math.random() * 1000,
 			)
 		}
 
@@ -260,7 +265,11 @@ export class Bot extends Player {
 						this.performAction(
 							pickStarting(corporation, pickedCards, pickedPreludes),
 						),
-					this.options.fast ? 200 : 2000 + Math.random() * 1000,
+					this.options.instant
+						? 0
+						: this.options.fast
+							? 200
+							: 2000 + Math.random() * 1000,
 				)
 
 				return
