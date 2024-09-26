@@ -29,8 +29,8 @@ export const StandardProjectsList = ({ onClose }: Props) => {
 	const { openSellCardsModal } = useGameModals()
 
 	const projects = game.standardProjects
-		.filter((p) => !HIDDEN_PROJECTS.includes(p))
-		.map((p) => Projects[p])
+		.filter((p) => !HIDDEN_PROJECTS.includes(p.type))
+		.map((p) => Projects[p.type])
 
 	const ctx = useMemo(
 		() =>

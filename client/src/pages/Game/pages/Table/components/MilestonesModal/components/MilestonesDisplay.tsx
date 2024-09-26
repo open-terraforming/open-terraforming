@@ -12,7 +12,6 @@ export const MilestonesDisplay = () => {
 	const api = useApi()
 	const game = useGameState()
 	const bought = game.milestones
-	const players = game.players
 	const playing = useAppStore((state) => state.game.playing)
 
 	const milestonesTypes = useAppStore(
@@ -55,9 +54,7 @@ export const MilestonesDisplay = () => {
 			</Info>
 			{milestones.map((c) => (
 				<MilestoneDisplay
-					owner={players.find(
-						(p) => p.id === bought.find((i) => i.type === c.type)?.playerId,
-					)}
+					ownerId={bought.find((i) => i.type === c.type)?.playerId}
 					cost={
 						bought.length < game.milestonesLimit
 							? game.milestonePrice
