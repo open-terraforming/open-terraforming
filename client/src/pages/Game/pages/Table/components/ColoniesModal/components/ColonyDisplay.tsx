@@ -1,8 +1,9 @@
 import { Button, Tooltip } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { useApi } from '@/context/ApiContext'
+import { useGameModals } from '@/context/GameModalsContext'
 import { useLocale } from '@/context/LocaleContext'
-import { useAppStore, useToggle } from '@/utils/hooks'
+import { useAppStore } from '@/utils/hooks'
 import {
 	faArrowLeft,
 	faBuilding,
@@ -24,7 +25,6 @@ import { darken, lighten } from 'polished'
 import { Fragment, ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
-import { ColonyTradeModal } from './ColonyTradeModal'
 
 type Props = {
 	index: number
@@ -59,8 +59,8 @@ export const ColonyDisplay = ({
 	const players = useAppStore((s) => s.game.playerMap)
 	const info = ColoniesLookupApi.get(colony.code)
 	const api = useApi()
-	const [isTrading, toggleTrading] = useToggle()
 	const t = useLocale()
+	const { openTradeWithColonyModal } = useGameModals()
 
 	const canTradeCurrently =
 		player.state === PlayerStateValue.Playing &&
@@ -141,14 +141,6 @@ export const ColonyDisplay = ({
 
 	return (
 		<Container>
-			{isTrading && (
-				<ColonyTradeModal
-					onClose={toggleTrading}
-					colony={colony}
-					colonyIndex={index}
-				/>
-			)}
-
 			<Title>
 				<TitleName>{t.colonies[info.code]}</TitleName>
 			</Title>
@@ -265,7 +257,15 @@ export const ColonyDisplay = ({
 												? 'No resources to trade with'
 												: undefined
 									}
-									onClick={freeTradePick ? handleFreeTrade : toggleTrading}
+									onClick={
+										freeTradePick
+											? handleFreeTrade
+											: () =>
+													openTradeWithColonyModal({
+														colony,
+														colonyIndex: index,
+													})
+									}
 									noClip
 								>
 									<Flex>
