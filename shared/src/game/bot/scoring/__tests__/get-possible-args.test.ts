@@ -6,6 +6,7 @@ import { getPossibleArgs } from '../args/get-possible-args'
 import { emptyCardState } from '@shared/cards/utils'
 import { getBestArgs } from '../getBestArgs'
 import { inspect } from 'util'
+import { defaultScoringCoefficients } from '../defaultScoringCoefficients'
 
 const prepareGame = () => {
 	const game = initialGameState()
@@ -40,6 +41,7 @@ it('should prepare arguments correctly', () => {
 	const cardState = player.usedCards[0]
 
 	const effectsArgs = getPossibleArgs(
+		defaultScoringCoefficients(),
 		player,
 		game,
 		card.actionEffects,
@@ -58,5 +60,15 @@ it('should prepare arguments correctly', () => {
 
 	console.log(pretty(effectsArgs))
 
-	console.log(pretty(getBestArgs(game, player, cardState, card.actionEffects)))
+	console.log(
+		pretty(
+			getBestArgs(
+				defaultScoringCoefficients(),
+				game,
+				player,
+				cardState,
+				card.actionEffects,
+			),
+		),
+	)
 })
