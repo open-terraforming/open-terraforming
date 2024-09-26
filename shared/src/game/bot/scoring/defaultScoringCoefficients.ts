@@ -20,6 +20,8 @@ export const defaultScoringCoefficients = () => ({
 	cardPriceChange: 1,
 	cardPriceChangePerTag: 1,
 	cardCount: 0.3,
+	playableCardsScore: 0.1,
+	playableCardsCountScore: 0.5,
 
 	usedCards: {
 		victoryPoints: 3,
@@ -49,9 +51,9 @@ export const defaultScoringCoefficients = () => ({
 	coloniesCount: 1,
 
 	resources: {
-		money: 0.9,
+		money: 0.4,
 		ore: 0.7,
-		titan: 0.7,
+		titan: 0.8,
 		plants: 1,
 		heatWhenBelowGlobalTemperature: 0.75,
 		heatWhenAboveGlobalTemperature: 0,

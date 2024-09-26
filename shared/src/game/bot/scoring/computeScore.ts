@@ -1,5 +1,10 @@
 import { CardsLookupApi } from '@shared/cards'
-import { resources, resourceProduction } from '@shared/cards/utils'
+import {
+	resources,
+	resourceProduction,
+	isCardPlayable,
+	emptyCardState,
+} from '@shared/cards/utils'
 import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
 import { getPlayerUsedFleets } from '@shared/expansions/colonies/utils/getPlayerUsedFleets'
 import { GameState, PlayerState, GridCellContent } from '@shared/index'
@@ -30,6 +35,16 @@ export const computeScore = (
 
 	// TODO: Should have higher score when milestone for card count is available
 	score += p.cards.length * s.cardCount
+
+	// TODO: This is pretty weak, but it's hard to evaluate the "score" price of unplayed card
+	score +=
+		p.cards.filter((code) =>
+			isCardPlayable(CardsLookupApi.get(code), {
+				card: emptyCardState(code),
+				game: g,
+				player: p,
+			}),
+		).length * s.playableCardsCountScore
 
 	score += resources.reduce(
 		(acc, r) =>

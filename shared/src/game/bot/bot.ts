@@ -690,6 +690,21 @@ export class Bot extends Player {
 							}
 						})
 
+					for (const card of this.cards) {
+						const playable = isCardPlayable(card, {
+							card: emptyCardState(card.code),
+							game: this.game.state,
+							player: this.state,
+						})
+
+						const affordable =
+							minimalCardPrice(card, this.state) <= this.state.money
+
+						this.debugLogger?.log(
+							` card ${card.code}: playable ${playable}, affordable ${affordable}`,
+						)
+					}
+
 					this.cards
 						.filter(
 							(c) =>
