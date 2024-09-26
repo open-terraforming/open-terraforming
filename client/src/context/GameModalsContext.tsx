@@ -2,7 +2,7 @@ import { ColoniesModal } from '@/pages/Game/pages/Table/components/ColoniesModal
 import { ColonyTradeModal } from '@/pages/Game/pages/Table/components/ColoniesModal/components/ColonyTradeModal'
 import { CardModal } from '@/pages/Game/pages/Table/components/EventList/components/CardModal'
 import { SellCardsModal } from '@/pages/Game/pages/Table/components/StandardProjectModal/components/SellCardsModal'
-import { ColonyState } from '@shared/game'
+import { ColonyState } from '@shared/gameState'
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
 
 type Props = {
