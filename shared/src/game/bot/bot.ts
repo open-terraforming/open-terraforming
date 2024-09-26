@@ -239,11 +239,16 @@ export class Bot extends Player {
 						)
 
 						// TODO: playCardScore should check if the card is even playable in some way
-						return [
-							playCardScore(this.scoringContext, CardsLookupApi.get(c)).score -
-								missingConditions.length * 0.5,
-							i,
-						]
+						try {
+							const score =
+								playCardScore(this.scoringContext, CardsLookupApi.get(c))
+									.score -
+								missingConditions.length * 0.5
+
+							return [score, i]
+						} catch {
+							return [0, i]
+						}
 					})
 					.sort(([a], [b]) => b - a)
 					.map(([, i]) => i)
@@ -324,11 +329,16 @@ export class Bot extends Player {
 						)
 
 						// TODO: playCardScore should check if the card is even playable in some way
-						return [
-							playCardScore(this.scoringContext, CardsLookupApi.get(c)).score -
-								missingConditions.length * 0.5,
-							i,
-						]
+						try {
+							const score =
+								playCardScore(this.scoringContext, CardsLookupApi.get(c))
+									.score -
+								missingConditions.length * 0.5
+
+							return [score, i]
+						} catch {
+							return [0, i]
+						}
 					})
 					.sort(([a], [b]) => b - a)
 					.map(([, i]) => i)
