@@ -9,6 +9,16 @@ export const Head = styled.div`
 	display: flex;
 	align-items: center;
 	height: 2rem;
+	position: relative;
+	// transform-style: preserve-3d;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: ${({ theme }) => rgba(theme.colors.background, 1)};
+		clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
+	}
 `
 
 export const HeadSymbols = styled(Symbols)<{ $ok?: boolean }>`
@@ -21,6 +31,9 @@ export const HeadSymbols = styled(Symbols)<{ $ok?: boolean }>`
 		padding-top: 0.1rem;
 		padding-bottom: 0.1rem;
 	}
+
+	position: relative;
+	z-index: 2;
 `
 
 export const Action = styled.div<{
@@ -84,6 +97,9 @@ export const ActionTitle = styled.div<{ $highlight?: boolean }>`
 
 export const Cost = styled.div<{ affordable: boolean }>`
 	height: 2rem;
+	position: relative;
+	z-index: 2;
+	//transform: translateZ(8px);
 
 	> div {
 		background: ${({ theme }) => rgba(theme.colors.background, 1)};
@@ -118,6 +134,7 @@ export const Categories = styled.div`
 	display: flex;
 	align-items: center;
 	z-index: 2;
+	//transform: translateZ(8px);
 `
 
 export const Title = styled.div`
@@ -128,6 +145,8 @@ export const Title = styled.div`
 	font-size: 100%;
 	margin-left: -1px;
 	margin-right: -1px;
+	position: relative;
+	z-index: 1;
 `
 
 export const Description = styled.div`
@@ -137,6 +156,8 @@ export const Description = styled.div`
 	flex-grow: 1;
 	font-size: 85%;
 	text-align: center;
+	background: ${({ theme }) => rgba(theme.colors.background, 1)};
+	clip-path: polygon(0 0, 100% 0, 100% 100%, 7px 100%, 0 calc(100% - 7px));
 
 	> div {
 		margin-bottom: 0.25rem;
@@ -186,6 +207,9 @@ export const Image = styled.div`
 	background-repeat: no-repeat;
 	flex-shrink: 0;
 	flex-grow: 0;
+	position: relative;
+	z-index: 1;
+	margin-bottom: 0.2rem;
 `
 
 type ContainerCtx = {
@@ -198,10 +222,29 @@ type ContainerCtx = {
 }
 
 export const Container = styled.div<ContainerCtx>`
-	border: 0.2rem solid
-		${(props) =>
+	padding: 0.2rem;
+	position: relative;
+	// transform-style: preserve-3d;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: ${(props) =>
 			darken(props.$faded ? 0.3 : 0, props.theme.colors.cards[props.type])};
-	background: ${({ theme }) => rgba(theme.colors.background, 1)};
+		clip-path: polygon(
+			0 0,
+			calc(100% - 7px) 0,
+			100% 7px,
+			100% 100%,
+			7px 100%,
+			0 calc(100% - 7px)
+		);
+		z-index: 0;
+	}
+
+	z-index: 1;
+	box-sizing: border-box;
 	width: 240px;
 	flex-shrink: 0;
 	min-width: 0;

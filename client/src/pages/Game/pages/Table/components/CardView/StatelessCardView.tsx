@@ -1,5 +1,6 @@
 import { CARD_IMAGES_URL } from '@/constants'
 import { useLocale } from '@/context/LocaleContext'
+import { useAppStore } from '@/utils/hooks'
 import { Card, CardCallbackContext, CardType } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import { flatten } from '@shared/utils'
@@ -24,7 +25,6 @@ import { PlayEffect } from './components/PlayEffect'
 import { Resource } from './components/Resource'
 import { Symbols } from './components/Symbols'
 import { Tag } from './components/Tag'
-import { useAppStore } from '@/utils/hooks'
 
 type Props = {
 	card: Card
@@ -63,6 +63,7 @@ export const StatelessCardView = ({
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
+	// const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null)
 
 	const played = wasPlayed
 	const playable = isPlayable
@@ -109,8 +110,40 @@ export const StatelessCardView = ({
 			? `${cardImagesUrl}/card/${cardImageFileName}.jpg`
 			: undefined
 
+	/*
+	useElementEvent(containerRef, 'mousemove', (e) => {
+		if (!containerRef) {
+			return
+		}
+
+		const rect = containerRef.getBoundingClientRect()
+
+		const XRel = e.pageX - rect.left
+		const YRel = e.pageY - rect.top
+		const width = rect.width
+
+		const YAngle = -(0.5 - XRel / width) * 10
+		const XAngle = (0.5 - YRel / width) * 10
+
+		const z = 10
+
+		containerRef.style.transition = 'none'
+		containerRef.style.transform = `perspective(525px) translateZ(${z}px) rotateX(${XAngle}deg) rotateY(${YAngle}deg)`
+	})
+
+	useElementEvent(containerRef, 'mouseleave', () => {
+		if (!containerRef) {
+			return
+		}
+
+		containerRef.style.transition = 'transform 0.5s'
+		containerRef.style.transform = ``
+	})
+	*/
+
 	return (
 		<Container
+			// ref={setContainerRef}
 			type={card.type}
 			selected={selected}
 			onClick={onClick}
