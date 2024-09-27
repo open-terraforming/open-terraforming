@@ -244,6 +244,10 @@ export class Game {
 			)
 		}
 
+		if (typeof state.events === 'undefined') {
+			state.events = []
+		}
+
 		this.config = config
 
 		this.state = state
