@@ -1,6 +1,7 @@
 import { useAppStore } from '@/utils/hooks'
 import { Card, CardCallbackContext, CardType } from '@shared/cards'
 import {
+	adjustedCardPrice,
 	emptyCardState,
 	isCardActionable,
 	isCardPlayable,
@@ -78,6 +79,7 @@ export const CardView = ({
 	return (
 		<StatelessCardView
 			card={card}
+			adjustedPrice={adjustedCardPrice(card, player)}
 			selected={selected}
 			evaluate={evaluate}
 			hover={hover}

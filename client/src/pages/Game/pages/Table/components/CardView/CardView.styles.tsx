@@ -22,7 +22,7 @@ export const Head = styled.div`
 
 export const HeadSymbols = styled(Symbols)<{ $ok?: boolean }>`
 	border: 0.2rem solid ${({ $ok }) => ($ok ? '#225e34' : '#ff3333')};
-	margin-left: 2.5rem;
+	margin-left: 0.2rem;
 	background-color: ${({ $ok }) =>
 		$ok ? rgba(0, 255, 0, 0.1) : 'rgba(255, 0, 0, 0.5)'};
 
@@ -94,37 +94,69 @@ export const ActionTitle = styled.div<{ $highlight?: boolean }>`
 				`};
 `
 
-export const Cost = styled.div<{ affordable: boolean }>`
-	height: 2rem;
+const CostBase = styled.div`
+	background: ${({ theme }) => rgba(theme.colors.background, 1)};
+	width: 2.5rem;
+	height: 2.5rem;
+	line-height: 2.5rem;
+	text-align: center;
+	border-radius: 4px;
+	font-size: 150%;
+	margin-top: -0.5rem;
+	margin-left: -0.5rem;
+`
+
+export const AdjustedCost = styled(CostBase)<{ $affordable: boolean }>`
 	position: relative;
 	z-index: 2;
 
-	> div {
-		background: ${({ theme }) => rgba(theme.colors.background, 1)};
+	${(props) =>
+		props.$affordable
+			? css`
+					border: 2px solid rgb(255, 255, 104);
+					color: rgb(255, 255, 104);
+				`
+			: css`
+					border: 2px solid rgba(255, 135, 135, 1);
+					color: rgba(255, 135, 135, 1);
+				`}
+`
 
-		position: absolute;
+export const OriginalCost = styled(CostBase)<{
+	$affordable: boolean
+	$isAdjusted: boolean
+}>`
+	position: relative;
+	z-index: 1;
 
-		${(props) =>
-			props.affordable
-				? css`
-						border: 2px solid rgb(255, 255, 104);
-						color: rgb(255, 255, 104);
-					`
-				: css`
-						border: 2px solid rgba(255, 135, 135, 1);
-						color: rgba(255, 135, 135, 1);
-					`}
+	${(props) =>
+		props.$affordable
+			? css`
+					border: 2px solid rgb(255, 255, 104);
+					color: rgb(255, 255, 104);
+				`
+			: css`
+					border: 2px solid rgba(255, 135, 135, 1);
+					color: rgba(255, 135, 135, 1);
+				`}
 
-		width: 2.5rem;
-		height: 2.5rem;
-		line-height: 2.5rem;
-		text-align: center;
-		border-radius: 4px;
-		font-size: 150%;
-		float: left;
-		margin-top: -0.5rem;
-		margin-left: -0.5rem;
-	}
+	${(props) =>
+		props.$isAdjusted &&
+		(props.$affordable
+			? css`
+					border: 2px solid rgb(121, 121, 51);
+					color: rgb(121, 121, 51);
+				`
+			: css`
+					border: 2px solid #b45050;
+					color: #b45050;
+				`)}
+`
+
+export const Cost = styled.div`
+	height: 2rem;
+	position: relative;
+	z-index: 2;
 `
 
 export const Categories = styled.div`

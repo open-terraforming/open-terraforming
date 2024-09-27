@@ -8,6 +8,7 @@ import { CSSProperties, useMemo } from 'react'
 import {
 	Action,
 	ActionTitle,
+	AdjustedCost,
 	Categories,
 	Container,
 	CorporationTitle,
@@ -17,6 +18,7 @@ import {
 	Head,
 	HeadSymbols,
 	Image,
+	OriginalCost,
 	Played,
 	Title,
 	VP,
@@ -26,10 +28,12 @@ import { PlayEffect } from './components/PlayEffect'
 import { Resource } from './components/Resource'
 import { Symbols } from './components/Symbols'
 import { Tag } from './components/Tag'
+import { Tooltip } from '@/components'
 
 type Props = {
 	card: Card
 	state?: UsedCardState
+	adjustedPrice?: number
 	selected?: boolean
 	onClick?: () => void
 	evaluate?: boolean
@@ -61,6 +65,7 @@ export const StatelessCardView = ({
 	conditionContext: condContext,
 	calculatedVps,
 	highlightAction,
+	adjustedPrice,
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
@@ -114,8 +119,20 @@ export const StatelessCardView = ({
 	const headSymbols = (
 		<Head>
 			{card.type !== CardType.Corporation && card.type !== CardType.Prelude && (
-				<Cost affordable={!!affordable}>
-					<div>{card.cost}</div>
+				<Cost>
+					<OriginalCost
+						$affordable={!!affordable}
+						$isAdjusted={
+							adjustedPrice !== undefined && adjustedPrice !== card.cost
+						}
+					>
+						{card.cost}
+					</OriginalCost>
+					{adjustedPrice !== undefined && adjustedPrice !== card.cost && (
+						<AdjustedCost $affordable={!!affordable}>
+							<Tooltip content="Your price">{adjustedPrice}</Tooltip>
+						</AdjustedCost>
+					)}
 				</Cost>
 			)}
 			{conditionSymbols.length > 0 && (
