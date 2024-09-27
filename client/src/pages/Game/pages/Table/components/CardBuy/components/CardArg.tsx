@@ -80,7 +80,7 @@ export const CardArg = ({
 
 		// when allowSelfCard is true, we've pushed the card itself to the end, but it has incorrect index
 		// -13 is special value that indicates it's indeed the card we added, -1 is a special value that means the card itself
-		if (arg.allowSelfCard && result[result.length - 1].state?.index === -13) {
+		if (arg.allowSelfCard && result[result.length - 1]?.state?.index === -13) {
 			result[result.length - 1].index = -1
 		}
 
