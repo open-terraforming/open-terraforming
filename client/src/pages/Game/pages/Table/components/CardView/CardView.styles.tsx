@@ -10,7 +10,6 @@ export const Head = styled.div`
 	align-items: center;
 	height: 2rem;
 	position: relative;
-	// transform-style: preserve-3d;
 
 	&::before {
 		content: '';
@@ -99,7 +98,6 @@ export const Cost = styled.div<{ affordable: boolean }>`
 	height: 2rem;
 	position: relative;
 	z-index: 2;
-	//transform: translateZ(8px);
 
 	> div {
 		background: ${({ theme }) => rgba(theme.colors.background, 1)};
@@ -134,7 +132,6 @@ export const Categories = styled.div`
 	display: flex;
 	align-items: center;
 	z-index: 2;
-	//transform: translateZ(8px);
 `
 
 export const Title = styled.div`
@@ -224,7 +221,6 @@ type ContainerCtx = {
 export const Container = styled.div<ContainerCtx>`
 	padding: 0.2rem;
 	position: relative;
-	// transform-style: preserve-3d;
 
 	&::before {
 		content: '';
@@ -295,7 +291,7 @@ export const Container = styled.div<ContainerCtx>`
 			}
 
 			${Head} {
-				float: right;
+				/*float: right;*/
 			}
 
 			${Description} {

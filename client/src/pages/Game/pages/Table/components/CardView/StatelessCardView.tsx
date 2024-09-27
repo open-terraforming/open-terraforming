@@ -63,7 +63,6 @@ export const StatelessCardView = ({
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
-	// const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null)
 
 	const played = wasPlayed
 	const playable = isPlayable
@@ -104,46 +103,15 @@ export const StatelessCardView = ({
 
 	const cardImagesUrl = settings.cardImagesUrl ?? CARD_IMAGES_URL
 	const cardImageFileName = card.code.replace(/'/g, "\\'")
+	const isCorporation = card.type === CardType.Corporation
 
 	const cardImageUrl =
 		cardImagesUrl !== undefined
 			? `${cardImagesUrl}/card/${cardImageFileName}.jpg`
 			: undefined
 
-	/*
-	useElementEvent(containerRef, 'mousemove', (e) => {
-		if (!containerRef) {
-			return
-		}
-
-		const rect = containerRef.getBoundingClientRect()
-
-		const XRel = e.pageX - rect.left
-		const YRel = e.pageY - rect.top
-		const width = rect.width
-
-		const YAngle = -(0.5 - XRel / width) * 10
-		const XAngle = (0.5 - YRel / width) * 10
-
-		const z = 10
-
-		containerRef.style.transition = 'none'
-		containerRef.style.transform = `perspective(525px) translateZ(${z}px) rotateX(${XAngle}deg) rotateY(${YAngle}deg)`
-	})
-
-	useElementEvent(containerRef, 'mouseleave', () => {
-		if (!containerRef) {
-			return
-		}
-
-		containerRef.style.transition = 'transform 0.5s'
-		containerRef.style.transform = ``
-	})
-	*/
-
 	return (
 		<Container
-			// ref={setContainerRef}
 			type={card.type}
 			selected={selected}
 			onClick={onClick}
@@ -157,6 +125,7 @@ export const StatelessCardView = ({
 			}
 			$faded={!!highlightAction}
 		>
+			{isCorporation && <Title>{locale.cards[card.code]}</Title>}
 			<Head>
 				{card.type !== CardType.Corporation &&
 					card.type !== CardType.Prelude && (
@@ -173,8 +142,8 @@ export const StatelessCardView = ({
 					))}
 				</Categories>
 			</Head>
-			<Title>{locale.cards[card.code]}</Title>
-			{card.type !== CardType.Corporation ? (
+			{!isCorporation && <Title>{locale.cards[card.code]}</Title>}
+			{!isCorporation ? (
 				<Image
 					style={
 						cardImageUrl ? { backgroundImage: `url('${cardImageUrl}')` } : {}
