@@ -1,10 +1,10 @@
 import { CARD_IMAGES_URL } from '@/constants'
 import { useLocale } from '@/context/LocaleContext'
-import { useAppStore } from '@/utils/hooks'
+import { useAppStore, useElementEvent } from '@/utils/hooks'
 import { Card, CardCallbackContext, CardType } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import { flatten } from '@shared/utils'
-import { CSSProperties, useMemo } from 'react'
+import { CSSProperties, useMemo, useState } from 'react'
 import {
 	Action,
 	ActionTitle,
@@ -63,7 +63,7 @@ export const StatelessCardView = ({
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
-	// const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null)
+	const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null)
 
 	const played = wasPlayed
 	const playable = isPlayable
@@ -110,7 +110,6 @@ export const StatelessCardView = ({
 			? `${cardImagesUrl}/card/${cardImageFileName}.jpg`
 			: undefined
 
-	/*
 	useElementEvent(containerRef, 'mousemove', (e) => {
 		if (!containerRef) {
 			return
@@ -139,11 +138,10 @@ export const StatelessCardView = ({
 		containerRef.style.transition = 'transform 0.5s'
 		containerRef.style.transform = ``
 	})
-	*/
 
 	return (
 		<Container
-			// ref={setContainerRef}
+			ref={setContainerRef}
 			type={card.type}
 			selected={selected}
 			onClick={onClick}
