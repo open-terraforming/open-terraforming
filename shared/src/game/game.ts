@@ -244,6 +244,10 @@ export class Game {
 			)
 		}
 
+		if ('solarPhase' in state) {
+			state.wgTerraforming = state.solarPhase as boolean
+		}
+
 		this.config = config
 
 		this.state = state
@@ -625,7 +629,9 @@ export class Game {
 									(progress) => this.state[progress] < this.state.map[progress],
 								)
 
-								p.performAction(worldGovernmentTerraform(availableProgressValues[0]))
+								p.performAction(
+									worldGovernmentTerraform(availableProgressValues[0]),
+								)
 							} else if (p.state.pendingActions.length > 0) {
 								p.state.pendingActions.forEach((a) => {
 									if (a.type === PlayerActionType.PickStarting) {
