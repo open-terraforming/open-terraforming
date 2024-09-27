@@ -18,7 +18,7 @@ import {
 	pickCards,
 	pickPreludes,
 	playerPass,
-	solarPhaseTerraform,
+	worldGovernmentTerraform,
 	UpdateDeepPartial,
 } from '@shared/index'
 import { Logger } from '@shared/lib/logger'
@@ -72,7 +72,7 @@ export interface GameConfig {
 	spectatorsAllowed: boolean
 	expansions: ExpansionType[]
 	draft: boolean
-	solarPhase: boolean
+	wgTerraforming: boolean
 
 	maxBots: number
 	fastBots: boolean
@@ -137,7 +137,7 @@ export class Game {
 			fastProduction: false,
 			instantBots: false,
 			draft: false,
-			solarPhase: false,
+			wgTerraforming: false,
 			everybodyIsAdmin: false,
 			disablePlayersWhenDisconnectedForInSeconds: 30,
 			maxBots: 5,
@@ -148,7 +148,7 @@ export class Game {
 		this.state.name = this.config.name
 		this.state.mode = this.config.mode
 		this.state.draft = this.config.draft
-		this.state.solarPhase = this.config.solarPhase
+		this.state.wgTerraforming = this.config.wgTerraforming
 		this.state.expansions = [...this.config.expansions]
 
 		range(0, this.config.bots).forEach(() => {
@@ -618,14 +618,14 @@ export class Game {
 				try {
 					if (!p.state.connected) {
 						if (p.state.state !== PlayerStateValue.Playing) {
-							if (p.state.state === PlayerStateValue.SolarPhaseTerraform) {
+							if (p.state.state === PlayerStateValue.WorldGovernmentTerraform) {
 								const availableProgressValues = (
 									['oceans', 'temperature', 'oxygen'] as const
 								).filter(
 									(progress) => this.state[progress] < this.state.map[progress],
 								)
 
-								p.performAction(solarPhaseTerraform(availableProgressValues[0]))
+								p.performAction(worldGovernmentTerraform(availableProgressValues[0]))
 							} else if (p.state.pendingActions.length > 0) {
 								p.state.pendingActions.forEach((a) => {
 									if (a.type === PlayerActionType.PickStarting) {

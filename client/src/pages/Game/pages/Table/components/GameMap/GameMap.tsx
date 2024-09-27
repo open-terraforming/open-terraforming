@@ -73,7 +73,7 @@ export const GameMap = () => {
 			state.game.player?.state === PlayerStateValue.Playing ||
 			state.game.player?.state === PlayerStateValue.EndingTiles ||
 			state.game.player?.state === PlayerStateValue.Prelude ||
-			state.game.player?.state === PlayerStateValue.SolarPhaseTerraform,
+			state.game.player?.state === PlayerStateValue.WorldGovernmentTerraform,
 	)
 
 	const placing =

@@ -14,7 +14,7 @@ async function main() {
 		bots: 4,
 		fastBots: true,
 		fastProduction: true,
-		solarPhase: true,
+		wgTerraforming: true,
 		expansions: [
 			ExpansionType.Base,
 			ExpansionType.Prelude,

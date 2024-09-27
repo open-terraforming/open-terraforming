@@ -31,7 +31,7 @@ const pendingToStr = {
 	[PlayerActionType.PlayCard]: 'Playing card',
 	[PlayerActionType.DraftCard]: 'Picking card',
 	[PlayerActionType.SponsorCompetition]: 'Selecting competition',
-	[PlayerActionType.SolarPhaseTerraform]: 'WG Terraforming',
+	[PlayerActionType.WorldGovernmentTerraform]: 'WG Terraforming',
 	[PlayerActionType.ChangeColonyStep]: 'Changing colony step',
 	[PlayerActionType.AddCardResource]: 'Adding card resource',
 	[PlayerActionType.TradeWithColony]: 'Trading with colony',
@@ -49,7 +49,7 @@ const stateToStr = {
 	[PlayerStateValue.Waiting]: null,
 	[PlayerStateValue.Ready]: null,
 	[PlayerStateValue.Prelude]: 'Playing',
-	[PlayerStateValue.SolarPhaseTerraform]: null,
+	[PlayerStateValue.WorldGovernmentTerraform]: null,
 } as const
 
 const stateToIcon = {
@@ -62,7 +62,7 @@ const stateToIcon = {
 	[PlayerStateValue.Waiting]: faHourglassHalf,
 	[PlayerStateValue.Ready]: faCheck,
 	[PlayerStateValue.Prelude]: faArrowRight,
-	[PlayerStateValue.SolarPhaseTerraform]: faUserClock,
+	[PlayerStateValue.WorldGovernmentTerraform]: faUserClock,
 } as const
 
 export const Player = ({

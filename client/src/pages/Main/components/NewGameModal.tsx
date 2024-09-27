@@ -51,7 +51,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 	const [spectators, setSpectators] = useState(true)
 	const [draft, setDraft] = useState(false)
 	const [bots, setBots] = useState(0)
-	const [solarPhase, setSolarPhase] = useState(true)
+	const [wgTerraforming, setWgTerraforming] = useState(true)
 	const [fastBots, setFastBots] = useState(false)
 
 	const [
@@ -103,7 +103,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 				spectatorsAllowed: spectators,
 				expansions,
 				draft,
-				solarPhase,
+				wgTerraforming,
 				fastBots,
 				disablePlayersAfterDisconnectingInSeconds:
 					disablePlayersAfterDisconnecting
@@ -277,9 +277,9 @@ export const NewGameModal = ({ onClose }: Props) => {
 
 				<Field>
 					<Checkbox
-						checked={solarPhase}
-						onChange={(v) => setSolarPhase(v)}
-						label="Enable Solar Phase"
+						checked={wgTerraforming}
+						onChange={(v) => setWgTerraforming(v)}
+						label="Enable World Government Terraforming"
 					/>
 
 					<SelectItemDesc style={{ maxWidth: '30rem' }}>

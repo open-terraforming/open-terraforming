@@ -4,7 +4,7 @@ import { Lore } from '@/components/Lore'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
-import { solarPhaseTerraform } from '@shared/actions'
+import { worldGovernmentTerraform } from '@shared/actions'
 import { GameProgress } from '@shared/cards'
 import { PlayerAction } from '@shared/player-actions'
 
@@ -12,12 +12,12 @@ type Props = {
 	action: PlayerAction
 }
 
-export const SolarPhaseTerraformPicker = ({}: Props) => {
+export const WorldGovernmentTerraformPicker = ({}: Props) => {
 	const api = useApi()
 	const game = useAppStore((state) => state.game.state)
 
 	const confirm = (progress: GameProgress) => () => {
-		api.send(solarPhaseTerraform(progress))
+		api.send(worldGovernmentTerraform(progress))
 	}
 
 	return (
@@ -41,6 +41,9 @@ export const SolarPhaseTerraformPicker = ({}: Props) => {
 					)}
 					{game.oceans < game.map.oceans && (
 						<Button onClick={confirm('oceans')}>Place Ocean</Button>
+					)}
+					{game.venus < game.map.venus && (
+						<Button onClick={confirm('venus')}>Increase Venus</Button>
 					)}
 
 					<Message

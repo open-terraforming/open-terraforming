@@ -36,7 +36,7 @@ export const gamesController = appController(
 			const isPublic = !!request.public
 			const expansions = Array.from(new Set(request.expansions))
 			const draft = request.draft
-			const solarPhase = request.solarPhase
+			const wgTerraforming = request.wgTerraforming
 
 			if (!globalConfig.bots.enabled && bots > 0) {
 				throw new Error(`Bots are disabled`)
@@ -83,7 +83,7 @@ export const gamesController = appController(
 				fastBots: request.fastBots,
 				debugBots: globalConfig.bots.debug,
 				draft,
-				solarPhase,
+				wgTerraforming,
 				everybodyIsAdmin: globalConfig.everybodyIsAdmin,
 				disablePlayersWhenDisconnectedForInSeconds:
 					request.disablePlayersAfterDisconnectingInSeconds,

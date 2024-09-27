@@ -54,7 +54,7 @@ export enum PlayerStateValue {
 	/** Playing prelude cards */
 	Prelude,
 	/** Picking what to terraform during the Solar Phase */
-	SolarPhaseTerraform,
+	WorldGovernmentTerraform,
 }
 
 export interface GameState {
@@ -69,8 +69,8 @@ export interface GameState {
 	venus: number
 	map: MapState
 
-	/** Is solar phase enabled */
-	solarPhase: boolean
+	/** Is world government terraforming enabled */
+	wgTerraforming: boolean
 
 	/**  Player index (NOT ID) currently playing round (only for GenerationInProgress) */
 	currentPlayer: number

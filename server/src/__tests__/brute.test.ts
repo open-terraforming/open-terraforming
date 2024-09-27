@@ -19,7 +19,7 @@ describe('brute', () => {
 				ExpansionType.Venus,
 				ExpansionType.Colonies,
 			],
-			solarPhase: true,
+			wgTerraforming: true,
 		})
 
 		game.players[0].state.owner = true

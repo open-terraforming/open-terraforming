@@ -50,7 +50,7 @@ export const initialGameState = (
 	competitionsPrices: [8, 14, 20],
 	competitionRewards: [5, 2],
 	expansions: [ExpansionType.Base],
-	solarPhase: true,
+	wgTerraforming: true,
 	standardProjects: [
 		initialStandardProjectState(StandardProjectType.SellPatents),
 		initialStandardProjectState(StandardProjectType.PowerPlant),

@@ -1,15 +1,15 @@
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { BaseGameState } from './base-game-state'
 import { pushPendingAction } from '@shared/utils'
-import { solarPhaseTerraformAction } from '@shared/player-actions'
+import { worldGovernmentTerraformAction } from '@shared/player-actions'
 
 export class SolarPhaseGameState extends BaseGameState {
 	name = GameStateValue.SolarPhase
 
 	onEnter() {
 		const player = this.state.players[this.state.startingPlayer]
-		player.state = PlayerStateValue.SolarPhaseTerraform
-		pushPendingAction(player, solarPhaseTerraformAction())
+		player.state = PlayerStateValue.WorldGovernmentTerraform
+		pushPendingAction(player, worldGovernmentTerraformAction())
 		this.game.updated()
 	}
 

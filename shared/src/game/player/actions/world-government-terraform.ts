@@ -3,29 +3,30 @@ import {
 	GameStateValue,
 	GridCellContent,
 	PlayerStateValue,
-	solarPhaseTerraform,
+	worldGovernmentTerraform,
 } from '@shared/index'
 import { placeTileAction, PlayerActionType } from '@shared/player-actions'
 import { f, pushPendingAction } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
 
-type Args = ReturnType<typeof solarPhaseTerraform>['data']
+type Args = ReturnType<typeof worldGovernmentTerraform>['data']
 
-export class SolarPhaseTerraform extends PlayerBaseAction<Args> {
-	states = [PlayerStateValue.SolarPhaseTerraform]
+export class WorldGovernmentTerraform extends PlayerBaseAction<Args> {
+	states = [PlayerStateValue.WorldGovernmentTerraform]
 	gameStates = [GameStateValue.SolarPhase]
 
 	perform({ progress }: Args) {
 		const top = this.pendingAction
 
-		if (top?.type !== PlayerActionType.SolarPhaseTerraform) {
-			throw new Error('Top action is not solar phase terraform')
+		if (top?.type !== PlayerActionType.WorldGovernmentTerraform) {
+			throw new Error('Top action is not world government terraform')
 		}
 
 		if (
 			progress !== 'temperature' &&
 			progress !== 'oxygen' &&
-			progress !== 'oceans'
+			progress !== 'oceans' &&
+			progress !== 'venus'
 		) {
 			throw new Error(
 				'Invalid progress, only global mars terraforming is allowed',
@@ -42,12 +43,7 @@ export class SolarPhaseTerraform extends PlayerBaseAction<Args> {
 		if (progress === 'oceans') {
 			pushPendingAction(
 				this.player,
-				placeTileAction(
-					{
-						type: GridCellContent.Ocean,
-					},
-					true,
-				),
+				placeTileAction({ type: GridCellContent.Ocean }, true),
 			)
 		} else {
 			this.game[progress]++

@@ -31,7 +31,7 @@ export const newGameValidator = object({
 	spectatorsAllowed: optional(boolean()),
 	draft: optional(boolean()),
 	map: enums([MapType.Elysium, MapType.Hellas, MapType.Standard]),
-	solarPhase: optional(boolean()),
+	wgTerraforming: optional(boolean()),
 	fastBots: optional(boolean()),
 	disablePlayersAfterDisconnectingInSeconds: optional(
 		min(max(integer(), 216000), 5),

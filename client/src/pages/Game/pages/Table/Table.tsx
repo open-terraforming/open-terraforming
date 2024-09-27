@@ -15,7 +15,7 @@ import { PendingCardPicker } from './components/PendingCardPicker/PendingCardPic
 import { Players } from './components/Players/Players'
 import { Spectator } from './components/Spectator/Spectator'
 import { StartPicker } from './components/StartPicker/StartPicker'
-import { SolarPhaseTerraformPicker } from './components/SolarPhaseTerraformPicker/SolarPhaseTerraformPicker'
+import { WorldGovernmentTerraformPicker } from './components/WorldGovernmentTerraformPicker/WorldGovernmentTerraformPicker'
 import { ColoniesModal } from './components/ColoniesModal/ColoniesModal'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { useApi } from '@/context/ApiContext'
@@ -68,8 +68,8 @@ const Table = () => {
 						/>
 					)}
 
-				{pending?.type === PlayerActionType.SolarPhaseTerraform && (
-					<SolarPhaseTerraformPicker action={pending} />
+				{pending?.type === PlayerActionType.WorldGovernmentTerraform && (
+					<WorldGovernmentTerraformPicker action={pending} />
 				)}
 
 				{pending?.type === PlayerActionType.SponsorCompetition && (

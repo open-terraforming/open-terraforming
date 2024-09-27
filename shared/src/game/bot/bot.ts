@@ -31,7 +31,7 @@ import {
 	playCard,
 	playerPass,
 	playerReady,
-	solarPhaseTerraform,
+	worldGovernmentTerraform,
 	sponsorCompetition,
 	tradeWithColony,
 } from '@shared/index'
@@ -455,7 +455,7 @@ export class Bot extends Player {
 				}
 			}
 
-			case PlayerActionType.SolarPhaseTerraform: {
+			case PlayerActionType.WorldGovernmentTerraform: {
 				// TODO: Scoring?
 				const availableProgressValues = (
 					['oceans', 'temperature', 'oxygen'] as const
@@ -466,7 +466,7 @@ export class Bot extends Player {
 
 				const progress = shuffle(availableProgressValues)[0]
 
-				return this.performAction(solarPhaseTerraform(progress))
+				return this.performAction(worldGovernmentTerraform(progress))
 			}
 
 			case PlayerActionType.AddCardResource: {
@@ -609,7 +609,7 @@ export class Bot extends Player {
 				break
 			}
 
-			case PlayerStateValue.SolarPhaseTerraform: {
+			case PlayerStateValue.WorldGovernmentTerraform: {
 				const pending = this.pendingAction
 
 				if (pending) {
