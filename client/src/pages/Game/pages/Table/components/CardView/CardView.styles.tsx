@@ -1,9 +1,9 @@
+import mars from '@/assets/mars-icon.png'
 import { media } from '@/styles/media'
 import { CardType } from '@shared/cards'
-import { rgba, lighten, darken } from 'polished'
+import { darken, lighten, rgba } from 'polished'
 import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from './components/Symbols'
-import mars from '@/assets/mars-icon.png'
 
 export const Head = styled.div`
 	display: flex;
@@ -282,21 +282,10 @@ export const Container = styled.div<ContainerCtx>`
 			width: 300px;
 			height: 200px;
 			max-height: 200px;
-			display: block;
 
 			${Title} {
-				float: left;
 				margin-left: -1px;
 				margin-top: -1px;
-			}
-
-			${Head} {
-				/*float: right;*/
-			}
-
-			${Description} {
-				clear: both;
-				max-height: 150px;
 			}
 		`}
 
@@ -333,4 +322,12 @@ export const Container = styled.div<ContainerCtx>`
 
 export const FadedSymbols = styled(Symbols)`
 	opacity: 0.5;
+`
+
+export const CorporationTitle = styled.div`
+	display: flex;
+
+	${Head} {
+		flex: 1;
+	}
 `

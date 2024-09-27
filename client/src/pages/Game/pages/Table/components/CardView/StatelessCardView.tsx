@@ -10,6 +10,7 @@ import {
 	ActionTitle,
 	Categories,
 	Container,
+	CorporationTitle,
 	Cost,
 	Description,
 	FadedSymbols,
@@ -110,6 +111,24 @@ export const StatelessCardView = ({
 			? `${cardImagesUrl}/card/${cardImageFileName}.jpg`
 			: undefined
 
+	const headSymbols = (
+		<Head>
+			{card.type !== CardType.Corporation && card.type !== CardType.Prelude && (
+				<Cost affordable={!!affordable}>
+					<div>{card.cost}</div>
+				</Cost>
+			)}
+			{conditionSymbols.length > 0 && (
+				<HeadSymbols $ok={!!allConditionsOk} symbols={conditionSymbols} />
+			)}
+			<Categories>
+				{card.categories.map((c, i) => (
+					<Tag key={i} tag={c} />
+				))}
+			</Categories>
+		</Head>
+	)
+
 	return (
 		<Container
 			type={card.type}
@@ -125,24 +144,20 @@ export const StatelessCardView = ({
 			}
 			$faded={!!highlightAction}
 		>
-			{isCorporation && <Title>{locale.cards[card.code]}</Title>}
-			<Head>
-				{card.type !== CardType.Corporation &&
-					card.type !== CardType.Prelude && (
-						<Cost affordable={!!affordable}>
-							<div>{card.cost}</div>
-						</Cost>
-					)}
-				{conditionSymbols.length > 0 && (
-					<HeadSymbols $ok={!!allConditionsOk} symbols={conditionSymbols} />
-				)}
-				<Categories>
-					{card.categories.map((c, i) => (
-						<Tag key={i} tag={c} />
-					))}
-				</Categories>
-			</Head>
-			{!isCorporation && <Title>{locale.cards[card.code]}</Title>}
+			{isCorporation && (
+				<CorporationTitle>
+					<Title>{locale.cards[card.code]}</Title>
+					{headSymbols}
+				</CorporationTitle>
+			)}
+
+			{!isCorporation && (
+				<>
+					{headSymbols}
+					<Title>{locale.cards[card.code]}</Title>
+				</>
+			)}
+
 			{!isCorporation ? (
 				<Image
 					style={
