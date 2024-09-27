@@ -1,6 +1,6 @@
 import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
-import { GameState, GameStateValue } from '@shared/index'
+import { GameState, GameStateValue, GridCellContent } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { isMarsTerraformed } from '@shared/utils'
 import { objDiff } from '@shared/utils/collections'
@@ -38,7 +38,7 @@ const EVENTS_WITH_CHANGES = [
 ] as const
 
 export const buildEvents = (lastGame: GameState, game: GameState) => {
-	const diff = objDiff(lastGame, game) as GameState
+	const diff = objDiff(lastGame, game)
 	const newEvents = [] as GameEvent[]
 
 	const tiles = diff.map?.grid
@@ -169,14 +169,14 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 							if (!oldCard) {
 								if (
-									CardsLookupApi.get(cardChanges.code).type !==
+									CardsLookupApi.get(newCard.code).type !==
 										CardType.Corporation &&
-									CardsLookupApi.get(cardChanges.code).type !== CardType.Prelude
+									CardsLookupApi.get(newCard.code).type !== CardType.Prelude
 								) {
 									playerEvents.push({
 										type: EventType.CardPlayed,
 										playerId: player.id,
-										card: cardChanges.code,
+										card: newCard.code,
 										changes: [],
 									})
 								}
@@ -214,14 +214,17 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 							if (oldCard) {
 								const card = CardsLookupApi.get(oldCard.code)
 
-								if (card.resource && cardChanges[card.resource] !== undefined) {
+								const resourceChange =
+									card.resource && cardChanges[card.resource]
+
+								if (card.resource && resourceChange !== undefined) {
 									playerEvents.push({
 										type: EventType.CardResourceChanged,
 										playerId: player.id,
 										card: oldCard.code,
 										resource: card.resource,
 										index: parseInt(cardIndex),
-										amount: cardChanges[card.resource] - oldCard[card.resource],
+										amount: resourceChange - oldCard[card.resource],
 									})
 								}
 							}
@@ -239,7 +242,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 				const resourceChanges = resources
 					.filter((res) => gameChanges[res] !== undefined)
-					.map((res) => [res, gameChanges[res] - player[res]])
+					.map((res) => [res, (gameChanges[res] ?? 0) - player[res]])
 					.filter((res) => res[1] !== 0)
 
 				if (resourceChanges.length > 0) {
@@ -308,8 +311,8 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 								playerEvents.push({
 									type: EventType.TileAcquired,
 									playerId: player.id,
-									tile: action.state.type,
-									other: action.state.other,
+									tile: action.state?.type ?? GridCellContent.City,
+									other: action.state?.other,
 								})
 
 								break
@@ -344,21 +347,25 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 	if (diff.competitions) {
 		Object.values(diff.competitions).forEach((c) => {
-			newEvents.push({
-				type: EventType.CompetitionSponsored,
-				playerId: c.playerId,
-				competition: c.type,
-			})
+			if (c.playerId !== undefined && c.type !== undefined) {
+				newEvents.push({
+					type: EventType.CompetitionSponsored,
+					playerId: c.playerId,
+					competition: c.type,
+				})
+			}
 		})
 	}
 
 	if (diff.milestones) {
 		Object.values(diff.milestones).forEach((c) => {
-			newEvents.push({
-				type: EventType.MilestoneBought,
-				playerId: c.playerId,
-				milestone: c.type,
-			})
+			if (c.playerId !== undefined && c.type !== undefined) {
+				newEvents.push({
+					type: EventType.MilestoneBought,
+					playerId: c.playerId,
+					milestone: c.type,
+				})
+			}
 		})
 	}
 

@@ -41,6 +41,7 @@ export class PlayerActions {
 			[MessageType.HandshakeResponse]: null,
 			[MessageType.ServerMessage]: null,
 			[MessageType.GameStateUpdate]: null,
+			[MessageType.GameStateFull]: null,
 			[MessageType.Kicked]: null,
 			[MessageType.SpectateRequest]: null,
 			[MessageType.SpectateResponse]: null,

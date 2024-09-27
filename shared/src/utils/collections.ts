@@ -370,6 +370,24 @@ const valueDiff = (aValue: any, bValue: any): [boolean, any?] => {
 	return [false]
 }
 
+export type ObjectDiff<TSource> = TSource extends
+	| string
+	| number
+	| boolean
+	| symbol
+	? TSource
+	: TSource extends Array<infer T>
+		? {
+				[K in number]: ObjectDiff<T>
+			}
+		: TSource extends object
+			? { [K in keyof TSource]?: ObjectDiff<TSource[K]> }
+			: TSource
+
+export type AnyObject = {
+	[key: string | number | symbol]: any
+}
+
 /**
  * Diff format:
  *    [key]: undefined   // key is missing from b
@@ -378,8 +396,11 @@ const valueDiff = (aValue: any, bValue: any): [boolean, any?] => {
  * @param a
  * @param b
  */
-export const objDiff = (a: any, b: any) => {
-	const result = {} as Record<string, any>
+export const objDiff = <TSource extends AnyObject>(
+	a: TSource,
+	b: any,
+): ObjectDiff<TSource> => {
+	const result = {} as Record<string | number | symbol, any>
 	const bKeys = Object.keys(b)
 
 	Object.keys(a)
@@ -399,5 +420,43 @@ export const objDiff = (a: any, b: any) => {
 		}
 	})
 
-	return result
+	return result as ObjectDiff<TSource>
+}
+
+export const applyDiff = (target: any, diff: any) => {
+	Object.entries(diff).forEach(([key, value]) => {
+		if (value === null) {
+			target[key] = null
+
+			return
+		}
+
+		if (typeof value === 'object') {
+			if (Array.isArray(value)) {
+				target[key] = [...value]
+
+				return
+			}
+
+			if (target[key] === undefined || target[key] === null) {
+				target[key] = {}
+			}
+
+			applyDiff(target[key], value)
+
+			// TODO: This is a hack, doesn't allow arrays with nulls but allows us to easily remove elements from array
+			if (Array.isArray(target[key])) {
+				while (
+					target[key].length > 0 &&
+					target[key][target[key].length - 1] === null
+				) {
+					target[key].pop()
+				}
+			}
+
+			return
+		}
+
+		target[key] = value
+	})
 }

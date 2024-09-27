@@ -3,6 +3,7 @@ import { CompetitionType } from './competitions'
 import { GameInfo } from './extra'
 import { GameState, GridCellLocation, StandardProjectType } from './gameState'
 import { MilestoneType } from './milestones'
+import { ObjectDiff } from './utils/collections'
 
 /**
  * Deep partial, where Arrays can also be objects with numeric indexes (updating only specific array key)
@@ -69,6 +70,7 @@ export enum MessageType {
 	TradeWithColony,
 	ChangeColonyStep,
 	AddBot,
+	GameStateFull,
 }
 
 export const handshakeRequest = (version: string) =>
@@ -117,7 +119,10 @@ export const playerPass = (force = false) =>
 export const serverMessage = (message: string) =>
 	({ type: MessageType.ServerMessage, data: { message } }) as const
 
-export const gameStateUpdate = (data: GameState) =>
+export const gameStateFull = (data: GameState) =>
+	({ type: MessageType.GameStateFull, data }) as const
+
+export const gameStateUpdate = (data: ObjectDiff<GameState>) =>
 	({ type: MessageType.GameStateUpdate, data }) as const
 
 export const pickStarting = (
@@ -358,3 +363,4 @@ export type GameMessage =
 	| ReturnType<typeof tradeWithColony>
 	| ReturnType<typeof changeColonyStep>
 	| ReturnType<typeof addBot>
+	| ReturnType<typeof gameStateFull>

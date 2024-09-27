@@ -187,13 +187,13 @@ export class Bot extends Player {
 				const pickedPreludes = a.preludes
 					.map((c, i) => [CardsLookupApi.get(c), i] as const)
 					// Only pick preludes that are playable (shouldn't matter, but just in case)
-					.filter(([c]) =>
+					/*.filter(([c]) =>
 						isCardPlayable(c, {
 							card: emptyCardState(c.code),
 							game: this.game.state,
 							player: this.state,
 						}),
-					)
+					)*/
 					// Score the preludes
 					.map(
 						([c, i]) =>

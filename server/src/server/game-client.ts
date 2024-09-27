@@ -7,6 +7,7 @@ import { Player } from '@shared/game/player'
 import {
 	GameMessage,
 	GameState,
+	gameStateFull,
 	gameStateUpdate,
 	GameStateValue,
 	HandshakeError,
@@ -25,6 +26,7 @@ import { nonEmptyStringLength, sanitize, shuffle } from '@shared/utils'
 import { decode, encode } from 'msgpack-lite'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
+import { objDiff } from '@shared/utils/collections'
 
 enum ClientState {
 	Initializing,
@@ -44,7 +46,7 @@ export class Client {
 
 	cardDictionary?: Record<string, string>
 
-	lastState?: GameState
+	lastSyncedState?: GameState
 
 	player?: Player
 
@@ -272,11 +274,20 @@ export class Client {
 		}
 
 		if (this.player || this.spectator) {
-			this.send(
-				gameStateUpdate(
-					obfuscateGame(game, this.player?.id ?? -1, this.cardDictionary),
-				),
+			const gameToSync = obfuscateGame(
+				game,
+				this.player?.id ?? -1,
+				this.cardDictionary,
 			)
+
+			if (this.lastSyncedState) {
+				const diff = objDiff(this.lastSyncedState, gameToSync)
+				this.send(gameStateUpdate(diff))
+			} else {
+				this.send(gameStateFull(gameToSync))
+			}
+
+			this.lastSyncedState = gameToSync
 		}
 	}
 }
