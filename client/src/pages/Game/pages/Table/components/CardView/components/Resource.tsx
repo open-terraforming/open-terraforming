@@ -33,9 +33,10 @@ const Container = styled.div<{ $onCorporation?: boolean }>`
 					float: left;
 				`
 			: css`
-					margin-right: 0.5rem;
 					padding: 0.35rem 0.5rem;
-					float: right;
+					top: 3rem;
+					left: 1.1rem;
+					position: absolute;
 				`}
 
 	background: ${({ theme }) => theme.colors.background};

@@ -172,6 +172,7 @@ export const VP = styled.div<{ $corporation?: boolean }>`
 					position: absolute;
 					top: 2.5rem;
 					right: 0.5rem;
+					float: right;
 				`
 			: css`
 					clear: both;

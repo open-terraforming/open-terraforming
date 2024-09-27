@@ -158,7 +158,7 @@ export const StatelessCardView = ({
 				</>
 			)}
 
-			{!isCorporation ? (
+			{!isCorporation && (
 				<Image
 					style={
 						cardImageUrl ? { backgroundImage: `url('${cardImageUrl}')` } : {}
@@ -173,21 +173,20 @@ export const StatelessCardView = ({
 
 					{state && <Resource card={card} state={state} />}
 				</Image>
-			) : (
-				<>
-					{state && <Resource card={card} state={state} onCorporation />}
-					{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
-					{card.victoryPointsCallback && (
-						<VP
-							$corporation={card.type === CardType.Corporation}
-							title={card.victoryPointsCallback.description}
-						>
-							{calculatedVps ?? 'X'}*
-						</VP>
-					)}
-				</>
 			)}
 			<Description>
+				{isCorporation && (
+					<>
+						{state && <Resource card={card} state={state} onCorporation />}
+						{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
+						{card.victoryPointsCallback && (
+							<VP $corporation title={card.victoryPointsCallback.description}>
+								{calculatedVps ?? 'X'}*
+							</VP>
+						)}
+					</>
+				)}
+
 				{played && <Played>Card already played this generation</Played>}
 
 				{card.actionEffects.filter(
