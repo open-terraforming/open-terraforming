@@ -17,23 +17,6 @@ const resources: Resource[] = [
 
 const progress: GameProgress[] = ['oxygen', 'temperature', 'venus']
 
-const EVENTS_ATE_BY_CARD_CHANGES = [
-	EventType.CardsReceived,
-	EventType.ResourcesChanged,
-	EventType.ProductionChanged,
-	EventType.CardResourceChanged,
-	EventType.GameProgressChanged,
-	EventType.RatingChanged,
-	EventType.ColonyActivated,
-	EventType.PlayerTradeFleetsChange,
-	EventType.TileAcquired,
-]
-
-const EVENTS_WITH_CHANGES = [
-	EventType.ColonyBuilt,
-	EventType.ColonyTrading,
-] as const
-
 export const buildEvents = (lastGame: GameState, game: GameState) => {
 	const diff = objDiff(lastGame, game) as GameState
 	const newEvents = [] as GameEvent[]
@@ -283,20 +266,6 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 		newEvents.push({
 			type: EventType.ProductionPhase,
 		})
-	}
-
-	const changes = newEvents.filter((e) =>
-		EVENTS_ATE_BY_CARD_CHANGES.includes(e.type),
-	)
-
-	for (const eventTypeWithChanges of EVENTS_WITH_CHANGES) {
-		const eventWithChanges = newEvents.find(
-			(e) => e.type === eventTypeWithChanges,
-		)
-
-		if (eventWithChanges && 'changes' in eventWithChanges) {
-			eventWithChanges.changes = changes
-		}
 	}
 
 	return newEvents
