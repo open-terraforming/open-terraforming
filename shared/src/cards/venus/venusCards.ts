@@ -6,7 +6,12 @@ import {
 	gameProgressConditionMin,
 	terraformRatingMin,
 } from '../conditions'
+import { moneyOrResPayment } from '../effects/moneyOrResPayment'
+import { resourceAsPaymentForTags } from '../effects/resourceAsPaymentForTags'
 import {
+	anyCardAnyResourceChange,
+	anyCardResourceChange,
+	anyCardResourceChangePerTag,
 	cardResourceAnyAmountChange,
 	cardResourceChange,
 	discardCard,
@@ -15,9 +20,6 @@ import {
 	getTopCards,
 	hasCardTagsVoidEffect,
 	joinedEffects,
-	anyCardAnyResourceChange,
-	anyCardResourceChange,
-	anyCardResourceChangePerTag,
 	otherPlayersGetTopCards,
 	placeCity,
 	placeTile,
@@ -27,15 +29,13 @@ import {
 	resourceChange,
 	resourceChangeByArg,
 	resourcesForTiles,
-	deprecatedTagPriceChange,
 	terraformRatingChange,
 } from '../effectsGrouped'
 import { cardResourcePerCardPlayed } from '../passive-effects'
-import { resourceAsPaymentForTags } from '../effects/resourceAsPaymentForTags'
+import { tagPriceChange } from '../passive-effects/tagPriceChange'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
 import { card, prependRightArrow, withRightArrow } from '../utils'
 import { vpsForCardResources } from '../vps'
-import { moneyOrResPayment } from '../effects/moneyOrResPayment'
 
 export const venusCards: Card[] = [
 	card({
@@ -653,7 +653,7 @@ export const venusCards: Card[] = [
 		cost: 9,
 		categories: [CardCategory.Venus, CardCategory.Space],
 		special: [CardSpecial.Venus],
-		playEffects: [deprecatedTagPriceChange(CardCategory.Venus, -2)],
+		passiveEffects: [tagPriceChange(CardCategory.Venus, -2)],
 	}),
 	card({
 		code: 'venusian_animals',

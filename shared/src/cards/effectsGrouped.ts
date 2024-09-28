@@ -32,20 +32,20 @@ import {
 	resourceTypeArg,
 } from './args'
 import {
-	cardCategoryCountCondition,
+	cardAcceptsAnyResource,
 	cardAcceptsResource,
+	cardAnyResourceCondition,
+	cardCategoryCountCondition,
+	cardHasCategory,
 	cardResourceCondition,
 	cellTypeCondition,
 	condition,
 	gameCardsCondition,
+	playerCardsInHandCondition,
 	productionCondition,
 	resourceCondition,
-	unprotectedPlayerResource,
-	cardHasCategory,
-	cardAcceptsAnyResource,
-	cardAnyResourceCondition,
-	playerCardsInHandCondition,
 	unprotectedCard,
+	unprotectedPlayerResource,
 } from './conditions'
 import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
@@ -64,15 +64,15 @@ import {
 	SymbolType,
 } from './types'
 import {
+	countGridContent,
 	countGridContentOnMars,
+	countTagsWithoutEvents,
 	gamePlayer,
 	productions,
 	resourceProduction,
 	resToPrice,
 	updatePlayerProduction,
 	updatePlayerResource,
-	countTagsWithoutEvents,
-	countGridContent,
 } from './utils'
 
 export const resourceChange = (res: Resource, change: number, spend = false) =>
@@ -1277,49 +1277,6 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 		},
 	})
 
-/** @deprecated use cardPriceChange passive effect */
-export const deprecatedCardPriceChange = (change: number) =>
-	effect({
-		description: `Effect: When you play a card, you pay ${withUnits(
-			'money',
-			-change,
-		)} less for it`,
-		perform: ({ player, card }) => {
-			player.cardPriceChanges.push({
-				change,
-				sourceCardIndex: card.index,
-			})
-		},
-	})
-
-/** @deprecated use tagPriceChange passiveEffect */
-export const spaceCardPriceChange = (change: number) =>
-	deprecatedTagPriceChange(CardCategory.Space, change)
-
-/** @deprecated use tagPriceChange passiveEffect */
-export const earthCardPriceChange = (change: number) =>
-	deprecatedTagPriceChange(CardCategory.Earth, change)
-
-/** @deprecated use tagPriceChange passiveEffect */
-export const deprecatedTagPriceChange = (tag: CardCategory, change: number) =>
-	effect({
-		description: `Effect: When you play a ${
-			CardCategory[tag]
-		} card, you pay ${withUnits('money', -change)} less for it`,
-		symbols: [
-			{ tag },
-			{ symbol: SymbolType.Colon },
-			{ resource: 'money', count: change },
-		],
-		perform: ({ player, card }) => {
-			player.tagPriceChanges.push({
-				change,
-				tag,
-				sourceCardIndex: card.index,
-			})
-		},
-	})
-
 export const productionChangeIfTags = (
 	res: Resource,
 	amount: number,
@@ -1338,32 +1295,6 @@ export const claimCell = () =>
 			'Place your marker on any area. Only you will be able to place tiles on this area.',
 		perform: ({ player }) => {
 			pushPendingAction(player, claimTileAction())
-		},
-	})
-
-export const orePriceChange = (change: number) =>
-	effect({
-		description: `Effect: Ore is worth ${withUnits('money', change)} extra`,
-		symbols: [
-			{ resource: 'ore' as const },
-			{ symbol: SymbolType.Colon },
-			{ resource: 'money' as const, count: 1, forceSign: true },
-		],
-		perform: ({ player }) => {
-			player.orePrice += change
-		},
-	})
-
-export const titanPriceChange = (change: number) =>
-	effect({
-		description: `Effect: Titan is worth ${withUnits('money', change)} extra`,
-		symbols: [
-			{ resource: 'titan' as const },
-			{ symbol: SymbolType.Colon },
-			{ resource: 'money' as const, count: 1, forceSign: true },
-		],
-		perform: ({ player }) => {
-			player.titanPrice += change
 		},
 	})
 
@@ -1675,16 +1606,6 @@ export const exchangeResources = (srcRes: Resource, dstRes: Resource) =>
 			updatePlayerResource(player, srcRes, -amount)
 			updatePlayerResource(player, dstRes, amount)
 		},
-	})
-
-export const changeProgressConditionBonus = (change: number) =>
-	effect({
-		description: f(
-			'Effect: Your global requirements are +{0} or -{1} steps, your choice in each case',
-			change,
-			change,
-		),
-		perform: ({ player }) => (player.progressConditionBonus += change),
 	})
 
 export const emptyEffect = (description: string, symbols: CardSymbol[] = []) =>

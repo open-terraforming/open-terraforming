@@ -1,20 +1,21 @@
-import { Card, CardType, CardCategory, CardSpecial } from '../types'
-import { card, noDesc } from '../utils'
+import { GridCellContent } from '../../gameState'
 import {
+	gameProcessChange,
+	getTopCards,
+	getTopCardsWithTag,
+	placeCity,
+	placeOcean,
+	placeTile,
 	productionChange,
 	resourceChange,
-	placeTile,
-	getTopCards,
-	changeProgressConditionBonus,
-	deprecatedCardPriceChange,
-	getTopCardsWithTag,
-	placeOcean,
-	gameProcessChange,
 	terraformRatingChange,
-	placeCity,
 } from '../effectsGrouped'
-import { GridCellContent } from '../../gameState'
-import { resetProgressBonus, resetCardPriceChange } from '../passive-effects'
+import {
+	oneTimeCardPriceChange,
+	oneTimeProgressBonus,
+} from '../passive-effects'
+import { Card, CardCategory, CardSpecial, CardType } from '../types'
+import { card } from '../utils'
 
 export const preludePreludes: Card[] = [
 	card({
@@ -106,11 +107,8 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Microbe, CardCategory.Plant],
 		special: [CardSpecial.Prelude],
-		playEffects: [
-			productionChange('plants', 1),
-			noDesc(changeProgressConditionBonus(30)),
-		],
-		passiveEffects: [resetProgressBonus(30)],
+		playEffects: [productionChange('plants', 1)],
+		passiveEffects: [oneTimeProgressBonus(30)],
 	}),
 	card({
 		code: 'eccentric_sponsor',
@@ -118,8 +116,7 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [],
 		special: [CardSpecial.Prelude],
-		playEffects: [noDesc(deprecatedCardPriceChange(-25))],
-		passiveEffects: [resetCardPriceChange(-25)],
+		passiveEffects: [oneTimeCardPriceChange(-25)],
 	}),
 	card({
 		code: 'experimental_forest',
