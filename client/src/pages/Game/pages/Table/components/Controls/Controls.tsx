@@ -100,6 +100,7 @@ const Container = styled.div<{ faded: boolean }>`
 	justify-content: center;
 	background-color: ${({ theme }) => theme.colors.background};
 	border-top: 0.2rem solid ${({ theme }) => theme.colors.border};
+	border-right: 0.2rem solid ${({ theme }) => theme.colors.border};
 	margin: 0 auto;
 
 	width: 100%;

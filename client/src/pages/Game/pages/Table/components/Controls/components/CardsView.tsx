@@ -12,6 +12,7 @@ type Props = {
 	cards: UsedCardState[]
 	play?: boolean
 	openable?: boolean
+	hideAdjustedPrice?: boolean
 }
 
 export const CardsView = ({
@@ -19,6 +20,7 @@ export const CardsView = ({
 	cards,
 	play = false,
 	openable = true,
+	hideAdjustedPrice,
 }: Props) => {
 	const theme = useTheme()
 	const dispatch = useAppDispatch()
@@ -100,6 +102,7 @@ export const CardsView = ({
 							card={CardsLookupApi.get(c.code)}
 							state={play ? c : undefined}
 							fade={false}
+							hideAdjustedPrice={hideAdjustedPrice}
 						/>
 					</CV>
 				))}

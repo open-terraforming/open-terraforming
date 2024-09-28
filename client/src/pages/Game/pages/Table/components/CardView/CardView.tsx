@@ -29,6 +29,7 @@ type Props = {
 	fade?: boolean
 	className?: string
 	style?: CSSProperties
+	hideAdjustedPrice?: boolean
 }
 
 export const CardView = ({
@@ -42,6 +43,7 @@ export const CardView = ({
 	state,
 	onClick,
 	style,
+	hideAdjustedPrice,
 }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 	const player = useAppStore((state) => state.game.player)
@@ -85,6 +87,10 @@ export const CardView = ({
 	const played = card.type === CardType.Action ? state && state.played : false
 
 	const adjustedPriceContext = useMemo(() => {
+		if (hideAdjustedPrice) {
+			return undefined
+		}
+
 		const context = [] as ReactNode[]
 
 		context.push(
@@ -124,12 +130,14 @@ export const CardView = ({
 		}
 
 		return <>{context}</>
-	}, [player, card])
+	}, [player, card, hideAdjustedPrice])
 
 	return (
 		<StatelessCardView
 			card={card}
-			adjustedPrice={adjustedCardPrice(card, player)}
+			adjustedPrice={
+				hideAdjustedPrice ? undefined : adjustedCardPrice(card, player)
+			}
 			adjustedPriceContext={adjustedPriceContext}
 			selected={selected}
 			evaluate={evaluate}

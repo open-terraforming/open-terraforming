@@ -70,6 +70,7 @@ export const PlayedCards = ({ onClose, defaultType }: Props) => {
 				onSelect={handleSelect}
 				selected={[]}
 				defaultType={defaultType}
+				hideAdjustedPrice
 			/>
 		</Modal>
 	)
