@@ -59,7 +59,11 @@ export const Header = () => {
 	const coloniesPopout = usePopout({
 		trigger: coloniesButton,
 		position: 'bottom-center',
-		content: <ColoniesList />,
+		content: (
+			<ColoniesListWrapper>
+				<ColoniesList />
+			</ColoniesListWrapper>
+		),
 		sticky: true,
 		openDelay: 300,
 	})
@@ -150,4 +154,8 @@ const StandardButton = styled(StyledButton)`
 
 const Counter = styled.div`
 	padding: 0.5rem 0.2rem;
+`
+
+const ColoniesListWrapper = styled.div`
+	max-width: 50rem;
 `
