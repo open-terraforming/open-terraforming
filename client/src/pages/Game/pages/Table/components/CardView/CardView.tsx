@@ -87,7 +87,7 @@ export const CardView = ({
 	const played = card.type === CardType.Action ? state && state.played : false
 
 	const adjustedPriceContext = useMemo(() => {
-		if (hideAdjustedPrice) {
+		if (hideAdjustedPrice || !evaluate) {
 			return undefined
 		}
 
@@ -136,7 +136,9 @@ export const CardView = ({
 		<StatelessCardView
 			card={card}
 			adjustedPrice={
-				hideAdjustedPrice ? undefined : adjustedCardPrice(card, player)
+				hideAdjustedPrice || !evaluate
+					? undefined
+					: adjustedCardPrice(card, player)
 			}
 			adjustedPriceContext={adjustedPriceContext}
 			selected={selected}
