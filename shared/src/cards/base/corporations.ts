@@ -227,9 +227,12 @@ export const baseCorporations = [
 						'Power cards and Standard Project Power Plant cost {0} less',
 						withUnits('money', 3),
 					),
-					perform: ({ player }) => {
-						player.tagPriceChange[CardCategory.Power] =
-							(player.tagPriceChange[CardCategory.Power] || 0) + -3
+					perform: ({ player, card }) => {
+						player.tagPriceChanges.push({
+							tag: CardCategory.Power,
+							change: -3,
+							sourceCardIndex: card.index,
+						})
 
 						player.powerProjectCost = 11 - 3
 					},

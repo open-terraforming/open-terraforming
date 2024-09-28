@@ -104,11 +104,13 @@ const CostBase = styled.div`
 	font-size: 150%;
 	margin-top: -0.5rem;
 	margin-left: -0.5rem;
+	cursor: default;
 `
 
 export const AdjustedCost = styled(CostBase)<{ $affordable: boolean }>`
 	position: relative;
 	z-index: 2;
+	cursor: default;
 
 	${(props) =>
 		props.$affordable

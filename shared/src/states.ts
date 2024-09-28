@@ -6,11 +6,10 @@ import {
 	StandardProjectState,
 	StandardProjectType,
 } from '.'
-import { CardCategory } from './cards'
+import { ExpansionType } from './expansions/types'
 import { MapType } from './map'
 import { Maps } from './maps'
 import { GameModeType } from './modes/types'
-import { ExpansionType } from './expansions/types'
 
 export const initialGameState = (
 	id = 'game',
@@ -93,8 +92,8 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	draftedCards: [],
 	usedCards: [],
 	corporation: '',
-	tagPriceChange: {} as Record<CardCategory, number>,
-	cardPriceChange: 0,
+	tagPriceChanges: [],
+	cardPriceChanges: [],
 	greeneryCost: 8,
 	powerProjectCost: 11,
 	temperatureCost: 8,

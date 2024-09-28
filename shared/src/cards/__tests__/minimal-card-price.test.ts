@@ -57,8 +57,8 @@ test('minimalCardPrice should return discounted price when player has discount',
 	const player = initialPlayerState(1)
 	player.titan = 1
 	player.titanPrice = 3
-	player.cardPriceChange = -2
-	player.tagPriceChange[CardCategory.Space] = -2
+	player.cardPriceChanges.push({ change: -2 })
+	player.tagPriceChanges.push({ tag: CardCategory.Space, change: -2 })
 
 	const testCard = prepareTestCard({
 		categories: [CardCategory.Space],

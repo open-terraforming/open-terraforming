@@ -1,6 +1,10 @@
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { PLAYER_PRODUCTION_TO_RESOURCE } from '../constants'
-import { GridCellContent, GridCellOther, StandardProjectType } from '../gameState'
+import {
+	GridCellContent,
+	GridCellOther,
+	StandardProjectType,
+} from '../gameState'
 import { playCardAction } from '../player-actions'
 import { tileWithArticle } from '../texts'
 import { withUnits } from '../units'
@@ -348,13 +352,19 @@ export const resetCardPriceChange = (amount: number) =>
 				card.code !== playedCard.code &&
 				card.data === undefined
 			) {
-				player.cardPriceChange -= amount
+				player.cardPriceChanges = player.cardPriceChanges.filter(
+					(item) => item.sourceCardIndex !== card.index,
+				)
+
 				card.data = true
 			}
 		},
 		onGenerationEnd: ({ player, card }) => {
 			if (card.data === undefined) {
-				player.cardPriceChange -= amount
+				player.cardPriceChanges = player.cardPriceChanges.filter(
+					(item) => item.sourceCardIndex !== card.index,
+				)
+
 				card.data = true
 			}
 		},

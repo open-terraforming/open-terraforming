@@ -7,7 +7,10 @@ export const cardPriceChange = (change: number) =>
 			'money',
 			-change,
 		)} less for it`,
-		onPlay: ({ player }) => {
-			player.cardPriceChange += change
+		onPlay: ({ player, card }) => {
+			player.cardPriceChanges.push({
+				change,
+				sourceCardIndex: card.index,
+			})
 		},
 	})

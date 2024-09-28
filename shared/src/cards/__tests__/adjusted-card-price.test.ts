@@ -5,9 +5,9 @@ import { CardCategory } from '../types'
 
 test('adjustedCardPrice should return normal price for normal cards', () => {
 	const player = initialPlayerState(1)
-	player.tagPriceChange[CardCategory.Animal] = -2
-	player.tagPriceChange[CardCategory.Building] = -2
-	player.tagPriceChange[CardCategory.Plant] = -2
+	player.tagPriceChanges.push({ tag: CardCategory.Animal, change: -2 })
+	player.tagPriceChanges.push({ tag: CardCategory.Building, change: -2 })
+	player.tagPriceChanges.push({ tag: CardCategory.Plant, change: -2 })
 
 	const testCard = prepareTestCard({
 		cost: 10,
@@ -18,10 +18,10 @@ test('adjustedCardPrice should return normal price for normal cards', () => {
 
 test('adjustedCardPrice should return discounted price for general discount', () => {
 	const player = initialPlayerState(1)
-	player.cardPriceChange = -5
-	player.tagPriceChange[CardCategory.Animal] = -2
-	player.tagPriceChange[CardCategory.Building] = -2
-	player.tagPriceChange[CardCategory.Plant] = -2
+	player.cardPriceChanges.push({ change: -5 })
+	player.tagPriceChanges.push({ tag: CardCategory.Animal, change: -2 })
+	player.tagPriceChanges.push({ tag: CardCategory.Building, change: -2 })
+	player.tagPriceChanges.push({ tag: CardCategory.Plant, change: -2 })
 
 	const testCard = prepareTestCard({
 		cost: 10,
@@ -32,10 +32,10 @@ test('adjustedCardPrice should return discounted price for general discount', ()
 
 test('adjustedCardPrice should return 0 when adjusted price is less than 0', () => {
 	const player = initialPlayerState(1)
-	player.cardPriceChange = -20
-	player.tagPriceChange[CardCategory.Animal] = -2
-	player.tagPriceChange[CardCategory.Building] = -2
-	player.tagPriceChange[CardCategory.Plant] = -2
+	player.cardPriceChanges.push({ change: -20 })
+	player.tagPriceChanges.push({ tag: CardCategory.Animal, change: -2 })
+	player.tagPriceChanges.push({ tag: CardCategory.Building, change: -2 })
+	player.tagPriceChanges.push({ tag: CardCategory.Plant, change: -2 })
 
 	const testCard = prepareTestCard({
 		cost: 10,
@@ -46,9 +46,9 @@ test('adjustedCardPrice should return 0 when adjusted price is less than 0', () 
 
 test('adjustedCardPrice should return discounted price for tags', () => {
 	const player = initialPlayerState(1)
-	player.tagPriceChange[CardCategory.Animal] = -2
-	player.tagPriceChange[CardCategory.Building] = -2
-	player.tagPriceChange[CardCategory.Plant] = -2
+	player.tagPriceChanges.push({ tag: CardCategory.Animal, change: -2 })
+	player.tagPriceChanges.push({ tag: CardCategory.Building, change: -2 })
+	player.tagPriceChanges.push({ tag: CardCategory.Plant, change: -2 })
 
 	expect(
 		adjustedCardPrice(

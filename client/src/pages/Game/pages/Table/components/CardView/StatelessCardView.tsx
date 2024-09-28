@@ -4,7 +4,7 @@ import { useAppStore } from '@/utils/hooks'
 import { Card, CardCallbackContext, CardType } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import { flatten } from '@shared/utils'
-import { CSSProperties, useMemo } from 'react'
+import { CSSProperties, ReactNode, useMemo } from 'react'
 import {
 	Action,
 	ActionTitle,
@@ -34,6 +34,7 @@ type Props = {
 	card: Card
 	state?: UsedCardState
 	adjustedPrice?: number
+	adjustedPriceContext?: ReactNode
 	selected?: boolean
 	onClick?: () => void
 	evaluate?: boolean
@@ -66,6 +67,7 @@ export const StatelessCardView = ({
 	calculatedVps,
 	highlightAction,
 	adjustedPrice,
+	adjustedPriceContext,
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
@@ -130,7 +132,7 @@ export const StatelessCardView = ({
 					</OriginalCost>
 					{adjustedPrice !== undefined && adjustedPrice !== card.cost && (
 						<AdjustedCost $affordable={!!affordable}>
-							<Tooltip content="Your price">{adjustedPrice}</Tooltip>
+							<Tooltip content={adjustedPriceContext}>{adjustedPrice}</Tooltip>
 						</AdjustedCost>
 					)}
 				</Cost>

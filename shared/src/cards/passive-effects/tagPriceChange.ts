@@ -12,8 +12,7 @@ export const tagPriceChange = (tag: CardCategory, change: number) =>
 			{ symbol: SymbolType.Colon },
 			{ resource: 'money', count: change },
 		],
-		onPlay: ({ player }) => {
-			const prev = player.tagPriceChange[tag] ?? 0
-			player.tagPriceChange[tag] = prev + change
+		onPlay: ({ player, card }) => {
+			player.tagPriceChanges.push({ tag, change, sourceCardIndex: card.index })
 		},
 	})
