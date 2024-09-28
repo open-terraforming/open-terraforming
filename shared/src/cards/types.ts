@@ -214,6 +214,7 @@ export type ResourceCondition = (
 export interface CardPassiveEffect {
 	description: string
 	symbols: CardSymbol[]
+	/** Triggered when card is played from hand */
 	onPlay?: (ctx: CardCallbackContext) => void
 	onGenerationStarted?: (ctx: CardCallbackContext, generation: number) => void
 	onTilePlaced?: (
