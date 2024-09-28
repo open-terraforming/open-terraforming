@@ -19,8 +19,6 @@ const contentColor = {
 
 const getTileContent = (content: GridCellContent, other?: GridCellOther) => {
 	if (other) {
-		console.log({ other })
-
 		return (
 			<OtherIcon viewBox="0 0 18 20">
 				<path fill="#CC9479" d={OtherIcons[other]} />
