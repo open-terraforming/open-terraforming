@@ -401,3 +401,6 @@ export const objDiff = (a: any, b: any) => {
 
 	return result
 }
+
+export const sum = <T>(items: T[], selector: (item: T) => number) =>
+	items.reduce((acc, item) => acc + selector(item), 0)

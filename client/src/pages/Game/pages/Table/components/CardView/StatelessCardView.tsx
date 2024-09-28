@@ -1,20 +1,24 @@
 import { CARD_IMAGES_URL } from '@/constants'
 import { useLocale } from '@/context/LocaleContext'
+import { useAppStore } from '@/utils/hooks'
 import { Card, CardCallbackContext, CardType } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import { flatten } from '@shared/utils'
-import { CSSProperties, useMemo } from 'react'
+import { CSSProperties, ReactNode, useMemo } from 'react'
 import {
 	Action,
 	ActionTitle,
+	AdjustedCost,
 	Categories,
 	Container,
+	CorporationTitle,
 	Cost,
 	Description,
 	FadedSymbols,
 	Head,
 	HeadSymbols,
 	Image,
+	OriginalCost,
 	Played,
 	Title,
 	VP,
@@ -24,11 +28,13 @@ import { PlayEffect } from './components/PlayEffect'
 import { Resource } from './components/Resource'
 import { Symbols } from './components/Symbols'
 import { Tag } from './components/Tag'
-import { useAppStore } from '@/utils/hooks'
+import { Tooltip } from '@/components'
 
 type Props = {
 	card: Card
 	state?: UsedCardState
+	adjustedPrice?: number
+	adjustedPriceContext?: ReactNode
 	selected?: boolean
 	onClick?: () => void
 	evaluate?: boolean
@@ -60,6 +66,8 @@ export const StatelessCardView = ({
 	conditionContext: condContext,
 	calculatedVps,
 	highlightAction,
+	adjustedPrice,
+	adjustedPriceContext,
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
@@ -103,11 +111,42 @@ export const StatelessCardView = ({
 
 	const cardImagesUrl = settings.cardImagesUrl ?? CARD_IMAGES_URL
 	const cardImageFileName = card.code.replace(/'/g, "\\'")
+	const isCorporation = card.type === CardType.Corporation
 
 	const cardImageUrl =
 		cardImagesUrl !== undefined
 			? `${cardImagesUrl}/card/${cardImageFileName}.jpg`
 			: undefined
+
+	const headSymbols = (
+		<Head>
+			{card.type !== CardType.Corporation && card.type !== CardType.Prelude && (
+				<Cost>
+					<OriginalCost
+						$affordable={!!affordable}
+						$isAdjusted={
+							adjustedPrice !== undefined && adjustedPrice !== card.cost
+						}
+					>
+						{card.cost}
+					</OriginalCost>
+					{adjustedPrice !== undefined && adjustedPrice !== card.cost && (
+						<AdjustedCost $affordable={!!affordable}>
+							<Tooltip content={adjustedPriceContext}>{adjustedPrice}</Tooltip>
+						</AdjustedCost>
+					)}
+				</Cost>
+			)}
+			{conditionSymbols.length > 0 && (
+				<HeadSymbols $ok={!!allConditionsOk} symbols={conditionSymbols} />
+			)}
+			<Categories>
+				{card.categories.map((c, i) => (
+					<Tag key={i} tag={c} />
+				))}
+			</Categories>
+		</Head>
+	)
 
 	return (
 		<Container
@@ -124,24 +163,21 @@ export const StatelessCardView = ({
 			}
 			$faded={!!highlightAction}
 		>
-			<Head>
-				{card.type !== CardType.Corporation &&
-					card.type !== CardType.Prelude && (
-						<Cost affordable={!!affordable}>
-							<div>{card.cost}</div>
-						</Cost>
-					)}
-				{conditionSymbols.length > 0 && (
-					<HeadSymbols $ok={!!allConditionsOk} symbols={conditionSymbols} />
-				)}
-				<Categories>
-					{card.categories.map((c, i) => (
-						<Tag key={i} tag={c} />
-					))}
-				</Categories>
-			</Head>
-			<Title>{locale.cards[card.code]}</Title>
-			{card.type !== CardType.Corporation ? (
+			{isCorporation && (
+				<CorporationTitle>
+					<Title>{locale.cards[card.code]}</Title>
+					{headSymbols}
+				</CorporationTitle>
+			)}
+
+			{!isCorporation && (
+				<>
+					{headSymbols}
+					<Title>{locale.cards[card.code]}</Title>
+				</>
+			)}
+
+			{!isCorporation && (
 				<Image
 					style={
 						cardImageUrl ? { backgroundImage: `url('${cardImageUrl}')` } : {}
@@ -156,21 +192,20 @@ export const StatelessCardView = ({
 
 					{state && <Resource card={card} state={state} />}
 				</Image>
-			) : (
-				<>
-					{state && <Resource card={card} state={state} onCorporation />}
-					{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
-					{card.victoryPointsCallback && (
-						<VP
-							$corporation={card.type === CardType.Corporation}
-							title={card.victoryPointsCallback.description}
-						>
-							{calculatedVps ?? 'X'}*
-						</VP>
-					)}
-				</>
 			)}
 			<Description>
+				{isCorporation && (
+					<>
+						{state && <Resource card={card} state={state} onCorporation />}
+						{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
+						{card.victoryPointsCallback && (
+							<VP $corporation title={card.victoryPointsCallback.description}>
+								{calculatedVps ?? 'X'}*
+							</VP>
+						)}
+					</>
+				)}
+
 				{played && <Played>Card already played this generation</Played>}
 
 				{card.actionEffects.filter(

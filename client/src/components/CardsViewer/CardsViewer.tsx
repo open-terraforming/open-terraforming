@@ -123,7 +123,6 @@ export const CardsViewer = ({ onClose }: Props) => {
 						card={card}
 						affordable={true}
 						isPlayable={true}
-						hover={false}
 					/>
 				))}
 			</StyledContainer>

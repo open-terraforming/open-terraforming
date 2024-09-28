@@ -33,7 +33,13 @@ export const EffectCards = ({ onClick }: Props) => {
 			onMouseOver={() => setOpened(true)}
 			onMouseLeave={() => setOpened(false)}
 		>
-			<CardsView cards={cards} play open={opened} openable={false} />
+			<CardsView
+				cards={cards}
+				play
+				open={opened}
+				openable={false}
+				hideAdjustedPrice
+			/>
 		</CardsCounter>
 	)
 }

@@ -1284,8 +1284,11 @@ export const deprecatedCardPriceChange = (change: number) =>
 			'money',
 			-change,
 		)} less for it`,
-		perform: ({ player }) => {
-			player.cardPriceChange += change
+		perform: ({ player, card }) => {
+			player.cardPriceChanges.push({
+				change,
+				sourceCardIndex: card.index,
+			})
 		},
 	})
 
@@ -1308,9 +1311,12 @@ export const deprecatedTagPriceChange = (tag: CardCategory, change: number) =>
 			{ symbol: SymbolType.Colon },
 			{ resource: 'money', count: change },
 		],
-		perform: ({ player }) => {
-			const prev = player.tagPriceChange[tag] ?? 0
-			player.tagPriceChange[tag] = prev + change
+		perform: ({ player, card }) => {
+			player.tagPriceChanges.push({
+				change,
+				tag,
+				sourceCardIndex: card.index,
+			})
 		},
 	})
 

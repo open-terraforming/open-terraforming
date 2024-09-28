@@ -1,5 +1,6 @@
 import {
 	CardCallbackContext,
+	CardCategory,
 	CardPassiveEffect,
 	CardsLookupApi,
 	GameProgress,
@@ -242,6 +243,27 @@ export class Game {
 			state.standardProjects = (state as any).standardProjects.map(
 				(p: StandardProjectType) => initialStandardProjectState(p),
 			)
+		}
+
+		for (const player of state.players) {
+			if (
+				typeof player.cardPriceChanges === 'undefined' &&
+				'cardPriceChange' in player
+			) {
+				player.cardPriceChanges = [{ change: player.cardPriceChange as number }]
+			}
+
+			if (
+				typeof player.tagPriceChanges === 'undefined' &&
+				'tagPriceChange' in player
+			) {
+				player.tagPriceChanges = Object.entries(
+					player.tagPriceChange as Record<CardCategory, number>,
+				).map(([tag, change]) => ({
+					change: change as number,
+					tag: +tag as CardCategory,
+				}))
+			}
 		}
 
 		this.config = config

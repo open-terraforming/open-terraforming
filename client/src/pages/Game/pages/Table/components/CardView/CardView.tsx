@@ -1,13 +1,21 @@
+import { useLocale } from '@/context/LocaleContext'
 import { useAppStore } from '@/utils/hooks'
-import { Card, CardCallbackContext, CardType } from '@shared/cards'
 import {
+	Card,
+	CardCallbackContext,
+	CardCategory,
+	CardType,
+} from '@shared/cards'
+import {
+	adjustedCardPrice,
 	emptyCardState,
 	isCardActionable,
 	isCardPlayable,
 	minimalCardPrice,
 } from '@shared/cards/utils'
 import { UsedCardState } from '@shared/index'
-import { CSSProperties, useMemo } from 'react'
+import { CSSProperties, ReactNode, useMemo } from 'react'
+import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { StatelessCardView } from './StatelessCardView'
 
 type Props = {
@@ -21,6 +29,7 @@ type Props = {
 	fade?: boolean
 	className?: string
 	style?: CSSProperties
+	hideAdjustedPrice?: boolean
 }
 
 export const CardView = ({
@@ -34,10 +43,12 @@ export const CardView = ({
 	state,
 	onClick,
 	style,
+	hideAdjustedPrice,
 }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 	const player = useAppStore((state) => state.game.player)
 	const playerId = useAppStore((state) => state.game.playerId)
+	const t = useLocale()
 
 	if (!player || !game || playerId === undefined) {
 		return <></>
@@ -75,9 +86,61 @@ export const CardView = ({
 
 	const played = card.type === CardType.Action ? state && state.played : false
 
+	const adjustedPriceContext = useMemo(() => {
+		if (hideAdjustedPrice || !evaluate) {
+			return undefined
+		}
+
+		const context = [] as ReactNode[]
+
+		context.push(
+			...player.cardPriceChanges.map((change, index) => (
+				<div key={`root-${index}`}>
+					{change.change}
+					<ResourceIcon res="money" />
+					{change.sourceCardIndex !== undefined && (
+						<> from {t.cards[player.usedCards[change.sourceCardIndex].code]}</>
+					)}
+				</div>
+			)),
+		)
+
+		context.push(
+			...player.tagPriceChanges
+				.filter((change) => card.categories.includes(change.tag))
+				.map((change, index) => (
+					<div key={`tag-${index}`}>
+						{change.change}
+						<ResourceIcon res="money" />
+						{change.sourceCardIndex !== undefined && (
+							<>
+								{' '}
+								from {
+									t.cards[player.usedCards[change.sourceCardIndex].code]
+								}{' '}
+								for {CardCategory[change.tag]}
+							</>
+						)}
+					</div>
+				)),
+		)
+
+		if (context.length === 0) {
+			return undefined
+		}
+
+		return <>{context}</>
+	}, [player, card, hideAdjustedPrice])
+
 	return (
 		<StatelessCardView
 			card={card}
+			adjustedPrice={
+				hideAdjustedPrice || !evaluate
+					? undefined
+					: adjustedCardPrice(card, player)
+			}
+			adjustedPriceContext={adjustedPriceContext}
 			selected={selected}
 			evaluate={evaluate}
 			hover={hover}

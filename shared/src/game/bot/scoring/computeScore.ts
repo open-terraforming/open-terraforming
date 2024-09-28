@@ -13,6 +13,7 @@ import { AiScoringCoefficients } from './defaultScoringCoefficients'
 import { resScore } from './resScore'
 import { resProductionScore } from './resProductionScore'
 import { computePendingActionScore } from './computePendingActionScore'
+import { sum } from '@shared/utils/collections'
 
 export const computeScore = (
 	s: AiScoringCoefficients,
@@ -25,13 +26,10 @@ export const computeScore = (
 	score += p.titanPrice * s.titanPrice
 	score += p.orePrice * s.orePrice
 
-	score -= p.cardPriceChange * s.cardPriceChange
+	score -= sum(p.cardPriceChanges, (item) => item.change) * s.cardPriceChange
 
 	score -=
-		(Object.values(p.tagPriceChange).reduce(
-			(acc, p) => (acc ?? 0) + (p ?? 0),
-			0,
-		) ?? 0) * s.cardPriceChangePerTag
+		sum(p.tagPriceChanges, (item) => item.change) * s.cardPriceChangePerTag
 
 	// TODO: Should have higher score when milestone for card count is available
 	score += p.cards.length * s.cardCount

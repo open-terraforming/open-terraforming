@@ -291,10 +291,18 @@ export interface PlayerState {
 	heat: number
 	heatProduction: number
 
-	/** General card price change */
-	cardPriceChange: number
-	/** Price change for specific tags */
-	tagPriceChange: Record<CardCategory, number | undefined>
+	cardPriceChanges: {
+		change: number
+		/** usedCards index of the card that caused this change */
+		sourceCardIndex?: number
+	}[]
+
+	tagPriceChanges: {
+		change: number
+		tag: CardCategory
+		/** usedCards index of the card that caused this change */
+		sourceCardIndex?: number
+	}[]
 
 	/** Cost of greenery in plants */
 	greeneryCost: number

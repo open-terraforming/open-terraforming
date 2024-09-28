@@ -16,6 +16,18 @@ export type CardInfo = {
 	index: number
 }
 
+type Props<T extends CardInfo> = {
+	onSelect: (cards: T[]) => void
+	cards: T[]
+	selected: T[]
+	defaultType?: CardType
+	filters?: boolean
+	buying?: boolean
+	evaluate?: boolean
+	hover?: boolean
+	hideAdjustedPrice?: boolean
+}
+
 export const CardDisplay = <T extends CardInfo>({
 	onSelect,
 	selected,
@@ -25,16 +37,8 @@ export const CardDisplay = <T extends CardInfo>({
 	evaluate = true,
 	hover = true,
 	defaultType,
-}: {
-	onSelect: (cards: T[]) => void
-	cards: T[]
-	selected: T[]
-	defaultType?: CardType
-	filters?: boolean
-	buying?: boolean
-	evaluate?: boolean
-	hover?: boolean
-}) => {
+	hideAdjustedPrice,
+}: Props<T>) => {
 	const [type, setType] = useState(defaultType)
 	const [playable, setPlayable] = useState(false)
 
@@ -182,6 +186,7 @@ export const CardDisplay = <T extends CardInfo>({
 								hover={hover}
 								evaluate={evaluate}
 								buying={buying}
+								hideAdjustedPrice={hideAdjustedPrice}
 								card={c.card}
 								selected={selected.map((s) => s.index).includes(c.index)}
 								key={c.index}
