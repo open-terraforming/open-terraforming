@@ -38,17 +38,21 @@ export const HeadSymbols = styled(Symbols)<{ $ok?: boolean }>`
 export const Action = styled.div<{
 	$hasSymbols: boolean
 	$highlight?: boolean
+	$highlightNoAnimation?: boolean
 }>`
 	padding: 0.5rem;
 
-	${({ theme, $highlight }) =>
+	${({ theme, $highlight, $highlightNoAnimation }) =>
 		$highlight
 			? css`
 					background: ${rgba(lighten(0.05, theme.colors.background), 1)};
 					border: 0.2rem solid ${lighten(0.1, theme.colors.border)};
-					animation-name: ${actionPop};
-					animation-duration: 0.5s;
-					animation-iteration-count: 1;
+					${!$highlightNoAnimation &&
+					css`
+						animation-name: ${actionPop};
+						animation-duration: 0.5s;
+						animation-iteration-count: 1;
+					`}
 				`
 			: css`
 					border: 0.1rem solid ${theme.colors.border};

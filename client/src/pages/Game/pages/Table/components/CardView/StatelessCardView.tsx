@@ -48,6 +48,7 @@ type Props = {
 	conditionContext?: CardCallbackContext
 	calculatedVps?: number
 	highlightAction?: boolean
+	highlightActionNoAnimation?: boolean
 }
 
 export const StatelessCardView = ({
@@ -68,6 +69,7 @@ export const StatelessCardView = ({
 	highlightAction,
 	adjustedPrice,
 	adjustedPriceContext,
+	highlightActionNoAnimation,
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
@@ -211,7 +213,11 @@ export const StatelessCardView = ({
 				{card.actionEffects.filter(
 					(a) => a.description?.length || a.symbols.length,
 				).length > 0 && (
-					<Action $hasSymbols={symbols.length > 0} $highlight={highlightAction}>
+					<Action
+						$hasSymbols={symbols.length > 0}
+						$highlight={highlightAction}
+						$highlightNoAnimation={highlightActionNoAnimation}
+					>
 						<ActionTitle $highlight={highlightAction}>Action</ActionTitle>
 
 						<Symbols symbols={playActionSymbols} />
