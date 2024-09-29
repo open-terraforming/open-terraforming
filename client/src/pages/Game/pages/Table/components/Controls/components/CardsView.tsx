@@ -13,6 +13,8 @@ type Props = {
 	play?: boolean
 	openable?: boolean
 	hideAdjustedPrice?: boolean
+	highlightAction?: boolean
+	highlightActionNoAnimation?: boolean
 }
 
 export const CardsView = ({
@@ -21,6 +23,8 @@ export const CardsView = ({
 	play = false,
 	openable = true,
 	hideAdjustedPrice,
+	highlightAction,
+	highlightActionNoAnimation,
 }: Props) => {
 	const theme = useTheme()
 	const dispatch = useAppDispatch()
@@ -103,6 +107,8 @@ export const CardsView = ({
 							state={play ? c : undefined}
 							fade={false}
 							hideAdjustedPrice={hideAdjustedPrice}
+							highlightAction={highlightAction}
+							highlightActionNoAnimation={highlightActionNoAnimation}
 						/>
 					</CV>
 				))}

@@ -51,6 +51,10 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 			throw new Error(`${card.code} isn't playable`)
 		}
 
+		if (card.actionEffects.length === 0) {
+			throw new Error(`${card.code} has no action effects`)
+		}
+
 		const ctx = {
 			player: this.player,
 			game: this.game,

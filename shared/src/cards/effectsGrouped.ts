@@ -643,10 +643,11 @@ export const anyCardResourceChange = (
 				: [
 						condition({
 							description: `Player has to have a card that accepts ${res}`,
-							evaluate: ({ player }) =>
+							evaluate: ({ player, card }) =>
 								!!player.usedCards
 									.map((c) => ({ card: CardsLookupApi.get(c.code), state: c }))
-									.find(({ card }) => card.resource === res),
+									.find(({ card }) => card.resource === res) ||
+								CardsLookupApi.get(card.code).resource === res,
 						}),
 					],
 		description:
