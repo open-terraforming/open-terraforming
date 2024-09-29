@@ -30,6 +30,8 @@ type Props = {
 	className?: string
 	style?: CSSProperties
 	hideAdjustedPrice?: boolean
+	highlightAction?: boolean
+	highlightActionNoAnimation?: boolean
 }
 
 export const CardView = ({
@@ -44,6 +46,8 @@ export const CardView = ({
 	onClick,
 	style,
 	hideAdjustedPrice,
+	highlightAction,
+	highlightActionNoAnimation,
 }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 	const player = useAppStore((state) => state.game.player)
@@ -154,6 +158,8 @@ export const CardView = ({
 			affordable={affordable}
 			conditionContext={condContext}
 			calculatedVps={calculatedVps}
+			highlightAction={highlightAction}
+			highlightActionNoAnimation={highlightActionNoAnimation}
 		/>
 	)
 }
