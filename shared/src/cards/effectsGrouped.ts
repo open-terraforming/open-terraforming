@@ -74,6 +74,7 @@ import {
 	updatePlayerProduction,
 	updatePlayerResource,
 } from './utils'
+import { tagsCountHint } from './cardHints'
 
 export const resourceChange = (res: Resource, change: number, spend = false) =>
 	effect({
@@ -957,6 +958,7 @@ export const productionChangeForTags = (
 			{ symbol: SymbolType.Colon },
 			{ tag, count: tagCount },
 		],
+		hints: [tagsCountHint([tag])],
 		perform: ({ player }) => {
 			updatePlayerProduction(
 				player,
@@ -1084,6 +1086,7 @@ export const hasCardTagsVoidEffect = (category: CardCategory, count: number) =>
 		description: f('Have {0} {1} tags', count, CardCategory[category]),
 		conditions: [cardCategoryCountCondition(category, count)],
 		symbols: [{ tag: category, count }, { symbol: SymbolType.Colon }],
+		hints: [tagsCountHint([category])],
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		perform: () => {},
 	})
@@ -1286,6 +1289,7 @@ export const productionChangeIfTags = (
 	effect({
 		...productionChange(res, amount),
 		conditions: [cardCategoryCountCondition(tag, tagCount)],
+		hints: [tagsCountHint([tag])],
 		description: `+ ${amount} production if you have ${tagCount} ${CardCategory[tag]} tags`,
 	})
 
@@ -1451,6 +1455,7 @@ export const productionForPlayersTags = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: resPerCard, production: true },
 		],
+		hints: [tagsCountHint([tag], !self)],
 		perform: ({ game, player }) => {
 			updatePlayerProduction(
 				player,
@@ -1486,6 +1491,7 @@ export const terraformRatingForTags = (tag: CardCategory, amount: number) =>
 			{ symbol: SymbolType.RightArrow },
 			{ symbol: SymbolType.TerraformingRating, count: amount },
 		],
+		hints: [tagsCountHint([tag])],
 		perform: ({ player, card }) => {
 			player.terraformRating +=
 				countTagsWithoutEvents([...player.usedCards, card.code], tag) * amount
@@ -1508,6 +1514,7 @@ export const resourcesForPlayersTags = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: resPerCard },
 		],
+		hints: [tagsCountHint([tag], !self)],
 		perform: ({ game, player }) => {
 			updatePlayerResource(
 				player,

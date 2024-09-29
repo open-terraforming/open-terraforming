@@ -29,6 +29,7 @@ import { Resource } from './components/Resource'
 import { Symbols } from './components/Symbols'
 import { Tag } from './components/Tag'
 import { Tooltip } from '@/components'
+import { CardHints } from './components/CardHints'
 
 type Props = {
 	card: Card
@@ -101,6 +102,17 @@ export const StatelessCardView = ({
 
 	const conditionSymbols = useMemo(
 		() => flatten(card.conditions.map((e) => e.symbols)),
+		[card],
+	)
+
+	const hints = useMemo(
+		() =>
+			evaluate
+				? [
+						...card.conditions.flatMap((e) => e.hints ?? []),
+						...card.playEffects.flatMap((e) => e.hints ?? []),
+					]
+				: [],
 		[card],
 	)
 
@@ -191,6 +203,8 @@ export const StatelessCardView = ({
 					)}
 
 					{state && <Resource card={card} state={state} />}
+
+					{hints.length > 0 && <CardHints type={card.type} hints={hints} />}
 				</Image>
 			)}
 			<Description>

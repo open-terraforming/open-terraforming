@@ -15,6 +15,7 @@ import {
 	WithOptional,
 } from './types'
 import { countGridContent, progressSymbol, resourceProduction } from './utils'
+import { progressHint, tagsCountHint } from './cardHints'
 
 export const condition = <T extends (CardEffectArgumentType | undefined)[]>(
 	c: WithOptional<CardCondition<T>, 'symbols'>,
@@ -98,6 +99,7 @@ export const cardCategoryCountCondition = (
 					0,
 				) >= value,
 		symbols: [{ tag: category, count: value }],
+		hints: [tagsCountHint([category])],
 		description: `Requires ${value} ${CardCategory[category]} tag(s)`,
 	})
 
@@ -151,6 +153,7 @@ export const joinedCardCountCondition = (
 			})
 		},
 		symbols: conditions.map((c) => ({ tag: c.category, count: c.value })),
+		hints: [tagsCountHint(conditions.map((c) => c.category))],
 		description: `Requires ${conditions
 			.map((c) => `${c.value} ${CardCategory[c.category]}`)
 			.join(', ')} tag(s)`,
@@ -172,6 +175,7 @@ export const gameProgressConditionMin = (res: GameProgress, value: number) =>
 			{ symbol: SymbolType.MoreOrEqual },
 			{ text: withUnits(res, value) },
 		],
+		hints: [progressHint(res)],
 		description: `${progressResToStr(res)} has to be at least ${withUnits(
 			res,
 			value,
@@ -194,6 +198,7 @@ export const gameProgressConditionMax = (res: GameProgress, value: number) =>
 			{ symbol: SymbolType.LessOrEqual },
 			{ text: withUnits(res, value) },
 		],
+		hints: [progressHint(res)],
 		description: `${progressResToStr(res)} has to be at most ${withUnits(
 			res,
 			value,

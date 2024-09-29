@@ -9,6 +9,7 @@ import {
 	ColonyState,
 } from '../gameState'
 import { StandardProject } from '../projects'
+import { CardHint } from './cardHints'
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &
 	Partial<Pick<T, K>>
@@ -126,6 +127,7 @@ export type CardCondition<
 > = {
 	description?: string
 	symbols: CardSymbol[]
+	hints?: CardHint[]
 	evaluate: (ctx: CardCallbackContext, ...args: T) => boolean
 }
 
@@ -156,6 +158,7 @@ export interface CardEffect<
 	type: CardEffectType
 	symbols: CardSymbol[]
 	aiScore: number | ((ctx: CardCallbackContext) => number)
+	hints?: CardHint[]
 	perform: (ctx: CardCallbackContext, ...args: T) => void
 }
 

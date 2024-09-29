@@ -19,6 +19,8 @@ import { Tag } from './Tag'
 
 type Props = {
 	symbol: CardSymbol
+	className?: string
+	noSpacing?: boolean
 }
 
 const symbolToIcon = (s: CardSymbol) => {
@@ -126,7 +128,7 @@ const getCountSymbol = (symbol: CardSymbol, countStr: string | undefined) => {
 	return undefined
 }
 
-export const SymbolDisplay = ({ symbol: s }: Props) => {
+export const SymbolDisplay = ({ symbol: s, className, noSpacing }: Props) => {
 	const countStr =
 		s.count === undefined
 			? undefined
@@ -138,11 +140,13 @@ export const SymbolDisplay = ({ symbol: s }: Props) => {
 
 	return (
 		<S
+			className={className}
 			production={s.production}
 			other={s.other}
 			style={{ color: s.color, ...(s.noRightSpacing && { paddingRight: 0 }) }}
 			title={s.title}
 			noSpacing={
+				noSpacing ||
 				s.symbol === SymbolType.X ||
 				s.symbol === SymbolType.RightArrow ||
 				s.symbol === SymbolType.LessOrEqual ||
