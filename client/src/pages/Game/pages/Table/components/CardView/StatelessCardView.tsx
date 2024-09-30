@@ -177,6 +177,7 @@ export const StatelessCardView = ({
 			}
 			$faded={!!highlightAction}
 		>
+			{hints.length > 0 && <CardHints type={card.type} hints={hints} />}
 			{isCorporation && (
 				<CorporationTitle>
 					<Title>{locale.cards[card.code]}</Title>
@@ -205,8 +206,6 @@ export const StatelessCardView = ({
 					)}
 
 					{state && <Resource card={card} state={state} />}
-
-					{hints.length > 0 && <CardHints type={card.type} hints={hints} />}
 				</Image>
 			)}
 			<Description>

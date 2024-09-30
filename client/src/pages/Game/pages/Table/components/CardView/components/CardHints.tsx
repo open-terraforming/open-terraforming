@@ -11,8 +11,10 @@ import styled from 'styled-components'
 import { SymbolDisplay } from './SymbolDisplay'
 import { Tag } from './Tag'
 import { CardType } from '@shared/cards'
-import { Fragment } from 'react'
+import { Fragment, useState } from 'react'
 import { sum } from '@shared/utils/collections'
+import { rgba } from 'polished'
+import { usePopout } from '@/components/Popout/usePopout'
 
 type Props = {
 	type: CardType
@@ -20,8 +22,15 @@ type Props = {
 }
 
 export const CardHints = ({ type, hints }: Props) => {
+	const [container, setContainer] = useState<HTMLDivElement | null>(null)
+
 	const player = usePlayerState()
 	const game = useGameState()
+
+	const tooltip = usePopout({
+		trigger: container,
+		content: 'Current game state',
+	})
 
 	const elements = hints.map((hint, index) => {
 		switch (hint.type) {
@@ -61,19 +70,25 @@ export const CardHints = ({ type, hints }: Props) => {
 		}
 	})
 
-	return <C $type={type}>{elements}</C>
+	return (
+		<C $type={type} ref={setContainer}>
+			{tooltip}
+			{elements}
+		</C>
+	)
 }
 
 const C = styled.div<{ $type: CardType }>`
 	position: absolute;
-	right: 0;
-	bottom: 0;
+	right: 2rem;
+	top: 100%;
+	margin-top: -1.2rem;
 	display: flex;
 	gap: 0.2rem;
-	background: ${(props) => props.theme.colors.background};
+	background: ${(props) => rgba(props.theme.colors.background, 1)};
 	border: 0.2rem solid ${(props) => props.theme.colors.cards[props.$type]};
-	border-bottom: 0;
-	border-right: 0;
+	/*border-bottom: 0;
+	border-right: 0;*/
 	padding: 0.2rem 0.3rem;
 	z-index: 3;
 	box-sizing: border-box;
