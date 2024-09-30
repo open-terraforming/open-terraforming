@@ -96,12 +96,12 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 
 			<CardDisplay
 				cards={cards}
-				evaluate={false}
 				hover={false}
 				onSelect={() => {
 					void 0
 				}}
 				selected={[]}
+				player={player}
 			/>
 		</Modal>
 	)

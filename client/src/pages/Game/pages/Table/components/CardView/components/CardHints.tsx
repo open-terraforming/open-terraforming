@@ -1,54 +1,29 @@
 import { Flex } from '@/components/Flex/Flex'
-import { useGameState, usePlayerState } from '@/utils/hooks'
+import { useGameState } from '@/utils/hooks'
+import { CardType } from '@shared/cards'
 import { CardHint, CardHintType } from '@shared/cards/cardHints'
-import {
-	countGridContent,
-	countTagsWithoutEvents,
-	progressSymbol,
-} from '@shared/cards/utils'
+import { countGridContent, progressSymbol } from '@shared/cards/utils'
 import { GAME_PROGRESS_MULTIPLIERS } from '@shared/constants'
+import { PlayerState } from '@shared/gameState'
+import { rgba } from 'polished'
 import styled from 'styled-components'
 import { SymbolDisplay } from './SymbolDisplay'
-import { Tag } from './Tag'
-import { CardType } from '@shared/cards'
-import { Fragment, useState } from 'react'
-import { sum } from '@shared/utils/collections'
-import { rgba } from 'polished'
-import { usePopout } from '@/components/Popout/usePopout'
+import { TagsCountCardHint } from './TagsCountCardHint'
 
 type Props = {
 	type: CardType
 	hints: CardHint[]
+	player: PlayerState
 }
 
-export const CardHints = ({ type, hints }: Props) => {
-	const [container, setContainer] = useState<HTMLDivElement | null>(null)
-
-	const player = usePlayerState()
+export const CardHints = ({ type, hints, player }: Props) => {
 	const game = useGameState()
-
-	const tooltip = usePopout({
-		trigger: container,
-		content: 'Current game state',
-	})
 
 	const elements = hints.map((hint, index) => {
 		switch (hint.type) {
 			case CardHintType.TagsCount:
-				return (
-					<Fragment key={index}>
-						{hint.tags.map((t) => (
-							<Flex key={t} gap={'0.2rem'}>
-								<Tag tag={t} size="sm" />
-								{hint.allPlayers
-									? sum(game.players, (p) =>
-											countTagsWithoutEvents(p.usedCards, t),
-										)
-									: countTagsWithoutEvents(player.usedCards, t)}
-							</Flex>
-						))}
-					</Fragment>
-				)
+				return <TagsCountCardHint key={index} player={player} hint={hint} />
+
 			case CardHintType.Progress:
 				return (
 					<Flex key={index} gap={'0.2rem'}>
@@ -60,6 +35,7 @@ export const CardHints = ({ type, hints }: Props) => {
 						{game[hint.progress] * GAME_PROGRESS_MULTIPLIERS[hint.progress]}
 					</Flex>
 				)
+
 			case CardHintType.TileCount:
 				return (
 					<Flex key={index}>
@@ -70,12 +46,7 @@ export const CardHints = ({ type, hints }: Props) => {
 		}
 	})
 
-	return (
-		<C $type={type} ref={setContainer}>
-			{tooltip}
-			{elements}
-		</C>
-	)
+	return <C $type={type}>{elements}</C>
 }
 
 const C = styled.div<{ $type: CardType }>`

@@ -13,7 +13,7 @@ import {
 	isCardPlayable,
 	minimalCardPrice,
 } from '@shared/cards/utils'
-import { UsedCardState } from '@shared/index'
+import { PlayerState, UsedCardState } from '@shared/index'
 import { CSSProperties, ReactNode, useMemo } from 'react'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { StatelessCardView } from './StatelessCardView'
@@ -32,6 +32,8 @@ type Props = {
 	hideAdjustedPrice?: boolean
 	highlightAction?: boolean
 	highlightActionNoAnimation?: boolean
+	player?: PlayerState
+	evaluateMode: 'buying' | 'playing' | 'viewing' | 'static'
 }
 
 export const CardView = ({
@@ -48,9 +50,10 @@ export const CardView = ({
 	hideAdjustedPrice,
 	highlightAction,
 	highlightActionNoAnimation,
+	player: presetPlayer,
 }: Props) => {
 	const game = useAppStore((state) => state.game.state)
-	const player = useAppStore((state) => state.game.player)
+	const player = presetPlayer ?? useAppStore((state) => state.game.player)
 	const playerId = useAppStore((state) => state.game.playerId)
 	const t = useLocale()
 
@@ -148,18 +151,20 @@ export const CardView = ({
 			selected={selected}
 			evaluate={evaluate}
 			hover={hover}
-			fade={fade}
+			faded={!fade || !evaluate || !playable || (!affordable && buying)}
 			className={className}
 			state={state}
 			onClick={onClick}
 			style={style}
 			wasPlayed={!!played}
 			isPlayable={playable}
-			affordable={affordable}
+			affordable={buying && affordable}
 			conditionContext={condContext}
 			calculatedVps={calculatedVps}
 			highlightAction={highlightAction}
 			highlightActionNoAnimation={highlightActionNoAnimation}
+			player={player}
+			buying={buying}
 		/>
 	)
 }

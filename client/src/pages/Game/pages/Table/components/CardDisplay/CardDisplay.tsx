@@ -1,6 +1,6 @@
 import { isNotUndefined, mapRight } from '@/utils/collections'
 import { Card, CardCategory, CardType } from '@shared/cards'
-import { UsedCardState } from '@shared/index'
+import { PlayerState, UsedCardState } from '@shared/index'
 import { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { NoCards } from '../CardsContainer/CardsContainer'
@@ -26,6 +26,7 @@ type Props<T extends CardInfo> = {
 	evaluate?: boolean
 	hover?: boolean
 	hideAdjustedPrice?: boolean
+	player?: PlayerState
 }
 
 export const CardDisplay = <T extends CardInfo>({
@@ -38,6 +39,7 @@ export const CardDisplay = <T extends CardInfo>({
 	hover = true,
 	defaultType,
 	hideAdjustedPrice,
+	player,
 }: Props<T>) => {
 	const [type, setType] = useState(defaultType)
 	const [playable, setPlayable] = useState(false)
@@ -191,6 +193,7 @@ export const CardDisplay = <T extends CardInfo>({
 								selected={selected.map((s) => s.index).includes(c.index)}
 								key={c.index}
 								state={c.state}
+								player={player}
 								onClick={() => {
 									onSelect(
 										selected.find((s) => s.index === c.index)
