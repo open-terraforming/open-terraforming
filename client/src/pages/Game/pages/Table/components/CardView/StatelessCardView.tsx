@@ -51,7 +51,7 @@ type Props = {
 	highlightAction?: boolean
 	highlightActionNoAnimation?: boolean
 	player?: PlayerState
-	buying: boolean
+	plainConditions?: boolean
 }
 
 export const StatelessCardView = ({
@@ -74,7 +74,7 @@ export const StatelessCardView = ({
 	adjustedPriceContext,
 	highlightActionNoAnimation,
 	player,
-	buying,
+	plainConditions,
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
@@ -157,7 +157,7 @@ export const StatelessCardView = ({
 			)}
 			{conditionSymbols.length > 0 && (
 				<HeadSymbols
-					$plain={!buying}
+					$plain={plainConditions}
 					$ok={!!allConditionsOk}
 					symbols={conditionSymbols}
 				/>
@@ -284,7 +284,7 @@ export const StatelessCardView = ({
 						ctx={condContext}
 						evaluate={evaluate}
 						faded={highlightAction}
-						plain={!buying}
+						plain={plainConditions}
 					/>
 				))}
 

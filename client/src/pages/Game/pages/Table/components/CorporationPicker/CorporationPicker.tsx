@@ -4,6 +4,7 @@ import { cardsToCardList } from '@/utils/cards'
 import { emptyCardState } from '@shared/cards/utils'
 import { useMemo } from 'react'
 import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
+import { EMPTY_PLAYER } from '@/utils/constants'
 
 interface Props {
 	corporations: string[]
@@ -42,9 +43,10 @@ export const CorporationPicker = ({
 			<CardDisplay
 				cards={cards}
 				filters={false}
-				evaluate={false}
 				onSelect={handlePick}
 				selected={[]}
+				evaluateMode="static"
+				player={EMPTY_PLAYER}
 			/>
 
 			<HelpMessage

@@ -102,6 +102,7 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 				}}
 				selected={[]}
 				player={player}
+				evaluateMode="viewing"
 			/>
 		</Modal>
 	)
