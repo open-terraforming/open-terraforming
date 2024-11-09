@@ -93,6 +93,7 @@ export enum CardSpecial {
 
 export interface CardVictoryPointsCallback {
 	description: string
+	hints?: CardHint[]
 	compute: (ctx: CardCallbackContext) => number
 }
 

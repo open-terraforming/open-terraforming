@@ -1,10 +1,12 @@
 import { Flex } from '@/components/Flex/Flex'
 import { useGameState } from '@/utils/hooks'
-import { CardType } from '@shared/cards'
+import { CardType, SymbolType } from '@shared/cards'
 import { CardHint, CardHintType } from '@shared/cards/cardHints'
 import { countGridContent, progressSymbol } from '@shared/cards/utils'
 import { GAME_PROGRESS_MULTIPLIERS } from '@shared/constants'
+import { getColoniesCount } from '@shared/expansions/colonies/utils/getColoniesCount'
 import { PlayerState } from '@shared/gameState'
+import { assertNever } from '@shared/utils/assertNever'
 import { rgba } from 'polished'
 import styled from 'styled-components'
 import { SymbolDisplay } from './SymbolDisplay'
@@ -43,7 +45,17 @@ export const CardHints = ({ type, hints, player }: Props) => {
 						{countGridContent(game, hint.tileType)}
 					</Flex>
 				)
+
+			case CardHintType.ColonyCount:
+				return (
+					<Flex key={index}>
+						<SmallSymbol symbol={{ symbol: SymbolType.Colony }} noSpacing />
+						{getColoniesCount({ game })}
+					</Flex>
+				)
 		}
+
+		assertNever(hint)
 	})
 
 	return <C $type={type}>{elements}</C>

@@ -117,6 +117,7 @@ export const StatelessCardView = ({
 				? [
 						...card.conditions.flatMap((e) => e.hints ?? []),
 						...card.playEffects.flatMap((e) => e.hints ?? []),
+						...(card.victoryPointsCallback?.hints ?? []),
 					]
 				: [],
 		[card],

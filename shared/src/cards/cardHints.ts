@@ -5,6 +5,7 @@ export enum CardHintType {
 	TagsCount = 1,
 	Progress,
 	TileCount,
+	ColonyCount,
 }
 
 export const tagsCountHint = (tags: CardCategory[], allPlayers = false) =>
@@ -26,7 +27,13 @@ export const tileCountHint = (type: GridCellContent) =>
 		tileType: type,
 	}) as const
 
+export const colonyCountHint = () =>
+	({
+		type: CardHintType.ColonyCount,
+	}) as const
+
 export type CardHint =
 	| ReturnType<typeof tagsCountHint>
 	| ReturnType<typeof progressHint>
 	| ReturnType<typeof tileCountHint>
+	| ReturnType<typeof colonyCountHint>
