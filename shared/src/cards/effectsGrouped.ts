@@ -106,8 +106,8 @@ export const productionChange = (res: Resource, change: number) => {
 		symbols: [{ resource: res, production: true, count: change }],
 		description:
 			change > 0
-				? `+ ${change} ${res} production`
-				: `- ${-change} ${res} production`,
+				? `+${change} ${res} production`
+				: `-${-change} ${res} production`,
 		perform: ({ player }) => {
 			player[prod] += change
 		},
@@ -524,8 +524,8 @@ export const terraformRatingChange = (change: number) =>
 	effect({
 		description:
 			change >= 0
-				? `+ ${change} Terraform Rating`
-				: `- ${-change} Terraform Rating`,
+				? `+${change} Terraform Rating`
+				: `-${-change} Terraform Rating`,
 		symbols: [{ symbol: SymbolType.TerraformingRating, count: change }],
 		perform: ({ player }) => {
 			player.terraformRating += change
