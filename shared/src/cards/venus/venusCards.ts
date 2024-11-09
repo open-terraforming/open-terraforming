@@ -4,6 +4,7 @@ import {
 	cardResourcesAnywhereCondition,
 	gameProgressConditionMax,
 	gameProgressConditionMin,
+	joinedCardCountCondition,
 	terraformRatingMin,
 } from '../conditions'
 import { moneyOrResPayment } from '../effects/moneyOrResPayment'
@@ -387,9 +388,11 @@ export const venusCards: Card[] = [
 		categories: [],
 		special: [CardSpecial.Venus],
 		conditions: [
-			cardCategoryCountCondition(CardCategory.Venus, 1),
-			cardCategoryCountCondition(CardCategory.Earth, 1),
-			cardCategoryCountCondition(CardCategory.Jupiter, 1),
+			joinedCardCountCondition([
+				{ category: CardCategory.Venus, value: 1 },
+				{ category: CardCategory.Earth, value: 1 },
+				{ category: CardCategory.Jupiter, value: 1 },
+			]),
 		],
 		victoryPoints: 2,
 	}),
@@ -419,9 +422,11 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Venus],
 		conditions: [
-			cardCategoryCountCondition(CardCategory.Venus, 1),
-			cardCategoryCountCondition(CardCategory.Earth, 1),
-			cardCategoryCountCondition(CardCategory.Jupiter, 1),
+			joinedCardCountCondition([
+				{ category: CardCategory.Venus, value: 1 },
+				{ category: CardCategory.Earth, value: 1 },
+				{ category: CardCategory.Jupiter, value: 1 },
+			]),
 		],
 		playEffects: [productionChange('ore', 2)],
 	}),
@@ -440,9 +445,11 @@ export const venusCards: Card[] = [
 		cost: 11,
 		categories: [CardCategory.Building],
 		conditions: [
-			cardCategoryCountCondition(CardCategory.Venus, 1),
-			cardCategoryCountCondition(CardCategory.Earth, 1),
-			cardCategoryCountCondition(CardCategory.Jupiter, 1),
+			joinedCardCountCondition([
+				{ category: CardCategory.Venus, value: 1 },
+				{ category: CardCategory.Earth, value: 1 },
+				{ category: CardCategory.Jupiter, value: 1 },
+			]),
 		],
 		playEffects: [terraformRatingChange(2)],
 	}),
@@ -493,9 +500,11 @@ export const venusCards: Card[] = [
 		categories: [],
 		special: [CardSpecial.Venus],
 		conditions: [
-			cardCategoryCountCondition(CardCategory.Venus, 1),
-			cardCategoryCountCondition(CardCategory.Earth, 1),
-			cardCategoryCountCondition(CardCategory.Jupiter, 1),
+			joinedCardCountCondition([
+				{ category: CardCategory.Venus, value: 1 },
+				{ category: CardCategory.Earth, value: 1 },
+				{ category: CardCategory.Jupiter, value: 1 },
+			]),
 		],
 		playEffects: [getTopCards(2)],
 	}),
