@@ -63,6 +63,12 @@ export const initialGameState = (
 	colonies: [],
 	colonyCards: [],
 	events: [],
+	committee: {
+		chairman: null,
+		lobby: [],
+		parties: [],
+	},
+	committeePartyCards: [],
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({

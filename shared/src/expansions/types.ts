@@ -6,6 +6,7 @@ export enum ExpansionType {
 	Prelude,
 	Venus,
 	Colonies,
+	Turmoil,
 }
 
 export interface Expansion {

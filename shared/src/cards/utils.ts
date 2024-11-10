@@ -266,16 +266,23 @@ export const progressSymbol: Record<GameProgress, Readonly<CardSymbol>> = {
  */
 export const countTagsWithoutEvents = (
 	cards: (string | UsedCardState)[],
-	tag: CardCategory,
+	tag: CardCategory | CardCategory[],
+	includeAny: boolean = true,
 ) => {
+	if (!Array.isArray(tag)) {
+		tag = [tag]
+	}
+
 	return cards
 		.map((c) => CardsLookupApi.get(typeof c === 'string' ? c : c.code))
 		.filter((c) => c.type !== CardType.Event)
 		.reduce(
 			(acc, c) =>
 				acc +
-				c.categories.filter((cat) => cat === tag || cat === CardCategory.Any)
-					.length,
+				c.categories.filter(
+					(cat) =>
+						tag.includes(cat) || (includeAny && cat === CardCategory.Any),
+				).length,
 			0,
 		)
 }

@@ -57,6 +57,23 @@ export enum PlayerStateValue {
 	SolarPhaseTerraform,
 }
 
+/** Interface to make it obvious something is player ID */
+export interface PlayerId {
+	id: number
+}
+
+interface CommitteePartyState {
+	code: string
+	partyLeader: PlayerId | null
+	members: PlayerId[]
+}
+
+export interface CommitteeState {
+	chairman: PlayerId | null
+	lobby: PlayerId[]
+	parties: CommitteePartyState[]
+}
+
 export interface GameState {
 	id: string
 	name: string
@@ -130,6 +147,10 @@ export interface GameState {
 
 	/** List of events that occurred during the game */
 	events: GameEvent[]
+
+	committee: CommitteeState
+
+	committeePartyCards: string[]
 }
 
 export interface StandardProjectState {
