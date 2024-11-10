@@ -2,7 +2,7 @@ import { CARD_IMAGES_URL } from '@/constants'
 import { useLocale } from '@/context/LocaleContext'
 import { useAppStore } from '@/utils/hooks'
 import { Card, CardCallbackContext, CardType } from '@shared/cards'
-import { UsedCardState } from '@shared/index'
+import { PlayerState, UsedCardState } from '@shared/index'
 import { flatten } from '@shared/utils'
 import { CSSProperties, ReactNode, useMemo } from 'react'
 import {
@@ -29,6 +29,7 @@ import { Resource } from './components/Resource'
 import { Symbols } from './components/Symbols'
 import { Tag } from './components/Tag'
 import { Tooltip } from '@/components'
+import { CardHints } from './components/CardHints'
 
 type Props = {
 	card: Card
@@ -39,7 +40,7 @@ type Props = {
 	onClick?: () => void
 	evaluate?: boolean
 	hover?: boolean
-	fade?: boolean
+	faded?: boolean
 	className?: string
 	style?: CSSProperties
 	wasPlayed?: boolean
@@ -49,6 +50,8 @@ type Props = {
 	calculatedVps?: number
 	highlightAction?: boolean
 	highlightActionNoAnimation?: boolean
+	player?: PlayerState
+	plainConditions?: boolean
 }
 
 export const StatelessCardView = ({
@@ -56,7 +59,7 @@ export const StatelessCardView = ({
 	selected = false,
 	evaluate = true,
 	hover = true,
-	fade = true,
+	faded,
 	className,
 	state,
 	onClick,
@@ -70,6 +73,8 @@ export const StatelessCardView = ({
 	adjustedPrice,
 	adjustedPriceContext,
 	highlightActionNoAnimation,
+	player,
+	plainConditions,
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
@@ -103,6 +108,18 @@ export const StatelessCardView = ({
 
 	const conditionSymbols = useMemo(
 		() => flatten(card.conditions.map((e) => e.symbols)),
+		[card],
+	)
+
+	const hints = useMemo(
+		() =>
+			evaluate
+				? [
+						...card.conditions.flatMap((e) => e.hints ?? []),
+						...card.playEffects.flatMap((e) => e.hints ?? []),
+						...(card.victoryPointsCallback?.hints ?? []),
+					]
+				: [],
 		[card],
 	)
 
@@ -140,7 +157,11 @@ export const StatelessCardView = ({
 				</Cost>
 			)}
 			{conditionSymbols.length > 0 && (
-				<HeadSymbols $ok={!!allConditionsOk} symbols={conditionSymbols} />
+				<HeadSymbols
+					$plain={plainConditions}
+					$ok={!!allConditionsOk}
+					symbols={conditionSymbols}
+				/>
 			)}
 			<Categories>
 				{card.categories.map((c, i) => (
@@ -156,15 +177,18 @@ export const StatelessCardView = ({
 			selected={selected}
 			onClick={onClick}
 			hover={hover}
-			playable={!fade || !evaluate || !!(playable && affordable)}
+			playable={!faded}
 			played={!!played}
 			style={style}
 			className={
-				(!evaluate || (playable && affordable) ? 'playable' : 'unplayable') +
+				(!evaluate || playable ? 'playable' : 'unplayable') +
 				(className ? ` ${className}` : '')
 			}
 			$faded={!!highlightAction}
 		>
+			{hints.length > 0 && player && (
+				<CardHints player={player} type={card.type} hints={hints} />
+			)}
 			{isCorporation && (
 				<CorporationTitle>
 					<Title>{locale.cards[card.code]}</Title>
@@ -261,6 +285,7 @@ export const StatelessCardView = ({
 						ctx={condContext}
 						evaluate={evaluate}
 						faded={highlightAction}
+						plain={plainConditions}
 					/>
 				))}
 

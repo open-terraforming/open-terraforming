@@ -144,6 +144,7 @@ export const CardsViewer = ({ onClose }: Props) => {
 						card={card}
 						affordable={true}
 						isPlayable={true}
+						evaluate={false}
 						onClick={isAdmin ? () => handleCardClick(card.code) : undefined}
 					/>
 				))}

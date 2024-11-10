@@ -71,6 +71,8 @@ export const PlayedCards = ({ onClose, defaultType }: Props) => {
 				selected={[]}
 				defaultType={defaultType}
 				hideAdjustedPrice
+				evaluateMode="playing"
+				player={player}
 			/>
 		</Modal>
 	)

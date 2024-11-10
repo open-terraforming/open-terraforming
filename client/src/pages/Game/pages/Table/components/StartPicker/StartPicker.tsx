@@ -1,7 +1,7 @@
 import { Button, Message } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
-import { useAppStore, useGameState } from '@/utils/hooks'
+import { useAppStore, useGameState, usePlayerState } from '@/utils/hooks'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
 import { pickStarting } from '@shared/actions'
 import { CardsLookupApi } from '@shared/cards'
@@ -25,6 +25,7 @@ export const StartPicker = () => {
 	const api = useApi()
 	const pendingAction = useAppStore((state) => state.game.pendingAction)
 	const game = useGameState()
+	const player = usePlayerState()
 
 	const [loading, setLoading] = useState(false)
 
@@ -115,7 +116,12 @@ export const StartPicker = () => {
 					<PickItemLabel>Corporation</PickItemLabel>
 					<PickItemValue>
 						{corporation && (
-							<CardView card={CardsLookupApi.get(corporation)} hover={false} />
+							<CardView
+								card={CardsLookupApi.get(corporation)}
+								hover={false}
+								evaluateMode="static"
+								player={player}
+							/>
 						)}
 					</PickItemValue>
 

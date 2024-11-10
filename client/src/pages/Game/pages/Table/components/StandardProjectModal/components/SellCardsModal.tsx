@@ -1,7 +1,7 @@
 import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
-import { useAppStore } from '@/utils/hooks'
+import { usePlayerState } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { CardsLookupApi } from '@shared/cards'
 import { buyStandardProject, StandardProjectType } from '@shared/index'
@@ -15,7 +15,8 @@ type Props = {
 
 export const SellCardsModal = ({ onClose }: Props) => {
 	const api = useApi()
-	const playerCards = useAppStore((state) => state.game.player?.cards)
+	const player = usePlayerState()
+	const playerCards = player.cards
 	const [selected, setSelected] = useState([] as CardInfo[])
 
 	const cards = useMemo(
@@ -67,6 +68,8 @@ export const SellCardsModal = ({ onClose }: Props) => {
 				onSelect={(cards) => {
 					setSelected(cards)
 				}}
+				player={player}
+				evaluateMode="viewing"
 			/>
 		</Modal>
 	)

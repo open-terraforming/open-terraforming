@@ -20,11 +20,16 @@ export const Head = styled.div`
 	}
 `
 
-export const HeadSymbols = styled(Symbols)<{ $ok?: boolean }>`
-	border: 0.2rem solid ${({ $ok }) => ($ok ? '#225e34' : '#ff3333')};
+export const HeadSymbols = styled(Symbols)<{ $ok?: boolean; $plain?: boolean }>`
+	border: 0.2rem solid
+		${({ $ok, $plain }) => ($plain ? '#aaa' : $ok ? '#225e34' : '#ff3333')};
 	margin-left: 0.2rem;
-	background-color: ${({ $ok }) =>
-		$ok ? rgba(0, 255, 0, 0.1) : 'rgba(255, 0, 0, 0.5)'};
+	background-color: ${({ $ok, $plain }) =>
+		$plain
+			? 'rgba(43, 40, 40, 0.1)'
+			: $ok
+				? 'rgba(0, 255, 0, 0.1)'
+				: 'rgba(255, 0, 0, 0.5)'};
 
 	> div {
 		padding-top: 0.1rem;

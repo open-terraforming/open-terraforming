@@ -67,7 +67,8 @@ export const Hand = ({
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
 		>
 			<CardDisplay
-				buying
+				player={player}
+				evaluateMode="buying"
 				onSelect={(c) => {
 					handleSelect(c.length > 0 ? c[c.length - 1].index : undefined)
 				}}

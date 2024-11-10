@@ -39,7 +39,7 @@ export const CorporationButton = ({ onClick }: Props) => {
 				play
 				open={opened}
 				openable={
-					!corporationState?.played && corporation.playEffects.length > 0
+					!corporationState?.played && corporation.actionEffects.length > 0
 				}
 			/>
 		</Container>
