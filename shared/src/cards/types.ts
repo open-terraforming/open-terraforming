@@ -299,4 +299,5 @@ export interface CardSymbol {
 	color?: string
 	title?: string
 	noRightSpacing?: boolean
+	affectedByInfluence?: boolean
 }

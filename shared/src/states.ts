@@ -64,6 +64,7 @@ export const initialGameState = (
 	colonyCards: [],
 	events: [],
 	committee: {
+		dominantParty: null,
 		chairman: null,
 		lobby: [],
 		parties: [],

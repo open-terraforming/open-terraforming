@@ -62,14 +62,21 @@ export interface PlayerId {
 	id: number
 }
 
+export interface CommitteePartyMember {
+	/** null means neutral delegate */
+	playerId: PlayerId | null
+}
+
 interface CommitteePartyState {
 	code: string
-	partyLeader: PlayerId | null
-	members: PlayerId[]
+	partyLeader: CommitteePartyMember | null
+	members: CommitteePartyMember[]
 }
 
 export interface CommitteeState {
-	chairman: PlayerId | null
+	/** code of currently dominant party */
+	dominantParty: string | null
+	chairman: CommitteePartyMember | null
 	lobby: PlayerId[]
 	parties: CommitteePartyState[]
 }
