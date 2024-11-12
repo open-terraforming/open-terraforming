@@ -20,7 +20,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 			apply(game) {
 				for (const player of game.players) {
 					player.money += countTagsWithoutEvents(
-						player.cards,
+						player.usedCards,
 						CardCategory.Building,
 					)
 				}
@@ -90,7 +90,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 			apply(game) {
 				for (const player of game.players) {
 					player.money += countTagsWithoutEvents(
-						player.cards,
+						player.usedCards,
 						CardCategory.Science,
 					)
 				}
@@ -174,7 +174,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 					updatePlayerResource(
 						player,
 						'money',
-						countTagsWithoutEvents(player.cards, [
+						countTagsWithoutEvents(player.usedCards, [
 							CardCategory.Earth,
 							CardCategory.Venus,
 							CardCategory.Jupiter,
@@ -222,7 +222,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 					updatePlayerResource(
 						player,
 						'money',
-						countTagsWithoutEvents(player.cards, [
+						countTagsWithoutEvents(player.usedCards, [
 							CardCategory.Plant,
 							CardCategory.Microbe,
 							CardCategory.Animal,

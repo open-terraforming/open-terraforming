@@ -281,6 +281,7 @@ export enum SymbolType {
 	SlashSmall,
 	BigPlus,
 	Player,
+	Influence,
 }
 
 export interface CardSymbol {

@@ -286,3 +286,20 @@ export const countTagsWithoutEvents = (
 			0,
 		)
 }
+
+/**
+ * Counts tags, excluding action cards
+ */
+export const countUniqueTagsWithoutEvents = (
+	cards: (string | UsedCardState)[],
+	includeAny: boolean = true,
+) => {
+	return new Set(
+		cards
+			.map((c) => CardsLookupApi.get(typeof c === 'string' ? c : c.code))
+			.filter((c) => c.type !== CardType.Event)
+			.flatMap((c) =>
+				c.categories.filter((c) => includeAny || c !== CardCategory.Any),
+			),
+	).size
+}
