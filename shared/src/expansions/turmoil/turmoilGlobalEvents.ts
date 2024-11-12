@@ -687,7 +687,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 					const firstPlayer = game.players[game.currentPlayer]
 
 					firstPlayer.pendingActions.push(
-						placeTileAction({ type: GridCellContent.Ocean }),
+						placeTileAction({ type: GridCellContent.Ocean }, true),
 					)
 				},
 			},

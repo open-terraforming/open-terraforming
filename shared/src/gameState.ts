@@ -164,6 +164,7 @@ export interface GameState {
 	globalEvents: {
 		enabled: boolean
 		events: string[]
+		discardedEvents: string[]
 
 		distantEvent: string | null
 		comingEvent: string | null

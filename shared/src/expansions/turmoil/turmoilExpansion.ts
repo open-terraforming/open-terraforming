@@ -2,6 +2,7 @@ import { shuffle } from '@shared/utils'
 import { expansion, ExpansionType } from '../types'
 import { turmoilCommitteeParties } from './turmoilCommitteeParties'
 import { turmoilGlobalEvents } from './turmoilGlobalEvents'
+import { drawGlobalEvent } from './utils/drawGlobalEvent'
 
 export const turmoilExpansion = expansion({
 	name: 'Turmoil',
@@ -29,6 +30,9 @@ export const turmoilExpansion = expansion({
 		game.globalEvents.events = [...turmoilGlobalEvents.map((e) => e.code)]
 
 		shuffle(game.globalEvents.events)
+
+		game.globalEvents.comingEvent = drawGlobalEvent(game)
+		game.globalEvents.currentEvent = drawGlobalEvent(game)
 
 		// TODO: What next?
 	},

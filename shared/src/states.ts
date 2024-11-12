@@ -74,6 +74,7 @@ export const initialGameState = (
 	globalEvents: {
 		enabled: false,
 		events: [],
+		discardedEvents: [],
 		comingEvent: null,
 		currentEvent: null,
 		distantEvent: null,
