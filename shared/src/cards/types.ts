@@ -282,6 +282,7 @@ export enum SymbolType {
 	BigPlus,
 	Player,
 	Influence,
+	BlueCard,
 }
 
 export interface CardSymbol {

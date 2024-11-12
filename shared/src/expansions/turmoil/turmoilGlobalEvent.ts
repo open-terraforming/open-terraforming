@@ -1,4 +1,4 @@
-import { CardSymbol } from '@shared/cards'
+import { CardSpecial, CardSymbol } from '@shared/cards'
 import { GameState } from '@shared/index'
 
 export interface GlobalEvent {
@@ -13,6 +13,8 @@ export interface GlobalEvent {
 		description: string
 		apply: (game: GameState) => void
 	}[]
+
+	special?: CardSpecial[]
 }
 
 export const globalEvent = (e: GlobalEvent) => e

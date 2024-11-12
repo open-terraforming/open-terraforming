@@ -8,7 +8,7 @@ import {
 } from '@shared/cards/utils'
 import { getPlayerInfluence } from '../utils/getPlayerInfluence'
 
-export const resourceChangePerTag = (
+export const resourceChangePerTagGlobalEffect = (
 	resource: Resource,
 	change: number,
 	tag: CardCategory,

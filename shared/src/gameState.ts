@@ -74,6 +74,7 @@ interface CommitteePartyState {
 }
 
 export interface CommitteeState {
+	enabled: boolean
 	/** code of currently dominant party */
 	dominantParty: string | null
 	chairman: CommitteePartyMember | null
@@ -157,7 +158,17 @@ export interface GameState {
 
 	committee: CommitteeState
 
-	committeePartyCards: string[]
+	/** List of available committee parties */
+	committeeParties: string[]
+
+	globalEvents: {
+		enabled: boolean
+		events: string[]
+
+		distantEvent: string | null
+		comingEvent: string | null
+		currentEvent: string | null
+	}
 }
 
 export interface StandardProjectState {

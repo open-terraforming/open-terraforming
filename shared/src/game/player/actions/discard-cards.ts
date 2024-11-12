@@ -6,6 +6,7 @@ import { PlayerBaseAction } from '../action'
 type Args = ReturnType<typeof discardCards>['data']
 
 export class DiscardCardsAction extends PlayerBaseAction<Args> {
+	// TODO: This has to be adjusted for paradigm_breakdown to allow discarding cards during global event
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
