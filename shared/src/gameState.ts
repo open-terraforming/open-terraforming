@@ -67,7 +67,7 @@ export interface CommitteePartyMember {
 	playerId: PlayerId | null
 }
 
-interface CommitteePartyState {
+export interface CommitteePartyState {
 	code: string
 	partyLeader: CommitteePartyMember | null
 	members: CommitteePartyMember[]
@@ -79,6 +79,7 @@ export interface CommitteeState {
 	dominantParty: string | null
 	chairman: CommitteePartyMember | null
 	lobby: PlayerId[]
+	reserve: (PlayerId | null)[]
 	parties: CommitteePartyState[]
 }
 

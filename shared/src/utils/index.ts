@@ -187,6 +187,8 @@ export function range(start: number, end: number, step = 1) {
 	return result
 }
 
+export const repeat = (n: number) => range(0, n)
+
 export const flatten = <T>(a: T[][]) =>
 	a.reduce((acc, a) => [...acc, ...a], [] as T[])
 

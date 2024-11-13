@@ -1,6 +1,8 @@
-import { CardSpecial } from '@shared/cards/types'
-import { Cards } from '@shared/cards/list'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { coloniesColonies } from '@shared/expansions/colonies/coloniesColonies'
+import { shuffle } from '@shared/utils'
+import { coloniesCards } from './colonies/coloniesCards'
+import { initialColonyState } from './colonies/states'
 import { expansion, ExpansionType } from './types'
 
 export const coloniesExpansion = expansion({
@@ -8,8 +10,16 @@ export const coloniesExpansion = expansion({
 	name: 'Colonies',
 
 	initialize(game) {
-		game.colonyCards.push(...coloniesColonies.map((c) => c.code))
+		const colonyCount =
+			game.players.length <= 2
+				? game.players.length + 3
+				: game.players.length + 2
+
+		game.colonies = shuffle(game.colonyCards.slice())
+			.slice(0, colonyCount)
+			.map((code) => initialColonyState(ColoniesLookupApi.get(code)))
 	},
 
-	getCards: () => Cards.filter((c) => c.special.includes(CardSpecial.Colonies)),
+	getColonies: () => coloniesColonies,
+	getCards: () => coloniesCards,
 })
