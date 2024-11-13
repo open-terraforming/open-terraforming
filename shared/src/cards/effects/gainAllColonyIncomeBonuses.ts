@@ -1,4 +1,4 @@
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { range } from '@shared/utils'
 import { effect } from './types'
 

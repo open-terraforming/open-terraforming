@@ -7,7 +7,7 @@ import {
 	minimalCardPrice,
 } from '@shared/cards/utils'
 import { Competitions, CompetitionType } from '@shared/competitions'
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import {
 	canBuildColony,
 	canTradeWithColonyUsingResource,

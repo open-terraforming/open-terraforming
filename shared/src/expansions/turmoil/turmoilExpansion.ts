@@ -7,6 +7,8 @@ import { drawGlobalEvent } from './utils/drawGlobalEvent'
 export const turmoilExpansion = expansion({
 	name: 'Turmoil',
 	type: ExpansionType.Turmoil,
+	getCommitteeParties: () => turmoilCommitteeParties,
+	getGlobalEvents: () => turmoilGlobalEvents,
 	initialize: (game) => {
 		// TODO: This should be separate step so other expansions can add their parties
 		game.committeeParties.push(...turmoilCommitteeParties.map((p) => p.code))

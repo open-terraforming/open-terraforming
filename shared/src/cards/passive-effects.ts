@@ -1,4 +1,4 @@
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { PLAYER_PRODUCTION_TO_RESOURCE } from '../constants'
 import {
 	GridCellContent,

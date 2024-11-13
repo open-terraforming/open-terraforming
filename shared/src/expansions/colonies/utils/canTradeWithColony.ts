@@ -3,7 +3,7 @@ import { failure } from '../../../utils/failure'
 import { ok } from '../../../utils/ok'
 import { OkOrFailure } from '../../../utils/okOrFailure'
 import { getPlayerUsedFleets } from './getPlayerUsedFleets'
-import { ColoniesLookupApi } from '../ColoniesLookupApi'
+import { ColoniesLookupApi } from '../../../ColoniesLookupApi'
 
 type Params = {
 	game: GameState

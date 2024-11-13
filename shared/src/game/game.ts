@@ -59,7 +59,7 @@ import {
 	TilePlacedEvent,
 } from './player'
 import { ColoniesProductionGameState } from './game/colonies-production-game-state'
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { buildEvents } from './events/buildEvents'
 import { GameEvent } from './events/eventTypes'
 

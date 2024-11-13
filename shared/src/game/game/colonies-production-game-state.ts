@@ -1,6 +1,6 @@
 import { GameStateValue } from '@shared/gameState'
 import { BaseGameState } from './base-game-state'
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 
 export class ColoniesProductionGameState extends BaseGameState {
 	name = GameStateValue.ColoniesProduction
