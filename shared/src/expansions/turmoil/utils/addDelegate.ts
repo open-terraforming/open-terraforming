@@ -1,6 +1,7 @@
 import { GameState, PlayerId } from '@shared/index'
 import { getPartyState } from './getPartyState'
 import { recalculatePartyLeader } from './recalculatePartyLeader'
+import { recalculateDominantParty } from './recalculateDominantParty'
 
 export const addDelegate = (
 	game: GameState,
@@ -12,4 +13,5 @@ export const addDelegate = (
 	partyState.members.push({ playerId: player })
 
 	recalculatePartyLeader(partyState)
+	recalculateDominantParty(game)
 }

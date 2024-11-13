@@ -32,6 +32,8 @@ export enum GameStateValue {
 	SolarPhase,
 	/** After solar phase or at the end of generation, colonies increase one step */
 	ColoniesProduction,
+	/** Turmoil state */
+	Turmoil,
 }
 
 export enum PlayerStateValue {
@@ -77,6 +79,8 @@ export interface CommitteeState {
 	enabled: boolean
 	/** code of currently dominant party */
 	dominantParty: string | null
+	/** code of currently ruling party */
+	rulingParty: string | null
 	chairman: CommitteePartyMember | null
 	lobby: PlayerId[]
 	reserve: (PlayerId | null)[]

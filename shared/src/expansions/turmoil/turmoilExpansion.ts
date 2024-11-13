@@ -34,6 +34,9 @@ export const turmoilExpansion = expansion({
 			})),
 		)
 
+		// Greens start as the ruling party
+		game.committee.rulingParty = 'greens'
+
 		// 1 delegate per player in lobby
 		game.committee.lobby.push(...game.players.map((p) => ({ id: p.id })))
 

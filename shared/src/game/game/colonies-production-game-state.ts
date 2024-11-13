@@ -1,6 +1,8 @@
 import { GameStateValue } from '@shared/gameState'
 import { BaseGameState } from './base-game-state'
 import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
+import { hasExpansion } from '@shared/utils/hasExpansion'
+import { ExpansionType } from '@shared/expansions/types'
 
 export class ColoniesProductionGameState extends BaseGameState {
 	name = GameStateValue.ColoniesProduction
@@ -19,6 +21,10 @@ export class ColoniesProductionGameState extends BaseGameState {
 	}
 
 	transition() {
+		if (hasExpansion(this.game.state, ExpansionType.Turmoil)) {
+			return GameStateValue.Turmoil
+		}
+
 		return GameStateValue.GenerationEnding
 	}
 }

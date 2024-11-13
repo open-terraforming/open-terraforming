@@ -1,6 +1,8 @@
 import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { f } from '@shared/utils'
 import { BaseGameState } from './base-game-state'
+import { ExpansionType } from '@shared/expansions/types'
+import { hasExpansion } from '@shared/utils/hasExpansion'
 
 export class GenerationInProgressGameState extends BaseGameState {
 	name = GameStateValue.GenerationInProgress
@@ -46,6 +48,10 @@ export class GenerationInProgressGameState extends BaseGameState {
 
 			if (this.game.state.colonies.length > 0) {
 				return GameStateValue.ColoniesProduction
+			}
+
+			if (hasExpansion(this.game.state, ExpansionType.Turmoil)) {
+				return GameStateValue.Turmoil
 			}
 
 			return GameStateValue.GenerationEnding
