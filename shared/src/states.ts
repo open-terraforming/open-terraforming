@@ -66,9 +66,11 @@ export const initialGameState = (
 	committee: {
 		enabled: false,
 		dominantParty: null,
+		rulingParty: null,
 		chairman: null,
 		lobby: [],
 		parties: [],
+		reserve: [],
 	},
 	committeeParties: [],
 	globalEvents: {

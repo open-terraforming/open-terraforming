@@ -121,6 +121,10 @@ export class StartingGameState extends BaseGameState {
 				.map((c) => c.code),
 		)
 
+		this.state.colonyCards = colonies.map((c) => c.code)
+		this.state.globalEvents.events = globalEvents.map((e) => e.code)
+		this.state.committeeParties = committeeParties.map((p) => p.code)
+
 		// Initialize expansions
 		this.state.expansions.forEach((e) => {
 			Expansions[e].initialize(this.state)

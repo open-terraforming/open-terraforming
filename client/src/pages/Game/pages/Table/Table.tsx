@@ -17,11 +17,11 @@ import { Spectator } from './components/Spectator/Spectator'
 import { StartPicker } from './components/StartPicker/StartPicker'
 import { SolarPhaseTerraformPicker } from './components/SolarPhaseTerraformPicker/SolarPhaseTerraformPicker'
 import { ColoniesModal } from './components/ColoniesModal/ColoniesModal'
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { useApi } from '@/context/ApiContext'
 import { changeColonyStep } from '@shared/actions'
 import { AddCardResourceModal } from './components/Controls/components/AddCardResourceModal'
 import { GameModalsProvider } from '@/context/GameModalsContext'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 
 const Table = () => {
 	const pending = useAppStore((state) => state.game.pendingAction)
