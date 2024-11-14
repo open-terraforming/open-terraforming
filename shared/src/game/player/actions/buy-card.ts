@@ -5,12 +5,12 @@ import {
 	updatePlayerResource,
 } from '@shared/cards/utils'
 import { buyCard, GameStateValue, PlayerStateValue } from '@shared/index'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
 
 type Args = ReturnType<typeof buyCard>['data']
 
-export class BuyCardAction extends PlayerBaseAction<Args> {
+export class BuyCardAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 

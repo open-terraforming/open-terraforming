@@ -1,6 +1,6 @@
 import { GameMessage, MessageType } from '@shared/actions'
 import { Player } from '../player'
-import { PlayerBaseAction } from './action'
+import { PlayerBaseActionHandler } from './action'
 import { AddCardResourceAction } from './actions/add-card-resource-action'
 import { AdminChangeAction } from './actions/admin-change'
 import { AdminLoginAction } from './actions/admin-login'
@@ -26,10 +26,12 @@ import { TradeWithColonyAction } from './actions/trade-with-colony'
 import { BuildColonyAction } from './actions/build-colony'
 import { ChangeColonyStep } from './actions/change-colony-step'
 import { AddBotAction } from './actions/add-bot'
+import { ActivateRulingPolicyActionHandler } from './actions/activate-ruling-policy-action-handler'
+import { AddDelegateToPartyActionHandler } from './actions/add-delegate-to-party-action-handler'
 
 export class PlayerActions {
 	player: Player
-	actions: Record<MessageType, PlayerBaseAction | null>
+	actions: Record<MessageType, PlayerBaseActionHandler | null>
 
 	constructor(player: Player) {
 		this.player = player
@@ -75,6 +77,12 @@ export class PlayerActions {
 			[MessageType.BuildColony]: new BuildColonyAction(this.player),
 			[MessageType.ChangeColonyStep]: new ChangeColonyStep(this.player),
 			[MessageType.AddBot]: new AddBotAction(this.player),
+			[MessageType.ActivateRulingPolicy]: new ActivateRulingPolicyActionHandler(
+				this.player,
+			),
+			[MessageType.AddDelegateToParty]: new AddDelegateToPartyActionHandler(
+				this.player,
+			),
 		}
 	}
 

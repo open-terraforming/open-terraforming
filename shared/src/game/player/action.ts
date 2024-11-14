@@ -12,7 +12,7 @@ import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
 import { GameEvent } from '../events/eventTypes'
 
-export abstract class PlayerBaseAction<Args = unknown> {
+export abstract class PlayerBaseActionHandler<Args = unknown> {
 	abstract states: PlayerStateValue[]
 	abstract gameStates: GameStateValue[]
 

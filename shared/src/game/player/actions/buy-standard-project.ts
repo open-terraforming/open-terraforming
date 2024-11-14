@@ -7,11 +7,11 @@ import {
 } from '@shared/index'
 import { Projects } from '@shared/projects'
 import { f } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof buyStandardProject>['data']
 
-export class BuyStandardProjectAction extends PlayerBaseAction<Args> {
+export class BuyStandardProjectAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 

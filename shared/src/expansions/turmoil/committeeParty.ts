@@ -32,7 +32,8 @@ interface CommitteePartyActiveAction {
 	symbols: CardSymbol[]
 	description: string
 	oncePerGeneration?: boolean
-	action: (player: CommitteePartyActiveActionCallbackContext) => void
+	condition?: (ctx: CommitteePartyActiveActionCallbackContext) => boolean
+	action: (ctx: CommitteePartyActiveActionCallbackContext) => void
 }
 
 interface CommitteePartyPassiveAction {

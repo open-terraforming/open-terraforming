@@ -7,11 +7,11 @@ import {
 } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { competitionPrice, f } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof sponsorCompetition>['data']
 
-export class SponsorCompetitionAction extends PlayerBaseAction<Args> {
+export class SponsorCompetitionAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 

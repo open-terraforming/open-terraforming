@@ -2,11 +2,11 @@ import { buildColony } from '@shared/actions'
 import { performBuildColony } from '@shared/expansions/colonies/actions/performBuildColony'
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerActionType } from '@shared/player-actions'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof buildColony>['data']
 
-export class BuildColonyAction extends PlayerBaseAction<Args> {
+export class BuildColonyAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 

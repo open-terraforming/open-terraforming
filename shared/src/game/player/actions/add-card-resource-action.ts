@@ -2,11 +2,11 @@ import { addCardResource } from '@shared/actions'
 import { CardsLookupApi } from '@shared/cards'
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerActionType } from '@shared/player-actions'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof addCardResource>['data']
 
-export class AddCardResourceAction extends PlayerBaseAction<Args> {
+export class AddCardResourceAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 

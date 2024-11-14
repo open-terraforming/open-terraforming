@@ -117,7 +117,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 					{ symbol: SymbolType.Slash },
 					{ symbol: SymbolType.TerraformingRating },
 				],
-				description: 'Lose $3 for each set of 5 TR over 10 TR (max 5).',
+				description: 'Lose 3$ for each set of 5 TR over 10 TR (max 5).',
 				apply(game) {
 					for (const player of game.players) {
 						if (player.terraformRating > 10) {
@@ -137,7 +137,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 					{ symbol: SymbolType.Slash },
 					{ symbol: SymbolType.Influence },
 				],
-				description: 'Gain $1 production per influence.',
+				description: 'Gain 1$ production per influence.',
 				apply(game) {
 					for (const player of game.players) {
 						const influence = getPlayerInfluence(game, player)
@@ -160,7 +160,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 					{ symbol: SymbolType.TerraformingRating, count: 5 },
 				],
 				description:
-					'Gain $2 per influence and every set of 5 TR over 15 TR (max 5 sets).',
+					'Gain 2 per influence and every set of 5 TR over 15 TR (max 5 sets).',
 				apply(game) {
 					for (const player of game.players) {
 						const influence = getPlayerInfluence(game, player)
@@ -203,7 +203,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 					{ symbol: SymbolType.Slash },
 					{ tile: GridCellContent.City, affectedByInfluence: true },
 				],
-				description: 'Gain $5 per city tile (max 5 + influence).',
+				description: 'Gain 5$ per city tile (max 5 + influence).',
 				apply(game) {
 					for (const player of game.players) {
 						const influence = getPlayerInfluence(game, player)
@@ -234,7 +234,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 					{ resource: 'money', count: 10 },
 				],
 				description:
-					'Gain $10 if you have 9 or more different tags. Influence counts as a unique tag.',
+					'Gain 10$ if you have 9 or more different tags. Influence counts as a unique tag.',
 				apply(game) {
 					for (const player of game.players) {
 						const influence = getPlayerInfluence(game, player)
@@ -480,7 +480,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 					{ symbol: SymbolType.Slash },
 					{ symbol: SymbolType.Influence },
 				],
-				description: 'Gain $2 per influence.',
+				description: 'Gain 2$ per influence.',
 				apply(game) {
 					for (const player of game.players) {
 						const influence = getPlayerInfluence(game, player)

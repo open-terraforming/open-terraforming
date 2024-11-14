@@ -69,6 +69,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 					],
 					description:
 						'You can pay $10 to increase your heat and energy production by 1, may be used as many times as you want',
+					condition: ({ player }) => player.money >= 10,
 					action({ player }) {
 						updatePlayerResource(player, 'money', -10)
 						updatePlayerProduction(player, 'heat', 1)
@@ -109,6 +110,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 					description:
 						'Pay $10 to draw 3 cards, can only be used once per generation per player',
 					oncePerGeneration: true,
+					condition: ({ player }) => player.money >= 10,
 					action({ player, game }) {
 						updatePlayerResource(player, 'money', -10)
 						player.cards.push(...drawCards(game, 3))

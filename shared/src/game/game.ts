@@ -56,12 +56,14 @@ import {
 	Player,
 	ProductionChangedEvent,
 	ProjectBoughtEvent,
+	TerraformingRatingChangedEvent,
 	TilePlacedEvent,
 } from './player'
 import { ColoniesProductionGameState } from './game/colonies-production-game-state'
 import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { buildEvents } from './events/buildEvents'
 import { GameEvent } from './events/eventTypes'
+import { getRulingParty } from '@shared/expansions/turmoil/utils/getRulingParty'
 
 export interface GameConfig {
 	bots: number
@@ -357,6 +359,11 @@ export class Game {
 		player.onTilePlaced.on(this.handleTilePlaced)
 		player.onProjectBought.on(this.handleProjectBought)
 		player.onProductionChanged.on(this.handlePlayerProductionChanged)
+
+		player.onTerraformingRatingChanged.on(
+			this.handlePlayerTerraformingRatingChanged,
+		)
+
 		player.onBeforeColonyTrade.on(this.handleBeforeColonyTrade)
 		player.onColonyBuilt.on(this.handleColonyBuilt)
 
@@ -544,6 +551,12 @@ export class Game {
 					)
 				})
 		})
+
+		if (this.state.committee.enabled) {
+			getRulingParty(this.state)?.policy.passive.forEach((p) => {
+				p.onTilePlaced?.({ game: this.state, cell, player: playedBy.state })
+			})
+		}
 	}
 
 	handlePlayerProductionChanged = ({
@@ -571,6 +584,19 @@ export class Game {
 					)
 				})
 		})
+	}
+
+	handlePlayerTerraformingRatingChanged = (
+		event: TerraformingRatingChangedEvent,
+	) => {
+		if (this.state.committee.enabled) {
+			getRulingParty(this.state)?.policy.passive.forEach((p) => {
+				p.onPlayerRatingChanged?.({
+					game: this.state,
+					player: event.player.state,
+				})
+			})
+		}
 	}
 
 	all(state: PlayerStateValue) {

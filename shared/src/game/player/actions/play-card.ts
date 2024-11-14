@@ -2,12 +2,12 @@ import { CardsLookupApi, CardType } from '@shared/cards'
 import { GameStateValue, playCard, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
 
 type Args = ReturnType<typeof playCard>['data']
 
-export class PlayCardAction extends PlayerBaseAction<Args> {
+export class PlayCardAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 

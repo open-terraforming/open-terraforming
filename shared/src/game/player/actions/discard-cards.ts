@@ -1,11 +1,11 @@
 import { discardCards } from '@shared/actions'
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerActionType } from '@shared/player-actions'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof discardCards>['data']
 
-export class DiscardCardsAction extends PlayerBaseAction<Args> {
+export class DiscardCardsAction extends PlayerBaseActionHandler<Args> {
 	// TODO: This has to be adjusted for paradigm_breakdown to allow discarding cards during global event
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]

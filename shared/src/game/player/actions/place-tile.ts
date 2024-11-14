@@ -8,11 +8,11 @@ import {
 import { canPlace } from '@shared/placements'
 import { placeTileAction, PlayerActionType } from '@shared/player-actions'
 import { adjacentCells, drawCards, f, pushPendingAction } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof placeTile>['data']
 
-export class PlaceTileAction extends PlayerBaseAction<Args> {
+export class PlaceTileAction extends PlayerBaseActionHandler<Args> {
 	states = [
 		PlayerStateValue.Playing,
 		PlayerStateValue.EndingTiles,

@@ -62,6 +62,11 @@ export interface ColonyBuiltEvent {
 	colony: ColonyState
 }
 
+export interface TerraformingRatingChangedEvent {
+	player: Player
+	change: number
+}
+
 export class Player {
 	static idCounter = 1
 
@@ -78,6 +83,7 @@ export class Player {
 	onColonyBuilt = new MyEvent<Readonly<ColonyBuiltEvent>>()
 	onProjectBought = new MyEvent<Readonly<ProjectBoughtEvent>>()
 	onProductionChanged = new MyEvent<Readonly<ProductionChangedEvent>>()
+	onTerraformingRatingChanged = new MyEvent<TerraformingRatingChangedEvent>()
 
 	previousState: PlayerState | undefined
 
@@ -158,6 +164,14 @@ export class Player {
 						change,
 					})
 				}
+			}
+
+			if (this.state.terraformRating !== this.previousState.terraformRating) {
+				this.onTerraformingRatingChanged.emit({
+					player: this,
+					change:
+						this.state.terraformRating - this.previousState.terraformRating,
+				})
 			}
 		}
 

@@ -1,10 +1,10 @@
-import { CommitteePartiesLookupApi } from '@shared/CommitteePartiesLookupApi'
 import { addDelegate } from '@shared/expansions/turmoil/utils/addDelegate'
 import { drawGlobalEvent } from '@shared/expansions/turmoil/utils/drawGlobalEvent'
 import { getPartyState } from '@shared/expansions/turmoil/utils/getPartyState'
 import { recalculateDominantParty } from '@shared/expansions/turmoil/utils/recalculateDominantParty'
 import { GameStateValue } from '@shared/gameState'
 import { pendingActions } from '@shared/utils'
+import { getCommitteeParty } from '@shared/utils/getCommitteeParty'
 import { getGlobalEvent } from '@shared/utils/getGlobalEvent'
 import { getPlayerById } from '@shared/utils/getPlayerById'
 import { playerId } from '@shared/utils/playerId'
@@ -33,15 +33,24 @@ export class TurmoilGameState extends BaseGameState {
 		}
 
 		if (game.committee.dominantParty) {
+			if (game.committee.rulingParty) {
+				const previousRuling = getCommitteeParty(game.committee.rulingParty)
+
+				for (const passivePolicy of previousRuling.policy.passive) {
+					passivePolicy.onDeactivate?.({ game })
+				}
+			}
+
 			game.committee.rulingParty = game.committee.dominantParty
 
-			const rulingParty = CommitteePartiesLookupApi.get(
-				game.committee.rulingParty,
-			)
-
+			const rulingParty = getCommitteeParty(game.committee.dominantParty)
 			const rulingPartyState = getPartyState(game, rulingParty.code)
 
 			rulingParty.bonus.apply(game)
+
+			for (const passivePolicy of rulingParty.policy.passive) {
+				passivePolicy.onActivate?.({ game })
+			}
 
 			if (game.committee.chairman) {
 				game.committee.reserve.push(game.committee.chairman.playerId)

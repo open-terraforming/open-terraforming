@@ -3,11 +3,11 @@ import { claimTile, GameStateValue, PlayerStateValue } from '@shared/index'
 import { isClaimable } from '@shared/placements'
 import { PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof claimTile>['data']
 
-export class ClaimTileAction extends PlayerBaseAction<Args> {
+export class ClaimTileAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing, PlayerStateValue.EndingTiles]
 	gameStates = [GameStateValue.GenerationInProgress, GameStateValue.EndingTiles]
 

@@ -8,11 +8,11 @@ import {
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerActionType } from '@shared/player-actions'
 import { isFailure } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof tradeWithColony>['data']
 
-export class TradeWithColonyAction extends PlayerBaseAction<Args> {
+export class TradeWithColonyAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 

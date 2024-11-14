@@ -1,9 +1,9 @@
 import { adminChange } from '@shared/index'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof adminChange>['data']
 
-export class AdminChangeAction extends PlayerBaseAction<Args> {
+export class AdminChangeAction extends PlayerBaseActionHandler<Args> {
 	states = []
 	gameStates = []
 
