@@ -4,7 +4,7 @@ import {
 	GameStateValue,
 	GridCellContent,
 } from '@shared/index'
-import { pushPendingAction } from '@shared/utils'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { placeTileAction } from '@shared/player-actions'
 import { prepareGame } from '@shared/utils/tests'
 

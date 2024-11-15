@@ -1,6 +1,6 @@
 import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { coloniesColonies } from '@shared/expansions/colonies/coloniesColonies'
-import { shuffle } from '@shared/utils'
+import { shuffle } from '@shared/utils/shuffle'
 import { coloniesCards } from './colonies/coloniesCards'
 import { initialColonyState } from './colonies/states'
 import { expansion, ExpansionType } from './types'

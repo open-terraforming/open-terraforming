@@ -1,7 +1,7 @@
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { GameStateValue, playCard, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { PlayerBaseActionHandler } from '../action'
 import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
 

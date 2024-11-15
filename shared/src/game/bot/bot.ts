@@ -40,13 +40,13 @@ import { canPlace, isClaimable } from '@shared/placements'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import { Projects } from '@shared/projects'
 import {
-	allCells,
-	competitionPrice,
-	f,
 	isOk,
-	pickRandom,
-	shuffle,
 } from '@shared/utils'
+import { allCells } from '@shared/utils/allCells'
+import { f } from '@shared/utils/f'
+import { competitionPrice } from '@shared/utils/competitionPrice'
+import { pickRandom } from '@shared/utils/pickRandom'
+import { shuffle } from '@shared/utils/shuffle'
 import { assertNever } from '@shared/utils/assertNever'
 import { mapCards } from '@shared/utils/mapCards'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'

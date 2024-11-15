@@ -1,6 +1,9 @@
 import { GameStateValue, pickCards, PlayerStateValue } from '@shared/index'
 import { draftCardAction, PlayerActionType } from '@shared/player-actions'
-import { f, getPlayerIndex, mod, pushPendingAction } from '@shared/utils'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { mod } from '@shared/utils/mod'
+import { getPlayerIndex } from '@shared/utils/getPlayerIndex'
 import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof pickCards>['data']

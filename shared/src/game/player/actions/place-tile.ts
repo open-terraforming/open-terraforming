@@ -7,7 +7,10 @@ import {
 } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import { placeTileAction, PlayerActionType } from '@shared/player-actions'
-import { adjacentCells, drawCards, f, pushPendingAction } from '@shared/utils'
+import { adjacentCells } from '@shared/utils/adjacentCells'
+import { drawCards } from '@shared/utils/drawCards'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof placeTile>['data']

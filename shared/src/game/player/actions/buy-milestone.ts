@@ -1,7 +1,7 @@
 import { updatePlayerResource } from '@shared/cards/utils'
 import { buyMilestone, GameStateValue, PlayerStateValue } from '@shared/index'
 import { Milestones, MilestoneType } from '@shared/milestones'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof buyMilestone>['data']

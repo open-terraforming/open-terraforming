@@ -1,5 +1,5 @@
 import { GameState } from '@shared/index'
-import { shuffle } from '@shared/utils'
+import { shuffle } from '@shared/utils/shuffle'
 
 export const drawGlobalEvent = (game: GameState) => {
 	if (game.globalEvents.events.length === 0) {

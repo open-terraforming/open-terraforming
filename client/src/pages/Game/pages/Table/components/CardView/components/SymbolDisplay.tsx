@@ -71,6 +71,13 @@ const symbolToIcon = (s: CardSymbol) => {
 				return <CardWithNoTagSymbol />
 			case SymbolType.Player:
 				return <FontAwesomeIcon icon={faUser} />
+			case SymbolType.BlueCard:
+				// TODO: Implement
+				return <Card />
+			case SymbolType.Influence:
+				return 'I'
+			case SymbolType.Tile:
+				return <TileIcon />
 			default:
 				console.warn('Unknown symbol', SymbolType[s.symbol])
 		}

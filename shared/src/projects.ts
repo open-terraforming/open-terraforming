@@ -8,7 +8,8 @@ import {
 } from './gameState'
 import { canPlaceAnywhere } from './placements'
 import { placeTileAction } from './player-actions'
-import { keyMap, pushPendingAction } from './utils'
+import { pushPendingAction } from './utils/pushPendingAction'
+import { keyMap } from './utils/keyMap'
 
 export interface StandardProjectContext {
 	player: PlayerState

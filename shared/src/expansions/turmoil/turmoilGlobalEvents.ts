@@ -14,7 +14,7 @@ import {
 } from '@shared/cards/utils'
 import { GridCellContent } from '@shared/index'
 import { discardCardsAction, placeTileAction } from '@shared/player-actions'
-import { adjacentCells } from '@shared/utils'
+import { adjacentCells } from '@shared/utils/adjacentCells'
 import { drawCardPerInfluenceGlobalEffect } from './globalEffects/drawCardPerInfluenceGlobalEffect'
 import { resourceChangePerTagGlobalEffect } from './globalEffects/resourceChangePerTagGlobalEffect'
 import { resourceForProductionGlobalEffect } from './globalEffects/resourceForProductionGlobalEffect'

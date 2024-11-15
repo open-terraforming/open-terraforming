@@ -1,6 +1,6 @@
 import { Resource, SymbolType } from '@shared/cards'
 import { withUnits } from '@shared/units'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { globalEffect } from '../globalEffect'
 import { getPlayerInfluence } from '../utils/getPlayerInfluence'
 

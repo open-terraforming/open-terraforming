@@ -1,7 +1,7 @@
 import { GridCellContent } from '../../gameState'
 import { PlayerActionType } from '../../player-actions'
 import { withUnits } from '../../units'
-import { f } from '../../utils'
+import { f } from '@shared/utils/f'
 import { condition } from '../conditions'
 import { effect } from '../effects/types'
 import {

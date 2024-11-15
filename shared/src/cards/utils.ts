@@ -8,7 +8,8 @@ import {
 	UsedCardState,
 } from '../gameState'
 import { withUnits } from '../units'
-import { allCells, tiles } from '../utils'
+import { allCells } from '@shared/utils/allCells'
+import { tiles } from '@shared/utils/tiles'
 import { CardsLookupApi } from './lookup'
 import {
 	Card,

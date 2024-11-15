@@ -1,6 +1,6 @@
 import { Resource } from '@shared/cards'
 import { GameState } from '@shared/index'
-import { isMarsTerraformed } from '@shared/utils'
+import { isMarsTerraformed } from '@shared/utils/isMarsTerraformed'
 import { AiScoringCoefficients } from './defaultScoringCoefficients'
 
 export const resScore = (

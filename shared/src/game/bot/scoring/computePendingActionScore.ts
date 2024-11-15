@@ -1,7 +1,7 @@
 import { GameState, PlayerState } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
-import { allCells } from '@shared/utils'
+import { allCells } from '@shared/utils/allCells'
 import { AiScoringCoefficients } from './defaultScoringCoefficients'
 import { placeTileScore } from './place-tile-score'
 import { pickBestScore } from './utils'

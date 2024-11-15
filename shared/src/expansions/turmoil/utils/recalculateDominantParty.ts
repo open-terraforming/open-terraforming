@@ -5,7 +5,7 @@ export const recalculateDominantParty = (game: GameState) => {
 	const sortedParties = game.committee.parties
 		.map((p) => ({
 			code: p.code,
-			count: p.members.length + (p.partyLeader !== null ? 1 : 0),
+			count: p.members.length + (p.leader !== null ? 1 : 0),
 		}))
 		.sort((a, b) => b.count - a.count)
 
@@ -21,7 +21,7 @@ export const recalculateDominantParty = (game: GameState) => {
 
 	const dominantPartyCount =
 		dominantPartyState.members.length +
-		(dominantPartyState.partyLeader !== null ? 1 : 0)
+		(dominantPartyState.leader !== null ? 1 : 0)
 
 	if (topParty.count > dominantPartyCount) {
 		game.committee.dominantParty = topParty.code

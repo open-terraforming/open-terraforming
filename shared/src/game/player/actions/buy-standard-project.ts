@@ -6,7 +6,7 @@ import {
 	StandardProjectType,
 } from '@shared/index'
 import { Projects } from '@shared/projects'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof buyStandardProject>['data']

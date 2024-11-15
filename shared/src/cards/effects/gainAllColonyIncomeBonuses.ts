@@ -1,5 +1,5 @@
 import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
-import { range } from '@shared/utils'
+import { range } from '@shared/utils/range'
 import { effect } from './types'
 
 export const gainAllColonyIncomeBonuses = () =>

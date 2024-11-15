@@ -7,7 +7,8 @@ import {
 	VictoryPoints,
 	VictoryPointsSource,
 } from './gameState'
-import { adjacentCells, allCells } from './utils'
+import { allCells } from './utils/allCells'
+import { adjacentCells } from './utils/adjacentCells'
 
 export const getCardVictoryPoints = (game: GameState, player: PlayerState) => {
 	return player.usedCards.reduce((acc, state) => {

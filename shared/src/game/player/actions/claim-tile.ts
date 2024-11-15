@@ -2,7 +2,7 @@ import { cellByCoords } from '@shared/cards/utils'
 import { claimTile, GameStateValue, PlayerStateValue } from '@shared/index'
 import { isClaimable } from '@shared/placements'
 import { PlayerActionType } from '@shared/player-actions'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof claimTile>['data']

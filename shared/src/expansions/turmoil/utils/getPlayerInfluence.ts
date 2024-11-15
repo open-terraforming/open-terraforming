@@ -8,7 +8,7 @@ export const getPlayerInfluence = (game: GameState, player: PlayerState) => {
 	)
 
 	const isLeaderOfDominantParty =
-		dominantParty?.partyLeader?.playerId?.id === player.id
+		dominantParty?.leader?.playerId?.id === player.id
 
 	const hasMemberInDominantParty = dominantParty?.members.some(
 		(m) => m.playerId?.id === player.id,

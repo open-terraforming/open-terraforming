@@ -1,6 +1,7 @@
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
-import { f, pendingActions } from '@shared/utils'
+import { f } from '@shared/utils/f'
+import { pendingActions } from '@shared/utils/pendingActions'
 import { BaseGameState } from './base-game-state'
 
 export class PreludeGameState extends BaseGameState {

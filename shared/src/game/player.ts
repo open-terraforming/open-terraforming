@@ -14,12 +14,10 @@ import {
 } from '@shared/player-actions'
 import { StandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
-import {
-	allCells,
-	pendingActions,
-	pushPendingAction,
-	range,
-} from '@shared/utils'
+import { allCells } from '@shared/utils/allCells'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { pendingActions } from '@shared/utils/pendingActions'
+import { range } from '@shared/utils/range'
 import { deepCopy } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
 import { getVictoryPoints } from '@shared/vps'

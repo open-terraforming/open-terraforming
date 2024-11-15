@@ -13,11 +13,11 @@ export const recalculatePartyLeader = (partyState: CommitteePartyState) => {
 		.sort((a, b) => b.count - a.count)[0]
 
 	const currentLeaderCount =
-		(partyState.partyLeader !== null
-			? membersByPlayer.get(partyState.partyLeader.playerId)?.length
+		(partyState.leader !== null
+			? membersByPlayer.get(partyState.leader.playerId)?.length
 			: null) ?? 0
 
-	if (partyState.partyLeader === null || topPlayer.count > currentLeaderCount) {
-		partyState.partyLeader = { playerId: topPlayer.playerId }
+	if (partyState.leader === null || topPlayer.count > currentLeaderCount) {
+		partyState.leader = { playerId: topPlayer.playerId }
 	}
 }

@@ -7,7 +7,10 @@ import {
 	CardsLookupApi,
 } from '@shared/cards'
 import { GameState, PlayerState, UsedCardState } from '@shared/index'
-import { range, shuffle, CardsCollection, flatten } from '@shared/utils'
+import { range } from '@shared/utils/range'
+import { shuffle } from '@shared/utils/shuffle'
+import { CardsCollection } from '@shared/utils/CardsCollection'
+import { flatten } from '@shared/utils/flatten'
 import { emptyCardState, resources } from '@shared/cards/utils'
 import { getBestArgs } from '../getBestArgs'
 import { assertNever } from '@shared/utils/assertNever'

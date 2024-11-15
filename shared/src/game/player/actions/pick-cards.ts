@@ -1,6 +1,6 @@
 import { GameStateValue, pickCards, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof pickCards>['data']

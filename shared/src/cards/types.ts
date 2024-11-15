@@ -283,6 +283,7 @@ export enum SymbolType {
 	Player,
 	Influence,
 	BlueCard,
+	Tile,
 }
 
 export interface CardSymbol {

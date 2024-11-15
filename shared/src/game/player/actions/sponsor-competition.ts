@@ -6,7 +6,8 @@ import {
 	sponsorCompetition,
 } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { competitionPrice, f } from '@shared/utils'
+import { f } from '@shared/utils/f'
+import { competitionPrice } from '@shared/utils/competitionPrice'
 import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof sponsorCompetition>['data']

@@ -1,5 +1,5 @@
 import { SymbolType } from '@shared/cards'
-import { drawCards } from '@shared/utils'
+import { drawCards } from '@shared/utils/drawCards'
 import { colonyBonus } from '../templates/colonyBonus'
 
 export const colonyDrawCardsBonus = (count: number) =>

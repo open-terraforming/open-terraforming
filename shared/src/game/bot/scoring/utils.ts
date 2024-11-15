@@ -1,5 +1,6 @@
 import { GameState, PlayerState } from '@shared/index'
-import { pickRandom, shuffle } from '@shared/utils'
+import { pickRandom } from '@shared/utils/pickRandom'
+import { shuffle } from '@shared/utils/shuffle'
 import { deepCopy } from '@shared/utils/collections'
 
 export const pickBest = <T>(values: T[], scoring: (v: T) => number) => {

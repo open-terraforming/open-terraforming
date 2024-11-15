@@ -2,7 +2,7 @@ import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
 import { GameState, GameStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { isMarsTerraformed } from '@shared/utils'
+import { isMarsTerraformed } from '@shared/utils/isMarsTerraformed'
 import { objDiff } from '@shared/utils/collections'
 import { EventType, GameEvent } from './eventTypes'
 

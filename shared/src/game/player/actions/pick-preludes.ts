@@ -2,7 +2,7 @@ import { CardsLookupApi } from '@shared/cards'
 import { emptyCardState } from '@shared/cards/utils'
 import { GameStateValue, pickPreludes, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof pickPreludes>['data']

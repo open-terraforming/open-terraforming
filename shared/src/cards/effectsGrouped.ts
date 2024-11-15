@@ -14,15 +14,13 @@ import {
 } from '../player-actions'
 import { otherWithArticle, specialToStr, tileWithArticle } from '../texts'
 import { withUnits } from '../units'
-import {
-	allCells,
-	drawCard,
-	drawCards,
-	drawPreludeCards,
-	f,
-	flatten,
-	pushPendingAction,
-} from '../utils'
+import { allCells } from '@shared/utils/allCells'
+import { drawPreludeCards } from '@shared/utils/drawPreludeCards'
+import { drawCard } from '@shared/utils/drawCard'
+import { drawCards } from '@shared/utils/drawCards'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { flatten } from '@shared/utils/flatten'
 import { progressToSymbol } from '../utils/progressToSymbol'
 import {
 	cardArg,

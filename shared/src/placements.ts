@@ -8,7 +8,8 @@ import {
 	GridCellSpecial,
 	PlayerState,
 } from './gameState'
-import { adjacentCells, allCells } from './utils'
+import { allCells } from './utils/allCells'
+import { adjacentCells } from './utils/adjacentCells'
 
 const placement = (c: PlacementCondition) => c
 

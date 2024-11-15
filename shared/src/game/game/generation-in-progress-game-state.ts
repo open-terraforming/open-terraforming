@@ -1,5 +1,5 @@
 import { GameStateValue, PlayerStateValue } from '@shared/index'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { BaseGameState } from './base-game-state'
 import { ExpansionType } from '@shared/expansions/types'
 import { hasExpansion } from '@shared/utils/hasExpansion'

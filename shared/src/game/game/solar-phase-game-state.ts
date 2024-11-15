@@ -1,6 +1,6 @@
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { BaseGameState } from './base-game-state'
-import { pushPendingAction } from '@shared/utils'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { solarPhaseTerraformAction } from '@shared/player-actions'
 import { ExpansionType } from '@shared/expansions/types'
 import { hasExpansion } from '@shared/utils/hasExpansion'

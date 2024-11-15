@@ -5,7 +5,7 @@ import {
 	updatePlayerResource,
 } from '@shared/cards/utils'
 import { GridCellContent, GridCellLocation } from '@shared/index'
-import { drawCards } from '@shared/utils'
+import { drawCards } from '@shared/utils/drawCards'
 import { committeeParty, CommitteeParty } from './committeeParty'
 
 export const turmoilCommitteeParties: CommitteeParty[] = [
@@ -17,6 +17,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 				{ symbol: SymbolType.Slash },
 				{ tag: CardCategory.Building },
 			],
+			description: 'Gain 1$ for each building tag',
 			apply(game) {
 				for (const player of game.players) {
 					player.money += countTagsWithoutEvents(
@@ -30,7 +31,11 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 			active: [],
 			passive: [
 				{
-					symbols: [],
+					symbols: [
+						{ symbol: SymbolType.Tile },
+						{ symbol: SymbolType.Colon },
+						{ resource: 'ore', count: 1 },
+					],
 					description: 'Gain 1 ore when placing tile on Mars',
 					onTilePlaced({ player, cell }) {
 						if (
@@ -52,6 +57,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 				{ symbol: SymbolType.Slash },
 				{ resource: 'heat', production: true },
 			],
+			description: 'Gain 1$ for each heat production',
 			apply(game) {
 				for (const player of game.players) {
 					player.money += player.heatProduction
@@ -88,6 +94,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 				{ symbol: SymbolType.Slash },
 				{ tag: CardCategory.Science },
 			],
+			description: 'Gain 1$ for each science tag',
 			apply(game) {
 				for (const player of game.players) {
 					player.money += countTagsWithoutEvents(
@@ -124,6 +131,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 		code: 'reds',
 		bonus: {
 			symbols: [],
+			description: 'Player(s) with lowest TR gains 1 TR',
 			apply(game) {
 				const lowestTr = game.players.reduce(
 					(lowest, player) =>
@@ -144,7 +152,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 				{
 					symbols: [
 						{ symbol: SymbolType.TerraformingRating },
-						{ symbol: SymbolType.RightArrow },
+						{ symbol: SymbolType.Colon },
 						{ resource: 'money', count: -3 },
 					],
 					description: 'When you gain TR, you lose $3',
@@ -171,6 +179,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 				{ tag: CardCategory.Venus },
 				{ tag: CardCategory.Jupiter },
 			],
+			description: 'Gain 1$ for each Earth, Venus and Jupiter tag',
 			apply(game) {
 				for (const player of game.players) {
 					updatePlayerResource(
@@ -192,7 +201,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 					symbols: [
 						{ resource: 'titan' },
 						{ symbol: SymbolType.Colon },
-						{ resource: 'money', count: 1 },
+						{ resource: 'money', count: 1, forceCount: true, forceSign: true },
 					],
 					description: 'Titan is worth $1 more',
 					onActivate({ game }) {
@@ -219,6 +228,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 				{ tag: CardCategory.Microbe },
 				{ tag: CardCategory.Animal },
 			],
+			description: 'Gain 1$ for each Plant, Microbe and Animal tag',
 			apply(game) {
 				for (const player of game.players) {
 					updatePlayerResource(

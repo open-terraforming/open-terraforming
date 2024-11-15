@@ -3,7 +3,7 @@ import { drawGlobalEvent } from '@shared/expansions/turmoil/utils/drawGlobalEven
 import { getPartyState } from '@shared/expansions/turmoil/utils/getPartyState'
 import { recalculateDominantParty } from '@shared/expansions/turmoil/utils/recalculateDominantParty'
 import { GameStateValue } from '@shared/gameState'
-import { pendingActions } from '@shared/utils'
+import { pendingActions } from '@shared/utils/pendingActions'
 import { getCommitteeParty } from '@shared/utils/getCommitteeParty'
 import { getGlobalEvent } from '@shared/utils/getGlobalEvent'
 import { getPlayerById } from '@shared/utils/getPlayerById'
@@ -63,19 +63,19 @@ export class TurmoilGameState extends BaseGameState {
 
 			rulingPartyState.members = []
 
-			if (rulingPartyState.partyLeader) {
+			if (rulingPartyState.leader) {
 				// +1 TR for becoming chairman
-				if (rulingPartyState.partyLeader.playerId) {
+				if (rulingPartyState.leader.playerId) {
 					const rulingLeaderPlayer = getPlayerById(
 						game,
-						rulingPartyState.partyLeader.playerId.id,
+						rulingPartyState.leader.playerId.id,
 					)
 
 					rulingLeaderPlayer.terraformRating++
 				}
 
-				game.committee.chairman = { ...rulingPartyState.partyLeader }
-				rulingPartyState.partyLeader = null
+				game.committee.chairman = { ...rulingPartyState.leader }
+				rulingPartyState.leader = null
 			}
 
 			// TODO: What about tie? It should rotate between tied parties

@@ -15,6 +15,7 @@ export interface CommitteeParty {
 	code: string
 	bonus: {
 		symbols: CardSymbol[]
+		description: string
 		apply: (game: GameState) => void
 	}
 	policy: {

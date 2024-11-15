@@ -1,6 +1,6 @@
 import { CardCategory, Resource, SymbolType } from '@shared/cards'
 import { globalEffect } from '../globalEffect'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { withUnits } from '@shared/units'
 import {
 	countTagsWithoutEvents,

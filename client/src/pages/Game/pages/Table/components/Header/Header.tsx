@@ -14,6 +14,8 @@ import { StandardProjectModal } from '../StandardProjectModal/StandardProjectMod
 import { ColoniesButton } from './components/ColoniesButton'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
 import { usePopout } from '@/components/Popout/usePopout'
+import { DialogButton } from '@/components/DialogButton/DialogButton'
+import { CommitteeModal } from '../CommitteeModal/CommitteeModal'
 
 export const Header = () => {
 	const game = useGameState()
@@ -75,7 +77,6 @@ export const Header = () => {
 				{competitionsPopout}
 				{standardProjectsPopout}
 				{coloniesPopout}
-
 				<Flex align="flex-start">
 					<DialogWrapper
 						dialog={(close) => <MilestonesModal onClose={close} />}
@@ -114,12 +115,20 @@ export const Header = () => {
 							</StyledButton>
 						)}
 					</DialogWrapper>
-				</Flex>
-				{game.expansions.includes(ExpansionType.Colonies) && (
-					<Flex justify="center">
+				</Flex>{' '}
+				<Flex justify="center">
+					{game.expansions.includes(ExpansionType.Colonies) && (
 						<ColoniesButton ref={setColoniesButton} />
-					</Flex>
-				)}
+					)}
+					{game.expansions.includes(ExpansionType.Turmoil) && (
+						<DialogButton
+							dialog={(close) => <CommitteeModal onClose={close} />}
+							noClip
+						>
+							Committee
+						</DialogButton>
+					)}
+				</Flex>
 			</E>
 			<HeaderEventDisplay />
 		</>

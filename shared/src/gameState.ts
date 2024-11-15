@@ -71,7 +71,7 @@ export interface CommitteePartyMember {
 
 export interface CommitteePartyState {
 	code: string
-	partyLeader: CommitteePartyMember | null
+	leader: CommitteePartyMember | null
 	members: CommitteePartyMember[]
 }
 

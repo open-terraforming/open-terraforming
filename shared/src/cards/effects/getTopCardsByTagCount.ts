@@ -1,4 +1,4 @@
-import { drawCards } from '@shared/utils'
+import { drawCards } from '@shared/utils/drawCards'
 import { CardCategory, SymbolType } from '../types'
 import { countTagsWithoutEvents } from '../utils'
 import { effect } from './types'

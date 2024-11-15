@@ -7,7 +7,7 @@ import {
 	PlayerStateValue,
 } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { PlayerBaseActionHandler } from '../action'
 import { simulateCardPassiveEffectsOnStart } from '@shared/utils/simulateCardPassiveEffectsOnStart'

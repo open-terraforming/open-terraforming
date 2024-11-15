@@ -6,7 +6,8 @@ import {
 	solarPhaseTerraform,
 } from '@shared/index'
 import { placeTileAction, PlayerActionType } from '@shared/player-actions'
-import { f, pushPendingAction } from '@shared/utils'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof solarPhaseTerraform>['data']

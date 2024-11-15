@@ -1,6 +1,8 @@
 import { CardCategory, CardsLookupApi, CardType } from './cards'
 import { GameState, GridCellContent, PlayerState } from './gameState'
-import { allCells, allTiles, keyMap } from './utils'
+import { allCells } from './utils/allCells'
+import { allTiles } from './utils/allTiles'
+import { keyMap } from './utils/keyMap'
 
 export enum CompetitionType {
 	Landlord = 1,

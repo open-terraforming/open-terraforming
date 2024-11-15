@@ -1,6 +1,7 @@
 import { CardSpecial } from '@shared/cards'
 import { GlobalEventsLookupApi } from '@shared/GlobalEventsLookupApi'
-import { repeat, shuffle } from '@shared/utils'
+import { shuffle } from '@shared/utils/shuffle'
+import { repeat } from '@shared/utils/repeat'
 import { expansion, ExpansionType } from '../types'
 import { turmoilCommitteeParties } from './turmoilCommitteeParties'
 import { turmoilGlobalEvents } from './turmoilGlobalEvents'
@@ -29,7 +30,7 @@ export const turmoilExpansion = expansion({
 			// TODO: Number of parties should be configurable?
 			...game.committeeParties.slice(0, 6).map((p) => ({
 				code: p,
-				partyLeader: null,
+				leader: null,
 				members: [],
 			})),
 		)
