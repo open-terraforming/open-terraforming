@@ -67,6 +67,7 @@ import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { buildEvents } from './events/buildEvents'
 import { GameEvent } from './events/eventTypes'
 import { getRulingParty } from '@shared/expansions/turmoil/utils/getRulingParty'
+import { TurmoilGameState } from './game/turmoil-game-state'
 
 export interface GameConfig {
 	bots: number
@@ -196,6 +197,7 @@ export class Game {
 			.addState(new PreludeGameState(this))
 			.addState(new SolarPhaseGameState(this))
 			.addState(new ColoniesProductionGameState(this))
+			.addState(new TurmoilGameState(this))
 
 		this.sm.setState(GameStateValue.WaitingForPlayers)
 	}

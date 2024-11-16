@@ -1,3 +1,4 @@
+import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { useLocale } from '@/context/LocaleContext'
 import { useAppStore } from '@/utils/hooks'
 import { CommitteePartyState } from '@shared/gameState'
@@ -16,7 +17,10 @@ export const CommitteePartyDisplay = ({ state }: Props) => {
 
 	return (
 		<div key={party.code} style={{ width: '40%', margin: '1rem' }}>
-			<div>{t.committeeParties[party.code]}</div>
+			<div>
+				<CommitteePartyIcon party={party.code} />{' '}
+				{t.committeeParties[party.code]}
+			</div>
 			<div>
 				Possible Ruling Bonus:{' '}
 				<div>

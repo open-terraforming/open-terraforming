@@ -77,7 +77,7 @@ const symbolToIcon = (s: CardSymbol) => {
 			case SymbolType.Influence:
 				return 'I'
 			case SymbolType.Tile:
-				return <TileIcon />
+				return <TileIcon size="1.25em" />
 			default:
 				console.warn('Unknown symbol', SymbolType[s.symbol])
 		}

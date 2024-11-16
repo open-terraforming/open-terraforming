@@ -3,10 +3,10 @@ import { drawGlobalEvent } from '@shared/expansions/turmoil/utils/drawGlobalEven
 import { getPartyState } from '@shared/expansions/turmoil/utils/getPartyState'
 import { recalculateDominantParty } from '@shared/expansions/turmoil/utils/recalculateDominantParty'
 import { GameStateValue } from '@shared/gameState'
-import { pendingActions } from '@shared/utils/pendingActions'
 import { getCommitteeParty } from '@shared/utils/getCommitteeParty'
 import { getGlobalEvent } from '@shared/utils/getGlobalEvent'
 import { getPlayerById } from '@shared/utils/getPlayerById'
+import { pendingActions } from '@shared/utils/pendingActions'
 import { playerId } from '@shared/utils/playerId'
 import { BaseGameState } from './base-game-state'
 
@@ -20,16 +20,14 @@ export class TurmoilGameState extends BaseGameState {
 			player.terraformRating -= 1
 		}
 
-		if (!game.globalEvents.currentEvent) {
-			throw new Error("No global event, this shouldn't happen")
-		}
+		if (game.globalEvents.currentEvent) {
+			const currentEffects = getGlobalEvent(
+				game.globalEvents.currentEvent,
+			).effects
 
-		const globalEventEffects = getGlobalEvent(
-			game.globalEvents.currentEvent,
-		).effects
-
-		for (const effect of globalEventEffects) {
-			effect.apply(game)
+			for (const effect of currentEffects) {
+				effect.apply(game)
+			}
 		}
 
 		if (game.committee.dominantParty) {
@@ -97,7 +95,10 @@ export class TurmoilGameState extends BaseGameState {
 		}
 
 		// Move global events around
-		game.globalEvents.discardedEvents.push(game.globalEvents.currentEvent)
+		if (game.globalEvents.currentEvent) {
+			game.globalEvents.discardedEvents.push(game.globalEvents.currentEvent)
+		}
+
 		game.globalEvents.currentEvent = game.globalEvents.comingEvent
 		game.globalEvents.comingEvent = game.globalEvents.distantEvent
 		game.globalEvents.distantEvent = drawGlobalEvent(game)
