@@ -6,6 +6,7 @@ import { styled } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { GlobalEventsModal } from '../../GlobalEventsModal/GlobalEventsModal'
 import { HeaderDialogButton } from './HeaderDialogButton'
+import { Position } from '@/components/Tooltip/Tooltip'
 
 export const GlobalEventsButton = () => {
 	const game = useGameState()
@@ -37,6 +38,7 @@ export const GlobalEventsButton = () => {
 								</div>
 							</>
 						}
+						position={Position.Bottom}
 					>
 						{currentEvent.effects.map((effect, index) => (
 							<Symbols key={index} symbols={effect.symbols} />

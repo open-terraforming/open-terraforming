@@ -1,4 +1,6 @@
 import { Tooltip } from '@/components'
+import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
+import { Position } from '@/components/Tooltip/Tooltip'
 import { useLocale } from '@/context/LocaleContext'
 import { useGameState } from '@/utils/hooks'
 import { getCommitteeParty } from '@shared/utils'
@@ -17,12 +19,13 @@ export const CommitteeButton = () => {
 
 	return (
 		<Container>
-			<HeaderDialogButton
+			<StyledButton
 				dialog={(close) => <CommitteeModal onClose={close} />}
 				noClip
 			>
+				{rulingParty && <CommitteePartyIcon party={rulingParty.code} />}
 				Committee
-			</HeaderDialogButton>
+			</StyledButton>
 			<SubContainer>
 				{!rulingParty && <None>NONE</None>}
 
@@ -41,6 +44,7 @@ export const CommitteeButton = () => {
 								</div>
 							</>
 						}
+						position={Position.Bottom}
 					>
 						{[
 							...rulingParty.policy.active.map((p) => p.symbols),
@@ -58,6 +62,10 @@ export const CommitteeButton = () => {
 const Container = styled.div`
 	margin-top: 0.5rem;
 	width: 10rem;
+`
+
+const StyledButton = styled(HeaderDialogButton)`
+	padding: 0.15rem 0.1rem;
 `
 
 const SubContainer = styled.div`

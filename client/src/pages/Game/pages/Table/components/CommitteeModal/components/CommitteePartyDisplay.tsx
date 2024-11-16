@@ -22,6 +22,25 @@ export const CommitteePartyDisplay = ({ state }: Props) => {
 				{t.committeeParties[party.code]}
 			</div>
 			<div>
+				Party leader:{' '}
+				{state.leader
+					? state.leader.playerId?.id
+						? playerMap[state.leader.playerId.id].name
+						: 'Neutral'
+					: 'No leader'}
+			</div>
+			<div>Members:</div>
+			<div>
+				{state.members.length === 0 && 'No members'}
+				{state.members.map((member, index) => (
+					<div key={index}>
+						{member.playerId?.id
+							? playerMap[member.playerId.id].name
+							: 'Neutral'}
+					</div>
+				))}
+			</div>
+			<div>
 				Possible Ruling Bonus:{' '}
 				<div>
 					<StyledSymbols symbols={party.bonus.symbols} />
@@ -40,25 +59,6 @@ export const CommitteePartyDisplay = ({ state }: Props) => {
 					<div key={index}>
 						<StyledSymbols symbols={policy.symbols} />
 						{policy.description}
-					</div>
-				))}
-			</div>
-			<div>
-				Party leader:{' '}
-				{state.leader
-					? state.leader.playerId?.id
-						? playerMap[state.leader.playerId.id].name
-						: 'Neutral'
-					: 'No leader'}
-			</div>
-			<div>Members:</div>
-			<div>
-				{state.members.length === 0 && 'No members'}
-				{state.members.map((member, index) => (
-					<div key={index}>
-						{member.playerId?.id
-							? playerMap[member.playerId.id].name
-							: 'Neutral'}
 					</div>
 				))}
 			</div>

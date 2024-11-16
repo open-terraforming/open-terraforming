@@ -1,6 +1,6 @@
 import { Modal } from '@/components/Modal/Modal'
 import { useLocale } from '@/context/LocaleContext'
-import { useGameState } from '@/utils/hooks'
+import { useAppStore, useGameState } from '@/utils/hooks'
 import { getRulingParty } from '@shared/expansions/turmoil/utils/getRulingParty'
 import { styled } from 'styled-components'
 import { Symbols } from '../CardView/components/Symbols'
@@ -12,11 +12,22 @@ type Props = {
 
 export const CommitteeModal = ({ onClose }: Props) => {
 	const game = useGameState()
+	const playerMap = useAppStore((store) => store.game.playerMap)
 	const t = useLocale()
 	const rulingParty = getRulingParty(game)
+	const chairman = game.committee.chairman
 
 	return (
 		<Modal open onClose={onClose} header="Committee">
+			<div>
+				Chairman:{' '}
+				{chairman
+					? chairman.playerId
+						? playerMap[chairman.playerId.id].name
+						: 'Neutral'
+					: 'None'}
+			</div>
+
 			{rulingParty && (
 				<div style={{ width: '50%' }}>
 					<div>Ruling party: {t.committeeParties[rulingParty.code]}</div>
