@@ -1,12 +1,12 @@
 import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
 import { useGameState } from '@/utils/hooks'
-import { GlobalEventView } from './components/GlobalEventView'
-import { getGlobalEvent } from '@shared/utils'
-import { EmptyGlobalEventView } from './components/EmptyGlobalEventView'
-import { styled } from 'styled-components'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { getGlobalEvent } from '@shared/utils'
+import { styled } from 'styled-components'
+import { EmptyGlobalEventView } from './components/EmptyGlobalEventView'
+import { GlobalEventView } from './components/GlobalEventView'
 
 type Props = {
 	onClose: () => void

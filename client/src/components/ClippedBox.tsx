@@ -1,44 +1,58 @@
 import { stripedBackground } from '@/styles/mixins'
 import { CSSProperties, ReactNode } from 'react'
-import { styled } from 'styled-components'
+import { css, styled } from 'styled-components'
 
 type Props = {
 	className?: string
 	outerClassName?: string
-	children: ReactNode
+	children?: ReactNode
 	style?: CSSProperties
+	clipSize?: string
 }
 
-export const ClippedBox = ({ className, children, style }: Props) => {
+export const ClippedBox = ({
+	className,
+	children,
+	style,
+	clipSize = '7px',
+}: Props) => {
 	return (
-		<OuterBorder className={className} style={style}>
-			<Inner className="inner">{children}</Inner>
+		<OuterBorder className={className} style={style} $clipSize={clipSize}>
+			<Inner className="inner" $clipSize={clipSize}>
+				{children}
+			</Inner>
 		</OuterBorder>
 	)
 }
 
-const OuterBorder = styled.div`
+const OuterBorder = styled.div<{ $clipSize: string }>`
 	padding: 2px;
 	background-color: ${({ theme }) => theme.colors.border};
-	clip-path: polygon(
-		0 0,
-		calc(100% - 7px) 0,
-		100% 7px,
-		100% 100%,
-		7px 100%,
-		0 calc(100% - 7px)
-	);
+	${({ $clipSize }) => css`
+		clip-path: polygon(
+			0 0,
+			calc(100% - ${$clipSize}) 0,
+			100% ${$clipSize},
+			100% 100%,
+			${$clipSize} 100%,
+			0 calc(100% - ${$clipSize})
+		);
+	`}
 `
 
-const Inner = styled.div`
+const Inner = styled.div<{ $clipSize: string }>`
+	height: 100%;
+
 	${stripedBackground()}
 
-	clip-path: polygon(
-		0 0,
-		calc(100% - 7px) 0,
-		100% 7px,
-		100% 100%,
-		7px 100%,
-		0 calc(100% - 7px)
-	);
+	${({ $clipSize }) => css`
+		clip-path: polygon(
+			0 0,
+			calc(100% - ${$clipSize}) 0,
+			100% ${$clipSize},
+			100% 100%,
+			${$clipSize} 100%,
+			0 calc(100% - ${$clipSize})
+		);
+	`}
 `

@@ -4,9 +4,10 @@ import {
 	faArrowRight,
 	faThermometerHalf,
 	faUser,
+	faUserTie,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { CardSymbol, SymbolType } from '@shared/cards'
+import { CardSymbol, CardType, SymbolType } from '@shared/cards'
 import { css, styled } from 'styled-components'
 import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
@@ -16,6 +17,7 @@ import { ColonyBuildSymbol } from './ColonyBuildSymbol'
 import { ColonyFleetSymbol } from './ColonyFleetSymbol'
 import { ColonyTradeSymbol } from './ColonyTradeSymbol'
 import { Tag } from './Tag'
+import { ClippedBox } from '@/components/ClippedBox'
 
 type Props = {
 	symbol: CardSymbol
@@ -72,10 +74,13 @@ const symbolToIcon = (s: CardSymbol) => {
 			case SymbolType.Player:
 				return <FontAwesomeIcon icon={faUser} />
 			case SymbolType.BlueCard:
-				// TODO: Implement
-				return <Card />
+				return <BlueCard clipSize="0.2em" />
 			case SymbolType.Influence:
-				return 'I'
+				return (
+					<InfluenceContainer>
+						<FontAwesomeIcon icon={faUserTie} />
+					</InfluenceContainer>
+				)
 			case SymbolType.Tile:
 				return <TileIcon size="1.25em" />
 			default:
@@ -174,6 +179,11 @@ export const SymbolDisplay = ({ symbol: s, className, noSpacing }: Props) => {
 				</Count>
 			)}
 			{symbolToIcon(s)}
+			{s.affectedByInfluence && (
+				<InfluenceMiniContainer>
+					<FontAwesomeIcon icon={faUserTie} />
+				</InfluenceMiniContainer>
+			)}
 		</S>
 	)
 }
@@ -185,6 +195,8 @@ const S = styled.div<{
 }>`
 	display: flex;
 	align-items: center;
+	position: relative;
+
 	${(props) =>
 		!props.noSpacing &&
 		css`
@@ -247,4 +259,45 @@ const SlashSymbol = styled.div`
 const BigPlus = styled.div`
 	font-size: 150%;
 	font-weight: bold;
+`
+
+const InfluenceContainer = styled.div`
+	background-color: #fff;
+	border-radius: 50%;
+	width: 1.2em;
+	height: 1.2em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #000;
+
+	.svg-inline--fa {
+		font-size: 90%;
+	}
+`
+
+const InfluenceMiniContainer = styled.div`
+	background-color: #fff;
+	border-radius: 50%;
+	width: 1rem;
+	height: 1rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #000;
+	font-size: 60%;
+	position: absolute;
+	top: -0.2rem;
+	right: -0.5rem;
+	border: 1px solid #000;
+`
+
+const BlueCard = styled(ClippedBox)`
+	background-color: ${({ theme }) => theme.colors.cards[CardType.Action]};
+	height: 1em;
+	width: 0.8em;
+
+	.inner {
+		background: ${({ theme }) => theme.colors.border};
+	}
 `

@@ -21,14 +21,16 @@ export const resourceChangePerTagGlobalEffect = (
 		],
 		description:
 			change < 0
-				? f('Lose {0} per {1} tag (max 5, then reduced by influence).', [
+				? f(
+						'Lose {0} per {1} tag (max 5, then reduced by influence).',
 						withUnits(resource, -change),
 						tag,
-					])
-				: f('Gain {0} per {1} tag (max 5 + influence).', [
-						withUnits(resource, -change),
+					)
+				: f(
+						'Gain {0} per {1} tag (max 5 + influence).',
+						withUnits(resource, change),
 						tag,
-					]),
+					),
 		apply(game) {
 			for (const player of game.players) {
 				const influence = getPlayerInfluence(game, player)

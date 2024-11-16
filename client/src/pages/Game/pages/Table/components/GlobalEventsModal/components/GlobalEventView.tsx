@@ -58,6 +58,7 @@ const Title = styled.div`
 	background-color: ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
 	text-transform: uppercase;
+	text-align: center;
 `
 
 const Description = styled.div`

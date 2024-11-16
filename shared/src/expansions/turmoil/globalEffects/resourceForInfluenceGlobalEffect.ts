@@ -14,10 +14,11 @@ export const resourceForInfluenceGlobalEffect = (
 			{ symbol: SymbolType.Slash },
 			{ symbol: SymbolType.Influence },
 		],
-		description: f('Gain {0} for each influence.', [
+		description: f(
+			'Gain {0} for each influence.',
 			withUnits(resource, count),
 			resource,
-		]),
+		),
 		apply(game) {
 			for (const player of game.players) {
 				const influence = getPlayerInfluence(game, player)

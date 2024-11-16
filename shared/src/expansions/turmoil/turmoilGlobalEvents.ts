@@ -157,6 +157,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 					{ resource: 'money', count: 2 },
 					{ symbol: SymbolType.Slash },
 					{ symbol: SymbolType.Influence },
+					{ symbol: SymbolType.Plus },
 					{ symbol: SymbolType.TerraformingRating, count: 5 },
 				],
 				description:
