@@ -1,21 +1,22 @@
 import { Button, DialogWrapper } from '@/components'
+import { DialogButton } from '@/components/DialogButton/DialogButton'
 import { Flex } from '@/components/Flex/Flex'
+import { usePopout } from '@/components/Popout/usePopout'
 import { useGameState } from '@/utils/hooks'
 import { ExpansionType } from '@shared/expansions/types'
 import { useState } from 'react'
 import styled from 'styled-components'
 import { ColoniesList } from '../ColoniesModal/components/ColoniesList'
+import { CommitteeModal } from '../CommitteeModal/CommitteeModal'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
 import { CompetitionsList } from '../CompetitionsModal/components/CompetitionsList'
+import { GlobalEventsModal } from '../GlobalEventsModal/GlobalEventsModal'
 import { MilestonesDisplay } from '../MilestonesModal/components/MilestonesDisplay'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { StandardProjectsList } from '../StandardProjectModal/components/StandardProjectsList'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { ColoniesButton } from './components/ColoniesButton'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
-import { usePopout } from '@/components/Popout/usePopout'
-import { DialogButton } from '@/components/DialogButton/DialogButton'
-import { CommitteeModal } from '../CommitteeModal/CommitteeModal'
 
 export const Header = () => {
 	const game = useGameState()
@@ -117,10 +118,18 @@ export const Header = () => {
 					</DialogWrapper>
 				</Flex>{' '}
 				<Flex justify="center">
+					{game.globalEvents.enabled && (
+						<DialogButton
+							dialog={(close) => <GlobalEventsModal onClose={close} />}
+							noClip
+						>
+							Global Events
+						</DialogButton>
+					)}
 					{game.expansions.includes(ExpansionType.Colonies) && (
 						<ColoniesButton ref={setColoniesButton} />
 					)}
-					{game.expansions.includes(ExpansionType.Turmoil) && (
+					{game.committee.enabled && (
 						<DialogButton
 							dialog={(close) => <CommitteeModal onClose={close} />}
 							noClip

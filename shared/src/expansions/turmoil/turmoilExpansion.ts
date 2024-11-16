@@ -64,11 +64,11 @@ export const turmoilExpansion = expansion({
 			null,
 		)
 
-		game.globalEvents.currentEvent = drawGlobalEvent(game)
+		game.globalEvents.distantEvent = drawGlobalEvent(game)
 
 		addDelegate(
 			game,
-			GlobalEventsLookupApi.get(game.globalEvents.currentEvent).initialDelegate,
+			GlobalEventsLookupApi.get(game.globalEvents.distantEvent).initialDelegate,
 			null,
 		)
 

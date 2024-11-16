@@ -1,6 +1,7 @@
 import { cards } from './cards'
 import { colonies } from './colonies'
 import { committeeParties } from './committeeParties'
+import { globalEvents } from './globalEvents'
 import { help } from './help'
 
 export const en = {
@@ -8,4 +9,5 @@ export const en = {
 	cards,
 	colonies,
 	committeeParties,
+	globalEvents,
 }

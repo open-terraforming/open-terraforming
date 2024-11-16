@@ -20,10 +20,11 @@ export const resourceForProductionGlobalEffect = (
 				affectedByInfluence: true,
 			},
 		],
-		description: f('Gain {0} for each {1} production (max 5) and influence.', [
+		description: f(
+			'Gain {0} for each {1} production (max 5) and influence.',
 			withUnits(resource, count),
 			resource,
-		]),
+		),
 		apply(game) {
 			for (const player of game.players) {
 				const influence = getPlayerInfluence(game, player)
