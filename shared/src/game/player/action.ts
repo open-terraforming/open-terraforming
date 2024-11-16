@@ -138,7 +138,13 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 						})
 					} catch (e) {
 						throw new Error(
-							f('{0}: Effect {1} argument {2} - {3}', card.code, i, ai, e),
+							f(
+								'{0}: Effect {1} argument {2} - {3}',
+								card.code,
+								i,
+								ai,
+								String(e),
+							),
 						)
 					}
 				})
