@@ -1,6 +1,6 @@
 import { Colony, GameState } from '../gameState'
 import { WithOptional, Card } from '../cards'
-import { GlobalEvent } from './turmoil/turmoilGlobalEvent'
+import { GlobalEvent } from './turmoil/globalEvent'
 import { CommitteeParty } from './turmoil/committeeParty'
 
 export enum ExpansionType {

@@ -8,7 +8,7 @@ import { randomPlayerColor } from '@shared/utils/colors'
 import { ExpansionType } from '@shared/expansions/types'
 import { deduplicate } from '@shared/utils/deduplicate'
 import { Cards } from '@shared/cards/list'
-import { GlobalEvent } from '@shared/expansions/turmoil/turmoilGlobalEvent'
+import { GlobalEvent } from '@shared/expansions/turmoil/globalEvent'
 import { CommitteeParty } from '@shared/expansions/turmoil/committeeParty'
 
 export class StartingGameState extends BaseGameState {
