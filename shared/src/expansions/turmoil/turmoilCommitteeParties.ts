@@ -110,9 +110,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 					symbols: [
 						{ resource: 'money', count: 10 },
 						{ symbol: SymbolType.RightArrow },
-						{ symbol: SymbolType.Card },
-						{ symbol: SymbolType.Card },
-						{ symbol: SymbolType.Card },
+						{ symbol: SymbolType.Card, count: 3 },
 					],
 					description:
 						'Pay $10 to draw 3 cards, can only be used once per generation per player',

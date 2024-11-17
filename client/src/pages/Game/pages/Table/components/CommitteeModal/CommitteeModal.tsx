@@ -10,6 +10,7 @@ import { Fragment } from 'react'
 import { styled } from 'styled-components'
 import { Symbols } from '../CardView/components/Symbols'
 import { SeatDef } from './components/SeatDef'
+import { getCommitteeParty } from '@shared/utils'
 
 type Props = {
 	onClose: () => void
@@ -18,12 +19,12 @@ type Props = {
 const PARTY_TO_COLORS = {
 	mars_first: {
 		backgroundColor: '#683f19',
-		color: '#c5957f',
+		color: '#fff',
 		borderColor: '#85533d',
 	},
 	kelvinists: {
 		backgroundColor: '#333',
-		color: '#f53030',
+		color: '#fff',
 		borderColor: '#f86666',
 	},
 	scientists: {
@@ -43,7 +44,7 @@ const PARTY_TO_COLORS = {
 	},
 	greens: {
 		backgroundColor: '#033003',
-		color: '#000',
+		color: '#fff',
 		borderColor: '#0c500c',
 	},
 } as Record<
@@ -170,6 +171,7 @@ export const CommitteeModal = ({ onClose }: Props) => {
 				<div style={{ position: 'absolute', inset: 0 }}>
 					{game.committee.parties.map((party, index) => {
 						const angle = partyAngle / 2 + index * partyAngle
+						const info = getCommitteeParty(party.code)
 
 						const center = [
 							centerX +
@@ -181,8 +183,13 @@ export const CommitteeModal = ({ onClose }: Props) => {
 						]
 
 						const leader = [
-							centerX + Math.cos(angle) * (closeDistance - 1.5),
-							centerY + Math.sin(angle) * (closeDistance - 1.5),
+							centerX + Math.cos(angle) * (closeDistance - 3.5),
+							centerY + Math.sin(angle) * (closeDistance - 3.5),
+						]
+
+						const effect = [
+							centerX + Math.cos(angle) * (farDistance - 3),
+							centerY + Math.sin(angle) * (farDistance - 3),
 						]
 
 						return (
@@ -207,6 +214,26 @@ export const CommitteeModal = ({ onClose }: Props) => {
 										<FontAwesomeIcon icon={faUserTie} />
 									</div>
 								)}
+								<div
+									style={{
+										position: 'absolute',
+										left: effect[0] * svgToHtmlX,
+										top: effect[1] * svgToHtmlY,
+										transform: `translate(-50%,-50%) rotate(${angle - Math.PI / 2}rad)`,
+										color: PARTY_TO_COLORS[party.code].color,
+									}}
+								>
+									{info.policy.active.map((policy, index) => (
+										<div key={index}>
+											<StyledSymbols symbols={policy.symbols} />
+										</div>
+									))}
+									{info.policy.passive.map((policy, index) => (
+										<div key={index}>
+											<StyledSymbols symbols={policy.symbols} />
+										</div>
+									))}
+								</div>
 								<div
 									style={{
 										position: 'absolute',
