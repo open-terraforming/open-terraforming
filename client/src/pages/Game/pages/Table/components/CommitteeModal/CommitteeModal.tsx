@@ -28,7 +28,7 @@ export const CommitteeModal = ({ onClose }: Props) => {
 		selectedPartyCode && getPartyState(game, selectedPartyCode)
 
 	const handlePartyClick = (party: string) => {
-		setSelectedPartyCode(party)
+		setSelectedPartyCode(selectedPartyCode === party ? null : party)
 	}
 
 	return (
