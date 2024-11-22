@@ -1,14 +1,9 @@
-import { Button } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
-import { useApi } from '@/context/ApiContext'
-import { useGameState, usePlayerState, useToggle } from '@/utils/hooks'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
-import { addDelegateToPartyActionRequest } from '@shared/actions'
+import { useGameState } from '@/utils/hooks'
 import { SymbolType } from '@shared/cards'
 import { getPartyState } from '@shared/expansions/turmoil/utils/getPartyState'
 import { getRulingParty } from '@shared/expansions/turmoil/utils/getRulingParty'
-import { PlayerStateValue } from '@shared/gameState'
 import { useState } from 'react'
 import { styled } from 'styled-components'
 import { Symbols } from '../CardView/components/Symbols'
@@ -23,10 +18,7 @@ type Props = {
 
 export const CommitteeModal = ({ onClose }: Props) => {
 	const game = useGameState()
-	const player = usePlayerState()
-	const api = useApi()
 	const rulingParty = getRulingParty(game)
-	const [isPlacing, toggleIsPlacing, setIsPlacing] = useToggle(false)
 
 	const [selectedPartyCode, setSelectedPartyCode] = useState<string | null>(
 		null,
@@ -35,24 +27,8 @@ export const CommitteeModal = ({ onClose }: Props) => {
 	const selectedParty =
 		selectedPartyCode && getPartyState(game, selectedPartyCode)
 
-	const isPlaying = player.state === PlayerStateValue.Playing
-
-	const canPlaceFromLobby =
-		isPlaying && game.committee.lobby.some((l) => l.id === player.id)
-
-	const canPlaceFromReserve =
-		isPlaying && game.committee.reserve.some((r) => r?.id === player.id)
-
 	const handlePartyClick = (party: string) => {
-		if (!isPlacing) {
-			setSelectedPartyCode(party)
-
-			return
-		}
-
-		api.send(addDelegateToPartyActionRequest(party))
-
-		setIsPlacing(false)
+		setSelectedPartyCode(party)
 	}
 
 	return (
@@ -89,38 +65,9 @@ export const CommitteeModal = ({ onClose }: Props) => {
 				/>
 			</Flex>
 
-			<CommitteePartiesView
-				placingMode={isPlacing}
-				onClick={handlePartyClick}
-			/>
+			<CommitteePartiesView onClick={handlePartyClick} />
 
 			{selectedParty && <CommitteePartyDisplay state={selectedParty} />}
-
-			<Actions>
-				{!isPlacing && (
-					<>
-						{canPlaceFromLobby && (
-							<Button onClick={toggleIsPlacing}>
-								Place candidate from lobby
-							</Button>
-						)}
-						{!canPlaceFromLobby && canPlaceFromReserve && (
-							<Button onClick={toggleIsPlacing}>
-								<Symbols
-									symbols={[{ resource: 'money', count: 5 }]}
-									noSpacing
-								/>{' '}
-								Place candidate from reserve
-							</Button>
-						)}
-					</>
-				)}
-				{isPlacing && (
-					<Button icon={faTimes} onClick={toggleIsPlacing}>
-						Cancel
-					</Button>
-				)}
-			</Actions>
 		</Modal>
 	)
 }
@@ -131,8 +78,4 @@ export const StyledSymbols = styled(Symbols)`
 
 export const TitleInfo = styled.div`
 	margin-left: auto;
-`
-
-const Actions = styled(Flex)`
-	justify-content: center;
 `

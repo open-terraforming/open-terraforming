@@ -1,7 +1,7 @@
 import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { useLocale } from '@/context/LocaleContext'
-import { useAppStore, useGameState } from '@/utils/hooks'
-import { CommitteePartyState } from '@shared/gameState'
+import { useAppStore, useGameState, usePlayerState } from '@/utils/hooks'
+import { CommitteePartyState, PlayerStateValue } from '@shared/gameState'
 import { getCommitteeParty } from '@shared/utils'
 import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
@@ -12,7 +12,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { DelegatesView } from './DelegatesView'
 import { DelegateIcon } from '@/components/DelegateIcon'
-import { Tooltip } from '@/components'
+import { Button, Tooltip } from '@/components'
+import { useApi } from '@/context/ApiContext'
+import { addDelegateToPartyActionRequest } from '@shared/actions'
 
 type Props = {
 	state: CommitteePartyState
@@ -20,9 +22,23 @@ type Props = {
 
 export const CommitteePartyDisplay = ({ state }: Props) => {
 	const game = useGameState()
+	const player = usePlayerState()
+	const api = useApi()
 	const party = getCommitteeParty(state.code)
 	const t = useLocale()
 	const playerMap = useAppStore((store) => store.game.playerMap)
+
+	const isPlaying = player.state === PlayerStateValue.Playing
+
+	const canPlaceFromLobby =
+		isPlaying && game.committee.lobby.some((l) => l.id === player.id)
+
+	const canPlaceFromReserve =
+		isPlaying && game.committee.reserve.some((r) => r?.id === player.id)
+
+	const handlePlace = async () => {
+		api.send(addDelegateToPartyActionRequest(party.code))
+	}
 
 	return (
 		<ClippedBox style={{ width: '20rem', margin: 'auto' }}>
@@ -62,6 +78,19 @@ export const CommitteePartyDisplay = ({ state }: Props) => {
 				<Delegates>
 					<DelegatesView delegates={state.members.map((m) => m.playerId)} />
 				</Delegates>
+			)}
+
+			{(canPlaceFromLobby || canPlaceFromReserve) && (
+				<Actions justify="center">
+					<Button onClick={handlePlace}>
+						{!canPlaceFromLobby && (
+							<Symbols symbols={[{ resource: 'money', count: 5 }]} noSpacing />
+						)}
+						{canPlaceFromLobby
+							? 'Add delegate from lobby'
+							: 'Add delegate from reserve'}
+					</Button>
+				</Actions>
 			)}
 
 			<div>
@@ -138,4 +167,8 @@ const Leader = styled(Flex)`
 const None = styled.div`
 	padding: 1rem;
 	text-align: center;
+`
+
+const Actions = styled(Flex)`
+	padding: 0.5rem;
 `

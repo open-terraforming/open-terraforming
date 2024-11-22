@@ -6,7 +6,7 @@ import { faStar, faUserTie } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getCommitteeParty } from '@shared/utils'
 import { Fragment } from 'react'
-import { css, styled } from 'styled-components'
+import { styled } from 'styled-components'
 import { StyledSymbols } from '../CommitteeModal'
 import { DelegatesView } from './DelegatesView'
 import { SeatDef } from './SeatDef'
@@ -14,7 +14,6 @@ import { SeatDef } from './SeatDef'
 type Props = {
 	width?: number
 	height?: number
-	placingMode?: boolean
 	onClick?: (party: string) => void
 }
 
@@ -61,7 +60,6 @@ const PARTY_TO_COLORS = {
 export const CommitteePartiesView = ({
 	width = 600,
 	height = 300,
-	placingMode,
 	onClick,
 }: Props) => {
 	const game = useGameState()
@@ -130,7 +128,6 @@ export const CommitteePartiesView = ({
 							fill={PARTY_TO_COLORS[party.code].backgroundColor}
 						>
 							<PartyPath
-								$isPlacing={!!placingMode}
 								d={[
 									`M ${points[0][0]},${points[0][1]}`,
 									`L ${points[1][0]},${points[1][1]}`,
@@ -279,23 +276,12 @@ const HtmlMarkesContainer = styled.div`
 	pointer-events: none;
 `
 
-const PartyPath = styled.path<{ $isPlacing: boolean }>`
+const PartyPath = styled.path`
 	cursor: pointer;
 
 	&:hover {
 		opacity: 0.7;
 	}
-
-	${(props) =>
-		props.$isPlacing &&
-		css`
-			cursor: pointer;
-			opacity: 0.3;
-
-			&:hover {
-				opacity: 1;
-			}
-		`}
 `
 
 const StyledSvg = styled.svg`
