@@ -6,7 +6,7 @@ import { faStar, faUserTie } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getCommitteeParty } from '@shared/utils'
 import { Fragment } from 'react'
-import { styled } from 'styled-components'
+import { css, styled } from 'styled-components'
 import { StyledSymbols } from '../CommitteeModal'
 import { DelegatesView } from './DelegatesView'
 import { SeatDef } from './SeatDef'
@@ -14,6 +14,7 @@ import { SeatDef } from './SeatDef'
 type Props = {
 	width?: number
 	height?: number
+	selectedCode?: string
 	onClick?: (party: string) => void
 }
 
@@ -60,6 +61,7 @@ const PARTY_TO_COLORS = {
 export const CommitteePartiesView = ({
 	width = 600,
 	height = 300,
+	selectedCode,
 	onClick,
 }: Props) => {
 	const game = useGameState()
@@ -128,6 +130,11 @@ export const CommitteePartiesView = ({
 							fill={PARTY_TO_COLORS[party.code].backgroundColor}
 						>
 							<PartyPath
+								$selected={
+									selectedCode === undefined
+										? undefined
+										: selectedCode === party.code
+								}
 								d={[
 									`M ${points[0][0]},${points[0][1]}`,
 									`L ${points[1][0]},${points[1][1]}`,
@@ -222,7 +229,12 @@ export const CommitteePartiesView = ({
 									<StyledSymbols key={index} symbols={policy.symbols} />
 								))}
 							</div>
-							<div
+							<PartyMarkers
+								$selected={
+									selectedCode === undefined
+										? undefined
+										: selectedCode === party.code
+								}
 								style={{
 									position: 'absolute',
 									left: center[0] * svgToHtmlX,
@@ -252,7 +264,7 @@ export const CommitteePartiesView = ({
 										delegates={party.members.map((m) => m.playerId)}
 									/>
 								</Flex>
-							</div>
+							</PartyMarkers>
 						</Fragment>
 					)
 				})}
@@ -270,18 +282,32 @@ const Container = styled.div`
 	margin: 1rem auto;
 `
 
-const HtmlMarkesContainer = styled.div`
+const HtmlMarkesContainer = styled.div<{ $selected?: boolean }>`
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
+
+	${({ $selected }) =>
+		$selected !== undefined &&
+		!$selected &&
+		css`
+			opacity: 0.5;
+		`}
 `
 
-const PartyPath = styled.path`
+const PartyPath = styled.path<{ $selected?: boolean }>`
 	cursor: pointer;
 
 	&:hover {
 		opacity: 0.7;
 	}
+
+	${({ $selected }) =>
+		$selected !== undefined &&
+		!$selected &&
+		css`
+			opacity: 0.5;
+		`}
 `
 
 const StyledSvg = styled.svg`
@@ -290,4 +316,20 @@ const StyledSvg = styled.svg`
 	fill: #222;
 	position: absolute;
 	inset: 0;
+`
+
+const PartyMarkers = styled.div<{ $selected?: boolean }>`
+	position: absolute;
+	transform: translate(-50%, -50%);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+
+	${({ $selected }) =>
+		$selected !== undefined &&
+		!$selected &&
+		css`
+			opacity: 0.5;
+		`}
 `

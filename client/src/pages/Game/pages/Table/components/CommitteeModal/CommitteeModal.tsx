@@ -65,7 +65,10 @@ export const CommitteeModal = ({ onClose }: Props) => {
 				/>
 			</Flex>
 
-			<CommitteePartiesView onClick={handlePartyClick} />
+			<CommitteePartiesView
+				onClick={handlePartyClick}
+				selectedCode={selectedPartyCode ?? undefined}
+			/>
 
 			{selectedParty && <CommitteePartyDisplay state={selectedParty} />}
 		</Modal>

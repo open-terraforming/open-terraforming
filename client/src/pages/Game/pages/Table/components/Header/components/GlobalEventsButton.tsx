@@ -7,6 +7,7 @@ import { Symbols } from '../../CardView/components/Symbols'
 import { GlobalEventsModal } from '../../GlobalEventsModal/GlobalEventsModal'
 import { HeaderDialogButton } from './HeaderDialogButton'
 import { Position } from '@/components/Tooltip/Tooltip'
+import { Flex } from '@/components/Flex/Flex'
 
 export const GlobalEventsButton = () => {
 	const game = useGameState()
@@ -40,13 +41,15 @@ export const GlobalEventsButton = () => {
 						}
 						position={Position.Bottom}
 					>
-						{currentEvent.effects.map((effect, index) => (
-							<StyledSymbols
-								key={index}
-								symbols={effect.symbols}
-								noVerticalSpacing
-							/>
-						))}
+						<Flex justify="center">
+							{currentEvent.effects.map((effect, index) => (
+								<StyledSymbols
+									key={index}
+									symbols={effect.symbols}
+									noVerticalSpacing
+								/>
+							))}
+						</Flex>
 					</Tooltip>
 				)}
 			</SubContainer>

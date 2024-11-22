@@ -15,6 +15,12 @@ type Props = {
 export const GlobalEventView = ({ globalEvent }: Props) => {
 	const t = useLocale()
 
+	const allSymbols = globalEvent.effects.flatMap((effect) => effect.symbols)
+
+	const allDescriptions = globalEvent.effects.map(
+		(effect) => effect.description,
+	)
+
 	return (
 		<Container>
 			<Title>{t.globalEvents[globalEvent.code]}</Title>
@@ -29,12 +35,8 @@ export const GlobalEventView = ({ globalEvent }: Props) => {
 					<CommitteePartyIcon party={globalEvent.effectDelegate} />
 				</Delegates>
 				<Effects>
-					{globalEvent.effects.map((effect, index) => (
-						<div key={index}>
-							<Symbols symbols={effect.symbols} />
-							<Description>{effect.description}</Description>
-						</div>
-					))}
+					<Symbols symbols={allSymbols} />
+					<Description>{allDescriptions.join(' ')}</Description>
 				</Effects>
 			</Inner>
 		</Container>
