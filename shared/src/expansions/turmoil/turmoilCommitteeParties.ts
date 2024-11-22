@@ -70,7 +70,7 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 					symbols: [
 						{ resource: 'money', count: 10 },
 						{ symbol: SymbolType.RightArrow },
-						{ resource: 'heat', production: true },
+						{ resource: 'heat', production: true, noRightSpacing: true },
 						{ resource: 'energy', production: true },
 					],
 					description:
