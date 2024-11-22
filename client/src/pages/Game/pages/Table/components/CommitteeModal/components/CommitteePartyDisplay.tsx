@@ -5,6 +5,8 @@ import { CommitteePartyState } from '@shared/gameState'
 import { getCommitteeParty } from '@shared/utils'
 import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
+import { ClippedBox } from '@/components/ClippedBox'
+import { ClippedBoxTitle } from '@/components/ClippedBoxTitle'
 
 type Props = {
 	state: CommitteePartyState
@@ -16,11 +18,11 @@ export const CommitteePartyDisplay = ({ state }: Props) => {
 	const playerMap = useAppStore((store) => store.game.playerMap)
 
 	return (
-		<div key={party.code} style={{ width: '40%', margin: '1rem' }}>
-			<div>
+		<ClippedBox style={{ width: '20rem', margin: 'auto' }}>
+			<ClippedBoxTitle>
 				<CommitteePartyIcon party={party.code} />{' '}
 				{t.committeeParties[party.code]}
-			</div>
+			</ClippedBoxTitle>
 			<div>
 				Party leader:{' '}
 				{state.leader
@@ -62,7 +64,7 @@ export const CommitteePartyDisplay = ({ state }: Props) => {
 					</div>
 				))}
 			</div>
-		</div>
+		</ClippedBox>
 	)
 }
 

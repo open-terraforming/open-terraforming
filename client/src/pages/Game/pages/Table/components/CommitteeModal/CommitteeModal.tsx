@@ -3,16 +3,19 @@ import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { useGameState, usePlayerState, useToggle } from '@/utils/hooks'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { addDelegateToPartyActionRequest } from '@shared/actions'
 import { SymbolType } from '@shared/cards'
+import { getPartyState } from '@shared/expansions/turmoil/utils/getPartyState'
 import { getRulingParty } from '@shared/expansions/turmoil/utils/getRulingParty'
 import { PlayerStateValue } from '@shared/gameState'
+import { useState } from 'react'
 import { styled } from 'styled-components'
 import { Symbols } from '../CardView/components/Symbols'
 import { CommitteePartiesView } from './components/CommitteePartiesView'
+import { CommitteePartyDisplay } from './components/CommitteePartyDisplay'
 import { DelegatesBox } from './components/DelegatesBox'
 import { RulingPartyDisplay } from './components/RulingPartyDisplay'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
 	onClose: () => void
@@ -25,6 +28,13 @@ export const CommitteeModal = ({ onClose }: Props) => {
 	const rulingParty = getRulingParty(game)
 	const [isPlacing, toggleIsPlacing, setIsPlacing] = useToggle(false)
 
+	const [selectedPartyCode, setSelectedPartyCode] = useState<string | null>(
+		null,
+	)
+
+	const selectedParty =
+		selectedPartyCode && getPartyState(game, selectedPartyCode)
+
 	const isPlaying = player.state === PlayerStateValue.Playing
 
 	const canPlaceFromLobby =
@@ -35,6 +45,8 @@ export const CommitteeModal = ({ onClose }: Props) => {
 
 	const handlePartyClick = (party: string) => {
 		if (!isPlacing) {
+			setSelectedPartyCode(party)
+
 			return
 		}
 
@@ -81,6 +93,8 @@ export const CommitteeModal = ({ onClose }: Props) => {
 				placingMode={isPlacing}
 				onClick={handlePartyClick}
 			/>
+
+			{selectedParty && <CommitteePartyDisplay state={selectedParty} />}
 
 			<Actions>
 				{!isPlacing && (

@@ -41,7 +41,11 @@ export const GlobalEventsButton = () => {
 						position={Position.Bottom}
 					>
 						{currentEvent.effects.map((effect, index) => (
-							<Symbols key={index} symbols={effect.symbols} />
+							<StyledSymbols
+								key={index}
+								symbols={effect.symbols}
+								noVerticalSpacing
+							/>
 						))}
 					</Tooltip>
 				)}
@@ -66,4 +70,8 @@ const SubContainer = styled.div`
 const None = styled.div`
 	text-align: center;
 	padding: 0.25rem;
+`
+
+const StyledSymbols = styled(Symbols)`
+	padding: 0.2rem 0;
 `

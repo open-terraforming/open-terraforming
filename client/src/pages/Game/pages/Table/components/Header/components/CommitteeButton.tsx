@@ -53,7 +53,7 @@ export const CommitteeButton = () => {
 								...rulingParty.policy.active.map((p) => p.symbols),
 								...rulingParty.policy.passive.map((p) => p.symbols),
 							].map((symbols, index) => (
-								<Symbols key={index} symbols={symbols} />
+								<Symbols key={index} symbols={symbols} noVerticalSpacing />
 							))}
 						</Data>
 					</Tooltip>

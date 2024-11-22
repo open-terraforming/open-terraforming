@@ -27,6 +27,7 @@ export const ClippedBox = ({
 
 const OuterBorder = styled.div<{ $clipSize: string }>`
 	padding: 2px;
+	box-sizing: border-box;
 	background-color: ${({ theme }) => theme.colors.border};
 	${({ $clipSize }) => css`
 		clip-path: polygon(
@@ -42,6 +43,7 @@ const OuterBorder = styled.div<{ $clipSize: string }>`
 
 const Inner = styled.div<{ $clipSize: string }>`
 	height: 100%;
+	box-sizing: border-box;
 
 	${stripedBackground()}
 

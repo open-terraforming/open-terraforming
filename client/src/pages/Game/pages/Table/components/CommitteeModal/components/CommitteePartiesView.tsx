@@ -2,7 +2,7 @@ import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { DelegateIcon } from '@/components/DelegateIcon'
 import { Flex } from '@/components/Flex/Flex'
 import { useAppStore, useGameState } from '@/utils/hooks'
-import { faUserTie } from '@fortawesome/free-solid-svg-icons'
+import { faStar, faUserTie } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getCommitteeParty } from '@shared/utils'
 import { Fragment } from 'react'
@@ -30,8 +30,8 @@ const PARTY_TO_COLORS = {
 		borderColor: '#f86666',
 	},
 	scientists: {
-		backgroundColor: '#adadad',
-		color: '#444444',
+		backgroundColor: '#504a4a',
+		color: '#fff',
 		borderColor: '#c0c0c0',
 	},
 	reds: {
@@ -200,6 +200,7 @@ export const CommitteePartiesView = ({
 						<Fragment key={party.code}>
 							{party.leader && (
 								<DelegateIcon
+									playerId={party.leader.playerId?.id}
 									style={{
 										position: 'absolute',
 										left: leader[0] * svgToHtmlX,
@@ -230,10 +231,26 @@ export const CommitteePartiesView = ({
 									left: center[0] * svgToHtmlX,
 									top: center[1] * svgToHtmlY,
 									transform: 'translate(-50%, -50%)',
+									display: 'flex',
+									justifyContent: 'center',
+									alignItems: 'center',
+									flexDirection: 'column',
 								}}
 							>
-								<CommitteePartyIcon party={party.code} />
-								<Flex gap="0.1rem" justify="center">
+								<Flex>
+									<CommitteePartyIcon party={party.code} />
+									{game.committee.dominantParty === party.code && (
+										<DominantIcon>
+											<FontAwesomeIcon icon={faStar} />
+										</DominantIcon>
+									)}
+								</Flex>
+								<Flex
+									gap="0.1rem"
+									justify="center"
+									wrap="wrap"
+									style={{ maxWidth: '4rem' }}
+								>
 									<DelegatesView
 										delegates={party.members.map((m) => m.playerId)}
 									/>
@@ -246,6 +263,10 @@ export const CommitteePartiesView = ({
 		</Container>
 	)
 }
+
+const DominantIcon = styled.div`
+	color: #d9ff30;
+`
 
 const Container = styled.div`
 	position: relative;
