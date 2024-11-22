@@ -1543,6 +1543,35 @@ export const resourcesForPlayersTags = (
 	})
 }
 
+export const resourceForTagsPlayed = (
+	tag: CardCategory,
+	res: Resource,
+	resPerCard: number,
+) => {
+	return effect({
+		description: `Gain ${withUnits(res, resPerCard)} per every ${
+			CardCategory[tag]
+		} tag in play`,
+		type: CardEffectType.Production,
+		symbols: [
+			{ resource: res, count: resPerCard },
+			{ symbol: SymbolType.Slash },
+			{ tag, other: true },
+		],
+		hints: [tagsCountHint([tag], true)],
+		perform: ({ game, player }) => {
+			updatePlayerResource(
+				player,
+				res,
+				game.players.reduce(
+					(acc, p) => acc + countTagsWithoutEvents(p.usedCards, tag),
+					0,
+				) * resPerCard,
+			)
+		},
+	})
+}
+
 export const addResourceToCard = () =>
 	effect({
 		description: 'Add 1 resource to a card with at least 1 resource on it',

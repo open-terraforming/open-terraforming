@@ -284,6 +284,8 @@ export enum SymbolType {
 	Influence,
 	BlueCard,
 	Tile,
+	Delegate,
+	Chairman,
 }
 
 export interface CardSymbol {
@@ -303,4 +305,5 @@ export interface CardSymbol {
 	title?: string
 	noRightSpacing?: boolean
 	affectedByInfluence?: boolean
+	committeeParty?: string
 }
