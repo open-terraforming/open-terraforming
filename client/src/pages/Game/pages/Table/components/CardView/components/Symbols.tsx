@@ -4,14 +4,26 @@ import { SymbolDisplay } from './SymbolDisplay'
 
 type Props = {
 	symbols: CardSymbol[]
+	noVerticalSpacing?: boolean
+	noSpacing?: boolean
 	className?: string
 }
 
-export const Symbols = ({ symbols, className }: Props) => {
+export const Symbols = ({
+	symbols,
+	noVerticalSpacing,
+	noSpacing,
+	className,
+}: Props) => {
 	return symbols.length > 0 ? (
 		<E className={className}>
 			{symbols.map((s, i) => (
-				<SymbolDisplay key={i} symbol={s} />
+				<SymbolDisplay
+					key={i}
+					symbol={s}
+					noVerticalSpacing={noVerticalSpacing}
+					noSpacing={noSpacing}
+				/>
 			))}
 		</E>
 	) : null

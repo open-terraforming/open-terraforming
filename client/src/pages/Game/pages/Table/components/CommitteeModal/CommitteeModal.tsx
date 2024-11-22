@@ -1,16 +1,18 @@
+import { Button } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
-import { useGameState } from '@/utils/hooks'
+import { useApi } from '@/context/ApiContext'
+import { useGameState, usePlayerState, useToggle } from '@/utils/hooks'
+import { addDelegateToPartyActionRequest } from '@shared/actions'
+import { SymbolType } from '@shared/cards'
 import { getRulingParty } from '@shared/expansions/turmoil/utils/getRulingParty'
+import { PlayerStateValue } from '@shared/gameState'
 import { styled } from 'styled-components'
 import { Symbols } from '../CardView/components/Symbols'
 import { CommitteePartiesView } from './components/CommitteePartiesView'
 import { DelegatesBox } from './components/DelegatesBox'
 import { RulingPartyDisplay } from './components/RulingPartyDisplay'
-import { Button } from '@/components'
-import { useState } from 'react'
-import { useApi } from '@/context/ApiContext'
-import { addDelegateToPartyActionRequest } from '@shared/actions'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
 	onClose: () => void
@@ -18,9 +20,18 @@ type Props = {
 
 export const CommitteeModal = ({ onClose }: Props) => {
 	const game = useGameState()
+	const player = usePlayerState()
 	const api = useApi()
 	const rulingParty = getRulingParty(game)
-	const [isPlacing, setIsPlacing] = useState(false)
+	const [isPlacing, toggleIsPlacing, setIsPlacing] = useToggle(false)
+
+	const isPlaying = player.state === PlayerStateValue.Playing
+
+	const canPlaceFromLobby =
+		isPlaying && game.committee.lobby.some((l) => l.id === player.id)
+
+	const canPlaceFromReserve =
+		isPlaying && game.committee.reserve.some((r) => r?.id === player.id)
 
 	const handlePartyClick = (party: string) => {
 		if (!isPlacing) {
@@ -45,26 +56,21 @@ export const CommitteeModal = ({ onClose }: Props) => {
 						title={'Neutral reserve'}
 						delegates={game.committee.reserve.filter((r) => !r)}
 					/>
-					<DelegatesBox
-						title={
-							<Flex>
-								<div>Lobby</div>
-								<ActionButton onClick={() => setIsPlacing(true)}>
-									To party
-								</ActionButton>
-							</Flex>
-						}
-						delegates={game.committee.lobby}
-					/>
+					<DelegatesBox title={'Lobby'} delegates={game.committee.lobby} />
 				</Flex>
 				{rulingParty && <RulingPartyDisplay party={rulingParty} />}
 				<DelegatesBox
 					title={
 						<Flex>
 							<div>Reserve</div>
-							<ActionButton onClick={() => setIsPlacing(true)}>
-								<Symbols symbols={[{ resource: 'money', count: 5 }]} /> To party
-							</ActionButton>
+							<TitleInfo>
+								<Symbols
+									symbols={[
+										{ resource: 'money', count: 5 },
+										{ symbol: SymbolType.RightArrow },
+									]}
+								/>
+							</TitleInfo>
 						</Flex>
 					}
 					delegates={game.committee.reserve.filter((r) => !!r)}
@@ -75,6 +81,32 @@ export const CommitteeModal = ({ onClose }: Props) => {
 				placingMode={isPlacing}
 				onClick={handlePartyClick}
 			/>
+
+			<Actions>
+				{!isPlacing && (
+					<>
+						{canPlaceFromLobby && (
+							<Button onClick={toggleIsPlacing}>
+								Place candidate from lobby
+							</Button>
+						)}
+						{!canPlaceFromLobby && canPlaceFromReserve && (
+							<Button onClick={toggleIsPlacing}>
+								<Symbols
+									symbols={[{ resource: 'money', count: 5 }]}
+									noSpacing
+								/>{' '}
+								Place candidate from reserve
+							</Button>
+						)}
+					</>
+				)}
+				{isPlacing && (
+					<Button icon={faTimes} onClick={toggleIsPlacing}>
+						Cancel
+					</Button>
+				)}
+			</Actions>
 		</Modal>
 	)
 }
@@ -83,8 +115,10 @@ export const StyledSymbols = styled(Symbols)`
 	justify-content: flex-start;
 `
 
-export const ActionButton = styled(Button)`
-	margin: 0;
-	padding: 0.1rem 0.25rem;
+export const TitleInfo = styled.div`
 	margin-left: auto;
+`
+
+const Actions = styled(Flex)`
+	justify-content: center;
 `

@@ -8,6 +8,7 @@ import { styled } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { CommitteeModal } from '../../CommitteeModal/CommitteeModal'
 import { HeaderDialogButton } from './HeaderDialogButton'
+import { Flex } from '@/components/Flex/Flex'
 
 export const CommitteeButton = () => {
 	const game = useGameState()
@@ -23,7 +24,6 @@ export const CommitteeButton = () => {
 				dialog={(close) => <CommitteeModal onClose={close} />}
 				noClip
 			>
-				{rulingParty && <CommitteePartyIcon party={rulingParty.code} />}
 				Committee
 			</StyledButton>
 			<SubContainer>
@@ -46,12 +46,16 @@ export const CommitteeButton = () => {
 						}
 						position={Position.Bottom}
 					>
-						{[
-							...rulingParty.policy.active.map((p) => p.symbols),
-							...rulingParty.policy.passive.map((p) => p.symbols),
-						].map((symbols, index) => (
-							<Symbols key={index} symbols={symbols} />
-						))}
+						<Data>
+							<CommitteePartyIcon party={rulingParty.code} size="sm" />
+
+							{[
+								...rulingParty.policy.active.map((p) => p.symbols),
+								...rulingParty.policy.passive.map((p) => p.symbols),
+							].map((symbols, index) => (
+								<Symbols key={index} symbols={symbols} />
+							))}
+						</Data>
 					</Tooltip>
 				)}
 			</SubContainer>
@@ -59,13 +63,18 @@ export const CommitteeButton = () => {
 	)
 }
 
+const Data = styled(Flex)`
+	justify-content: space-between;
+	padding: 0 0.5rem;
+`
+
 const Container = styled.div`
 	margin-top: 0.5rem;
 	width: 10rem;
 `
 
 const StyledButton = styled(HeaderDialogButton)`
-	padding: 0.15rem 0.1rem;
+	/*padding: 0.15rem 0.1rem;*/
 `
 
 const SubContainer = styled.div`

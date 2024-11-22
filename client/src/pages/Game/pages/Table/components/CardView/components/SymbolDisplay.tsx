@@ -23,6 +23,7 @@ type Props = {
 	symbol: CardSymbol
 	className?: string
 	noSpacing?: boolean
+	noVerticalSpacing?: boolean
 }
 
 const symbolToIcon = (s: CardSymbol) => {
@@ -140,7 +141,12 @@ const getCountSymbol = (symbol: CardSymbol, countStr: string | undefined) => {
 	return undefined
 }
 
-export const SymbolDisplay = ({ symbol: s, className, noSpacing }: Props) => {
+export const SymbolDisplay = ({
+	symbol: s,
+	className,
+	noSpacing,
+	noVerticalSpacing,
+}: Props) => {
 	const countStr =
 		s.count === undefined
 			? undefined
@@ -157,6 +163,7 @@ export const SymbolDisplay = ({ symbol: s, className, noSpacing }: Props) => {
 			other={s.other}
 			style={{ color: s.color, ...(s.noRightSpacing && { paddingRight: 0 }) }}
 			title={s.title}
+			noVerticalSpacing={noVerticalSpacing}
 			noSpacing={
 				noSpacing ||
 				s.symbol === SymbolType.X ||
@@ -192,6 +199,7 @@ const S = styled.div<{
 	production?: boolean
 	other?: boolean
 	noSpacing?: boolean
+	noVerticalSpacing?: boolean
 }>`
 	display: flex;
 	align-items: center;
@@ -200,7 +208,7 @@ const S = styled.div<{
 	${(props) =>
 		!props.noSpacing &&
 		css`
-			padding: 0.3em 0.3em;
+			padding: ${props.noVerticalSpacing ? '0' : '0.3em'} 0.3em;
 		`}
 
 	${(props) =>

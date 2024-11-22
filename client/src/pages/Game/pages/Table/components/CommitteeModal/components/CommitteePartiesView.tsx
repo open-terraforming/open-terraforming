@@ -263,9 +263,10 @@ const PartyPath = styled.path<{ $isPlacing: boolean }>`
 		props.$isPlacing &&
 		css`
 			cursor: pointer;
+			opacity: 0.3;
 
 			&:hover {
-				fill: #fff;
+				opacity: 1;
 			}
 		`}
 `

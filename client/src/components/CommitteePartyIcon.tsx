@@ -7,17 +7,21 @@ import {
 	faTree,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
+
+type Size = 'sm' | 'md'
 
 type Params = {
 	party: string
+	size?: Size
 }
 
-export const CommitteePartyIcon = ({ party }: Params) => {
+export const CommitteePartyIcon = ({ party, size = 'md' }: Params) => {
 	switch (party) {
 		case 'mars_first':
 			return (
 				<GeneralContainer
+					$size={size}
 					style={{
 						backgroundColor: '#b87e47',
 						color: '#5f3420',
@@ -31,6 +35,7 @@ export const CommitteePartyIcon = ({ party }: Params) => {
 		case 'kelvinists':
 			return (
 				<GeneralContainer
+					$size={size}
 					style={{
 						backgroundColor: '#333',
 						color: '#f53030',
@@ -44,6 +49,7 @@ export const CommitteePartyIcon = ({ party }: Params) => {
 		case 'scientists':
 			return (
 				<GeneralContainer
+					$size={size}
 					style={{
 						backgroundColor: '#e0e0e0',
 						color: '#444444',
@@ -57,6 +63,7 @@ export const CommitteePartyIcon = ({ party }: Params) => {
 		case 'reds':
 			return (
 				<GeneralContainer
+					$size={size}
 					style={{
 						backgroundColor: '#f00',
 						color: '#fff',
@@ -70,6 +77,7 @@ export const CommitteePartyIcon = ({ party }: Params) => {
 		case 'unity':
 			return (
 				<GeneralContainer
+					$size={size}
 					style={{
 						backgroundColor: '#22a',
 						color: '#fff',
@@ -83,6 +91,7 @@ export const CommitteePartyIcon = ({ party }: Params) => {
 		case 'greens':
 			return (
 				<GeneralContainer
+					$size={size}
 					style={{
 						backgroundColor: '#4b4',
 						color: '#060',
@@ -95,7 +104,7 @@ export const CommitteePartyIcon = ({ party }: Params) => {
 	}
 }
 
-const GeneralContainer = styled.div`
+const GeneralContainer = styled.div<{ $size: Size }>`
 	padding: 0.1rem 0.5rem;
 	border-radius: 0.8rem;
 	width: 1.5rem;
@@ -103,4 +112,12 @@ const GeneralContainer = styled.div`
 	text-align: center;
 	border: 2px solid #fff;
 	font-size: 125%;
+
+	${({ $size }) =>
+		$size === 'sm' &&
+		css`
+			width: 1.25rem;
+			font-size: 80%;
+			padding: 0.1rem 0.3rem;
+		`}
 `
