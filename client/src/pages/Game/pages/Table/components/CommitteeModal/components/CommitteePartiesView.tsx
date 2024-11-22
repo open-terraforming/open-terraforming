@@ -280,6 +280,12 @@ const HtmlMarkesContainer = styled.div`
 `
 
 const PartyPath = styled.path<{ $isPlacing: boolean }>`
+	cursor: pointer;
+
+	&:hover {
+		opacity: 0.7;
+	}
+
 	${(props) =>
 		props.$isPlacing &&
 		css`
