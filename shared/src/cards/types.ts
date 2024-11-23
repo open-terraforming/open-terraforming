@@ -36,7 +36,11 @@ export type CardResource =
 
 export type GameProgress = 'oxygen' | 'temperature' | 'oceans' | 'venus'
 
-export type CardEffectArgumentType = number | string | CardEffectArgumentType[]
+export type CardEffectArgumentType =
+	| number
+	| null
+	| string
+	| CardEffectArgumentType[]
 
 export interface CardCallbackContext {
 	game: GameState

@@ -166,7 +166,10 @@ export const isCardActionable = (card: Card, ctx: CardCallbackContext) =>
 	card.actionEffects.length > 0 &&
 	!card.actionEffects.find((e) => e.conditions.find((c) => !c.evaluate(ctx)))
 
-export const emptyCardState = (cardCode: string, index = -1) => ({
+export const emptyCardState = (
+	cardCode: string,
+	index = -1,
+): UsedCardState => ({
 	code: cardCode,
 	index,
 	played: false,
@@ -177,6 +180,7 @@ export const emptyCardState = (cardCode: string, index = -1) => ({
 	floaters: 0,
 	asteroids: 0,
 	camps: 0,
+	preservation: 0,
 })
 
 export const minimalCardPrice = (card: Card, player: PlayerGameState) =>

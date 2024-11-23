@@ -8,16 +8,23 @@ type Props = {
 	children?: ReactNode
 	style?: CSSProperties
 	clipSize?: string
+	onClick?: () => void
 }
 
 export const ClippedBox = ({
 	className,
 	children,
 	style,
+	onClick,
 	clipSize = '7px',
 }: Props) => {
 	return (
-		<OuterBorder className={className} style={style} $clipSize={clipSize}>
+		<OuterBorder
+			className={className}
+			style={style}
+			$clipSize={clipSize}
+			onClick={onClick}
+		>
 			<Inner className="inner" $clipSize={clipSize}>
 				{children}
 			</Inner>
