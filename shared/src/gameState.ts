@@ -396,6 +396,9 @@ export interface PlayerState {
 
 	/** Override of cost of sponsoring a card (buying it into hand) */
 	sponsorCost?: number
+
+	/** Adds extra influence when calculating influence */
+	extraInfluence?: number
 }
 
 export enum VictoryPointsSource {

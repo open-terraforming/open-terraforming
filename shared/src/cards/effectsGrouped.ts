@@ -1543,7 +1543,7 @@ export const resourcesForPlayersTags = (
 	})
 }
 
-export const resourceForTagsPlayed = (
+export const resourceForAllPlayersTags = (
 	tag: CardCategory,
 	res: Resource,
 	resPerCard: number,

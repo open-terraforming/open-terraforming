@@ -10,6 +10,7 @@ import { preludeCorporations } from './prelude/corporations'
 import { preludePreludes } from './prelude/prelude'
 import { venusCards } from './venus/venusCards'
 import { venusCorporations } from './venus/venusCorporations'
+import { turmoilCards } from '@shared/expansions/turmoil/turmoilCards'
 
 if (Cards.length === 0) {
 	Cards.push(...baseCorporations)
@@ -21,4 +22,5 @@ if (Cards.length === 0) {
 	Cards.push(...venusCorporations)
 	Cards.push(...coloniesCards)
 	Cards.push(...coloniesCorporations)
+	Cards.push(...turmoilCards)
 }

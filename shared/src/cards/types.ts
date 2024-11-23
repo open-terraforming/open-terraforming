@@ -89,6 +89,7 @@ export enum CardSpecial {
 	Prelude,
 	Venus,
 	Colonies,
+	Turmoil,
 }
 
 export interface CardVictoryPointsCallback {
@@ -286,6 +287,7 @@ export enum SymbolType {
 	Tile,
 	Delegate,
 	Chairman,
+	PartyLeader,
 }
 
 export interface CardSymbol {

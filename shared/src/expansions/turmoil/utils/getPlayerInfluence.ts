@@ -15,6 +15,7 @@ export const getPlayerInfluence = (game: GameState, player: PlayerState) => {
 	)
 
 	return (
+		(player.extraInfluence ?? 0) +
 		(hasChairman ? 1 : 0) +
 		(isLeaderOfDominantParty ? 1 : 0) +
 		(hasMemberInDominantParty ? 1 : 0)

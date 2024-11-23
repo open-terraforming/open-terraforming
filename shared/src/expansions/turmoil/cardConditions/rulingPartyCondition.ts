@@ -8,7 +8,6 @@ export const rulingPartyCondition = (rulingParty: string) =>
 			'Requires that {0} are ruling or that you have 2 delegates there.',
 			ucFirst(rulingParty),
 		),
-		// TODO: Symbols for parties
 		symbols: [{ committeeParty: rulingParty }],
 		evaluate: ({ game, player }) =>
 			game.committee.rulingParty === rulingParty ||
