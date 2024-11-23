@@ -16,12 +16,12 @@ export const RulingPartyDisplay = ({ party }: { party: CommitteeParty }) => {
 	const game = useGameState()
 	const api = useApi()
 
+	const activePolicy = party.policy.active[0]
+
 	const canRunActivePolicy =
-		party.policy.active.length > 0 &&
-		(!party.policy.active[0].condition ||
-			party.policy.active[0].condition({ game, player })) &&
-		(!party.policy.active[0].oncePerGeneration ||
-			!player.usedActiveRulingPartyPolicy)
+		activePolicy &&
+		(!activePolicy.condition || activePolicy.condition({ game, player })) &&
+		(!activePolicy.oncePerGeneration || !player.usedActiveRulingPartyPolicy)
 
 	const handleActivatePolicy = () => {
 		if (!canRunActivePolicy) {

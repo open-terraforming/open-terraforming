@@ -22,6 +22,7 @@ import { changeColonyStep } from '@shared/actions'
 import { AddCardResourceModal } from './components/Controls/components/AddCardResourceModal'
 import { GameModalsProvider } from '@/context/GameModalsContext'
 import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
+import { DiscardCardsModal } from './components/DiscardCardsModal'
 
 const Table = () => {
 	const pending = useAppStore((state) => state.game.pendingAction)
@@ -112,6 +113,10 @@ const Table = () => {
 
 				{pending?.type === PlayerActionType.AddCardResource && (
 					<AddCardResourceModal pendingAction={pending} />
+				)}
+
+				{pending?.type === PlayerActionType.DiscardCards && (
+					<DiscardCardsModal count={pending.data.count} />
 				)}
 
 				<GameContainer>

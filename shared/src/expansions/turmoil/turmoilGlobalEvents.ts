@@ -463,11 +463,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 		effectDelegate: 'scientists',
 		effects: [
 			{
-				symbols: [
-					{ symbol: SymbolType.Minus },
-					{ symbol: SymbolType.Card },
-					{ symbol: SymbolType.Card },
-				],
+				symbols: [{ symbol: SymbolType.Card, count: -2 }],
 				description: 'Discard 2 cards from hand.',
 				apply(game) {
 					for (const player of game.players) {

@@ -10,7 +10,7 @@ export interface CommitteeParty {
 	}
 	policy: {
 		// NOTE: The system currently only supports one activate policy at a time
-		active: [CommitteePartyActiveAction]
+		active: [CommitteePartyActiveAction] | []
 		passive: CommitteePartyPassiveAction[]
 	}
 }
