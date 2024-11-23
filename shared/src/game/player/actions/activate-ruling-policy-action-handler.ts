@@ -25,10 +25,16 @@ export class ActivateRulingPolicyActionHandler extends PlayerBaseActionHandler<A
 			throw new Error('Player cannot activate this policy')
 		}
 
+		if (policy.oncePerGeneration && this.player.usedActiveRulingPartyPolicy) {
+			throw new Error('Player already used active ruling party policy')
+		}
+
 		rulingParty.policy.active[index].action({
 			game: this.game,
 			player: this.player,
 		})
+
+		this.player.usedActiveRulingPartyPolicy = true
 
 		if (!this.pendingAction) {
 			this.actionPlayed()

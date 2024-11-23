@@ -404,6 +404,9 @@ export interface PlayerState {
 
 	/** Override default adjacent oceans bonus */
 	adjacentOceansBonus?: number
+
+	/** Marks that this player has used active ruling party policy - used for policies that can be only run once per generation */
+	usedActiveRulingPartyPolicy?: boolean
 }
 
 export enum VictoryPointsSource {

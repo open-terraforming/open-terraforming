@@ -5,9 +5,31 @@ import { CommitteeParty } from '@shared/expansions/turmoil/committeeParty'
 import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { useLocale } from '@/context/LocaleContext'
+import { useGameState, usePlayerState } from '@/utils/hooks'
+import { Button } from '@/components'
+import { useApi } from '@/context/ApiContext'
+import { activateRulingPolicyActionRequest } from '@shared/actions'
 
 export const RulingPartyDisplay = ({ party }: { party: CommitteeParty }) => {
 	const t = useLocale()
+	const player = usePlayerState()
+	const game = useGameState()
+	const api = useApi()
+
+	const canRunActivePolicy =
+		party.policy.active.length > 0 &&
+		(!party.policy.active[0].condition ||
+			party.policy.active[0].condition({ game, player })) &&
+		(!party.policy.active[0].oncePerGeneration ||
+			!player.usedActiveRulingPartyPolicy)
+
+	const handleActivatePolicy = () => {
+		if (!canRunActivePolicy) {
+			return
+		}
+
+		api.send(activateRulingPolicyActionRequest(0))
+	}
 
 	return (
 		<Container>
@@ -33,6 +55,12 @@ export const RulingPartyDisplay = ({ party }: { party: CommitteeParty }) => {
 						...party.policy.passive.map((p) => p.description),
 					].join(' ')}
 				</div>
+
+				{canRunActivePolicy && (
+					<ActivateButton onClick={handleActivatePolicy}>
+						Activate policy
+					</ActivateButton>
+				)}
 			</Effect>
 		</Container>
 	)
@@ -61,7 +89,7 @@ const TitleParty = styled(Flex)`
 `
 
 const Container = styled(ClippedBox)`
-	height: 125px;
+	height: 160px;
 	width: 250px;
 
 	.inner {
@@ -72,4 +100,8 @@ const Container = styled(ClippedBox)`
 
 const StyledSymbols = styled(Symbols)`
 	justify-content: flex-start;
+`
+
+const ActivateButton = styled(Button)`
+	margin-top: 0.5rem;
 `
