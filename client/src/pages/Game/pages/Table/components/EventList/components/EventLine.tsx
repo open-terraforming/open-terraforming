@@ -21,6 +21,9 @@ import { memo, useEffect, useMemo, useRef } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { CardResourceIcon } from '../../CardResourceIcon/CardResourceIcon'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
+import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
 	event: GameEvent
@@ -268,6 +271,44 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return <></>
 			case EventType.MarsTerraformed:
 				return <>Mars terraformed</>
+			case EventType.CommitteeDominantPartyChanged:
+				return (
+					<InlineFlex>
+						<CommitteePartyIcon party={event.partyCode} size="sm" />{' '}
+						{locale.committeeParties[event.partyCode]} is now dominant party
+					</InlineFlex>
+				)
+			case EventType.CommitteePartyLeaderChanged:
+				return (
+					<InlineFlex>
+						{event.playerId !== null ? (
+							<PlayerSpan player={players[event.playerId.id]} />
+						) : (
+							'Neutral'
+						)}{' '}
+						is now leader of{' '}
+						<CommitteePartyIcon party={event.partyCode} size="sm" />{' '}
+						{locale.committeeParties[event.partyCode]}
+					</InlineFlex>
+				)
+			case EventType.CommitteePartyDelegateChange:
+				return (
+					<InlineFlex>
+						<CommitteePartyIcon party={event.partyCode} size="sm" />{' '}
+						{locale.committeeParties[event.partyCode]}{' '}
+						{event.changes.map(({ change, playerId }, i) => (
+							<span key={i}>
+								{change > 0 ? `+${change}` : change}{' '}
+								<FontAwesomeIcon
+									icon={faUser}
+									color={
+										playerId === null ? '#ccc' : players[playerId.id].color
+									}
+								/>
+							</span>
+						))}
+					</InlineFlex>
+				)
 		}
 
 		assertNever(event)
@@ -329,4 +370,10 @@ const ColoniesSpanE = styled.span`
 	&:hover {
 		text-decoration: underline;
 	}
+`
+
+const InlineFlex = styled.div`
+	display: inline-flex;
+	gap: 0.2rem;
+	align-items: center;
 `

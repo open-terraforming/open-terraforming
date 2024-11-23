@@ -4,6 +4,7 @@ import {
 	ColonyState,
 	GridCellContent,
 	GridCellOther,
+	PlayerId,
 	StandardProjectType,
 	UsedCardState,
 } from '@shared/index'
@@ -37,6 +38,9 @@ export enum EventType {
 	TileClaimed,
 	WorldGovernmentTerraforming,
 	MarsTerraformed,
+	CommitteePartyDelegateChange,
+	CommitteePartyLeaderChanged,
+	CommitteeDominantPartyChanged,
 }
 
 export type StartingSetup = {
@@ -212,6 +216,26 @@ export type MarsTerraformed = {
 	type: EventType.MarsTerraformed
 }
 
+export type CommitteePartyDelegateChange = {
+	type: EventType.CommitteePartyDelegateChange
+	partyCode: string
+	changes: {
+		playerId: PlayerId | null
+		change: number
+	}[]
+}
+
+export type CommitteePartyLeaderChanged = {
+	type: EventType.CommitteePartyLeaderChanged
+	partyCode: string
+	playerId: PlayerId | null
+}
+
+export type CommitteeDominantPartyChanged = {
+	type: EventType.CommitteeDominantPartyChanged
+	partyCode: string
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -240,6 +264,9 @@ export type GameEvent =
 	| TileClaimed
 	| WorldGovernmentTerraforming
 	| MarsTerraformed
+	| CommitteePartyDelegateChange
+	| CommitteePartyLeaderChanged
+	| CommitteeDominantPartyChanged
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

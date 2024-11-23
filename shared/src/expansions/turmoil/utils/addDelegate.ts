@@ -1,7 +1,7 @@
 import { GameState, PlayerId } from '@shared/index'
 import { getPartyState } from './getPartyState'
-import { recalculatePartyLeader } from './recalculatePartyLeader'
 import { recalculateDominantParty } from './recalculateDominantParty'
+import { recalculatePartyLeader } from './recalculatePartyLeader'
 
 export const addDelegate = (
 	game: GameState,

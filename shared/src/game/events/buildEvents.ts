@@ -2,8 +2,9 @@ import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
 import { GameState, GameStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { isMarsTerraformed } from '@shared/utils/isMarsTerraformed'
+import { groupBy } from '@shared/utils'
 import { objDiff } from '@shared/utils/collections'
+import { isMarsTerraformed } from '@shared/utils/isMarsTerraformed'
 import { EventType, GameEvent } from './eventTypes'
 
 const resources: Resource[] = [
@@ -380,6 +381,88 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 		newEvents.push({
 			type: EventType.ProductionPhase,
 		})
+	}
+
+	if (diff.committee) {
+		if (diff.committee.parties) {
+			for (const [index, party] of Object.entries(diff.committee.parties)) {
+				const prevParty = lastGame.committee.parties[+index]
+				const nextParty = game.committee.parties[+index]
+
+				if (!prevParty) {
+					continue
+				}
+
+				if (party.members) {
+					const newMembers = groupBy(
+						nextParty.members.map((m) => m.playerId?.id ?? null),
+						(m) => m,
+					)
+
+					const oldMembers = groupBy(
+						prevParty.members.map((m) => m.playerId?.id ?? null),
+						(m) => m,
+					)
+
+					const oldLeaderId = prevParty.leader?.playerId?.id ?? null
+					const newLeaderId = nextParty.leader?.playerId?.id ?? null
+
+					oldMembers.set(oldLeaderId, [
+						...(oldMembers.get(oldLeaderId) ?? []),
+						oldLeaderId,
+					])
+
+					newMembers.set(newLeaderId, [
+						...(newMembers.get(newLeaderId) ?? []),
+						newLeaderId,
+					])
+
+					const changes = new Map<number | null, number>()
+
+					for (const [playerId, members] of newMembers) {
+						if (!oldMembers.has(playerId)) {
+							changes.set(playerId, members.length)
+						} else {
+							const prevCount = oldMembers.get(playerId)!.length
+
+							if (prevCount !== members.length) {
+								changes.set(playerId, members.length - prevCount)
+							}
+						}
+					}
+
+					for (const [playerId, members] of oldMembers) {
+						if (!newMembers.has(playerId)) {
+							changes.set(playerId, -members.length)
+						}
+					}
+
+					game.events.push({
+						type: EventType.CommitteePartyDelegateChange,
+						partyCode: prevParty.code,
+						changes: Array.from(changes).map(([playerId, change]) => ({
+							playerId: playerId === null ? null : { id: playerId },
+							change,
+						})),
+					})
+				}
+
+				if (party.leader) {
+					game.events.push({
+						type: EventType.CommitteePartyLeaderChanged,
+						partyCode: prevParty.code,
+						playerId: party.leader.playerId,
+					})
+				}
+			}
+		}
+
+		if (diff.committee.dominantParty) {
+			game.events.push({
+				type: EventType.CommitteeDominantPartyChanged,
+				partyCode: diff.committee.dominantParty,
+			})
+		}
 	}
 
 	const changes = newEvents.filter((e) =>
