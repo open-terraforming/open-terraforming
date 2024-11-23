@@ -7,7 +7,7 @@
     "start": "node dist/server/src/index.js",
     "dev": "nodemon dist/server/src/index.js",
     "all": "concurrently --kill-others -c yellow,gray,blue -n \"server,watch,client\" \"npm run dev\" \"npx tsc --watch --preserveWatchOutput\" \"cd ../client && npm run start\"",
-		"picker:dev": "nodemon dist/server/src/picker.js",
+    "picker:dev": "nodemon dist/server/src/picker.js",
     "picker": "concurrently --kill-others -c yellow,gray -n \"server,watch\" \"npm run picker:dev\" \"npx tsc --watch --preserveWatchOutput\"",
     "build": "tsc",
     "watch": "tsc --watch",
