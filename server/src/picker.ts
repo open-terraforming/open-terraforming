@@ -23,6 +23,12 @@ async function main() {
 
 	app.use(express.static('./picker'))
 
+	app.get('/api/config', (req, res) => {
+		res.json({
+			iframePath: globalConfig.cardEditor.iframeUrl,
+		})
+	})
+
 	app.get('/api/progress', (req, res) => {
 		const all = Object.values(CardsLookupApi.data()).map((c) => c.code)
 		const done = all.filter((c) => existsSync(cardPath({ code: c } as Card)))

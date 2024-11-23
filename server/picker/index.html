@@ -35,14 +35,14 @@
 		<div style="display: flex"><h2 id="card_title">...</h2> <button id="save">Save</button></div>
 		<input type="file" id="file" /> 
 		<img id="image" />
-		<iframe src="http://127.0.0.1:7865" id="iframe" width="100%" height="800px"></iframe>
+		<iframe id="iframe" width="100%" height="800px"></iframe>
 	</body>
 	<script type="text/javascript">
-		const iframe = document.getElementById('iframe');
-		const cardTitle = document.getElementById('card_title');
-		const fileInput = document.getElementById('file');
-		const saveButton = document.getElementById('save');
-		const image = document.getElementById('image');
+		const $iframe = document.getElementById('iframe');
+		const $cardTitle = document.getElementById('card_title');
+		const $fileInput = document.getElementById('file');
+		const $saveButton = document.getElementById('save');
+		const $image = document.getElementById('image');
 		const $progress = document.getElementById('progress');
 		
 		const getNextCard = async () => {
@@ -83,30 +83,30 @@
 			currentCard = await getNextCard();
 			
 			const cardCode = card.code
-			cardTitle.innerText = cardCode
-			fileInput.value = ''
+			$cardTitle.innerText = cardCode
+			$fileInput.value = ''
 
 			if (croppr) {
 				croppr.destroy();
 				croppr = null;
-				image.src = '';
+				$image.src = '';
 			}
 		}
 
 		let currentCrop = {}
 		let croppr
 
-		fileInput.onchange = async (event) => {
+		$fileInput.onchange = async (event) => {
 			const file = event.target.files[0];
 			const reader = new FileReader();
 			reader.onload = async (event) => {
-				image.src = event.target.result;
-				image.onload = async () => {
+				$image.src = event.target.result;
+				$image.onload = async () => {
 					if (croppr) {
 						croppr.destroy();
 					}
 
-					croppr = new Croppr(image, {
+					croppr = new Croppr($image, {
 						aspectRatio: currentCard.type === 5 ? 1 : 0.5,
 						onCropEnd: async (data) => {
 							currentCrop = {...data}
@@ -117,18 +117,26 @@
 			reader.readAsDataURL(file);
 		}
 
-		saveButton.onclick = async () => {
+		$saveButton.onclick = async () => {
 			const cutX = currentCrop.x;
 			const cutY = currentCrop.y;
 			const cutW = currentCrop.width;
 			const cutH = currentCrop.height;
-			const imageAsBase64 = image.src;
-			const cardCode = cardTitle.innerText;
+			const imageAsBase64 = $image.src;
+			const cardCode = $cardTitle.innerText;
 			await saveCardImage(cardCode, imageAsBase64, cutX, cutY, cutW, cutH);
 			loadCard();
 			updateProgress();
 		}
 
+		async function loadIframeUrl() {
+			const response = await fetch('/api/config');
+			const config = await response.json();
+
+			$iframe.src = config.iframePath;
+		}
+
+		loadIframeUrl();
 		loadCard();
 		updateProgress();
 	</script>
