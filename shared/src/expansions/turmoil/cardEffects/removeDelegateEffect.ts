@@ -12,8 +12,8 @@ export const removeDelegateEffect = () =>
 		symbols: [{ symbol: SymbolType.Delegate, count: -1, other: true }],
 		args: [
 			{
-				...committeePartyMemberArg(),
-				descriptionPostfix: 'Remove delegate from',
+				...committeePartyMemberArg([(_, party) => party.members.length > 0]),
+				descriptionPrefix: 'Remove delegate from',
 			},
 		],
 		conditions: [
@@ -49,7 +49,7 @@ export const removeDelegateEffect = () =>
 			const party = getPartyState(game, partyCode)
 
 			const delegateIndex = party.members.findIndex(
-				(m) => m.playerId?.id === memberPlayerId,
+				(m) => (m.playerId?.id ?? null) === memberPlayerId,
 			)
 
 			if (delegateIndex === -1) {

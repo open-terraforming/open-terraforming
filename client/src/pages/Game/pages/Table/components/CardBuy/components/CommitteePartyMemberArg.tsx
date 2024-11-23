@@ -52,6 +52,8 @@ export const CommitteePartyMemberArg = ({ arg, onChange }: Props) => {
 		setPartyCode(value)
 	}
 
+	console.log({ partyCode, playerId, playerChoices, selectedParty })
+
 	return (
 		<ArgContainer>
 			<span>{arg.descriptionPrefix}</span>
