@@ -45,7 +45,7 @@ const Title = styled(Flex)`
 `
 
 const Effect = styled(Flex)`
-	padding: 0.1rem;
+	padding: 0.25rem;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
