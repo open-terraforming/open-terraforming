@@ -415,6 +415,7 @@ export const gameProcessChange = (res: GameProgress, change: number) => {
 			if (update > 0) {
 				game[res] += update
 				player.terraformRating += update
+				player.terraformRatingIncreasedThisGeneration = true
 			}
 		},
 	})
@@ -528,6 +529,10 @@ export const terraformRatingChange = (change: number) =>
 		symbols: [{ symbol: SymbolType.TerraformingRating, count: change }],
 		perform: ({ player }) => {
 			player.terraformRating += change
+
+			if (change > 0) {
+				player.terraformRatingIncreasedThisGeneration = true
+			}
 		},
 	})
 
@@ -1492,8 +1497,14 @@ export const terraformRatingForTags = (tag: CardCategory, amount: number) =>
 		],
 		hints: [tagsCountHint([tag])],
 		perform: ({ player, card }) => {
-			player.terraformRating +=
+			const change =
 				countTagsWithoutEvents([...player.usedCards, card.code], tag) * amount
+
+			player.terraformRating += change
+
+			if (change > 0) {
+				player.terraformRatingIncreasedThisGeneration = true
+			}
 		},
 	})
 

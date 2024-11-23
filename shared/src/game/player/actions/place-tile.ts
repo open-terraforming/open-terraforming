@@ -90,6 +90,7 @@ export class PlaceTileAction extends PlayerBaseActionHandler<Args> {
 
 					if (!top.anonymous) {
 						this.player.terraformRating++
+						this.player.terraformRatingIncreasedThisGeneration = true
 					}
 				}
 
@@ -99,6 +100,7 @@ export class PlaceTileAction extends PlayerBaseActionHandler<Args> {
 			case GridCellContent.Ocean: {
 				if (!top.anonymous) {
 					this.player.terraformRating++
+					this.player.terraformRatingIncreasedThisGeneration = true
 				}
 
 				this.game.oceans++

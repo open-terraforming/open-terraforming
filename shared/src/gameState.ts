@@ -359,8 +359,7 @@ export interface PlayerState {
 	/** Player TR */
 	terraformRating: number
 
-	/** Player TR at start of the generation */
-	terraformRatingAtGenerationStart: number
+	terraformRatingIncreasedThisGeneration: boolean
 
 	/**  Number of actions played this round */
 	actionsPlayed: number

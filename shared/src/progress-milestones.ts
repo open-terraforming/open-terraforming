@@ -27,6 +27,7 @@ const ProgressMilestonesList = [
 			(game, player) => {
 				if (game.temperature < game.map.temperature) {
 					player.terraformRating++
+					player.terraformRatingIncreasedThisGeneration = true
 					game.temperature++
 				}
 			},
@@ -60,6 +61,7 @@ const ProgressMilestonesList = [
 		effects: [
 			(game, player) => {
 				player.terraformRating++
+				player.terraformRatingIncreasedThisGeneration = true
 			},
 		],
 	}),

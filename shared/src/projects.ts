@@ -84,6 +84,7 @@ const ProjectsList = [
 		conditions: [({ game }) => game.temperature < game.map.temperature],
 		execute: ({ game, player }) => {
 			player.terraformRating += 1
+			player.terraformRatingIncreasedThisGeneration = true
 			game.temperature += 1
 		},
 	}),
@@ -154,6 +155,7 @@ const ProjectsList = [
 		conditions: [({ game }) => game.temperature < game.map.temperature],
 		execute: ({ game, player }) => {
 			player.terraformRating += 1
+			player.terraformRatingIncreasedThisGeneration = true
 			game.temperature += 1
 		},
 	}),
@@ -164,6 +166,7 @@ const ProjectsList = [
 		conditions: [canIncreaseProgress('venus')],
 		execute: ({ game, player }) => {
 			player.terraformRating += 1
+			player.terraformRatingIncreasedThisGeneration = true
 			game.venus += 1
 		},
 	}),

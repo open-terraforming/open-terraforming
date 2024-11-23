@@ -67,9 +67,7 @@ export const turmoilCorporations: Card[] = [
 					{ cardResource: 'preservation' },
 				],
 				onGenerationEnd({ player, card }) {
-					if (
-						player.terraformRating === player.terraformRatingAtGenerationStart
-					) {
+					if (!player.terraformRatingIncreasedThisGeneration) {
 						card.preservation += 1
 						updatePlayerResource(player, 'money', 6)
 					}
@@ -110,10 +108,13 @@ export const turmoilCorporations: Card[] = [
 			effect({
 				description: 'Decrease any production to gain 4 resources of that kind',
 				args: [
-					resourceTypeArg([
-						({ player }, resource) =>
-							player[PLAYER_RESOURCE_TO_PRODUCTION[resource]] > 0,
-					]),
+					{
+						...resourceTypeArg([
+							({ player }, resource) =>
+								player[PLAYER_RESOURCE_TO_PRODUCTION[resource]] > 0,
+						]),
+						descriptionPrefix: 'Decrease',
+					},
 				],
 				symbols: [
 					{

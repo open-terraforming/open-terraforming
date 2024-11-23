@@ -125,7 +125,7 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	protectedHabitat: false,
 	tradeFleets: 1,
 	colonyTradeResourceCostChange: 0,
-	terraformRatingAtGenerationStart: 20,
+	terraformRatingIncreasedThisGeneration: false,
 })
 
 export const initialStandardProjectState = (

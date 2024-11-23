@@ -19,8 +19,10 @@ export const resourcePerPartyWithDelegate = (
 			{ symbol: SymbolType.Delegate },
 		],
 		perform({ game, player }) {
-			const partiesWithDelegates = game.committee.parties.filter((party) =>
-				party.members.some((delegate) => delegate.playerId?.id === player.id),
+			const partiesWithDelegates = game.committee.parties.filter(
+				(party) =>
+					party.leader?.playerId?.id === player.id ||
+					party.members.some((delegate) => delegate.playerId?.id === player.id),
 			)
 
 			updatePlayerResource(
