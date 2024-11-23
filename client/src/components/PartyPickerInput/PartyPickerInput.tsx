@@ -4,6 +4,8 @@ import { useGameState, useToggle } from '@/utils/hooks'
 import { Button } from '../Button/Button'
 import { Flex } from '../Flex/Flex'
 import { Modal } from '../Modal/Modal'
+import styled from 'styled-components'
+import { CommitteePartyIcon } from '../CommitteePartyIcon'
 
 type Props = {
 	value: string | null
@@ -21,26 +23,55 @@ export const PartyPickerInput = ({ value, onChange, parties }: Props) => {
 	)
 
 	return (
-		<Flex>
-			{value === null ? 'None' : t.committeeParties[value]}
+		<Container>
+			<Value>
+				{value === null ? (
+					'None'
+				) : (
+					<>
+						<CommitteePartyIcon party={value} size="sm" />
+						{t.committeeParties[value]}
+					</>
+				)}
+			</Value>
 			<Button noClip onClick={togglePicker}>
 				Pick
 			</Button>
 
 			{showPicker && (
 				<Modal open header="Pick a Party" onClose={togglePicker}>
-					{shownParties.map((party) => (
-						<CommitteePartyDisplay
-							key={party.code}
-							state={party}
-							onClick={() => {
-								onChange(party.code)
-								togglePicker()
-							}}
-						/>
-					))}
+					<Flex wrap="wrap" justify="center" align="stretch" gap="0.5rem">
+						{shownParties.map((party) => (
+							<CommitteePartyDisplay
+								key={party.code}
+								state={party}
+								onClick={() => {
+									onChange(party.code)
+									togglePicker()
+								}}
+								pickerMode
+							/>
+						))}
+					</Flex>
 				</Modal>
 			)}
-		</Flex>
+		</Container>
 	)
 }
+
+const Container = styled(Flex)`
+	align-items: center;
+	background-color: ${({ theme }) => theme.colors.background};
+	margin: 0 0.25rem;
+	border: 2px solid ${({ theme }) => theme.colors.border};
+
+	button {
+		margin: 0;
+	}
+`
+
+const Value = styled(Flex)`
+	padding: 0 0.5rem;
+	gap: 0.25rem;
+	align-items: center;
+`

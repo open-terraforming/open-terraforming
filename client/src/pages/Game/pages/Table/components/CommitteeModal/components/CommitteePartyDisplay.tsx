@@ -3,7 +3,7 @@ import { useLocale } from '@/context/LocaleContext'
 import { useAppStore, useGameState, usePlayerState } from '@/utils/hooks'
 import { CommitteePartyState, PlayerStateValue } from '@shared/gameState'
 import { getCommitteeParty } from '@shared/utils'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { ClippedBox } from '@/components/ClippedBox'
 import { ClippedBoxTitle } from '@/components/ClippedBoxTitle'
@@ -19,9 +19,14 @@ import { addDelegateToPartyActionRequest } from '@shared/actions'
 type Props = {
 	state: CommitteePartyState
 	onClick?: () => void
+	pickerMode?: boolean
 }
 
-export const CommitteePartyDisplay = ({ state, onClick }: Props) => {
+export const CommitteePartyDisplay = ({
+	state,
+	onClick,
+	pickerMode,
+}: Props) => {
 	const game = useGameState()
 	const player = usePlayerState()
 	const api = useApi()
@@ -42,7 +47,7 @@ export const CommitteePartyDisplay = ({ state, onClick }: Props) => {
 	}
 
 	return (
-		<ClippedBox style={{ width: '20rem', margin: 'auto' }} onClick={onClick}>
+		<Container onClick={onClick} $pickerMode={pickerMode}>
 			<ClippedBoxTitle>
 				<Flex>
 					<Flex gap="0.25rem">
@@ -81,7 +86,7 @@ export const CommitteePartyDisplay = ({ state, onClick }: Props) => {
 				</Delegates>
 			)}
 
-			{(canPlaceFromLobby || canPlaceFromReserve) && (
+			{!pickerMode && (canPlaceFromLobby || canPlaceFromReserve) && (
 				<Actions justify="center">
 					<Button onClick={handlePlace}>
 						{!canPlaceFromLobby && (
@@ -123,9 +128,25 @@ export const CommitteePartyDisplay = ({ state, onClick }: Props) => {
 					))}
 				</EffectsContainer>
 			</div>
-		</ClippedBox>
+		</Container>
 	)
 }
+
+const Container = styled(ClippedBox)<{ $pickerMode?: boolean }>`
+	width: 20rem;
+	margin: 0 auto;
+
+	${({ $pickerMode }) =>
+		$pickerMode &&
+		css`
+			cursor: pointer;
+			opacity: 0.8;
+
+			&:hover {
+				opacity: 1;
+			}
+		`}
+`
 
 const StyledSymbols = styled(Symbols)`
 	justify-content: flex-start;

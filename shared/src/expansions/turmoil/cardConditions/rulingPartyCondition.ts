@@ -1,6 +1,7 @@
 import { condition } from '@shared/cards/conditions'
-import { f, ucFirst } from '@shared/utils'
+import { f } from '@shared/utils'
 import { getPartyState } from '../utils/getPartyState'
+import { ucFirst } from '@shared/utils/collections'
 
 export const rulingPartyCondition = (rulingParty: string) =>
 	condition({
