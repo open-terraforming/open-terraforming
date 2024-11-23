@@ -17,8 +17,6 @@ export enum PlayerActionType {
 	BuildColony,
 	ChangeColonyStep,
 	TradeWithColony,
-	RemoveDelegate,
-	PlaceDelegates,
 }
 
 export const placeTileAction = (state: PlacementState, anonymous = false) =>
@@ -127,17 +125,6 @@ export const tradeWithColonyAction = () =>
 		type: PlayerActionType.TradeWithColony,
 	}) as const
 
-export const removeDelegateAction = () =>
-	({
-		type: PlayerActionType.RemoveDelegate,
-	}) as const
-
-export const placeDelegatesAction = (count: number) =>
-	({
-		type: PlayerActionType.PlaceDelegates,
-		count,
-	}) as const
-
 export type PlayerAction =
 	| ReturnType<typeof placeTileAction>
 	| ReturnType<typeof pickCardsAction>
@@ -153,5 +140,3 @@ export type PlayerAction =
 	| ReturnType<typeof buildColonyAction>
 	| ReturnType<typeof changeColonyStepAction>
 	| ReturnType<typeof tradeWithColonyAction>
-	| ReturnType<typeof removeDelegateAction>
-	| ReturnType<typeof placeDelegatesAction>

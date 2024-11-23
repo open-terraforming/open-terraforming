@@ -7,6 +7,7 @@ import {
 	CellCondition,
 	WithOptional,
 	ResourceCondition,
+	CommitteePartyCondition,
 } from './types'
 
 export const effectArg = (
@@ -69,4 +70,18 @@ export const resourceTypeArg = (resourceConditions: ResourceCondition[] = []) =>
 	effectArg({
 		type: CardEffectTarget.ResourceType,
 		resourceConditions,
+	})
+
+export const committeePartyArg = (conditions?: CommitteePartyCondition[]) =>
+	effectArg({
+		type: CardEffectTarget.CommitteeParty,
+		committeePartyConditions: conditions,
+	})
+
+export const committeePartyMemberArg = (
+	conditions?: CommitteePartyCondition[],
+) =>
+	effectArg({
+		type: CardEffectTarget.CommitteePartyMember,
+		committeePartyConditions: conditions,
 	})

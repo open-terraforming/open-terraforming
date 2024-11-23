@@ -71,8 +71,6 @@ export enum MessageType {
 	AddBot,
 	ActivateRulingPolicy,
 	AddDelegateToParty,
-	RemoveDelegate,
-	AddPendingDelegates,
 }
 
 export const handshakeRequest = (version: string) =>
@@ -338,21 +336,6 @@ export const addDelegateToPartyActionRequest = (party: string) =>
 		data: { party },
 	}) as const
 
-export const removeDelegateActionRequest = (
-	party: string,
-	playerId: number | null,
-) =>
-	({
-		type: MessageType.RemoveDelegate,
-		data: { party, playerId },
-	}) as const
-
-export const addPendingDelegatesRequest = (party: string, count: number) =>
-	({
-		type: MessageType.AddPendingDelegates,
-		data: { party, count },
-	}) as const
-
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -391,5 +374,3 @@ export type GameMessage =
 	| ReturnType<typeof addBot>
 	| ReturnType<typeof activateRulingPolicyActionRequest>
 	| ReturnType<typeof addDelegateToPartyActionRequest>
-	| ReturnType<typeof removeDelegateActionRequest>
-	| ReturnType<typeof addPendingDelegatesRequest>

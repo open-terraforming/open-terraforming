@@ -1,12 +1,17 @@
 import { GameMessage, MessageType } from '@shared/actions'
 import { Player } from '../player'
 import { PlayerBaseActionHandler } from './action'
+import { ActivateRulingPolicyActionHandler } from './actions/activate-ruling-policy-action-handler'
+import { AddBotAction } from './actions/add-bot'
 import { AddCardResourceAction } from './actions/add-card-resource-action'
+import { AddDelegateToPartyActionHandler } from './actions/add-delegate-to-party-action-handler'
 import { AdminChangeAction } from './actions/admin-change'
 import { AdminLoginAction } from './actions/admin-login'
+import { BuildColonyAction } from './actions/build-colony'
 import { BuyCardAction } from './actions/buy-card'
 import { BuyMilestoneAction } from './actions/buy-milestone'
 import { BuyStandardProjectAction } from './actions/buy-standard-project'
+import { ChangeColonyStep } from './actions/change-colony-step'
 import { ClaimTileAction } from './actions/claim-tile'
 import { DiscardCardsAction } from './actions/discard-cards'
 import { DraftCardAction } from './actions/draft-card'
@@ -23,13 +28,6 @@ import { SponsorCompetitionAction } from './actions/sponsor-competition'
 import { StartGameAction } from './actions/start-game'
 import { ToggleReadyAction } from './actions/toggle-ready'
 import { TradeWithColonyAction } from './actions/trade-with-colony'
-import { BuildColonyAction } from './actions/build-colony'
-import { ChangeColonyStep } from './actions/change-colony-step'
-import { AddBotAction } from './actions/add-bot'
-import { ActivateRulingPolicyActionHandler } from './actions/activate-ruling-policy-action-handler'
-import { AddDelegateToPartyActionHandler } from './actions/add-delegate-to-party-action-handler'
-import { RemoveDelegateActionHandler } from './actions/remove-delegate-action-handler'
-import { AddPendingDelegatesActionHandler } from './actions/add-pending-delegates-action-handler'
 
 export class PlayerActions {
 	player: Player
@@ -83,12 +81,6 @@ export class PlayerActions {
 				this.player,
 			),
 			[MessageType.AddDelegateToParty]: new AddDelegateToPartyActionHandler(
-				this.player,
-			),
-			[MessageType.RemoveDelegate]: new RemoveDelegateActionHandler(
-				this.player,
-			),
-			[MessageType.AddPendingDelegates]: new AddPendingDelegatesActionHandler(
 				this.player,
 			),
 		}

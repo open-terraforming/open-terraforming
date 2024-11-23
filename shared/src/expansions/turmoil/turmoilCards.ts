@@ -21,6 +21,9 @@ import { rulingPartyCondition } from './cardConditions/rulingPartyCondition'
 import { extraInfluenceEffect } from './cardEffects/extraInfluenceEffect'
 import { placeDelegatesEffect } from './cardEffects/placeDelegatesEffect'
 import { removeDelegateEffect } from './cardEffects/removeDelegateEffect'
+import { replaceNeutralChairmanEffect } from './cardEffects/replaceNeutralChairmanEffect'
+import { replaceNeutralMemberEffect } from './cardEffects/replaceNeutralMemberEffect'
+import { resourceForEmptyAdjacentTilesEffect } from './cardEffects/resourceForEmptyAdjacentTilesEffect'
 
 export const turmoilCards: Card[] = [
 	card({
@@ -144,9 +147,7 @@ export const turmoilCards: Card[] = [
 		type: CardType.Event,
 		cost: 2,
 		categories: [CardCategory.Event],
-		playEffects: [
-			// TODO: Exchange one neutral non-leader delegate with your own from the reserve
-		],
+		playEffects: [replaceNeutralMemberEffect()],
 		special: [CardSpecial.Turmoil],
 	}),
 	card({
@@ -155,9 +156,7 @@ export const turmoilCards: Card[] = [
 		categories: [CardCategory.Earth, CardCategory.Event],
 		cost: 3,
 		conditions: [rulingPartyCondition('reds')],
-		playEffects: [
-			// TODO: Gain 1 MC from each empty area adjacent to your tiles
-		],
+		playEffects: [resourceForEmptyAdjacentTilesEffect('money', 1)],
 		special: [CardSpecial.Turmoil],
 	}),
 	card({
@@ -200,9 +199,7 @@ export const turmoilCards: Card[] = [
 			playerHasPartyLeadersCondition(1),
 			chairmanIsNeutralCondition(),
 		],
-		playEffects: [
-			// TODO: Replace neutral chairman with your delegate from reserve
-		],
+		playEffects: [replaceNeutralChairmanEffect()],
 		special: [CardSpecial.Turmoil],
 	}),
 	card({
