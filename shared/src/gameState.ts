@@ -442,6 +442,7 @@ export interface UsedCardState {
 	asteroids: number
 	/** Number of camps on the card */
 	camps: number
+	preservation: number
 
 	/** Index of card that triggered last passive effect */
 	triggeredByCard?: number

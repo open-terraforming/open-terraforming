@@ -1,9 +1,11 @@
 import { CardSpecial } from '@shared/cards'
 import { GlobalEventsLookupApi } from '@shared/GlobalEventsLookupApi'
-import { shuffle } from '@shared/utils/shuffle'
 import { repeat } from '@shared/utils/repeat'
+import { shuffle } from '@shared/utils/shuffle'
 import { expansion, ExpansionType } from '../types'
+import { turmoilCards } from './turmoilCards'
 import { turmoilCommitteeParties } from './turmoilCommitteeParties'
+import { turmoilCorporations } from './turmoilCorporations'
 import { turmoilGlobalEvents } from './turmoilGlobalEvents'
 import { addDelegate } from './utils/addDelegate'
 import { drawGlobalEvent } from './utils/drawGlobalEvent'
@@ -21,6 +23,7 @@ export const turmoilExpansion = expansion({
 				(!e.special?.includes(CardSpecial.Venus) ||
 					game.expansions.includes(ExpansionType.Venus)),
 		),
+	getCards: () => [...turmoilCards, ...turmoilCorporations],
 	initialize: (game) => {
 		shuffle(game.committeeParties)
 

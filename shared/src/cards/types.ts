@@ -32,6 +32,7 @@ export type CardResource =
 	| 'floaters'
 	| 'asteroids'
 	| 'camps'
+	| 'preservation'
 
 export type GameProgress = 'oxygen' | 'temperature' | 'oceans' | 'venus'
 
