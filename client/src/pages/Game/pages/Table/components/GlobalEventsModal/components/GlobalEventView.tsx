@@ -7,6 +7,7 @@ import { Flex } from '@/components/Flex/Flex'
 import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
+import { Tooltip } from '@/components'
 
 type Props = {
 	globalEvent: GlobalEvent
@@ -26,13 +27,25 @@ export const GlobalEventView = ({ globalEvent }: Props) => {
 			<Title>{t.globalEvents[globalEvent.code]}</Title>
 			<Inner>
 				<Delegates>
-					<CommitteePartyIcon party={globalEvent.initialDelegate} />
+					<Tooltip
+						content={
+							'Neutral delegate added to this party when this global become DISTANT'
+						}
+					>
+						<CommitteePartyIcon party={globalEvent.initialDelegate} />
+					</Tooltip>
 					<Arrow>
 						<FontAwesomeIcon icon={faChevronRight} />
 						<FontAwesomeIcon icon={faChevronRight} />
 						<FontAwesomeIcon icon={faChevronRight} />
 					</Arrow>
-					<CommitteePartyIcon party={globalEvent.effectDelegate} />
+					<Tooltip
+						content={
+							'Neutral delegate added to this party when this global event becomes CURRENT'
+						}
+					>
+						<CommitteePartyIcon party={globalEvent.effectDelegate} />
+					</Tooltip>
 				</Delegates>
 				<Effects>
 					<Symbols symbols={allSymbols} />
