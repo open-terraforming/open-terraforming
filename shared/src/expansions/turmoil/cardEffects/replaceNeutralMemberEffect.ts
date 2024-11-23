@@ -20,9 +20,12 @@ export const replaceNeutralMemberEffect = () =>
 			playerHasDelegateInReserveCondition(),
 		],
 		args: [
-			committeePartyArg([
-				(_, party) => party.members.some((m) => m.playerId === null),
-			]),
+			{
+				...committeePartyArg([
+					(_, party) => party.members.some((m) => m.playerId === null),
+				]),
+				descriptionPrefix: 'Replace neutral member in',
+			},
 		],
 		perform: ({ game, player }, partyCode) => {
 			if (typeof partyCode !== 'string') {

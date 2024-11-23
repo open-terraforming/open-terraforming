@@ -10,7 +10,12 @@ export const removeDelegateEffect = () =>
 	effect({
 		description: 'Remove any NON-LEADER delegate',
 		symbols: [{ symbol: SymbolType.Delegate, count: -1, other: true }],
-		args: [committeePartyMemberArg()],
+		args: [
+			{
+				...committeePartyMemberArg(),
+				descriptionPostfix: 'Remove delegate from',
+			},
+		],
 		conditions: [
 			condition({
 				evaluate: ({ game }) =>

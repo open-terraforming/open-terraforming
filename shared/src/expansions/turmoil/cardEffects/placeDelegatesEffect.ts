@@ -19,7 +19,15 @@ export const placeDelegatesEffect = (count: number) =>
 					game.committee.reserve.some((p) => p?.id === player.id),
 			}),
 		],
-		args: [committeePartyArg()],
+		args: [
+			{
+				...committeePartyArg(),
+				descriptionPrefix: f(
+					'Add {0} delegates to',
+					quantized(count, 'delegate', 'delegates'),
+				),
+			},
+		],
 		perform({ game, player }, partyCode) {
 			if (typeof partyCode !== 'string') {
 				throw new Error(
