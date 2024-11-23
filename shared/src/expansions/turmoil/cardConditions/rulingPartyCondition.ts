@@ -1,13 +1,13 @@
 import { condition } from '@shared/cards/conditions'
 import { f } from '@shared/utils'
 import { getPartyState } from '../utils/getPartyState'
-import { ucFirst } from '@shared/utils/collections'
+import { partyToName } from '../utils/partyToName'
 
 export const rulingPartyCondition = (rulingParty: string) =>
 	condition({
 		description: f(
 			'Requires that {0} are ruling or that you have 2 delegates there.',
-			ucFirst(rulingParty),
+			partyToName(rulingParty),
 		),
 		symbols: [{ committeeParty: rulingParty }],
 		evaluate: ({ game, player }) =>

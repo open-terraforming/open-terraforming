@@ -18,6 +18,7 @@ import { ColonyFleetSymbol } from './ColonyFleetSymbol'
 import { ColonyTradeSymbol } from './ColonyTradeSymbol'
 import { Tag } from './Tag'
 import { ClippedBox } from '@/components/ClippedBox'
+import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 
 type Props = {
 	symbol: CardSymbol
@@ -84,6 +85,22 @@ const symbolToIcon = (s: CardSymbol) => {
 				)
 			case SymbolType.Tile:
 				return <TileIcon size="1.25em" />
+			case SymbolType.AnyProduction:
+				return <ProductionContainer>?</ProductionContainer>
+			case SymbolType.Chairman:
+				return (
+					<LeaderContainer>
+						<FontAwesomeIcon icon={faUserTie} />
+					</LeaderContainer>
+				)
+			case SymbolType.Delegate:
+				return <FontAwesomeIcon icon={faUser} />
+			case SymbolType.PartyLeader:
+				return (
+					<LeaderContainer>
+						<FontAwesomeIcon icon={faUser} />
+					</LeaderContainer>
+				)
 			default:
 				console.warn('Unknown symbol', SymbolType[s.symbol])
 		}
@@ -107,6 +124,10 @@ const symbolToIcon = (s: CardSymbol) => {
 
 	if (s.tile) {
 		return <TileIcon content={s.tile} other={s.tileOther} />
+	}
+
+	if (s.committeeParty) {
+		return <CommitteePartyIcon party={s.committeeParty} size="sm" />
 	}
 
 	return null
@@ -243,6 +264,17 @@ const ResourceContainer = styled.div`
 	color: #000;
 `
 
+const ProductionContainer = styled.div`
+	background-color: #fff;
+	border-radius: 50%;
+	width: 1.1em;
+	height: 1.1em;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: #000;
+`
+
 const TextSymbol = styled.div`
 	font-weight: bold;
 	display: flex;
@@ -308,4 +340,11 @@ const BlueCard = styled(ClippedBox)`
 	.inner {
 		background: ${({ theme }) => theme.colors.border};
 	}
+`
+
+const LeaderContainer = styled.div`
+	background-color: #000;
+	border-radius: 25%;
+	color: #fff;
+	padding: 0.25rem;
 `

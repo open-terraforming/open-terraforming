@@ -105,9 +105,9 @@ export const CommitteePartyIcon = ({ party, size = 'md' }: Params) => {
 }
 
 const GeneralContainer = styled.div<{ $size: Size }>`
-	padding: 0.1rem 0.5rem;
-	border-radius: 0.8rem;
-	width: 1.5rem;
+	padding: 0.1em 0.5em;
+	border-radius: 0.8em;
+	width: 1.5em;
 	display: inline-block;
 	text-align: center;
 	border: 2px solid #fff;
@@ -116,8 +116,8 @@ const GeneralContainer = styled.div<{ $size: Size }>`
 	${({ $size }) =>
 		$size === 'sm' &&
 		css`
-			width: 1.25rem;
+			width: 1.25em;
 			font-size: 80%;
-			padding: 0.1rem 0.3rem;
+			padding: 0.1em 0.3em;
 		`}
 `

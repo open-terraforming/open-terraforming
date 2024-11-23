@@ -15,6 +15,7 @@ import { emptyCardState, resources } from '@shared/cards/utils'
 import { getBestArgs } from '../getBestArgs'
 import { assertNever } from '@shared/utils/assertNever'
 import { AiScoringCoefficients } from '../defaultScoringCoefficients'
+import { deduplicate } from '@shared/utils'
 
 export const cardsList = (list: (string | UsedCardState)[]) => {
 	return new CardsCollection(
@@ -178,6 +179,47 @@ const getPossibleOptions = (
 			// TODO: We need to find out what the maximum amount is and then pick the best value
 			//    This is used for "exchange production" effect so we somehow need to know how much source production we have
 			return [1]
+		}
+
+		case CardEffectTarget.CommitteeParty: {
+			return game.committee.parties
+				.filter(
+					(p) =>
+						!a.committeePartyConditions ||
+						a.committeePartyConditions?.every(
+							(c) =>
+								!c(
+									{
+										game,
+										player,
+									},
+									p,
+								),
+						),
+				)
+				.map((p) => p.code)
+		}
+
+		case CardEffectTarget.CommitteePartyMember: {
+			const parties = game.committee.parties.filter(
+				(p) =>
+					!a.committeePartyConditions ||
+					a.committeePartyConditions?.every(
+						(c) =>
+							!c(
+								{
+									game,
+									player,
+								},
+								p,
+							),
+					),
+			)
+
+			return parties.flatMap((party) => [
+				party.code,
+				deduplicate(party.members.map((m) => m.playerId?.id ?? null)),
+			])
 		}
 	}
 
