@@ -1,7 +1,7 @@
 import { PartyPickerInput } from '@/components/PartyPickerInput/PartyPickerInput'
 import { useGameState, usePlayerState } from '@/utils/hooks'
 import { CardEffectArgument } from '@shared/cards'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ArgContainer } from './ArgContainer'
 
 type Props = {
@@ -31,6 +31,10 @@ export const CommitteePartyArg = ({ arg, onChange }: Props) => {
 		setPartyCode(value)
 		onChange(value)
 	}
+
+	useEffect(() => {
+		onChange(partyCode)
+	}, [])
 
 	return (
 		<ArgContainer>
