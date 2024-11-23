@@ -517,6 +517,8 @@ export class Game {
 
 	handleNewGeneration = (generation: number) => {
 		this.state.players.forEach((player) => {
+			player.terraformRatingAtGenerationStart = player.terraformRating
+
 			player.usedCards
 				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {

@@ -300,6 +300,7 @@ export enum SymbolType {
 	Delegate,
 	Chairman,
 	PartyLeader,
+	AnyProduction,
 }
 
 export interface CardSymbol {

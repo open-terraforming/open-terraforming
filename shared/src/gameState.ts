@@ -359,6 +359,9 @@ export interface PlayerState {
 	/** Player TR */
 	terraformRating: number
 
+	/** Player TR at start of the generation */
+	terraformRatingAtGenerationStart: number
+
 	/**  Number of actions played this round */
 	actionsPlayed: number
 
@@ -399,6 +402,9 @@ export interface PlayerState {
 
 	/** Adds extra influence when calculating influence */
 	extraInfluence?: number
+
+	/** Override default adjacent oceans bonus */
+	adjacentOceansBonus?: number
 }
 
 export enum VictoryPointsSource {

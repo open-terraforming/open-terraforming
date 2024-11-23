@@ -12,6 +12,7 @@ import { drawCards } from '@shared/utils/drawCards'
 import { f } from '@shared/utils/f'
 import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { PlayerBaseActionHandler } from '../action'
+import { adjacentOceansBonus } from '@shared/utils/adjacentOceansBonus'
 
 type Args = ReturnType<typeof placeTile>['data']
 
@@ -109,7 +110,7 @@ export class PlaceTileAction extends PlayerBaseActionHandler<Args> {
 			this.player.money +=
 				adjacentCells(this.game, cell.x, cell.y).filter(
 					(c) => c.content === GridCellContent.Ocean,
-				).length * 2
+				).length * adjacentOceansBonus(this.game, this.player)
 		}
 
 		this.parent.onTilePlaced.emit({
