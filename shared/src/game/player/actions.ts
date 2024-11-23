@@ -28,6 +28,8 @@ import { ChangeColonyStep } from './actions/change-colony-step'
 import { AddBotAction } from './actions/add-bot'
 import { ActivateRulingPolicyActionHandler } from './actions/activate-ruling-policy-action-handler'
 import { AddDelegateToPartyActionHandler } from './actions/add-delegate-to-party-action-handler'
+import { RemoveDelegateActionHandler } from './actions/remove-delegate-action-handler'
+import { AddPendingDelegatesActionHandler } from './actions/add-pending-delegates-action-handler'
 
 export class PlayerActions {
 	player: Player
@@ -81,6 +83,12 @@ export class PlayerActions {
 				this.player,
 			),
 			[MessageType.AddDelegateToParty]: new AddDelegateToPartyActionHandler(
+				this.player,
+			),
+			[MessageType.RemoveDelegate]: new RemoveDelegateActionHandler(
+				this.player,
+			),
+			[MessageType.AddPendingDelegates]: new AddPendingDelegatesActionHandler(
 				this.player,
 			),
 		}

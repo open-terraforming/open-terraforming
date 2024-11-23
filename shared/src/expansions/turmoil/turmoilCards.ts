@@ -1,22 +1,26 @@
 import { Card, CardCategory, CardSpecial, CardType } from '@shared/cards'
+import { productionForTags } from '@shared/cards/effects/production-for-tags'
 import {
 	getTopCards,
+	joinedEffects,
 	placeCity,
 	placeGreenery,
 	playerResourceChange,
 	productionChange,
+	resourceChange,
 	resourceForAllPlayersTags,
 	resourcesForPlayersTags,
 	terraformRatingChange,
 } from '@shared/cards/effectsGrouped'
-import { card } from '@shared/cards/utils'
-import { playerIsChairmanCondition } from './cardConditions/playerIsChairmanCondition'
-import { rulingPartyCondition } from './cardConditions/rulingPartyCondition'
 import { resourcePerCardPlayed } from '@shared/cards/passive-effects'
-import { productionForTags } from '@shared/cards/effects/production-for-tags'
+import { card } from '@shared/cards/utils'
 import { chairmanIsNeutralCondition } from './cardConditions/chairmanIsNeutralCondition'
 import { playerHasPartyLeadersCondition } from './cardConditions/playerHasPartyLeadersCondition'
+import { playerIsChairmanCondition } from './cardConditions/playerIsChairmanCondition'
+import { rulingPartyCondition } from './cardConditions/rulingPartyCondition'
 import { extraInfluenceEffect } from './cardEffects/extraInfluenceEffect'
+import { placeDelegatesEffect } from './cardEffects/placeDelegatesEffect'
+import { removeDelegateEffect } from './cardEffects/removeDelegateEffect'
 
 export const turmoilCards: Card[] = [
 	card({
@@ -38,10 +42,7 @@ export const turmoilCards: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Event],
 		conditions: [playerIsChairmanCondition()],
-		playEffects: [
-			// TODO: Remove any NON-LEADER delegate
-			// TODO: removeDelegateAction()
-		],
+		playEffects: [removeDelegateEffect()],
 		special: [CardSpecial.Turmoil],
 	}),
 	card({
@@ -54,8 +55,7 @@ export const turmoilCards: Card[] = [
 			productionChange('energy', -1),
 			productionChange('money', 3),
 			placeCity(),
-			// TODO: Place 2 delegates to same party
-			// TODO: placeDelegates(2)
+			placeDelegatesEffect(2),
 		],
 		special: [CardSpecial.Turmoil],
 	}),
@@ -101,7 +101,10 @@ export const turmoilCards: Card[] = [
 		conditions: [rulingPartyCondition('mars_first')],
 		playEffects: [productionChange('money', 2)],
 		actionEffects: [
-			// TODO: Pay 3 money to place 1 delegate
+			joinedEffects(
+				[resourceChange('money', -3), placeDelegatesEffect(1)],
+				'to',
+			),
 		],
 		special: [CardSpecial.Turmoil],
 	}),
@@ -153,7 +156,7 @@ export const turmoilCards: Card[] = [
 		cost: 3,
 		conditions: [rulingPartyCondition('reds')],
 		playEffects: [
-			// TODO: Gain 1 MC from each empty area adjacent toy our tiles
+			// TODO: Gain 1 MC from each empty area adjacent to your tiles
 		],
 		special: [CardSpecial.Turmoil],
 	}),
