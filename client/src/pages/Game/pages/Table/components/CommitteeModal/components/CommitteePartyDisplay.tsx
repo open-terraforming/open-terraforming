@@ -71,7 +71,10 @@ export const CommitteePartyDisplay = ({
 				<Flex justify="center">
 					<Tooltip content="Party leader">
 						<Leader>
-							<DelegateIcon playerId={state.leader.playerId?.id} />
+							<DelegateIcon
+								type="party-leader"
+								playerId={state.leader.playerId?.id}
+							/>
 							{state.leader.playerId
 								? playerMap[state.leader.playerId.id].name
 								: 'Neutral'}
@@ -180,7 +183,7 @@ const Delegates = styled(Flex)`
 
 const Leader = styled(Flex)`
 	gap: 0.25rem;
-	padding: 0.5rem;
+	padding: 0.25rem;
 	border-radius: 0.5rem;
 	background-color: ${({ theme }) => theme.colors.border};
 	margin: 0.25rem;

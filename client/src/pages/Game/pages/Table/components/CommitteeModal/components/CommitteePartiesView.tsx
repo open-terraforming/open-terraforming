@@ -2,7 +2,7 @@ import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { DelegateIcon } from '@/components/DelegateIcon'
 import { Flex } from '@/components/Flex/Flex'
 import { useAppStore, useGameState } from '@/utils/hooks'
-import { faStar, faUserTie } from '@fortawesome/free-solid-svg-icons'
+import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getCommitteeParty } from '@shared/utils'
 import { Fragment } from 'react'
@@ -174,7 +174,7 @@ export const CommitteePartiesView = ({
 							fontSize: '125%',
 						}}
 					>
-						<FontAwesomeIcon icon={faUserTie} />
+						<DelegateIcon playerId={chairman.playerId?.id} type="chairman" />
 					</div>
 				)}
 				{game.committee.parties.map((party, index) => {
@@ -205,6 +205,7 @@ export const CommitteePartiesView = ({
 							{party.leader && (
 								<DelegateIcon
 									playerId={party.leader.playerId?.id}
+									type="party-leader"
 									style={{
 										position: 'absolute',
 										left: leader[0] * svgToHtmlX,

@@ -1,20 +1,32 @@
 import { useAppStore } from '@/utils/hooks'
-import { faUserTie } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faUserTie } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CSSProperties } from 'react'
+import styled, { css } from 'styled-components'
+
+type DelegateType = 'delegate' | 'party-leader' | 'chairman'
 
 type Props = {
 	playerId?: number | null
 	className?: string
 	style?: CSSProperties
+	type?: DelegateType
 }
 
-export const DelegateIcon = ({ playerId, className, style }: Props) => {
+export const DelegateIcon = ({
+	playerId,
+	className,
+	style,
+	type = 'delegate',
+}: Props) => {
 	const playerMap = useAppStore((store) => store.game.playerMap)
 	const player = playerId ? playerMap[playerId] : null
 
+	const icon = type !== 'chairman' ? faUser : faUserTie
+
 	return (
-		<div
+		<Container
+			$type={type}
 			className={className}
 			title={player?.name ?? 'Neutral delegate'}
 			style={{
@@ -22,7 +34,19 @@ export const DelegateIcon = ({ playerId, className, style }: Props) => {
 				...style,
 			}}
 		>
-			<FontAwesomeIcon icon={faUserTie} />
-		</div>
+			<FontAwesomeIcon icon={icon} />
+		</Container>
 	)
 }
+
+const Container = styled.div<{ $type: DelegateType }>`
+	filter: drop-shadow(0 0 2px #222);
+
+	${({ $type }) =>
+		$type !== 'delegate' &&
+		css`
+			background-color: #000;
+			padding: 0.2rem;
+			border-radius: 25%;
+		`}
+`

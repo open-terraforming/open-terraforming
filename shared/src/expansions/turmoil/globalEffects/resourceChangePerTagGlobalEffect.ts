@@ -24,12 +24,12 @@ export const resourceChangePerTagGlobalEffect = (
 				? f(
 						'Lose {0} per {1} tag (max 5, then reduced by influence).',
 						withUnits(resource, -change),
-						tag,
+						CardCategory[tag],
 					)
 				: f(
 						'Gain {0} per {1} tag (max 5 + influence).',
 						withUnits(resource, change),
-						tag,
+						CardCategory[tag],
 					),
 		apply(game) {
 			for (const player of game.players) {
