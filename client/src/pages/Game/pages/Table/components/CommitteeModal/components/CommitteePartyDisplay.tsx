@@ -18,9 +18,10 @@ import { addDelegateToPartyActionRequest } from '@shared/actions'
 
 type Props = {
 	state: CommitteePartyState
+	onClick?: () => void
 }
 
-export const CommitteePartyDisplay = ({ state }: Props) => {
+export const CommitteePartyDisplay = ({ state, onClick }: Props) => {
 	const game = useGameState()
 	const player = usePlayerState()
 	const api = useApi()
@@ -41,7 +42,7 @@ export const CommitteePartyDisplay = ({ state }: Props) => {
 	}
 
 	return (
-		<ClippedBox style={{ width: '20rem', margin: 'auto' }}>
+		<ClippedBox style={{ width: '20rem', margin: 'auto' }} onClick={onClick}>
 			<ClippedBoxTitle>
 				<Flex>
 					<Flex gap="0.25rem">
