@@ -186,16 +186,7 @@ const getPossibleOptions = (
 				.filter(
 					(p) =>
 						!a.committeePartyConditions ||
-						a.committeePartyConditions?.every(
-							(c) =>
-								!c(
-									{
-										game,
-										player,
-									},
-									p,
-								),
-						),
+						a.committeePartyConditions?.every((c) => !c({ game, player }, p)),
 				)
 				.map((p) => p.code)
 		}
@@ -204,16 +195,7 @@ const getPossibleOptions = (
 			const parties = game.committee.parties.filter(
 				(p) =>
 					!a.committeePartyConditions ||
-					a.committeePartyConditions?.every(
-						(c) =>
-							!c(
-								{
-									game,
-									player,
-								},
-								p,
-							),
-					),
+					a.committeePartyConditions?.every((c) => !c({ game, player }, p)),
 			)
 
 			return parties.flatMap((party) => [
