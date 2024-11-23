@@ -40,7 +40,9 @@ export const CommitteePartyDisplay = ({
 		isPlaying && game.committee.lobby.some((l) => l.id === player.id)
 
 	const canPlaceFromReserve =
-		isPlaying && game.committee.reserve.some((r) => r?.id === player.id)
+		isPlaying &&
+		game.committee.reserve.some((r) => r?.id === player.id) &&
+		player.money >= 5
 
 	const handlePlace = async () => {
 		api.send(addDelegateToPartyActionRequest(party.code))

@@ -5,6 +5,7 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { getGlobalEvent } from '@shared/utils'
 import { styled } from 'styled-components'
+import { CurrentInfluenceDisplay } from './components/CurrentInfluenceDisplay'
 import { EmptyGlobalEventView } from './components/EmptyGlobalEventView'
 import { GlobalEventView } from './components/GlobalEventView'
 
@@ -16,7 +17,16 @@ export const GlobalEventsModal = ({ onClose }: Props) => {
 	const game = useGameState()
 
 	return (
-		<Modal open onClose={onClose} header="Global Events">
+		<Modal
+			open
+			onClose={onClose}
+			header={
+				<>
+					<div>Global Events</div>
+					<CurrentInfluenceDisplay />
+				</>
+			}
+		>
 			<Flex align="stretch" gap="0.5rem">
 				<Flex direction="column">
 					<Title>Distant</Title>

@@ -20,6 +20,7 @@ interface Props {
 	children?: ReactNode
 	className?: string
 	styleTrigger?: CSSProperties
+	noSpacing?: boolean
 }
 
 /** @TODO: Use usePopout */
@@ -32,6 +33,7 @@ export const Tooltip = ({
 	children,
 	className,
 	styleTrigger,
+	noSpacing,
 }: Props) => {
 	const [opened, setOpened] = useState(showOnHover ? false : shown)
 
@@ -129,6 +131,7 @@ export const Tooltip = ({
 						className={className}
 						ref={contentRef}
 						disableStyle={disableStyle}
+						noSpacing={noSpacing}
 						style={{
 							top: calculatedPosition.top,
 							left: calculatedPosition.left,
@@ -170,7 +173,7 @@ const BottomCaret = styled(Caret)`
 	border-bottom-color: ${({ theme }) => rgba(theme.colors.border, 1)};
 `
 
-const Container = styled.div<{ disableStyle?: boolean }>`
+const Container = styled.div<{ disableStyle?: boolean; noSpacing?: boolean }>`
 	position: absolute;
 	z-index: 999999;
 
@@ -179,7 +182,11 @@ const Container = styled.div<{ disableStyle?: boolean }>`
 		css`
 			background: ${rgba(props.theme.colors.background, 1)};
 			color: #ddd;
-			padding: 10px;
+			${!props.noSpacing &&
+			css`
+				padding: 10px;
+			`}
+
 			border: 2px solid ${({ theme }) => rgba(theme.colors.border, 1)};
 		`}
 `
