@@ -1,6 +1,10 @@
 import { prepareTestState } from '../../test/utils'
 import { emptyCardState } from '../utils'
-import { joinedEffects, playerResourceChange, resourceChange } from '../effects'
+import {
+	joinedEffects,
+	playerResourceChange,
+	resourceChange,
+} from '../effectsGrouped'
 
 test('joinedEffect should properly work with arguments', () => {
 	const card = emptyCardState('void')

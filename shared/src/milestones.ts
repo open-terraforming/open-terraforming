@@ -1,4 +1,4 @@
-import { GameState, PlayerState, GridCellContent } from './game'
+import { GameState, PlayerState, GridCellContent } from './gameState'
 import { allCells, keyMap, voidReduce, tiles } from './utils'
 import { CardsLookupApi, CardCategory, CardType } from './cards'
 import { resources, resourceProduction } from './cards/utils'
@@ -76,9 +76,7 @@ const MilestonesList = [
 		description: 'Cards in your hand',
 		limit: 16,
 		getValue: (_game, player) =>
-			player.cards.filter(
-				(c) => CardsLookupApi.get(c).type !== CardType.Corporation,
-			).length,
+			player.cards.length - (player.corporation ? 1 : 0),
 	}),
 	milestone({
 		type: MilestoneType.Diversifier,

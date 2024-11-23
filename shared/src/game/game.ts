@@ -1,5 +1,6 @@
 import {
 	CardCallbackContext,
+	CardCategory,
 	CardPassiveEffect,
 	CardsLookupApi,
 	GameProgress,
@@ -11,7 +12,8 @@ import {
 	GameStateValue,
 	PlayerStateValue,
 	ProgressMilestoneType,
-} from '@shared/game'
+	StandardProjectType,
+} from '@shared/gameState'
 import {
 	draftCard,
 	pickCards,
@@ -28,13 +30,13 @@ import { GameModes } from '@shared/modes'
 import { GameModeType } from '@shared/modes/types'
 import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
-import { initialGameState } from '@shared/states'
+import { initialGameState, initialStandardProjectState } from '@shared/states'
 import { f, isMarsTerraformed, range, shuffle } from '@shared/utils'
-import { deepExtend } from '@shared/utils/collections'
+import { deepCopy, deepExtend } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
 import { randomPassword } from '@shared/utils/password'
 import { v4 as uuidv4 } from 'uuid'
-import { Bot } from './bot'
+import { Bot } from './bot/bot'
 import { BotNames } from './bot-names'
 import { DraftGameState } from './game/draft-game-state'
 import { EndedGameState } from './game/ended-game-state'
@@ -58,6 +60,8 @@ import {
 } from './player'
 import { ColoniesProductionGameState } from './game/colonies-production-game-state'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { buildEvents } from './events/buildEvents'
+import { GameEvent } from './events/eventTypes'
 
 export interface GameConfig {
 	bots: number
@@ -71,8 +75,11 @@ export interface GameConfig {
 	draft: boolean
 	solarPhase: boolean
 
+	maxBots: number
 	fastBots: boolean
 	fastProduction: boolean
+	instantBots: boolean
+	debugBots: boolean
 
 	everybodyIsAdmin: boolean
 	/** Disable players (skip their turn) when they're disconnected for specified number of seconds */
@@ -110,6 +117,8 @@ export class Game {
 
 	botNames = shuffle([...BotNames])
 
+	private lastGameState: GameState | null = null
+
 	constructor(
 		readonly lockSystem: GameLockSystem,
 		readonly baseLogger: Logger,
@@ -125,11 +134,14 @@ export class Game {
 			spectatorsAllowed: true,
 			expansions: [ExpansionType.Base, ExpansionType.Prelude],
 			fastBots: false,
+			debugBots: false,
 			fastProduction: false,
+			instantBots: false,
 			draft: false,
 			solarPhase: false,
 			everybodyIsAdmin: false,
 			disablePlayersWhenDisconnectedForInSeconds: 30,
+			maxBots: 5,
 			...config,
 		}
 
@@ -141,7 +153,14 @@ export class Game {
 		this.state.expansions = [...this.config.expansions]
 
 		range(0, this.config.bots).forEach(() => {
-			this.add(new Bot(this, { fast: config?.fastBots }), false)
+			this.add(
+				new Bot(this, {
+					fast: config?.fastBots,
+					debug: config?.debugBots,
+					instant: config?.instantBots,
+				}),
+				false,
+			)
 		})
 
 		this.sm.onStateChanged.on(({ old, current }) => {
@@ -201,6 +220,10 @@ export class Game {
 		return player
 	}
 
+	get bots() {
+		return this.players.filter((p) => p.state.bot)
+	}
+
 	get mode() {
 		return GameModes[this.state.mode]
 	}
@@ -214,6 +237,35 @@ export class Game {
 	}
 
 	load = (state: GameState, config: GameConfig) => {
+		// Backwards compatibility with old format that didn't have project state
+		if (typeof state.standardProjects[0] === 'number') {
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			state.standardProjects = (state as any).standardProjects.map(
+				(p: StandardProjectType) => initialStandardProjectState(p),
+			)
+		}
+
+		for (const player of state.players) {
+			if (
+				typeof player.cardPriceChanges === 'undefined' &&
+				'cardPriceChange' in player
+			) {
+				player.cardPriceChanges = [{ change: player.cardPriceChange as number }]
+			}
+
+			if (
+				typeof player.tagPriceChanges === 'undefined' &&
+				'tagPriceChange' in player
+			) {
+				player.tagPriceChanges = Object.entries(
+					player.tagPriceChange as Record<CardCategory, number>,
+				).map(([tag, change]) => ({
+					change: change as number,
+					tag: +tag as CardCategory,
+				}))
+			}
+		}
+
 		this.config = config
 
 		this.state = state
@@ -221,7 +273,11 @@ export class Game {
 
 		state.players.forEach((p) => {
 			const player = p.bot
-				? new Bot(this, { fast: this.config.fastBots })
+				? new Bot(this, {
+						fast: this.config.fastBots,
+						debug: this.config.debugBots,
+						instant: this.config.instantBots,
+					})
 				: new Player(this)
 
 			player.state = p
@@ -239,12 +295,40 @@ export class Game {
 
 	updated = () => {
 		this.checkState()
+		this.buildEventsAfterStateChange()
 
 		if (this.sm.update()) {
 			this.updated()
 		} else {
 			this.onStateUpdated.emit(this.state)
 		}
+	}
+
+	buildEventsAfterStateChange() {
+		if (this.lastGameState === null) {
+			// TODO: Better cloning logic?
+			this.lastGameState = deepCopy(this.state)
+		} else {
+			const events = buildEvents(this.lastGameState, this.state)
+			this.state.events.push(...events)
+
+			this.lastGameState = deepCopy(this.state)
+		}
+	}
+
+	pushEvent(event: GameEvent) {
+		this.state.events.push(event)
+		this.onStateUpdated.emit(this.state)
+	}
+
+	addBot() {
+		this.add(
+			new Bot(this, {
+				fast: this.config.fastBots,
+				instant: this.config.instantBots,
+				debug: this.config.debugBots,
+			}),
+		)
 	}
 
 	add(player: Player, triggerUpdate = true) {

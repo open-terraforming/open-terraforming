@@ -7,8 +7,9 @@ import {
 	GridCellContent,
 	GridCellOther,
 	ColonyState,
-} from '../game'
+} from '../gameState'
 import { StandardProject } from '../projects'
+import { CardHint } from './cardHints'
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &
 	Partial<Pick<T, K>>
@@ -41,6 +42,8 @@ export interface CardCallbackContext {
 	card: UsedCardState
 	/** used by joinedEffects, includes all args sent to the action */
 	allArgs?: unknown[]
+	/** used for playEffect, it's the index in players hand */
+	cardHandIndex?: number
 }
 
 export interface PlayerCallbackContext {
@@ -90,6 +93,7 @@ export enum CardSpecial {
 
 export interface CardVictoryPointsCallback {
 	description: string
+	hints?: CardHint[]
 	compute: (ctx: CardCallbackContext) => number
 }
 
@@ -124,6 +128,7 @@ export type CardCondition<
 > = {
 	description?: string
 	symbols: CardSymbol[]
+	hints?: CardHint[]
 	evaluate: (ctx: CardCallbackContext, ...args: T) => boolean
 }
 
@@ -154,6 +159,7 @@ export interface CardEffect<
 	type: CardEffectType
 	symbols: CardSymbol[]
 	aiScore: number | ((ctx: CardCallbackContext) => number)
+	hints?: CardHint[]
 	perform: (ctx: CardCallbackContext, ...args: T) => void
 }
 
@@ -197,6 +203,9 @@ export interface CardEffectArgument {
 	fromHand?: boolean
 	effects?: CardEffect[]
 	minAmount?: number
+	/** Allow selecting the card being played as the target - used for CARD inside playEffects */
+	allowSelfCard?: boolean
+	skipCurrentCard?: boolean
 }
 
 export type MaxAmountCallback = (ctx: CardCallbackContext) => number
@@ -209,6 +218,7 @@ export type ResourceCondition = (
 export interface CardPassiveEffect {
 	description: string
 	symbols: CardSymbol[]
+	/** Triggered when card is played from hand */
 	onPlay?: (ctx: CardCallbackContext) => void
 	onGenerationStarted?: (ctx: CardCallbackContext, generation: number) => void
 	onTilePlaced?: (
@@ -270,6 +280,7 @@ export enum SymbolType {
 	TradeFleet,
 	SlashSmall,
 	BigPlus,
+	Player,
 }
 
 export interface CardSymbol {
@@ -285,4 +296,7 @@ export interface CardSymbol {
 	text?: string
 	forceSign?: boolean
 	forceCount?: boolean
+	color?: string
+	title?: string
+	noRightSpacing?: boolean
 }

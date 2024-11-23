@@ -81,11 +81,13 @@ export const gamesController = appController(
 				spectatorsAllowed,
 				expansions: [ExpansionType.Base, ...expansions],
 				fastBots: request.fastBots,
+				debugBots: globalConfig.bots.debug,
 				draft,
 				solarPhase,
 				everybodyIsAdmin: globalConfig.everybodyIsAdmin,
 				disablePlayersWhenDisconnectedForInSeconds:
 					request.disablePlayersAfterDisconnectingInSeconds,
+				maxBots: globalConfig.bots.max,
 			})
 
 			logger.log(`New ${gameServer.id} - ${name}`)

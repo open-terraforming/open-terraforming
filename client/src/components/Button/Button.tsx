@@ -1,7 +1,14 @@
 import { IconProp } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { memo, MouseEvent, ReactChild, ReactNode, useMemo } from 'react'
+import {
+	forwardRef,
+	memo,
+	MouseEvent,
+	ReactChild,
+	ReactNode,
+	useMemo,
+} from 'react'
 import { Tooltip } from '@/components/Tooltip/Tooltip'
 import styled, { css } from 'styled-components'
 
@@ -25,68 +32,73 @@ export interface ButtonProps {
 	noClip?: boolean
 }
 
-const ButtonComponent = ({
-	disabled = false,
-	name,
-	schema,
-	type = 'button',
-	children,
-	icon,
-	onClick,
-	isLoading = false,
-	onMouseOver,
-	onMouseLeave,
-	tooltip,
-	className,
-	noClip = false,
-}: ButtonProps) => {
-	const hasContent = !!children
+const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
+	(
+		{
+			disabled = false,
+			name,
+			schema,
+			type = 'button',
+			children,
+			icon,
+			onClick,
+			isLoading = false,
+			onMouseOver,
+			onMouseLeave,
+			tooltip,
+			className,
+			noClip = false,
+		}: ButtonProps,
+		ref,
+	) => {
+		const hasContent = children !== null && children !== undefined
+		let iconToShow = icon
 
-	let iconToShow = icon
+		if (isLoading) {
+			iconToShow = faSpinner
+		}
 
-	if (isLoading) {
-		iconToShow = faSpinner
-	}
+		let contents = useMemo(
+			() => (
+				<>
+					{iconToShow && (
+						<Icon
+							isDisabled={disabled || false}
+							hasContent={hasContent}
+							schema={schema || 'primary'}
+						>
+							<FontAwesomeIcon icon={iconToShow} spin={isLoading} />
+						</Icon>
+					)}
+					{children}
+				</>
+			),
+			[children, iconToShow, disabled, hasContent, schema, isLoading],
+		)
 
-	let contents = useMemo(
-		() => (
-			<>
-				{iconToShow && (
-					<Icon
-						isDisabled={disabled || false}
-						hasContent={hasContent}
-						schema={schema || 'primary'}
-					>
-						<FontAwesomeIcon icon={iconToShow} spin={isLoading} />
-					</Icon>
-				)}
-				{children}
-			</>
-		),
-		[children, iconToShow, disabled, hasContent, schema, isLoading],
-	)
+		if (tooltip) {
+			contents = <Tooltip content={tooltip}>{contents}</Tooltip>
+		}
 
-	if (tooltip) {
-		contents = <Tooltip content={tooltip}>{contents}</Tooltip>
-	}
-
-	return (
-		<Container
-			noClip={noClip}
-			className={className}
-			isDisabled={disabled || false}
-			name={name}
-			onClick={!disabled ? onClick : undefined}
-			onMouseOver={onMouseOver}
-			onMouseLeave={onMouseLeave}
-			type={type}
-			hasContent={hasContent}
-			schema={schema || 'primary'}
-		>
-			{contents}
-		</Container>
-	)
-}
+		return (
+			<Container
+				ref={ref}
+				noClip={noClip}
+				className={className}
+				isDisabled={disabled || false}
+				name={name}
+				onClick={!disabled ? onClick : undefined}
+				onMouseOver={onMouseOver}
+				onMouseLeave={onMouseLeave}
+				type={type}
+				hasContent={hasContent}
+				schema={schema || 'primary'}
+			>
+				{contents}
+			</Container>
+		)
+	},
+)
 
 const Container = styled.button<{
 	isDisabled: boolean

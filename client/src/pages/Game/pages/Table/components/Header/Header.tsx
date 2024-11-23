@@ -1,28 +1,87 @@
 import { Button, DialogWrapper } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { useGameState } from '@/utils/hooks'
+import { ExpansionType } from '@shared/expansions/types'
+import { useState } from 'react'
 import styled from 'styled-components'
+import { ColoniesList } from '../ColoniesModal/components/ColoniesList'
 import { CompetitionsModal } from '../CompetitionsModal/CompetitionsModal'
+import { CompetitionsList } from '../CompetitionsModal/components/CompetitionsList'
+import { MilestonesDisplay } from '../MilestonesModal/components/MilestonesDisplay'
 import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
+import { StandardProjectsList } from '../StandardProjectModal/components/StandardProjectsList'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { ColoniesButton } from './components/ColoniesButton'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
-import { ExpansionType } from '@shared/expansions/types'
+import { usePopout } from '@/components/Popout/usePopout'
 
 export const Header = () => {
 	const game = useGameState()
 	const milestones = game.milestones
 	const competitions = game.competitions
 
+	const [milestonesButton, setMilestonesButton] = useState<HTMLElement | null>(
+		null,
+	)
+
+	const [competitionsButton, setCompetitionsButton] =
+		useState<HTMLElement | null>(null)
+
+	const [standardProjectsButton, setStandardProjectsButton] =
+		useState<HTMLElement | null>(null)
+
+	const [coloniesButton, setColoniesButton] = useState<HTMLElement | null>(null)
+
+	const milestonesPopout = usePopout({
+		trigger: milestonesButton,
+		position: 'bottom-right',
+		content: <MilestonesDisplay />,
+		sticky: true,
+		openDelay: 300,
+	})
+
+	const competitionsPopout = usePopout({
+		trigger: competitionsButton,
+		position: 'bottom-left',
+		content: <CompetitionsList />,
+		sticky: true,
+		openDelay: 300,
+	})
+
+	const standardProjectsPopout = usePopout({
+		trigger: standardProjectsButton,
+		position: 'bottom-center',
+		content: <StandardProjectsList />,
+		sticky: true,
+		openDelay: 300,
+	})
+
+	const coloniesPopout = usePopout({
+		trigger: coloniesButton,
+		position: 'bottom-center',
+		content: (
+			<ColoniesListWrapper>
+				<ColoniesList />
+			</ColoniesListWrapper>
+		),
+		sticky: true,
+		openDelay: 300,
+	})
+
 	return (
 		<>
 			<E>
+				{milestonesPopout}
+				{competitionsPopout}
+				{standardProjectsPopout}
+				{coloniesPopout}
+
 				<Flex align="flex-start">
 					<DialogWrapper
 						dialog={(close) => <MilestonesModal onClose={close} />}
 					>
 						{(open) => (
-							<StyledButton noClip onClick={open}>
+							<StyledButton noClip onClick={open} ref={setMilestonesButton}>
 								<Counter>
 									{milestones.length}/{game.milestonesLimit}
 								</Counter>
@@ -34,7 +93,11 @@ export const Header = () => {
 						dialog={(close) => <StandardProjectModal onClose={close} />}
 					>
 						{(open) => (
-							<StandardButton noClip onClick={open}>
+							<StandardButton
+								noClip
+								onClick={open}
+								ref={setStandardProjectsButton}
+							>
 								Standard projects
 							</StandardButton>
 						)}
@@ -43,7 +106,7 @@ export const Header = () => {
 						dialog={(close) => <CompetitionsModal onClose={close} />}
 					>
 						{(open) => (
-							<StyledButton noClip onClick={open}>
+							<StyledButton noClip onClick={open} ref={setCompetitionsButton}>
 								<span>Competitions</span>
 								<Counter>
 									{competitions.length}/{game.competitionsLimit}
@@ -54,7 +117,7 @@ export const Header = () => {
 				</Flex>
 				{game.expansions.includes(ExpansionType.Colonies) && (
 					<Flex justify="center">
-						<ColoniesButton />
+						<ColoniesButton ref={setColoniesButton} />
 					</Flex>
 				)}
 			</E>
@@ -91,4 +154,8 @@ const StandardButton = styled(StyledButton)`
 
 const Counter = styled.div`
 	padding: 0.5rem 0.2rem;
+`
+
+const ColoniesListWrapper = styled.div`
+	max-width: 50rem;
 `

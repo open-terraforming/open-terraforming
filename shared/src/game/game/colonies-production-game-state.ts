@@ -1,4 +1,4 @@
-import { GameStateValue } from '@shared/game'
+import { GameStateValue } from '@shared/gameState'
 import { BaseGameState } from './base-game-state'
 import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 

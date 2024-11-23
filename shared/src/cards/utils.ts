@@ -1,3 +1,4 @@
+import { sum } from '@shared/utils/collections'
 import {
 	GameState,
 	GridCell,
@@ -5,7 +6,7 @@ import {
 	GridCellLocation,
 	PlayerGameState,
 	UsedCardState,
-} from '../game'
+} from '../gameState'
 import { withUnits } from '../units'
 import { allCells, tiles } from '../utils'
 import { CardsLookupApi } from './lookup'
@@ -193,11 +194,13 @@ export const adjustedCardPrice = (card: Card, player: PlayerGameState) =>
 	Math.max(
 		0,
 		card.cost +
-			card.categories.reduce(
-				(acc, c) => acc + (player.tagPriceChange[c] ?? 0),
-				0,
+			sum(card.categories, (c) =>
+				sum(
+					player.tagPriceChanges.filter((ch) => ch.tag === c),
+					(ch) => ch.change,
+				),
 			) +
-			player.cardPriceChange,
+			sum(player.cardPriceChanges, (c) => c.change),
 	)
 
 export const updatePlayerResource = (

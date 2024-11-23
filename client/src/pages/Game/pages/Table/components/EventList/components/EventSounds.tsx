@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
-import { GameEvent, EventType } from '../types'
 import { Sounds } from '@/sounds/sounds'
-import { GridCellContent } from '@shared/index'
+import { EventType, GameEvent, GridCellContent } from '@shared/index'
 import { isNotUndefined } from '@/utils/collections'
 
 type Props = {

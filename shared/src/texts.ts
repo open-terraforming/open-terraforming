@@ -1,4 +1,4 @@
-import { GridCellContent, GridCellOther, GridCellSpecial } from './game'
+import { GridCellContent, GridCellOther, GridCellSpecial } from './gameState'
 
 export const tileWithArticle = (content: GridCellContent) => {
 	return `${tileArticle(content)} ${tileToStr(content)}`

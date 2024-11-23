@@ -4,7 +4,7 @@ import {
 	GridCell,
 	GridCellContent,
 	PlayerState,
-} from '@shared/game'
+} from '@shared/gameState'
 import { GameMessage, PLAYER_PRODUCTION_FIELDS } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import {

@@ -1,20 +1,21 @@
+import { Tooltip } from '@/components'
 import { DialogButton } from '@/components/DialogButton/DialogButton'
-import { ColoniesModal } from '../../ColoniesModal/ColoniesModal'
-import styled from 'styled-components'
 import { Flex } from '@/components/Flex/Flex'
+import { Position } from '@/components/Tooltip/Tooltip'
 import { useGameState, usePlayerState } from '@/utils/hooks'
 import { getColoniesCount } from '@shared/expansions/colonies/utils/getColoniesCount'
-import { getPlayerUsedFleets } from '@shared/expansions/colonies/utils/getPlayerUsedFleets'
-import { Tooltip } from '@/components'
 import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
-import { Position } from '@/components/Tooltip/Tooltip'
+import { getPlayerUsedFleets } from '@shared/expansions/colonies/utils/getPlayerUsedFleets'
+import { forwardRef } from 'react'
+import styled from 'styled-components'
+import { ColoniesModal } from '../../ColoniesModal/ColoniesModal'
 
-export const ColoniesButton = () => {
+export const ColoniesButton = forwardRef<HTMLDivElement>((_, ref) => {
 	const game = useGameState()
 	const player = usePlayerState()
 
 	return (
-		<Container>
+		<Container ref={ref}>
 			<StyledButton
 				dialog={(close) => <ColoniesModal onClose={close} />}
 				noClip
@@ -54,7 +55,7 @@ export const ColoniesButton = () => {
 			</SubContainer>
 		</Container>
 	)
-}
+})
 
 const Container = styled.div`
 	margin-top: 0.5rem;

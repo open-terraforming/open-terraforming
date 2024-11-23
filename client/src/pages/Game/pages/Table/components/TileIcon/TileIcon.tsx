@@ -2,6 +2,7 @@ import { faCity, faTint, faTree } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GridCellContent, GridCellOther } from '@shared/index'
 import styled from 'styled-components'
+import { OtherIcons } from '../GameMap/icons/other'
 type Props = {
 	content: GridCellContent
 	other?: GridCellOther
@@ -16,7 +17,15 @@ const contentColor = {
 	[GridCellContent.Other]: '#9F5C3B',
 } as const
 
-const getTileContent = (content: GridCellContent) => {
+const getTileContent = (content: GridCellContent, other?: GridCellOther) => {
+	if (other) {
+		return (
+			<OtherIcon viewBox="0 0 18 20">
+				<path fill="#CC9479" d={OtherIcons[other]} />
+			</OtherIcon>
+		)
+	}
+
 	switch (content) {
 		case GridCellContent.City:
 			return <FontAwesomeIcon icon={faCity} />
@@ -29,10 +38,10 @@ const getTileContent = (content: GridCellContent) => {
 	return null
 }
 
-export const TileIcon = ({ content }: Props) => {
+export const TileIcon = ({ content, other }: Props) => {
 	return (
 		<E>
-			<Icon>{getTileContent(content)}</Icon>
+			<Icon>{getTileContent(content, other)}</Icon>
 			<Hexagon viewBox="0 0 18 20">
 				<polygon
 					stroke="rgba(255, 255, 255, 0.6)"
@@ -69,5 +78,11 @@ const Hexagon = styled.svg`
 	height: 2em;
 	top: 0;
 	left: 0;
+	z-index: 0;
+`
+
+const OtherIcon = styled.svg`
+	width: 1.2em;
+	height: 1.2em;
 	z-index: 0;
 `

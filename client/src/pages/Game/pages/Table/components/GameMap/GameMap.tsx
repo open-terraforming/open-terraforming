@@ -2,7 +2,7 @@ import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
 import { claimTile, placeTile } from '@shared/actions'
-import { GridCell, GridCellLocation, PlayerStateValue } from '@shared/game'
+import { GridCell, GridCellLocation, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { useRef, useState } from 'react'
 import styled from 'styled-components'
@@ -27,6 +27,8 @@ export const GameMap = () => {
 	)
 
 	const map = useAppStore((state) => state.game.state?.map)
+	const highlighted = useAppStore((state) => state.game.highlightedCell)
+
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [delayFunction] = useState(0)
 
@@ -131,6 +133,15 @@ export const GameMap = () => {
 									}}
 									width={18 / width}
 									height={20 / height}
+									highlighted={
+										highlighted !== undefined &&
+										highlighted.x === cell.x &&
+										highlighted.y === cell.y
+									}
+									faded={
+										highlighted !== undefined &&
+										(highlighted.x !== cell.x || highlighted.y !== cell.y)
+									}
 								/>
 							)),
 					)}
@@ -164,6 +175,15 @@ export const GameMap = () => {
 											key={`${cell.x},${cell.y}`}
 											pos={cellPos(cell.x, cell.y)}
 											onClick={() => handleCellClick(cell)}
+											highlighted={
+												highlighted !== undefined &&
+												highlighted.x === cell.x &&
+												highlighted.y === cell.y
+											}
+											faded={
+												highlighted !== undefined &&
+												(highlighted.x !== cell.x || highlighted.y !== cell.y)
+											}
 										/>
 									)),
 							)}

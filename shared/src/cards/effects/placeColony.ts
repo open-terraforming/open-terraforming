@@ -23,7 +23,7 @@ export const placeColony = ({ allowMoreColoniesPerColony }: Params = {}) =>
 						(c) =>
 							c.playersAtSteps.length < 3 &&
 							(allowMoreColoniesPerColony ||
-								c.playersAtSteps.includes(player.id)),
+								!c.playersAtSteps.includes(player.id)),
 					)
 				},
 			},

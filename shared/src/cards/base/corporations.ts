@@ -1,18 +1,23 @@
-import { GridCellContent } from '../../game'
+import { GridCellContent } from '../../gameState'
+import { PlayerActionType } from '../../player-actions'
 import { withUnits } from '../../units'
 import { f } from '../../utils'
 import { condition } from '../conditions'
+import { effect } from '../effects/types'
 import {
-	earthCardPriceChange,
 	emptyEffect,
 	exchangeResources,
 	getTopCards,
 	placeCity,
 	productionChange,
 	resourceChange,
+} from '../effectsGrouped'
+import {
+	asFirstAction,
+	passiveEffect,
 	titanPriceChange,
-} from '../effects'
-import { asFirstAction, passiveEffect } from '../passive-effects'
+} from '../passive-effects'
+import { tagPriceChange } from '../passive-effects/tagPriceChange'
 import { Card, CardCategory, CardSpecial, CardType, SymbolType } from '../types'
 import {
 	card,
@@ -20,8 +25,6 @@ import {
 	updatePlayerResource,
 	withRightArrow,
 } from '../utils'
-import { PlayerActionType } from '../../player-actions'
-import { effect } from '../effects/types'
 
 export const corp = (c: Card): Card => {
 	return c
@@ -95,9 +98,11 @@ export const baseCorporations = [
 				resourceChange('money', 36),
 				resourceChange('plants', 3),
 				productionChange('plants', 2),
-				effect({
-					description: f('Greenery will only cost {0}', withUnits('plants', 7)),
-					perform: ({ player }) => (player.greeneryCost = 7),
+			],
+			passiveEffects: [
+				passiveEffect({
+					description: f('Greenery costs {0}', withUnits('plants', 7)),
+					onPlay: ({ player }) => (player.greeneryCost = 7),
 				}),
 			],
 		}),
@@ -149,6 +154,11 @@ export const baseCorporations = [
 						'When you play an Event card, you receive {0}',
 						withUnits('money', 2),
 					),
+					symbols: [
+						{ tag: CardCategory.Event, count: 1 },
+						{ symbol: SymbolType.Colon },
+						{ resource: 'money', count: 2 },
+					],
 					onCardBought: (
 						{ player },
 						playedCard,
@@ -172,11 +182,8 @@ export const baseCorporations = [
 			categories: [CardCategory.Science],
 			cost: 0,
 			type: CardType.Corporation,
-			playEffects: [
-				resourceChange('money', 23),
-				resourceChange('titan', 10),
-				titanPriceChange(1),
-			],
+			playEffects: [resourceChange('money', 23), resourceChange('titan', 10)],
+			passiveEffects: [titanPriceChange(1)],
 		}),
 	),
 	corp(
@@ -194,6 +201,14 @@ export const baseCorporations = [
 			passiveEffects: [
 				asFirstAction(placeCity()),
 				passiveEffect({
+					symbols: [
+						{ tile: GridCellContent.City, other: true },
+						{ symbol: SymbolType.Colon },
+						{ resource: 'money', count: 1, production: true },
+						{ tile: GridCellContent.City },
+						{ symbol: SymbolType.Colon },
+						{ resource: 'money', count: 3 },
+					],
 					description: f(
 						'When any city tile is placed on Mars, increase your money production by 1. When you place a city tile, gain {0}',
 						withUnits('money', 3),
@@ -219,17 +234,19 @@ export const baseCorporations = [
 			categories: [CardCategory.Power],
 			cost: 0,
 			type: CardType.Corporation,
-			playEffects: [
-				resourceChange('money', 48),
-				productionChange('energy', 1),
-				effect({
+			playEffects: [resourceChange('money', 48), productionChange('energy', 1)],
+			passiveEffects: [
+				passiveEffect({
 					description: f(
 						'Power cards and Standard Project Power Plant cost {0} less',
 						withUnits('money', 3),
 					),
-					perform: ({ player }) => {
-						player.tagPriceChange[CardCategory.Power] =
-							(player.tagPriceChange[CardCategory.Power] || 0) + -3
+					onPlay: ({ player, card }) => {
+						player.tagPriceChanges.push({
+							tag: CardCategory.Power,
+							change: -3,
+							sourceCardIndex: card.index,
+						})
 
 						player.powerProjectCost = 11 - 3
 					},
@@ -279,7 +296,8 @@ export const baseCorporations = [
 			categories: [CardCategory.Earth],
 			cost: 0,
 			type: CardType.Corporation,
-			playEffects: [resourceChange('money', 60), earthCardPriceChange(-3)],
+			playEffects: [resourceChange('money', 60)],
+			passiveEffects: [tagPriceChange(CardCategory.Earth, -2)],
 			special: [CardSpecial.CorporationsEra],
 		}),
 	),
@@ -300,6 +318,11 @@ export const baseCorporations = [
 						'When any card with {0} tag is played, your money production will increase by 1',
 						CardCategory[CardCategory.Jupiter],
 					),
+					symbols: [
+						{ tag: CardCategory.Jupiter },
+						{ symbol: SymbolType.Colon },
+						{ resource: 'money', production: true },
+					],
 					onCardBought: ({ player }, playedCard) => {
 						if (playedCard.categories.includes(CardCategory.Jupiter)) {
 							updatePlayerProduction(player, 'money', 1)

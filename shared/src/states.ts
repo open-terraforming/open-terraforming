@@ -3,13 +3,13 @@ import {
 	GameStateValue,
 	PlayerState,
 	PlayerStateValue,
+	StandardProjectState,
 	StandardProjectType,
 } from '.'
-import { CardCategory } from './cards'
+import { ExpansionType } from './expansions/types'
 import { MapType } from './map'
 import { Maps } from './maps'
 import { GameModeType } from './modes/types'
-import { ExpansionType } from './expansions/types'
 
 export const initialGameState = (
 	id = 'game',
@@ -51,17 +51,18 @@ export const initialGameState = (
 	expansions: [ExpansionType.Base],
 	solarPhase: true,
 	standardProjects: [
-		StandardProjectType.SellPatents,
-		StandardProjectType.PowerPlant,
-		StandardProjectType.Asteroid,
-		StandardProjectType.Aquifer,
-		StandardProjectType.Greenery,
-		StandardProjectType.City,
-		StandardProjectType.GreeneryForPlants,
-		StandardProjectType.TemperatureForHeat,
+		initialStandardProjectState(StandardProjectType.SellPatents),
+		initialStandardProjectState(StandardProjectType.PowerPlant),
+		initialStandardProjectState(StandardProjectType.Asteroid),
+		initialStandardProjectState(StandardProjectType.Aquifer),
+		initialStandardProjectState(StandardProjectType.Greenery),
+		initialStandardProjectState(StandardProjectType.City),
+		initialStandardProjectState(StandardProjectType.GreeneryForPlants),
+		initialStandardProjectState(StandardProjectType.TemperatureForHeat),
 	],
 	colonies: [],
 	colonyCards: [],
+	events: [],
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
@@ -91,8 +92,8 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	draftedCards: [],
 	usedCards: [],
 	corporation: '',
-	tagPriceChange: {} as Record<CardCategory, number>,
-	cardPriceChange: 0,
+	tagPriceChanges: [],
+	cardPriceChanges: [],
 	greeneryCost: 8,
 	powerProjectCost: 11,
 	temperatureCost: 8,
@@ -106,4 +107,11 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	protectedHabitat: false,
 	tradeFleets: 1,
 	colonyTradeResourceCostChange: 0,
+})
+
+export const initialStandardProjectState = (
+	type: StandardProjectType,
+): StandardProjectState => ({
+	type,
+	usedByPlayerIds: [],
 })

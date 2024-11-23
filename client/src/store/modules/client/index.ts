@@ -1,4 +1,4 @@
-import { GameStateValue } from '@shared/game'
+import { GameStateValue } from '@shared/index'
 import { GameInfo } from '@shared/extra'
 
 type State = Readonly<typeof initialState>

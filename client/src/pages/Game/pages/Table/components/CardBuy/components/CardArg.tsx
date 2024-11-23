@@ -1,4 +1,5 @@
 import { Button } from '@/components'
+import { useLocale } from '@/context/LocaleContext'
 import { cardsToCardList } from '@/utils/cards'
 import { useAppStore } from '@/utils/hooks'
 import { CardEffectArgument } from '@shared/cards'
@@ -7,15 +8,23 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CardInfo } from '../../CardDisplay/CardDisplay'
 import { CardSelector } from '../../CardSelector/CardSelector'
 import { ArgContainer } from './ArgContainer'
-import { useLocale } from '@/context/LocaleContext'
+import { UsedCardState } from '@shared/index'
 
 type Props = {
 	arg: CardEffectArgument
+	handCardIndex?: number
+	cardState: UsedCardState
 	otherPlayer?: boolean
 	onChange: (v: number | [number, number]) => void
 }
 
-export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
+export const CardArg = ({
+	arg,
+	handCardIndex,
+	onChange,
+	otherPlayer,
+	cardState,
+}: Props) => {
 	const locale = useLocale()
 
 	const [picking, setPicking] = useState(false)
@@ -37,29 +46,52 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 							cards: cardsToCardList(p.usedCards, arg.cardConditions, {
 								game,
 								player: p,
-							}),
+							}).filter((c) =>
+								arg.skipCurrentCard
+									? p.id !== player.id || c.index !== handCardIndex
+									: true,
+							),
 						}))
 						.filter(({ cards }) => cards.length > 0)
 				: [],
-		[otherPlayer, game, arg],
+		[otherPlayer, game, arg, handCardIndex],
 	)
 
 	const [selectedPlayer, setSelectedPlayer] = useState(0)
 
-	const cards = useMemo(
-		() =>
+	const cards = useMemo(() => {
+		const result =
 			usedCards && handCards && game && playerState && playerId
 				? cardsToCardList(
-						arg.fromHand ? handCards.map((c) => emptyCardState(c)) : usedCards,
+						arg.fromHand
+							? handCards.map((c) => emptyCardState(c))
+							: arg.allowSelfCard
+								? // Add the bought card itself as last (to not corrupt indexes), use -13 to mark it
+									// By putting the card through cardsToCardList, we ensure it's only shown when compatible with the action
+									[...usedCards, emptyCardState(cardState.code, -13)]
+								: usedCards,
 						arg.cardConditions,
 						{
 							game,
 							player: playerState,
 						},
 					)
-				: [],
-		[usedCards],
-	)
+				: []
+
+		// when allowSelfCard is true, we've pushed the card itself to the end, but it has incorrect index
+		// -13 is special value that indicates it's indeed the card we added, -1 is a special value that means the card itself
+		if (arg.allowSelfCard && result[result.length - 1]?.state?.index === -13) {
+			result[result.length - 1].index = -1
+		}
+
+		return result
+	}, [usedCards, arg, playerState, game, playerId, handCards])
+
+	console.log({
+		allowSelfCard: arg.allowSelfCard,
+		arg,
+		selfCode: cardState.code,
+	})
 
 	const handleSubmit = useCallback(
 		(cards: CardInfo[]) => {
@@ -80,7 +112,15 @@ export const CardArg = ({ arg, onChange, otherPlayer }: Props) => {
 		[onChange, selectedPlayer],
 	)
 
-	const choice = !otherPlayer ? cards : players[selectedPlayer].cards
+	const choice = useMemo(
+		() =>
+			!otherPlayer
+				? cards.filter((c) =>
+						arg.skipCurrentCard ? c.index !== handCardIndex : true,
+					)
+				: (players[selectedPlayer]?.cards ?? []),
+		[handCardIndex, otherPlayer, arg, players],
+	)
 
 	useEffect(() => {
 		if (!choice.find((c) => c.index === selected?.index)) {

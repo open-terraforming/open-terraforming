@@ -1,4 +1,5 @@
 import {
+	EventType,
 	GameStateValue,
 	GridCellContent,
 	PlayerStateValue,
@@ -55,5 +56,11 @@ export class SolarPhaseTerraform extends PlayerBaseAction<Args> {
 		this.logger.log(f('Increased {0}', progress))
 
 		this.popAction()
+
+		this.pushEvent({
+			type: EventType.WorldGovernmentTerraforming,
+			progress,
+			playerId: this.player.id,
+		})
 	}
 }

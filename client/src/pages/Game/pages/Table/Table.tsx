@@ -21,6 +21,7 @@ import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi
 import { useApi } from '@/context/ApiContext'
 import { changeColonyStep } from '@shared/actions'
 import { AddCardResourceModal } from './components/Controls/components/AddCardResourceModal'
+import { GameModalsProvider } from '@/context/GameModalsContext'
 
 const Table = () => {
 	const pending = useAppStore((state) => state.game.pendingAction)
@@ -49,84 +50,86 @@ const Table = () => {
 	}, [Notification.permission])
 
 	return (
-		<TableContainer>
-			<Mouses />
+		<GameModalsProvider>
+			<TableContainer>
+				<Mouses />
 
-			{pending?.type === PlayerActionType.PickStarting && <StartPicker />}
+				{pending?.type === PlayerActionType.PickStarting && <StartPicker />}
 
-			{!pickerHidden &&
-				(pending?.type === PlayerActionType.PickCards ||
-					pending?.type === PlayerActionType.PickPreludes ||
-					pending?.type === PlayerActionType.DraftCard) && (
-					<PendingCardPicker
-						key={pending.cards.join(',')}
-						action={pending}
-						closeable
-						onClose={() => setPickerHidden(true)}
+				{!pickerHidden &&
+					(pending?.type === PlayerActionType.PickCards ||
+						pending?.type === PlayerActionType.PickPreludes ||
+						pending?.type === PlayerActionType.DraftCard) && (
+						<PendingCardPicker
+							key={pending.cards.join(',')}
+							action={pending}
+							closeable
+							onClose={() => setPickerHidden(true)}
+						/>
+					)}
+
+				{pending?.type === PlayerActionType.SolarPhaseTerraform && (
+					<SolarPhaseTerraformPicker action={pending} />
+				)}
+
+				{pending?.type === PlayerActionType.SponsorCompetition && (
+					<CompetitionsModal freePick onClose={() => null} />
+				)}
+
+				{pending?.type === PlayerActionType.BuildColony && (
+					<ColoniesModal
+						freeColonizePick
+						allowDuplicateColonies={pending.data.allowMoreColoniesPerColony}
+						onClose={() => null}
 					/>
 				)}
 
-			{pending?.type === PlayerActionType.SolarPhaseTerraform && (
-				<SolarPhaseTerraformPicker action={pending} />
-			)}
+				{pending?.type === PlayerActionType.TradeWithColony && (
+					<ColoniesModal freeTradePick onClose={() => null} />
+				)}
 
-			{pending?.type === PlayerActionType.SponsorCompetition && (
-				<CompetitionsModal freePick onClose={() => null} />
-			)}
+				{pending?.type === PlayerActionType.ChangeColonyStep && (
+					<ColoniesModal
+						customAction={(index) => {
+							const colony = colonies[index]
+							const colonyInfo = ColoniesLookupApi.get(colony.code)
+							const change = pending.data.change
 
-			{pending?.type === PlayerActionType.BuildColony && (
-				<ColoniesModal
-					freeColonizePick
-					allowDuplicateColonies={pending.data.allowMoreColoniesPerColony}
-					onClose={() => null}
-				/>
-			)}
+							return {
+								enabled:
+									change > 0
+										? colony.step < colonyInfo.tradeIncome.slots.length - 1
+										: colony.step > 0,
+								label: change > 0 ? `+${change} step` : `${change} step`,
+								perform: () => {
+									api.send(changeColonyStep(index))
+								},
+							}
+						}}
+						onClose={() => null}
+					/>
+				)}
 
-			{pending?.type === PlayerActionType.TradeWithColony && (
-				<ColoniesModal freeTradePick onClose={() => null} />
-			)}
+				{pending?.type === PlayerActionType.AddCardResource && (
+					<AddCardResourceModal pendingAction={pending} />
+				)}
 
-			{pending?.type === PlayerActionType.ChangeColonyStep && (
-				<ColoniesModal
-					customAction={(index) => {
-						const colony = colonies[index]
-						const colonyInfo = ColoniesLookupApi.get(colony.code)
-						const change = pending.data.change
-
-						return {
-							enabled:
-								change > 0
-									? colony.step < colonyInfo.tradeIncome.slots.length - 1
-									: colony.step > 0,
-							label: change > 0 ? `+${change} step` : `${change} step`,
-							perform: () => {
-								api.send(changeColonyStep(index))
-							},
-						}
-					}}
-					onClose={() => null}
-				/>
-			)}
-
-			{pending?.type === PlayerActionType.AddCardResource && (
-				<AddCardResourceModal pendingAction={pending} />
-			)}
-
-			<GameContainer>
-				<Header />
-				<Players />
-				<EventList />
-				<GameMap />
-				<GlobalState />
-			</GameContainer>
-			<HiddenPicker style={{ opacity: pickerHidden ? 1 : 0 }}>
-				<Button icon={faChevronUp} onClick={() => setPickerHidden(false)}>
-					BACK TO CARD PICKER
-				</Button>
-			</HiddenPicker>
-			{!spectating && <Controls />}
-			{spectating && <Spectator />}
-		</TableContainer>
+				<GameContainer>
+					<Header />
+					<Players />
+					<EventList />
+					<GameMap />
+					<GlobalState />
+				</GameContainer>
+				<HiddenPicker style={{ opacity: pickerHidden ? 1 : 0 }}>
+					<Button icon={faChevronUp} onClick={() => setPickerHidden(false)}>
+						BACK TO CARD PICKER
+					</Button>
+				</HiddenPicker>
+				{!spectating && <Controls />}
+				{spectating && <Spectator />}
+			</TableContainer>
+		</GameModalsProvider>
 	)
 }
 

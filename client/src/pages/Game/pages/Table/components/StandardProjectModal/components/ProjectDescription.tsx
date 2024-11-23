@@ -1,10 +1,8 @@
+import { SymbolType } from '@shared/cards'
+import { GridCellContent, StandardProjectType } from '@shared/index'
 import { StandardProject } from '@shared/projects'
-import { StandardProjectType } from '@shared/index'
 import styled from 'styled-components'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { Card } from '@/icons/card'
-import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
+import { Symbols } from '../../CardView/components/Symbols'
 
 type Props = {
 	project: StandardProject
@@ -16,70 +14,118 @@ const typeToContent = (project: StandardProject, cost: number) => {
 		case StandardProjectType.SellPatents:
 			return (
 				<>
-					<span>X</span>
-					<Card />
-					<FontAwesomeIcon icon={faArrowRight} />
-					<span>X</span>
-					<ResourceIcon res={project.resource} size="lg" />
+					<CostE>
+						<Symbols
+							symbols={[
+								{ symbol: SymbolType.X, noRightSpacing: true },
+								{ symbol: SymbolType.Card },
+							]}
+						/>
+					</CostE>
+					<Symbols
+						symbols={[
+							{ symbol: SymbolType.RightArrow },
+							{ symbol: SymbolType.X, noRightSpacing: true },
+							{ resource: 'money' },
+						]}
+					/>
 				</>
 			)
 		case StandardProjectType.PowerPlant:
 			return (
 				<>
-					<span>{cost}</span>
-					<ResourceIcon res={project.resource} size="lg" />
-					<FontAwesomeIcon icon={faArrowRight} />
-					<span>+ 1 energy production</span>
+					<CostE>
+						<Symbols symbols={[{ resource: 'money', count: cost }]} />
+					</CostE>
+					<Symbols
+						symbols={[
+							{ symbol: SymbolType.RightArrow },
+							{
+								resource: 'energy',
+								production: true,
+								count: 1,
+								forceCount: true,
+								forceSign: true,
+							},
+						]}
+					/>
 				</>
 			)
 		case StandardProjectType.Asteroid:
 			return (
 				<>
-					<span>{cost}</span>
-					<ResourceIcon res={project.resource} size="lg" />
-					<FontAwesomeIcon icon={faArrowRight} />
-					<span>+ 1 temperature</span>
+					<CostE>
+						<Symbols symbols={[{ resource: 'money', count: cost }]} />
+					</CostE>
+					<Symbols
+						symbols={[
+							{ symbol: SymbolType.RightArrow },
+							{ symbol: SymbolType.Temperature, count: 1 },
+						]}
+					/>
 				</>
 			)
 		case StandardProjectType.Aquifer:
 			return (
 				<>
-					<span>{cost}</span>
-					<ResourceIcon res={project.resource} size="lg" />
-					<FontAwesomeIcon icon={faArrowRight} />
-					<span>place an Ocean</span>
+					<CostE>
+						<Symbols symbols={[{ resource: 'money', count: cost }]} />
+					</CostE>
+					<Symbols
+						symbols={[
+							{ symbol: SymbolType.RightArrow },
+							{ tile: GridCellContent.Ocean, title: 'Place a Ocean' },
+						]}
+					/>
 				</>
 			)
 		case StandardProjectType.Greenery:
 			return (
 				<>
-					<span>{cost}</span>
-					<ResourceIcon res={project.resource} size="lg" />
-					<FontAwesomeIcon icon={faArrowRight} />
-					<span>place a Forest</span>
+					<CostE>
+						<Symbols symbols={[{ resource: 'money', count: cost }]} />
+					</CostE>
+					<Symbols
+						symbols={[
+							{ symbol: SymbolType.RightArrow },
+							{ tile: GridCellContent.Forest, title: 'Place a Forest' },
+						]}
+					/>
 				</>
 			)
 		case StandardProjectType.City:
 			return (
 				<>
-					<span>{cost}</span>
-					<ResourceIcon res={project.resource} size="lg" />
-					<FontAwesomeIcon icon={faArrowRight} />
-					<div>
-						<div>place a City</div>
-						<div>+ 1 money production</div>
-					</div>
+					<CostE>
+						<Symbols symbols={[{ resource: 'money', count: cost }]} />
+					</CostE>
+					<Symbols
+						symbols={[
+							{ symbol: SymbolType.RightArrow },
+							{ tile: GridCellContent.City, title: 'Place a City' },
+							{
+								resource: 'money',
+								production: true,
+								count: 1,
+								forceCount: true,
+								forceSign: true,
+							},
+						]}
+					/>
 				</>
 			)
 		case StandardProjectType.AirScrapping:
 			return (
 				<>
-					<span>{cost}</span>
-					<ResourceIcon res={project.resource} size="lg" />
-					<FontAwesomeIcon icon={faArrowRight} />
-					<div>
-						<div>+ 1 Venus</div>
-					</div>
+					<CostE>
+						<Symbols symbols={[{ resource: 'money', count: cost }]} />
+					</CostE>
+					<Symbols
+						symbols={[
+							{ symbol: SymbolType.RightArrow },
+							{ symbol: SymbolType.Venus, count: 1, forceSign: true },
+						]}
+					/>
 				</>
 			)
 		default:
@@ -94,8 +140,9 @@ export const ProjectDescription = ({ project, cost }: Props) => {
 const E = styled.div`
 	display: flex;
 	align-items: center;
+	height: 1.5rem;
+`
 
-	> * {
-		margin: 0 0.25rem;
-	}
+const CostE = styled.div`
+	width: 3rem;
 `

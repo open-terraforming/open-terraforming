@@ -80,7 +80,8 @@ export const AddCardResourceModal = ({ pendingAction }: Props) => {
 					card={selected.card}
 					onClick={togglePicking}
 					hover={false}
-					evaluate={false}
+					evaluateMode="static"
+					player={player}
 				/>
 			)}
 

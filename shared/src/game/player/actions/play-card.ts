@@ -3,6 +3,7 @@ import { GameStateValue, playCard, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils'
 import { PlayerBaseAction } from '../action'
+import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
 
 type Args = ReturnType<typeof playCard>['data']
 
@@ -50,6 +51,10 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 			throw new Error(`${card.code} isn't playable`)
 		}
 
+		if (card.actionEffects.length === 0) {
+			throw new Error(`${card.code} has no action effects`)
+		}
+
 		const ctx = {
 			player: this.player,
 			game: this.game,
@@ -61,6 +66,8 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 		this.logger.log(`Played ${card.code} with`, JSON.stringify(args))
 
 		this.runCardEffects(card.actionEffects, ctx, args)
+
+		processCardsToDiscard(this.game, this.player)
 
 		this.parent.game.checkMilestones()
 

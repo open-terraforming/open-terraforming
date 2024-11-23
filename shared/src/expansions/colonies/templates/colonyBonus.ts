@@ -1,3 +1,3 @@
-import { ColonyBonus } from '@shared/game'
+import { ColonyBonus } from '@shared/gameState'
 
 export const colonyBonus = (bonus: ColonyBonus) => bonus

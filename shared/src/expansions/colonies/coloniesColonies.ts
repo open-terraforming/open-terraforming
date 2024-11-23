@@ -1,6 +1,6 @@
 import { Resource, SymbolType } from '@shared/cards'
 import { PLAYER_RESOURCE_TO_PRODUCTION } from '@shared/constants'
-import { Colony, GridCellContent } from '@shared/game'
+import { Colony, GridCellContent } from '@shared/gameState'
 import { discardCardsAction } from '@shared/player-actions'
 import { drawCard, drawCards, pushPendingAction, range } from '@shared/utils'
 import { colonyDrawCardsBonus } from './bonuses/colonyDrawCardsBonus'

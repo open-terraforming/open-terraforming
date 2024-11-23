@@ -1,9 +1,10 @@
-import { GridCellContent } from '../game'
-import { CardResource, CardVictoryPointsCallback, CardCategory } from './types'
-import { CardsLookupApi } from './lookup'
-import { allCells, adjacentCells } from '../utils'
-import { countGridContent } from './utils'
 import { getColoniesCount } from '@shared/expansions/colonies/utils/getColoniesCount'
+import { GridCellContent } from '../gameState'
+import { adjacentCells, allCells } from '../utils'
+import { colonyCountHint, tagsCountHint, tileCountHint } from './cardHints'
+import { CardsLookupApi } from './lookup'
+import { CardCategory, CardResource, CardVictoryPointsCallback } from './types'
+import { countGridContent } from './utils'
 
 export const vpCb = (cb: CardVictoryPointsCallback) => cb
 
@@ -41,6 +42,7 @@ export const vpsForAdjacentTiles = (type: GridCellContent, perTile: number) =>
 export const vpsForCards = (category: CardCategory, vpPerCategory: number) =>
 	vpCb({
 		description: `${vpPerCategory} VP for each ${CardCategory[category]} tag you have`,
+		hints: [tagsCountHint([category])],
 		compute: ({ player }) => {
 			return Math.floor(
 				player.usedCards
@@ -72,6 +74,7 @@ export const vpsForTiles = (type: GridCellContent, perTile: number) =>
 				: `1 VPs for every ${Math.ceil(1 / perTile)} ${
 						GridCellContent[type]
 					} tiles in game`,
+		hints: [tileCountHint(type)],
 		compute: ({ game }) => {
 			return Math.floor(countGridContent(game, type) * perTile)
 		},
@@ -83,6 +86,7 @@ export const vpsForColoniesInPlay = (vpPerColony: number) =>
 			vpPerColony >= 1
 				? `${vpPerColony} VPs for each colony in play`
 				: `1 VPs for every ${Math.ceil(1 / vpPerColony)} colony tiles in play`,
+		hints: [colonyCountHint()],
 		compute: ({ game }) => {
 			const colonies = getColoniesCount({ game })
 

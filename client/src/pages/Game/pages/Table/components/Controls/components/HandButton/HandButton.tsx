@@ -132,8 +132,9 @@ export const HandButton = ({ playing }: Props) => {
 						<DiffAnim key={toDisplay[0]}>
 							<CardView
 								card={CardsLookupApi.get(toDisplay[0])}
-								evaluate={false}
 								hover={false}
+								evaluateMode="viewing"
+								player={player}
 							/>
 						</DiffAnim>
 					)}

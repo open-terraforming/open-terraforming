@@ -20,7 +20,11 @@ export class BuyStandardProjectAction extends PlayerBaseAction<Args> {
 			throw new Error("You've got pending actions to attend to")
 		}
 
-		if (!this.game.standardProjects.includes(projectType)) {
+		const projectState = this.game.standardProjects.find(
+			(p) => p.type === projectType,
+		)
+
+		if (!projectState) {
 			throw new Error('Project type not supported by current game')
 		}
 
@@ -46,6 +50,8 @@ export class BuyStandardProjectAction extends PlayerBaseAction<Args> {
 			player: this.parent,
 			project,
 		})
+
+		projectState.usedByPlayerIds.push(this.player.id)
 
 		this.parent.game.checkMilestones()
 

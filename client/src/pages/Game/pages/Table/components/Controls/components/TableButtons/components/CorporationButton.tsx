@@ -15,10 +15,12 @@ export const CorporationButton = ({ onClick }: Props) => {
 	const player = usePlayerState()
 	const [opened, setOpened] = useState(false)
 
-	const corporation =
-		player.usedCards.length > 0
-			? CardsLookupApi.get(player.corporation || player.usedCards[0].code)
-			: undefined
+	const corporationState =
+		player.usedCards.length > 0 ? player.usedCards[0] : undefined
+
+	const corporation = corporationState
+		? CardsLookupApi.get(player.corporation || corporationState.code)
+		: undefined
 
 	const handleClick = () => {
 		onClick(CardType.Corporation)
@@ -36,7 +38,9 @@ export const CorporationButton = ({ onClick }: Props) => {
 				cards={[player.usedCards[0]]}
 				play
 				open={opened}
-				openable={false}
+				openable={
+					!corporationState?.played && corporation.actionEffects.length > 0
+				}
 			/>
 		</Container>
 	) : (

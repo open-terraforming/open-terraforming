@@ -1,4 +1,5 @@
-export * from './game'
+export * from './gameState'
 export * from './actions'
 export * from './version'
 export * from './constants'
+export * from './game/events/eventTypes'

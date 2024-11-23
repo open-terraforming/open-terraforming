@@ -5,7 +5,7 @@ import {
 	canTradeWithColony,
 	canTradeWithColonyUsingResource,
 } from '@shared/expansions/colonies/utils'
-import { GameStateValue, PlayerStateValue } from '@shared/game'
+import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerActionType } from '@shared/player-actions'
 import { isFailure } from '@shared/utils'
 import { PlayerBaseAction } from '../action'

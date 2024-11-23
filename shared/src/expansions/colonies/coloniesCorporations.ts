@@ -10,7 +10,7 @@ import {
 	effectChoice,
 	productionChange,
 	resourceChange,
-} from '@shared/cards/effects'
+} from '@shared/cards/effectsGrouped'
 import { exchangeCardResourceForResource } from '@shared/cards/effects/exchangeCardResourceForResource'
 import { placeColony } from '@shared/cards/effects/placeColony'
 import {

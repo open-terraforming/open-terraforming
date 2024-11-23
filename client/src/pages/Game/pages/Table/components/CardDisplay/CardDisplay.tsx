@@ -1,10 +1,10 @@
 import { isNotUndefined, mapRight } from '@/utils/collections'
 import { Card, CardCategory, CardType } from '@shared/cards'
-import { UsedCardState } from '@shared/index'
+import { PlayerState, UsedCardState } from '@shared/index'
 import { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { NoCards } from '../CardsContainer/CardsContainer'
-import { CardView } from '../CardView/CardView'
+import { CardEvaluateMode, CardView } from '../CardView/CardView'
 import { Tag } from '../CardView/components/Tag'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { media } from '@/styles/media'
@@ -16,25 +16,29 @@ export type CardInfo = {
 	index: number
 }
 
-export const CardDisplay = <T extends CardInfo>({
-	onSelect,
-	selected,
-	cards,
-	filters = true,
-	buying = false,
-	evaluate = true,
-	hover = true,
-	defaultType,
-}: {
+type Props<T extends CardInfo> = {
 	onSelect: (cards: T[]) => void
 	cards: T[]
 	selected: T[]
 	defaultType?: CardType
 	filters?: boolean
-	buying?: boolean
-	evaluate?: boolean
 	hover?: boolean
-}) => {
+	hideAdjustedPrice?: boolean
+	player: PlayerState
+	evaluateMode: CardEvaluateMode
+}
+
+export const CardDisplay = <T extends CardInfo>({
+	onSelect,
+	selected,
+	cards,
+	filters = true,
+	evaluateMode,
+	hover = true,
+	defaultType,
+	hideAdjustedPrice,
+	player,
+}: Props<T>) => {
 	const [type, setType] = useState(defaultType)
 	const [playable, setPlayable] = useState(false)
 
@@ -141,7 +145,7 @@ export const CardDisplay = <T extends CardInfo>({
 						))}
 					</Types>
 
-					{evaluate && (
+					{(evaluateMode === 'playing' || evaluateMode === 'buying') && (
 						<Checkbox
 							checked={playable}
 							onChange={(v) => setPlayable(v)}
@@ -180,12 +184,13 @@ export const CardDisplay = <T extends CardInfo>({
 						c && (
 							<CardView
 								hover={hover}
-								evaluate={evaluate}
-								buying={buying}
+								evaluateMode={evaluateMode}
+								hideAdjustedPrice={hideAdjustedPrice}
 								card={c.card}
 								selected={selected.map((s) => s.index).includes(c.index)}
 								key={c.index}
 								state={c.state}
+								player={player}
 								onClick={() => {
 									onSelect(
 										selected.find((s) => s.index === c.index)

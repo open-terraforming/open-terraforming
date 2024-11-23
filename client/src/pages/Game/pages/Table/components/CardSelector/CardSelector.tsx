@@ -1,7 +1,8 @@
-import { useState, useMemo } from 'react'
-import { Modal } from '@/components/Modal/Modal'
 import { Button } from '@/components'
-import { CardInfo, CardDisplay } from '../CardDisplay/CardDisplay'
+import { Modal } from '@/components/Modal/Modal'
+import { useMemo, useState } from 'react'
+import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
+import { initialPlayerState } from '@shared/states'
 
 type Props = {
 	cards: CardInfo[]
@@ -12,6 +13,8 @@ type Props = {
 	title?: string
 	filters?: boolean
 }
+
+const EMPTY_PLAYER = initialPlayerState()
 
 export const CardSelector = ({
 	cards,
@@ -70,7 +73,8 @@ export const CardSelector = ({
 				onSelect={handleSelect}
 				selected={selected}
 				filters={filters}
-				evaluate={false}
+				evaluateMode="static"
+				player={EMPTY_PLAYER}
 			/>
 		</Modal>
 	)

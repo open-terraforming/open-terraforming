@@ -1,31 +1,68 @@
+import mars from '@/assets/mars-icon.png'
 import { media } from '@/styles/media'
 import { CardType } from '@shared/cards'
-import { rgba, lighten } from 'polished'
-import styled, { css } from 'styled-components'
+import { darken, lighten, rgba } from 'polished'
+import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from './components/Symbols'
-import mars from '@/assets/mars-icon.png'
 
 export const Head = styled.div`
 	display: flex;
 	align-items: center;
 	height: 2rem;
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: ${({ theme }) => rgba(theme.colors.background, 1)};
+		clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
+	}
 `
 
-export const HeadSymbols = styled(Symbols)`
-	border: 0.2rem solid #ff3333;
-	margin-left: 2.5rem;
-	background-color: rgba(255, 0, 0, 0.5);
+export const HeadSymbols = styled(Symbols)<{ $ok?: boolean; $plain?: boolean }>`
+	border: 0.2rem solid
+		${({ $ok, $plain }) => ($plain ? '#aaa' : $ok ? '#225e34' : '#ff3333')};
+	margin-left: 0.2rem;
+	background-color: ${({ $ok, $plain }) =>
+		$plain
+			? 'rgba(43, 40, 40, 0.1)'
+			: $ok
+				? 'rgba(0, 255, 0, 0.1)'
+				: 'rgba(255, 0, 0, 0.5)'};
 
 	> div {
 		padding-top: 0.1rem;
 		padding-bottom: 0.1rem;
 	}
+
+	position: relative;
+	z-index: 2;
 `
 
-export const Action = styled.div<{ $hasSymbols: boolean }>`
-	background: ${({ theme }) => theme.colors.background};
+export const Action = styled.div<{
+	$hasSymbols: boolean
+	$highlight?: boolean
+	$highlightNoAnimation?: boolean
+}>`
 	padding: 0.5rem;
-	border: 0.1rem solid ${({ theme }) => theme.colors.border};
+
+	${({ theme, $highlight, $highlightNoAnimation }) =>
+		$highlight
+			? css`
+					background: ${rgba(lighten(0.05, theme.colors.background), 1)};
+					border: 0.2rem solid ${lighten(0.1, theme.colors.border)};
+					${!$highlightNoAnimation &&
+					css`
+						animation-name: ${actionPop};
+						animation-duration: 0.5s;
+						animation-iteration-count: 1;
+					`}
+				`
+			: css`
+					border: 0.1rem solid ${theme.colors.border};
+					background: ${rgba(theme.colors.background, 1)};
+				`};
 
 	&& {
 		margin-bottom: ${({ $hasSymbols }) =>
@@ -33,47 +70,104 @@ export const Action = styled.div<{ $hasSymbols: boolean }>`
 	}
 `
 
-export const ActionTitle = styled.div`
+const actionPop = keyframes`
+	0% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.05);
+	}
+	100% {
+		transform: scale(1);
+	}
+`
+
+export const ActionTitle = styled.div<{ $highlight?: boolean }>`
 	margin-left: auto;
 	margin-right: auto;
 	width: 5rem;
 	margin-top: -1rem;
-	background: ${({ theme }) => theme.colors.background};
-	border: 0.1rem solid ${({ theme }) => theme.colors.border};
 	text-align: center;
 	padding: 0.1rem 0;
 	margin-bottom: 0.2rem;
+
+	${({ theme, $highlight }) =>
+		$highlight
+			? css`
+					background: ${rgba(lighten(0.05, theme.colors.background), 1)};
+					border: 0.2rem solid ${lighten(0.1, theme.colors.border)};
+				`
+			: css`
+					border: 0.1rem solid ${theme.colors.border};
+					background: ${rgba(theme.colors.background, 1)};
+				`};
 `
 
-export const Cost = styled.div<{ affordable: boolean }>`
+const CostBase = styled.div`
+	background: ${({ theme }) => rgba(theme.colors.background, 1)};
+	width: 2.5rem;
+	height: 2.5rem;
+	line-height: 2.5rem;
+	text-align: center;
+	border-radius: 4px;
+	font-size: 150%;
+	margin-top: -0.5rem;
+	margin-left: -0.5rem;
+	cursor: default;
+`
+
+export const AdjustedCost = styled(CostBase)<{ $affordable: boolean }>`
+	position: relative;
+	z-index: 2;
+	cursor: default;
+
+	${(props) =>
+		props.$affordable
+			? css`
+					border: 2px solid rgb(255, 255, 104);
+					color: rgb(255, 255, 104);
+				`
+			: css`
+					border: 2px solid rgba(255, 135, 135, 1);
+					color: rgba(255, 135, 135, 1);
+				`}
+`
+
+export const OriginalCost = styled(CostBase)<{
+	$affordable: boolean
+	$isAdjusted: boolean
+}>`
+	position: relative;
+	z-index: 1;
+
+	${(props) =>
+		props.$affordable
+			? css`
+					border: 2px solid rgb(255, 255, 104);
+					color: rgb(255, 255, 104);
+				`
+			: css`
+					border: 2px solid rgba(255, 135, 135, 1);
+					color: rgba(255, 135, 135, 1);
+				`}
+
+	${(props) =>
+		props.$isAdjusted &&
+		(props.$affordable
+			? css`
+					border: 2px solid rgb(121, 121, 51);
+					color: rgb(121, 121, 51);
+				`
+			: css`
+					border: 2px solid #b45050;
+					color: #b45050;
+				`)}
+`
+
+export const Cost = styled.div`
 	height: 2rem;
-
-	> div {
-		background: ${({ theme }) => rgba(theme.colors.background, 1)};
-
-		position: absolute;
-
-		${(props) =>
-			props.affordable
-				? css`
-						border: 2px solid rgb(255, 255, 104);
-						color: rgb(255, 255, 104);
-					`
-				: css`
-						border: 2px solid rgba(255, 135, 135, 1);
-						color: rgba(255, 135, 135, 1);
-					`}
-
-		width: 2.5rem;
-		height: 2.5rem;
-		line-height: 2.5rem;
-		text-align: center;
-		border-radius: 4px;
-		font-size: 150%;
-		float: left;
-		margin-top: -0.5rem;
-		margin-left: -0.5rem;
-	}
+	position: relative;
+	z-index: 2;
 `
 
 export const Categories = styled.div`
@@ -91,6 +185,8 @@ export const Title = styled.div`
 	font-size: 100%;
 	margin-left: -1px;
 	margin-right: -1px;
+	position: relative;
+	z-index: 1;
 `
 
 export const Description = styled.div`
@@ -100,6 +196,8 @@ export const Description = styled.div`
 	flex-grow: 1;
 	font-size: 85%;
 	text-align: center;
+	background: ${({ theme }) => rgba(theme.colors.background, 1)};
+	clip-path: polygon(0 0, 100% 0, 100% 100%, 7px 100%, 0 calc(100% - 7px));
 
 	> div {
 		margin-bottom: 0.25rem;
@@ -117,6 +215,7 @@ export const VP = styled.div<{ $corporation?: boolean }>`
 					position: absolute;
 					top: 2.5rem;
 					right: 0.5rem;
+					float: right;
 				`
 			: css`
 					clear: both;
@@ -149,6 +248,9 @@ export const Image = styled.div`
 	background-repeat: no-repeat;
 	flex-shrink: 0;
 	flex-grow: 0;
+	position: relative;
+	z-index: 1;
+	margin-bottom: 0.2rem;
 `
 
 type ContainerCtx = {
@@ -157,11 +259,32 @@ type ContainerCtx = {
 	played: boolean
 	hover: boolean
 	type: CardType
+	$faded: boolean
 }
 
 export const Container = styled.div<ContainerCtx>`
-	border: 0.2rem solid ${(props) => props.theme.colors.cards[props.type]};
-	background: ${({ theme }) => rgba(theme.colors.background, 1)};
+	padding: 0.2rem;
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: ${(props) =>
+			darken(props.$faded ? 0.3 : 0, props.theme.colors.cards[props.type])};
+		clip-path: polygon(
+			0 0,
+			calc(100% - 7px) 0,
+			100% 7px,
+			100% 100%,
+			7px 100%,
+			0 calc(100% - 7px)
+		);
+		z-index: 0;
+	}
+
+	z-index: 1;
+	box-sizing: border-box;
 	width: 240px;
 	flex-shrink: 0;
 	min-width: 0;
@@ -175,8 +298,22 @@ export const Container = styled.div<ContainerCtx>`
 	overflow: visible;
 
 	${Title} {
-		background: ${(props) => props.theme.colors.cards[props.type]};
+		background: ${(props) =>
+			darken(props.$faded ? 0.2 : 0, props.theme.colors.cards[props.type])};
 	}
+
+	${(props) =>
+		props.$faded &&
+		css`
+			${Categories}, ${Cost}, ${Title} {
+				opacity: 0.2;
+			}
+
+			${Image} {
+				background-color: rgba(0, 0, 0, 0.8);
+				background-blend-mode: darken;
+			}
+		`}
 
 	${media.medium} {
 		width: 150px;
@@ -189,21 +326,10 @@ export const Container = styled.div<ContainerCtx>`
 			width: 300px;
 			height: 200px;
 			max-height: 200px;
-			display: block;
 
 			${Title} {
-				float: left;
 				margin-left: -1px;
 				margin-top: -1px;
-			}
-
-			${Head} {
-				float: right;
-			}
-
-			${Description} {
-				clear: both;
-				max-height: 150px;
 			}
 		`}
 
@@ -236,4 +362,16 @@ export const Container = styled.div<ContainerCtx>`
 		css`
 			transform: rotate(1deg);
 		`}
+`
+
+export const FadedSymbols = styled(Symbols)`
+	opacity: 0.5;
+`
+
+export const CorporationTitle = styled.div`
+	display: flex;
+
+	${Head} {
+		flex: 1;
+	}
 `

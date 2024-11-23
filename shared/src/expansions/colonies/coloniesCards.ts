@@ -6,6 +6,18 @@ import {
 	playerMaxColonyCountCondition,
 	playerMinColonyCountCondition,
 } from '@shared/cards/conditions'
+import { changeColonyStep } from '@shared/cards/effects/changeColonyStep'
+import { freeTradeWithColony } from '@shared/cards/effects/freeTradeWithColony'
+import { gainAllColonyIncomeBonuses } from '@shared/cards/effects/gainAllColonyIncomeBonuses'
+import { getTopCardsByTagCount } from '@shared/cards/effects/getTopCardsByTagCount'
+import { placeColony } from '@shared/cards/effects/placeColony'
+import { productionChangePerCardResource } from '@shared/cards/effects/productionChangePerCardResource'
+import { productionChangePerColonyInPlay } from '@shared/cards/effects/productionChangePerColonyInPlay'
+import { productionChangePerNoTags } from '@shared/cards/effects/productionChangePerNoTags'
+import { productionChangePerOwnedColony } from '@shared/cards/effects/productionChangePerOwnedColony'
+import { resourcePerCardResource } from '@shared/cards/effects/resourcePerCardResource'
+import { resourcesForColonies } from '@shared/cards/effects/resourcesForColonies'
+import { tradeFleetCountChange } from '@shared/cards/effects/tradeFleetCountChange'
 import {
 	anyCardResourceChange,
 	cardResourceChange,
@@ -22,24 +34,12 @@ import {
 	resourceChange,
 	resourcesForTiles,
 	terraformRatingChange,
-} from '@shared/cards/effects'
-import { changeColonyStep } from '@shared/cards/effects/changeColonyStep'
-import { freeTradeWithColony } from '@shared/cards/effects/freeTradeWithColony'
-import { gainAllColonyIncomeBonuses } from '@shared/cards/effects/gainAllColonyIncomeBonuses'
-import { getTopCardsByTagCount } from '@shared/cards/effects/getTopCardsByTagCount'
-import { placeColony } from '@shared/cards/effects/placeColony'
-import { productionChangePerCardResource } from '@shared/cards/effects/productionChangePerCardResource'
-import { productionChangePerColonyInPlay } from '@shared/cards/effects/productionChangePerColonyInPlay'
-import { productionChangePerNoTags } from '@shared/cards/effects/productionChangePerNoTags'
-import { productionChangePerOwnedColony } from '@shared/cards/effects/productionChangePerOwnedColony'
-import { resourcePerCardResource } from '@shared/cards/effects/resourcePerCardResource'
-import { resourcesForColonies } from '@shared/cards/effects/resourcesForColonies'
-import { tradeFleetCountChange } from '@shared/cards/effects/tradeFleetCountChange'
+} from '@shared/cards/effectsGrouped'
 import {
 	cardResourcePerSelfTagPlayed,
 	drawCardWhenBuyingCard,
 	increaseIncomeStepBeforeTrading,
-	resetCardPriceChange,
+	oneTimeCardPriceChange,
 } from '@shared/cards/passive-effects'
 import { cardPriceChange } from '@shared/cards/passive-effects/cardPriceChange'
 import { colonyTradePriceChange } from '@shared/cards/passive-effects/colonyTradePriceChange'
@@ -47,7 +47,7 @@ import { tagPriceChange } from '@shared/cards/passive-effects/tagPriceChange'
 import { CardCategory, CardSpecial, CardType } from '@shared/cards/types'
 import { card, prependRightArrow, withRightArrow } from '@shared/cards/utils'
 import { vpsForCardResources, vpsForColoniesInPlay } from '@shared/cards/vps'
-import { GridCellContent } from '@shared/game'
+import { GridCellContent } from '@shared/gameState'
 
 export const coloniesCards = [
 	card({
@@ -116,7 +116,7 @@ export const coloniesCards = [
 		type: CardType.Event,
 		categories: [CardCategory.Earth, CardCategory.Event],
 		conditions: [cardCategoryCountCondition(CardCategory.Earth, 2)],
-		passiveEffects: [resetCardPriceChange(-16)],
+		passiveEffects: [oneTimeCardPriceChange(-16)],
 		special: [CardSpecial.Colonies],
 		victoryPoints: -2,
 	}),

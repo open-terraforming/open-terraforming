@@ -22,6 +22,7 @@ interface Props {
 	styleTrigger?: CSSProperties
 }
 
+/** @TODO: Use usePopout */
 export const Tooltip = ({
 	showOnHover = true,
 	shown = true,

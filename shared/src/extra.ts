@@ -1,5 +1,5 @@
 import { GameModeType } from './modes/types'
-import { GameStateValue } from './game'
+import { GameStateValue } from './gameState'
 import { MapType } from './map'
 import { ExpansionType } from './expansions/types'
 
