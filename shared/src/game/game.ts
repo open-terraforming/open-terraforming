@@ -5,6 +5,8 @@ import {
 	CardsLookupApi,
 	GameProgress,
 } from '@shared/cards'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
+import { getRulingParty } from '@shared/expansions/turmoil/utils/getRulingParty'
 import { ExpansionType } from '@shared/expansions/types'
 import { GameInfo } from '@shared/extra'
 import {
@@ -31,16 +33,19 @@ import { GameModeType } from '@shared/modes/types'
 import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState, initialStandardProjectState } from '@shared/states'
-import { f } from '@shared/utils/f'
-import { range } from '@shared/utils/range'
-import { isMarsTerraformed } from '@shared/utils/isMarsTerraformed'
-import { shuffle } from '@shared/utils/shuffle'
 import { deepCopy, deepExtend } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
+import { f } from '@shared/utils/f'
+import { isMarsTerraformed } from '@shared/utils/isMarsTerraformed'
 import { randomPassword } from '@shared/utils/password'
+import { range } from '@shared/utils/range'
+import { shuffle } from '@shared/utils/shuffle'
 import { v4 as uuidv4 } from 'uuid'
-import { Bot } from './bot/bot'
 import { BotNames } from './bot-names'
+import { Bot } from './bot/bot'
+import { buildEvents } from './events/buildEvents'
+import { GameEvent } from './events/eventTypes'
+import { ColoniesProductionGameState } from './game/colonies-production-game-state'
 import { DraftGameState } from './game/draft-game-state'
 import { EndedGameState } from './game/ended-game-state'
 import { EndingTilesGameState } from './game/ending-tiles-game-state'
@@ -51,6 +56,7 @@ import { PreludeGameState } from './game/prelude-game-state'
 import { ResearchPhaseGameState } from './game/research-phase-game-state'
 import { SolarPhaseGameState } from './game/solar-phase-game-state'
 import { StartingGameState } from './game/starting-game-state'
+import { TurmoilGameState } from './game/turmoil-game-state'
 import { WaitingForPlayersGameState } from './game/waiting-for-players-game-state'
 import {
 	BeforeColonyTradeEvent,
@@ -62,12 +68,6 @@ import {
 	TerraformingRatingChangedEvent,
 	TilePlacedEvent,
 } from './player'
-import { ColoniesProductionGameState } from './game/colonies-production-game-state'
-import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
-import { buildEvents } from './events/buildEvents'
-import { GameEvent } from './events/eventTypes'
-import { getRulingParty } from '@shared/expansions/turmoil/utils/getRulingParty'
-import { TurmoilGameState } from './game/turmoil-game-state'
 
 export interface GameConfig {
 	bots: number
@@ -317,9 +317,26 @@ export class Game {
 			this.lastGameState = deepCopy(this.state)
 		} else {
 			const events = buildEvents(this.lastGameState, this.state)
+
 			this.state.events.push(...events)
 
 			this.lastGameState = deepCopy(this.state)
+		}
+	}
+
+	startEventsCollector() {
+		const copy = deepCopy(this.state)
+
+		return {
+			startState: copy,
+			collectAndPush: (build: (events: GameEvent[]) => GameEvent) => {
+				const collectedEvents = buildEvents(copy, this.state)
+
+				this.state.events.push(build(collectedEvents), ...collectedEvents)
+				this.lastGameState = deepCopy(this.state)
+
+				return collectedEvents
+			},
 		}
 	}
 

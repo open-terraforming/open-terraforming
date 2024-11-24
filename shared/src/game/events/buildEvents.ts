@@ -1,6 +1,6 @@
 import { CardsLookupApi, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
-import { GameState, GameStateValue } from '@shared/index'
+import { GameState } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { groupBy } from '@shared/utils'
 import { objDiff } from '@shared/utils/collections'
@@ -263,12 +263,6 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 		})
 	}
 
-	if (diff.state === GameStateValue.GenerationEnding) {
-		newEvents.push({
-			type: EventType.ProductionPhase,
-		})
-	}
-
 	if (diff.committee) {
 		if (diff.committee.parties) {
 			for (const [index, party] of Object.entries(diff.committee.parties)) {
@@ -328,7 +322,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 						}
 					}
 
-					game.events.push({
+					newEvents.push({
 						type: EventType.CommitteePartyDelegateChange,
 						partyCode: prevParty.code,
 						changes: Array.from(changes).map(([playerId, change]) => ({
@@ -339,7 +333,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 				}
 
 				if (party.leader) {
-					game.events.push({
+					newEvents.push({
 						type: EventType.CommitteePartyLeaderChanged,
 						partyCode: prevParty.code,
 						playerId: party.leader.playerId,
@@ -349,7 +343,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 		}
 
 		if (diff.committee.dominantParty) {
-			game.events.push({
+			newEvents.push({
 				type: EventType.CommitteeDominantPartyChanged,
 				partyCode: diff.committee.dominantParty,
 			})

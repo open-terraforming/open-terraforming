@@ -25,6 +25,7 @@ import { nonEmptyStringLength, sanitize, shuffle } from '@shared/utils'
 import { decode, encode } from 'msgpack-lite'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
+import { GlobalEventsLookupApi } from '@shared/GlobalEventsLookupApi'
 
 enum ClientState {
 	Initializing,
@@ -43,6 +44,7 @@ export class Client {
 	state: ClientState
 
 	cardDictionary?: Record<string, string>
+	globalEventsDictionary?: Record<string, string>
 
 	lastState?: GameState
 
@@ -271,10 +273,26 @@ export class Client {
 			)
 		}
 
+		if (!this.globalEventsDictionary) {
+			this.globalEventsDictionary = shuffle(
+				Object.keys(GlobalEventsLookupApi.data),
+			).reduce(
+				(acc, c, i) => {
+					acc[c] = i.toString(16)
+
+					return acc
+				},
+				{} as Record<string, string>,
+			)
+		}
+
 		if (this.player || this.spectator) {
 			this.send(
 				gameStateUpdate(
-					obfuscateGame(game, this.player?.id ?? -1, this.cardDictionary),
+					obfuscateGame(game, this.player?.id ?? -1, {
+						cards: this.cardDictionary,
+						globalEvents: this.globalEventsDictionary,
+					}),
 				),
 			)
 		}

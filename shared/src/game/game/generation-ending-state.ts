@@ -1,8 +1,6 @@
 import { GameStateValue } from '@shared/index'
+import { EventType, ResourcesChanged } from '../events/eventTypes'
 import { BaseGameState } from './base-game-state'
-import { deepCopy } from '@shared/utils/collections'
-import { EventType } from '../events/eventTypes'
-import { buildEvents } from '../events/buildEvents'
 
 export class GenerationEndingState extends BaseGameState {
 	name = GameStateValue.GenerationEnding
@@ -15,18 +13,22 @@ export class GenerationEndingState extends BaseGameState {
 	}
 
 	doProduction() {
-		const startingState = deepCopy(this.game.state)
+		const events = this.game.startEventsCollector()
 
 		for (const p of this.game.players) {
 			p.endGeneration()
 		}
 
-		this.game.pushEvent({
-			type: EventType.ProductionDone,
-			players: buildEvents(startingState, this.game.state).filter(
-				(e) => e.type === EventType.ResourcesChanged,
-			),
+		this.game.state.events.push({
+			type: EventType.ProductionPhase,
 		})
+
+		events.collectAndPush((changes) => ({
+			type: EventType.ProductionDone,
+			players: changes.filter(
+				(e) => e.type === EventType.ResourcesChanged,
+			) as ResourcesChanged[],
+		}))
 	}
 
 	transition() {

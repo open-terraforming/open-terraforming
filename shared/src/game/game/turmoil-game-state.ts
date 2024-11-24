@@ -3,13 +3,11 @@ import { drawGlobalEvent } from '@shared/expansions/turmoil/utils/drawGlobalEven
 import { getPartyState } from '@shared/expansions/turmoil/utils/getPartyState'
 import { recalculateDominantParty } from '@shared/expansions/turmoil/utils/recalculateDominantParty'
 import { GameState, GameStateValue } from '@shared/gameState'
-import { deepCopy } from '@shared/utils/collections'
 import { getCommitteeParty } from '@shared/utils/getCommitteeParty'
 import { getGlobalEvent } from '@shared/utils/getGlobalEvent'
 import { getPlayerById } from '@shared/utils/getPlayerById'
 import { pendingActions } from '@shared/utils/pendingActions'
 import { playerId } from '@shared/utils/playerId'
-import { buildEvents } from '../events/buildEvents'
 import { EventType } from '../events/eventTypes'
 import { BaseGameState } from './base-game-state'
 
@@ -31,7 +29,7 @@ export class TurmoilGameState extends BaseGameState {
 	}
 
 	private shiftGlobalEvents(game: GameState) {
-		const startingState = deepCopy(this.game.state)
+		const events = this.game.startEventsCollector()
 
 		if (game.globalEvents.currentEvent) {
 			game.globalEvents.discardedEvents.push(game.globalEvents.currentEvent)
@@ -56,26 +54,24 @@ export class TurmoilGameState extends BaseGameState {
 			null,
 		)
 
-		this.game.pushEvent({
+		events.collectAndPush((changes) => ({
 			type: EventType.GlobalEventsChanged,
 			previous: {
-				current: startingState.globalEvents.currentEvent,
-				coming: startingState.globalEvents.comingEvent,
-				distant: startingState.globalEvents.distantEvent,
+				current: events.startState.globalEvents.currentEvent,
+				coming: events.startState.globalEvents.comingEvent,
+				distant: events.startState.globalEvents.distantEvent,
 			},
 			current: {
 				current: game.globalEvents.currentEvent,
 				coming: game.globalEvents.comingEvent,
 				distant: game.globalEvents.distantEvent,
 			},
-			changes: buildEvents(startingState, this.game.state),
-		})
-
-		return startingState
+			changes,
+		}))
 	}
 
 	private processNewGovernment(game: GameState) {
-		const startingState = deepCopy(this.game.state)
+		const events = this.game.startEventsCollector()
 
 		if (game.committee.dominantParty) {
 			if (game.committee.rulingParty) {
@@ -141,33 +137,36 @@ export class TurmoilGameState extends BaseGameState {
 			}
 		}
 
-		if (startingState.committee.rulingParty && game.committee.rulingParty) {
-			this.game.pushEvent({
+		if (events.startState.committee.rulingParty && game.committee.rulingParty) {
+			const oldRulingParty = events.startState.committee.rulingParty
+			const newRulingParty = game.committee.rulingParty
+
+			events.collectAndPush((changes) => ({
 				type: EventType.NewGovernment,
-				oldRulingParty: startingState.committee.rulingParty,
-				newRulingParty: game.committee.rulingParty,
-				changes: buildEvents(startingState, this.game.state),
-			})
+				oldRulingParty,
+				newRulingParty,
+				changes,
+			}))
 		}
 	}
 
 	private executeCurrentGlobalEvent(game: GameState) {
 		if (game.globalEvents.currentEvent) {
-			const currentEffects = getGlobalEvent(
-				game.globalEvents.currentEvent,
-			).effects
+			const currentEvent = game.globalEvents.currentEvent
 
-			const startingState = deepCopy(this.game.state)
+			const currentEffects = getGlobalEvent(currentEvent).effects
+
+			const events = this.game.startEventsCollector()
 
 			for (const effect of currentEffects) {
 				effect.apply(game)
 			}
 
-			this.game.pushEvent({
+			events.collectAndPush((changes) => ({
 				type: EventType.CurrentGlobalEventExecuted,
-				changes: buildEvents(startingState, this.game.state),
-				eventCode: game.globalEvents.currentEvent,
-			})
+				changes,
+				eventCode: currentEvent,
+			}))
 		}
 	}
 
