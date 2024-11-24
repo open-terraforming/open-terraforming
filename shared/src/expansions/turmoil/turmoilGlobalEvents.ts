@@ -494,7 +494,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 		effects: [
 			{
 				symbols: [
-					{ tag: CardCategory.Building },
+					{ tag: CardCategory.Earth },
 					{ symbol: SymbolType.Plus },
 					{ symbol: SymbolType.Influence },
 					{ symbol: SymbolType.Colon },

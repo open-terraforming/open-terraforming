@@ -8,7 +8,7 @@ type Args = ReturnType<typeof discardCards>['data']
 export class DiscardCardsAction extends PlayerBaseActionHandler<Args> {
 	// TODO: This has to be adjusted for paradigm_breakdown to allow discarding cards during global event
 	states = [PlayerStateValue.Playing]
-	gameStates = [GameStateValue.GenerationInProgress]
+	gameStates = [GameStateValue.GenerationInProgress, GameStateValue.Turmoil]
 
 	perform({ cardIndexes }: Args): void {
 		if (cardIndexes.length !== new Set(cardIndexes).size) {

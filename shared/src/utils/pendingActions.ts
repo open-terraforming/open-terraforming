@@ -15,7 +15,6 @@ export const allowedActions: Record<number, PlayerActionType[] | undefined> = {
 		PlayerActionType.SolarPhaseTerraform,
 		PlayerActionType.ClaimTile,
 		PlayerActionType.PlaceTile,
-		PlayerActionType.DiscardCards,
 	],
 }
 
