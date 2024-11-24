@@ -1,6 +1,7 @@
 import { updatePlayerResource } from '@shared/cards/utils'
 import {
 	buyStandardProject,
+	EventType,
 	GameStateValue,
 	PlayerStateValue,
 	StandardProjectType,
@@ -39,6 +40,8 @@ export class BuyStandardProjectAction extends PlayerBaseActionHandler<Args> {
 			throw new Error(`You cannot execute ${StandardProjectType[projectType]}`)
 		}
 
+		const collector = this.startCollectingEvents()
+
 		updatePlayerResource(this.player, project.resource, -project.cost(ctx))
 		project.execute(ctx, cards)
 
@@ -54,6 +57,13 @@ export class BuyStandardProjectAction extends PlayerBaseActionHandler<Args> {
 		projectState.usedByPlayerIds.push(this.player.id)
 
 		this.parent.game.checkMilestones()
+
+		this.pushEvent({
+			type: EventType.StandardProjectBought,
+			playerId: this.player.id,
+			project: projectType,
+			changes: collector.collect(),
+		})
 
 		if (!this.pendingAction) {
 			this.actionPlayed()

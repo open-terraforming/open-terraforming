@@ -12,6 +12,7 @@ import { getPlayerIndex } from '@shared/utils/getPlayerIndex'
 import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
 import { GameEvent } from '../events/eventTypes'
+import { startEventCollector } from '../utils/startEventCollector'
 
 export abstract class PlayerBaseActionHandler<Args = unknown> {
 	abstract states: PlayerStateValue[]
@@ -229,6 +230,10 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 
 	pushEvent(event: GameEvent) {
 		this.parent.game.pushEvent(event)
+	}
+
+	startCollectingEvents() {
+		return startEventCollector(this.game)
 	}
 
 	abstract perform(args: Args): void

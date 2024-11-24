@@ -3,6 +3,8 @@ import { performBuildColony } from '@shared/expansions/colonies/actions/performB
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerActionType } from '@shared/player-actions'
 import { PlayerBaseActionHandler } from '../action'
+import { deepCopy } from '@shared/utils/collections'
+import { EventType } from '@shared/index'
 
 type Args = ReturnType<typeof buildColony>['data']
 
@@ -13,6 +15,8 @@ export class BuildColonyAction extends PlayerBaseActionHandler<Args> {
 	perform({ colonyIndex }: Args): void {
 		const colony = this.game.colonies[colonyIndex]
 		const pendingAction = this.pendingAction
+
+		const collector = this.startCollectingEvents()
 
 		performBuildColony({
 			game: this.game,
@@ -27,6 +31,14 @@ export class BuildColonyAction extends PlayerBaseActionHandler<Args> {
 		this.parent.onColonyBuilt.emit({
 			colony,
 			player: this.parent,
+		})
+
+		this.pushEvent({
+			type: EventType.ColonyBuilt,
+			playerId: this.player.id,
+			colony: +colonyIndex,
+			state: deepCopy(colony),
+			changes: collector.collect(),
 		})
 
 		if (pendingAction) {

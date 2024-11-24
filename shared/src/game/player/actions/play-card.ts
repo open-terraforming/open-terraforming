@@ -1,9 +1,15 @@
 import { CardsLookupApi, CardType } from '@shared/cards'
-import { GameStateValue, playCard, PlayerStateValue } from '@shared/index'
+import {
+	EventType,
+	GameStateValue,
+	playCard,
+	PlayerStateValue,
+} from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
+import { deepCopy } from '@shared/utils/collections'
 import { f } from '@shared/utils/f'
-import { PlayerBaseActionHandler } from '../action'
 import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof playCard>['data']
 
@@ -65,11 +71,22 @@ export class PlayCardAction extends PlayerBaseActionHandler<Args> {
 
 		this.logger.log(`Played ${card.code} with`, JSON.stringify(args))
 
+		const collector = this.startCollectingEvents()
+
 		this.runCardEffects(card.actionEffects, ctx, args)
 
 		processCardsToDiscard(this.game, this.player)
 
 		this.parent.game.checkMilestones()
+
+		this.pushEvent({
+			type: EventType.CardUsed,
+			playerId: this.player.id,
+			card: card.code,
+			index: index,
+			changes: collector.collect(),
+			state: deepCopy(cardState),
+		})
 
 		if (top) {
 			this.popAction()
