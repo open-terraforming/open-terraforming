@@ -267,40 +267,46 @@ export type NewGovernment = {
 	changes: GameEvent[]
 }
 
-export type GameEvent =
-	| CardPlayed
-	| CardsReceived
-	| CardUsed
-	| ResourcesChanged
-	| ProductionChanged
-	| CardResourceChanged
-	| GameProgressChanged
-	| TilePlaced
-	| CorporationPicked
-	| RatingChanged
-	| MilestoneBought
-	| CompetitionSponsored
-	| PlayingChanged
-	| NewGeneration
-	| ProductionPhase
-	| ProductionDone
-	| ColonyBuilt
-	| ColonyActivated
-	| ColonyTrading
-	| ColonyTradingStepChanged
-	| PlayerTradeFleetsChange
-	| StandardProjectBought
-	| TileAcquired
-	| StartingSetup
-	| TileClaimed
-	| WorldGovernmentTerraforming
-	| MarsTerraformed
-	| CommitteePartyDelegateChange
-	| CommitteePartyLeaderChanged
-	| CommitteeDominantPartyChanged
-	| GlobalEventExecuted
-	| GlobalEventsChanged
-	| NewGovernment
+export type BaseGameEvent = {
+	processed?: boolean
+}
+
+export type GameEvent = BaseGameEvent &
+	(
+		| CardPlayed
+		| CardsReceived
+		| CardUsed
+		| ResourcesChanged
+		| ProductionChanged
+		| CardResourceChanged
+		| GameProgressChanged
+		| TilePlaced
+		| CorporationPicked
+		| RatingChanged
+		| MilestoneBought
+		| CompetitionSponsored
+		| PlayingChanged
+		| NewGeneration
+		| ProductionPhase
+		| ProductionDone
+		| ColonyBuilt
+		| ColonyActivated
+		| ColonyTrading
+		| ColonyTradingStepChanged
+		| PlayerTradeFleetsChange
+		| StandardProjectBought
+		| TileAcquired
+		| StartingSetup
+		| TileClaimed
+		| WorldGovernmentTerraforming
+		| MarsTerraformed
+		| CommitteePartyDelegateChange
+		| CommitteePartyLeaderChanged
+		| CommitteeDominantPartyChanged
+		| GlobalEventExecuted
+		| GlobalEventsChanged
+		| NewGovernment
+	)
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

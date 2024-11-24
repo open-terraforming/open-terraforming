@@ -329,8 +329,17 @@ export class Game {
 
 		return {
 			startState: copy,
-			collectAndPush: (build: (events: GameEvent[]) => GameEvent) => {
+			collectAndPush: (
+				build: (events: GameEvent[]) => GameEvent,
+				{ markAsProcessed }: { markAsProcessed?: boolean } = {},
+			) => {
 				const collectedEvents = buildEvents(copy, this.state)
+
+				if (markAsProcessed === undefined || markAsProcessed) {
+					collectedEvents.forEach((event) => {
+						event.processed = true
+					})
+				}
 
 				this.state.events.push(build(collectedEvents), ...collectedEvents)
 				this.lastGameState = deepCopy(this.state)

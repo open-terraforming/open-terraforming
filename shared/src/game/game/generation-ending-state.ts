@@ -1,5 +1,5 @@
 import { GameStateValue } from '@shared/index'
-import { EventType, ResourcesChanged } from '../events/eventTypes'
+import { EventType } from '../events/eventTypes'
 import { BaseGameState } from './base-game-state'
 
 export class GenerationEndingState extends BaseGameState {
@@ -23,12 +23,20 @@ export class GenerationEndingState extends BaseGameState {
 			type: EventType.ProductionPhase,
 		})
 
-		events.collectAndPush((changes) => ({
-			type: EventType.ProductionDone,
-			players: changes.filter(
+		events.collectAndPush((changes) => {
+			const processedChanges = changes.filter(
 				(e) => e.type === EventType.ResourcesChanged,
-			) as ResourcesChanged[],
-		}))
+			)
+
+			processedChanges.forEach((c) => {
+				c.processed = true
+			})
+
+			return {
+				type: EventType.ProductionDone,
+				players: processedChanges,
+			}
+		})
 	}
 
 	transition() {

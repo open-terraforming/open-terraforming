@@ -20,6 +20,8 @@ import { StartingSetupEvent } from './components/StartingSetupEvent'
 import { TilePlacedEvent } from './components/TilePlacedEvent'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { MarsTerraformedEvent } from './components/MarsTerraformedEvent'
+import { CommitteeDominantPartyChangedEvent } from './components/CommitteeDominantPartyChangedEvent'
+import { CommitteePartyDelegateChangeEvent } from './components/CommitteePartyDelegateChangeEvent'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -33,6 +35,12 @@ const PROCESSABLE_EVENTS = [
 	EventType.ProductionDone,
 	EventType.TilePlaced,
 	EventType.MarsTerraformed,
+	EventType.CommitteePartyDelegateChange,
+	EventType.CommitteePartyLeaderChanged,
+	EventType.CommitteeDominantPartyChanged,
+	EventType.GlobalEventsChanged,
+	EventType.CurrentGlobalEventExecuted,
+	EventType.NewGovernment,
 ]
 
 export const InYourFaceEvents = () => {
@@ -46,6 +54,10 @@ export const InYourFaceEvents = () => {
 
 	useGameEventsHandler((event) => {
 		if ('playerId' in event && event.playerId === player.id) {
+			return
+		}
+
+		if (event.processed) {
 			return
 		}
 
@@ -142,6 +154,18 @@ export const InYourFaceEvents = () => {
 				return <CenterText>Production</CenterText>
 			case EventType.MarsTerraformed:
 				return <CenterText>Mars terraformed</CenterText>
+			case EventType.CommitteeDominantPartyChanged:
+				return <CenterText>Dominant party changed</CenterText>
+			case EventType.CommitteePartyDelegateChange:
+				return <CenterText>Delegate changed</CenterText>
+			case EventType.CommitteePartyLeaderChanged:
+				return <CenterText>Leader changed</CenterText>
+			case EventType.GlobalEventsChanged:
+				return <CenterText>Global events changed</CenterText>
+			case EventType.CurrentGlobalEventExecuted:
+				return <CenterText>Global event executed</CenterText>
+			case EventType.NewGovernment:
+				return <CenterText>New government</CenterText>
 			default:
 				return null
 		}
@@ -171,6 +195,18 @@ export const InYourFaceEvents = () => {
 				return <TilePlacedEvent event={event} onOpacityChange={setOpacity} />
 			case EventType.MarsTerraformed:
 				return <MarsTerraformedEvent />
+			case EventType.CommitteeDominantPartyChanged:
+				return <CommitteeDominantPartyChangedEvent event={event} />
+			case EventType.CommitteePartyDelegateChange:
+				return <CommitteePartyDelegateChangeEvent event={event} />
+			case EventType.CommitteePartyLeaderChanged:
+				return <CenterText>Leader changed</CenterText>
+			case EventType.GlobalEventsChanged:
+				return <CenterText>Global events changed</CenterText>
+			case EventType.CurrentGlobalEventExecuted:
+				return <CenterText>Global event executed</CenterText>
+			case EventType.NewGovernment:
+				return <CenterText>New government</CenterText>
 			default:
 				return null
 		}
