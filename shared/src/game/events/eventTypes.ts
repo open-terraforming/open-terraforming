@@ -262,8 +262,8 @@ export type GlobalEventsChanged = {
 
 export type NewGovernment = {
 	type: EventType.NewGovernment
-	oldRulingParty: string | null
-	newRulingParty: string | null
+	oldRulingParty: string
+	newRulingParty: string
 	changes: GameEvent[]
 }
 

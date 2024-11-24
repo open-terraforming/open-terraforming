@@ -141,12 +141,14 @@ export class TurmoilGameState extends BaseGameState {
 			}
 		}
 
-		this.game.pushEvent({
-			type: EventType.NewGovernment,
-			oldRulingParty: startingState.committee.rulingParty,
-			newRulingParty: game.committee.dominantParty,
-			changes: buildEvents(startingState, this.game.state),
-		})
+		if (startingState.committee.rulingParty && game.committee.rulingParty) {
+			this.game.pushEvent({
+				type: EventType.NewGovernment,
+				oldRulingParty: startingState.committee.rulingParty,
+				newRulingParty: game.committee.rulingParty,
+				changes: buildEvents(startingState, this.game.state),
+			})
+		}
 	}
 
 	private executeCurrentGlobalEvent(game: GameState) {

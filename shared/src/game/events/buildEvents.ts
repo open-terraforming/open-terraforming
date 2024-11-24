@@ -279,7 +279,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 					continue
 				}
 
-				if (party.members) {
+				if (party.members || party.leader) {
 					const newMembers = groupBy(
 						nextParty.members.map((m) => m.playerId?.id ?? null),
 						(m) => m,
@@ -290,18 +290,23 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 						(m) => m,
 					)
 
-					const oldLeaderId = prevParty.leader?.playerId?.id ?? null
-					const newLeaderId = nextParty.leader?.playerId?.id ?? null
+					if (prevParty.leader) {
+						const oldLeaderId = prevParty.leader?.playerId?.id ?? null
 
-					oldMembers.set(oldLeaderId, [
-						...(oldMembers.get(oldLeaderId) ?? []),
-						oldLeaderId,
-					])
+						oldMembers.set(oldLeaderId, [
+							...(oldMembers.get(oldLeaderId) ?? []),
+							oldLeaderId,
+						])
+					}
 
-					newMembers.set(newLeaderId, [
-						...(newMembers.get(newLeaderId) ?? []),
-						newLeaderId,
-					])
+					if (nextParty.leader) {
+						const newLeaderId = nextParty.leader?.playerId?.id ?? null
+
+						newMembers.set(newLeaderId, [
+							...(newMembers.get(newLeaderId) ?? []),
+							newLeaderId,
+						])
+					}
 
 					const changes = new Map<number | null, number>()
 
