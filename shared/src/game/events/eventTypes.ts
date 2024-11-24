@@ -42,7 +42,8 @@ export enum EventType {
 	CommitteePartyLeaderChanged,
 	CommitteeDominantPartyChanged,
 	CurrentGlobalEventExecuted,
-	NewDistantGlobalEvent,
+	GlobalEventsChanged,
+	NewGovernment,
 }
 
 export type StartingSetup = {
@@ -244,10 +245,26 @@ export type GlobalEventExecuted = {
 	changes: GameEvent[]
 }
 
-export type NewDistantGlobalEvent = {
-	type: EventType.NewDistantGlobalEvent
-	eventCode: string
-	oldEventCode?: string
+export type GlobalEventsChanged = {
+	type: EventType.GlobalEventsChanged
+	previous: {
+		distant: string | null
+		coming: string | null
+		current: string | null
+	}
+	current: {
+		distant: string | null
+		coming: string | null
+		current: string | null
+	}
+	changes: GameEvent[]
+}
+
+export type NewGovernment = {
+	type: EventType.NewGovernment
+	oldRulingParty: string | null
+	newRulingParty: string | null
+	changes: GameEvent[]
 }
 
 export type GameEvent =
@@ -282,7 +299,8 @@ export type GameEvent =
 	| CommitteePartyLeaderChanged
 	| CommitteeDominantPartyChanged
 	| GlobalEventExecuted
-	| NewDistantGlobalEvent
+	| GlobalEventsChanged
+	| NewGovernment
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

@@ -2,7 +2,7 @@ import { addDelegate } from '@shared/expansions/turmoil/utils/addDelegate'
 import { drawGlobalEvent } from '@shared/expansions/turmoil/utils/drawGlobalEvent'
 import { getPartyState } from '@shared/expansions/turmoil/utils/getPartyState'
 import { recalculateDominantParty } from '@shared/expansions/turmoil/utils/recalculateDominantParty'
-import { GameStateValue } from '@shared/gameState'
+import { GameState, GameStateValue } from '@shared/gameState'
 import { deepCopy } from '@shared/utils/collections'
 import { getCommitteeParty } from '@shared/utils/getCommitteeParty'
 import { getGlobalEvent } from '@shared/utils/getGlobalEvent'
@@ -23,23 +23,59 @@ export class TurmoilGameState extends BaseGameState {
 			player.terraformRating -= 1
 		}
 
+		this.executeCurrentGlobalEvent(game)
+		this.processNewGovernment(game)
+		this.shiftGlobalEvents(game)
+
+		this.game.updated()
+	}
+
+	private shiftGlobalEvents(game: GameState) {
+		const startingState = deepCopy(this.game.state)
+
 		if (game.globalEvents.currentEvent) {
-			const currentEffects = getGlobalEvent(
-				game.globalEvents.currentEvent,
-			).effects
-
-			const startingState = deepCopy(this.game.state)
-
-			for (const effect of currentEffects) {
-				effect.apply(game)
-			}
-
-			this.game.pushEvent({
-				type: EventType.CurrentGlobalEventExecuted,
-				changes: buildEvents(startingState, this.game.state),
-				eventCode: game.globalEvents.currentEvent,
-			})
+			game.globalEvents.discardedEvents.push(game.globalEvents.currentEvent)
 		}
+
+		game.globalEvents.currentEvent = game.globalEvents.comingEvent
+		game.globalEvents.comingEvent = game.globalEvents.distantEvent
+		game.globalEvents.distantEvent = drawGlobalEvent(game)
+
+		// Add new delegates
+		if (game.globalEvents.currentEvent) {
+			addDelegate(
+				game,
+				getGlobalEvent(game.globalEvents.currentEvent).effectDelegate,
+				null,
+			)
+		}
+
+		addDelegate(
+			game,
+			getGlobalEvent(game.globalEvents.distantEvent).initialDelegate,
+			null,
+		)
+
+		this.game.pushEvent({
+			type: EventType.GlobalEventsChanged,
+			previous: {
+				current: startingState.globalEvents.currentEvent,
+				coming: startingState.globalEvents.comingEvent,
+				distant: startingState.globalEvents.distantEvent,
+			},
+			current: {
+				current: game.globalEvents.currentEvent,
+				coming: game.globalEvents.comingEvent,
+				distant: game.globalEvents.distantEvent,
+			},
+			changes: buildEvents(startingState, this.game.state),
+		})
+
+		return startingState
+	}
+
+	private processNewGovernment(game: GameState) {
+		const startingState = deepCopy(this.game.state)
 
 		if (game.committee.dominantParty) {
 			if (game.committee.rulingParty) {
@@ -105,33 +141,32 @@ export class TurmoilGameState extends BaseGameState {
 			}
 		}
 
-		// Move global events around
+		this.game.pushEvent({
+			type: EventType.NewGovernment,
+			oldRulingParty: startingState.committee.rulingParty,
+			newRulingParty: game.committee.dominantParty,
+			changes: buildEvents(startingState, this.game.state),
+		})
+	}
+
+	private executeCurrentGlobalEvent(game: GameState) {
 		if (game.globalEvents.currentEvent) {
-			game.globalEvents.discardedEvents.push(game.globalEvents.currentEvent)
+			const currentEffects = getGlobalEvent(
+				game.globalEvents.currentEvent,
+			).effects
+
+			const startingState = deepCopy(this.game.state)
+
+			for (const effect of currentEffects) {
+				effect.apply(game)
+			}
+
+			this.game.pushEvent({
+				type: EventType.CurrentGlobalEventExecuted,
+				changes: buildEvents(startingState, this.game.state),
+				eventCode: game.globalEvents.currentEvent,
+			})
 		}
-
-		game.globalEvents.currentEvent = game.globalEvents.comingEvent
-		game.globalEvents.comingEvent = game.globalEvents.distantEvent
-		game.globalEvents.distantEvent = drawGlobalEvent(game)
-
-		// Add new delegates
-		if (game.globalEvents.currentEvent) {
-			addDelegate(
-				game,
-				getGlobalEvent(game.globalEvents.currentEvent).effectDelegate,
-				null,
-			)
-		}
-
-		addDelegate(
-			game,
-			getGlobalEvent(game.globalEvents.distantEvent).initialDelegate,
-			null,
-		)
-
-		// TODO: Maybe add event?
-
-		this.game.updated()
 	}
 
 	transition() {
