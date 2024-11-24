@@ -143,12 +143,12 @@ export class BuyCardAction extends PlayerBaseActionHandler<Args> {
 
 		this.parent.game.checkMilestones()
 
-		this.pushEvent({
+		collector.collectAndPush((changes) => ({
 			type: EventType.CardPlayed,
 			playerId: this.player.id,
 			card: card.code,
-			changes: collector.collect(),
-		})
+			changes,
+		}))
 
 		if (!this.pendingAction) {
 			this.actionPlayed()

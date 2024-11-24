@@ -72,14 +72,17 @@ export class TradeWithColonyAction extends PlayerBaseActionHandler<Args> {
 			costResource,
 		})
 
-		this.pushEvent({
-			type: EventType.ColonyTrading,
-			playerId: this.player.id,
-			colony: +colonyIndex,
-			at: stepBeforeTrade,
-			state: deepCopy(colony),
-			changes: collector.collect(),
-		})
+		collector.collectAndPush(
+			(changes) =>
+				({
+					type: EventType.ColonyTrading,
+					playerId: this.player.id,
+					colony: +colonyIndex,
+					at: stepBeforeTrade,
+					state: deepCopy(colony),
+					changes,
+				}) as const,
+		)
 
 		if (pendingAction) {
 			this.popAction()

@@ -58,12 +58,12 @@ export class BuyStandardProjectAction extends PlayerBaseActionHandler<Args> {
 
 		this.parent.game.checkMilestones()
 
-		this.pushEvent({
+		collector.collectAndPush((changes) => ({
 			type: EventType.StandardProjectBought,
 			playerId: this.player.id,
 			project: projectType,
-			changes: collector.collect(),
-		})
+			changes,
+		}))
 
 		if (!this.pendingAction) {
 			this.actionPlayed()

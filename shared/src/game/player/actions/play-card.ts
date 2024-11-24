@@ -79,14 +79,17 @@ export class PlayCardAction extends PlayerBaseActionHandler<Args> {
 
 		this.parent.game.checkMilestones()
 
-		this.pushEvent({
-			type: EventType.CardUsed,
-			playerId: this.player.id,
-			card: card.code,
-			index: index,
-			changes: collector.collect(),
-			state: deepCopy(cardState),
-		})
+		collector.collectAndPush(
+			(changes) =>
+				({
+					type: EventType.CardUsed,
+					playerId: this.player.id,
+					card: card.code,
+					index: index,
+					changes,
+					state: deepCopy(cardState),
+				}) as const,
+		)
 
 		if (top) {
 			this.popAction()

@@ -9,10 +9,9 @@ import {
 import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { f } from '@shared/utils/f'
 import { getPlayerIndex } from '@shared/utils/getPlayerIndex'
+import { GameEvent } from '../events/eventTypes'
 import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
-import { GameEvent } from '../events/eventTypes'
-import { startEventCollector } from '../utils/startEventCollector'
 
 export abstract class PlayerBaseActionHandler<Args = unknown> {
 	abstract states: PlayerStateValue[]
@@ -233,7 +232,7 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 	}
 
 	startCollectingEvents() {
-		return startEventCollector(this.game)
+		return this.parent.game.startEventsCollector()
 	}
 
 	abstract perform(args: Args): void

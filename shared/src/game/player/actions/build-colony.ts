@@ -33,13 +33,16 @@ export class BuildColonyAction extends PlayerBaseActionHandler<Args> {
 			player: this.parent,
 		})
 
-		this.pushEvent({
-			type: EventType.ColonyBuilt,
-			playerId: this.player.id,
-			colony: +colonyIndex,
-			state: deepCopy(colony),
-			changes: collector.collect(),
-		})
+		collector.collectAndPush(
+			(changes) =>
+				({
+					type: EventType.ColonyBuilt,
+					playerId: this.player.id,
+					colony: +colonyIndex,
+					state: deepCopy(colony),
+					changes,
+				}) as const,
+		)
 
 		if (pendingAction) {
 			this.popAction()
