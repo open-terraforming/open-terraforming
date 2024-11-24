@@ -41,6 +41,8 @@ export enum EventType {
 	CommitteePartyDelegateChange,
 	CommitteePartyLeaderChanged,
 	CommitteeDominantPartyChanged,
+	CurrentGlobalEventExecuted,
+	NewDistantGlobalEvent,
 }
 
 export type StartingSetup = {
@@ -236,6 +238,18 @@ export type CommitteeDominantPartyChanged = {
 	partyCode: string
 }
 
+export type GlobalEventExecuted = {
+	type: EventType.CurrentGlobalEventExecuted
+	eventCode: string
+	changes: GameEvent[]
+}
+
+export type NewDistantGlobalEvent = {
+	type: EventType.NewDistantGlobalEvent
+	eventCode: string
+	oldEventCode?: string
+}
+
 export type GameEvent =
 	| CardPlayed
 	| CardsReceived
@@ -267,6 +281,8 @@ export type GameEvent =
 	| CommitteePartyDelegateChange
 	| CommitteePartyLeaderChanged
 	| CommitteeDominantPartyChanged
+	| GlobalEventExecuted
+	| NewDistantGlobalEvent
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

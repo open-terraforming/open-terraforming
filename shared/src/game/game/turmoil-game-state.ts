@@ -3,11 +3,14 @@ import { drawGlobalEvent } from '@shared/expansions/turmoil/utils/drawGlobalEven
 import { getPartyState } from '@shared/expansions/turmoil/utils/getPartyState'
 import { recalculateDominantParty } from '@shared/expansions/turmoil/utils/recalculateDominantParty'
 import { GameStateValue } from '@shared/gameState'
+import { deepCopy } from '@shared/utils/collections'
 import { getCommitteeParty } from '@shared/utils/getCommitteeParty'
 import { getGlobalEvent } from '@shared/utils/getGlobalEvent'
 import { getPlayerById } from '@shared/utils/getPlayerById'
 import { pendingActions } from '@shared/utils/pendingActions'
 import { playerId } from '@shared/utils/playerId'
+import { buildEvents } from '../events/buildEvents'
+import { EventType } from '../events/eventTypes'
 import { BaseGameState } from './base-game-state'
 
 export class TurmoilGameState extends BaseGameState {
@@ -25,9 +28,17 @@ export class TurmoilGameState extends BaseGameState {
 				game.globalEvents.currentEvent,
 			).effects
 
+			const startingState = deepCopy(this.game.state)
+
 			for (const effect of currentEffects) {
 				effect.apply(game)
 			}
+
+			this.game.pushEvent({
+				type: EventType.CurrentGlobalEventExecuted,
+				changes: buildEvents(startingState, this.game.state),
+				eventCode: game.globalEvents.currentEvent,
+			})
 		}
 
 		if (game.committee.dominantParty) {
