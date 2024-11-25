@@ -5,6 +5,7 @@ import { EventType, GameEvent, GridCellContent } from '@shared/index'
 import { useMemo } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { SymbolDisplay } from '../../CardView/components/SymbolDisplay'
+import { Flex } from '@/components/Flex/Flex'
 
 type Props = {
 	events: GameEvent[]
@@ -34,7 +35,7 @@ export const SymbolsEventLog = ({
 					},
 				]
 
-	const eventToSymbols = (e: GameEvent): CardSymbol[] => {
+	const eventToSymbols = (e: GameEvent): (CardSymbol[] | CardSymbol)[] => {
 		switch (e.type) {
 			case EventType.ResourcesChanged: {
 				return Object.entries(e.resources).flatMap(([resource, amount]) => [
@@ -150,31 +151,39 @@ export const SymbolsEventLog = ({
 			}
 
 			case EventType.CommitteePartyDelegateChange: {
-				return e.changes.flatMap((c) => [
-					...playerSymbol(c.playerId?.id ?? null),
+				return e.changes.map((c) => [
+					{ committeeParty: e.partyCode, noRightSpacing: true },
 					{
 						symbol: SymbolType.Delegate,
 						forceCount: true,
 						forceSign: true,
 						count: c.change,
+						color: !c.playerId?.id ? '#ccc' : players[c.playerId?.id].color,
+						title: `${!c.playerId?.id ? 'Neutral' : players[c.playerId?.id].name} delegate`,
 					},
 				])
 			}
 
 			case EventType.CommitteePartyLeaderChanged: {
 				return [
-					{ committeeParty: e.partyCode },
-					{
-						symbol: SymbolType.PartyLeader,
-						color: !e.playerId?.id ? '#ccc' : players[e.playerId.id].color,
-						title: !e.playerId?.id ? 'Neutral' : players[e.playerId.id].name,
-						noRightSpacing: true,
-					},
+					[
+						{ committeeParty: e.partyCode, noRightSpacing: true },
+						{
+							symbol: SymbolType.PartyLeader,
+							color: !e.playerId?.id ? '#ccc' : players[e.playerId.id].color,
+							title: `${!e.playerId?.id ? 'Neutral' : players[e.playerId.id].name} is now party leader`,
+						},
+					],
 				]
 			}
 
 			case EventType.CommitteeDominantPartyChanged: {
-				return [{ text: 'DOMINANT' }, { committeeParty: e.partyCode }]
+				return [
+					[
+						{ text: 'DOMINANT', noRightSpacing: true },
+						{ committeeParty: e.partyCode, title: `Is now dominant` },
+					],
+				]
 			}
 
 			// TODO: Committee symbols
@@ -190,10 +199,17 @@ export const SymbolsEventLog = ({
 
 	return (
 		<E style={{ maxWidth }}>
-			{allSymbols.map((s, i) => (
-				<SymbolContainer key={i} style={{ animationDelay: `${i * 300}ms` }}>
-					<SymbolDisplay key={i} symbol={s} />
-				</SymbolContainer>
+			{allSymbols.flatMap((s, i) => (
+				<Flex>
+					{(Array.isArray(s) ? s : [s]).map((s, ii) => (
+						<SymbolContainer
+							key={i + ii}
+							style={{ animationDelay: `${i * 300}ms` }}
+						>
+							<SymbolDisplay symbol={s} />
+						</SymbolContainer>
+					))}
+				</Flex>
 			))}
 		</E>
 	)
@@ -223,4 +239,5 @@ const SymbolContainer = styled.div`
 	transform: scale(0);
 	display: flex;
 	align-items: center;
+	flex-wrap: nowrap;
 `

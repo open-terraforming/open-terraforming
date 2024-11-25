@@ -15,23 +15,23 @@ export const GlobalEventsChangedEvent = ({ event }: Props) => {
 
 	return (
 		<Container>
-			<Flex>
+			<Flex align="stretch" gap="0.5rem">
 				{event.current.distant && (
-					<div>
+					<Flex direction="column" gap="0.5rem">
 						<div>NEW DISTANT EVENT</div>
 						<GlobalEventView
 							globalEvent={getGlobalEvent(event.current.distant)}
 						/>
-					</div>
+					</Flex>
 				)}
 
 				{event.current.current && (
-					<div>
+					<Flex direction="column" gap="0.5rem">
 						<div>NEW CURRENT EVENT</div>
 						<GlobalEventView
 							globalEvent={getGlobalEvent(event.current.current)}
 						/>
-					</div>
+					</Flex>
 				)}
 			</Flex>
 
@@ -41,7 +41,6 @@ export const GlobalEventsChangedEvent = ({ event }: Props) => {
 }
 
 const Container = styled.div`
-	font-size: 125%;
 	text-align: center;
 	margin: 1rem 3rem;
 `

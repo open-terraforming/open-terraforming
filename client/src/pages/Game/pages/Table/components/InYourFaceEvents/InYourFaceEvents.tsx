@@ -25,6 +25,7 @@ import { CommitteePartyDelegateChangeEvent } from './components/CommitteePartyDe
 import { CommitteePartyLeaderChangedEvent } from './components/CommitteePartyLeaderChangedEvent'
 import { GlobalEventsChangedEvent } from './components/GlobalEventsChangedEvent'
 import { CurrentGlobalEventExecutedEvent } from './components/CurrentGlobalEventExecuted'
+import { NewGovernmentEvent } from './components/NewGovernmentEvent'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -209,8 +210,7 @@ export const InYourFaceEvents = () => {
 			case EventType.CurrentGlobalEventExecuted:
 				return <CurrentGlobalEventExecutedEvent event={event} />
 			case EventType.NewGovernment:
-				// TODO:
-				return <CenterText>New government</CenterText>
+				return <NewGovernmentEvent event={event} />
 			default:
 				return null
 		}

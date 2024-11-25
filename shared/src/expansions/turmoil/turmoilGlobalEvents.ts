@@ -712,8 +712,19 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 		effectDelegate: 'mars_first',
 		effects: [
 			{
-				symbols: [],
-				description: '',
+				symbols: [
+					{ symbol: SymbolType.Influence },
+					{ symbol: SymbolType.Plus },
+					{ tag: CardCategory.Building },
+					{ symbol: SymbolType.Plus },
+					{ tile: GridCellContent.City },
+					{ symbol: SymbolType.Colon },
+					{ symbol: SymbolType.TerraformingRating, count: 2 },
+					{ symbol: SymbolType.SlashSmall },
+					{ symbol: SymbolType.TerraformingRating, count: 1 },
+				],
+				description:
+					'Count influence + number of building tags + number of city tiles. Player with the biggest count gains 2 TR, 2nd biggest gains 1 TR. SOLO: Gain 2 TR if count is 10 or more.',
 				apply(game) {
 					if (game.players.length === 0) {
 						const count =

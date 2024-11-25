@@ -264,6 +264,8 @@ export type NewGovernment = {
 	type: EventType.NewGovernment
 	oldRulingParty: string
 	newRulingParty: string
+	oldChairman: PlayerId | null
+	newChairman: PlayerId | null
 	changes: GameEvent[]
 }
 

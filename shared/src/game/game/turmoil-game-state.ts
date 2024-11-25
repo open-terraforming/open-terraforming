@@ -140,12 +140,16 @@ export class TurmoilGameState extends BaseGameState {
 		if (events.startState.committee.rulingParty && game.committee.rulingParty) {
 			const oldRulingParty = events.startState.committee.rulingParty
 			const newRulingParty = game.committee.rulingParty
+			const oldChairman = events.startState.committee.chairman?.playerId ?? null
+			const newChairman = game.committee.chairman?.playerId ?? null
 
 			events.collectAndPush((changes) => ({
 				type: EventType.NewGovernment,
 				oldRulingParty,
 				newRulingParty,
 				changes,
+				oldChairman,
+				newChairman,
 			}))
 		}
 	}

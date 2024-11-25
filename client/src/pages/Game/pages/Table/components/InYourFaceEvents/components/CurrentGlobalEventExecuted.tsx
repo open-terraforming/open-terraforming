@@ -21,7 +21,6 @@ export const CurrentGlobalEventExecutedEvent = ({ event }: Props) => {
 }
 
 const Container = styled.div`
-	font-size: 125%;
 	text-align: center;
 	margin: 1rem 3rem;
 `
