@@ -269,8 +269,13 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 				description: 'Lose 1 energy and 1 ore production.',
 				apply(game) {
 					for (const player of game.players) {
-						updatePlayerProduction(player, 'energy', -1)
-						updatePlayerProduction(player, 'ore', -1)
+						if (player.energyProduction > 0) {
+							updatePlayerProduction(player, 'energy', -1)
+						}
+
+						if (player.oreProduction > 0) {
+							updatePlayerProduction(player, 'ore', -1)
+						}
 					}
 				},
 			},

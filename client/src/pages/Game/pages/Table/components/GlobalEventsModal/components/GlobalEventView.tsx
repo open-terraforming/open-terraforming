@@ -1,7 +1,7 @@
 import { ClippedBox } from '@/components/ClippedBox'
 import { GlobalEvent } from '@shared/expansions/turmoil/globalEvent'
 import { Symbols } from '../../CardView/components/Symbols'
-import { styled } from 'styled-components'
+import { css, styled } from 'styled-components'
 import { useLocale } from '@/context/LocaleContext'
 import { Flex } from '@/components/Flex/Flex'
 import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
@@ -11,9 +11,10 @@ import { Tooltip } from '@/components'
 
 type Props = {
 	globalEvent: GlobalEvent
+	highlightEffect?: boolean
 }
 
-export const GlobalEventView = ({ globalEvent }: Props) => {
+export const GlobalEventView = ({ globalEvent, highlightEffect }: Props) => {
 	const t = useLocale()
 
 	const allSymbols = globalEvent.effects.flatMap((effect) => effect.symbols)
@@ -26,7 +27,7 @@ export const GlobalEventView = ({ globalEvent }: Props) => {
 		<Container>
 			<Title>{t.globalEvents[globalEvent.code]}</Title>
 			<Inner>
-				<Delegates>
+				<Delegates $faded={!!highlightEffect}>
 					<Tooltip
 						content={
 							'Neutral delegate added to this party when this global become DISTANT'
@@ -81,9 +82,15 @@ const Description = styled.div`
 	margin-top: 0.25rem;
 `
 
-const Delegates = styled(Flex)`
+const Delegates = styled(Flex)<{ $faded: boolean }>`
 	padding: 0.5rem;
 	justify-content: space-between;
+
+	${({ $faded }) =>
+		$faded &&
+		css`
+			opacity: 0.2;
+		`}
 `
 
 const Arrow = styled.div`

@@ -14,7 +14,10 @@ export const CurrentGlobalEventExecutedEvent = ({ event }: Props) => {
 
 	return (
 		<Container>
-			<GlobalEventView globalEvent={getGlobalEvent(event.eventCode)} />
+			<GlobalEventView
+				globalEvent={getGlobalEvent(event.eventCode)}
+				highlightEffect
+			/>
 			<SymbolsEventLog events={event.changes} currentPlayerId={playerId} />
 		</Container>
 	)

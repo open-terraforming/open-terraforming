@@ -189,6 +189,9 @@ export class Player {
 
 		// Reset playable cards
 		state.usedCards.forEach((c) => (c.played = false))
+
+		// Reset active ruling party policy flag
+		state.usedActiveRulingPartyPolicy = false
 	}
 
 	filterPendingActions() {

@@ -17,10 +17,6 @@ export class TurmoilGameState extends BaseGameState {
 	onEnter() {
 		const game = this.game.state
 
-		for (const player of game.players) {
-			player.terraformRating -= 1
-		}
-
 		this.executeCurrentGlobalEvent(game)
 		this.processNewGovernment(game)
 		this.shiftGlobalEvents(game)
@@ -72,6 +68,11 @@ export class TurmoilGameState extends BaseGameState {
 
 	private processNewGovernment(game: GameState) {
 		const events = this.game.startEventsCollector()
+
+		// TODO: This doesn't trigger any event so it can be confusing
+		for (const player of game.players) {
+			player.terraformRating -= 1
+		}
 
 		if (game.committee.dominantParty) {
 			if (game.committee.rulingParty) {
