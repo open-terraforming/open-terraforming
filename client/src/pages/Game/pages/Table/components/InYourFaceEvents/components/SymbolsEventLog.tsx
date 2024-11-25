@@ -148,6 +148,8 @@ export const SymbolsEventLog = ({
 					{ tile: e.tile, tileOther: e.other },
 				]
 			}
+
+			// TODO: Committee symbols
 		}
 
 		return []

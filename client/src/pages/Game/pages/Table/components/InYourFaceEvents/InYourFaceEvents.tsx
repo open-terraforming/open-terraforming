@@ -200,12 +200,16 @@ export const InYourFaceEvents = () => {
 			case EventType.CommitteePartyDelegateChange:
 				return <CommitteePartyDelegateChangeEvent event={event} />
 			case EventType.CommitteePartyLeaderChanged:
+				// TODO:
 				return <CenterText>Leader changed</CenterText>
 			case EventType.GlobalEventsChanged:
+				// TODO:
 				return <CenterText>Global events changed</CenterText>
 			case EventType.CurrentGlobalEventExecuted:
+				// TODO:
 				return <CenterText>Global event executed</CenterText>
 			case EventType.NewGovernment:
+				// TODO:
 				return <CenterText>New government</CenterText>
 			default:
 				return null
