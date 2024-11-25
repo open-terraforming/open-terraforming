@@ -21,6 +21,7 @@ export const GlobalEventsChangedEvent = ({ event }: Props) => {
 						<div>NEW DISTANT EVENT</div>
 						<GlobalEventView
 							globalEvent={getGlobalEvent(event.current.distant)}
+							highlightDistantDelegate
 						/>
 					</Flex>
 				)}
@@ -30,6 +31,7 @@ export const GlobalEventsChangedEvent = ({ event }: Props) => {
 						<div>NEW CURRENT EVENT</div>
 						<GlobalEventView
 							globalEvent={getGlobalEvent(event.current.current)}
+							highlightCurrentDelegate
 						/>
 					</Flex>
 				)}

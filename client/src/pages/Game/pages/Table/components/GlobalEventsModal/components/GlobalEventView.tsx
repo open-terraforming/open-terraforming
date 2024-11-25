@@ -12,9 +12,16 @@ import { Tooltip } from '@/components'
 type Props = {
 	globalEvent: GlobalEvent
 	highlightEffect?: boolean
+	highlightDistantDelegate?: boolean
+	highlightCurrentDelegate?: boolean
 }
 
-export const GlobalEventView = ({ globalEvent, highlightEffect }: Props) => {
+export const GlobalEventView = ({
+	globalEvent,
+	highlightEffect,
+	highlightCurrentDelegate,
+	highlightDistantDelegate,
+}: Props) => {
 	const t = useLocale()
 
 	const allSymbols = globalEvent.effects.flatMap((effect) => effect.symbols)
@@ -33,7 +40,10 @@ export const GlobalEventView = ({ globalEvent, highlightEffect }: Props) => {
 							'Neutral delegate added to this party when this global become DISTANT'
 						}
 					>
-						<CommitteePartyIcon party={globalEvent.initialDelegate} />
+						<StyledParty
+							party={globalEvent.initialDelegate}
+							$faded={highlightCurrentDelegate}
+						/>
 					</Tooltip>
 					<Arrow>
 						<FontAwesomeIcon icon={faChevronRight} />
@@ -45,7 +55,10 @@ export const GlobalEventView = ({ globalEvent, highlightEffect }: Props) => {
 							'Neutral delegate added to this party when this global event becomes CURRENT'
 						}
 					>
-						<CommitteePartyIcon party={globalEvent.effectDelegate} />
+						<StyledParty
+							party={globalEvent.effectDelegate}
+							$faded={highlightDistantDelegate}
+						/>
 					</Tooltip>
 				</Delegates>
 				<Effects>
@@ -101,4 +114,12 @@ const Arrow = styled.div`
 const Effects = styled.div`
 	border-top: 2px solid ${({ theme }) => theme.colors.border};
 	padding: 0.5rem;
+`
+
+const StyledParty = styled(CommitteePartyIcon)<{ $faded?: boolean }>`
+	${({ $faded }) =>
+		$faded &&
+		css`
+			opacity: 0.2;
+		`}
 `

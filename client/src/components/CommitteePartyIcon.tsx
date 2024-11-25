@@ -14,13 +14,19 @@ type Size = 'sm' | 'md'
 type Params = {
 	party: string
 	size?: Size
+	className?: string
 }
 
-export const CommitteePartyIcon = ({ party, size = 'md' }: Params) => {
+export const CommitteePartyIcon = ({
+	party,
+	className,
+	size = 'md',
+}: Params) => {
 	switch (party) {
 		case 'mars_first':
 			return (
 				<GeneralContainer
+					className={className}
 					$size={size}
 					style={{
 						backgroundColor: '#b87e47',
@@ -35,6 +41,7 @@ export const CommitteePartyIcon = ({ party, size = 'md' }: Params) => {
 		case 'kelvinists':
 			return (
 				<GeneralContainer
+					className={className}
 					$size={size}
 					style={{
 						backgroundColor: '#333',
@@ -49,6 +56,7 @@ export const CommitteePartyIcon = ({ party, size = 'md' }: Params) => {
 		case 'scientists':
 			return (
 				<GeneralContainer
+					className={className}
 					$size={size}
 					style={{
 						backgroundColor: '#e0e0e0',
@@ -63,6 +71,7 @@ export const CommitteePartyIcon = ({ party, size = 'md' }: Params) => {
 		case 'reds':
 			return (
 				<GeneralContainer
+					className={className}
 					$size={size}
 					style={{
 						backgroundColor: '#f00',
@@ -77,6 +86,7 @@ export const CommitteePartyIcon = ({ party, size = 'md' }: Params) => {
 		case 'unity':
 			return (
 				<GeneralContainer
+					className={className}
 					$size={size}
 					style={{
 						backgroundColor: '#22a',
@@ -91,6 +101,7 @@ export const CommitteePartyIcon = ({ party, size = 'md' }: Params) => {
 		case 'greens':
 			return (
 				<GeneralContainer
+					className={className}
 					$size={size}
 					style={{
 						backgroundColor: '#4b4',
