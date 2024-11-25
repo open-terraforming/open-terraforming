@@ -187,6 +187,7 @@ export const SymbolDisplay = ({
 			noVerticalSpacing={noVerticalSpacing}
 			noSpacing={
 				noSpacing ||
+				s.noSpacing ||
 				s.symbol === SymbolType.X ||
 				s.symbol === SymbolType.RightArrow ||
 				s.symbol === SymbolType.LessOrEqual ||
@@ -345,6 +346,6 @@ const BlueCard = styled(ClippedBox)`
 const LeaderContainer = styled.div`
 	background-color: #000;
 	border-radius: 25%;
-	color: #fff;
+	/*color: #fff;*/
 	padding: 0.25rem;
 `

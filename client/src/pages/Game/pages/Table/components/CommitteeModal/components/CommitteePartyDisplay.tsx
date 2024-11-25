@@ -20,12 +20,14 @@ type Props = {
 	state: CommitteePartyState
 	onClick?: () => void
 	pickerMode?: boolean
+	hideMembers?: boolean
 }
 
 export const CommitteePartyDisplay = ({
 	state,
 	onClick,
 	pickerMode,
+	hideMembers,
 }: Props) => {
 	const game = useGameState()
 	const player = usePlayerState()
@@ -67,47 +69,58 @@ export const CommitteePartyDisplay = ({
 				</Flex>
 			</ClippedBoxTitle>
 
-			{!state.leader && state.members.length === 0 && <None>No members</None>}
+			{!hideMembers && (
+				<>
+					{!state.leader && state.members.length === 0 && (
+						<None>No members</None>
+					)}
 
-			{state.leader && (
-				<Flex justify="center">
-					<Tooltip content="Party leader">
-						<Leader>
-							<DelegateIcon
-								type="party-leader"
-								playerId={state.leader.playerId?.id}
-							/>
-							{state.leader.playerId
-								? playerMap[state.leader.playerId.id].name
-								: 'Neutral'}
-						</Leader>
-					</Tooltip>
-				</Flex>
-			)}
+					{state.leader && (
+						<Flex justify="center">
+							<Tooltip content="Party leader">
+								<Leader>
+									<DelegateIcon
+										type="party-leader"
+										playerId={state.leader.playerId?.id}
+									/>
+									{state.leader.playerId
+										? playerMap[state.leader.playerId.id].name
+										: 'Neutral'}
+								</Leader>
+							</Tooltip>
+						</Flex>
+					)}
 
-			{state.members.length > 0 && (
-				<Delegates>
-					<DelegatesView delegates={state.members.map((m) => m.playerId)} />
-				</Delegates>
-			)}
+					{state.members.length > 0 && (
+						<Delegates>
+							<DelegatesView delegates={state.members.map((m) => m.playerId)} />
+						</Delegates>
+					)}
 
-			{!pickerMode && (canPlaceFromLobby || canPlaceFromReserve) && (
-				<Actions justify="center">
-					<Button onClick={handlePlace}>
-						{!canPlaceFromLobby && (
-							<Symbols symbols={[{ resource: 'money', count: 5 }]} noSpacing />
-						)}
-						{canPlaceFromLobby
-							? 'Add delegate from lobby'
-							: 'Add delegate from reserve'}
-					</Button>
-				</Actions>
+					{!pickerMode && (canPlaceFromLobby || canPlaceFromReserve) && (
+						<Actions justify="center">
+							<Button onClick={handlePlace}>
+								{!canPlaceFromLobby && (
+									<Symbols
+										symbols={[{ resource: 'money', count: 5 }]}
+										noSpacing
+									/>
+								)}
+								{canPlaceFromLobby
+									? 'Add delegate from lobby'
+									: 'Add delegate from reserve'}
+							</Button>
+						</Actions>
+					)}
+				</>
 			)}
 
 			<div>
-				<ClippedBoxTitle $centered $spacing>
-					Ruling Bonus
-				</ClippedBoxTitle>
+				{!hideMembers && (
+					<ClippedBoxTitle $centered $spacing>
+						Ruling Bonus
+					</ClippedBoxTitle>
+				)}
 				<EffectsContainer>
 					<StyledSymbols symbols={party.bonus.symbols} noVerticalSpacing />
 					{party.bonus.description}
@@ -118,20 +131,18 @@ export const CommitteePartyDisplay = ({
 				<ClippedBoxTitle $centered $spacing>
 					Ruling Policy
 				</ClippedBoxTitle>
-				<EffectsContainer>
-					{party.policy.active.map((policy, index) => (
-						<EffectsContainer key={index}>
-							<StyledSymbols symbols={policy.symbols} noVerticalSpacing />
-							{policy.description}
-						</EffectsContainer>
-					))}
-					{party.policy.passive.map((policy, index) => (
-						<EffectsContainer key={index}>
-							<StyledSymbols symbols={policy.symbols} noVerticalSpacing />
-							{policy.description}
-						</EffectsContainer>
-					))}
-				</EffectsContainer>
+				{party.policy.active.map((policy, index) => (
+					<EffectsContainer key={index}>
+						<StyledSymbols symbols={policy.symbols} noVerticalSpacing />
+						{policy.description}
+					</EffectsContainer>
+				))}
+				{party.policy.passive.map((policy, index) => (
+					<EffectsContainer key={index}>
+						<StyledSymbols symbols={policy.symbols} noVerticalSpacing />
+						{policy.description}
+					</EffectsContainer>
+				))}
 			</div>
 		</Container>
 	)

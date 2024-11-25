@@ -335,6 +335,8 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						<PartySpan party={event.newRulingParty} /> is now ruling party
 					</>
 				)
+			case EventType.PlayerMovedDelegate:
+				return <></>
 		}
 
 		assertNever(event)

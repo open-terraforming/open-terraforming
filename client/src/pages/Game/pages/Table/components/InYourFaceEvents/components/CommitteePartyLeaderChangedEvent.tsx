@@ -20,14 +20,13 @@ export const CommitteePartyLeaderChangedEvent = ({ event }: Props) => {
 	return (
 		<Container>
 			<CommitteePartyIcon party={event.partyCode} />{' '}
-			{locale.committeeParties[event.partyCode]} party leader changed to{' '}
+			{locale.committeeParties[event.partyCode]} party leader is now{' '}
 			<span style={{ color: newLeader.color }}>{newLeader.name}</span>
 		</Container>
 	)
 }
 
 const Container = styled.div`
-	font-size: 125%;
 	text-align: center;
 	margin: 1rem 3rem;
 `

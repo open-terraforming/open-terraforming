@@ -323,6 +323,7 @@ export interface CardSymbol {
 	color?: string
 	title?: string
 	noRightSpacing?: boolean
+	noSpacing?: boolean
 	affectedByInfluence?: boolean
 	committeeParty?: string
 }

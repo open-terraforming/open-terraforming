@@ -16,18 +16,17 @@ export const NewGovernmentEvent = ({ event }: Props) => {
 
 	return (
 		<Container>
-			<h2>New government</h2>
-
-			<div>New chairman</div>
+			<SubTitle>New chairman</SubTitle>
 
 			{event.newChairman !== null
 				? playersMap[event.newChairman.id].name
 				: 'Neutral'}
 
-			<div>New ruling party</div>
+			<SubTitle>New ruling party</SubTitle>
 
 			<CommitteePartyDisplay
 				state={getPartyState(game, event.newRulingParty)}
+				hideMembers
 			/>
 
 			<SymbolsEventLog events={event.changes} currentPlayerId={playerId} />
@@ -38,4 +37,10 @@ export const NewGovernmentEvent = ({ event }: Props) => {
 const Container = styled.div`
 	text-align: center;
 	margin: 1rem 3rem;
+`
+
+const SubTitle = styled.div`
+	font-size: 1.25rem;
+	margin: 1.25rem 0 0.5rem 0;
+	text-transform: uppercase;
 `

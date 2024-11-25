@@ -35,17 +35,17 @@ export const SymbolsEventLog = ({
 					},
 				]
 
-	const eventToSymbols = (e: GameEvent): (CardSymbol[] | CardSymbol)[] => {
-		switch (e.type) {
+	const eventToSymbols = (event: GameEvent): (CardSymbol[] | CardSymbol)[] => {
+		switch (event.type) {
 			case EventType.ResourcesChanged: {
-				return Object.entries(e.resources).flatMap(([resource, amount]) => [
-					...playerSymbol(e.playerId),
+				return Object.entries(event.resources).flatMap(([resource, amount]) => [
+					...playerSymbol(event.playerId),
 					{
 						resource: resource as Resource,
 						count: amount,
 						forceCount: true,
 						forceSign: true,
-						other: e.playerId !== currentPlayerId,
+						other: event.playerId !== currentPlayerId,
 					},
 				])
 			}
@@ -53,46 +53,46 @@ export const SymbolsEventLog = ({
 			case EventType.CardResourceChanged: {
 				// TODO: What if the card index is different?
 				return [
-					...playerSymbol(e.playerId),
-					...(e.index !== currentUsedCardIndex
-						? [{ text: t.cards[e.card], noRightSpacing: true }]
+					...playerSymbol(event.playerId),
+					...(event.index !== currentUsedCardIndex
+						? [{ text: t.cards[event.card], noRightSpacing: true }]
 						: []),
 					{
-						cardResource: e.resource as CardResource,
-						count: e.amount,
+						cardResource: event.resource as CardResource,
+						count: event.amount,
 						forceCount: true,
 						forceSign: true,
-						other: e.playerId !== currentPlayerId,
+						other: event.playerId !== currentPlayerId,
 					},
 				]
 			}
 
 			case EventType.CardsReceived: {
 				return [
-					...playerSymbol(e.playerId),
+					...playerSymbol(event.playerId),
 					{
 						symbol: SymbolType.Card,
-						count: e.amount,
-						other: e.playerId !== currentPlayerId,
+						count: event.amount,
+						other: event.playerId !== currentPlayerId,
 					},
 				]
 			}
 
 			case EventType.GameProgressChanged: {
-				if (e.progress === 'temperature') {
-					return [{ symbol: SymbolType.Temperature, count: e.amount }]
+				if (event.progress === 'temperature') {
+					return [{ symbol: SymbolType.Temperature, count: event.amount }]
 				}
 
-				if (e.progress === 'oxygen') {
-					return [{ symbol: SymbolType.Oxygen, count: e.amount }]
+				if (event.progress === 'oxygen') {
+					return [{ symbol: SymbolType.Oxygen, count: event.amount }]
 				}
 
-				if (e.progress === 'oceans') {
-					return [{ tile: GridCellContent.Ocean, count: e.amount }]
+				if (event.progress === 'oceans') {
+					return [{ tile: GridCellContent.Ocean, count: event.amount }]
 				}
 
-				if (e.progress === 'venus') {
-					return [{ symbol: SymbolType.Venus, count: e.amount }]
+				if (event.progress === 'venus') {
+					return [{ symbol: SymbolType.Venus, count: event.amount }]
 				}
 
 				return []
@@ -100,10 +100,10 @@ export const SymbolsEventLog = ({
 
 			case EventType.RatingChanged: {
 				return [
-					...playerSymbol(e.playerId),
+					...playerSymbol(event.playerId),
 					{
 						symbol: SymbolType.TerraformingRating,
-						count: e.amount,
+						count: event.amount,
 						forceCount: true,
 						forceSign: true,
 					},
@@ -112,21 +112,21 @@ export const SymbolsEventLog = ({
 
 			case EventType.PlayerTradeFleetsChange: {
 				return [
-					...playerSymbol(e.playerId),
-					{ symbol: SymbolType.TradeFleet, count: e.amount },
+					...playerSymbol(event.playerId),
+					{ symbol: SymbolType.TradeFleet, count: event.amount },
 				]
 			}
 
 			case EventType.ProductionChanged: {
 				return [
-					...playerSymbol(e.playerId),
+					...playerSymbol(event.playerId),
 					{
-						resource: e.resource,
+						resource: event.resource,
 						production: true,
-						count: e.amount,
+						count: event.amount,
 						forceCount: true,
 						forceSign: true,
-						other: e.playerId !== currentPlayerId,
+						other: event.playerId !== currentPlayerId,
 					},
 				]
 			}
@@ -138,41 +138,47 @@ export const SymbolsEventLog = ({
 
 			case EventType.TileAcquired: {
 				return [
-					...playerSymbol(e.playerId),
-					{ tile: e.tile, tileOther: e.other },
+					...playerSymbol(event.playerId),
+					{ tile: event.tile, tileOther: event.other },
 				]
 			}
 
 			case EventType.TilePlaced: {
 				return [
-					...playerSymbol(e.playerId),
-					{ tile: e.tile, tileOther: e.other },
+					...playerSymbol(event.playerId),
+					{ tile: event.tile, tileOther: event.other },
 				]
 			}
 
 			case EventType.CommitteePartyDelegateChange: {
-				return e.changes.map((c) => [
-					{ committeeParty: e.partyCode, noRightSpacing: true },
-					{
-						symbol: SymbolType.Delegate,
-						forceCount: true,
-						forceSign: true,
-						count: c.change,
-						color: !c.playerId?.id ? '#ccc' : players[c.playerId?.id].color,
-						title: `${!c.playerId?.id ? 'Neutral' : players[c.playerId?.id].name} delegate`,
-					},
-				])
+				return [
+					[
+						...event.changes.map((c) => ({
+							symbol: SymbolType.Delegate,
+							forceCount: true,
+							forceSign: true,
+							count: c.change,
+							color: !c.playerId?.id ? '#ccc' : players[c.playerId?.id].color,
+							title: `${!c.playerId?.id ? 'Neutral' : players[c.playerId?.id].name} delegate`,
+							noRightSpacing: true,
+						})),
+						{ committeeParty: event.partyCode, noSpacing: true },
+					],
+				]
 			}
 
 			case EventType.CommitteePartyLeaderChanged: {
 				return [
 					[
-						{ committeeParty: e.partyCode, noRightSpacing: true },
 						{
 							symbol: SymbolType.PartyLeader,
-							color: !e.playerId?.id ? '#ccc' : players[e.playerId.id].color,
-							title: `${!e.playerId?.id ? 'Neutral' : players[e.playerId.id].name} is now party leader`,
+							color: !event.playerId?.id
+								? '#ccc'
+								: players[event.playerId.id].color,
+							title: `${!event.playerId?.id ? 'Neutral' : players[event.playerId.id].name} is now party leader`,
+							noRightSpacing: true,
 						},
+						{ committeeParty: event.partyCode, noSpacing: true },
 					],
 				]
 			}
@@ -180,8 +186,15 @@ export const SymbolsEventLog = ({
 			case EventType.CommitteeDominantPartyChanged: {
 				return [
 					[
-						{ text: 'DOMINANT', noRightSpacing: true },
-						{ committeeParty: e.partyCode, title: `Is now dominant` },
+						{
+							committeeParty: event.partyCode,
+							title: `${t.committeeParties[event.partyCode]} is now dominant`,
+							noRightSpacing: true,
+						},
+						{
+							text: 'DOMINANT',
+							title: `${t.committeeParties[event.partyCode]} is now dominant`,
+						},
 					],
 				]
 			}

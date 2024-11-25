@@ -4,6 +4,7 @@ import { Flex } from '@/components/Flex/Flex'
 import { useAppStore, useToggle } from '@/utils/hooks'
 import { useGameEventsHandler } from '@/utils/useGameEventsHandler'
 import { faBell, faChevronDown } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { EventType, GameEvent } from '@shared/index'
 import { useCallback, useEffect, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
@@ -12,20 +13,17 @@ import { CardUsedEvent } from './components/CardUsedEvent'
 import { ColonyBuiltEvent } from './components/ColonyBuiltEvent'
 import { ColonyTradingEvent } from './components/ColonyTradingEvent'
 import { CompetitionSponsoredEvent } from './components/CompetitionSponsoredEvent'
+import { CurrentGlobalEventExecutedEvent } from './components/CurrentGlobalEventExecuted'
+import { GlobalEventsChangedEvent } from './components/GlobalEventsChangedEvent'
+import { MarsTerraformedEvent } from './components/MarsTerraformedEvent'
 import { MilestoneBoughtEvent } from './components/MilestoneBoughtEvent'
+import { NewGovernmentEvent } from './components/NewGovernmentEvent'
 import { PlayerDidHeader } from './components/PlayerDidHeader'
+import { PlayerMovedDelegateEvent } from './components/PlayerMovedDelegateEvent'
 import { ProductionDoneEvent } from './components/ProductionDoneEvent'
 import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
 import { StartingSetupEvent } from './components/StartingSetupEvent'
 import { TilePlacedEvent } from './components/TilePlacedEvent'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { MarsTerraformedEvent } from './components/MarsTerraformedEvent'
-import { CommitteeDominantPartyChangedEvent } from './components/CommitteeDominantPartyChangedEvent'
-import { CommitteePartyDelegateChangeEvent } from './components/CommitteePartyDelegateChangeEvent'
-import { CommitteePartyLeaderChangedEvent } from './components/CommitteePartyLeaderChangedEvent'
-import { GlobalEventsChangedEvent } from './components/GlobalEventsChangedEvent'
-import { CurrentGlobalEventExecutedEvent } from './components/CurrentGlobalEventExecuted'
-import { NewGovernmentEvent } from './components/NewGovernmentEvent'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -39,12 +37,10 @@ const PROCESSABLE_EVENTS = [
 	EventType.ProductionDone,
 	EventType.TilePlaced,
 	EventType.MarsTerraformed,
-	EventType.CommitteePartyDelegateChange,
-	EventType.CommitteePartyLeaderChanged,
-	EventType.CommitteeDominantPartyChanged,
 	EventType.GlobalEventsChanged,
 	EventType.CurrentGlobalEventExecuted,
 	EventType.NewGovernment,
+	EventType.PlayerMovedDelegate,
 ]
 
 export const InYourFaceEvents = () => {
@@ -158,18 +154,20 @@ export const InYourFaceEvents = () => {
 				return <CenterText>Production</CenterText>
 			case EventType.MarsTerraformed:
 				return <CenterText>Mars terraformed</CenterText>
-			case EventType.CommitteeDominantPartyChanged:
-				return <CenterText>Dominant party changed</CenterText>
-			case EventType.CommitteePartyDelegateChange:
-				return <CenterText>Delegate changed</CenterText>
-			case EventType.CommitteePartyLeaderChanged:
-				return <CenterText>Leader changed</CenterText>
 			case EventType.GlobalEventsChanged:
 				return <CenterText>Global events changed</CenterText>
 			case EventType.CurrentGlobalEventExecuted:
 				return <CenterText>Global event executed</CenterText>
 			case EventType.NewGovernment:
 				return <CenterText>New government</CenterText>
+			case EventType.PlayerMovedDelegate:
+				return (
+					<PlayerDidHeader
+						playerId={event.playerId}
+						noSpacing
+						thing=" placed delegate"
+					/>
+				)
 			default:
 				return null
 		}
@@ -199,18 +197,14 @@ export const InYourFaceEvents = () => {
 				return <TilePlacedEvent event={event} onOpacityChange={setOpacity} />
 			case EventType.MarsTerraformed:
 				return <MarsTerraformedEvent />
-			case EventType.CommitteeDominantPartyChanged:
-				return <CommitteeDominantPartyChangedEvent event={event} />
-			case EventType.CommitteePartyDelegateChange:
-				return <CommitteePartyDelegateChangeEvent event={event} />
-			case EventType.CommitteePartyLeaderChanged:
-				return <CommitteePartyLeaderChangedEvent event={event} />
 			case EventType.GlobalEventsChanged:
 				return <GlobalEventsChangedEvent event={event} />
 			case EventType.CurrentGlobalEventExecuted:
 				return <CurrentGlobalEventExecutedEvent event={event} />
 			case EventType.NewGovernment:
 				return <NewGovernmentEvent event={event} />
+			case EventType.PlayerMovedDelegate:
+				return <PlayerMovedDelegateEvent event={event} />
 			default:
 				return null
 		}

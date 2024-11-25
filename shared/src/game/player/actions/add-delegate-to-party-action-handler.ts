@@ -2,6 +2,7 @@ import { addDelegateToPartyActionRequest } from '@shared/actions'
 import { addDelegate } from '@shared/expansions/turmoil/utils/addDelegate'
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerBaseActionHandler } from '../action'
+import { EventType } from '@shared/game/events/eventTypes'
 
 type Args = ReturnType<typeof addDelegateToPartyActionRequest>['data']
 
@@ -15,8 +16,18 @@ export class AddDelegateToPartyActionHandler extends PlayerBaseActionHandler<Arg
 		)
 
 		if (lobbyIndex >= 0) {
+			const collector = this.parent.game.startEventsCollector()
+
 			this.game.committee.lobby.splice(lobbyIndex, 1)
 			addDelegate(this.game, party, { id: this.player.id })
+
+			collector.collectAndPush((changes) => ({
+				type: EventType.PlayerMovedDelegate,
+				playerId: this.player.id,
+				changes,
+				change: 1,
+				partyCode: party,
+			}))
 
 			return
 		}
@@ -35,13 +46,21 @@ export class AddDelegateToPartyActionHandler extends PlayerBaseActionHandler<Arg
 			)
 		}
 
+		const collector = this.parent.game.startEventsCollector()
+
 		this.player.money -= 5
 
 		this.game.committee.reserve.splice(reserveIndex, 1)
 		addDelegate(this.game, party, { id: this.player.id })
 
-		if (!this.pendingAction) {
-			this.actionPlayed()
-		}
+		collector.collectAndPush((changes) => ({
+			type: EventType.PlayerMovedDelegate,
+			playerId: this.player.id,
+			changes,
+			change: 1,
+			partyCode: party,
+		}))
+
+		this.actionPlayed()
 	}
 }
