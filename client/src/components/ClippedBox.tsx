@@ -9,6 +9,7 @@ type Props = {
 	style?: CSSProperties
 	clipSize?: string
 	onClick?: () => void
+	innerSpacing?: boolean
 }
 
 export const ClippedBox = ({
@@ -17,6 +18,7 @@ export const ClippedBox = ({
 	style,
 	onClick,
 	clipSize = '7px',
+	innerSpacing,
 }: Props) => {
 	return (
 		<OuterBorder
@@ -25,7 +27,7 @@ export const ClippedBox = ({
 			$clipSize={clipSize}
 			onClick={onClick}
 		>
-			<Inner className="inner" $clipSize={clipSize}>
+			<Inner className="inner" $clipSize={clipSize} $spacing={innerSpacing}>
 				{children}
 			</Inner>
 		</OuterBorder>
@@ -48,9 +50,15 @@ const OuterBorder = styled.div<{ $clipSize: string }>`
 	`}
 `
 
-const Inner = styled.div<{ $clipSize: string }>`
+const Inner = styled.div<{ $clipSize: string; $spacing?: boolean }>`
 	height: 100%;
 	box-sizing: border-box;
+
+	${({ $spacing }) =>
+		$spacing &&
+		css`
+			padding: 0.5rem;
+		`}
 
 	${stripedBackground()}
 

@@ -4,6 +4,8 @@ import { NewGovernment } from '@shared/index'
 import { styled } from 'styled-components'
 import { CommitteePartyDisplay } from '../../CommitteeModal/components/CommitteePartyDisplay'
 import { SymbolsEventLog } from './SymbolsEventLog'
+import { Flex } from '@/components/Flex/Flex'
+import { DelegateIcon } from '@/components/DelegateIcon'
 
 type Props = {
 	event: NewGovernment
@@ -18,9 +20,15 @@ export const NewGovernmentEvent = ({ event }: Props) => {
 		<Container>
 			<SubTitle>New chairman</SubTitle>
 
-			{event.newChairman !== null
-				? playersMap[event.newChairman.id].name
-				: 'Neutral'}
+			<Flex justify="center" gap="0.25rem">
+				<DelegateIcon
+					playerId={event.newChairman?.id ?? null}
+					type="chairman"
+				/>
+				{event.newChairman !== null
+					? playersMap[event.newChairman.id].name
+					: 'Neutral'}
+			</Flex>
 
 			<SubTitle>New ruling party</SubTitle>
 

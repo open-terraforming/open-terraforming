@@ -337,6 +337,8 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				)
 			case EventType.PlayerMovedDelegate:
 				return <></>
+			case EventType.CommitteePartyActivePolicyActivated:
+				return <></>
 		}
 
 		assertNever(event)

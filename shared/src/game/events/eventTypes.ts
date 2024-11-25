@@ -45,6 +45,7 @@ export enum EventType {
 	GlobalEventsChanged,
 	NewGovernment,
 	PlayerMovedDelegate,
+	CommitteePartyActivePolicyActivated,
 }
 
 export type StartingSetup = {
@@ -282,6 +283,13 @@ export type PlayerMovedDelegate = {
 	changes: GameEvent[]
 }
 
+export type CommitteePartyActivePolicyActivated = {
+	type: EventType.CommitteePartyActivePolicyActivated
+	playerId: number
+	partyCode: string
+	changes: GameEvent[]
+}
+
 export type GameEvent = BaseGameEvent &
 	(
 		| CardPlayed
@@ -318,6 +326,7 @@ export type GameEvent = BaseGameEvent &
 		| GlobalEventsChanged
 		| NewGovernment
 		| PlayerMovedDelegate
+		| CommitteePartyActivePolicyActivated
 	)
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {

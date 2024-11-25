@@ -24,6 +24,7 @@ import { ProductionDoneEvent } from './components/ProductionDoneEvent'
 import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
 import { StartingSetupEvent } from './components/StartingSetupEvent'
 import { TilePlacedEvent } from './components/TilePlacedEvent'
+import { CommitteePartyActivePolicyActivatedEvent } from './components/CommitteePartyActivePolicyActivatedEvent'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -41,6 +42,7 @@ const PROCESSABLE_EVENTS = [
 	EventType.CurrentGlobalEventExecuted,
 	EventType.NewGovernment,
 	EventType.PlayerMovedDelegate,
+	EventType.CommitteePartyActivePolicyActivated,
 ]
 
 export const InYourFaceEvents = () => {
@@ -168,6 +170,14 @@ export const InYourFaceEvents = () => {
 						thing=" placed delegate"
 					/>
 				)
+			case EventType.CommitteePartyActivePolicyActivated:
+				return (
+					<PlayerDidHeader
+						playerId={event.playerId}
+						noSpacing
+						thing=" used ruling policy"
+					/>
+				)
 			default:
 				return null
 		}
@@ -205,6 +215,8 @@ export const InYourFaceEvents = () => {
 				return <NewGovernmentEvent event={event} />
 			case EventType.PlayerMovedDelegate:
 				return <PlayerMovedDelegateEvent event={event} />
+			case EventType.CommitteePartyActivePolicyActivated:
+				return <CommitteePartyActivePolicyActivatedEvent event={event} />
 			default:
 				return null
 		}
