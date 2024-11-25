@@ -40,10 +40,6 @@ export const CommitteeModal = ({ onClose }: Props) => {
 					gap="0.25rem"
 					align="stretch"
 				>
-					<DelegatesBox
-						title={'Neutral reserve'}
-						delegates={game.committee.reserve.filter((r) => !r)}
-					/>
 					<DelegatesBox title={'Lobby'} delegates={game.committee.lobby} />
 				</Flex>
 				{rulingParty && <RulingPartyDisplay party={rulingParty} />}
