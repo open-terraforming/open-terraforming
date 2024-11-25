@@ -22,6 +22,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { MarsTerraformedEvent } from './components/MarsTerraformedEvent'
 import { CommitteeDominantPartyChangedEvent } from './components/CommitteeDominantPartyChangedEvent'
 import { CommitteePartyDelegateChangeEvent } from './components/CommitteePartyDelegateChangeEvent'
+import { CommitteePartyLeaderChangedEvent } from './components/CommitteePartyLeaderChangedEvent'
+import { GlobalEventsChangedEvent } from './components/GlobalEventsChangedEvent'
+import { CurrentGlobalEventExecutedEvent } from './components/CurrentGlobalEventExecuted'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -200,14 +203,11 @@ export const InYourFaceEvents = () => {
 			case EventType.CommitteePartyDelegateChange:
 				return <CommitteePartyDelegateChangeEvent event={event} />
 			case EventType.CommitteePartyLeaderChanged:
-				// TODO:
-				return <CenterText>Leader changed</CenterText>
+				return <CommitteePartyLeaderChangedEvent event={event} />
 			case EventType.GlobalEventsChanged:
-				// TODO:
-				return <CenterText>Global events changed</CenterText>
+				return <GlobalEventsChangedEvent event={event} />
 			case EventType.CurrentGlobalEventExecuted:
-				// TODO:
-				return <CenterText>Global event executed</CenterText>
+				return <CurrentGlobalEventExecutedEvent event={event} />
 			case EventType.NewGovernment:
 				// TODO:
 				return <CenterText>New government</CenterText>

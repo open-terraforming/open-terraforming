@@ -22,14 +22,14 @@ export const SymbolsEventLog = ({
 	const players = useAppStore((state) => state.game.playerMap)
 	const t = useLocale()
 
-	const playerSymbol = (playerId: number): CardSymbol[] =>
+	const playerSymbol = (playerId: number | null): CardSymbol[] =>
 		playerId === currentPlayerId
 			? []
 			: [
 					{
 						symbol: SymbolType.Player,
-						color: players[playerId].color,
-						title: players[playerId].name,
+						color: playerId === null ? '#ccc' : players[playerId].color,
+						title: playerId === null ? 'Neutral' : players[playerId].name,
 						noRightSpacing: true,
 					},
 				]
@@ -147,6 +147,34 @@ export const SymbolsEventLog = ({
 					...playerSymbol(e.playerId),
 					{ tile: e.tile, tileOther: e.other },
 				]
+			}
+
+			case EventType.CommitteePartyDelegateChange: {
+				return e.changes.flatMap((c) => [
+					...playerSymbol(c.playerId?.id ?? null),
+					{
+						symbol: SymbolType.Delegate,
+						forceCount: true,
+						forceSign: true,
+						count: c.change,
+					},
+				])
+			}
+
+			case EventType.CommitteePartyLeaderChanged: {
+				return [
+					{ committeeParty: e.partyCode },
+					{
+						symbol: SymbolType.PartyLeader,
+						color: !e.playerId?.id ? '#ccc' : players[e.playerId.id].color,
+						title: !e.playerId?.id ? 'Neutral' : players[e.playerId.id].name,
+						noRightSpacing: true,
+					},
+				]
+			}
+
+			case EventType.CommitteeDominantPartyChanged: {
+				return [{ text: 'DOMINANT' }, { committeeParty: e.partyCode }]
 			}
 
 			// TODO: Committee symbols
