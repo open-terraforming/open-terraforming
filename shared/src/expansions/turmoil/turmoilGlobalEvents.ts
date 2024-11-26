@@ -161,7 +161,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 					{ symbol: SymbolType.TerraformingRating, count: 5 },
 				],
 				description:
-					'Gain 2 per influence and every set of 5 TR over 15 TR (max 5 sets).',
+					'Gain 2$ per influence and every set of 5 TR over 15 TR (max 5 sets).',
 				apply(game) {
 					for (const player of game.players) {
 						const influence = getPlayerInfluence(game, player)

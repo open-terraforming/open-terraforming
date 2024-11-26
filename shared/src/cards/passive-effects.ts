@@ -491,8 +491,8 @@ export const drawCardWhenBuyingCard = (minCardCost: number) =>
 			{ symbol: SymbolType.Colon },
 			{ symbol: SymbolType.Card },
 		],
-		onCardBought: ({ player, game }, card) => {
-			if (card.cost >= minCardCost) {
+		onCardBought: ({ player, game }, card, _, playedBy) => {
+			if (player.id === playedBy.id && card.cost >= minCardCost) {
 				player.cards.push(drawCard(game))
 			}
 		},

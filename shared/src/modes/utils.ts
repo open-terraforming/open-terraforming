@@ -35,7 +35,6 @@ export const prepareStartingPick = (
 	game.corporations = game.corporations.filter((c) => c !== startingCorp.code)
 
 	game.players.forEach((p) => {
-		/*
 		const corpCards: string[] = []
 
 		try {
@@ -46,8 +45,9 @@ export const prepareStartingPick = (
 			if (corpCards.length === 0) {
 				corpCards.push(startingCorp.code)
 			}
-		}*/
-		const corpCards = game.corporations.slice()
+		}
+
+		// const corpCards = game.corporations.slice()
 
 		pushPendingAction(
 			p,
