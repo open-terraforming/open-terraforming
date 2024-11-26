@@ -6,15 +6,17 @@ import {
 	isCardPlayable,
 	minimalCardPrice,
 } from '@shared/cards/utils'
-import { Competitions, CompetitionType } from '@shared/competitions'
 import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
+import { Competitions, CompetitionType } from '@shared/competitions'
 import {
 	canBuildColony,
 	canTradeWithColonyUsingResource,
 } from '@shared/expansions/colonies/utils'
 import { PlayerStateValue, StandardProjectType } from '@shared/gameState'
 import {
+	activateRulingPolicyActionRequest,
 	addCardResource,
+	addDelegateToPartyActionRequest,
 	buildColony,
 	buyCard,
 	buyMilestone,
@@ -35,29 +37,33 @@ import {
 	sponsorCompetition,
 	tradeWithColony,
 } from '@shared/index'
+import { Logger } from '@shared/lib/logger'
 import { Milestones, MilestoneType } from '@shared/milestones'
 import { canPlace, isClaimable } from '@shared/placements'
 import { PlayerAction, PlayerActionType } from '@shared/player-actions'
 import { Projects } from '@shared/projects'
-import {
-	isOk,
-} from '@shared/utils'
+import { getCommitteeParty, isOk } from '@shared/utils'
 import { allCells } from '@shared/utils/allCells'
-import { f } from '@shared/utils/f'
+import { assertNever } from '@shared/utils/assertNever'
 import { competitionPrice } from '@shared/utils/competitionPrice'
+import { f } from '@shared/utils/f'
+import { mapCards } from '@shared/utils/mapCards'
 import { pickRandom } from '@shared/utils/pickRandom'
 import { shuffle } from '@shared/utils/shuffle'
-import { assertNever } from '@shared/utils/assertNever'
-import { mapCards } from '@shared/utils/mapCards'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { Game } from '../game'
 import { Player } from '../player'
+import { BotAction } from './botTypes'
+import { activatePartyPolicyScore } from './scoring/activatePartyPolicyScore'
+import { addDelegateToPartyScore } from './scoring/addDelegateToPartyScore'
 import { buildColonyScore } from './scoring/buildColonyScore'
 import { claimTileScore } from './scoring/claim-tile-score'
+import { computeScore } from './scoring/computeScore'
 import {
 	AiScoringCoefficients,
 	defaultScoringCoefficients,
 } from './scoring/defaultScoringCoefficients'
+import { getBestArgs } from './scoring/getBestArgs'
 import { placeTileScore } from './scoring/place-tile-score'
 import { playCardScore } from './scoring/play-card-score'
 import { standardProjectScore } from './scoring/standard-project-score'
@@ -65,10 +71,6 @@ import { tradeWithColonyScore } from './scoring/tradeWithColonyScore'
 import { ScoringContext } from './scoring/types'
 import { useCardScore } from './scoring/use-card-score'
 import { pickBest } from './scoring/utils'
-import { getBestArgs } from './scoring/getBestArgs'
-import { computeScore } from './scoring/computeScore'
-import { Logger } from '@shared/lib/logger'
-import { BotAction } from './botTypes'
 
 export type BotOptions = ReturnType<typeof defaultOptions>
 
@@ -855,6 +857,45 @@ export class Bot extends Player {
 							}
 						}
 					})
+
+					for (const party of this.game.state.committee.parties) {
+						if (
+							this.game.state.committee.lobby.some((m) => m.id === this.id) ||
+							this.game.state.committee.reserve.some((m) => m?.id === this.id)
+						) {
+							const score = addDelegateToPartyScore(
+								this.scoringContext,
+								party.code,
+							)
+
+							actions.push(
+								action(`add delegate to ${party.code} from lobby`, score, () =>
+									this.performAction(
+										addDelegateToPartyActionRequest(party.code),
+									),
+								),
+							)
+						}
+					}
+
+					if (this.game.state.committee.rulingParty) {
+						const rulingParty = getCommitteeParty(
+							this.game.state.committee.rulingParty,
+						)
+
+						for (const index of rulingParty.policy.active.keys()) {
+							actions.push(
+								action(
+									`activate ruling party policy`,
+									activatePartyPolicyScore(this.scoringContext, index),
+									() =>
+										this.performAction(
+											activateRulingPolicyActionRequest(index),
+										),
+								),
+							)
+						}
+					}
 				}
 
 				break

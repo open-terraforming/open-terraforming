@@ -1,21 +1,23 @@
 import { CardsLookupApi } from '@shared/cards'
 import {
-	resources,
-	resourceProduction,
-	isCardPlayable,
 	emptyCardState,
+	isCardPlayable,
+	resourceProduction,
+	resources,
 } from '@shared/cards/utils'
 import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
 import { getPlayerUsedFleets } from '@shared/expansions/colonies/utils/getPlayerUsedFleets'
-import { GameState, PlayerState, GridCellContent } from '@shared/index'
-import { allCells } from '@shared/utils/allCells'
+import { getPlayerDelegateCount } from '@shared/expansions/turmoil/utils/getPlayerDelegateCount'
+import { getPlayerInfluence } from '@shared/expansions/turmoil/utils/getPlayerInfluence'
+import { GameState, GridCellContent, PlayerState } from '@shared/index'
 import { adjTilesList } from '@shared/utils/adjTilesList'
-import { tiles } from '@shared/utils/tiles'
-import { AiScoringCoefficients } from './defaultScoringCoefficients'
-import { resScore } from './resScore'
-import { resProductionScore } from './resProductionScore'
-import { computePendingActionScore } from './computePendingActionScore'
+import { allCells } from '@shared/utils/allCells'
 import { sum } from '@shared/utils/collections'
+import { tiles } from '@shared/utils/tiles'
+import { computePendingActionScore } from './computePendingActionScore'
+import { AiScoringCoefficients } from './defaultScoringCoefficients'
+import { resProductionScore } from './resProductionScore'
+import { resScore } from './resScore'
 
 export const computeScore = (
 	s: AiScoringCoefficients,
@@ -126,6 +128,23 @@ export const computeScore = (
 		(p.tradeFleets - getPlayerUsedFleets(g, p).length) * s.freeFleetsCount
 
 	score += getPlayerColoniesCount({ game: g, player: p }) * s.coloniesCount
+
+	score += getPlayerInfluence(g, p) * s.globalEvents.influence
+
+	for (const party of g.committee.parties) {
+		score += getPlayerDelegateCount(party, p) * s.committee.delegatesCount
+
+		if (
+			g.committee.dominantParty === party.code &&
+			party.leader?.playerId?.id === p.id
+		) {
+			score += s.committee.leaderOfDominantParty
+		}
+
+		if (party.leader?.playerId?.id === p.id) {
+			score += s.committee.leaderOfParty
+		}
+	}
 
 	return score
 }
