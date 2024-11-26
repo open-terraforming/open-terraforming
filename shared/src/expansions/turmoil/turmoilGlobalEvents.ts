@@ -472,7 +472,11 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 				description: 'Discard 2 cards from hand.',
 				apply(game) {
 					for (const player of game.players) {
-						player.pendingActions.push(discardCardsAction(2))
+						const toDiscard = Math.min(2, player.cards.length)
+
+						if (toDiscard > 0) {
+							player.pendingActions.push(discardCardsAction(toDiscard))
+						}
 					}
 				},
 			},
