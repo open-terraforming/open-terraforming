@@ -128,5 +128,21 @@ export const getVictoryPoints = (
 		amount: tileVps.cities,
 	})
 
+	if (game.committee.enabled) {
+		victoryPoints.push({
+			source: VictoryPointsSource.PartyLeaders,
+			amount: game.committee.parties.reduce(
+				(acc, party) =>
+					acc + (party.leader?.playerId?.id === player.id ? 1 : 0),
+				0,
+			),
+		})
+
+		victoryPoints.push({
+			source: VictoryPointsSource.Chairman,
+			amount: game.committee.chairman?.playerId?.id === player.id ? 1 : 0,
+		})
+	}
+
 	return victoryPoints
 }

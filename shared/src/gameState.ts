@@ -416,6 +416,8 @@ export enum VictoryPointsSource {
 	Awards,
 	Forests,
 	Cities,
+	PartyLeaders,
+	Chairman,
 }
 
 export type VictoryPoints = {

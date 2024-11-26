@@ -37,6 +37,10 @@ export class GenerationInProgressGameState extends BaseGameState {
 
 	transition() {
 		if (this.game.all(PlayerStateValue.Passed)) {
+			if (this.game.isMarsTerraformed) {
+				return GameStateValue.GenerationEnding
+			}
+
 			if (
 				this.game.state.solarPhase &&
 				(this.game.state.temperature < this.game.state.map.temperature ||
