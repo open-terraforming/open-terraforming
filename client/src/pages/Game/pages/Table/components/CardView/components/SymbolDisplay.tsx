@@ -19,6 +19,8 @@ import { ColonyTradeSymbol } from './ColonyTradeSymbol'
 import { Tag } from './Tag'
 import { ClippedBox } from '@/components/ClippedBox'
 import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
+import { usePopout } from '@/components/Popout/usePopout'
+import { useState } from 'react'
 
 type Props = {
 	symbol: CardSymbol
@@ -168,6 +170,8 @@ export const SymbolDisplay = ({
 	noSpacing,
 	noVerticalSpacing,
 }: Props) => {
+	const [sElement, setSElement] = useState<HTMLDivElement | null>(null)
+
 	const countStr =
 		s.count === undefined
 			? undefined
@@ -177,13 +181,19 @@ export const SymbolDisplay = ({
 
 	const countSymbol = getCountSymbol(s, countStr)
 
+	const popout = usePopout({
+		trigger: sElement,
+		content: s.title,
+		disableAnimation: true,
+	})
+
 	return (
 		<S
+			ref={setSElement}
 			className={className}
 			production={s.production}
 			other={s.other}
 			style={{ color: s.color, ...(s.noRightSpacing && { paddingRight: 0 }) }}
-			title={s.title}
 			noVerticalSpacing={noVerticalSpacing}
 			noSpacing={
 				noSpacing ||
@@ -214,6 +224,8 @@ export const SymbolDisplay = ({
 				</InfluenceMiniContainer>
 			)}
 			{s.postfix}
+
+			{popout}
 		</S>
 	)
 }

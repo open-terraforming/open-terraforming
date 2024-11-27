@@ -246,6 +246,8 @@ export const SymbolsEventLog = ({
 }
 
 const PlayerContainer = styled(ClippedBox)`
+	margin: 0.15rem;
+
 	.inner {
 		display: flex;
 		align-items: stretch;
@@ -261,6 +263,7 @@ const PlayerIcon = styled.div`
 
 const PlayerChanges = styled(Flex)`
 	padding: 0 0.25rem;
+	height: 2.2rem;
 `
 
 const E = styled.div`
