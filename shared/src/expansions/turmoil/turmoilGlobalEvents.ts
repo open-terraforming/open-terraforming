@@ -93,7 +93,7 @@ export const turmoilGlobalEvents: GlobalEvent[] = [
 						const influence = getPlayerInfluence(game, player)
 
 						if (player.plants > 3 + influence) {
-							updatePlayerResource(player, 'plants', 3 + influence)
+							player.plants = 3 + influence
 						}
 					}
 				},

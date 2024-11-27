@@ -1,7 +1,7 @@
 import { initialPlayerState } from '../../states'
 import { prepareTestCard } from '../../test/utils'
 import { CardCategory } from '../types'
-import { minimalCardPrice } from '../utils'
+import { emptyCardState, minimalCardPrice } from '../utils'
 
 test('minimalCardPrice should return normal price for normal cards', () => {
 	const player = initialPlayerState(1)
@@ -66,4 +66,20 @@ test('minimalCardPrice should return discounted price when player has discount',
 	})
 
 	expect(minimalCardPrice(testCard, player)).toEqual(testCard.cost - 7)
+})
+
+test('minimalCardPrice should account for cards that can use resources as money', () => {
+	const player = initialPlayerState(1)
+
+	const dirigibles = emptyCardState('dirigibles', 0)
+	dirigibles.floaters += 2
+
+	player.usedCards.push(dirigibles)
+
+	const testCard = prepareTestCard({
+		categories: [CardCategory.Venus],
+		cost: 10,
+	})
+
+	expect(minimalCardPrice(testCard, player)).toEqual(testCard.cost - 6)
 })

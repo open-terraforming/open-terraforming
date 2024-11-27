@@ -10,6 +10,7 @@ import { pendingActions } from '@shared/utils/pendingActions'
 import { playerId } from '@shared/utils/playerId'
 import { EventType } from '../events/eventTypes'
 import { BaseGameState } from './base-game-state'
+import { getPlayerInfluence } from '@shared/expansions/turmoil/utils/getPlayerInfluence'
 
 export class TurmoilGameState extends BaseGameState {
 	name = GameStateValue.Turmoil
@@ -163,6 +164,12 @@ export class TurmoilGameState extends BaseGameState {
 
 			const events = this.game.startEventsCollector()
 
+			const influencePerPlayer = Object.fromEntries(
+				this.game.state.players.map(
+					(p) => [p.id, getPlayerInfluence(game, p)] as const,
+				),
+			)
+
 			for (const effect of currentEffects) {
 				effect.apply(game)
 			}
@@ -171,6 +178,7 @@ export class TurmoilGameState extends BaseGameState {
 				type: EventType.CurrentGlobalEventExecuted,
 				changes,
 				eventCode: currentEvent,
+				influencePerPlayer,
 			}))
 		}
 	}

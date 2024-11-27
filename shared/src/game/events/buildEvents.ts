@@ -336,7 +336,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 					newEvents.push({
 						type: EventType.CommitteePartyLeaderChanged,
 						partyCode: prevParty.code,
-						playerId: party.leader.playerId,
+						playerId: party.leader.playerId?.id ?? null,
 					})
 				}
 			}

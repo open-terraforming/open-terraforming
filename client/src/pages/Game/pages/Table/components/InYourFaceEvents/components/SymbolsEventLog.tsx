@@ -12,12 +12,16 @@ type Props = {
 	currentPlayerId: number
 	currentUsedCardIndex?: number
 	maxWidth?: string
+	noSpacing?: boolean
+	className?: string
 }
 
 export const SymbolsEventLog = ({
 	events,
 	currentPlayerId,
 	currentUsedCardIndex,
+	noSpacing,
+	className,
 	maxWidth = '15rem',
 }: Props) => {
 	const players = useAppStore((state) => state.game.playerMap)
@@ -172,10 +176,8 @@ export const SymbolsEventLog = ({
 					[
 						{
 							symbol: SymbolType.PartyLeader,
-							color: !event.playerId?.id
-								? '#ccc'
-								: players[event.playerId.id].color,
-							title: `${!event.playerId?.id ? 'Neutral' : players[event.playerId.id].name} is now party leader`,
+							color: !event.playerId ? '#ccc' : players[event.playerId].color,
+							title: `${!event.playerId ? 'Neutral' : players[event.playerId].name} is now party leader`,
 							noRightSpacing: true,
 						},
 						{ committeeParty: event.partyCode, noSpacing: true },
@@ -211,7 +213,10 @@ export const SymbolsEventLog = ({
 	)
 
 	return (
-		<E style={{ maxWidth }}>
+		<E
+			style={{ maxWidth, ...(noSpacing && { margin: 0 }) }}
+			className={className}
+		>
 			{allSymbols.flatMap((s, i) => (
 				<Flex>
 					{(Array.isArray(s) ? s : [s]).map((s, ii) => (

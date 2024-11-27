@@ -286,7 +286,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return (
 					<>
 						{event.playerId !== null ? (
-							<PlayerSpan player={players[event.playerId.id]} />
+							<PlayerSpan player={players[event.playerId]} />
 						) : (
 							'Neutral'
 						)}{' '}

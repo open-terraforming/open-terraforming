@@ -192,7 +192,20 @@ export const minimalCardPrice = (card: Card, player: PlayerGameState) =>
 				: 0) -
 			(card.categories.includes(CardCategory.Space)
 				? player?.titan * player?.titanPrice
-				: 0),
+				: 0) -
+			player.usedCards
+				.map((c) => ({ state: c, card: CardsLookupApi.get(c.code) }))
+				.filter(({ card }) => card.resourcesUsableAsMoney)
+				.reduce(
+					(acc, { state, card }) =>
+						acc +
+						(card.resourcesUsableAsMoney?.categories?.some((c) =>
+							card.categories.includes(c),
+						) && card.resource
+							? state[card.resource] * card.resourcesUsableAsMoney.amount
+							: 0),
+					0,
+				),
 	)
 
 export const adjustedCardPrice = (card: Card, player: PlayerGameState) =>

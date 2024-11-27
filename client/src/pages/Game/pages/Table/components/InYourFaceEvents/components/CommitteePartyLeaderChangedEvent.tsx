@@ -15,7 +15,7 @@ export const CommitteePartyLeaderChangedEvent = ({ event }: Props) => {
 	const newLeader =
 		event.playerId === null
 			? { name: 'Neutral', color: '#fff' }
-			: playerMap[event.playerId.id]
+			: playerMap[event.playerId]
 
 	return (
 		<Container>

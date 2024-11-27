@@ -233,7 +233,7 @@ export type CommitteePartyDelegateChange = {
 export type CommitteePartyLeaderChanged = {
 	type: EventType.CommitteePartyLeaderChanged
 	partyCode: string
-	playerId: PlayerId | null
+	playerId: number | null
 }
 
 export type CommitteeDominantPartyChanged = {
@@ -244,6 +244,8 @@ export type CommitteeDominantPartyChanged = {
 export type GlobalEventExecuted = {
 	type: EventType.CurrentGlobalEventExecuted
 	eventCode: string
+	/** Key is player id */
+	influencePerPlayer: Record<number, number>
 	changes: GameEvent[]
 }
 

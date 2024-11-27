@@ -18,6 +18,10 @@ export const addDelegateToPartyScore = (
 			(delegate) => delegate?.id === playerCopy.id,
 		)
 
+		if (playerCopy.money < 5) {
+			return -1
+		}
+
 		playerCopy.money -= 5
 		gameCopy.committee.reserve.splice(reserveIndex, 1)
 	} else {
