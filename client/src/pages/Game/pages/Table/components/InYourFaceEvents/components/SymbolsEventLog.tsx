@@ -199,7 +199,7 @@ export const SymbolsEventLog = ({
 	const allSymbols = useMemo(
 		(): LogSymbol[] =>
 			[...groupBy(events, (e) => ('playerId' in e ? e.playerId : -1)).entries()]
-				.sort(([a], [b]) => (a ?? 0) - (b ?? 0))
+				.sort(([a], [b]) => (a ?? Infinity) - (b ?? Infinity))
 				.flatMap(([playerId, events]) => {
 					if (playerId === -1) {
 						return events.flatMap((e) => eventToSymbols(e))
