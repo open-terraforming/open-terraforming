@@ -213,6 +213,7 @@ export const SymbolDisplay = ({
 					<FontAwesomeIcon icon={faUserTie} />
 				</InfluenceMiniContainer>
 			)}
+			{s.postfix}
 		</S>
 	)
 }

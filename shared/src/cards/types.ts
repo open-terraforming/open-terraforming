@@ -326,4 +326,5 @@ export interface CardSymbol {
 	noSpacing?: boolean
 	affectedByInfluence?: boolean
 	committeeParty?: string
+	postfix?: string
 }

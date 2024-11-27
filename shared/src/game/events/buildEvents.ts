@@ -5,7 +5,11 @@ import { PlayerActionType } from '@shared/player-actions'
 import { groupBy } from '@shared/utils'
 import { objDiff } from '@shared/utils/collections'
 import { isMarsTerraformed } from '@shared/utils/isMarsTerraformed'
-import { EventType, GameEvent } from './eventTypes'
+import {
+	CommitteePartyDelegateChange,
+	EventType,
+	GameEvent,
+} from './eventTypes'
 
 const resources: Resource[] = [
 	'money',
@@ -322,14 +326,16 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 						}
 					}
 
-					newEvents.push({
-						type: EventType.CommitteePartyDelegateChange,
-						partyCode: prevParty.code,
-						changes: Array.from(changes).map(([playerId, change]) => ({
-							playerId: playerId === null ? null : { id: playerId },
-							change,
-						})),
-					})
+					newEvents.push(
+						...Array.from(changes).map(
+							([playerId, change]): CommitteePartyDelegateChange => ({
+								type: EventType.CommitteePartyDelegateChange,
+								partyCode: prevParty.code,
+								playerId: playerId ?? null,
+								change,
+							}),
+						),
+					)
 				}
 
 				if (party.leader) {

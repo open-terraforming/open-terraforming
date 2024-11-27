@@ -1,13 +1,14 @@
+import { Flex } from '@/components/Flex/Flex'
 import { useGameState, usePlayerState } from '@/utils/hooks'
+import { SymbolType } from '@shared/cards'
 import { GlobalEventExecuted } from '@shared/index'
 import { getGlobalEvent, groupBy } from '@shared/utils'
 import { styled } from 'styled-components'
-import { GlobalEventView } from '../../GlobalEventsModal/components/GlobalEventView'
-import { SymbolsEventLog } from './SymbolsEventLog'
-import { SomethingHappenedHeader } from './SomethingHappenedHeader'
 import { SymbolDisplay } from '../../CardView/components/SymbolDisplay'
-import { SymbolType } from '@shared/cards'
-import { Flex } from '@/components/Flex/Flex'
+import { GlobalEventView } from '../../GlobalEventsModal/components/GlobalEventView'
+import { PlayerWithEvents } from './PlayerWithEvents'
+import { SomethingHappenedHeader } from './SomethingHappenedHeader'
+import { SymbolsEventLog } from './SymbolsEventLog'
 
 type Props = {
 	event: GlobalEventExecuted
@@ -25,33 +26,28 @@ export const CurrentGlobalEventExecutedEvent = ({ event }: Props) => {
 		<Container>
 			<SomethingHappenedHeader>Global event</SomethingHappenedHeader>
 
-			<GlobalEventView
-				globalEvent={getGlobalEvent(event.eventCode)}
-				highlightEffect
-			/>
+			<Flex align="center" direction="column">
+				<GlobalEventView
+					globalEvent={getGlobalEvent(event.eventCode)}
+					highlightEffect
+				/>
+			</Flex>
 
 			{game.players.map((p) => {
 				const changes = changesPerPlayer.get(p.id) ?? []
 
 				return (
-					<PlayerContainer key={p.id}>
-						<Flex justify="center">
-							<span>
-								<span style={{ color: p.color }}>{p.name}</span>
-								{' with '}
-							</span>
-							<SymbolDisplay symbol={{ symbol: SymbolType.Influence }} />
-							{event.influencePerPlayer[p.id]}
-						</Flex>
-						{changes.length > 0 && (
-							<SymbolsEventLog
-								events={changesPerPlayer.get(p.id) ?? []}
-								currentPlayerId={p.id}
-								noSpacing
-							/>
-						)}
-						{changes.length === 0 && <Nothing>Nothing</Nothing>}
-					</PlayerContainer>
+					<PlayerWithEvents
+						key={p.id}
+						player={p}
+						events={changes}
+						prefix={
+							<Influence>
+								<SymbolDisplay symbol={{ symbol: SymbolType.Influence }} />
+								{event.influencePerPlayer[p.id]}
+							</Influence>
+						}
+					/>
 				)
 			})}
 
@@ -68,13 +64,10 @@ const Container = styled.div`
 	margin: 1rem 3rem;
 `
 
-const Nothing = styled.div`
-	padding: 0.5rem;
-	font-size: 125%;
-	opacity: 0.5;
-	text-transform: uppercase;
-`
-
-const PlayerContainer = styled.div`
-	margin: 0.5rem 0;
+const Influence = styled.div`
+	width: 3rem;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-right: 2px solid ${({ theme }) => theme.colors.border};
 `

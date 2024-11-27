@@ -7,6 +7,7 @@ import { useMemo } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { SymbolDisplay } from '../../CardView/components/SymbolDisplay'
 import { Flex } from '@/components/Flex/Flex'
+import { ClippedBox } from '@/components/ClippedBox'
 
 type Props = {
 	events: GameEvent[]
@@ -151,15 +152,15 @@ export const SymbolsEventLog = ({
 
 			case EventType.CommitteePartyDelegateChange: {
 				return [
-					...event.changes.map((c) => ({
+					{
 						symbol: SymbolType.Delegate,
 						forceCount: true,
 						forceSign: true,
-						count: c.change,
-						color: !c.playerId?.id ? '#ccc' : players[c.playerId?.id].color,
-						title: `${!c.playerId?.id ? 'Neutral' : players[c.playerId?.id].name} delegate`,
+						count: event.change,
+						color: !event.playerId ? '#ccc' : players[event.playerId].color,
+						title: `${!event.playerId ? 'Neutral' : players[event.playerId].name} delegate`,
 						noRightSpacing: true,
-					})),
+					},
 					{ committeeParty: event.partyCode, noSpacing: true },
 				]
 			}
@@ -182,10 +183,7 @@ export const SymbolsEventLog = ({
 						committeeParty: event.partyCode,
 						title: `${t.committeeParties[event.partyCode]} is now dominant`,
 						noRightSpacing: true,
-					},
-					{
-						text: 'DOMINANT',
-						title: `${t.committeeParties[event.partyCode]} is now dominant`,
+						postfix: 'DOMINANT',
 					},
 				]
 			}
@@ -213,13 +211,6 @@ export const SymbolsEventLog = ({
 		[events, currentPlayerId],
 	)
 
-	/*
-	const allSymbols = useMemo(
-		() => events.flatMap((e) => eventToSymbols(e)),
-		[events],
-	)
-	*/
-
 	return (
 		<E
 			style={{ maxWidth, ...(noSpacing && { margin: 0 }) }}
@@ -229,14 +220,21 @@ export const SymbolsEventLog = ({
 				<SymbolContainer key={i} style={{ animationDelay: `${i * 300}ms` }}>
 					{'player' in s ? (
 						<PlayerContainer>
-							<div>
-								{displayPlayer.id === s.player.id ? 'You' : s.player.name}
-							</div>
-							<Flex>
+							<PlayerIcon>
+								<SymbolDisplay
+									symbol={{
+										symbol: SymbolType.Player,
+										color: s.player.color,
+										title:
+											displayPlayer.id === s.player.id ? 'You' : s.player.name,
+									}}
+								/>
+							</PlayerIcon>
+							<PlayerChanges>
 								{s.symbols.map((s, i) => (
 									<SymbolDisplay key={i} symbol={s} />
 								))}
-							</Flex>
+							</PlayerChanges>
 						</PlayerContainer>
 					) : (
 						<SymbolDisplay symbol={s} />
@@ -247,7 +245,23 @@ export const SymbolsEventLog = ({
 	)
 }
 
-const PlayerContainer = styled.div``
+const PlayerContainer = styled(ClippedBox)`
+	.inner {
+		display: flex;
+		align-items: stretch;
+	}
+`
+
+const PlayerIcon = styled.div`
+	background-color: ${({ theme }) => theme.colors.border};
+	display: flex;
+	align-items: center;
+	padding: 0 0.5rem;
+`
+
+const PlayerChanges = styled(Flex)`
+	padding: 0 0.25rem;
+`
 
 const E = styled.div`
 	display: flex;

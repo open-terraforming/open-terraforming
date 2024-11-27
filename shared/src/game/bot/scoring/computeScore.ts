@@ -18,12 +18,15 @@ import { computePendingActionScore } from './computePendingActionScore'
 import { AiScoringCoefficients } from './defaultScoringCoefficients'
 import { resProductionScore } from './resProductionScore'
 import { resScore } from './resScore'
+import { isMarsTerraformed } from '@shared/utils'
 
 export const computeScore = (
 	s: AiScoringCoefficients,
 	g: GameState,
 	p: PlayerState,
 ) => {
+	const isLastGeneration = isMarsTerraformed(g)
+
 	let score = 0
 
 	score += p.terraformRating * s.terraformingRating
@@ -142,7 +145,9 @@ export const computeScore = (
 		}
 
 		if (party.leader?.playerId?.id === p.id) {
-			score += s.committee.leaderOfParty
+			score += isLastGeneration
+				? s.committee.lastGeneration.leaderOfParty
+				: s.committee.leaderOfParty
 		}
 	}
 

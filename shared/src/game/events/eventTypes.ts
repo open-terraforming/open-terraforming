@@ -224,10 +224,8 @@ export type MarsTerraformed = {
 export type CommitteePartyDelegateChange = {
 	type: EventType.CommitteePartyDelegateChange
 	partyCode: string
-	changes: {
-		playerId: PlayerId | null
-		change: number
-	}[]
+	playerId: number | null
+	change: number
 }
 
 export type CommitteePartyLeaderChanged = {

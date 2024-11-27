@@ -297,17 +297,17 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return (
 					<InlineFlex>
 						<PartySpan party={event.partyCode} />{' '}
-						{event.changes.map(({ change, playerId }, i) => (
-							<span key={i}>
-								{change > 0 ? `+${change}` : change}{' '}
-								<FontAwesomeIcon
-									icon={faUser}
-									color={
-										playerId === null ? '#ccc' : players[playerId.id].color
-									}
-								/>
-							</span>
-						))}
+						<span>
+							{event.change > 0 ? `+${event.change}` : event.change}{' '}
+							<FontAwesomeIcon
+								icon={faUser}
+								color={
+									event.playerId === null
+										? '#ccc'
+										: players[event.playerId].color
+								}
+							/>
+						</span>
 					</InlineFlex>
 				)
 			case EventType.CurrentGlobalEventExecuted:

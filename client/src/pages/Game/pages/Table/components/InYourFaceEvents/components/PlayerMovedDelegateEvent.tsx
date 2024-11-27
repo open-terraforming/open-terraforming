@@ -1,4 +1,3 @@
-import { usePlayerState } from '@/utils/hooks'
 import { PlayerMovedDelegate } from '@shared/index'
 import { styled } from 'styled-components'
 import { PlayerDidHeader } from './PlayerDidHeader'
@@ -9,7 +8,7 @@ type Props = {
 }
 
 export const PlayerMovedDelegateEvent = ({ event }: Props) => {
-	const playerId = usePlayerState().id
+	const playerId = event.playerId
 
 	return (
 		<Container>
