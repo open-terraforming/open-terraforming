@@ -2,6 +2,7 @@ import { CardResource, GameProgress, Resource } from '@shared/cards'
 import { CompetitionType } from '@shared/competitions'
 import {
 	ColonyState,
+	CommitteePartyState,
 	GridCellContent,
 	GridCellOther,
 	PlayerId,
@@ -281,6 +282,7 @@ export type PlayerMovedDelegate = {
 	change: number
 	partyCode: string
 	changes: GameEvent[]
+	partyState: CommitteePartyState
 }
 
 export type CommitteePartyActivePolicyActivated = {

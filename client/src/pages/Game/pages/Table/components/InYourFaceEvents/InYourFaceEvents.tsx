@@ -25,6 +25,7 @@ import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEv
 import { StartingSetupEvent } from './components/StartingSetupEvent'
 import { TilePlacedEvent } from './components/TilePlacedEvent'
 import { CommitteePartyActivePolicyActivatedEvent } from './components/CommitteePartyActivePolicyActivatedEvent'
+import { useLocale } from '@/context/LocaleContext'
 
 const PROCESSABLE_EVENTS = [
 	EventType.CardPlayed,
@@ -51,6 +52,7 @@ export const InYourFaceEvents = () => {
 	const [rendered, setRendered] = useState(false)
 	const [events, setEvents] = useState<GameEvent[]>([])
 	const [opacity, setOpacity] = useState(1)
+	const t = useLocale()
 
 	const current = events[0]
 
@@ -167,7 +169,7 @@ export const InYourFaceEvents = () => {
 					<PlayerDidHeader
 						playerId={event.playerId}
 						noSpacing
-						thing=" placed delegate"
+						thing={` added delegate to ${t.committeeParties[event.partyCode]}`}
 					/>
 				)
 			case EventType.CommitteePartyActivePolicyActivated:

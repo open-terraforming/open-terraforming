@@ -158,7 +158,11 @@ export const SymbolsEventLog = ({
 						forceSign: true,
 						count: event.change,
 						color: !event.playerId ? '#ccc' : players[event.playerId].color,
-						title: `${!event.playerId ? 'Neutral' : players[event.playerId].name} delegate`,
+						title:
+							`${!event.playerId ? 'Neutral' : players[event.playerId].name} delegate ` +
+							(event.change > 0 ? 'added' : 'removed') +
+							' to ' +
+							t.committeeParties[event.partyCode],
 						noRightSpacing: true,
 					},
 					{ committeeParty: event.partyCode, noSpacing: true },
@@ -194,20 +198,18 @@ export const SymbolsEventLog = ({
 
 	const allSymbols = useMemo(
 		(): LogSymbol[] =>
-			[
-				...groupBy(events, (e) =>
-					'playerId' in e ? e.playerId : -1,
-				).entries(),
-			].flatMap(([playerId, events]) => {
-				if (playerId === -1) {
-					return events.flatMap((e) => eventToSymbols(e))
-				}
+			[...groupBy(events, (e) => ('playerId' in e ? e.playerId : -1)).entries()]
+				.sort(([a], [b]) => (a ?? 0) - (b ?? 0))
+				.flatMap(([playerId, events]) => {
+					if (playerId === -1) {
+						return events.flatMap((e) => eventToSymbols(e))
+					}
 
-				return optionallyWithPlayer(
-					playerId,
-					events.flatMap((e) => eventToSymbols(e)),
-				)
-			}),
+					return optionallyWithPlayer(
+						playerId,
+						events.flatMap((e) => eventToSymbols(e)),
+					)
+				}),
 		[events, currentPlayerId],
 	)
 

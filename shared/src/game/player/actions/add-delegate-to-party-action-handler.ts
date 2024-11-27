@@ -1,8 +1,14 @@
 import { addDelegateToPartyActionRequest } from '@shared/actions'
 import { addDelegate } from '@shared/expansions/turmoil/utils/addDelegate'
-import { GameStateValue, PlayerStateValue } from '@shared/gameState'
+import {
+	CommitteePartyState,
+	GameStateValue,
+	PlayerStateValue,
+} from '@shared/gameState'
 import { PlayerBaseActionHandler } from '../action'
 import { EventType } from '@shared/game/events/eventTypes'
+import { getPartyState } from '@shared/expansions/turmoil/utils/getPartyState'
+import { deepCopy } from '@shared/utils/collections'
 
 type Args = ReturnType<typeof addDelegateToPartyActionRequest>['data']
 
@@ -46,6 +52,9 @@ export class AddDelegateToPartyActionHandler extends PlayerBaseActionHandler<Arg
 			changes,
 			change: 1,
 			partyCode: party,
+			partyState: deepCopy(
+				getPartyState(this.game, party),
+			) as CommitteePartyState,
 		}))
 
 		this.actionPlayed()

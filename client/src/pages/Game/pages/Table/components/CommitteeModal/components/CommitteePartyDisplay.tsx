@@ -21,6 +21,7 @@ type Props = {
 	onClick?: () => void
 	pickerMode?: boolean
 	hideMembers?: boolean
+	hideActions?: boolean
 }
 
 export const CommitteePartyDisplay = ({
@@ -28,6 +29,7 @@ export const CommitteePartyDisplay = ({
 	onClick,
 	pickerMode,
 	hideMembers,
+	hideActions,
 }: Props) => {
 	const game = useGameState()
 	const player = usePlayerState()
@@ -97,21 +99,23 @@ export const CommitteePartyDisplay = ({
 						</Delegates>
 					)}
 
-					{!pickerMode && (canPlaceFromLobby || canPlaceFromReserve) && (
-						<Actions justify="center">
-							<Button onClick={handlePlace}>
-								{!canPlaceFromLobby && (
-									<Symbols
-										symbols={[{ resource: 'money', count: 5 }]}
-										noSpacing
-									/>
-								)}
-								{canPlaceFromLobby
-									? 'Add delegate from lobby'
-									: 'Add delegate from reserve'}
-							</Button>
-						</Actions>
-					)}
+					{!pickerMode &&
+						!hideActions &&
+						(canPlaceFromLobby || canPlaceFromReserve) && (
+							<Actions justify="center">
+								<Button onClick={handlePlace}>
+									{!canPlaceFromLobby && (
+										<Symbols
+											symbols={[{ resource: 'money', count: 5 }]}
+											noSpacing
+										/>
+									)}
+									{canPlaceFromLobby
+										? 'Add delegate from lobby'
+										: 'Add delegate from reserve'}
+								</Button>
+							</Actions>
+						)}
 				</>
 			)}
 
