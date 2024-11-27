@@ -1,18 +1,17 @@
-import { useGameState, usePlayersMap, usePlayerState } from '@/utils/hooks'
+import { DelegateIcon } from '@/components/DelegateIcon'
+import { Flex } from '@/components/Flex/Flex'
+import { useGameState, usePlayersMap } from '@/utils/hooks'
 import { getPartyState } from '@shared/expansions/turmoil/utils/getPartyState'
 import { NewGovernment } from '@shared/index'
 import { styled } from 'styled-components'
 import { CommitteePartyDisplay } from '../../CommitteeModal/components/CommitteePartyDisplay'
 import { SymbolsEventLog } from './SymbolsEventLog'
-import { Flex } from '@/components/Flex/Flex'
-import { DelegateIcon } from '@/components/DelegateIcon'
 
 type Props = {
 	event: NewGovernment
 }
 
 export const NewGovernmentEvent = ({ event }: Props) => {
-	const playerId = usePlayerState().id
 	const game = useGameState()
 	const playersMap = usePlayersMap()
 
@@ -37,7 +36,7 @@ export const NewGovernmentEvent = ({ event }: Props) => {
 				hideMembers
 			/>
 
-			<SymbolsEventLog events={event.changes} currentPlayerId={playerId} />
+			<SymbolsEventLog events={event.changes} />
 		</Container>
 	)
 }
