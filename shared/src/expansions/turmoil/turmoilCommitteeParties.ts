@@ -38,12 +38,20 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 					],
 					description: 'Gain 1 ore when placing tile on Mars',
 					onTilePlaced({ player, cell }) {
+						// No ore when outside Mars
 						if (
-							cell.location === undefined ||
-							cell.location === GridCellLocation.Main
+							cell.location !== undefined &&
+							cell.location !== GridCellLocation.Main
 						) {
-							updatePlayerResource(player, 'ore', 1)
+							return
 						}
+
+						// No ore when the placement was anonymous?
+						if (cell.ownerId !== player.id) {
+							return
+						}
+
+						updatePlayerResource(player, 'ore', 1)
 					},
 				},
 			],
@@ -252,7 +260,10 @@ export const turmoilCommitteeParties: CommitteeParty[] = [
 					],
 					description: 'Gain $4 every time you place a greenery tile',
 					onTilePlaced({ player, cell }) {
-						if (cell.content === GridCellContent.Forest) {
+						if (
+							cell.content === GridCellContent.Forest &&
+							cell.ownerId === player.id
+						) {
 							updatePlayerResource(player, 'money', 4)
 						}
 					},

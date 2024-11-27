@@ -127,6 +127,6 @@ export class PlaceTileAction extends PlayerBaseActionHandler<Args> {
 			this.parent.buyAllGreeneries()
 		}
 
-		this.popAction()
+		this.popAction(!top.anonymous)
 	}
 }

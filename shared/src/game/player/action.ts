@@ -175,7 +175,7 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 		this.parent.filterPendingActions()
 	}
 
-	popAction() {
+	popAction(countsAsAction = true) {
 		if (!this.pendingAction) {
 			throw new Error("Trying to pop action when there aren't any")
 		}
@@ -191,7 +191,10 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 				case GameStateValue.GenerationInProgress: {
 					switch (this.player.state) {
 						case PlayerStateValue.Playing: {
-							this.actionPlayed()
+							if (countsAsAction) {
+								this.actionPlayed()
+							}
+
 							break
 						}
 					}
