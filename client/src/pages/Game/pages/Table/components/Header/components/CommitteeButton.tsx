@@ -9,6 +9,7 @@ import { Symbols } from '../../CardView/components/Symbols'
 import { CommitteeModal } from '../../CommitteeModal/CommitteeModal'
 import { HeaderDialogButton } from './HeaderDialogButton'
 import { Flex } from '@/components/Flex/Flex'
+import { TooltipContentWithTitle } from '@/components/TooltipContentWithTitle'
 
 export const CommitteeButton = () => {
 	const game = useGameState()
@@ -31,18 +32,14 @@ export const CommitteeButton = () => {
 
 				{rulingParty && (
 					<Tooltip
+						noSpacing
 						content={
-							<>
-								<div>{t.committeeParties[rulingParty.code]}</div>
-								<div>
-									{rulingParty.policy.active
-										.map((e) => e.description)
-										.join(' ')}
-									{rulingParty.policy.passive
-										.map((e) => e.description)
-										.join(' ')}
-								</div>
-							</>
+							<TooltipContentWithTitle
+								title={`Current ruling party: ${t.committeeParties[rulingParty.code]}`}
+							>
+								{rulingParty.policy.active.map((e) => e.description).join(' ')}
+								{rulingParty.policy.passive.map((e) => e.description).join(' ')}
+							</TooltipContentWithTitle>
 						}
 						position={Position.Bottom}
 					>
