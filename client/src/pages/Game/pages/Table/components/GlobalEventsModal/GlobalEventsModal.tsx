@@ -8,6 +8,8 @@ import { styled } from 'styled-components'
 import { CurrentInfluenceDisplay } from './components/CurrentInfluenceDisplay'
 import { EmptyGlobalEventView } from './components/EmptyGlobalEventView'
 import { GlobalEventView } from './components/GlobalEventView'
+import { Tooltip } from '@/components'
+import { TooltipContent } from '@/components/TooltipContent'
 
 type Props = {
 	onClose: () => void
@@ -29,7 +31,17 @@ export const GlobalEventsModal = ({ onClose }: Props) => {
 		>
 			<Flex align="stretch" gap="0.5rem">
 				<Flex direction="column">
-					<Title>Distant</Title>
+					<Tooltip
+						noSpacing
+						content={
+							<TooltipContent>{`Event that was revealed on start of this generation, it'll be
+								moved to Coming on generation end. When distant event is
+								revealed delegate from party that's in the left corner gets
+								added to the committee.`}</TooltipContent>
+						}
+					>
+						<Title>Distant</Title>
+					</Tooltip>
 					{game.globalEvents.distantEvent && (
 						<GlobalEventView
 							globalEvent={getGlobalEvent(game.globalEvents.distantEvent)}
@@ -40,7 +52,18 @@ export const GlobalEventsModal = ({ onClose }: Props) => {
 					<FontAwesomeIcon icon={faChevronRight} />
 				</Arrow>
 				<Flex direction="column">
-					<Title>Coming</Title>
+					<Tooltip
+						noSpacing
+						content={
+							<TooltipContent>
+								{
+									'This event will become Current on the generation end. When the event becomes Current the delegate from the party that is in the right corner gets added to the committee.'
+								}
+							</TooltipContent>
+						}
+					>
+						<Title>Coming</Title>
+					</Tooltip>
 					{game.globalEvents.comingEvent && (
 						<GlobalEventView
 							globalEvent={getGlobalEvent(game.globalEvents.comingEvent)}
@@ -51,7 +74,18 @@ export const GlobalEventsModal = ({ onClose }: Props) => {
 					<FontAwesomeIcon icon={faChevronRight} />
 				</Arrow>
 				<Flex direction="column">
-					<Title>Current</Title>
+					<Tooltip
+						noSpacing
+						content={
+							<TooltipContent>
+								{
+									'This event will be executed at the end of the generation, but before the Dominant Party becomes the Ruling party.'
+								}
+							</TooltipContent>
+						}
+					>
+						<Title>Current</Title>
+					</Tooltip>
 					{game.globalEvents.currentEvent ? (
 						<GlobalEventView
 							globalEvent={getGlobalEvent(game.globalEvents.currentEvent)}

@@ -2,14 +2,14 @@ import { ReactNode } from 'react'
 import styled from 'styled-components'
 
 type Props = {
-	title: ReactNode
+	title?: ReactNode
 	children: ReactNode
 }
 
-export const TooltipContentWithTitle = ({ title, children }: Props) => {
+export const TooltipContent = ({ title, children }: Props) => {
 	return (
 		<>
-			<Title>{title}</Title>
+			{title && <Title>{title}</Title>}
 			<Content>{children}</Content>
 		</>
 	)
@@ -21,5 +21,6 @@ const Title = styled.div`
 `
 
 const Content = styled.div`
-	padding: 0.25rem 0.5rem;
+	padding: 0.5rem;
+	max-width: 20rem;
 `

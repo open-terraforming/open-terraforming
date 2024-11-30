@@ -6,7 +6,7 @@ import { styled } from 'styled-components'
 import { SymbolDisplay } from '../../CardView/components/SymbolDisplay'
 import { Tooltip } from '@/components'
 import { Position } from '@/components/Tooltip/Tooltip'
-import { TooltipContentWithTitle } from '@/components/TooltipContentWithTitle'
+import { TooltipContent } from '@/components/TooltipContent'
 
 export const CurrentInfluenceDisplay = () => {
 	const game = useGameState()
@@ -31,7 +31,7 @@ export const CurrentInfluenceDisplay = () => {
 			position={Position.Bottom}
 			noSpacing
 			content={
-				<TooltipContentWithTitle title="Your current influence value">
+				<TooltipContent title="Your current influence value">
 					<div>{hasChairman ? 1 : 0} for being Chairman</div>
 					<div>
 						{isLeaderOfDominantParty ? 1 : 0} for being leader of the dominant
@@ -42,7 +42,7 @@ export const CurrentInfluenceDisplay = () => {
 						dominant party
 					</div>
 					<div>{player.extraInfluence ?? 0} for extra influence</div>
-				</TooltipContentWithTitle>
+				</TooltipContent>
 			}
 		>
 			<Container>

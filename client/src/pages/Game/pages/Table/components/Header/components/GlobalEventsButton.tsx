@@ -8,7 +8,7 @@ import { GlobalEventsModal } from '../../GlobalEventsModal/GlobalEventsModal'
 import { HeaderDialogButton } from './HeaderDialogButton'
 import { Position } from '@/components/Tooltip/Tooltip'
 import { Flex } from '@/components/Flex/Flex'
-import { TooltipContentWithTitle } from '@/components/TooltipContentWithTitle'
+import { TooltipContent } from '@/components/TooltipContent'
 
 export const GlobalEventsButton = () => {
 	const game = useGameState()
@@ -34,11 +34,11 @@ export const GlobalEventsButton = () => {
 					<Tooltip
 						noSpacing
 						content={
-							<TooltipContentWithTitle
+							<TooltipContent
 								title={`Current global event: ${t.globalEvents[currentEvent.code]}`}
 							>
 								{currentEvent.effects.map((e) => e.description).join(' ')}
-							</TooltipContentWithTitle>
+							</TooltipContent>
 						}
 						position={Position.Bottom}
 					>
