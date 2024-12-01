@@ -6,7 +6,7 @@ import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { useLocale } from '@/context/LocaleContext'
 import { useGameState, usePlayerState } from '@/utils/hooks'
-import { Button } from '@/components'
+import { Button, Tooltip } from '@/components'
 import { useApi } from '@/context/ApiContext'
 import { activateRulingPolicyActionRequest } from '@shared/actions'
 
@@ -33,13 +33,15 @@ export const RulingPartyDisplay = ({ party }: { party: CommitteeParty }) => {
 
 	return (
 		<Container>
-			<Title>
-				<TitleLabel>Ruling party</TitleLabel>
-				<TitleParty>
-					{t.committeeParties[party.code]}
-					<CommitteePartyIcon party={party.code} />
-				</TitleParty>
-			</Title>
+			<Tooltip content={t.help.committeeRulingParty}>
+				<Title>
+					<TitleLabel>Ruling party</TitleLabel>
+					<TitleParty>
+						{t.committeeParties[party.code]}
+						<CommitteePartyIcon party={party.code} />
+					</TitleParty>
+				</Title>
+			</Tooltip>
 			<Effect>
 				<Flex gap="0.25rem" justify="center">
 					{party.policy.active.map((policy, index) => (

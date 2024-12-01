@@ -61,12 +61,17 @@ export const CommitteePartyDisplay = ({
 						{t.committeeParties[party.code]}
 					</Flex>
 					{game.committee.dominantParty === state.code && (
-						<Dominant>
-							<DominantIcon>
-								<FontAwesomeIcon icon={faStar} />
-							</DominantIcon>
-							Dominant party
-						</Dominant>
+						<Tooltip
+							content={t.help.committeeDominantParty}
+							styleTrigger={{ marginLeft: 'auto' }}
+						>
+							<Dominant>
+								<DominantIcon>
+									<FontAwesomeIcon icon={faStar} />
+								</DominantIcon>
+								Dominant party
+							</Dominant>
+						</Tooltip>
 					)}
 				</Flex>
 			</ClippedBoxTitle>
@@ -79,7 +84,10 @@ export const CommitteePartyDisplay = ({
 
 					{state.leader && (
 						<Flex justify="center">
-							<Tooltip content="Party leader">
+							<Tooltip
+								content={t.help.committeePartyLeader}
+								title="Party Leader"
+							>
 								<Leader>
 									<DelegateIcon
 										type="party-leader"
@@ -122,7 +130,9 @@ export const CommitteePartyDisplay = ({
 			<div>
 				{!hideMembers && (
 					<ClippedBoxTitle $centered $spacing>
-						Ruling Bonus
+						<Tooltip content={t.help.committeeRulingBonus}>
+							Ruling Bonus
+						</Tooltip>
 					</ClippedBoxTitle>
 				)}
 				<EffectsContainer>
@@ -133,7 +143,9 @@ export const CommitteePartyDisplay = ({
 
 			<div>
 				<ClippedBoxTitle $centered $spacing>
-					Ruling Policy
+					<Tooltip content={t.help.committeeRulingPolicy}>
+						Ruling Policy
+					</Tooltip>
 				</ClippedBoxTitle>
 				{party.policy.active.map((policy, index) => (
 					<EffectsContainer key={index}>

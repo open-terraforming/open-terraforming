@@ -13,4 +13,17 @@ export const help = {
 		"Pick one card to draft, the rest will be passed to the next player. Once there're no more cards to pass, you'll pick projects to sponsor from the cards you've drafted.",
 	preludes:
 		"Prelude cards are played at the beginning of the first generations and they're free.",
+
+	committeeLobby:
+		"At the start of a generation each player that doesn't have a delegate in the lobby moves one delegate from reserve here. Moving delegates from the lobby to a party is free.",
+	committeeReserve: 'Delegates in the reserve can be moved to a party for 5$.',
+	committeeRulingParty:
+		'Ruling party dictates the ruling policy, some projects may have a condition that requires the ruling party to be a specific party. Ruling party is replaced by dominant party after generation end.',
+	committeeDominantParty:
+		'Dominant party becomes the ruling party at the end of the generation. Dominant party is replaced when some other party has more delegates.',
+	committeePartyLeader: `Party leader is replaced when other player has more delegates in the party that the current party leader. Party leader becomes the Chairman when the party becomes the ruling party. At the end of the last generation, player receives 1 VP for each party leader they have.`,
+	committeeRulingBonus:
+		'Ruling bonus is applied when the party becomes the ruling party.',
+	committeeRulingPolicy:
+		'Ruling policy is active when the party is the ruling party.',
 }

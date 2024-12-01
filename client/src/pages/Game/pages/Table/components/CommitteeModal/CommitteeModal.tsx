@@ -11,12 +11,15 @@ import { CommitteePartiesView } from './components/CommitteePartiesView'
 import { CommitteePartyDisplay } from './components/CommitteePartyDisplay'
 import { DelegatesBox } from './components/DelegatesBox'
 import { RulingPartyDisplay } from './components/RulingPartyDisplay'
+import { Tooltip } from '@/components'
+import { useLocale } from '@/context/LocaleContext'
 
 type Props = {
 	onClose: () => void
 }
 
 export const CommitteeModal = ({ onClose }: Props) => {
+	const t = useLocale()
 	const game = useGameState()
 	const rulingParty = getRulingParty(game)
 
@@ -40,15 +43,21 @@ export const CommitteeModal = ({ onClose }: Props) => {
 					gap="0.25rem"
 					align="stretch"
 				>
-					<DelegatesBox title={'Lobby'} delegates={game.committee.lobby} />
+					<DelegatesBox
+						title={<Tooltip content={t.help.committeeLobby}>Lobby</Tooltip>}
+						delegates={game.committee.lobby}
+					/>
 				</Flex>
 				{rulingParty && <RulingPartyDisplay party={rulingParty} />}
 				<DelegatesBox
 					title={
 						<Flex>
-							<div>Reserve</div>
+							<div>
+								<Tooltip content={t.help.committeeReserve}>Reserve</Tooltip>
+							</div>
 							<TitleInfo>
 								<Symbols
+									noSpacing
 									symbols={[
 										{ resource: 'money', count: 5 },
 										{ symbol: SymbolType.RightArrow },
