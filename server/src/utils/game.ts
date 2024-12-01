@@ -25,8 +25,6 @@ export const obfuscateGame = (
 		'corporationsDiscarded',
 	] as const
 
-	// TODO: Obfluscate global event cards
-
 	toClearBase.forEach((k) => {
 		copy[k] = clearArray(copy[k], names.cards)
 	})
