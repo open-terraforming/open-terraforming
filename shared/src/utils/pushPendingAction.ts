@@ -1,10 +1,9 @@
-import { PlayerAction } from "@shared/player-actions";
-import { PlayerState } from "..";
-
+import { PlayerAction } from '@shared/player-actions'
+import { PlayerState } from '..'
 
 export const pushPendingAction = (
 	player: PlayerState,
-	action: PlayerAction
+	action: PlayerAction,
 ) => {
-	player.pendingActions.push(action);
-};
+	player.pendingActions.push(action)
+}
