@@ -80,16 +80,17 @@ export const ColonyDisplay = ({
 
 	const canTradeWithAnyResource =
 		!noActions &&
-		(['money', 'titan', 'energy'] as const).some((res) =>
-			isOk(
-				canTradeWithColonyUsingResource({
-					player,
-					game,
-					colony,
-					resource: res,
-				}),
-			),
-		)
+		(freeTradePick ||
+			(['money', 'titan', 'energy'] as const).some((res) =>
+				isOk(
+					canTradeWithColonyUsingResource({
+						player,
+						game,
+						colony,
+						resource: res,
+					}),
+				),
+			))
 
 	const canColonize = noActions
 		? failure('')
