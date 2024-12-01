@@ -134,7 +134,7 @@ const ProjectsList = [
 	}),
 	project({
 		type: StandardProjectType.GreeneryForPlants,
-		description: 'Greenery using pants',
+		description: 'Greenery using plants',
 		cost: ({ player }) => player.greeneryCost,
 		resource: 'plants',
 		conditions: [canPlaceTile(GridCellContent.Forest)],
