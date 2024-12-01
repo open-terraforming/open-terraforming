@@ -1,8 +1,10 @@
 import { Button } from '@/components'
-import { Modal } from '@/components/Modal/Modal'
-import { useMemo, useState } from 'react'
-import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
 import { initialPlayerState } from '@shared/states'
+import { useMemo, useState } from 'react'
+import {
+	CardDisplayModal,
+	CardInfo,
+} from '../CardDisplayModal/CardDisplayModal'
 
 type Props = {
 	cards: CardInfo[]
@@ -47,8 +49,7 @@ export const CardSelector = ({
 	)
 
 	return (
-		<Modal
-			open={true}
+		<CardDisplayModal
 			onClose={onClose}
 			header={title}
 			footer={
@@ -67,15 +68,12 @@ export const CardSelector = ({
 					</Button>
 				)
 			}
-		>
-			<CardDisplay
-				cards={cards}
-				onSelect={handleSelect}
-				selected={selected}
-				filters={filters}
-				evaluateMode="static"
-				player={EMPTY_PLAYER}
-			/>
-		</Modal>
+			cards={cards}
+			onSelect={handleSelect}
+			selected={selected}
+			filters={filters}
+			evaluateMode="static"
+			player={EMPTY_PLAYER}
+		/>
 	)
 }

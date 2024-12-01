@@ -1,5 +1,4 @@
 import { Button } from '@/components'
-import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { usePlayerState } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -7,7 +6,10 @@ import { CardsLookupApi } from '@shared/cards'
 import { buyStandardProject, StandardProjectType } from '@shared/index'
 import { withUnits } from '@shared/units'
 import { useMemo, useState } from 'react'
-import { CardDisplay, CardInfo } from '../../CardDisplay/CardDisplay'
+import {
+	CardDisplayModal,
+	CardInfo,
+} from '../../CardDisplayModal/CardDisplayModal'
 
 type Props = {
 	onClose: () => void
@@ -45,9 +47,15 @@ export const SellCardsModal = ({ onClose }: Props) => {
 	}
 
 	return (
-		<Modal
+		<CardDisplayModal
+			cards={cards}
+			selected={selected}
+			onSelect={(cards) => {
+				setSelected(cards)
+			}}
+			player={player}
+			evaluateMode="viewing"
 			contentStyle={{ minWidth: '80%' }}
-			open={true}
 			onClose={onClose}
 			footer={
 				<>
@@ -61,16 +69,6 @@ export const SellCardsModal = ({ onClose }: Props) => {
 					</Button>
 				</>
 			}
-		>
-			<CardDisplay
-				cards={cards}
-				selected={selected}
-				onSelect={(cards) => {
-					setSelected(cards)
-				}}
-				player={player}
-				evaluateMode="viewing"
-			/>
-		</Modal>
+		/>
 	)
 }

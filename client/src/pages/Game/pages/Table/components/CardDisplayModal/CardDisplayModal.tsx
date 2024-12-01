@@ -1,7 +1,7 @@
 import { isNotUndefined, mapRight } from '@/utils/collections'
 import { Card, CardCategory, CardType } from '@shared/cards'
 import { PlayerState, UsedCardState } from '@shared/index'
-import { useEffect, useMemo, useState } from 'react'
+import { CSSProperties, ReactNode, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { NoCards } from '../CardsContainer/CardsContainer'
 import { CardEvaluateMode, CardView } from '../CardView/CardView'
@@ -9,6 +9,8 @@ import { Tag } from '../CardView/components/Tag'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { media } from '@/styles/media'
 import { lighten } from 'polished'
+import { Modal } from '@/components/Modal/Modal'
+import { Flex } from '@/components/Flex/Flex'
 
 export type CardInfo = {
 	card: Card
@@ -26,9 +28,17 @@ type Props<T extends CardInfo> = {
 	hideAdjustedPrice?: boolean
 	player: PlayerState
 	evaluateMode: CardEvaluateMode
+
+	onClose?: () => void
+	header?: ReactNode
+	footer?: ReactNode
+	contentStyle?: CSSProperties
+	bodyStyle?: CSSProperties
+	hideClose?: boolean
+	prefix?: ReactNode
 }
 
-export const CardDisplay = <T extends CardInfo>({
+export const CardDisplayModal = <T extends CardInfo>({
 	onSelect,
 	selected,
 	cards,
@@ -38,6 +48,13 @@ export const CardDisplay = <T extends CardInfo>({
 	defaultType,
 	hideAdjustedPrice,
 	player,
+	onClose,
+	contentStyle,
+	bodyStyle,
+	header,
+	footer,
+	hideClose,
+	prefix,
 }: Props<T>) => {
 	const [type, setType] = useState(defaultType)
 	const [playable, setPlayable] = useState(false)
@@ -127,54 +144,67 @@ export const CardDisplay = <T extends CardInfo>({
 	}, [type, selectedCategory])
 
 	return (
-		<>
-			{filters && (
-				<Filters>
-					<Types>
-						{types.map(([cat, t, count]) => (
-							<FilterItem
-								selected={cat === type}
-								onClick={() => {
-									setType(cat)
-								}}
-								key={cat === undefined ? -1 : cat}
-							>
-								<Type>{t}</Type>
-								<Count>{count}</Count>
-							</FilterItem>
-						))}
-					</Types>
+		<Modal
+			open={true}
+			contentStyle={contentStyle}
+			bodyStyle={bodyStyle}
+			onClose={onClose}
+			hideClose={hideClose}
+			header={
+				<Header>
+					<div>{header}</div>
+					{filters && (
+						<Filters>
+							{(evaluateMode === 'playing' || evaluateMode === 'buying') && (
+								<Checkbox
+									checked={playable}
+									onChange={(v) => setPlayable(v)}
+									label="Only playable"
+								/>
+							)}
 
-					{(evaluateMode === 'playing' || evaluateMode === 'buying') && (
-						<Checkbox
-							checked={playable}
-							onChange={(v) => setPlayable(v)}
-							label="Only playable"
-						/>
+							<Types>
+								{types.map(([cat, t, count]) => (
+									<FilterItem
+										selected={cat === type}
+										onClick={() => {
+											setType(cat)
+										}}
+										key={cat === undefined ? -1 : cat}
+									>
+										<Type>{t}</Type>
+										<Count>{count}</Count>
+									</FilterItem>
+								))}
+							</Types>
+
+							<Categories style={{ maxWidth: '50%', overflow: 'auto' }}>
+								{categories.map(({ category, cards }) => (
+									<FilterTag
+										selected={selectedCategory === category}
+										onClick={() => {
+											setSelectedCategory(
+												selectedCategory === category ? undefined : category,
+											)
+										}}
+										key={category}
+									>
+										<Type>
+											<Tag tag={category} size="sm" />
+										</Type>
+										<Count>
+											<div>{cards}</div>
+										</Count>
+									</FilterTag>
+								))}
+							</Categories>
+						</Filters>
 					)}
-
-					<Categories style={{ maxWidth: '50%', overflow: 'auto' }}>
-						{categories.map(({ category, cards }) => (
-							<FilterTag
-								selected={selectedCategory === category}
-								onClick={() => {
-									setSelectedCategory(
-										selectedCategory === category ? undefined : category,
-									)
-								}}
-								key={category}
-							>
-								<Type>
-									<Tag tag={category} size="sm" />
-								</Type>
-								<Count>
-									<div>{cards}</div>
-								</Count>
-							</FilterTag>
-						))}
-					</Categories>
-				</Filters>
-			)}
+				</Header>
+			}
+			footer={footer}
+		>
+			{prefix}
 
 			<CardsContainer playableOnly={playable}>
 				{filtered.length === 0 && <NoCards>No cards</NoCards>}
@@ -202,7 +232,7 @@ export const CardDisplay = <T extends CardInfo>({
 						),
 				)}
 			</CardsContainer>
-		</>
+		</Modal>
 	)
 }
 
@@ -210,7 +240,7 @@ const CardsContainer = styled.div<{ playableOnly: boolean }>`
 	display: flex;
 	overflow: auto;
 	flex-wrap: wrap;
-	justify-content: flex-start;
+	justify-content: center;
 	align-items: center;
 	min-width: 0;
 	padding: 1.5rem 1rem;
@@ -246,7 +276,10 @@ const Filters = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin-bottom: 1rem;
+	font-size: 1rem;
+	margin-left: auto;
+	margin-right: 2rem;
+	gap: 0.5rem;
 `
 
 const Count = styled.div`
@@ -283,4 +316,8 @@ const FilterItem = styled.div<{ selected: boolean }>`
 const FilterTag = styled(FilterItem)`
 	margin-right: 0;
 	margin-left: 0.3rem;
+`
+
+const Header = styled(Flex)`
+	flex: 1;
 `

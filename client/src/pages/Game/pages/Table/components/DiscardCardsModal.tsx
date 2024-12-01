@@ -1,11 +1,10 @@
 import { Button } from '@/components'
-import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { usePlayerState } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { discardCards } from '@shared/index'
 import { useMemo, useState } from 'react'
-import { CardDisplay, CardInfo } from './CardDisplay/CardDisplay'
+import { CardDisplayModal, CardInfo } from './CardDisplayModal/CardDisplayModal'
 
 type Props = {
 	count: number
@@ -40,9 +39,8 @@ export const DiscardCardsModal = ({ count }: Props) => {
 	}
 
 	return (
-		<Modal
+		<CardDisplayModal
 			contentStyle={{ minWidth: '80%' }}
-			open={true}
 			hideClose={true}
 			header="Discard cards"
 			footer={
@@ -54,14 +52,11 @@ export const DiscardCardsModal = ({ count }: Props) => {
 					</Button>
 				</>
 			}
-		>
-			<CardDisplay
-				cards={cards}
-				selected={selected}
-				onSelect={selectedChanged}
-				player={player}
-				evaluateMode="viewing"
-			/>
-		</Modal>
+			cards={cards}
+			selected={selected}
+			onSelect={selectedChanged}
+			player={player}
+			evaluateMode="viewing"
+		/>
 	)
 }

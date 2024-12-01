@@ -4,7 +4,7 @@ import {
 	CardCallbackContext,
 	CardsLookupApi,
 } from '@shared/cards'
-import { CardInfo } from '@/pages/Game/pages/Table/components/CardDisplay/CardDisplay'
+import { CardInfo } from '@/pages/Game/pages/Table/components/CardDisplayModal/CardDisplayModal'
 import { emptyCardState } from '@shared/cards/utils'
 
 export const cardsToCardList = (
