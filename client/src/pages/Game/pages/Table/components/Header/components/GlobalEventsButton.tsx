@@ -7,6 +7,7 @@ import { styled } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { GlobalEventsModal } from '../../GlobalEventsModal/GlobalEventsModal'
 import { HeaderDialogButton } from './HeaderDialogButton'
+import { Hr } from '@/components/Hr'
 
 export const GlobalEventsButton = () => {
 	const game = useGameState()
@@ -31,7 +32,18 @@ export const GlobalEventsButton = () => {
 				{currentEvent && (
 					<Tooltip
 						title={`Current global event: ${t.globalEvents[currentEvent.code]}`}
-						content={currentEvent.effects.map((e) => e.description).join(' ')}
+						content={
+							<>
+								<div>
+									{currentEvent.effects.map((e) => e.description).join(' ')}
+								</div>
+								<Hr />
+								<div>
+									The global event is evaluated at the end of the generation,
+									before Dominant Party becomes the Ruling party.
+								</div>
+							</>
+						}
 						position={'bottom-center'}
 					>
 						<Flex justify="center">
