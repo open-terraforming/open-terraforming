@@ -82,7 +82,7 @@
 		const loadCard = async () => {
 			currentCard = await getNextCard();
 			
-			const cardCode = card.code
+			const cardCode = currentCard.code
 			$cardTitle.innerText = cardCode
 			$fileInput.value = ''
 
@@ -112,6 +112,7 @@
 							currentCrop = {...data}
 						}
 					});
+					croppr.reset();
 				}
 			}
 			reader.readAsDataURL(file);

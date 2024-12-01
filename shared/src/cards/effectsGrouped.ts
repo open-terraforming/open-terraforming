@@ -14,15 +14,13 @@ import {
 } from '../player-actions'
 import { otherWithArticle, specialToStr, tileWithArticle } from '../texts'
 import { withUnits } from '../units'
-import {
-	allCells,
-	drawCard,
-	drawCards,
-	drawPreludeCards,
-	f,
-	flatten,
-	pushPendingAction,
-} from '../utils'
+import { allCells } from '@shared/utils/allCells'
+import { drawPreludeCards } from '@shared/utils/drawPreludeCards'
+import { drawCard } from '@shared/utils/drawCard'
+import { drawCards } from '@shared/utils/drawCards'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { flatten } from '@shared/utils/flatten'
 import { progressToSymbol } from '../utils/progressToSymbol'
 import {
 	cardArg,
@@ -417,6 +415,7 @@ export const gameProcessChange = (res: GameProgress, change: number) => {
 			if (update > 0) {
 				game[res] += update
 				player.terraformRating += update
+				player.terraformRatingIncreasedThisGeneration = true
 			}
 		},
 	})
@@ -530,6 +529,10 @@ export const terraformRatingChange = (change: number) =>
 		symbols: [{ symbol: SymbolType.TerraformingRating, count: change }],
 		perform: ({ player }) => {
 			player.terraformRating += change
+
+			if (change > 0) {
+				player.terraformRatingIncreasedThisGeneration = true
+			}
 		},
 	})
 
@@ -1494,8 +1497,14 @@ export const terraformRatingForTags = (tag: CardCategory, amount: number) =>
 		],
 		hints: [tagsCountHint([tag])],
 		perform: ({ player, card }) => {
-			player.terraformRating +=
+			const change =
 				countTagsWithoutEvents([...player.usedCards, card.code], tag) * amount
+
+			player.terraformRating += change
+
+			if (change > 0) {
+				player.terraformRatingIncreasedThisGeneration = true
+			}
 		},
 	})
 
@@ -1540,6 +1549,35 @@ export const resourcesForPlayersTags = (
 
 					return acc
 				}, 0),
+			)
+		},
+	})
+}
+
+export const resourceForAllPlayersTags = (
+	tag: CardCategory,
+	res: Resource,
+	resPerCard: number,
+) => {
+	return effect({
+		description: `Gain ${withUnits(res, resPerCard)} per every ${
+			CardCategory[tag]
+		} tag in play`,
+		type: CardEffectType.Production,
+		symbols: [
+			{ resource: res, count: resPerCard },
+			{ symbol: SymbolType.Slash },
+			{ tag, other: true },
+		],
+		hints: [tagsCountHint([tag], true)],
+		perform: ({ game, player }) => {
+			updatePlayerResource(
+				player,
+				res,
+				game.players.reduce(
+					(acc, p) => acc + countTagsWithoutEvents(p.usedCards, tag),
+					0,
+				) * resPerCard,
 			)
 		},
 	})

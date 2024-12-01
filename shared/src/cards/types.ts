@@ -7,6 +7,7 @@ import {
 	GridCellContent,
 	GridCellOther,
 	ColonyState,
+	CommitteePartyState,
 } from '../gameState'
 import { StandardProject } from '../projects'
 import { CardHint } from './cardHints'
@@ -31,10 +32,15 @@ export type CardResource =
 	| 'floaters'
 	| 'asteroids'
 	| 'camps'
+	| 'preservation'
 
 export type GameProgress = 'oxygen' | 'temperature' | 'oceans' | 'venus'
 
-export type CardEffectArgumentType = number | string | CardEffectArgumentType[]
+export type CardEffectArgumentType =
+	| number
+	| null
+	| string
+	| CardEffectArgumentType[]
 
 export interface CardCallbackContext {
 	game: GameState
@@ -89,6 +95,7 @@ export enum CardSpecial {
 	Prelude,
 	Venus,
 	Colonies,
+	Turmoil,
 }
 
 export interface CardVictoryPointsCallback {
@@ -184,6 +191,10 @@ export enum CardEffectTarget {
 	Cell,
 	// Type - amount: number
 	CardResourceCount,
+	// Type - partyCode: string
+	CommitteeParty,
+	// Type - [partyCode: string, memberPlayerId: number | null]
+	CommitteePartyMember,
 }
 
 export interface CardEffectArgument {
@@ -194,6 +205,7 @@ export interface CardEffectArgument {
 	cardConditions: CardCondition[]
 	cellConditions: CellCondition[]
 	resourceConditions: ResourceCondition[]
+	committeePartyConditions?: CommitteePartyCondition[]
 	drawnCards?: number
 	amount?: number
 	maxAmount?: number | MaxAmountCallback
@@ -213,6 +225,11 @@ export type MaxAmountCallback = (ctx: CardCallbackContext) => number
 export type ResourceCondition = (
 	context: { player: PlayerState; game: GameState },
 	resource: Resource,
+) => boolean
+
+export type CommitteePartyCondition = (
+	context: { player: PlayerState; game: GameState },
+	committeeParty: CommitteePartyState,
 ) => boolean
 
 export interface CardPassiveEffect {
@@ -281,6 +298,13 @@ export enum SymbolType {
 	SlashSmall,
 	BigPlus,
 	Player,
+	Influence,
+	BlueCard,
+	Tile,
+	Delegate,
+	Chairman,
+	PartyLeader,
+	AnyProduction,
 }
 
 export interface CardSymbol {
@@ -299,4 +323,8 @@ export interface CardSymbol {
 	color?: string
 	title?: string
 	noRightSpacing?: boolean
+	noSpacing?: boolean
+	affectedByInfluence?: boolean
+	committeeParty?: string
+	postfix?: string
 }

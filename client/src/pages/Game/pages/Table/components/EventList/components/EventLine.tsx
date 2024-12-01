@@ -1,6 +1,8 @@
 import { useGameModals } from '@/context/GameModalsContext'
 import { useLocale } from '@/context/LocaleContext'
 import { useAppStore } from '@/utils/hooks'
+import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi, Resource } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
 import {
@@ -33,6 +35,12 @@ const PlayerSpan = ({ player }: { player: PlayerState }) => (
 		{player?.name}
 	</span>
 )
+
+const PartySpan = ({ party }: { party: string }) => {
+	const locale = useLocale()
+
+	return <>{locale.committeeParties[party]}</>
+}
 
 const CardSpan = memo(({ card }: { card: string }) => {
 	const locale = useLocale()
@@ -102,7 +110,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} />
-						{` + ${event.amount} TR`}
+						{` ${event.amount > 0 ? `+${event.amount}` : event.amount} TR`}
 					</>
 				)
 			case EventType.CorporationPicked:
@@ -268,6 +276,69 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return <></>
 			case EventType.MarsTerraformed:
 				return <>Mars terraformed</>
+			case EventType.CommitteeDominantPartyChanged:
+				return (
+					<>
+						<PartySpan party={event.partyCode} /> is now dominant party
+					</>
+				)
+			case EventType.CommitteePartyLeaderChanged:
+				return (
+					<>
+						{event.playerId !== null ? (
+							<PlayerSpan player={players[event.playerId]} />
+						) : (
+							'Neutral'
+						)}{' '}
+						is now leader of <PartySpan party={event.partyCode} />
+					</>
+				)
+			case EventType.CommitteePartyDelegateChange:
+				return (
+					<InlineFlex>
+						<PartySpan party={event.partyCode} />{' '}
+						<span>
+							{event.change > 0 ? `+${event.change}` : event.change}{' '}
+							<FontAwesomeIcon
+								icon={faUser}
+								color={
+									event.playerId === null
+										? '#ccc'
+										: players[event.playerId].color
+								}
+							/>
+						</span>
+					</InlineFlex>
+				)
+			case EventType.CurrentGlobalEventExecuted:
+				return <>{locale.globalEvents[event.eventCode]} global event</>
+			case EventType.GlobalEventsChanged:
+				return (
+					<>
+						{event.current.distant && (
+							<div>
+								{locale.globalEvents[event.current.distant]} is new distant
+								event
+							</div>
+						)}
+						{event.current.current && (
+							<div>
+								{locale.globalEvents[event.current.current]} is new current
+								event
+							</div>
+						)}
+					</>
+				)
+			case EventType.NewGovernment:
+				return (
+					<>
+						<PartySpan party={event.newRulingParty} /> is now ruling party
+					</>
+				)
+			case EventType.PlayerMovedDelegate:
+				return <></>
+			case EventType.CommitteePartyActivePolicyActivated:
+				return <></>
 		}
 
 		assertNever(event)
@@ -329,4 +400,10 @@ const ColoniesSpanE = styled.span`
 	&:hover {
 		text-decoration: underline;
 	}
+`
+
+const InlineFlex = styled.div`
+	display: inline-flex;
+	gap: 0.2rem;
+	align-items: center;
 `

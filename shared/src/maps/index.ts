@@ -1,4 +1,4 @@
-import { keyMap } from '../utils'
+import { keyMap } from '@shared/utils/keyMap'
 import { hellasMap } from './hellas'
 import { standardMap } from './standard'
 import { elysiumMap } from './elysium'

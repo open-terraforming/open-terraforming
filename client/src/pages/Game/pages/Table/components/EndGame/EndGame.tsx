@@ -20,6 +20,8 @@ const vpOrder = [
 	VictoryPointsSource.Cities,
 	VictoryPointsSource.Milestones,
 	VictoryPointsSource.Awards,
+	VictoryPointsSource.PartyLeaders,
+	VictoryPointsSource.Chairman,
 ]
 
 const vpToColor = {
@@ -29,6 +31,8 @@ const vpToColor = {
 	[VictoryPointsSource.Cities]: '#FF952B',
 	[VictoryPointsSource.Milestones]: '#FF0000',
 	[VictoryPointsSource.Awards]: '#7B7BFF',
+	[VictoryPointsSource.PartyLeaders]: '#FFD700',
+	[VictoryPointsSource.Chairman]: '#8f7901',
 } as const
 
 const vpText = (vp: VictoryPointsSource, extra?: VictoryPoints) => {
@@ -49,6 +53,10 @@ const vpText = (vp: VictoryPointsSource, extra?: VictoryPoints) => {
 			return 'Forests'
 		case VictoryPointsSource.Cities:
 			return 'Cities'
+		case VictoryPointsSource.PartyLeaders:
+			return 'Party Leaders'
+		case VictoryPointsSource.Chairman:
+			return 'Chairman'
 	}
 }
 
@@ -67,7 +75,7 @@ export const EndGame = ({ onClose }: Props) => {
 	}, 3000)
 
 	const chart = useMemo(
-		() =>
+		(): Record<number, [number, number]> =>
 			game
 				? game.players
 						.map((player) => {

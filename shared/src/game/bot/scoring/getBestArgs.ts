@@ -1,6 +1,6 @@
 import { CardEffect, CardEffectArgumentType } from '@shared/cards'
 import { GameState, PlayerState, UsedCardState } from '@shared/index'
-import { sortBy } from '@shared/utils'
+import { sortBy } from '@shared/utils/sortBy'
 import { deepCopy } from '@shared/utils/collections'
 import { getPossibleArgs } from './args/get-possible-args'
 import { computeScore } from './computeScore'

@@ -90,4 +90,18 @@ export const defaultScoringCoefficients = () => ({
 		playCard: 1,
 		draftCard: 0.5,
 	},
+
+	committee: {
+		delegatesCount: 0.2,
+		leaderOfDominantParty: 1,
+		leaderOfParty: 0.3,
+
+		lastGeneration: {
+			leaderOfParty: 1,
+		},
+	},
+
+	globalEvents: {
+		influence: 0.5,
+	},
 })

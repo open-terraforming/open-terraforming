@@ -1,6 +1,8 @@
 import { GameStateValue, PlayerStateValue } from '@shared/index'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { BaseGameState } from './base-game-state'
+import { ExpansionType } from '@shared/expansions/types'
+import { hasExpansion } from '@shared/utils/hasExpansion'
 
 export class GenerationInProgressGameState extends BaseGameState {
 	name = GameStateValue.GenerationInProgress
@@ -35,6 +37,10 @@ export class GenerationInProgressGameState extends BaseGameState {
 
 	transition() {
 		if (this.game.all(PlayerStateValue.Passed)) {
+			if (this.game.isMarsTerraformed) {
+				return GameStateValue.GenerationEnding
+			}
+
 			if (
 				this.game.state.solarPhase &&
 				(this.game.state.temperature < this.game.state.map.temperature ||
@@ -46,6 +52,10 @@ export class GenerationInProgressGameState extends BaseGameState {
 
 			if (this.game.state.colonies.length > 0) {
 				return GameStateValue.ColoniesProduction
+			}
+
+			if (hasExpansion(this.game.state, ExpansionType.Turmoil)) {
+				return GameStateValue.Turmoil
 			}
 
 			return GameStateValue.GenerationEnding

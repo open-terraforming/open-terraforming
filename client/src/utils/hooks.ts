@@ -21,6 +21,8 @@ export const useAppDispatch = useDispatch as () => AppDispatch
 export const usePlayerState = () => useAppStore((state) => state.game.player)
 export const useGameState = () => useAppStore((state) => state.game.state)
 
+export const usePlayersMap = () => useAppStore((state) => state.game.playerMap)
+
 export const useWindowEvent = <EType extends keyof WindowEventMap>(
 	event: EType,
 	callback: (e: WindowEventMap[EType]) => void,

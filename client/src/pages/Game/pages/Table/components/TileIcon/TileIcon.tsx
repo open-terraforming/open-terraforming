@@ -4,8 +4,9 @@ import { GridCellContent, GridCellOther } from '@shared/index'
 import styled from 'styled-components'
 import { OtherIcons } from '../GameMap/icons/other'
 type Props = {
-	content: GridCellContent
+	content?: GridCellContent
 	other?: GridCellOther
+	size?: string
 }
 
 const hexPoints = '-8.5,4.4 -8.5,-4.5 0,-9.5 8.5,-4.5 8.5,4.5 0,9.5'
@@ -38,14 +39,17 @@ const getTileContent = (content: GridCellContent, other?: GridCellOther) => {
 	return null
 }
 
-export const TileIcon = ({ content, other }: Props) => {
+export const TileIcon = ({ content, other, size }: Props) => {
 	return (
-		<E>
-			<Icon>{getTileContent(content, other)}</Icon>
-			<Hexagon viewBox="0 0 18 20">
+		<E style={size ? { width: size, height: size } : undefined}>
+			{content && <Icon>{getTileContent(content, other)}</Icon>}
+			<Hexagon
+				viewBox="0 0 18 20"
+				style={size ? { width: size, height: size } : undefined}
+			>
 				<polygon
 					stroke="rgba(255, 255, 255, 0.6)"
-					fill={contentColor[content]}
+					fill={content ? contentColor[content] : '#ccc'}
 					strokeWidth="1"
 					points={hexPoints}
 					transform="translate(9, 10)"

@@ -1,6 +1,7 @@
 import { getColoniesCount } from '@shared/expansions/colonies/utils/getColoniesCount'
 import { GridCellContent } from '../gameState'
-import { adjacentCells, allCells } from '../utils'
+import { allCells } from '@shared/utils/allCells'
+import { adjacentCells } from '@shared/utils/adjacentCells'
 import { colonyCountHint, tagsCountHint, tileCountHint } from './cardHints'
 import { CardsLookupApi } from './lookup'
 import { CardCategory, CardResource, CardVictoryPointsCallback } from './types'

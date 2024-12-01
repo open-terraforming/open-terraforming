@@ -1,6 +1,6 @@
 import { GridCell, GridCellContent } from '@shared/index'
 import { PlacementState } from '@shared/placements'
-import { adjTilesList } from '@shared/utils'
+import { adjTilesList } from '@shared/utils/adjTilesList'
 import { ScoringContext } from './types'
 
 export const placeTileScore = (

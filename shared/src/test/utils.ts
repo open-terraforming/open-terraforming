@@ -1,5 +1,5 @@
 import { initialGameState, initialPlayerState } from '../states'
-import { range } from '../utils'
+import { range } from '@shared/utils/range'
 import { Card, CardType } from '../cards'
 import { card } from '../cards/utils'
 

@@ -7,6 +7,7 @@ import {
 } from '@shared/index'
 import { PlacementState } from '@shared/placements'
 import { adjTilesList } from '@shared/utils'
+import { adjacentOceansBonus } from '@shared/utils/adjacentOceansBonus'
 
 export type PlacementReward = {
 	resource: 'vp' | Resource
@@ -47,7 +48,9 @@ export const getPlaceRewards = (
 
 	rewards.push({
 		resource: 'money',
-		count: adjTilesList(game, cell.x, cell.y).hasOcean().length * 2,
+		count:
+			adjTilesList(game, cell.x, cell.y).hasOcean().length *
+			adjacentOceansBonus(game, player),
 		description: 'for adjacent Oceans',
 	})
 

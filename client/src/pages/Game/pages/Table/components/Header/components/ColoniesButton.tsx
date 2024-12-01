@@ -1,7 +1,5 @@
 import { Tooltip } from '@/components'
-import { DialogButton } from '@/components/DialogButton/DialogButton'
 import { Flex } from '@/components/Flex/Flex'
-import { Position } from '@/components/Tooltip/Tooltip'
 import { useGameState, usePlayerState } from '@/utils/hooks'
 import { getColoniesCount } from '@shared/expansions/colonies/utils/getColoniesCount'
 import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
@@ -9,6 +7,7 @@ import { getPlayerUsedFleets } from '@shared/expansions/colonies/utils/getPlayer
 import { forwardRef } from 'react'
 import styled from 'styled-components'
 import { ColoniesModal } from '../../ColoniesModal/ColoniesModal'
+import { HeaderDialogButton } from './HeaderDialogButton'
 
 export const ColoniesButton = forwardRef<HTMLDivElement>((_, ref) => {
 	const game = useGameState()
@@ -16,15 +15,15 @@ export const ColoniesButton = forwardRef<HTMLDivElement>((_, ref) => {
 
 	return (
 		<Container ref={ref}>
-			<StyledButton
+			<HeaderDialogButton
 				dialog={(close) => <ColoniesModal onClose={close} />}
 				noClip
 			>
 				Colonies
-			</StyledButton>
+			</HeaderDialogButton>
 			<SubContainer>
 				<Tooltip
-					position={Position.Bottom}
+					position={'bottom-center'}
 					content={
 						<>
 							<div>The total number of colonies built</div>
@@ -42,7 +41,7 @@ export const ColoniesButton = forwardRef<HTMLDivElement>((_, ref) => {
 					{player.tradeFleets - getPlayerUsedFleets(game, player).length}
 				</SubValue>
 				<Tooltip
-					position={Position.Bottom}
+					position={'bottom-center'}
 					content={
 						<>
 							<div>Number of fleets currently available to you</div>
@@ -66,16 +65,6 @@ const SubContainer = styled(Flex)`
 	margin-top: -1px;
 	align-items: stretch;
 	border-bottom: 2px solid ${({ theme }) => theme.colors.border};
-`
-
-const StyledButton = styled(DialogButton)`
-	background-color: ${({ theme }) => theme.colors.background};
-	border: 2px solid ${({ theme }) => theme.colors.border};
-	padding: 0;
-	display: flex;
-	padding: 0.5rem 1rem;
-	width: 100%;
-	box-sizing: border-box;
 `
 
 const SubTitle = styled.div`

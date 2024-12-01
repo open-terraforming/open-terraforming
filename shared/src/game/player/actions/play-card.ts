@@ -6,14 +6,14 @@ import {
 	PlayerStateValue,
 } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { f } from '@shared/utils'
 import { deepCopy } from '@shared/utils/collections'
+import { f } from '@shared/utils/f'
 import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof playCard>['data']
 
-export class PlayCardAction extends PlayerBaseAction<Args> {
+export class PlayCardAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
@@ -79,14 +79,17 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 
 		this.parent.game.checkMilestones()
 
-		this.pushEvent({
-			type: EventType.CardUsed,
-			playerId: this.player.id,
-			card: card.code,
-			index: index,
-			changes: collector.collect(),
-			state: deepCopy(cardState),
-		})
+		collector.collectAndPush(
+			(changes) =>
+				({
+					type: EventType.CardUsed,
+					playerId: this.player.id,
+					card: card.code,
+					index: index,
+					changes,
+					state: deepCopy(cardState),
+				}) as const,
+		)
 
 		if (top) {
 			this.popAction()

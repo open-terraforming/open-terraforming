@@ -1,9 +1,9 @@
 import { GameStateValue, PlayerStateValue, kickPlayer } from '@shared/index'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof kickPlayer>['data']
 
-export class KickPlayerAction extends PlayerBaseAction<Args> {
+export class KickPlayerAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Ready, PlayerStateValue.Waiting]
 	gameStates = [GameStateValue.WaitingForPlayers]
 

@@ -1,10 +1,10 @@
 import { GameStateValue, pickColor, PlayerStateValue } from '@shared/index'
 import { PlayerColors } from '@shared/player-colors'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof pickColor>['data']
 
-export class PickColorAction extends PlayerBaseAction<Args> {
+export class PickColorAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Waiting]
 	gameStates = [GameStateValue.WaitingForPlayers]
 

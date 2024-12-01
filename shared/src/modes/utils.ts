@@ -1,13 +1,11 @@
 import { CardsLookupApi, CardSpecial } from '../cards'
 import { GameState, PlayerStateValue } from '../gameState'
 import { pickStartingAction } from '../player-actions'
-import {
-	drawCards,
-	drawCorporation,
-	drawPreludeCards,
-	pushPendingAction,
-	range,
-} from '../utils'
+import { drawPreludeCards } from '@shared/utils/drawPreludeCards'
+import { drawCards } from '@shared/utils/drawCards'
+import { drawCorporation } from '@shared/utils/drawCorporation'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { range } from '@shared/utils/range'
 import { GameMode, GameModeType } from './types'
 
 export const gameMode = (m: GameMode) => m
@@ -48,6 +46,8 @@ export const prepareStartingPick = (
 				corpCards.push(startingCorp.code)
 			}
 		}
+
+		// const corpCards = game.corporations.slice()
 
 		pushPendingAction(
 			p,

@@ -1,4 +1,5 @@
-import { HelpTooltip } from '@/components/HelpTooltip/HelpTooltip'
+import { Tooltip } from '@/components'
+import { useLocale } from '@/context/LocaleContext'
 import { useAnimatedNumber } from '@/utils/hooks'
 import { Resource as Res } from '@shared/cards'
 import { useEffect, useState } from 'react'
@@ -6,7 +7,6 @@ import styled, { css, keyframes } from 'styled-components'
 import { ResourceIcon } from '../../../../ResourceIcon/ResourceIcon'
 import { GreeneryButton } from '../../GreeneryButton'
 import { HeatButton } from '../../HeatButton'
-import { useLocale } from '@/context/LocaleContext'
 
 export const Resource = ({
 	name,
@@ -57,11 +57,11 @@ export const Resource = ({
 
 	return (
 		<Container diffAnim={productionDiff !== 0 || valueDiff !== 0}>
-			<HelpTooltip content={helpStr} title={name}>
+			<Tooltip content={helpStr} title={name}>
 				<Value>
 					{valueDisplay} <ResourceIcon res={res} />
 				</Value>
-			</HelpTooltip>
+			</Tooltip>
 			<Production negative={production < 0}>
 				{production >= 0 ? `+${productionDisplay}` : productionDisplay}
 			</Production>

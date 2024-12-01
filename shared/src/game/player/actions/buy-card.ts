@@ -11,11 +11,11 @@ import {
 	PlayerStateValue,
 } from '@shared/index'
 import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof buyCard>['data']
 
-export class BuyCardAction extends PlayerBaseAction<Args> {
+export class BuyCardAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
@@ -143,12 +143,12 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 
 		this.parent.game.checkMilestones()
 
-		this.pushEvent({
+		collector.collectAndPush((changes) => ({
 			type: EventType.CardPlayed,
 			playerId: this.player.id,
 			card: card.code,
-			changes: collector.collect(),
-		})
+			changes,
+		}))
 
 		if (!this.pendingAction) {
 			this.actionPlayed()

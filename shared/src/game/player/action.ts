@@ -7,13 +7,13 @@ import {
 	CardPassiveEffect,
 } from '@shared/cards'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
-import { f, getPlayerIndex } from '@shared/utils'
+import { f } from '@shared/utils/f'
+import { getPlayerIndex } from '@shared/utils/getPlayerIndex'
+import { GameEvent } from '../events/eventTypes'
 import { Player } from '../player'
 import { validateArgValue } from '../validation/validate-arg-value'
-import { GameEvent } from '../events/eventTypes'
-import { startEventCollector } from '../utils/startEventCollector'
 
-export abstract class PlayerBaseAction<Args = unknown> {
+export abstract class PlayerBaseActionHandler<Args = unknown> {
 	abstract states: PlayerStateValue[]
 	abstract gameStates: GameStateValue[]
 
@@ -138,7 +138,13 @@ export abstract class PlayerBaseAction<Args = unknown> {
 						})
 					} catch (e) {
 						throw new Error(
-							f('{0}: Effect {1} argument {2} - {3}', card.code, i, ai, e),
+							f(
+								'{0}: Effect {1} argument {2} - {3}',
+								card.code,
+								i,
+								ai,
+								String(e),
+							),
 						)
 					}
 				})
@@ -169,7 +175,7 @@ export abstract class PlayerBaseAction<Args = unknown> {
 		this.parent.filterPendingActions()
 	}
 
-	popAction() {
+	popAction(countsAsAction = true) {
 		if (!this.pendingAction) {
 			throw new Error("Trying to pop action when there aren't any")
 		}
@@ -185,7 +191,10 @@ export abstract class PlayerBaseAction<Args = unknown> {
 				case GameStateValue.GenerationInProgress: {
 					switch (this.player.state) {
 						case PlayerStateValue.Playing: {
-							this.actionPlayed()
+							if (countsAsAction) {
+								this.actionPlayed()
+							}
+
 							break
 						}
 					}
@@ -226,7 +235,7 @@ export abstract class PlayerBaseAction<Args = unknown> {
 	}
 
 	startCollectingEvents() {
-		return startEventCollector(this.game)
+		return this.parent.game.startEventsCollector()
 	}
 
 	abstract perform(args: Args): void

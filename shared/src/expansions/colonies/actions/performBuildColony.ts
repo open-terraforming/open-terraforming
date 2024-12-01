@@ -1,6 +1,6 @@
 import { GameState, PlayerState } from '@shared/gameState'
 import { isOk } from '@shared/utils'
-import { ColoniesLookupApi } from '../ColoniesLookupApi'
+import { ColoniesLookupApi } from '../../../ColoniesLookupApi'
 import { canBuildColony } from '../utils/canColonizeColony'
 
 type Params = {

@@ -1,6 +1,6 @@
 import { GridCell } from '@shared/index'
 import { ScoringContext } from './types'
-import { adjTilesList } from '@shared/utils'
+import { adjTilesList } from '@shared/utils/adjTilesList'
 
 export const claimTileScore = (
 	{ game, player }: ScoringContext,

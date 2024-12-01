@@ -1,16 +1,15 @@
 import { Card, CardType } from '@shared/cards'
 import { Expansions } from '@shared/expansions'
-import { GameStateValue, PlayerStateValue } from '@shared/index'
+import { Colony, GameStateValue, PlayerStateValue } from '@shared/index'
 import { PlayerColors } from '@shared/player-colors'
-import { shuffle } from '@shared/utils'
+import { shuffle } from '@shared/utils/shuffle'
 import { BaseGameState } from './base-game-state'
 import { randomPlayerColor } from '@shared/utils/colors'
 import { ExpansionType } from '@shared/expansions/types'
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
-import { hasExpansion } from '@shared/utils/hasExpansion'
-import { initialColonyState } from '@shared/expansions/colonies/states'
 import { deduplicate } from '@shared/utils/deduplicate'
 import { Cards } from '@shared/cards/list'
+import { GlobalEvent } from '@shared/expansions/turmoil/globalEvent'
+import { CommitteeParty } from '@shared/expansions/turmoil/committeeParty'
 
 export class StartingGameState extends BaseGameState {
 	name = GameStateValue.Starting
@@ -53,13 +52,47 @@ export class StartingGameState extends BaseGameState {
 
 		// Create card pool
 		let cards = [] as Card[]
+		let colonies = [] as Colony[]
+		let globalEvents = [] as GlobalEvent[]
+		let committeeParties = [] as CommitteeParty[]
 
 		this.state.expansions.forEach((e) => {
-			cards = cards.concat(Expansions[e].getCards(this.state))
+			const expansion = Expansions[e]
+
+			cards = cards.concat(expansion.getCards(this.state))
 
 			if (deduplicate(cards).length !== cards.length) {
 				this.logger.error(
 					'Duplicate cards found after adding',
+					ExpansionType[e],
+				)
+			}
+
+			colonies = colonies.concat(expansion.getColonies(this.state))
+
+			if (deduplicate(colonies).length !== colonies.length) {
+				this.logger.error(
+					'Duplicate colonies found after adding',
+					ExpansionType[e],
+				)
+			}
+
+			globalEvents = globalEvents.concat(expansion.getGlobalEvents(this.state))
+
+			if (deduplicate(globalEvents).length !== globalEvents.length) {
+				this.logger.error(
+					'Duplicate globalEvents found after adding',
+					ExpansionType[e],
+				)
+			}
+
+			committeeParties = committeeParties.concat(
+				expansion.getCommitteeParties(this.state),
+			)
+
+			if (deduplicate(committeeParties).length !== committeeParties.length) {
+				this.logger.error(
+					'Duplicate committeeParties found after adding',
 					ExpansionType[e],
 				)
 			}
@@ -88,6 +121,10 @@ export class StartingGameState extends BaseGameState {
 				.map((c) => c.code),
 		)
 
+		this.state.colonyCards = colonies.map((c) => c.code)
+		this.state.globalEvents.events = globalEvents.map((e) => e.code)
+		this.state.committeeParties = committeeParties.map((p) => p.code)
+
 		// Initialize expansions
 		this.state.expansions.forEach((e) => {
 			Expansions[e].initialize(this.state)
@@ -99,18 +136,6 @@ export class StartingGameState extends BaseGameState {
 				)
 			}
 		})
-
-		// Initialize colonies if the expansion is enabled
-		if (hasExpansion(this.game.state, ExpansionType.Colonies)) {
-			const colonyCount =
-				this.game.state.players.length <= 2
-					? this.game.state.players.length + 3
-					: this.game.state.players.length + 2
-
-			this.game.state.colonies = shuffle(this.game.state.colonyCards.slice())
-				.slice(0, colonyCount)
-				.map((code) => initialColonyState(ColoniesLookupApi.get(code)))
-		}
 
 		if (deduplicate(this.state.cards).length !== this.state.cards.length) {
 			this.logger.error('Duplicate cards found after initialization')

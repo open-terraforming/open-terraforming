@@ -1,6 +1,6 @@
 import { CardResource } from '@shared/cards'
 import { addCardResourceAction } from '@shared/player-actions'
-import { pushPendingAction } from '@shared/utils'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { colonyBonus } from '../templates/colonyBonus'
 import { mapCards } from '@shared/utils/mapCards'
 

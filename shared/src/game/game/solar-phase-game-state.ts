@@ -1,7 +1,9 @@
+import { ExpansionType } from '@shared/expansions/types'
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
-import { BaseGameState } from './base-game-state'
-import { pushPendingAction } from '@shared/utils'
 import { solarPhaseTerraformAction } from '@shared/player-actions'
+import { hasExpansion } from '@shared/utils/hasExpansion'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { BaseGameState } from './base-game-state'
 
 export class SolarPhaseGameState extends BaseGameState {
 	name = GameStateValue.SolarPhase
@@ -13,10 +15,24 @@ export class SolarPhaseGameState extends BaseGameState {
 		this.game.updated()
 	}
 
+	onLeave() {
+		this.game.players.forEach((p) => {
+			p.state.state = PlayerStateValue.Passed
+		})
+	}
+
 	transition() {
 		if (this.game.players.every((p) => p.state.pendingActions.length === 0)) {
+			if (this.game.isMarsTerraformed) {
+				return GameStateValue.EndingTiles
+			}
+
 			if (this.game.state.colonies.length > 0) {
 				return GameStateValue.ColoniesProduction
+			}
+
+			if (hasExpansion(this.game.state, ExpansionType.Turmoil)) {
+				return GameStateValue.Turmoil
 			}
 
 			return GameStateValue.GenerationEnding

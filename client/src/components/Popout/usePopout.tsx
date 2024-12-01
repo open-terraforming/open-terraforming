@@ -1,6 +1,6 @@
 import { useElementEvent, useWindowEvent } from '@/utils/hooks'
 import { rgba } from 'polished'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Portal } from '../Portal/Portal'
 
@@ -13,23 +13,29 @@ export type PopoutPosition =
 interface Props {
 	trigger: HTMLElement | null
 	content?: ReactNode
+	contentStyle?: CSSProperties
 	disableStyle?: boolean
 	position?: PopoutPosition
 	className?: string
 	sticky?: boolean
 	stickyTimeout?: number
 	openDelay?: number
+	disableAnimation?: boolean
+	noSpacing?: boolean
 }
 
 export const usePopout = ({
 	trigger,
 	position = 'top-left',
 	disableStyle,
+	noSpacing,
 	content,
+	contentStyle,
 	className,
 	sticky,
 	stickyTimeout = 200,
 	openDelay = 0,
+	disableAnimation,
 }: Props) => {
 	const [triggerHovered, setTriggerHovered] = useState(false)
 	const [contentHovered, setContentHovered] = useState(false)
@@ -47,6 +53,10 @@ export const usePopout = ({
 	const contentRef = useRef<HTMLDivElement>(null)
 
 	const recalculate = () => {
+		if (!content) {
+			return
+		}
+
 		let top = undefined as number | undefined
 		let left = undefined as number | undefined
 		let maxHeight = undefined as number | undefined
@@ -98,10 +108,18 @@ export const usePopout = ({
 	}
 
 	useEffect(() => {
+		if (!content) {
+			return
+		}
+
 		recalculate()
 	}, [triggerHovered])
 
 	useElementEvent(trigger, 'mouseover', () => {
+		if (!content) {
+			return
+		}
+
 		if (stickyTimeoutRef.current) {
 			clearTimeout(stickyTimeoutRef.current)
 			stickyTimeoutRef.current = undefined
@@ -120,6 +138,10 @@ export const usePopout = ({
 	})
 
 	useElementEvent(trigger, 'mouseleave', () => {
+		if (!content) {
+			return
+		}
+
 		if (showTimeoutRef.current) {
 			clearTimeout(showTimeoutRef.current)
 			showTimeoutRef.current = undefined
@@ -150,12 +172,14 @@ export const usePopout = ({
 			{(triggerHovered || (sticky && contentHovered)) && content && (
 				<Portal>
 					<Container
+						$disableAnimation={disableAnimation}
 						onMouseEnter={() => setContentHovered(true)}
 						onMouseLeave={() => setContentHovered(false)}
 						className={className}
 						ref={contentRef}
 						disableStyle={disableStyle}
 						style={{
+							...contentStyle,
 							top: calculatedPosition.top,
 							left: calculatedPosition.left,
 							maxHeight: calculatedPosition.maxHeight,
@@ -169,7 +193,9 @@ export const usePopout = ({
 						{position === 'top-left' && (
 							<TopCaret style={{ left: calculatedPosition.caretOffset }} />
 						)}
-						<Inner>{content}</Inner>
+						<Inner className="popout-inner" $noSpacing={noSpacing}>
+							{content}
+						</Inner>
 					</Container>
 				</Portal>
 			)}
@@ -207,11 +233,20 @@ const BottomCaret = styled(Caret)`
 	border-bottom-color: ${({ theme }) => rgba(theme.colors.border, 1)};
 `
 
-const Container = styled.div<{ disableStyle?: boolean }>`
+const Container = styled.div<{
+	disableStyle?: boolean
+	$disableAnimation?: boolean
+}>`
 	position: absolute;
 	z-index: 999999;
-	animation-name: ${inAnimation};
-	animation-duration: 0.15s;
+	filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.4));
+
+	${(props) =>
+		!props.$disableAnimation &&
+		css`
+			animation-name: ${inAnimation};
+			animation-duration: 0.15s;
+		`}
 
 	${(props) =>
 		!props.disableStyle &&
@@ -222,12 +257,13 @@ const Container = styled.div<{ disableStyle?: boolean }>`
 		`}
 `
 
-const Inner = styled.div<{ disableStyle?: boolean }>`
+const Inner = styled.div<{ disableStyle?: boolean; $noSpacing?: boolean }>`
 	position: relative;
 	overflow: auto;
 
 	${(props) =>
 		!props.disableStyle &&
+		!props.$noSpacing &&
 		css`
 			padding: 10px;
 		`}

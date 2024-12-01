@@ -63,6 +63,24 @@ export const initialGameState = (
 	colonies: [],
 	colonyCards: [],
 	events: [],
+	committee: {
+		enabled: false,
+		dominantParty: null,
+		rulingParty: null,
+		chairman: null,
+		lobby: [],
+		parties: [],
+		reserve: [],
+	},
+	committeeParties: [],
+	globalEvents: {
+		enabled: false,
+		events: [],
+		discardedEvents: [],
+		comingEvent: null,
+		currentEvent: null,
+		distantEvent: null,
+	},
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
@@ -107,6 +125,7 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	protectedHabitat: false,
 	tradeFleets: 1,
 	colonyTradeResourceCostChange: 0,
+	terraformRatingIncreasedThisGeneration: false,
 })
 
 export const initialStandardProjectState = (

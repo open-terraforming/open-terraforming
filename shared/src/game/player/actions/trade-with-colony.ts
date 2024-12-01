@@ -6,15 +6,15 @@ import {
 	canTradeWithColonyUsingResource,
 } from '@shared/expansions/colonies/utils'
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
+import { EventType } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { isFailure } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
 import { deepCopy } from '@shared/utils/collections'
-import { EventType } from '@shared/index'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof tradeWithColony>['data']
 
-export class TradeWithColonyAction extends PlayerBaseAction<Args> {
+export class TradeWithColonyAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
@@ -72,14 +72,17 @@ export class TradeWithColonyAction extends PlayerBaseAction<Args> {
 			costResource,
 		})
 
-		this.pushEvent({
-			type: EventType.ColonyTrading,
-			playerId: this.player.id,
-			colony: +colonyIndex,
-			at: stepBeforeTrade,
-			state: deepCopy(colony),
-			changes: collector.collect(),
-		})
+		collector.collectAndPush(
+			(changes) =>
+				({
+					type: EventType.ColonyTrading,
+					playerId: this.player.id,
+					colony: +colonyIndex,
+					at: stepBeforeTrade,
+					state: deepCopy(colony),
+					changes,
+				}) as const,
+		)
 
 		if (pendingAction) {
 			this.popAction()

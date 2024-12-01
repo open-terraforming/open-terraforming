@@ -1,7 +1,7 @@
 import { Resource } from '@shared/cards'
 import { GameState, PlayerState } from '@shared/gameState'
 import { getPlayerById } from '@shared/utils/getPlayerById'
-import { ColoniesLookupApi } from '../ColoniesLookupApi'
+import { ColoniesLookupApi } from '../../../ColoniesLookupApi'
 
 type Params = {
 	game: GameState

@@ -11,7 +11,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { buildColony, tradeWithColony } from '@shared/actions'
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import {
 	canBuildColony,
 	canTradeWithColony,
@@ -25,6 +24,7 @@ import { darken, lighten } from 'polished'
 import { Fragment, ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 
 type Props = {
 	index: number

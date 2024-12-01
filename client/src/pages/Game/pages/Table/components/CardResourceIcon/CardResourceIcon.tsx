@@ -5,6 +5,7 @@ import {
 	faFighterJet,
 	faMicroscope,
 	faPaw,
+	faPumpMedical,
 	faRocket,
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -25,6 +26,7 @@ const resourceToColor: Record<CardResource, string> = {
 	floaters: '#b3b149',
 	asteroids: '#fff',
 	camps: '#c7a50f',
+	preservation: '#d81616',
 }
 
 export const CardResourceIcon = ({ res, fixedHeight }: Props) => {
@@ -45,6 +47,8 @@ export const CardResourceIcon = ({ res, fixedHeight }: Props) => {
 				return <FontAwesomeIcon icon={faRocket} color="#000" />
 			case 'camps':
 				return <FontAwesomeIcon icon={faCampground} color="#000" />
+			case 'preservation':
+				return <FontAwesomeIcon icon={faPumpMedical} color="#fff" />
 		}
 	}, [res])
 

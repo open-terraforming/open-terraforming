@@ -1,9 +1,9 @@
 import { GameStateValue, playerPass, PlayerStateValue } from '@shared/index'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof playerPass>['data']
 
-export class PassAction extends PlayerBaseAction<Args> {
+export class PassAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing, PlayerStateValue.EndingTiles]
 	gameStates = [GameStateValue.GenerationInProgress, GameStateValue.EndingTiles]
 

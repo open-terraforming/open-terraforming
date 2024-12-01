@@ -7,7 +7,8 @@ import {
 	VictoryPoints,
 	VictoryPointsSource,
 } from './gameState'
-import { adjacentCells, allCells } from './utils'
+import { allCells } from './utils/allCells'
+import { adjacentCells } from './utils/adjacentCells'
 
 export const getCardVictoryPoints = (game: GameState, player: PlayerState) => {
 	return player.usedCards.reduce((acc, state) => {
@@ -126,6 +127,22 @@ export const getVictoryPoints = (
 		source: VictoryPointsSource.Cities,
 		amount: tileVps.cities,
 	})
+
+	if (game.committee.enabled) {
+		victoryPoints.push({
+			source: VictoryPointsSource.PartyLeaders,
+			amount: game.committee.parties.reduce(
+				(acc, party) =>
+					acc + (party.leader?.playerId?.id === player.id ? 1 : 0),
+				0,
+			),
+		})
+
+		victoryPoints.push({
+			source: VictoryPointsSource.Chairman,
+			amount: game.committee.chairman?.playerId?.id === player.id ? 1 : 0,
+		})
+	}
 
 	return victoryPoints
 }

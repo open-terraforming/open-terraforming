@@ -1,9 +1,9 @@
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 import { PlayerStateValue, GameStateValue, playerReady } from '@shared/index'
 
 type ToggleReadyArgs = ReturnType<typeof playerReady>['data']
 
-export class ToggleReadyAction extends PlayerBaseAction<ToggleReadyArgs> {
+export class ToggleReadyAction extends PlayerBaseActionHandler<ToggleReadyArgs> {
 	states = [PlayerStateValue.Waiting, PlayerStateValue.Ready]
 	gameStates = [GameStateValue.WaitingForPlayers]
 

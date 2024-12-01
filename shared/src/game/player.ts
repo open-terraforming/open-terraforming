@@ -14,12 +14,10 @@ import {
 } from '@shared/player-actions'
 import { StandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
-import {
-	allCells,
-	pendingActions,
-	pushPendingAction,
-	range,
-} from '@shared/utils'
+import { allCells } from '@shared/utils/allCells'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { pendingActions } from '@shared/utils/pendingActions'
+import { range } from '@shared/utils/range'
 import { deepCopy } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
 import { getVictoryPoints } from '@shared/vps'
@@ -62,6 +60,11 @@ export interface ColonyBuiltEvent {
 	colony: ColonyState
 }
 
+export interface TerraformingRatingChangedEvent {
+	player: Player
+	change: number
+}
+
 export class Player {
 	static idCounter = 1
 
@@ -78,6 +81,7 @@ export class Player {
 	onColonyBuilt = new MyEvent<Readonly<ColonyBuiltEvent>>()
 	onProjectBought = new MyEvent<Readonly<ProjectBoughtEvent>>()
 	onProductionChanged = new MyEvent<Readonly<ProductionChangedEvent>>()
+	onTerraformingRatingChanged = new MyEvent<TerraformingRatingChangedEvent>()
 
 	previousState: PlayerState | undefined
 
@@ -159,6 +163,14 @@ export class Player {
 					})
 				}
 			}
+
+			if (this.state.terraformRating !== this.previousState.terraformRating) {
+				this.onTerraformingRatingChanged.emit({
+					player: this,
+					change:
+						this.state.terraformRating - this.previousState.terraformRating,
+				})
+			}
 		}
 
 		this.previousState = deepCopy(this.state)
@@ -177,6 +189,9 @@ export class Player {
 
 		// Reset playable cards
 		state.usedCards.forEach((c) => (c.played = false))
+
+		// Reset active ruling party policy flag
+		state.usedActiveRulingPartyPolicy = false
 	}
 
 	filterPendingActions() {

@@ -2,7 +2,7 @@ import { ColonyState, GameState, PlayerState } from '@shared/gameState'
 import { failure } from '../../../utils/failure'
 import { ok } from '../../../utils/ok'
 import { OkOrFailure } from '../../../utils/okOrFailure'
-import { ColoniesLookupApi } from '../ColoniesLookupApi'
+import { ColoniesLookupApi } from '../../../ColoniesLookupApi'
 
 type Params = {
 	game: GameState

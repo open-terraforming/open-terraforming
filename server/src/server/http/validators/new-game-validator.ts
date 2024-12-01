@@ -24,6 +24,7 @@ export const newGameValidator = object({
 			ExpansionType.Prelude,
 			ExpansionType.Venus,
 			ExpansionType.Colonies,
+			ExpansionType.Turmoil,
 		]),
 	),
 	bots: max(min(integer(), 0), globalConfig.bots.max),

@@ -1,6 +1,6 @@
 import { useAppStore } from '@/utils/hooks'
 import { ReactNode } from 'react'
-import { css, styled } from 'styled-components'
+import { SomethingHappenedHeader } from './SomethingHappenedHeader'
 
 type Props = {
 	playerId: number
@@ -17,18 +17,9 @@ export const PlayerDidHeader = ({ playerId, thing, noSpacing }: Props) => {
 		(playerId === currentPlayerId ? 'You' : player?.name) ?? 'Unknown player'
 
 	return (
-		<Header $noSpacing={noSpacing}>
+		<SomethingHappenedHeader $noSpacing={noSpacing}>
 			<span style={{ color: player?.color }}>{displayName}</span>
 			{thing}
-		</Header>
+		</SomethingHappenedHeader>
 	)
 }
-
-const Header = styled.div<{ $noSpacing?: boolean }>`
-	text-align: center;
-	${({ $noSpacing }) =>
-		!$noSpacing &&
-		css`
-			margin: 0.25rem 0 1rem 0;
-		`}
-`

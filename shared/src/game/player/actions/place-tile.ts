@@ -7,12 +7,16 @@ import {
 } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import { placeTileAction, PlayerActionType } from '@shared/player-actions'
-import { adjacentCells, drawCards, f, pushPendingAction } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
+import { adjacentCells } from '@shared/utils/adjacentCells'
+import { drawCards } from '@shared/utils/drawCards'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { PlayerBaseActionHandler } from '../action'
+import { adjacentOceansBonus } from '@shared/utils/adjacentOceansBonus'
 
 type Args = ReturnType<typeof placeTile>['data']
 
-export class PlaceTileAction extends PlayerBaseAction<Args> {
+export class PlaceTileAction extends PlayerBaseActionHandler<Args> {
 	states = [
 		PlayerStateValue.Playing,
 		PlayerStateValue.EndingTiles,
@@ -86,6 +90,7 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 
 					if (!top.anonymous) {
 						this.player.terraformRating++
+						this.player.terraformRatingIncreasedThisGeneration = true
 					}
 				}
 
@@ -95,6 +100,7 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 			case GridCellContent.Ocean: {
 				if (!top.anonymous) {
 					this.player.terraformRating++
+					this.player.terraformRatingIncreasedThisGeneration = true
 				}
 
 				this.game.oceans++
@@ -106,7 +112,7 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 			this.player.money +=
 				adjacentCells(this.game, cell.x, cell.y).filter(
 					(c) => c.content === GridCellContent.Ocean,
-				).length * 2
+				).length * adjacentOceansBonus(this.game, this.player)
 		}
 
 		this.parent.onTilePlaced.emit({
@@ -121,6 +127,6 @@ export class PlaceTileAction extends PlayerBaseAction<Args> {
 			this.parent.buyAllGreeneries()
 		}
 
-		this.popAction()
+		this.popAction(!top.anonymous)
 	}
 }

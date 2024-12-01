@@ -32,6 +32,8 @@ export enum GameStateValue {
 	SolarPhase,
 	/** After solar phase or at the end of generation, colonies increase one step */
 	ColoniesProduction,
+	/** Turmoil state */
+	Turmoil,
 }
 
 export enum PlayerStateValue {
@@ -55,6 +57,34 @@ export enum PlayerStateValue {
 	Prelude,
 	/** Picking what to terraform during the Solar Phase */
 	SolarPhaseTerraform,
+}
+
+/** Interface to make it obvious something is player ID */
+export interface PlayerId {
+	id: number
+}
+
+export interface CommitteePartyMember {
+	/** null means neutral delegate */
+	playerId: PlayerId | null
+}
+
+export interface CommitteePartyState {
+	code: string
+	leader: CommitteePartyMember | null
+	members: CommitteePartyMember[]
+}
+
+export interface CommitteeState {
+	enabled: boolean
+	/** code of currently dominant party */
+	dominantParty: string | null
+	/** code of currently ruling party */
+	rulingParty: string | null
+	chairman: CommitteePartyMember | null
+	lobby: PlayerId[]
+	reserve: (PlayerId | null)[]
+	parties: CommitteePartyState[]
 }
 
 export interface GameState {
@@ -130,6 +160,21 @@ export interface GameState {
 
 	/** List of events that occurred during the game */
 	events: GameEvent[]
+
+	committee: CommitteeState
+
+	/** List of available committee parties */
+	committeeParties: string[]
+
+	globalEvents: {
+		enabled: boolean
+		events: string[]
+		discardedEvents: string[]
+
+		distantEvent: string | null
+		comingEvent: string | null
+		currentEvent: string | null
+	}
 }
 
 export interface StandardProjectState {
@@ -314,6 +359,8 @@ export interface PlayerState {
 	/** Player TR */
 	terraformRating: number
 
+	terraformRatingIncreasedThisGeneration: boolean
+
 	/**  Number of actions played this round */
 	actionsPlayed: number
 
@@ -351,6 +398,15 @@ export interface PlayerState {
 
 	/** Override of cost of sponsoring a card (buying it into hand) */
 	sponsorCost?: number
+
+	/** Adds extra influence when calculating influence */
+	extraInfluence?: number
+
+	/** Override default adjacent oceans bonus */
+	adjacentOceansBonus?: number
+
+	/** Marks that this player has used active ruling party policy - used for policies that can be only run once per generation */
+	usedActiveRulingPartyPolicy?: boolean
 }
 
 export enum VictoryPointsSource {
@@ -360,6 +416,8 @@ export enum VictoryPointsSource {
 	Awards,
 	Forests,
 	Cities,
+	PartyLeaders,
+	Chairman,
 }
 
 export type VictoryPoints = {
@@ -394,6 +452,7 @@ export interface UsedCardState {
 	asteroids: number
 	/** Number of camps on the card */
 	camps: number
+	preservation: number
 
 	/** Index of card that triggered last passive effect */
 	triggeredByCard?: number

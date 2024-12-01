@@ -219,7 +219,7 @@ const Popup = styled(ClippedBox)<{
 	display: flex;
 	flex-direction: column;
 
-	.inner {
+	> .inner {
 		overflow: auto;
 		display: flex;
 		flex-direction: column;

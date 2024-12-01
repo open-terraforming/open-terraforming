@@ -2,13 +2,13 @@ import { buildColony } from '@shared/actions'
 import { performBuildColony } from '@shared/expansions/colonies/actions/performBuildColony'
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
 import { PlayerActionType } from '@shared/player-actions'
+import { PlayerBaseActionHandler } from '../action'
 import { deepCopy } from '@shared/utils/collections'
-import { PlayerBaseAction } from '../action'
 import { EventType } from '@shared/index'
 
 type Args = ReturnType<typeof buildColony>['data']
 
-export class BuildColonyAction extends PlayerBaseAction<Args> {
+export class BuildColonyAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
@@ -33,13 +33,16 @@ export class BuildColonyAction extends PlayerBaseAction<Args> {
 			player: this.parent,
 		})
 
-		this.pushEvent({
-			type: EventType.ColonyBuilt,
-			playerId: this.player.id,
-			colony: +colonyIndex,
-			state: deepCopy(colony),
-			changes: collector.collect(),
-		})
+		collector.collectAndPush(
+			(changes) =>
+				({
+					type: EventType.ColonyBuilt,
+					playerId: this.player.id,
+					colony: +colonyIndex,
+					state: deepCopy(colony),
+					changes,
+				}) as const,
+		)
 
 		if (pendingAction) {
 			this.popAction()

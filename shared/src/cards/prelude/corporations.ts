@@ -1,5 +1,6 @@
 import { withUnits } from '../../units'
-import { drawCard, f } from '../../utils'
+import { drawCard } from '@shared/utils/drawCard'
+import { f } from '@shared/utils/f'
 import { corp } from '../base/corporations'
 import {
 	emptyEffect,

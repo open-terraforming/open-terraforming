@@ -1,11 +1,11 @@
 import { GameStateValue, pickCards, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { f } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
+import { f } from '@shared/utils/f'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof pickCards>['data']
 
-export class PickCardsAction extends PlayerBaseAction<Args> {
+export class PickCardsAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Picking, PlayerStateValue.Playing]
 	gameStates = [
 		GameStateValue.Starting,

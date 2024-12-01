@@ -77,6 +77,7 @@ const Project = styled.div`
 	display: flex;
 	align-items: center;
 	margin-bottom: 0.5rem;
+	width: 22rem;
 
 	button {
 		margin-right: 1rem;
@@ -84,6 +85,6 @@ const Project = styled.div`
 	}
 
 	> div {
-		flex: 2;
+		flex: 1.5;
 	}
 `

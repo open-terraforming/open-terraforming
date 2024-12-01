@@ -39,6 +39,11 @@ const EXPANSIONS_OPTIONS = [
 		label: 'Colonies',
 		description: 'Adds Colonies which can be used to boost your economy.',
 	},
+	{
+		value: ExpansionType.Turmoil,
+		label: 'Turmoil',
+		description: 'Adds a Terraforming Committee and Global Events',
+	},
 ]
 
 export const NewGameModal = ({ onClose }: Props) => {
@@ -70,6 +75,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 		ExpansionType.Prelude,
 		ExpansionType.Venus,
 		ExpansionType.Colonies,
+		ExpansionType.Turmoil,
 	])
 
 	const [loading, setLoading] = useState(false)

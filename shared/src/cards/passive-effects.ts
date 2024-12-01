@@ -1,4 +1,4 @@
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { PLAYER_PRODUCTION_TO_RESOURCE } from '../constants'
 import {
 	GridCellContent,
@@ -8,7 +8,11 @@ import {
 import { playCardAction } from '../player-actions'
 import { tileWithArticle } from '../texts'
 import { withUnits } from '../units'
-import { adjacentCells, drawCard, f, pushPendingAction, range } from '../utils'
+import { adjacentCells } from '@shared/utils/adjacentCells'
+import { drawCard } from '@shared/utils/drawCard'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { range } from '@shared/utils/range'
 import { effectArg } from './args'
 import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
@@ -487,8 +491,8 @@ export const drawCardWhenBuyingCard = (minCardCost: number) =>
 			{ symbol: SymbolType.Colon },
 			{ symbol: SymbolType.Card },
 		],
-		onCardBought: ({ player, game }, card) => {
-			if (card.cost >= minCardCost) {
+		onCardBought: ({ player, game }, card, _, playedBy) => {
+			if (player.id === playedBy.id && card.cost >= minCardCost) {
 				player.cards.push(drawCard(game))
 			}
 		},
