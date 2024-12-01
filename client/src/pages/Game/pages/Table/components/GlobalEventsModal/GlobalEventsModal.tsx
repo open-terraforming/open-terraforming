@@ -1,3 +1,4 @@
+import { Tooltip } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
 import { useGameState } from '@/utils/hooks'
@@ -8,8 +9,6 @@ import { styled } from 'styled-components'
 import { CurrentInfluenceDisplay } from './components/CurrentInfluenceDisplay'
 import { EmptyGlobalEventView } from './components/EmptyGlobalEventView'
 import { GlobalEventView } from './components/GlobalEventView'
-import { Tooltip } from '@/components'
-import { TooltipContent } from '@/components/TooltipContent'
 
 type Props = {
 	onClose: () => void
@@ -32,13 +31,10 @@ export const GlobalEventsModal = ({ onClose }: Props) => {
 			<Flex align="stretch" gap="0.5rem">
 				<Flex direction="column">
 					<Tooltip
-						noSpacing
-						content={
-							<TooltipContent>{`Event that was revealed on start of this generation, it'll be
+						content={`Event that was revealed on start of this generation, it'll be
 								moved to Coming on generation end. When distant event is
 								revealed delegate from party that's in the left corner gets
-								added to the committee.`}</TooltipContent>
-						}
+								added to the committee.`}
 					>
 						<Title>Distant</Title>
 					</Tooltip>
@@ -53,13 +49,8 @@ export const GlobalEventsModal = ({ onClose }: Props) => {
 				</Arrow>
 				<Flex direction="column">
 					<Tooltip
-						noSpacing
 						content={
-							<TooltipContent>
-								{
-									'This event will become Current on the generation end. When the event becomes Current the delegate from the party that is in the right corner gets added to the committee.'
-								}
-							</TooltipContent>
+							'This event will become Current on the generation end. When the event becomes Current the delegate from the party that is in the right corner gets added to the committee.'
 						}
 					>
 						<Title>Coming</Title>
@@ -75,13 +66,8 @@ export const GlobalEventsModal = ({ onClose }: Props) => {
 				</Arrow>
 				<Flex direction="column">
 					<Tooltip
-						noSpacing
 						content={
-							<TooltipContent>
-								{
-									'This event will be executed at the end of the generation, but before the Dominant Party becomes the Ruling party.'
-								}
-							</TooltipContent>
+							'This event will be executed at the end of the generation, but before the Dominant Party becomes the Ruling party.'
 						}
 					>
 						<Title>Current</Title>

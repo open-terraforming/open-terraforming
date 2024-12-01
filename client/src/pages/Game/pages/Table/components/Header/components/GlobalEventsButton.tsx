@@ -1,4 +1,5 @@
 import { Tooltip } from '@/components'
+import { Flex } from '@/components/Flex/Flex'
 import { useLocale } from '@/context/LocaleContext'
 import { useGameState } from '@/utils/hooks'
 import { getGlobalEvent } from '@shared/utils'
@@ -6,9 +7,6 @@ import { styled } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { GlobalEventsModal } from '../../GlobalEventsModal/GlobalEventsModal'
 import { HeaderDialogButton } from './HeaderDialogButton'
-import { Position } from '@/components/Tooltip/Tooltip'
-import { Flex } from '@/components/Flex/Flex'
-import { TooltipContent } from '@/components/TooltipContent'
 
 export const GlobalEventsButton = () => {
 	const game = useGameState()
@@ -32,15 +30,9 @@ export const GlobalEventsButton = () => {
 
 				{currentEvent && (
 					<Tooltip
-						noSpacing
-						content={
-							<TooltipContent
-								title={`Current global event: ${t.globalEvents[currentEvent.code]}`}
-							>
-								{currentEvent.effects.map((e) => e.description).join(' ')}
-							</TooltipContent>
-						}
-						position={Position.Bottom}
+						title={`Current global event: ${t.globalEvents[currentEvent.code]}`}
+						content={currentEvent.effects.map((e) => e.description).join(' ')}
+						position={'bottom-center'}
 					>
 						<Flex justify="center">
 							{currentEvent.effects.map((effect, index) => (

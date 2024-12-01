@@ -1,12 +1,10 @@
+import { Tooltip } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { useGameState, usePlayerState } from '@/utils/hooks'
 import { SymbolType } from '@shared/cards'
 import { getPlayerInfluence } from '@shared/expansions/turmoil/utils/getPlayerInfluence'
 import { styled } from 'styled-components'
 import { SymbolDisplay } from '../../CardView/components/SymbolDisplay'
-import { Tooltip } from '@/components'
-import { Position } from '@/components/Tooltip/Tooltip'
-import { TooltipContent } from '@/components/TooltipContent'
 
 export const CurrentInfluenceDisplay = () => {
 	const game = useGameState()
@@ -28,10 +26,10 @@ export const CurrentInfluenceDisplay = () => {
 	return (
 		<Tooltip
 			styleTrigger={{ marginLeft: 'auto' }}
-			position={Position.Bottom}
-			noSpacing
+			position={'bottom-center'}
+			title="Your current influence value"
 			content={
-				<TooltipContent title="Your current influence value">
+				<>
 					<div>{hasChairman ? 1 : 0} for being Chairman</div>
 					<div>
 						{isLeaderOfDominantParty ? 1 : 0} for being leader of the dominant
@@ -42,7 +40,7 @@ export const CurrentInfluenceDisplay = () => {
 						dominant party
 					</div>
 					<div>{player.extraInfluence ?? 0} for extra influence</div>
-				</TooltipContent>
+				</>
 			}
 		>
 			<Container>

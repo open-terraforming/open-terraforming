@@ -1,6 +1,6 @@
 import { useElementEvent, useWindowEvent } from '@/utils/hooks'
 import { rgba } from 'polished'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { CSSProperties, ReactNode, useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Portal } from '../Portal/Portal'
 
@@ -13,6 +13,7 @@ export type PopoutPosition =
 interface Props {
 	trigger: HTMLElement | null
 	content?: ReactNode
+	contentStyle?: CSSProperties
 	disableStyle?: boolean
 	position?: PopoutPosition
 	className?: string
@@ -20,13 +21,16 @@ interface Props {
 	stickyTimeout?: number
 	openDelay?: number
 	disableAnimation?: boolean
+	noSpacing?: boolean
 }
 
 export const usePopout = ({
 	trigger,
 	position = 'top-left',
 	disableStyle,
+	noSpacing,
 	content,
+	contentStyle,
 	className,
 	sticky,
 	stickyTimeout = 200,
@@ -175,6 +179,7 @@ export const usePopout = ({
 						ref={contentRef}
 						disableStyle={disableStyle}
 						style={{
+							...contentStyle,
 							top: calculatedPosition.top,
 							left: calculatedPosition.left,
 							maxHeight: calculatedPosition.maxHeight,
@@ -188,7 +193,9 @@ export const usePopout = ({
 						{position === 'top-left' && (
 							<TopCaret style={{ left: calculatedPosition.caretOffset }} />
 						)}
-						<Inner>{content}</Inner>
+						<Inner className="popout-inner" $noSpacing={noSpacing}>
+							{content}
+						</Inner>
 					</Container>
 				</Portal>
 			)}
@@ -249,12 +256,13 @@ const Container = styled.div<{
 		`}
 `
 
-const Inner = styled.div<{ disableStyle?: boolean }>`
+const Inner = styled.div<{ disableStyle?: boolean; $noSpacing?: boolean }>`
 	position: relative;
 	overflow: auto;
 
 	${(props) =>
 		!props.disableStyle &&
+		!props.$noSpacing &&
 		css`
 			padding: 10px;
 		`}

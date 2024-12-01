@@ -1,6 +1,6 @@
 import { Tooltip } from '@/components'
 import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
-import { Position } from '@/components/Tooltip/Tooltip'
+import { Flex } from '@/components/Flex/Flex'
 import { useLocale } from '@/context/LocaleContext'
 import { useGameState } from '@/utils/hooks'
 import { getCommitteeParty } from '@shared/utils'
@@ -8,8 +8,6 @@ import { styled } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 import { CommitteeModal } from '../../CommitteeModal/CommitteeModal'
 import { HeaderDialogButton } from './HeaderDialogButton'
-import { Flex } from '@/components/Flex/Flex'
-import { TooltipContent } from '@/components/TooltipContent'
 
 export const CommitteeButton = () => {
 	const game = useGameState()
@@ -32,16 +30,14 @@ export const CommitteeButton = () => {
 
 				{rulingParty && (
 					<Tooltip
-						noSpacing
+						title={`Current ruling party: ${t.committeeParties[rulingParty.code]}`}
 						content={
-							<TooltipContent
-								title={`Current ruling party: ${t.committeeParties[rulingParty.code]}`}
-							>
+							<>
 								{rulingParty.policy.active.map((e) => e.description).join(' ')}
 								{rulingParty.policy.passive.map((e) => e.description).join(' ')}
-							</TooltipContent>
+							</>
 						}
-						position={Position.Bottom}
+						position={'bottom-center'}
 					>
 						<Data>
 							<CommitteePartyIcon party={rulingParty.code} size="sm" />

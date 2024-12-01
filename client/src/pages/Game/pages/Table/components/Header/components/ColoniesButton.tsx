@@ -1,6 +1,5 @@
 import { Tooltip } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
-import { Position } from '@/components/Tooltip/Tooltip'
 import { useGameState, usePlayerState } from '@/utils/hooks'
 import { getColoniesCount } from '@shared/expansions/colonies/utils/getColoniesCount'
 import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
@@ -24,7 +23,7 @@ export const ColoniesButton = forwardRef<HTMLDivElement>((_, ref) => {
 			</HeaderDialogButton>
 			<SubContainer>
 				<Tooltip
-					position={Position.Bottom}
+					position={'bottom-center'}
 					content={
 						<>
 							<div>The total number of colonies built</div>
@@ -42,7 +41,7 @@ export const ColoniesButton = forwardRef<HTMLDivElement>((_, ref) => {
 					{player.tradeFleets - getPlayerUsedFleets(game, player).length}
 				</SubValue>
 				<Tooltip
-					position={Position.Bottom}
+					position={'bottom-center'}
 					content={
 						<>
 							<div>Number of fleets currently available to you</div>
