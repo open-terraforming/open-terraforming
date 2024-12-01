@@ -80,17 +80,19 @@ const Table = () => {
 				{pending?.type === PlayerActionType.BuildColony && (
 					<ColoniesModal
 						freeColonizePick
+						disableClose
 						allowDuplicateColonies={pending.data.allowMoreColoniesPerColony}
 						onClose={() => null}
 					/>
 				)}
 
 				{pending?.type === PlayerActionType.TradeWithColony && (
-					<ColoniesModal freeTradePick onClose={() => null} />
+					<ColoniesModal freeTradePick disableClose onClose={() => null} />
 				)}
 
 				{pending?.type === PlayerActionType.ChangeColonyStep && (
 					<ColoniesModal
+						disableClose
 						customAction={(index) => {
 							const colony = colonies[index]
 							const colonyInfo = ColoniesLookupApi.get(colony.code)

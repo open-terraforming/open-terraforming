@@ -5,6 +5,7 @@ type Props = {
 	freeTradePick?: boolean
 	freeColonizePick?: boolean
 	allowDuplicateColonies?: boolean
+	disableClose?: boolean
 	customAction?: (colonyIndex: number) => {
 		enabled: boolean
 		perform: () => void
@@ -18,10 +19,11 @@ export const ColoniesModal = ({
 	freeColonizePick,
 	allowDuplicateColonies,
 	customAction,
+	disableClose,
 	onClose,
 }: Props) => {
 	return (
-		<Modal header="Colonies" onClose={onClose} open>
+		<Modal header="Colonies" onClose={onClose} open hideClose={disableClose}>
 			<ColoniesList
 				freeTradePick={freeTradePick}
 				freeColonizePick={freeColonizePick}
