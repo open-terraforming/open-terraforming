@@ -116,7 +116,9 @@ export const EndGame = ({ onClose }: Props) => {
 		[game],
 	)
 
-	const barHeight = 600
+	const barWidth = 600
+	const barHeight = 25
+	const barPadding = 8
 
 	return (
 		<Modal
@@ -135,7 +137,11 @@ export const EndGame = ({ onClose }: Props) => {
 					))}
 				</Current>
 			)}
-			<CharContainer>
+			<CharContainer
+				style={{
+					height: game.players.length * (barHeight + barPadding),
+				}}
+			>
 				{(game?.players || []).map((player) => {
 					const vps = Array.from(
 						player.victoryPoints
@@ -149,7 +155,12 @@ export const EndGame = ({ onClose }: Props) => {
 					).sort(([a], [b]) => vpOrder.indexOf(a) - vpOrder.indexOf(b))
 
 					return (
-						<Place key={player.id}>
+						<Place
+							key={player.id}
+							style={{
+								top: chart[player.id][0] * (barHeight + barPadding),
+							}}
+						>
 							<PlayerName>{player.name}</PlayerName>
 							<Flex gap="1px">
 								{vps.map(([source, amount], i) => (
@@ -168,7 +179,7 @@ export const EndGame = ({ onClose }: Props) => {
 												backgroundColor: rgba(vpToColor[source], 0.9),
 												width:
 													(sources.includes(source)
-														? (amount / maxValue) * barHeight
+														? (amount / maxValue) * barWidth
 														: 0) + 'px',
 											}}
 										/>
@@ -218,15 +229,16 @@ const Place = styled.div`
 	text-align: center;
 	align-items: center;
 	transition: left 3s;
-	height: 2rem;
+	height: 25px;
 	display: flex;
 	gap: 0.25rem;
+	position: absolute;
 `
 
 const Bar = styled.div<{ $selected: boolean }>`
 	transition: width 3s;
 	background: ${({ theme }) => theme.colors.border};
-	height: 1.5rem;
+	height: 25px;
 	box-sizing: border-box;
 
 	${({ $selected }) =>
@@ -236,7 +248,7 @@ const Bar = styled.div<{ $selected: boolean }>`
 		`}
 
 	&:hover {
-		border: 0.2rem solid ${({ theme }) => theme.colors.primary.base};
+		opacity: 0.8;
 	}
 `
 
