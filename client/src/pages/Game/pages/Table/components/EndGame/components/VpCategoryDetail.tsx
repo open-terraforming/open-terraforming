@@ -1,10 +1,13 @@
+import { Tooltip } from '@/components'
 import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { Flex } from '@/components/Flex/Flex'
 import { useLocale } from '@/context/LocaleContext'
 import { useGameState } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
+import { Competitions } from '@shared/competitions'
 import { PlayerState, VictoryPointsSource } from '@shared/index'
 import { Milestones } from '@shared/milestones'
+import { CardView } from '../../CardView/CardView'
 
 type Props = {
 	player: PlayerState
@@ -17,19 +20,49 @@ export const VpCategoryDetail = ({ player, category }: Props) => {
 
 	switch (category) {
 		case VictoryPointsSource.Rating: {
-			return <div>Terraforming Rating</div>
+			return <div>1 TR = 1VP: +{player.terraformRating} VP</div>
 		}
 
 		case VictoryPointsSource.Awards: {
 			return (
 				<div>
-					{game.milestones
-						.filter((m) => m.playerId === player.id)
-						.map((m) => {
-							const data = Milestones[m.type]
+					{game.competitions.map(({ type }) => {
+						const competition = Competitions[type]
 
-							return <div key={m.type}>+5 {data.title}</div>
-						})}
+						const score = game.players.reduce(
+							(acc, p) => {
+								const s = competition.getScore(game, p)
+
+								if (!acc[s]) {
+									acc[s] = []
+								}
+
+								acc[s].push(p)
+
+								return acc
+							},
+							{} as Record<number, PlayerState[]>,
+						)
+
+						const index = Object.entries(score)
+							.sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
+							.findIndex(([, players]) =>
+								players.some((p) => p.id === player.id),
+							)
+
+						if (index >= game.competitionRewards.length) {
+							return <></>
+						}
+
+						return (
+							<div key={type}>
+								<div>
+									{competition.title}: {index + 1} position +
+									{game.competitionRewards[index]} VP
+								</div>
+							</div>
+						)
+					})}
 				</div>
 			)
 		}
@@ -42,7 +75,7 @@ export const VpCategoryDetail = ({ player, category }: Props) => {
 						.map((m) => {
 							const data = Milestones[m.type]
 
-							return <div key={m.type}>+5 {data.title}</div>
+							return <div key={m.type}>{data.title}: +5 VP</div>
 						})}
 				</div>
 			)
@@ -68,7 +101,18 @@ export const VpCategoryDetail = ({ player, category }: Props) => {
 				.sort(({ vp: a }, { vp: b }) => b - a)
 				.map(({ card, vp }) => (
 					<div key={card.code}>
-						{t.cards[card.code]} - {vp}
+						<Tooltip
+							position="bottom-left"
+							content={
+								<CardView
+									card={card}
+									evaluateMode={'viewing'}
+									player={player}
+								/>
+							}
+						>
+							{t.cards[card.code]} - {vp}
+						</Tooltip>
 					</div>
 				))
 		}
@@ -86,14 +130,17 @@ export const VpCategoryDetail = ({ player, category }: Props) => {
 		}
 
 		case VictoryPointsSource.PartyLeaders: {
+			const leaderOfParties = game.committee.parties.filter(
+				(p) => p.leader?.playerId?.id === player.id,
+			)
+
 			return (
 				<Flex gap="0.25rem">
 					Party leader of:
-					{game.committee.parties
-						.filter((p) => p.leader?.playerId?.id === player.id)
-						.map((p) => (
-							<CommitteePartyIcon key={p.code} party={p.code} />
-						))}
+					{leaderOfParties.map((p) => (
+						<CommitteePartyIcon key={p.code} party={p.code} />
+					))}
+					+{leaderOfParties.length} VP
 				</Flex>
 			)
 		}

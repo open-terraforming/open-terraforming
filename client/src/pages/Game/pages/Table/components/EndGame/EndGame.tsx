@@ -8,7 +8,7 @@ import { PlayerState, VictoryPoints, VictoryPointsSource } from '@shared/index'
 import { MilestoneType } from '@shared/milestones'
 import { rgba } from 'polished'
 import { useMemo, useState } from 'react'
-import styled, { keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { VpCategoryDetail } from './components/VpCategoryDetail'
 
 type Props = {
@@ -78,7 +78,7 @@ export const EndGame = ({ onClose }: Props) => {
 			setSources((s) => [...s, waiting[0]])
 			setWaiting((s) => s.slice(1))
 		}
-	}, 3000)
+	}, 300)
 
 	const chart = useMemo(
 		(): Record<number, [number, number]> =>
@@ -145,6 +145,10 @@ export const EndGame = ({ onClose }: Props) => {
 										content={`${vpText(v.source, v)}: ${v.amount}`}
 									>
 										<Bar
+											$selected={
+												selected?.player?.id === player.id &&
+												selected?.source === v.source
+											}
 											onClick={() => setSelected({ source: v.source, player })}
 											key={`${v.source}_${i}`}
 											style={{
@@ -186,13 +190,20 @@ const Place = styled.div`
 	gap: 0.25rem;
 `
 
-const Bar = styled.div`
+const Bar = styled.div<{ $selected: boolean }>`
 	transition: width 3s;
 	background: ${({ theme }) => theme.colors.border};
 	height: 1.5rem;
+	box-sizing: border-box;
+
+	${({ $selected }) =>
+		$selected &&
+		css`
+			border: 0.2rem solid ${({ theme }) => theme.colors.primary.base};
+		`}
 
 	&:hover {
-		outline: ${({ theme }) => theme.colors.primary.base} solid 0.2rem;
+		border: 0.2rem solid ${({ theme }) => theme.colors.primary.base};
 	}
 `
 
