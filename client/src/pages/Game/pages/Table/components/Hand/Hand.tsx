@@ -62,7 +62,6 @@ export const Hand = ({
 			onClose={onClose}
 			header={'Cards in your hand'}
 			contentStyle={{ minWidth: '80%' }}
-			bodyStyle={{ display: 'flex', flexDirection: 'column', padding: 0 }}
 			player={player}
 			evaluateMode="buying"
 			onSelect={(c) => {

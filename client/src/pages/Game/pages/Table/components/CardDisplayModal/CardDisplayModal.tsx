@@ -99,6 +99,7 @@ export const CardDisplayModal = <T extends CardInfo>({
 				[CardType.Effect, 'Effects'] as const,
 				[CardType.Building, 'Automated'] as const,
 				[CardType.Event, 'Events'] as const,
+				[CardType.Prelude, 'Prelude'] as const,
 				[CardType.Corporation, 'Corporation'] as const,
 			]
 				.map(
@@ -177,27 +178,6 @@ export const CardDisplayModal = <T extends CardInfo>({
 									</FilterItem>
 								))}
 							</Types>
-
-							<Categories style={{ maxWidth: '50%', overflow: 'auto' }}>
-								{categories.map(({ category, cards }) => (
-									<FilterTag
-										selected={selectedCategory === category}
-										onClick={() => {
-											setSelectedCategory(
-												selectedCategory === category ? undefined : category,
-											)
-										}}
-										key={category}
-									>
-										<Type>
-											<Tag tag={category} size="sm" />
-										</Type>
-										<Count>
-											<div>{cards}</div>
-										</Count>
-									</FilterTag>
-								))}
-							</Categories>
 						</Filters>
 					)}
 				</Header>
@@ -206,32 +186,54 @@ export const CardDisplayModal = <T extends CardInfo>({
 		>
 			{prefix}
 
-			<CardsContainer playableOnly={playable}>
-				{filtered.length === 0 && <NoCards>No cards</NoCards>}
-				{mapRight(
-					filtered,
-					(c) =>
-						c && (
-							<CardView
-								hover={hover}
-								evaluateMode={evaluateMode}
-								hideAdjustedPrice={hideAdjustedPrice}
-								card={c.card}
-								selected={selected.map((s) => s.index).includes(c.index)}
-								key={c.index}
-								state={c.state}
-								player={player}
-								onClick={() => {
-									onSelect(
-										selected.find((s) => s.index === c.index)
-											? selected.filter((s) => s.index !== c.index)
-											: [...selected, c],
-									)
-								}}
-							/>
-						),
-				)}
-			</CardsContainer>
+			<Flex align="stretch" gap="0.25rem">
+				<CardsContainer playableOnly={playable}>
+					{filtered.length === 0 && <NoCards>No cards</NoCards>}
+					{mapRight(
+						filtered,
+						(c) =>
+							c && (
+								<CardView
+									hover={hover}
+									evaluateMode={evaluateMode}
+									hideAdjustedPrice={hideAdjustedPrice}
+									card={c.card}
+									selected={selected.map((s) => s.index).includes(c.index)}
+									key={c.index}
+									state={c.state}
+									player={player}
+									onClick={() => {
+										onSelect(
+											selected.find((s) => s.index === c.index)
+												? selected.filter((s) => s.index !== c.index)
+												: [...selected, c],
+										)
+									}}
+								/>
+							),
+					)}
+				</CardsContainer>
+				<Categories style={{ maxWidth: '50%', overflow: 'auto' }}>
+					{categories.map(({ category, cards }) => (
+						<FilterTag
+							selected={selectedCategory === category}
+							onClick={() => {
+								setSelectedCategory(
+									selectedCategory === category ? undefined : category,
+								)
+							}}
+							key={category}
+						>
+							<Type>
+								<Tag tag={category} size="sm" />
+							</Type>
+							<Count>
+								<div>{cards}</div>
+							</Count>
+						</FilterTag>
+					))}
+				</Categories>
+			</Flex>
 		</Modal>
 	)
 }
@@ -267,9 +269,10 @@ const Types = styled.div`
 	align-items: center;
 `
 
-const Categories = styled.div`
-	display: flex;
-	justify-content: center;
+const Categories = styled(Flex)`
+	flex-direction: column;
+	gap: 0.5rem;
+	align-items: stretch;
 `
 
 const Filters = styled.div`
