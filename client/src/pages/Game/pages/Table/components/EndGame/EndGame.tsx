@@ -65,6 +65,7 @@ const vpText = (vp: VictoryPointsSource, extra?: VictoryPoints) => {
 export const EndGame = ({ onClose }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 
+	const [opacity, setOpacity] = useState(1)
 	const [waiting, setWaiting] = useState(vpOrder.slice(1))
 	const [sources, setSources] = useState(vpOrder.slice(0, 1))
 
@@ -117,7 +118,12 @@ export const EndGame = ({ onClose }: Props) => {
 	const barHeight = 600
 
 	return (
-		<Modal header="Game ended" open={true} onClose={onClose}>
+		<Modal
+			header="Game ended"
+			open={true}
+			onClose={onClose}
+			contentStyle={{ opacity }}
+		>
 			{sources.length > 0 && (
 				<Current>
 					{sources.map((s) => (
@@ -167,9 +173,15 @@ export const EndGame = ({ onClose }: Props) => {
 				))}
 			</CharContainer>
 
-			{selected && (
-				<VpCategoryDetail category={selected.source} player={selected.player} />
-			)}
+			<div style={{ width: 900 }}>
+				{selected && (
+					<VpCategoryDetail
+						category={selected.source}
+						player={selected.player}
+						onOpacity={setOpacity}
+					/>
+				)}
+			</div>
 		</Modal>
 	)
 }

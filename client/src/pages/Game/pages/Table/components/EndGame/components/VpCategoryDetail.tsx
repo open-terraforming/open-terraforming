@@ -1,22 +1,29 @@
-import { Tooltip } from '@/components'
 import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { Flex } from '@/components/Flex/Flex'
-import { useLocale } from '@/context/LocaleContext'
-import { useGameState } from '@/utils/hooks'
+import { useAppDispatch, useGameState } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
-import { PlayerState, VictoryPointsSource } from '@shared/index'
+import {
+	GridCell,
+	GridCellContent,
+	PlayerState,
+	VictoryPointsSource,
+} from '@shared/index'
 import { Milestones } from '@shared/milestones'
+import { adjacentCells, allCells, allTiles } from '@shared/utils'
 import { CardView } from '../../CardView/CardView'
+import { setGameHighlightedCell } from '@/store/modules/game'
 
 type Props = {
 	player: PlayerState
 	category: VictoryPointsSource
+	onOpacity: (opacity: number) => void
 }
 
-export const VpCategoryDetail = ({ player, category }: Props) => {
+export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 	const game = useGameState()
-	const t = useLocale()
+	const dispatch = useAppDispatch()
+	/*const t = useLocale()*/
 
 	switch (category) {
 		case VictoryPointsSource.Rating: {
@@ -82,43 +89,44 @@ export const VpCategoryDetail = ({ player, category }: Props) => {
 		}
 
 		case VictoryPointsSource.Cards: {
-			return player.usedCards
-				.map((state) => {
-					const card = CardsLookupApi.get(state.code)
+			return (
+				<Flex wrap="wrap">
+					{player.usedCards
+						.map((state) => {
+							const card = CardsLookupApi.get(state.code)
 
-					return {
-						card,
-						vp:
-							card.victoryPoints +
-							(card.victoryPointsCallback?.compute({
-								card: state,
-								game: game,
-								player: player,
-							}) ?? 0),
-					}
-				}, 0)
-				.filter(({ vp }) => vp > 0)
-				.sort(({ vp: a }, { vp: b }) => b - a)
-				.map(({ card, vp }) => (
-					<div key={card.code}>
-						<Tooltip
-							position="bottom-left"
-							content={
+							return {
+								state,
+								card,
+								vp:
+									card.victoryPoints +
+									(card.victoryPointsCallback?.compute({
+										card: state,
+										game: game,
+										player: player,
+									}) ?? 0),
+							}
+						}, 0)
+						.filter(({ vp }) => vp > 0)
+						.sort(({ vp: a }, { vp: b }) => b - a)
+						.map(({ card, state }) => (
+							<div key={card.code}>
 								<CardView
 									card={card}
+									state={state}
 									evaluateMode={'viewing'}
 									player={player}
 								/>
-							}
-						>
-							{t.cards[card.code]} - {vp}
-						</Tooltip>
-					</div>
-				))
+							</div>
+						))}
+				</Flex>
+			)
 		}
 
 		case VictoryPointsSource.Forests: {
-			return <div>Forests</div>
+			const forests = allTiles(game).ownedBy(player.id).hasGreenery().length
+
+			return <div>1 Forest = 1 VP: +{forests} VP</div>
 		}
 
 		case VictoryPointsSource.Chairman: {
@@ -126,7 +134,47 @@ export const VpCategoryDetail = ({ player, category }: Props) => {
 		}
 
 		case VictoryPointsSource.Cities: {
-			return <div>Cities</div>
+			// TODO: Change alpha of the parent modal
+
+			const handleMouseOver = (cell: GridCell) => () => {
+				dispatch(setGameHighlightedCell(cell))
+				onOpacity(0.1)
+			}
+
+			const handleMouseOut = () => {
+				dispatch(setGameHighlightedCell(undefined))
+				onOpacity(1)
+			}
+
+			return (
+				<div>
+					{allCells(game).map((cell) => {
+						if (
+							cell.ownerId === player.id &&
+							cell.content === GridCellContent.City
+						) {
+							const adjacentForests = adjacentCells(
+								game,
+								cell.x,
+								cell.y,
+							).filter((c) => c.content === GridCellContent.Forest).length
+
+							if (adjacentForests > 0) {
+								return (
+									<div
+										key={`${cell.x}-${cell.y}`}
+										onMouseOver={handleMouseOver(cell)}
+										onMouseOut={handleMouseOut}
+									>
+										City at {cell.x}, {cell.y}: +{adjacentForests} VP for
+										adjacent greeneries
+									</div>
+								)
+							}
+						}
+					})}
+				</div>
+			)
 		}
 
 		case VictoryPointsSource.PartyLeaders: {
