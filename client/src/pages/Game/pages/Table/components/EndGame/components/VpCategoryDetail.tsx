@@ -1,5 +1,6 @@
 import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { Flex } from '@/components/Flex/Flex'
+import { setGameHighlightedCell } from '@/store/modules/game'
 import { useAppDispatch, useGameState } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
@@ -10,9 +11,8 @@ import {
 	VictoryPointsSource,
 } from '@shared/index'
 import { Milestones } from '@shared/milestones'
-import { adjacentCells, allCells, allTiles } from '@shared/utils'
+import { adjacentCells, allTiles } from '@shared/utils'
 import { CardView } from '../../CardView/CardView'
-import { setGameHighlightedCell } from '@/store/modules/game'
 
 type Props = {
 	player: PlayerState
@@ -148,11 +148,10 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 
 			return (
 				<div>
-					{allCells(game).map((cell) => {
-						if (
-							cell.ownerId === player.id &&
-							cell.content === GridCellContent.City
-						) {
+					{allTiles(game)
+						.ownedBy(player.id)
+						.hasCity()
+						.map((cell) => {
 							const adjacentForests = adjacentCells(
 								game,
 								cell.x,
@@ -171,8 +170,7 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 									</div>
 								)
 							}
-						}
-					})}
+						})}
 				</div>
 			)
 		}
