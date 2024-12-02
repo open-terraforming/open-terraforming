@@ -27,7 +27,7 @@ export const GameMap = () => {
 	)
 
 	const map = useAppStore((state) => state.game.state?.map)
-	const highlighted = useAppStore((state) => state.game.highlightedCell)
+	const highlighted = useAppStore((state) => state.game.highlightedCells)
 
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [delayFunction] = useState(0)
@@ -133,14 +133,12 @@ export const GameMap = () => {
 									}}
 									width={18 / width}
 									height={20 / height}
-									highlighted={
-										highlighted !== undefined &&
-										highlighted.x === cell.x &&
-										highlighted.y === cell.y
-									}
+									highlighted={highlighted.some(
+										(h) => h.x === cell.x && h.y === cell.y,
+									)}
 									faded={
-										highlighted !== undefined &&
-										(highlighted.x !== cell.x || highlighted.y !== cell.y)
+										highlighted.length > 0 &&
+										!highlighted.some((h) => h.x === cell.x && h.y === cell.y)
 									}
 								/>
 							)),
@@ -177,12 +175,15 @@ export const GameMap = () => {
 											onClick={() => handleCellClick(cell)}
 											highlighted={
 												highlighted !== undefined &&
-												highlighted.x === cell.x &&
-												highlighted.y === cell.y
+												highlighted.some(
+													(h) => h.x === cell.x && h.y === cell.y,
+												)
 											}
 											faded={
-												highlighted !== undefined &&
-												(highlighted.x !== cell.x || highlighted.y !== cell.y)
+												highlighted.length > 0 &&
+												!highlighted.some(
+													(h) => h.x === cell.x && h.y === cell.y,
+												)
 											}
 										/>
 									)),

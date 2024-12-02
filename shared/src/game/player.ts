@@ -260,7 +260,6 @@ export class Player {
 	createHistoryEntry(): GameHistoryPlayerEntry {
 		return {
 			generation: this.game.state.generation,
-			round: 0,
 			time: Date.now(),
 			cardsCount: this.state.cards.length,
 			usedCardsCount: this.state.usedCards.length,

@@ -10,6 +10,7 @@ import { rgba } from 'polished'
 import { useMemo, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { VpCategoryDetail } from './components/VpCategoryDetail'
+import { ClippedBox } from '@/components/ClippedBox'
 
 type Props = {
 	onClose: () => void
@@ -135,51 +136,64 @@ export const EndGame = ({ onClose }: Props) => {
 				</Current>
 			)}
 			<CharContainer>
-				{(game?.players || []).map((player) => (
-					<Place key={player.id}>
-						<PlayerName>{player.name}</PlayerName>
-						<Flex gap="1px">
-							{player.victoryPoints
-								.slice()
-								.sort(
-									(a, b) =>
-										vpOrder.indexOf(a.source) - vpOrder.indexOf(b.source),
-								)
-								.map((v, i) => (
+				{(game?.players || []).map((player) => {
+					const vps = Array.from(
+						player.victoryPoints
+							.map((v) => [v.source, v.amount] as const)
+							.reduce((acc, [source, amount]) => {
+								acc.set(source, (acc.get(source) || 0) + amount)
+
+								return acc
+							}, new Map<VictoryPointsSource, number>())
+							.entries(),
+					).sort(([a], [b]) => vpOrder.indexOf(a) - vpOrder.indexOf(b))
+
+					return (
+						<Place key={player.id}>
+							<PlayerName>{player.name}</PlayerName>
+							<Flex gap="1px">
+								{vps.map(([source, amount], i) => (
 									<Tooltip
-										key={`${v.source}_${i}`}
-										content={`${vpText(v.source, v)}: ${v.amount}`}
+										key={`${source}_${i}`}
+										content={`${vpText(source)}: ${amount}`}
 									>
 										<Bar
 											$selected={
 												selected?.player?.id === player.id &&
-												selected?.source === v.source
+												selected?.source === source
 											}
-											onClick={() => setSelected({ source: v.source, player })}
-											key={`${v.source}_${i}`}
+											onClick={() => setSelected({ source, player })}
+											key={`${source}_${i}`}
 											style={{
-												backgroundColor: rgba(vpToColor[v.source], 0.9),
+												backgroundColor: rgba(vpToColor[source], 0.9),
 												width:
-													(sources.includes(v.source)
-														? (v.amount / maxValue) * barHeight
+													(sources.includes(source)
+														? (amount / maxValue) * barHeight
 														: 0) + 'px',
 											}}
 										/>
 									</Tooltip>
 								))}
-						</Flex>
-						<AnimatedNumber value={chart[player.id][1]} delay={3000} />
-					</Place>
-				))}
+							</Flex>
+							<AnimatedNumber value={chart[player.id][1]} delay={3000} />
+						</Place>
+					)
+				})}
 			</CharContainer>
 
-			<div style={{ width: 900 }}>
+			<div style={{ width: 900, margin: 'auto' }}>
 				{selected && (
-					<VpCategoryDetail
-						category={selected.source}
-						player={selected.player}
-						onOpacity={setOpacity}
-					/>
+					<>
+						<SelectedTitle innerSpacing>
+							{selected.player.name} - {vpText(selected.source)}
+						</SelectedTitle>
+
+						<VpCategoryDetail
+							category={selected.source}
+							player={selected.player}
+							onOpacity={setOpacity}
+						/>
+					</>
 				)}
 			</div>
 		</Modal>
@@ -191,6 +205,13 @@ const CharContainer = styled.div`
 	position: relative;
 	width: 900px;
 	margin: 1.5rem 0;
+`
+
+const SelectedTitle = styled(ClippedBox)`
+	text-align: center;
+	width: 20rem;
+	margin: 1rem auto 0.5rem auto;
+	text-transform: uppercase;
 `
 
 const Place = styled.div`

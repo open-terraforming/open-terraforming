@@ -658,7 +658,6 @@ export class Game {
 		}
 
 		this.state.history.game.push({
-			round: 0,
 			generation: this.state.generation,
 			time: Date.now(),
 			oceans: this.state.oceans,

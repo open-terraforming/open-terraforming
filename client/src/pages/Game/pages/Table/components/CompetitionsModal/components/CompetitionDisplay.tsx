@@ -3,17 +3,18 @@ import { useAppStore } from '@/utils/hooks'
 import { Competition } from '@shared/competitions'
 import { PlayerState } from '@shared/index'
 import { useMemo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { faCheck, faAward } from '@fortawesome/free-solid-svg-icons'
 
 type Props = {
 	competition: Competition
-	canAfford: boolean
+	playing: boolean
+	highlightPlayerId?: number
+	canAfford?: boolean
 	freePick?: boolean
 	sponsoredId?: number
-	cost: number
-	playing: boolean
-	onBuy: (competition: Competition) => void
+	cost?: number
+	onBuy?: (competition: Competition) => void
 }
 
 export const CompetitionDisplay = ({
@@ -24,6 +25,7 @@ export const CompetitionDisplay = ({
 	playing,
 	cost,
 	freePick: pendingAction,
+	highlightPlayerId,
 }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 	const playerId = useAppStore((state) => state.game.playerId)
@@ -33,20 +35,17 @@ export const CompetitionDisplay = ({
 	const score = useMemo(
 		() =>
 			game
-				? game.players.reduce(
-						(acc, p) => {
-							const s = competition.getScore(game, p)
+				? game.players.reduce((acc: Record<number, PlayerState[]>, p) => {
+						const s = competition.getScore(game, p)
 
-							if (!acc[s]) {
-								acc[s] = []
-							}
+						if (!acc[s]) {
+							acc[s] = []
+						}
 
-							acc[s].push(p)
+						acc[s].push(p)
 
-							return acc
-						},
-						{} as Record<number, PlayerState[]>,
-					)
+						return acc
+					}, {})
 				: ({} as Record<number, PlayerState[]>),
 		[game, competition],
 	)
@@ -63,7 +62,7 @@ export const CompetitionDisplay = ({
 					<Button
 						noClip
 						disabled={!playing || !canAfford || !!sponsored}
-						onClick={() => onBuy(competition)}
+						onClick={() => onBuy?.(competition)}
 						icon={sponsored ? faCheck : faAward}
 					>
 						{sponsored
@@ -76,7 +75,14 @@ export const CompetitionDisplay = ({
 				{Object.entries(score)
 					.sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
 					.map(([score, players], index) => (
-						<Position key={score}>
+						<Position
+							key={score}
+							$highlight={
+								highlightPlayerId === undefined
+									? undefined
+									: players.some((p) => p.id === highlightPlayerId)
+							}
+						>
 							<Index>{index + 1}.</Index>
 							<Name>{players.map((p) => p.name).join(', ')}</Name>
 							<Score>{score}</Score>
@@ -121,13 +127,19 @@ const ScoreList = styled.div`
 	border-right: 2px solid ${({ theme }) => theme.colors.border};
 `
 
-const Position = styled.div`
+const Position = styled.div<{ $highlight?: boolean }>`
 	display: flex;
 	align-items: center;
 	margin-bottom: 0.25rem;
 	&:last-child {
 		margin-bottom: 0;
 	}
+
+	${({ $highlight }) =>
+		$highlight === false &&
+		css`
+			opacity: 0.5;
+		`}
 `
 
 const Index = styled.div`

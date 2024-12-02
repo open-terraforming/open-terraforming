@@ -2,17 +2,18 @@ import { Button } from '@/components'
 import { useAppStore } from '@/utils/hooks'
 import { faCheck, faMedal, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { Milestone } from '@shared/milestones'
-import { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import styled from 'styled-components'
 
 type Props = {
 	milestone: Milestone
-	canAfford: boolean
+	canAfford?: boolean
+	playing: boolean
 	ownerId?: number
 	currentPlayerId?: number
 	cost?: number
-	playing: boolean
-	onBuy: (milestone: Milestone) => void
+	onBuy?: (milestone: Milestone) => void
+	titleRight?: ReactNode
 }
 
 export const MilestoneDisplay = ({
@@ -23,6 +24,7 @@ export const MilestoneDisplay = ({
 	cost,
 	playing,
 	currentPlayerId,
+	titleRight,
 }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 	const players = useAppStore((state) => state.game.playerMap)
@@ -46,11 +48,12 @@ export const MilestoneDisplay = ({
 		<E>
 			<Head>
 				<Title>{milestone.title}</Title>
+				{titleRight}
 				{(cost !== undefined || owner) && (
 					<Button
 						noClip
 						disabled={!playing || !reached || !canAfford || !!owner}
-						onClick={() => onBuy(milestone)}
+						onClick={() => onBuy?.(milestone)}
 						icon={owner ? faCheck : reached ? faMedal : faTimes}
 					>
 						{owner

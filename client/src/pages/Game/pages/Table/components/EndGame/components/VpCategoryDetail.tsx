@@ -1,8 +1,8 @@
 import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { Flex } from '@/components/Flex/Flex'
-import { setGameHighlightedCell } from '@/store/modules/game'
+import { setGameHighlightedCells } from '@/store/modules/game'
 import { useAppDispatch, useGameState } from '@/utils/hooks'
-import { CardsLookupApi } from '@shared/cards'
+import { CardsLookupApi, SymbolType } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
 import {
 	GridCell,
@@ -11,8 +11,14 @@ import {
 	VictoryPointsSource,
 } from '@shared/index'
 import { Milestones } from '@shared/milestones'
-import { adjacentCells, allTiles } from '@shared/utils'
+import { adjacentCells, allTiles, repeat } from '@shared/utils'
 import { CardView } from '../../CardView/CardView'
+import { TileIcon } from '../../TileIcon/TileIcon'
+import { Symbols } from '../../CardView/components/Symbols'
+import { MilestoneDisplay } from '../../MilestonesModal/components/MilestoneDisplay'
+import { Box } from '@/components/Box'
+import { CompetitionDisplay } from '../../CompetitionsModal/components/CompetitionDisplay'
+import styled from 'styled-components'
 
 type Props = {
 	player: PlayerState
@@ -27,12 +33,16 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 
 	switch (category) {
 		case VictoryPointsSource.Rating: {
-			return <div>1 TR = 1VP: +{player.terraformRating} VP</div>
+			return (
+				<CenteredDisplay>
+					1 TR = 1VP: +{player.terraformRating} VP
+				</CenteredDisplay>
+			)
 		}
 
 		case VictoryPointsSource.Awards: {
 			return (
-				<div>
+				<CenteredDisplay>
 					{game.competitions.map(({ type }) => {
 						const competition = Competitions[type]
 
@@ -62,35 +72,46 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 						}
 
 						return (
-							<div key={type}>
-								<div>
-									{competition.title}: {index + 1} position +
-									{game.competitionRewards[index]} VP
-								</div>
-							</div>
+							<CompetitionDisplay
+								key={type}
+								competition={competition}
+								playing={false}
+								highlightPlayerId={player.id}
+								sponsoredId={
+									game.competitions.find((c) => c.type === type)?.playerId
+								}
+							/>
 						)
 					})}
-				</div>
+				</CenteredDisplay>
 			)
 		}
 
 		case VictoryPointsSource.Milestones: {
 			return (
-				<div>
+				<CenteredDisplay>
 					{game.milestones
 						.filter((m) => m.playerId === player.id)
 						.map((m) => {
 							const data = Milestones[m.type]
 
-							return <div key={m.type}>{data.title}: +5 VP</div>
+							return (
+								<MilestoneDisplay
+									key={m.type}
+									playing={false}
+									milestone={data}
+									currentPlayerId={player.id}
+									titleRight={<Box $mr={2}>+{game.milestoneReward} VP</Box>}
+								/>
+							)
 						})}
-				</div>
+				</CenteredDisplay>
 			)
 		}
 
 		case VictoryPointsSource.Cards: {
 			return (
-				<Flex wrap="wrap">
+				<Flex wrap="wrap" justify="center">
 					{player.usedCards
 						.map((state) => {
 							const card = CardsLookupApi.get(state.code)
@@ -124,54 +145,93 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 		}
 
 		case VictoryPointsSource.Forests: {
-			const forests = allTiles(game).ownedBy(player.id).hasGreenery().length
+			const forests = allTiles(game).ownedBy(player.id).hasGreenery().asArray()
 
-			return <div>1 Forest = 1 VP: +{forests} VP</div>
+			const handleMouseOver = () => {
+				dispatch(setGameHighlightedCells(forests))
+				onOpacity(0.1)
+			}
+
+			const handleMouseOut = () => {
+				dispatch(setGameHighlightedCells([]))
+				onOpacity(1)
+			}
+
+			return (
+				<div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
+					<Flex wrap="wrap" justify="center">
+						{repeat(forests.length).map((i) => (
+							<TileIcon size="2.5em" content={GridCellContent.Forest} key={i} />
+						))}
+					</Flex>
+					<Symbols
+						symbols={[
+							{ tile: GridCellContent.Forest, count: forests.length },
+							{ symbol: SymbolType.Equal },
+							{ text: forests.length + ' VP' },
+						]}
+					/>
+				</div>
+			)
 		}
 
 		case VictoryPointsSource.Chairman: {
-			return <div>Chairman</div>
+			return <CenteredDisplay>Chairman</CenteredDisplay>
 		}
 
 		case VictoryPointsSource.Cities: {
 			// TODO: Change alpha of the parent modal
 
 			const handleMouseOver = (cell: GridCell) => () => {
-				dispatch(setGameHighlightedCell(cell))
+				const adjacentGreeneries = adjacentCells(game, cell.x, cell.y).filter(
+					(c) => c.content === GridCellContent.Forest,
+				)
+
+				dispatch(setGameHighlightedCells([cell, ...adjacentGreeneries]))
 				onOpacity(0.1)
 			}
 
 			const handleMouseOut = () => {
-				dispatch(setGameHighlightedCell(undefined))
+				dispatch(setGameHighlightedCells([]))
 				onOpacity(1)
 			}
 
 			return (
-				<div>
-					{allTiles(game)
-						.ownedBy(player.id)
-						.hasCity()
-						.map((cell) => {
-							const adjacentForests = adjacentCells(
-								game,
-								cell.x,
-								cell.y,
-							).filter((c) => c.content === GridCellContent.Forest).length
+				<CenteredDisplay>
+					<Flex wrap="wrap" justify="center" gap="0.5rem">
+						{allTiles(game)
+							.ownedBy(player.id)
+							.hasCity()
+							.sortBy(
+								(cell) =>
+									-adjacentCells(game, cell.x, cell.y).filter(
+										(c) => c.content === GridCellContent.Forest,
+									).length,
+							)
+							.map((cell) => {
+								const adjacentForests = adjacentCells(
+									game,
+									cell.x,
+									cell.y,
+								).filter((c) => c.content === GridCellContent.Forest).length
 
-							if (adjacentForests > 0) {
-								return (
-									<div
-										key={`${cell.x}-${cell.y}`}
-										onMouseOver={handleMouseOver(cell)}
-										onMouseOut={handleMouseOut}
-									>
-										City at {cell.x}, {cell.y}: +{adjacentForests} VP for
-										adjacent greeneries
-									</div>
-								)
-							}
-						})}
-				</div>
+								if (adjacentForests > 0) {
+									return (
+										<Flex
+											gap="0.5rem"
+											key={`${cell.x}-${cell.y}`}
+											onMouseOver={handleMouseOver(cell)}
+											onMouseOut={handleMouseOut}
+										>
+											<TileIcon content={GridCellContent.City} size="3em" />+
+											{adjacentForests} VP for adjacent{' '}
+											<TileIcon content={GridCellContent.Forest} size="2em" />
+										</Flex>
+									)
+								}
+							})}
+					</Flex>
+				</CenteredDisplay>
 			)
 		}
 
@@ -181,13 +241,15 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 			)
 
 			return (
-				<Flex gap="0.25rem">
-					Party leader of:
-					{leaderOfParties.map((p) => (
-						<CommitteePartyIcon key={p.code} party={p.code} />
-					))}
-					+{leaderOfParties.length} VP
-				</Flex>
+				<CenteredDisplay>
+					<Flex gap="0.25rem">
+						Party leader of:
+						{leaderOfParties.map((p) => (
+							<CommitteePartyIcon key={p.code} party={p.code} />
+						))}
+						+{leaderOfParties.length} VP
+					</Flex>
+				</CenteredDisplay>
 			)
 		}
 
@@ -195,3 +257,8 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 			return <></>
 	}
 }
+
+const CenteredDisplay = styled.div`
+	width: 20rem;
+	margin: auto;
+`

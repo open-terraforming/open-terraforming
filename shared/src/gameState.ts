@@ -186,9 +186,8 @@ export interface GameState {
 }
 
 export interface GameHistoryGameEntry {
-	// "Timestamp" of the event
+	// Timestamp of the event
 	generation: number
-	round: number
 	time: number
 
 	// Terraforming progress
@@ -199,9 +198,8 @@ export interface GameHistoryGameEntry {
 }
 
 export interface GameHistoryPlayerEntry {
-	// "Timestamp" of the event
+	// Timestamp of the event
 	generation: number
-	round: number
 	time: number
 
 	// Resources
