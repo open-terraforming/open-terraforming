@@ -1,13 +1,15 @@
-import { Button } from '@/components'
+import { Tooltip } from '@/components'
+import { AnimatedNumber } from '@/components/AnimatedNumber/AnimatedNumber'
+import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
 import { useAppStore, useInterval } from '@/utils/hooks'
-import { VictoryPointsSource, VictoryPoints } from '@shared/index'
+import { CompetitionType } from '@shared/competitions'
+import { PlayerState, VictoryPoints, VictoryPointsSource } from '@shared/index'
+import { MilestoneType } from '@shared/milestones'
 import { rgba } from 'polished'
 import { useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
-import { AnimatedNumber } from '@/components/AnimatedNumber/AnimatedNumber'
-import { CompetitionType } from '@shared/competitions'
-import { MilestoneType } from '@shared/milestones'
+import { VpCategoryDetail } from './components/VpCategoryDetail'
 
 type Props = {
 	onClose: () => void
@@ -64,8 +66,12 @@ export const EndGame = ({ onClose }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 
 	const [waiting, setWaiting] = useState(vpOrder.slice(1))
-
 	const [sources, setSources] = useState(vpOrder.slice(0, 1))
+
+	const [selected, setSelected] = useState<{
+		source: VictoryPointsSource
+		player: PlayerState
+	} | null>(null)
 
 	useInterval(() => {
 		if (waiting.length > 0) {
@@ -108,17 +114,10 @@ export const EndGame = ({ onClose }: Props) => {
 		[game],
 	)
 
-	const barWidth = game ? 100 / game.players.length : 0
-	const barPadding = barWidth * 0.2
-	const barHeight = 200
+	const barHeight = 600
 
 	return (
-		<Modal
-			header="Game ended"
-			open={true}
-			onClose={onClose}
-			footer={<Button onClick={onClose}>Back to game</Button>}
-		>
+		<Modal header="Game ended" open={true} onClose={onClose}>
 			{sources.length > 0 && (
 				<Current>
 					{sources.map((s) => (
@@ -131,36 +130,42 @@ export const EndGame = ({ onClose }: Props) => {
 			)}
 			<CharContainer>
 				{(game?.players || []).map((player) => (
-					<Place
-						key={player.id}
-						style={{
-							left: chart[player.id][0] * barWidth + barPadding + '%',
-							width: barWidth - barPadding * 2 + '%',
-						}}
-					>
-						<AnimatedNumber value={chart[player.id][1]} delay={3000} />
-						{player.victoryPoints
-							.slice()
-							.sort(
-								(a, b) => vpOrder.indexOf(b.source) - vpOrder.indexOf(a.source),
-							)
-							.map((v, i) => (
-								<Bar
-									key={`${v.source}_${i}`}
-									style={{
-										backgroundColor: rgba(vpToColor[v.source], 0.9),
-										height:
-											(sources.includes(v.source)
-												? (v.amount / maxValue) * barHeight
-												: 0) + 'px',
-									}}
-									title={`${vpText(v.source, v)}: ${v.amount}`}
-								/>
-							))}
+					<Place key={player.id}>
 						<PlayerName>{player.name}</PlayerName>
+						<Flex gap="1px">
+							{player.victoryPoints
+								.slice()
+								.sort(
+									(a, b) =>
+										vpOrder.indexOf(a.source) - vpOrder.indexOf(b.source),
+								)
+								.map((v, i) => (
+									<Tooltip
+										key={`${v.source}_${i}`}
+										content={`${vpText(v.source, v)}: ${v.amount}`}
+									>
+										<Bar
+											onClick={() => setSelected({ source: v.source, player })}
+											key={`${v.source}_${i}`}
+											style={{
+												backgroundColor: rgba(vpToColor[v.source], 0.9),
+												width:
+													(sources.includes(v.source)
+														? (v.amount / maxValue) * barHeight
+														: 0) + 'px',
+											}}
+										/>
+									</Tooltip>
+								))}
+						</Flex>
+						<AnimatedNumber value={chart[player.id][1]} delay={3000} />
 					</Place>
 				))}
 			</CharContainer>
+
+			{selected && (
+				<VpCategoryDetail category={selected.source} player={selected.player} />
+			)}
 		</Modal>
 	)
 }
@@ -168,25 +173,27 @@ export const EndGame = ({ onClose }: Props) => {
 const CharContainer = styled.div`
 	text-align: center;
 	position: relative;
-	min-height: 250px;
-	width: 30rem;
+	width: 900px;
 	margin: 1.5rem 0;
 `
 
 const Place = styled.div`
 	text-align: center;
+	align-items: center;
 	transition: left 3s;
-	position: absolute;
-	top: 0;
-	height: 100%;
+	height: 2rem;
 	display: flex;
-	flex-direction: column;
-	justify-content: flex-end;
+	gap: 0.25rem;
 `
 
 const Bar = styled.div`
-	transition: height 3s;
+	transition: width 3s;
 	background: ${({ theme }) => theme.colors.border};
+	height: 1.5rem;
+
+	&:hover {
+		outline: ${({ theme }) => theme.colors.primary.base} solid 0.2rem;
+	}
 `
 
 const Current = styled.div`
@@ -214,5 +221,10 @@ const Color = styled.div`
 `
 
 const PlayerName = styled.div`
-	margin-top: 0.5rem;
+	width: 7rem;
+	flex-grow: 0;
+	flex-shrink: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	text-align: right;
 `
