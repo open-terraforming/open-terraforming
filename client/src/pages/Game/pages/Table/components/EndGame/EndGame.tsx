@@ -284,15 +284,6 @@ const CharContainer = styled.div`
 	margin: 1.5rem 0;
 `
 
-const SelectedTitle = styled(ClippedBox)`
-	text-align: center;
-	margin: 1rem auto 0.25rem auto;
-	text-transform: uppercase;
-	.inner {
-		background: ${({ theme }) => theme.colors.border};
-	}
-`
-
 const SelectedPlayerTitle = styled(ClippedBoxTitle)`
 	text-transform: uppercase;
 `
