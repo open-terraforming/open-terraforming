@@ -1,7 +1,10 @@
 import { Tooltip } from '@/components'
-import { AnimatedNumber } from '@/components/AnimatedNumber/AnimatedNumber'
+import { Box } from '@/components/Box'
+import { ClippedBox } from '@/components/ClippedBox'
+import { ClippedBoxTitle } from '@/components/ClippedBoxTitle'
 import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
+import { contrastColor } from '@/utils/contrastColor'
 import { useAppStore, useInterval } from '@/utils/hooks'
 import { CompetitionType } from '@shared/competitions'
 import { PlayerState, VictoryPoints, VictoryPointsSource } from '@shared/index'
@@ -10,15 +13,22 @@ import { rgba } from 'polished'
 import { useMemo, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { VpCategoryDetail } from './components/VpCategoryDetail'
-import { ClippedBox } from '@/components/ClippedBox'
-import { ClippedBoxTitle } from '@/components/ClippedBoxTitle'
-import { Box } from '@/components/Box'
-import { contrastColor } from '@/utils/contrastColor'
 import { VpCount } from './components/VpCount'
 
 type Props = {
 	onClose: () => void
 }
+
+type ChartItem = Record<
+	number,
+	[
+		number,
+		{
+			sum: number
+			bySource: Record<VictoryPointsSource, number>
+		},
+	]
+>
 
 const vpOrder = [
 	VictoryPointsSource.Rating,
@@ -73,6 +83,7 @@ export const EndGame = ({ onClose }: Props) => {
 	const [opacity, setOpacity] = useState(1)
 	const [waiting, setWaiting] = useState(vpOrder.slice(1))
 	const [sources, setSources] = useState(vpOrder.slice(0, 1))
+	const [ratio, setRatio] = useState(0)
 
 	const [selected, setSelected] = useState<{
 		source: VictoryPointsSource
@@ -83,31 +94,56 @@ export const EndGame = ({ onClose }: Props) => {
 		if (waiting.length > 0) {
 			setSources((s) => [...s, waiting[0]])
 			setWaiting((s) => s.slice(1))
+			setRatio(0)
 		}
 	}, 3000)
 
+	useInterval(() => {
+		setRatio((r) => Math.min(1, r + 0.05))
+	}, 100)
+
 	const chart = useMemo(
-		(): Record<number, [number, number]> =>
+		() =>
 			game
 				? game.players
 						.map((player) => {
-							const score = player.victoryPoints
+							const scoreItems = player.victoryPoints
 								.filter((s) => sources.includes(s.source))
-								.reduce((acc, v) => acc + v.amount, 0)
+								.map(
+									(v) =>
+										[
+											v.source,
+											v.amount *
+												(sources[sources.length - 1] === v.source ? ratio : 1),
+										] as const,
+									0,
+								)
 
-							return [player, score] as const
+							const scoreSum = scoreItems.reduce((acc, s) => acc + s[1], 0)
+
+							const bySource = scoreItems.reduce(
+								(acc, [source, amount]) => {
+									if (!acc[source]) {
+										acc[source] = 0
+									}
+
+									acc[source] += amount
+
+									return acc
+								},
+								{} as Record<VictoryPointsSource, number>,
+							)
+
+							return [player, bySource, scoreSum] as const
 						})
-						.sort((a, b) => b[1] - a[1])
-						.reduce(
-							(acc, item, index) => {
-								acc[item[0].id] = [index, item[1]]
+						.sort((a, b) => b[2] - a[2])
+						.reduce((acc: ChartItem, item, index) => {
+							acc[item[0].id] = [index, { bySource: item[1], sum: item[2] }]
 
-								return acc
-							},
-							{} as Record<number, [number, number]>,
-						)
-				: {},
-		[game, sources],
+							return acc
+						}, {})
+				: ({} as ChartItem),
+		[game, sources, ratio],
 	)
 
 	const maxValue = useMemo(
@@ -167,8 +203,9 @@ export const EndGame = ({ onClose }: Props) => {
 						>
 							<PlayerName>{player.name}</PlayerName>
 							<Flex gap="1px">
-								{vps.map(([source, amount], i) => {
+								{vps.map(([source], i) => {
 									const isSelected = selected?.source === source
+									const amount = chart[player.id][1].bySource[source]
 
 									return (
 										<Tooltip key={`${source}_${i}`} content={vpText(source)}>
@@ -185,7 +222,7 @@ export const EndGame = ({ onClose }: Props) => {
 															: 0) + 'px',
 												}}
 											>
-												{waiting.length === 0 && (
+												{waiting.length === 0 && ratio === 1 && (
 													<FadeInValue>{amount}</FadeInValue>
 												)}
 											</Bar>
@@ -193,7 +230,7 @@ export const EndGame = ({ onClose }: Props) => {
 									)
 								})}
 							</Flex>
-							<AnimatedNumber value={chart[player.id][1]} delay={3000} />
+							{Math.floor(chart[player.id][1].sum)}
 						</Place>
 					)
 				})}
@@ -261,7 +298,7 @@ const SelectedPlayerTitle = styled(ClippedBoxTitle)`
 const Place = styled.div`
 	text-align: center;
 	align-items: center;
-	transition: top 3s;
+	transition: top 2.5s;
 	height: 25px;
 	display: flex;
 	gap: 0.25rem;
@@ -269,7 +306,7 @@ const Place = styled.div`
 `
 
 const Bar = styled.div<{ $selected: boolean }>`
-	transition: width 3s;
+	transition: width 100ms linear;
 	background: ${({ theme }) => theme.colors.border};
 	height: 25px;
 	box-sizing: border-box;
