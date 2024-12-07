@@ -11,6 +11,10 @@ import { useMemo, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { VpCategoryDetail } from './components/VpCategoryDetail'
 import { ClippedBox } from '@/components/ClippedBox'
+import { ClippedBoxTitle } from '@/components/ClippedBoxTitle'
+import { Box } from '@/components/Box'
+import { contrastColor } from '@/utils/contrastColor'
+import { VpCount } from './components/VpCount'
 
 type Props = {
 	onClose: () => void
@@ -80,7 +84,7 @@ export const EndGame = ({ onClose }: Props) => {
 			setSources((s) => [...s, waiting[0]])
 			setWaiting((s) => s.slice(1))
 		}
-	}, 300)
+	}, 3000)
 
 	const chart = useMemo(
 		(): Record<number, [number, number]> =>
@@ -122,7 +126,7 @@ export const EndGame = ({ onClose }: Props) => {
 
 	return (
 		<Modal
-			header="Game ended"
+			header="End game stats"
 			open={true}
 			onClose={onClose}
 			contentStyle={{ opacity }}
@@ -163,28 +167,31 @@ export const EndGame = ({ onClose }: Props) => {
 						>
 							<PlayerName>{player.name}</PlayerName>
 							<Flex gap="1px">
-								{vps.map(([source, amount], i) => (
-									<Tooltip
-										key={`${source}_${i}`}
-										content={`${vpText(source)}: ${amount}`}
-									>
-										<Bar
-											$selected={
-												selected?.player?.id === player.id &&
-												selected?.source === source
-											}
-											onClick={() => setSelected({ source, player })}
-											key={`${source}_${i}`}
-											style={{
-												backgroundColor: rgba(vpToColor[source], 0.9),
-												width:
-													(sources.includes(source)
-														? (amount / maxValue) * barWidth
-														: 0) + 'px',
-											}}
-										/>
-									</Tooltip>
-								))}
+								{vps.map(([source, amount], i) => {
+									const isSelected = selected?.source === source
+
+									return (
+										<Tooltip key={`${source}_${i}`} content={vpText(source)}>
+											<Bar
+												$selected={isSelected}
+												onClick={() => setSelected({ source, player })}
+												key={`${source}_${i}`}
+												style={{
+													color: contrastColor({ bgColor: vpToColor[source] }),
+													backgroundColor: rgba(vpToColor[source], 0.9),
+													width:
+														(sources.includes(source)
+															? (amount / maxValue) * barWidth
+															: 0) + 'px',
+												}}
+											>
+												{waiting.length === 0 && (
+													<FadeInValue>{amount}</FadeInValue>
+												)}
+											</Bar>
+										</Tooltip>
+									)
+								})}
 							</Flex>
 							<AnimatedNumber value={chart[player.id][1]} delay={3000} />
 						</Place>
@@ -192,24 +199,44 @@ export const EndGame = ({ onClose }: Props) => {
 				})}
 			</CharContainer>
 
-			<div style={{ width: 900, margin: 'auto' }}>
-				{selected && (
-					<>
-						<SelectedTitle innerSpacing>
-							{selected.player.name} - {vpText(selected.source)}
-						</SelectedTitle>
+			{selected && (
+				<>
+					<SelectedTitle innerSpacing>{vpText(selected.source)}</SelectedTitle>
+					<Flex wrap="wrap" gap="1rem" justify="center" align="stretch">
+						{game.players.map((player) => (
+							<PlayerDisplay key={player.id}>
+								<SelectedPlayerTitle $spacing>
+									<Flex>
+										<span>{player.name}</span>
+										<PlayerTitleValue>
+											<VpCount
+												count={player.victoryPoints
+													.filter((vp) => vp.source === selected.source)
+													.reduce((acc, vp) => acc + vp.amount, 0)}
+											/>
+										</PlayerTitleValue>
+									</Flex>
+								</SelectedPlayerTitle>
 
-						<VpCategoryDetail
-							category={selected.source}
-							player={selected.player}
-							onOpacity={setOpacity}
-						/>
-					</>
-				)}
-			</div>
+								<Box $p={2}>
+									<VpCategoryDetail
+										category={selected.source}
+										player={player}
+										onOpacity={setOpacity}
+									/>
+								</Box>
+							</PlayerDisplay>
+						))}
+					</Flex>
+				</>
+			)}
 		</Modal>
 	)
 }
+
+const PlayerDisplay = styled(ClippedBox)`
+	width: 280px;
+`
 
 const CharContainer = styled.div`
 	text-align: center;
@@ -220,15 +247,21 @@ const CharContainer = styled.div`
 
 const SelectedTitle = styled(ClippedBox)`
 	text-align: center;
-	width: 20rem;
-	margin: 1rem auto 0.5rem auto;
+	margin: 1rem auto 0.25rem auto;
+	text-transform: uppercase;
+	.inner {
+		background: ${({ theme }) => theme.colors.border};
+	}
+`
+
+const SelectedPlayerTitle = styled(ClippedBoxTitle)`
 	text-transform: uppercase;
 `
 
 const Place = styled.div`
 	text-align: center;
 	align-items: center;
-	transition: left 3s;
+	transition: top 3s;
 	height: 25px;
 	display: flex;
 	gap: 0.25rem;
@@ -240,11 +273,16 @@ const Bar = styled.div<{ $selected: boolean }>`
 	background: ${({ theme }) => theme.colors.border};
 	height: 25px;
 	box-sizing: border-box;
+	line-height: 25px;
+	white-space: nowrap;
+	overflow: hidden;
+	cursor: pointer;
+	color: #000;
 
 	${({ $selected }) =>
 		$selected &&
 		css`
-			border: 0.2rem solid ${({ theme }) => theme.colors.primary.base};
+			/*background-color: #fff !important;*/
 		`}
 
 	&:hover {
@@ -262,9 +300,12 @@ const FadeIn = keyframes`
 	100% { opacity: 1; }
 `
 
-const Value = styled.div`
+const FadeInValue = styled.div`
 	animation-name: ${FadeIn};
 	animation-duration: 500ms;
+`
+
+const Value = styled(FadeInValue)`
 	margin: 0 0.3rem;
 	display: flex;
 	align-items: center;
@@ -283,4 +324,8 @@ const PlayerName = styled.div`
 	overflow: hidden;
 	text-overflow: ellipsis;
 	text-align: right;
+`
+
+const PlayerTitleValue = styled.div`
+	margin-left: auto;
 `

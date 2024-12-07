@@ -19,6 +19,7 @@ import { MilestoneDisplay } from '../../MilestonesModal/components/MilestoneDisp
 import { Box } from '@/components/Box'
 import { CompetitionDisplay } from '../../CompetitionsModal/components/CompetitionDisplay'
 import styled from 'styled-components'
+import { VpCount } from './VpCount'
 
 type Props = {
 	player: PlayerState
@@ -35,7 +36,16 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 		case VictoryPointsSource.Rating: {
 			return (
 				<CenteredDisplay>
-					1 TR = 1VP: +{player.terraformRating} VP
+					<Symbols
+						symbols={[
+							{
+								symbol: SymbolType.TerraformingRating,
+								count: player.terraformRating,
+							},
+							{ symbol: SymbolType.Equal },
+							{ victoryPoints: player.terraformRating },
+						]}
+					/>
 				</CenteredDisplay>
 			)
 		}
@@ -77,8 +87,10 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 								competition={competition}
 								playing={false}
 								highlightPlayerId={player.id}
-								sponsoredId={
-									game.competitions.find((c) => c.type === type)?.playerId
+								titleRight={
+									<Box $mr={2}>
+										<VpCount count={game.competitionRewards[index]} />
+									</Box>
 								}
 							/>
 						)
@@ -101,7 +113,11 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 									playing={false}
 									milestone={data}
 									currentPlayerId={player.id}
-									titleRight={<Box $mr={2}>+{game.milestoneReward} VP</Box>}
+									titleRight={
+										<Box $mr={2}>
+											<VpCount count={game.milestoneReward} />
+										</Box>
+									}
 								/>
 							)
 						})}
@@ -158,8 +174,13 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 			}
 
 			return (
-				<div onMouseOver={handleMouseOver} onMouseOut={handleMouseOut}>
-					<Flex wrap="wrap" justify="center">
+				<CenteredDisplay>
+					<Flex
+						wrap="wrap"
+						justify="center"
+						onMouseOver={handleMouseOver}
+						onMouseOut={handleMouseOut}
+					>
 						{repeat(forests.length).map((i) => (
 							<TileIcon size="2.5em" content={GridCellContent.Forest} key={i} />
 						))}
@@ -168,10 +189,10 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 						symbols={[
 							{ tile: GridCellContent.Forest, count: forests.length },
 							{ symbol: SymbolType.Equal },
-							{ text: forests.length + ' VP' },
+							{ victoryPoints: forests.length },
 						]}
 					/>
-				</div>
+				</CenteredDisplay>
 			)
 		}
 
@@ -180,8 +201,6 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 		}
 
 		case VictoryPointsSource.Cities: {
-			// TODO: Change alpha of the parent modal
-
 			const handleMouseOver = (cell: GridCell) => () => {
 				const adjacentGreeneries = adjacentCells(game, cell.x, cell.y).filter(
 					(c) => c.content === GridCellContent.Forest,
@@ -223,8 +242,8 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 											onMouseOver={handleMouseOver(cell)}
 											onMouseOut={handleMouseOut}
 										>
-											<TileIcon content={GridCellContent.City} size="3em" />+
-											{adjacentForests} VP for adjacent{' '}
+											<TileIcon content={GridCellContent.City} size="3em" />
+											<VpCount count={adjacentForests} /> for adjacent{' '}
 											<TileIcon content={GridCellContent.Forest} size="2em" />
 										</Flex>
 									)
@@ -241,15 +260,12 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 			)
 
 			return (
-				<CenteredDisplay>
-					<Flex gap="0.25rem">
-						Party leader of:
-						{leaderOfParties.map((p) => (
-							<CommitteePartyIcon key={p.code} party={p.code} />
-						))}
-						+{leaderOfParties.length} VP
-					</Flex>
-				</CenteredDisplay>
+				<Flex gap="0.25rem" justify="center">
+					{leaderOfParties.map((p) => (
+						<CommitteePartyIcon key={p.code} party={p.code} />
+					))}
+					<VpCount count={leaderOfParties.length} />
+				</Flex>
 			)
 		}
 
@@ -259,6 +275,8 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 }
 
 const CenteredDisplay = styled.div`
-	width: 20rem;
-	margin: auto;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	flex-direction: column;
 `

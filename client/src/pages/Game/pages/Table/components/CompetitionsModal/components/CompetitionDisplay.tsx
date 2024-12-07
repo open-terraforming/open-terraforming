@@ -2,7 +2,7 @@ import { Button } from '@/components'
 import { useAppStore } from '@/utils/hooks'
 import { Competition } from '@shared/competitions'
 import { PlayerState } from '@shared/index'
-import { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { faCheck, faAward } from '@fortawesome/free-solid-svg-icons'
 
@@ -15,6 +15,7 @@ type Props = {
 	sponsoredId?: number
 	cost?: number
 	onBuy?: (competition: Competition) => void
+	titleRight?: ReactNode
 }
 
 export const CompetitionDisplay = ({
@@ -26,6 +27,7 @@ export const CompetitionDisplay = ({
 	cost,
 	freePick: pendingAction,
 	highlightPlayerId,
+	titleRight,
 }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 	const playerId = useAppStore((state) => state.game.playerId)
@@ -58,6 +60,7 @@ export const CompetitionDisplay = ({
 		<E>
 			<Head>
 				<Title>{competition.title}</Title>
+				{titleRight}
 				{(cost !== undefined || sponsored) && (
 					<Button
 						noClip

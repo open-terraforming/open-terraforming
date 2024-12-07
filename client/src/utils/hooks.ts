@@ -99,12 +99,16 @@ export const useInterval = (callback: () => void, delay: number) => {
 	}, [delay])
 }
 
-export const useAnimatedNumber = (value: number, delay = 100) => {
+export const useAnimatedNumber = (
+	value: number,
+	delay = 100,
+	initialValue?: number,
+) => {
 	// Stop animating when component unmounts
 	const mounted = useRef(true)
 
 	// This is the only change that should cause render
-	const [display, setDisplay] = useState(value)
+	const [display, setDisplay] = useState(initialValue ?? value)
 
 	// Internal data, no need to rerender when those change
 	const state = useRef<{
