@@ -154,6 +154,8 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 									state={state}
 									evaluateMode={'viewing'}
 									player={player}
+									hover={false}
+									highlightVictoryPoints
 								/>
 							</div>
 						))}

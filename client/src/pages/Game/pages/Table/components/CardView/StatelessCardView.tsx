@@ -50,6 +50,7 @@ type Props = {
 	calculatedVps?: number
 	highlightAction?: boolean
 	highlightActionNoAnimation?: boolean
+	highlightVictoryPoints?: boolean
 	player?: PlayerState
 	plainConditions?: boolean
 }
@@ -73,6 +74,7 @@ export const StatelessCardView = ({
 	adjustedPrice,
 	adjustedPriceContext,
 	highlightActionNoAnimation,
+	highlightVictoryPoints,
 	player,
 	plainConditions,
 }: Props) => {
@@ -184,7 +186,7 @@ export const StatelessCardView = ({
 				(!evaluate || playable ? 'playable' : 'unplayable') +
 				(className ? ` ${className}` : '')
 			}
-			$faded={!!highlightAction}
+			$faded={!!highlightAction || !!highlightVictoryPoints}
 		>
 			{hints.length > 0 && player && (
 				<CardHints player={player} type={card.type} hints={hints} />
