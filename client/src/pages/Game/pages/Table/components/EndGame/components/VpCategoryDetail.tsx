@@ -87,6 +87,7 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 								competition={competition}
 								playing={false}
 								highlightPlayerId={player.id}
+								fullHeight
 								titleRight={
 									<Box $mr={2}>
 										<VpCount count={game.competitionRewards[index]} />

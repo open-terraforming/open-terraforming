@@ -237,9 +237,11 @@ export const EndGame = ({ onClose }: Props) => {
 			</CharContainer>
 
 			{selected && (
-				<>
-					<SelectedTitle innerSpacing>{vpText(selected.source)}</SelectedTitle>
-					<Flex wrap="wrap" gap="1rem" justify="center" align="stretch">
+				<ClippedBox>
+					<ClippedBoxTitle $spacing $centered>
+						{vpText(selected.source)}
+					</ClippedBoxTitle>
+					<Box $p={2} wrap="wrap" gap="1rem" justify="center" align="stretch">
 						{game.players.map((player) => (
 							<PlayerDisplay key={player.id}>
 								<SelectedPlayerTitle $spacing>
@@ -264,8 +266,8 @@ export const EndGame = ({ onClose }: Props) => {
 								</Box>
 							</PlayerDisplay>
 						))}
-					</Flex>
-				</>
+					</Box>
+				</ClippedBox>
 			)}
 		</Modal>
 	)

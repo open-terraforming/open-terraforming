@@ -16,6 +16,7 @@ type Props = {
 	cost?: number
 	onBuy?: (competition: Competition) => void
 	titleRight?: ReactNode
+	fullHeight?: boolean
 }
 
 export const CompetitionDisplay = ({
@@ -28,6 +29,7 @@ export const CompetitionDisplay = ({
 	freePick: pendingAction,
 	highlightPlayerId,
 	titleRight,
+	fullHeight,
 }: Props) => {
 	const game = useAppStore((state) => state.game.state)
 	const playerId = useAppStore((state) => state.game.playerId)
@@ -74,7 +76,7 @@ export const CompetitionDisplay = ({
 					</Button>
 				)}
 			</Head>
-			<ScoreList>
+			<ScoreList $fullHeight={fullHeight}>
 				{Object.entries(score)
 					.sort((a, b) => parseInt(b[0]) - parseInt(a[0]))
 					.map(([score, players], index) => (
@@ -122,9 +124,13 @@ const Info = styled.div`
 	padding: 0.5rem 0.5rem;
 `
 
-const ScoreList = styled.div`
+const ScoreList = styled.div<{ $fullHeight?: boolean }>`
 	padding: 0.25rem 0.5rem;
-	max-height: 4rem;
+	${({ $fullHeight }) =>
+		!$fullHeight &&
+		css`
+			max-height: 4rem;
+		`}
 	overflow: auto;
 	border-left: 2px solid ${({ theme }) => theme.colors.border};
 	border-right: 2px solid ${({ theme }) => theme.colors.border};
