@@ -641,32 +641,6 @@ export class Game {
 		this.checkGameEvents()
 	}
 
-	recordHistory() {
-		for (const player of this.players) {
-			let playerHistory = this.state.history.players.find((h) => h.playerId)
-
-			if (!playerHistory) {
-				playerHistory = {
-					playerId: player.id,
-					entries: [],
-				}
-
-				this.state.history.players.push(playerHistory)
-			}
-
-			playerHistory.entries.push(player.createHistoryEntry())
-		}
-
-		this.state.history.game.push({
-			generation: this.state.generation,
-			time: Date.now(),
-			oceans: this.state.oceans,
-			temperature: this.state.temperature,
-			oxygen: this.state.oxygen,
-			venus: this.state.venus,
-		})
-	}
-
 	checkGameEvents() {
 		for (const progress of [
 			'oxygen',

@@ -175,54 +175,6 @@ export interface GameState {
 		comingEvent: string | null
 		currentEvent: string | null
 	}
-
-	history: {
-		game: GameHistoryGameEntry[]
-		players: {
-			playerId: number
-			entries: GameHistoryPlayerEntry[]
-		}[]
-	}
-}
-
-export interface GameHistoryGameEntry {
-	// Timestamp of the event
-	generation: number
-	time: number
-
-	// Terraforming progress
-	oceans: number
-	temperature: number
-	oxygen: number
-	venus: number
-}
-
-export interface GameHistoryPlayerEntry {
-	// Timestamp of the event
-	generation: number
-	time: number
-
-	// Resources
-	money: number
-	moneyProduction: number
-	ore: number
-	oreProduction: number
-	titan: number
-	titanProduction: number
-	plants: number
-	plantsProduction: number
-	energy: number
-	energyProduction: number
-	heat: number
-	heatProduction: number
-
-	// Card counts
-	cardsCount: number
-	usedCardsCount: number
-
-	// Current player state
-	victoryPoints: VictoryPoints[]
-	terraformRating: number
 }
 
 export interface StandardProjectState {

@@ -5,11 +5,7 @@ import {
 	GridCellContent,
 	PlayerState,
 } from '@shared/gameState'
-import {
-	GameHistoryPlayerEntry,
-	GameMessage,
-	PLAYER_PRODUCTION_FIELDS,
-} from '@shared/index'
+import { GameMessage, PLAYER_PRODUCTION_FIELDS } from '@shared/index'
 import { canPlace } from '@shared/placements'
 import {
 	placeTileAction,
@@ -255,28 +251,5 @@ export class Player {
 
 	finishGame() {
 		this.state.victoryPoints = getVictoryPoints(this.game.state, this.state)
-	}
-
-	createHistoryEntry(): GameHistoryPlayerEntry {
-		return {
-			generation: this.game.state.generation,
-			time: Date.now(),
-			cardsCount: this.state.cards.length,
-			usedCardsCount: this.state.usedCards.length,
-			energy: this.state.energy,
-			heat: this.state.heat,
-			ore: this.state.ore,
-			titan: this.state.titan,
-			plants: this.state.plants,
-			money: this.state.money,
-			terraformRating: this.state.terraformRating,
-			energyProduction: this.state.energyProduction,
-			heatProduction: this.state.heatProduction,
-			oreProduction: this.state.oreProduction,
-			titanProduction: this.state.titanProduction,
-			plantsProduction: this.state.plantsProduction,
-			moneyProduction: this.state.moneyProduction,
-			victoryPoints: getVictoryPoints(this.game.state, this.state),
-		}
 	}
 }
