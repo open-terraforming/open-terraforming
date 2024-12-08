@@ -327,4 +327,5 @@ export interface CardSymbol {
 	affectedByInfluence?: boolean
 	committeeParty?: string
 	postfix?: string
+	victoryPoints?: number
 }

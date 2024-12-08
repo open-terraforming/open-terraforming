@@ -50,6 +50,7 @@ type Props = {
 	calculatedVps?: number
 	highlightAction?: boolean
 	highlightActionNoAnimation?: boolean
+	highlightVictoryPoints?: boolean
 	player?: PlayerState
 	plainConditions?: boolean
 }
@@ -73,6 +74,7 @@ export const StatelessCardView = ({
 	adjustedPrice,
 	adjustedPriceContext,
 	highlightActionNoAnimation,
+	highlightVictoryPoints,
 	player,
 	plainConditions,
 }: Props) => {
@@ -82,14 +84,7 @@ export const StatelessCardView = ({
 	const played = wasPlayed
 	const playable = isPlayable
 
-	const description = useMemo(() => {
-		return [
-			card.description,
-			...(card.victoryPointsCallback
-				? [card.victoryPointsCallback.description]
-				: []),
-		]
-	}, [card])
+	const description = card.description
 
 	const symbols = useMemo(
 		() => flatten(card.playEffects.map((e) => e.symbols)),
@@ -161,6 +156,7 @@ export const StatelessCardView = ({
 					$plain={plainConditions}
 					$ok={!!allConditionsOk}
 					symbols={conditionSymbols}
+					$faded={highlightAction || highlightVictoryPoints}
 				/>
 			)}
 			<Categories>
@@ -184,7 +180,7 @@ export const StatelessCardView = ({
 				(!evaluate || playable ? 'playable' : 'unplayable') +
 				(className ? ` ${className}` : '')
 			}
-			$faded={!!highlightAction}
+			$faded={!!highlightAction || !!highlightVictoryPoints}
 		>
 			{hints.length > 0 && player && (
 				<CardHints player={player} type={card.type} hints={hints} />
@@ -241,6 +237,7 @@ export const StatelessCardView = ({
 						$hasSymbols={symbols.length > 0}
 						$highlight={highlightAction}
 						$highlightNoAnimation={highlightActionNoAnimation}
+						$fade={highlightVictoryPoints}
 					>
 						<ActionTitle $highlight={highlightAction}>Action</ActionTitle>
 
@@ -258,7 +255,10 @@ export const StatelessCardView = ({
 				)}
 
 				{card.passiveEffects.filter((e) => e.description).length > 0 && (
-					<Action $hasSymbols={symbols.length > 0}>
+					<Action
+						$hasSymbols={symbols.length > 0}
+						$fade={highlightVictoryPoints}
+					>
 						<ActionTitle $highlight={highlightAction}>Effect</ActionTitle>
 
 						<Symbols symbols={passiveSymbols} />
@@ -272,7 +272,7 @@ export const StatelessCardView = ({
 					</Action>
 				)}
 
-				{highlightAction ? (
+				{highlightAction || highlightVictoryPoints ? (
 					<FadedSymbols symbols={symbols} />
 				) : (
 					<Symbols symbols={symbols} />
@@ -284,7 +284,7 @@ export const StatelessCardView = ({
 						cond={c}
 						ctx={condContext}
 						evaluate={evaluate}
-						faded={highlightAction}
+						faded={highlightAction || highlightVictoryPoints}
 						plain={plainConditions}
 					/>
 				))}
@@ -295,14 +295,24 @@ export const StatelessCardView = ({
 						effect={e}
 						ctx={condContext}
 						evaluate={evaluate}
-						faded={highlightAction}
+						faded={highlightAction || highlightVictoryPoints}
 					/>
 				))}
-				{description.map((d, i) => (
-					<div style={highlightAction ? { opacity: 0.5 } : undefined} key={i}>
-						{d}
+				<div
+					style={
+						highlightAction || highlightVictoryPoints
+							? { opacity: 0.5 }
+							: undefined
+					}
+				>
+					{description}
+				</div>
+
+				{card.victoryPointsCallback && (
+					<div style={highlightAction ? { opacity: 0.5 } : undefined}>
+						{card.victoryPointsCallback.description}
 					</div>
-				))}
+				)}
 			</Description>
 		</Container>
 	)

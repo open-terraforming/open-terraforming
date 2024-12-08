@@ -36,6 +36,7 @@ type Props = {
 	hideAdjustedPrice?: boolean
 	highlightAction?: boolean
 	highlightActionNoAnimation?: boolean
+	highlightVictoryPoints?: boolean
 	player: PlayerState
 	evaluateMode: CardEvaluateMode
 }
@@ -51,6 +52,7 @@ export const CardView = ({
 	hideAdjustedPrice,
 	highlightAction,
 	highlightActionNoAnimation,
+	highlightVictoryPoints,
 	player,
 	evaluateMode,
 }: Props) => {
@@ -169,6 +171,7 @@ export const CardView = ({
 			calculatedVps={calculatedVps}
 			highlightAction={highlightAction}
 			highlightActionNoAnimation={highlightActionNoAnimation}
+			highlightVictoryPoints={highlightVictoryPoints}
 			player={player}
 			plainConditions={
 				evaluateMode === 'viewing' ||

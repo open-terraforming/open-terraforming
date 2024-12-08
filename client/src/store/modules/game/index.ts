@@ -19,7 +19,8 @@ const initialState = {
 	interrupted: false,
 	spectating: false,
 	events: [] as GameEvent[],
-	highlightedCell: undefined as { x: number; y: number } | undefined,
+	highlightedCells: [] as { x: number; y: number }[],
+	resultsShown: false,
 }
 
 export default (state = initialState, action: Action): State => {
@@ -72,10 +73,17 @@ export default (state = initialState, action: Action): State => {
 			}
 		}
 
-		case SET_GAME_HIGHLIGHTED_CELL: {
+		case SET_GAME_HIGHLIGHTED_CELLS: {
 			return {
 				...state,
-				highlightedCell: action.highlightedCell,
+				highlightedCells: action.highlightedCells,
+			}
+		}
+
+		case SET_GAME_RESULTS_SHOWN: {
+			return {
+				...state,
+				resultsShown: action.shown,
 			}
 		}
 
@@ -87,7 +95,8 @@ export default (state = initialState, action: Action): State => {
 const SET_GAME_STATE = 'SET_GAME_STATE'
 const SET_GAME_PLAYER = 'SET_GAME_PLAYER'
 const SET_GAME_INFO = 'SET_GAME_INFO'
-const SET_GAME_HIGHLIGHTED_CELL = 'SET_GAME_HIGHLIGHTED_CELL'
+const SET_GAME_HIGHLIGHTED_CELLS = 'SET_GAME_HIGHLIGHTED_CELLS'
+const SET_GAME_RESULTS_SHOWN = 'SET_GAME_RESULTS_SHOWN'
 
 export const setGameState = (state: GameState) =>
 	({
@@ -108,16 +117,21 @@ export const setGameInfo = (info: GameInfo) =>
 		info,
 	}) as const
 
-export const setGameHighlightedCell = (
-	cell: { x: number; y: number } | undefined,
-) =>
+export const setGameHighlightedCells = (cells: { x: number; y: number }[]) =>
 	({
-		type: SET_GAME_HIGHLIGHTED_CELL,
-		highlightedCell: cell,
+		type: SET_GAME_HIGHLIGHTED_CELLS,
+		highlightedCells: cells,
+	}) as const
+
+export const setGameResultsShown = (shown: boolean) =>
+	({
+		type: SET_GAME_RESULTS_SHOWN,
+		shown,
 	}) as const
 
 type Action =
 	| ReturnType<typeof setGameState>
 	| ReturnType<typeof setGamePlayer>
 	| ReturnType<typeof setGameInfo>
-	| ReturnType<typeof setGameHighlightedCell>
+	| ReturnType<typeof setGameHighlightedCells>
+	| ReturnType<typeof setGameResultsShown>

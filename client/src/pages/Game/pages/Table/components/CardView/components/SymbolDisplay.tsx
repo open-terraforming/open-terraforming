@@ -21,6 +21,7 @@ import { ClippedBox } from '@/components/ClippedBox'
 import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { usePopout } from '@/components/Popout/usePopout'
 import { useState } from 'react'
+import { VpCount } from '../../EndGame/components/VpCount'
 
 type Props = {
 	symbol: CardSymbol
@@ -130,6 +131,10 @@ const symbolToIcon = (s: CardSymbol) => {
 
 	if (s.committeeParty) {
 		return <CommitteePartyIcon party={s.committeeParty} size="sm" />
+	}
+
+	if (s.victoryPoints !== undefined) {
+		return <VpCount count={s.victoryPoints} />
 	}
 
 	return null
