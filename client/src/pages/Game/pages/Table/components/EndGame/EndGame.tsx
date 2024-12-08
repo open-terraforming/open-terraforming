@@ -172,7 +172,7 @@ export const EndGame = ({ onClose }: Props) => {
 		<Modal
 			header={
 				<>
-					<span>End game stats</span>
+					<span>Results</span>
 					{alreadyShown && waiting.length > 0 && (
 						<Box $ml="auto">
 							<FastForward
