@@ -20,6 +20,7 @@ import { Box } from '@/components/Box'
 import { CompetitionDisplay } from '../../CompetitionsModal/components/CompetitionDisplay'
 import styled, { css } from 'styled-components'
 import { VpCount } from './VpCount'
+import { DelegateIcon } from '@/components/DelegateIcon'
 
 type Props = {
 	player: PlayerState
@@ -200,7 +201,16 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 		}
 
 		case VictoryPointsSource.Chairman: {
-			return <CenteredDisplay>Chairman</CenteredDisplay>
+			return (
+				<CenteredDisplay>
+					{game.committee.chairman?.playerId?.id === player.id && (
+						<Flex justify="center" gap="0.25rem">
+							<DelegateIcon playerId={player.id} type="chairman" />
+							<VpCount count={1} />
+						</Flex>
+					)}
+				</CenteredDisplay>
+			)
 		}
 
 		case VictoryPointsSource.Cities: {
@@ -263,12 +273,16 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 			)
 
 			return (
-				<Flex gap="0.25rem" justify="center">
-					{leaderOfParties.map((p) => (
-						<CommitteePartyIcon key={p.code} party={p.code} />
-					))}
-					<VpCount count={leaderOfParties.length} />
-				</Flex>
+				<CenteredDisplay>
+					<Flex gap="0.25rem" justify="center">
+						{leaderOfParties.map((p) => (
+							<CommitteePartyIcon key={p.code} party={p.code} />
+						))}
+						{leaderOfParties.length > 0 && (
+							<VpCount count={leaderOfParties.length} />
+						)}
+					</Flex>
+				</CenteredDisplay>
 			)
 		}
 
