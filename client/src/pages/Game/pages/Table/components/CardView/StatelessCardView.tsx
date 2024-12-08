@@ -84,14 +84,7 @@ export const StatelessCardView = ({
 	const played = wasPlayed
 	const playable = isPlayable
 
-	const description = useMemo(() => {
-		return [
-			card.description,
-			...(card.victoryPointsCallback
-				? [card.victoryPointsCallback.description]
-				: []),
-		]
-	}, [card])
+	const description = card.description
 
 	const symbols = useMemo(
 		() => flatten(card.playEffects.map((e) => e.symbols)),
@@ -163,6 +156,7 @@ export const StatelessCardView = ({
 					$plain={plainConditions}
 					$ok={!!allConditionsOk}
 					symbols={conditionSymbols}
+					$faded={highlightAction || highlightVictoryPoints}
 				/>
 			)}
 			<Categories>
@@ -274,7 +268,7 @@ export const StatelessCardView = ({
 					</Action>
 				)}
 
-				{highlightAction ? (
+				{highlightAction || highlightVictoryPoints ? (
 					<FadedSymbols symbols={symbols} />
 				) : (
 					<Symbols symbols={symbols} />
@@ -286,7 +280,7 @@ export const StatelessCardView = ({
 						cond={c}
 						ctx={condContext}
 						evaluate={evaluate}
-						faded={highlightAction}
+						faded={highlightAction || highlightVictoryPoints}
 						plain={plainConditions}
 					/>
 				))}
@@ -297,14 +291,24 @@ export const StatelessCardView = ({
 						effect={e}
 						ctx={condContext}
 						evaluate={evaluate}
-						faded={highlightAction}
+						faded={highlightAction || highlightVictoryPoints}
 					/>
 				))}
-				{description.map((d, i) => (
-					<div style={highlightAction ? { opacity: 0.5 } : undefined} key={i}>
-						{d}
+				<div
+					style={
+						highlightAction || highlightVictoryPoints
+							? { opacity: 0.5 }
+							: undefined
+					}
+				>
+					{description}
+				</div>
+
+				{card.victoryPointsCallback && (
+					<div style={highlightAction ? { opacity: 0.5 } : undefined}>
+						{card.victoryPointsCallback.description}
 					</div>
-				))}
+				)}
 			</Description>
 		</Container>
 	)

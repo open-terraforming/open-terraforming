@@ -20,7 +20,11 @@ export const Head = styled.div`
 	}
 `
 
-export const HeadSymbols = styled(Symbols)<{ $ok?: boolean; $plain?: boolean }>`
+export const HeadSymbols = styled(Symbols)<{
+	$ok?: boolean
+	$plain?: boolean
+	$faded?: boolean
+}>`
 	border: 0.2rem solid
 		${({ $ok, $plain }) => ($plain ? '#aaa' : $ok ? '#225e34' : '#ff3333')};
 	margin-left: 0.2rem;
@@ -35,6 +39,12 @@ export const HeadSymbols = styled(Symbols)<{ $ok?: boolean; $plain?: boolean }>`
 		padding-top: 0.1rem;
 		padding-bottom: 0.1rem;
 	}
+
+	${(props) =>
+		props.$faded &&
+		css`
+			opacity: 0.5;
+		`}
 
 	position: relative;
 	z-index: 2;

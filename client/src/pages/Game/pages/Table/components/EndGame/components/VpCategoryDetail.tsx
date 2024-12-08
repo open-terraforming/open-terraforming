@@ -18,7 +18,7 @@ import { Symbols } from '../../CardView/components/Symbols'
 import { MilestoneDisplay } from '../../MilestonesModal/components/MilestoneDisplay'
 import { Box } from '@/components/Box'
 import { CompetitionDisplay } from '../../CompetitionsModal/components/CompetitionDisplay'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { VpCount } from './VpCount'
 
 type Props = {
@@ -147,8 +147,8 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 						}, 0)
 						.filter(({ vp }) => vp > 0)
 						.sort(({ vp: a }, { vp: b }) => b - a)
-						.map(({ card, state }) => (
-							<div key={card.code}>
+						.map(({ card, state }, index, array) => (
+							<CardContainer key={card.code} $last={index === array.length - 1}>
 								<CardView
 									card={card}
 									state={state}
@@ -157,7 +157,7 @@ export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 									hover={false}
 									highlightVictoryPoints
 								/>
-							</div>
+							</CardContainer>
 						))}
 				</Flex>
 			)
@@ -282,4 +282,20 @@ const CenteredDisplay = styled.div`
 	justify-content: center;
 	width: 100%;
 	flex-direction: column;
+`
+
+const CardContainer = styled.div<{ $last: boolean }>`
+	position: relative;
+
+	${(props) =>
+		!props.$last &&
+		css`
+			height: 140px;
+			overflow: hidden;
+
+			&:hover {
+				overflow: visible;
+				z-index: 20;
+			}
+		`}
 `
