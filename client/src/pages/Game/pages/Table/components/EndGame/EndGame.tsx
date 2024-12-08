@@ -241,7 +241,7 @@ export const EndGame = ({ onClose }: Props) => {
 					<ClippedBoxTitle $spacing $centered>
 						{vpText(selected.source)}
 					</ClippedBoxTitle>
-					<Box $p={2} wrap="wrap" gap="1rem" justify="center" align="stretch">
+					<PlayersContainer $p={2} gap="1rem" justify="center" align="stretch">
 						{game.players.map((player) => (
 							<PlayerDisplay key={player.id}>
 								<SelectedPlayerTitle $spacing>
@@ -266,7 +266,7 @@ export const EndGame = ({ onClose }: Props) => {
 								</Box>
 							</PlayerDisplay>
 						))}
-					</Box>
+					</PlayersContainer>
 				</ClippedBox>
 			)}
 		</Modal>
@@ -286,6 +286,10 @@ const CharContainer = styled.div`
 
 const SelectedPlayerTitle = styled(ClippedBoxTitle)`
 	text-transform: uppercase;
+`
+
+const PlayersContainer = styled(Box)`
+	overflow: auto;
 `
 
 const Place = styled.div`
