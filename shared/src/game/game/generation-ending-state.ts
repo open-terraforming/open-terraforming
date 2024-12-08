@@ -19,7 +19,7 @@ export class GenerationEndingState extends BaseGameState {
 			p.endGeneration()
 		}
 
-		this.game.state.events.push({
+		this.game.pushEvent({
 			type: EventType.ProductionPhase,
 		})
 

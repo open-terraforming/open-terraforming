@@ -273,6 +273,7 @@ export type NewGovernment = {
 }
 
 export type BaseGameEvent = {
+	at: number
 	processed?: boolean
 }
 

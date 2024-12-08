@@ -330,7 +330,7 @@ export class Game {
 		return {
 			startState: copy,
 			collectAndPush: (
-				build: (events: GameEvent[]) => GameEvent,
+				build: (events: GameEvent[]) => Omit<GameEvent, 'at'>,
 				{ markAsProcessed }: { markAsProcessed?: boolean } = {},
 			) => {
 				const collectedEvents = buildEvents(copy, this.state)
@@ -341,7 +341,11 @@ export class Game {
 					})
 				}
 
-				this.state.events.push(build(collectedEvents), ...collectedEvents)
+				this.state.events.push(
+					{ at: Date.now(), ...build(collectedEvents) } as GameEvent,
+					...collectedEvents,
+				)
+
 				this.lastGameState = deepCopy(this.state)
 
 				return collectedEvents
@@ -349,8 +353,8 @@ export class Game {
 		}
 	}
 
-	pushEvent(event: GameEvent) {
-		this.state.events.push(event)
+	pushEvent<TEvent extends Omit<GameEvent, 'at'>>(event: TEvent) {
+		this.state.events.push({ at: Date.now(), ...event } as GameEvent)
 		this.onStateUpdated.emit(this.state)
 	}
 
