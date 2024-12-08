@@ -31,7 +31,6 @@ type Props = {
 export const VpCategoryDetail = ({ player, category, onOpacity }: Props) => {
 	const game = useGameState()
 	const dispatch = useAppDispatch()
-	/*const t = useLocale()*/
 
 	switch (category) {
 		case VictoryPointsSource.Rating: {
