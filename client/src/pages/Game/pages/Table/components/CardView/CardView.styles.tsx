@@ -54,8 +54,15 @@ export const Action = styled.div<{
 	$hasSymbols: boolean
 	$highlight?: boolean
 	$highlightNoAnimation?: boolean
+	$fade?: boolean
 }>`
 	padding: 0.5rem;
+
+	${({ $fade }) =>
+		$fade &&
+		css`
+			opacity: 0.5;
+		`}
 
 	${({ theme, $highlight, $highlightNoAnimation }) =>
 		$highlight

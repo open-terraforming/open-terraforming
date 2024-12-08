@@ -237,6 +237,7 @@ export const StatelessCardView = ({
 						$hasSymbols={symbols.length > 0}
 						$highlight={highlightAction}
 						$highlightNoAnimation={highlightActionNoAnimation}
+						$fade={highlightVictoryPoints}
 					>
 						<ActionTitle $highlight={highlightAction}>Action</ActionTitle>
 
@@ -254,7 +255,10 @@ export const StatelessCardView = ({
 				)}
 
 				{card.passiveEffects.filter((e) => e.description).length > 0 && (
-					<Action $hasSymbols={symbols.length > 0}>
+					<Action
+						$hasSymbols={symbols.length > 0}
+						$fade={highlightVictoryPoints}
+					>
 						<ActionTitle $highlight={highlightAction}>Effect</ActionTitle>
 
 						<Symbols symbols={passiveSymbols} />

@@ -305,10 +305,8 @@ const CardContainer = styled.div<{ $last: boolean }>`
 		!props.$last &&
 		css`
 			height: 140px;
-			overflow: hidden;
 
 			&:hover {
-				overflow: visible;
 				z-index: 20;
 			}
 		`}
