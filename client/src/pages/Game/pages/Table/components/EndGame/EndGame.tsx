@@ -1,11 +1,13 @@
-import { Tooltip } from '@/components'
+import { Button, Tooltip } from '@/components'
 import { Box } from '@/components/Box'
 import { ClippedBox } from '@/components/ClippedBox'
 import { ClippedBoxTitle } from '@/components/ClippedBoxTitle'
 import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
+import { setGameResultsShown } from '@/store/modules/game'
 import { contrastColor } from '@/utils/contrastColor'
-import { useAppStore, useInterval } from '@/utils/hooks'
+import { useAppDispatch, useAppStore, useInterval } from '@/utils/hooks'
+import { faFastForward } from '@fortawesome/free-solid-svg-icons'
 import { CompetitionType } from '@shared/competitions'
 import { PlayerState, VictoryPoints, VictoryPointsSource } from '@shared/index'
 import { MilestoneType } from '@shared/milestones'
@@ -79,6 +81,8 @@ const vpText = (vp: VictoryPointsSource, extra?: VictoryPoints) => {
 
 export const EndGame = ({ onClose }: Props) => {
 	const game = useAppStore((state) => state.game.state)
+	const alreadyShown = useAppStore((state) => state.game.resultsShown)
+	const dispatch = useAppDispatch()
 
 	const [opacity, setOpacity] = useState(1)
 	const [waiting, setWaiting] = useState(vpOrder.slice(1))
@@ -95,6 +99,10 @@ export const EndGame = ({ onClose }: Props) => {
 			setSources((s) => [...s, waiting[0]])
 			setWaiting((s) => s.slice(1))
 			setRatio(0)
+
+			if (waiting.length === 1) {
+				dispatch(setGameResultsShown(true))
+			}
 		}
 	}, 3000)
 
@@ -162,10 +170,28 @@ export const EndGame = ({ onClose }: Props) => {
 
 	return (
 		<Modal
-			header="End game stats"
+			header={
+				<>
+					<span>End game stats</span>
+					{alreadyShown && waiting.length > 0 && (
+						<Box $ml="auto">
+							<FastForward
+								icon={faFastForward}
+								onClick={() => {
+									setSources((s) => [...s, ...waiting])
+									setWaiting([])
+								}}
+							>
+								Fast Forward
+							</FastForward>
+						</Box>
+					)}
+				</>
+			}
 			open={true}
 			onClose={onClose}
 			contentStyle={{ opacity }}
+			bodyStyle={{ padding: 0 }}
 		>
 			<Flex justify="center" direction="column">
 				{sources.length > 0 && (
@@ -241,10 +267,8 @@ export const EndGame = ({ onClose }: Props) => {
 			</Flex>
 
 			{selected && (
-				<ClippedBox style={{ overflow: 'auto' }}>
-					<ClippedBoxTitle $spacing $centered>
-						{vpText(selected.source)}
-					</ClippedBoxTitle>
+				<DetailContainer>
+					<DetailTitle>{vpText(selected.source)}</DetailTitle>
 					<PlayersContainer $p={2} gap="1rem" justify="center" align="stretch">
 						{game.players.map((player) => (
 							<PlayerDisplay key={player.id}>
@@ -271,11 +295,22 @@ export const EndGame = ({ onClose }: Props) => {
 							</PlayerDisplay>
 						))}
 					</PlayersContainer>
-				</ClippedBox>
+				</DetailContainer>
 			)}
 		</Modal>
 	)
 }
+
+const DetailContainer = styled.div`
+	overflow: auto;
+`
+
+const DetailTitle = styled.div`
+	background-color: ${({ theme }) => theme.colors.border};
+	text-align: center;
+	padding: 0.5rem;
+	text-transform: uppercase;
+`
 
 const PlayerDisplay = styled(ClippedBox)`
 	width: 280px;
@@ -320,7 +355,8 @@ const Bar = styled.div<{ $selected: boolean }>`
 	${({ $selected }) =>
 		$selected &&
 		css`
-			/*background-color: #fff !important;*/
+			transform: scale(1, 1.1);
+			box-shadow: 0 0 5px #222;
 		`}
 
 	&:hover {
@@ -366,4 +402,8 @@ const PlayerName = styled.div`
 
 const PlayerTitleValue = styled.div`
 	margin-left: auto;
+`
+
+const FastForward = styled(Button)`
+	font-size: 1rem;
 `
