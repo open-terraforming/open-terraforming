@@ -81,10 +81,6 @@ export const initialGameState = (
 		currentEvent: null,
 		distantEvent: null,
 	},
-	history: {
-		players: [],
-		game: [],
-	},
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
