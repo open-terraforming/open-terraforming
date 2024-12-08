@@ -167,77 +167,81 @@ export const EndGame = ({ onClose }: Props) => {
 			onClose={onClose}
 			contentStyle={{ opacity }}
 		>
-			{sources.length > 0 && (
-				<Current>
-					{sources.map((s) => (
-						<Value key={s}>
-							<Color style={{ background: vpToColor[s] }} />
-							{vpText(s)}
-						</Value>
-					))}
-				</Current>
-			)}
-			<CharContainer
-				style={{
-					height: game.players.length * (barHeight + barPadding),
-				}}
-			>
-				{(game?.players || []).map((player) => {
-					const vps = Array.from(
-						player.victoryPoints
-							.map((v) => [v.source, v.amount] as const)
-							.reduce((acc, [source, amount]) => {
-								acc.set(source, (acc.get(source) || 0) + amount)
+			<Flex justify="center" direction="column">
+				{sources.length > 0 && (
+					<Current>
+						{sources.map((s) => (
+							<Value key={s}>
+								<Color style={{ background: vpToColor[s] }} />
+								{vpText(s)}
+							</Value>
+						))}
+					</Current>
+				)}
+				<CharContainer
+					style={{
+						height: game.players.length * (barHeight + barPadding),
+					}}
+				>
+					{(game?.players || []).map((player) => {
+						const vps = Array.from(
+							player.victoryPoints
+								.map((v) => [v.source, v.amount] as const)
+								.reduce((acc, [source, amount]) => {
+									acc.set(source, (acc.get(source) || 0) + amount)
 
-								return acc
-							}, new Map<VictoryPointsSource, number>())
-							.entries(),
-					).sort(([a], [b]) => vpOrder.indexOf(a) - vpOrder.indexOf(b))
+									return acc
+								}, new Map<VictoryPointsSource, number>())
+								.entries(),
+						).sort(([a], [b]) => vpOrder.indexOf(a) - vpOrder.indexOf(b))
 
-					return (
-						<Place
-							key={player.id}
-							style={{
-								top: chart[player.id][0] * (barHeight + barPadding),
-							}}
-						>
-							<PlayerName>{player.name}</PlayerName>
-							<Flex gap="1px">
-								{vps.map(([source], i) => {
-									const isSelected = selected?.source === source
-									const amount = chart[player.id][1].bySource[source]
+						return (
+							<Place
+								key={player.id}
+								style={{
+									top: chart[player.id][0] * (barHeight + barPadding),
+								}}
+							>
+								<PlayerName>{player.name}</PlayerName>
+								<Flex gap="1px">
+									{vps.map(([source], i) => {
+										const isSelected = selected?.source === source
+										const amount = chart[player.id][1].bySource[source]
 
-									return (
-										<Tooltip key={`${source}_${i}`} content={vpText(source)}>
-											<Bar
-												$selected={isSelected}
-												onClick={() => setSelected({ source, player })}
-												key={`${source}_${i}`}
-												style={{
-													color: contrastColor({ bgColor: vpToColor[source] }),
-													backgroundColor: rgba(vpToColor[source], 0.9),
-													width:
-														(sources.includes(source)
-															? (amount / maxValue) * barWidth
-															: 0) + 'px',
-												}}
-											>
-												{waiting.length === 0 && ratio === 1 && (
-													<FadeInValue>{amount}</FadeInValue>
-												)}
-											</Bar>
-										</Tooltip>
-									)
-								})}
-							</Flex>
-							{Math.floor(chart[player.id][1].sum)}
-						</Place>
-					)
-				})}
-			</CharContainer>
+										return (
+											<Tooltip key={`${source}_${i}`} content={vpText(source)}>
+												<Bar
+													$selected={isSelected}
+													onClick={() => setSelected({ source, player })}
+													key={`${source}_${i}`}
+													style={{
+														color: contrastColor({
+															bgColor: vpToColor[source],
+														}),
+														backgroundColor: rgba(vpToColor[source], 0.9),
+														width:
+															(sources.includes(source)
+																? (amount / maxValue) * barWidth
+																: 0) + 'px',
+													}}
+												>
+													{waiting.length === 0 && ratio === 1 && (
+														<FadeInValue>{amount}</FadeInValue>
+													)}
+												</Bar>
+											</Tooltip>
+										)
+									})}
+								</Flex>
+								{Math.floor(chart[player.id][1].sum)}
+							</Place>
+						)
+					})}
+				</CharContainer>
+			</Flex>
 
 			{selected && (
-				<ClippedBox>
+				<ClippedBox style={{ overflow: 'auto' }}>
 					<ClippedBoxTitle $spacing $centered>
 						{vpText(selected.source)}
 					</ClippedBoxTitle>
