@@ -16,7 +16,7 @@ export const EventsModal = ({ onClose, events }: Props) => {
 			header="Events"
 		>
 			{[...events].reverse().map((e, i) => (
-				<EventLine key={i} event={e} animated={false} />
+				<EventLine key={i} event={e} animated={false} timestamp />
 			))}
 		</Modal>
 	)

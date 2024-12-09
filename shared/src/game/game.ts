@@ -330,7 +330,7 @@ export class Game {
 		return {
 			startState: copy,
 			collectAndPush: (
-				build: (events: GameEvent[]) => Omit<GameEvent, 'at'>,
+				build: (events: GameEvent[]) => Omit<GameEvent, 't'>,
 				{ markAsProcessed }: { markAsProcessed?: boolean } = {},
 			) => {
 				const collectedEvents = buildEvents(copy, this.state)
@@ -342,7 +342,7 @@ export class Game {
 				}
 
 				this.state.events.push(
-					{ at: Date.now(), ...build(collectedEvents) } as GameEvent,
+					{ t: Date.now(), ...build(collectedEvents) } as GameEvent,
 					...collectedEvents,
 				)
 
@@ -353,8 +353,8 @@ export class Game {
 		}
 	}
 
-	pushEvent<TEvent extends Omit<GameEvent, 'at'>>(event: TEvent) {
-		this.state.events.push({ at: Date.now(), ...event } as GameEvent)
+	pushEvent<TEvent extends Omit<GameEvent, 't'>>(event: TEvent) {
+		this.state.events.push({ t: Date.now(), ...event } as GameEvent)
 		this.onStateUpdated.emit(this.state)
 	}
 

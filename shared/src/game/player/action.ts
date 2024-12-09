@@ -230,7 +230,7 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 		}
 	}
 
-	pushEvent<TEvent extends Omit<GameEvent, 'at'>>(event: TEvent) {
+	pushEvent<TEvent extends Omit<GameEvent, 't'>>(event: TEvent) {
 		this.parent.game.pushEvent(event)
 	}
 

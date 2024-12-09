@@ -27,6 +27,7 @@ import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 type Props = {
 	event: GameEvent
 	animated: boolean
+	timestamp?: boolean
 	onDone?: () => void
 }
 
@@ -68,7 +69,14 @@ const ColonySpan = ({ colony }: { colony: ColonyState }) => {
 	)
 }
 
-export const EventLine = ({ event, animated, onDone }: Props) => {
+const formatTime = (time: number) => {
+	const minutes = Math.floor(time / 60000)
+	const seconds = ((time % 60000) / 1000).toFixed(0)
+
+	return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+}
+
+export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
 	const locale = useLocale()
 	const players = useAppStore((state) => state.game.playerMap)
 	const game = useAppStore((state) => state.game.state)
@@ -269,11 +277,11 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					</>
 				)
 			case EventType.StartingSetup:
-				return <></>
+				return null
 			case EventType.ProductionDone:
-				return <></>
+				return null
 			case EventType.WorldGovernmentTerraforming:
-				return <></>
+				return null
 			case EventType.MarsTerraformed:
 				return <>Mars terraformed</>
 			case EventType.CommitteeDominantPartyChanged:
@@ -336,15 +344,23 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					</>
 				)
 			case EventType.PlayerMovedDelegate:
-				return <></>
+				return null
 			case EventType.CommitteePartyActivePolicyActivated:
-				return <></>
+				return null
 		}
 
 		assertNever(event)
 	}, [event, players])
 
-	return <E animation={animated}>{content}</E>
+	return content ? (
+		<E animation={animated}>
+			{timestamp &&
+				formatTime((event.t ?? 0) - new Date(game.started).getTime())}{' '}
+			{content}
+		</E>
+	) : (
+		<></>
+	)
 }
 
 const E = styled.div<{ animation: boolean }>`
