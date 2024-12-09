@@ -1,19 +1,20 @@
-import { drawCard, f } from '../../utils'
+import { withUnits } from '../../units'
+import { drawCard } from '@shared/utils/drawCard'
+import { f } from '@shared/utils/f'
 import { corp } from '../base/corporations'
 import {
+	emptyEffect,
+	joinedEffects,
+	lowestProductionChange,
 	pickPreludes,
 	productionChange,
 	resourceChange,
-	deprecatedTagPriceChange,
-	emptyEffect,
-	lowestProductionChange,
 	sponsorCompetitionForFree,
-	joinedEffects,
 } from '../effectsGrouped'
-import { passiveEffect, asFirstAction } from '../passive-effects'
-import { CardCategory, CardSpecial, CardType } from '../types'
-import { card, withRightArrow, updatePlayerResource } from '../utils'
-import { withUnits } from '../../units'
+import { asFirstAction, passiveEffect } from '../passive-effects'
+import { tagPriceChange } from '../passive-effects/tagPriceChange'
+import { CardCategory, CardSpecial, CardType, SymbolType } from '../types'
+import { card, updatePlayerResource, withRightArrow } from '../utils'
 
 export const preludeCorporations = [
 	corp(
@@ -23,11 +24,8 @@ export const preludeCorporations = [
 			type: CardType.Corporation,
 			categories: [CardCategory.Building],
 			special: [CardSpecial.Prelude],
-			playEffects: [
-				productionChange('money', 3),
-				resourceChange('money', 44),
-				deprecatedTagPriceChange(CardCategory.Building, -2),
-			],
+			playEffects: [productionChange('money', 3), resourceChange('money', 44)],
+			passiveEffects: [tagPriceChange(CardCategory.Building, -2)],
 		}),
 	),
 	corp(
@@ -42,6 +40,11 @@ export const preludeCorporations = [
 				passiveEffect({
 					description:
 						'When you play an Earth tag, including this, draw a card',
+					symbols: [
+						{ tag: CardCategory.Earth },
+						{ symbol: SymbolType.Colon },
+						{ symbol: SymbolType.Card },
+					],
 					onCardBought: (
 						{ player, game },
 						playedCard,
@@ -87,12 +90,14 @@ export const preludeCorporations = [
 			special: [CardSpecial.Prelude],
 			playEffects: [
 				resourceChange('money', 37),
-				deprecatedTagPriceChange(CardCategory.Science, -2),
 				emptyEffect(
 					'As your first action, draw 3 prelude cards, pick 1 and discard the rest',
 				),
 			],
-			passiveEffects: [asFirstAction(pickPreludes(3, 1))],
+			passiveEffects: [
+				asFirstAction(pickPreludes(3, 1)),
+				tagPriceChange(CardCategory.Science, -2),
+			],
 		}),
 	),
 	corp(

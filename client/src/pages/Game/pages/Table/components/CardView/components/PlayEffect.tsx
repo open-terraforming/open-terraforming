@@ -25,7 +25,7 @@ const Container = styled.div<{ fine: boolean; $faded?: boolean }>`
 	${(props) =>
 		!props.fine &&
 		css`
-			color: #f12e41;
+			color: #da5a67;
 		`}
 
 	${(props) =>

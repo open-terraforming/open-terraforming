@@ -11,7 +11,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { buildColony, tradeWithColony } from '@shared/actions'
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import {
 	canBuildColony,
 	canTradeWithColony,
@@ -25,6 +24,7 @@ import { darken, lighten } from 'polished'
 import { Fragment, ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 
 type Props = {
 	index: number
@@ -80,16 +80,17 @@ export const ColonyDisplay = ({
 
 	const canTradeWithAnyResource =
 		!noActions &&
-		(['money', 'titan', 'energy'] as const).some((res) =>
-			isOk(
-				canTradeWithColonyUsingResource({
-					player,
-					game,
-					colony,
-					resource: res,
-				}),
-			),
-		)
+		(freeTradePick ||
+			(['money', 'titan', 'energy'] as const).some((res) =>
+				isOk(
+					canTradeWithColonyUsingResource({
+						player,
+						game,
+						colony,
+						resource: res,
+					}),
+				),
+			))
 
 	const canColonize = noActions
 		? failure('')

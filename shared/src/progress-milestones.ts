@@ -4,7 +4,9 @@ import {
 	PlayerState,
 	ProgressMilestoneType,
 } from './gameState'
-import { drawCards, keyMap, pushPendingAction } from './utils'
+import { drawCards } from './utils/drawCards'
+import { pushPendingAction } from './utils/pushPendingAction'
+import { keyMap } from './utils/keyMap'
 import { placeTileAction } from './player-actions'
 
 export interface ProgressMilestone {
@@ -25,6 +27,7 @@ const ProgressMilestonesList = [
 			(game, player) => {
 				if (game.temperature < game.map.temperature) {
 					player.terraformRating++
+					player.terraformRatingIncreasedThisGeneration = true
 					game.temperature++
 				}
 			},
@@ -58,6 +61,7 @@ const ProgressMilestonesList = [
 		effects: [
 			(game, player) => {
 				player.terraformRating++
+				player.terraformRatingIncreasedThisGeneration = true
 			},
 		],
 	}),

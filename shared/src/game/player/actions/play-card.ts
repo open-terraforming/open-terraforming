@@ -1,13 +1,19 @@
 import { CardsLookupApi, CardType } from '@shared/cards'
-import { GameStateValue, playCard, PlayerStateValue } from '@shared/index'
+import {
+	EventType,
+	GameStateValue,
+	playCard,
+	PlayerStateValue,
+} from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { f } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
+import { deepCopy } from '@shared/utils/collections'
+import { f } from '@shared/utils/f'
 import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof playCard>['data']
 
-export class PlayCardAction extends PlayerBaseAction<Args> {
+export class PlayCardAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
@@ -51,6 +57,10 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 			throw new Error(`${card.code} isn't playable`)
 		}
 
+		if (card.actionEffects.length === 0) {
+			throw new Error(`${card.code} has no action effects`)
+		}
+
 		const ctx = {
 			player: this.player,
 			game: this.game,
@@ -61,11 +71,25 @@ export class PlayCardAction extends PlayerBaseAction<Args> {
 
 		this.logger.log(`Played ${card.code} with`, JSON.stringify(args))
 
+		const collector = this.startCollectingEvents()
+
 		this.runCardEffects(card.actionEffects, ctx, args)
 
 		processCardsToDiscard(this.game, this.player)
 
 		this.parent.game.checkMilestones()
+
+		collector.collectAndPush(
+			(changes) =>
+				({
+					type: EventType.CardUsed,
+					playerId: this.player.id,
+					card: card.code,
+					index: index,
+					changes,
+					state: deepCopy(cardState),
+				}) as const,
+		)
 
 		if (top) {
 			this.popAction()

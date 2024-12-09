@@ -1,12 +1,12 @@
+import { markCardAsUnplayed } from '../effects/mark-card-as-unplayed'
 import {
-	getTopCardsWithTag,
 	anyCardResourceChange,
+	getTopCardsWithTag,
 	productionChange,
 	resourceChange,
 } from '../effectsGrouped'
-import { changeProgressConditionBonusPerTag } from '../effects/changeProgressConditionBonusPerTag'
-import { markCardAsUnplayed } from '../effects/mark-card-as-unplayed'
 import {
+	changeProgressConditionBonusPerTag,
 	resourceForProductionChange,
 	resourceForProgress,
 } from '../passive-effects'
@@ -60,6 +60,8 @@ export const venusCorporations: Card[] = [
 		playEffects: [
 			resourceChange('money', 50),
 			getTopCardsWithTag(3, CardCategory.Venus),
+		],
+		passiveEffects: [
 			// TODO: Test this
 			changeProgressConditionBonusPerTag(CardCategory.Venus, 2),
 		],

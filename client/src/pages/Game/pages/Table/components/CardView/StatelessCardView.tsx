@@ -1,20 +1,24 @@
 import { CARD_IMAGES_URL } from '@/constants'
 import { useLocale } from '@/context/LocaleContext'
+import { useAppStore } from '@/utils/hooks'
 import { Card, CardCallbackContext, CardType } from '@shared/cards'
-import { UsedCardState } from '@shared/index'
+import { PlayerState, UsedCardState } from '@shared/index'
 import { flatten } from '@shared/utils'
-import { CSSProperties, useMemo } from 'react'
+import { CSSProperties, ReactNode, useMemo } from 'react'
 import {
 	Action,
 	ActionTitle,
+	AdjustedCost,
 	Categories,
 	Container,
+	CorporationTitle,
 	Cost,
 	Description,
 	FadedSymbols,
 	Head,
 	HeadSymbols,
 	Image,
+	OriginalCost,
 	Played,
 	Title,
 	VP,
@@ -24,16 +28,19 @@ import { PlayEffect } from './components/PlayEffect'
 import { Resource } from './components/Resource'
 import { Symbols } from './components/Symbols'
 import { Tag } from './components/Tag'
-import { useAppStore } from '@/utils/hooks'
+import { Tooltip } from '@/components'
+import { CardHints } from './components/CardHints'
 
 type Props = {
 	card: Card
 	state?: UsedCardState
+	adjustedPrice?: number
+	adjustedPriceContext?: ReactNode
 	selected?: boolean
 	onClick?: () => void
 	evaluate?: boolean
 	hover?: boolean
-	fade?: boolean
+	faded?: boolean
 	className?: string
 	style?: CSSProperties
 	wasPlayed?: boolean
@@ -42,6 +49,10 @@ type Props = {
 	conditionContext?: CardCallbackContext
 	calculatedVps?: number
 	highlightAction?: boolean
+	highlightActionNoAnimation?: boolean
+	highlightVictoryPoints?: boolean
+	player?: PlayerState
+	plainConditions?: boolean
 }
 
 export const StatelessCardView = ({
@@ -49,7 +60,7 @@ export const StatelessCardView = ({
 	selected = false,
 	evaluate = true,
 	hover = true,
-	fade = true,
+	faded,
 	className,
 	state,
 	onClick,
@@ -60,6 +71,12 @@ export const StatelessCardView = ({
 	conditionContext: condContext,
 	calculatedVps,
 	highlightAction,
+	adjustedPrice,
+	adjustedPriceContext,
+	highlightActionNoAnimation,
+	highlightVictoryPoints,
+	player,
+	plainConditions,
 }: Props) => {
 	const locale = useLocale()
 	const settings = useAppStore((state) => state.settings.data)
@@ -67,14 +84,7 @@ export const StatelessCardView = ({
 	const played = wasPlayed
 	const playable = isPlayable
 
-	const description = useMemo(() => {
-		return [
-			card.description,
-			...(card.victoryPointsCallback
-				? [card.victoryPointsCallback.description]
-				: []),
-		]
-	}, [card])
+	const description = card.description
 
 	const symbols = useMemo(
 		() => flatten(card.playEffects.map((e) => e.symbols)),
@@ -96,6 +106,18 @@ export const StatelessCardView = ({
 		[card],
 	)
 
+	const hints = useMemo(
+		() =>
+			evaluate
+				? [
+						...card.conditions.flatMap((e) => e.hints ?? []),
+						...card.playEffects.flatMap((e) => e.hints ?? []),
+						...(card.victoryPointsCallback?.hints ?? []),
+					]
+				: [],
+		[card],
+	)
+
 	const allConditionsOk =
 		!evaluate ||
 		!condContext ||
@@ -103,11 +125,47 @@ export const StatelessCardView = ({
 
 	const cardImagesUrl = settings.cardImagesUrl ?? CARD_IMAGES_URL
 	const cardImageFileName = card.code.replace(/'/g, "\\'")
+	const isCorporation = card.type === CardType.Corporation
 
 	const cardImageUrl =
 		cardImagesUrl !== undefined
 			? `${cardImagesUrl}/card/${cardImageFileName}.jpg`
 			: undefined
+
+	const headSymbols = (
+		<Head>
+			{card.type !== CardType.Corporation && card.type !== CardType.Prelude && (
+				<Cost>
+					<OriginalCost
+						$affordable={!!affordable}
+						$isAdjusted={
+							adjustedPrice !== undefined && adjustedPrice !== card.cost
+						}
+					>
+						{card.cost}
+					</OriginalCost>
+					{adjustedPrice !== undefined && adjustedPrice !== card.cost && (
+						<AdjustedCost $affordable={!!affordable}>
+							<Tooltip content={adjustedPriceContext}>{adjustedPrice}</Tooltip>
+						</AdjustedCost>
+					)}
+				</Cost>
+			)}
+			{conditionSymbols.length > 0 && (
+				<HeadSymbols
+					$plain={plainConditions}
+					$ok={!!allConditionsOk}
+					symbols={conditionSymbols}
+					$faded={highlightAction || highlightVictoryPoints}
+				/>
+			)}
+			<Categories>
+				{card.categories.map((c, i) => (
+					<Tag key={i} tag={c} />
+				))}
+			</Categories>
+		</Head>
+	)
 
 	return (
 		<Container
@@ -115,33 +173,33 @@ export const StatelessCardView = ({
 			selected={selected}
 			onClick={onClick}
 			hover={hover}
-			playable={!fade || !evaluate || !!(playable && affordable)}
+			playable={!faded}
 			played={!!played}
 			style={style}
 			className={
-				(!evaluate || (playable && affordable) ? 'playable' : 'unplayable') +
+				(!evaluate || playable ? 'playable' : 'unplayable') +
 				(className ? ` ${className}` : '')
 			}
-			$faded={!!highlightAction}
+			$faded={!!highlightAction || !!highlightVictoryPoints}
 		>
-			<Head>
-				{card.type !== CardType.Corporation &&
-					card.type !== CardType.Prelude && (
-						<Cost affordable={!!affordable}>
-							<div>{card.cost}</div>
-						</Cost>
-					)}
-				{conditionSymbols.length > 0 && (
-					<HeadSymbols $ok={!!allConditionsOk} symbols={conditionSymbols} />
-				)}
-				<Categories>
-					{card.categories.map((c, i) => (
-						<Tag key={i} tag={c} />
-					))}
-				</Categories>
-			</Head>
-			<Title>{locale.cards[card.code]}</Title>
-			{card.type !== CardType.Corporation ? (
+			{hints.length > 0 && player && (
+				<CardHints player={player} type={card.type} hints={hints} />
+			)}
+			{isCorporation && (
+				<CorporationTitle>
+					<Title>{locale.cards[card.code]}</Title>
+					{headSymbols}
+				</CorporationTitle>
+			)}
+
+			{!isCorporation && (
+				<>
+					{headSymbols}
+					<Title>{locale.cards[card.code]}</Title>
+				</>
+			)}
+
+			{!isCorporation && (
 				<Image
 					style={
 						cardImageUrl ? { backgroundImage: `url('${cardImageUrl}')` } : {}
@@ -156,27 +214,31 @@ export const StatelessCardView = ({
 
 					{state && <Resource card={card} state={state} />}
 				</Image>
-			) : (
-				<>
-					{state && <Resource card={card} state={state} onCorporation />}
-					{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
-					{card.victoryPointsCallback && (
-						<VP
-							$corporation={card.type === CardType.Corporation}
-							title={card.victoryPointsCallback.description}
-						>
-							{calculatedVps ?? 'X'}*
-						</VP>
-					)}
-				</>
 			)}
 			<Description>
+				{isCorporation && (
+					<>
+						{state && <Resource card={card} state={state} onCorporation />}
+						{card.victoryPoints !== 0 && <VP>{card.victoryPoints}</VP>}
+						{card.victoryPointsCallback && (
+							<VP $corporation title={card.victoryPointsCallback.description}>
+								{calculatedVps ?? 'X'}*
+							</VP>
+						)}
+					</>
+				)}
+
 				{played && <Played>Card already played this generation</Played>}
 
 				{card.actionEffects.filter(
 					(a) => a.description?.length || a.symbols.length,
 				).length > 0 && (
-					<Action $hasSymbols={symbols.length > 0} $highlight={highlightAction}>
+					<Action
+						$hasSymbols={symbols.length > 0}
+						$highlight={highlightAction}
+						$highlightNoAnimation={highlightActionNoAnimation}
+						$fade={highlightVictoryPoints}
+					>
 						<ActionTitle $highlight={highlightAction}>Action</ActionTitle>
 
 						<Symbols symbols={playActionSymbols} />
@@ -193,7 +255,10 @@ export const StatelessCardView = ({
 				)}
 
 				{card.passiveEffects.filter((e) => e.description).length > 0 && (
-					<Action $hasSymbols={symbols.length > 0}>
+					<Action
+						$hasSymbols={symbols.length > 0}
+						$fade={highlightVictoryPoints}
+					>
 						<ActionTitle $highlight={highlightAction}>Effect</ActionTitle>
 
 						<Symbols symbols={passiveSymbols} />
@@ -207,7 +272,7 @@ export const StatelessCardView = ({
 					</Action>
 				)}
 
-				{highlightAction ? (
+				{highlightAction || highlightVictoryPoints ? (
 					<FadedSymbols symbols={symbols} />
 				) : (
 					<Symbols symbols={symbols} />
@@ -219,7 +284,8 @@ export const StatelessCardView = ({
 						cond={c}
 						ctx={condContext}
 						evaluate={evaluate}
-						faded={highlightAction}
+						faded={highlightAction || highlightVictoryPoints}
+						plain={plainConditions}
 					/>
 				))}
 
@@ -229,14 +295,24 @@ export const StatelessCardView = ({
 						effect={e}
 						ctx={condContext}
 						evaluate={evaluate}
-						faded={highlightAction}
+						faded={highlightAction || highlightVictoryPoints}
 					/>
 				))}
-				{description.map((d, i) => (
-					<div style={highlightAction ? { opacity: 0.5 } : undefined} key={i}>
-						{d}
+				<div
+					style={
+						highlightAction || highlightVictoryPoints
+							? { opacity: 0.5 }
+							: undefined
+					}
+				>
+					{description}
+				</div>
+
+				{card.victoryPointsCallback && (
+					<div style={highlightAction ? { opacity: 0.5 } : undefined}>
+						{card.victoryPointsCallback.description}
 					</div>
-				))}
+				)}
 			</Description>
 		</Container>
 	)

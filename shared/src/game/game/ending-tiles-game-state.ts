@@ -1,6 +1,7 @@
 import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { BaseGameState } from './base-game-state'
-import { pendingActions, f } from '@shared/utils'
+import { f } from '@shared/utils/f'
+import { pendingActions } from '@shared/utils/pendingActions'
 
 export class EndingTilesGameState extends BaseGameState {
 	name = GameStateValue.EndingTiles

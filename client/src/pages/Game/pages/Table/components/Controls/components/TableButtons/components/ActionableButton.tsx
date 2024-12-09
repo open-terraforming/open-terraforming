@@ -39,7 +39,14 @@ export const ActionableButton = ({ onClick }: Props) => {
 			onMouseOver={() => setOpened(true)}
 			onMouseLeave={() => setOpened(false)}
 		>
-			<CardsView cards={cards} play open={opened} />
+			<CardsView
+				cards={cards}
+				play
+				open={opened}
+				hideAdjustedPrice
+				highlightAction
+				highlightActionNoAnimation
+			/>
 		</CardsCounter>
 	)
 }

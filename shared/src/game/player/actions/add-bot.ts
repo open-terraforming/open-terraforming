@@ -1,9 +1,9 @@
 import { GameStateValue, PlayerStateValue, addBot } from '@shared/index'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof addBot>['data']
 
-export class AddBotAction extends PlayerBaseAction<Args> {
+export class AddBotAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Ready, PlayerStateValue.Waiting]
 	gameStates = [GameStateValue.WaitingForPlayers]
 

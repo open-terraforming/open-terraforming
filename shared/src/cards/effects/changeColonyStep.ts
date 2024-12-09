@@ -1,5 +1,6 @@
 import { changeColonyStepAction } from '@shared/player-actions'
-import { f, pushPendingAction } from '@shared/utils'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { quantized } from '@shared/utils/quantized'
 import { effect } from './types'
 

@@ -6,11 +6,10 @@ import {
 	StandardProjectState,
 	StandardProjectType,
 } from '.'
-import { CardCategory } from './cards'
+import { ExpansionType } from './expansions/types'
 import { MapType } from './map'
 import { Maps } from './maps'
 import { GameModeType } from './modes/types'
-import { ExpansionType } from './expansions/types'
 
 export const initialGameState = (
 	id = 'game',
@@ -64,6 +63,24 @@ export const initialGameState = (
 	colonies: [],
 	colonyCards: [],
 	events: [],
+	committee: {
+		enabled: false,
+		dominantParty: null,
+		rulingParty: null,
+		chairman: null,
+		lobby: [],
+		parties: [],
+		reserve: [],
+	},
+	committeeParties: [],
+	globalEvents: {
+		enabled: false,
+		events: [],
+		discardedEvents: [],
+		comingEvent: null,
+		currentEvent: null,
+		distantEvent: null,
+	},
 })
 
 export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
@@ -93,8 +110,8 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	draftedCards: [],
 	usedCards: [],
 	corporation: '',
-	tagPriceChange: {} as Record<CardCategory, number>,
-	cardPriceChange: 0,
+	tagPriceChanges: [],
+	cardPriceChanges: [],
 	greeneryCost: 8,
 	powerProjectCost: 11,
 	temperatureCost: 8,
@@ -108,6 +125,7 @@ export const initialPlayerState = (id = 0, session = ''): PlayerState => ({
 	protectedHabitat: false,
 	tradeFleets: 1,
 	colonyTradeResourceCostChange: 0,
+	terraformRatingIncreasedThisGeneration: false,
 })
 
 export const initialStandardProjectState = (

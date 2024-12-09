@@ -1,50 +1,67 @@
 import { useLocale } from '@/context/LocaleContext'
-import { useAppStore } from '@/utils/hooks'
+import { useAppStore, usePlayerState } from '@/utils/hooks'
 import { CardResource, CardSymbol, Resource, SymbolType } from '@shared/cards'
 import { EventType, GameEvent, GridCellContent } from '@shared/index'
+import { groupBy } from '@shared/utils'
 import { useMemo } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { SymbolDisplay } from '../../CardView/components/SymbolDisplay'
+import { Flex } from '@/components/Flex/Flex'
+import { ClippedBox } from '@/components/ClippedBox'
 
 type Props = {
 	events: GameEvent[]
-	currentPlayerId: number
+	currentPlayerId?: number
 	currentUsedCardIndex?: number
 	maxWidth?: string
+	noSpacing?: boolean
+	className?: string
 }
+
+type LogSymbol =
+	| CardSymbol
+	| {
+			player: { id?: number; name: string; color: string }
+			symbols: CardSymbol[]
+	  }
 
 export const SymbolsEventLog = ({
 	events,
 	currentPlayerId,
 	currentUsedCardIndex,
+	noSpacing,
+	className,
 	maxWidth = '15rem',
 }: Props) => {
+	const displayPlayer = usePlayerState()
 	const players = useAppStore((state) => state.game.playerMap)
 	const t = useLocale()
 
-	const playerSymbol = (playerId: number): CardSymbol[] =>
+	const optionallyWithPlayer = (
+		playerId: number | null,
+		symbols: CardSymbol[],
+	): LogSymbol[] =>
 		playerId === currentPlayerId
-			? []
+			? symbols
 			: [
 					{
-						symbol: SymbolType.Player,
-						color: players[playerId].color,
-						title: players[playerId].name,
-						noRightSpacing: true,
+						player:
+							playerId === null
+								? { name: 'Neutral', color: '#ccc' }
+								: players[playerId],
+						symbols,
 					},
 				]
 
-	const eventToSymbols = (e: GameEvent): CardSymbol[] => {
-		switch (e.type) {
+	const eventToSymbols = (event: GameEvent): CardSymbol[] => {
+		switch (event.type) {
 			case EventType.ResourcesChanged: {
-				return Object.entries(e.resources).flatMap(([resource, amount]) => [
-					...playerSymbol(e.playerId),
+				return Object.entries(event.resources).flatMap(([resource, amount]) => [
 					{
 						resource: resource as Resource,
 						count: amount,
 						forceCount: true,
 						forceSign: true,
-						other: e.playerId !== currentPlayerId,
 					},
 				])
 			}
@@ -52,46 +69,42 @@ export const SymbolsEventLog = ({
 			case EventType.CardResourceChanged: {
 				// TODO: What if the card index is different?
 				return [
-					...playerSymbol(e.playerId),
-					...(e.index !== currentUsedCardIndex
-						? [{ text: t.cards[e.card], noRightSpacing: true }]
+					...(event.index !== currentUsedCardIndex
+						? [{ text: t.cards[event.card], noRightSpacing: true }]
 						: []),
 					{
-						cardResource: e.resource as CardResource,
-						count: e.amount,
+						cardResource: event.resource as CardResource,
+						count: event.amount,
 						forceCount: true,
 						forceSign: true,
-						other: e.playerId !== currentPlayerId,
 					},
 				]
 			}
 
 			case EventType.CardsReceived: {
 				return [
-					...playerSymbol(e.playerId),
 					{
 						symbol: SymbolType.Card,
-						count: e.amount,
-						other: e.playerId !== currentPlayerId,
+						count: event.amount,
 					},
 				]
 			}
 
 			case EventType.GameProgressChanged: {
-				if (e.progress === 'temperature') {
-					return [{ symbol: SymbolType.Temperature, count: e.amount }]
+				if (event.progress === 'temperature') {
+					return [{ symbol: SymbolType.Temperature, count: event.amount }]
 				}
 
-				if (e.progress === 'oxygen') {
-					return [{ symbol: SymbolType.Oxygen, count: e.amount }]
+				if (event.progress === 'oxygen') {
+					return [{ symbol: SymbolType.Oxygen, count: event.amount }]
 				}
 
-				if (e.progress === 'oceans') {
-					return [{ tile: GridCellContent.Ocean, count: e.amount }]
+				if (event.progress === 'oceans') {
+					return [{ tile: GridCellContent.Ocean, count: event.amount }]
 				}
 
-				if (e.progress === 'venus') {
-					return [{ symbol: SymbolType.Venus, count: e.amount }]
+				if (event.progress === 'venus') {
+					return [{ symbol: SymbolType.Venus, count: event.amount }]
 				}
 
 				return []
@@ -99,10 +112,9 @@ export const SymbolsEventLog = ({
 
 			case EventType.RatingChanged: {
 				return [
-					...playerSymbol(e.playerId),
 					{
 						symbol: SymbolType.TerraformingRating,
-						count: e.amount,
+						count: event.amount,
 						forceCount: true,
 						forceSign: true,
 					},
@@ -110,22 +122,17 @@ export const SymbolsEventLog = ({
 			}
 
 			case EventType.PlayerTradeFleetsChange: {
-				return [
-					...playerSymbol(e.playerId),
-					{ symbol: SymbolType.TradeFleet, count: e.amount },
-				]
+				return [{ symbol: SymbolType.TradeFleet, count: event.amount }]
 			}
 
 			case EventType.ProductionChanged: {
 				return [
-					...playerSymbol(e.playerId),
 					{
-						resource: e.resource,
+						resource: event.resource,
 						production: true,
-						count: e.amount,
+						count: event.amount,
 						forceCount: true,
 						forceSign: true,
-						other: e.playerId !== currentPlayerId,
 					},
 				]
 			}
@@ -136,16 +143,52 @@ export const SymbolsEventLog = ({
 			}
 
 			case EventType.TileAcquired: {
-				return [
-					...playerSymbol(e.playerId),
-					{ tile: e.tile, tileOther: e.other },
-				]
+				return [{ tile: event.tile, tileOther: event.other }]
 			}
 
 			case EventType.TilePlaced: {
+				return [{ tile: event.tile, tileOther: event.other }]
+			}
+
+			case EventType.CommitteePartyDelegateChange: {
 				return [
-					...playerSymbol(e.playerId),
-					{ tile: e.tile, tileOther: e.other },
+					{
+						symbol: SymbolType.Delegate,
+						forceCount: true,
+						forceSign: true,
+						count: event.change,
+						color: !event.playerId ? '#ccc' : players[event.playerId].color,
+						title:
+							`${!event.playerId ? 'Neutral' : players[event.playerId].name} delegate ` +
+							(event.change > 0 ? 'added' : 'removed') +
+							' to ' +
+							t.committeeParties[event.partyCode],
+						noRightSpacing: true,
+					},
+					{ committeeParty: event.partyCode, noSpacing: true },
+				]
+			}
+
+			case EventType.CommitteePartyLeaderChanged: {
+				return [
+					{
+						symbol: SymbolType.PartyLeader,
+						color: !event.playerId ? '#ccc' : players[event.playerId].color,
+						title: `${!event.playerId ? 'Neutral' : players[event.playerId].name} is now party leader`,
+						noRightSpacing: true,
+					},
+					{ committeeParty: event.partyCode, noSpacing: true },
+				]
+			}
+
+			case EventType.CommitteeDominantPartyChanged: {
+				return [
+					{
+						committeeParty: event.partyCode,
+						title: `${t.committeeParties[event.partyCode]} is now dominant`,
+						noRightSpacing: true,
+						postfix: 'DOMINANT',
+					},
 				]
 			}
 		}
@@ -154,20 +197,76 @@ export const SymbolsEventLog = ({
 	}
 
 	const allSymbols = useMemo(
-		() => events.flatMap((e) => eventToSymbols(e)),
-		[events],
+		(): LogSymbol[] =>
+			[...groupBy(events, (e) => ('playerId' in e ? e.playerId : -1)).entries()]
+				.sort(([a], [b]) => (a ?? Infinity) - (b ?? Infinity))
+				.flatMap(([playerId, events]) => {
+					if (playerId === -1) {
+						return events.flatMap((e) => eventToSymbols(e))
+					}
+
+					return optionallyWithPlayer(
+						playerId,
+						events.flatMap((e) => eventToSymbols(e)),
+					)
+				}),
+		[events, currentPlayerId],
 	)
 
 	return (
-		<E style={{ maxWidth }}>
-			{allSymbols.map((s, i) => (
+		<E
+			style={{ maxWidth, ...(noSpacing && { margin: 0 }) }}
+			className={className}
+		>
+			{allSymbols.flatMap((s, i) => (
 				<SymbolContainer key={i} style={{ animationDelay: `${i * 300}ms` }}>
-					<SymbolDisplay key={i} symbol={s} />
+					{'player' in s ? (
+						<PlayerContainer>
+							<PlayerIcon>
+								<SymbolDisplay
+									symbol={{
+										symbol: SymbolType.Player,
+										color: s.player.color,
+										title:
+											displayPlayer.id === s.player.id ? 'You' : s.player.name,
+									}}
+								/>
+							</PlayerIcon>
+							<PlayerChanges>
+								{s.symbols.map((s, i) => (
+									<SymbolDisplay key={i} symbol={s} />
+								))}
+							</PlayerChanges>
+						</PlayerContainer>
+					) : (
+						<SymbolDisplay symbol={s} />
+					)}
 				</SymbolContainer>
 			))}
 		</E>
 	)
 }
+
+const PlayerContainer = styled(ClippedBox)`
+	margin: 0.15rem;
+
+	.inner {
+		display: flex;
+		align-items: stretch;
+	}
+`
+
+const PlayerIcon = styled.div`
+	background-color: ${({ theme }) => theme.colors.border};
+	display: flex;
+	align-items: center;
+	padding: 0 0.5rem;
+`
+
+const PlayerChanges = styled(Flex)`
+	padding: 0 0.25rem;
+	height: 2.2rem;
+`
 
 const E = styled.div`
 	display: flex;
@@ -193,4 +292,5 @@ const SymbolContainer = styled.div`
 	transform: scale(0);
 	display: flex;
 	align-items: center;
+	flex-wrap: nowrap;
 `

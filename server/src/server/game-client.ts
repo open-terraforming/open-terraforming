@@ -27,6 +27,7 @@ import { decode, encode } from 'msgpack-lite'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
 import { objDiff } from '@shared/utils/collections'
+import { GlobalEventsLookupApi } from '@shared/GlobalEventsLookupApi'
 
 enum ClientState {
 	Initializing,
@@ -45,6 +46,7 @@ export class Client {
 	state: ClientState
 
 	cardDictionary?: Record<string, string>
+	globalEventsDictionary?: Record<string, string>
 
 	lastSyncedState?: GameState
 
@@ -273,12 +275,24 @@ export class Client {
 			)
 		}
 
-		if (this.player || this.spectator) {
-			const gameToSync = obfuscateGame(
-				game,
-				this.player?.id ?? -1,
-				this.cardDictionary,
+		if (!this.globalEventsDictionary) {
+			this.globalEventsDictionary = shuffle(
+				Object.keys(GlobalEventsLookupApi.data),
+			).reduce(
+				(acc, c, i) => {
+					acc[c] = i.toString(16)
+
+					return acc
+				},
+				{} as Record<string, string>,
 			)
+		}
+
+		if (this.player || this.spectator) {
+			const gameToSync = obfuscateGame(game, this.player?.id ?? -1, {
+				cards: this.cardDictionary,
+				globalEvents: this.globalEventsDictionary,
+			})
 
 			if (this.lastSyncedState) {
 				const diff = objDiff(this.lastSyncedState, gameToSync)

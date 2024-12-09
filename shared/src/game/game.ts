@@ -1,9 +1,12 @@
 import {
 	CardCallbackContext,
+	CardCategory,
 	CardPassiveEffect,
 	CardsLookupApi,
 	GameProgress,
 } from '@shared/cards'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
+import { getRulingParty } from '@shared/expansions/turmoil/utils/getRulingParty'
 import { ExpansionType } from '@shared/expansions/types'
 import { GameInfo } from '@shared/extra'
 import {
@@ -30,13 +33,19 @@ import { GameModeType } from '@shared/modes/types'
 import { PlayerActionType } from '@shared/player-actions'
 import { ProgressMilestones } from '@shared/progress-milestones'
 import { initialGameState, initialStandardProjectState } from '@shared/states'
-import { f, isMarsTerraformed, range, shuffle } from '@shared/utils'
 import { deepCopy, deepExtend } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
+import { f } from '@shared/utils/f'
+import { isMarsTerraformed } from '@shared/utils/isMarsTerraformed'
 import { randomPassword } from '@shared/utils/password'
+import { range } from '@shared/utils/range'
+import { shuffle } from '@shared/utils/shuffle'
 import { v4 as uuidv4 } from 'uuid'
-import { Bot } from './bot/bot'
 import { BotNames } from './bot-names'
+import { Bot } from './bot/bot'
+import { buildEvents } from './events/buildEvents'
+import { GameEvent } from './events/eventTypes'
+import { ColoniesProductionGameState } from './game/colonies-production-game-state'
 import { DraftGameState } from './game/draft-game-state'
 import { EndedGameState } from './game/ended-game-state'
 import { EndingTilesGameState } from './game/ending-tiles-game-state'
@@ -47,6 +56,7 @@ import { PreludeGameState } from './game/prelude-game-state'
 import { ResearchPhaseGameState } from './game/research-phase-game-state'
 import { SolarPhaseGameState } from './game/solar-phase-game-state'
 import { StartingGameState } from './game/starting-game-state'
+import { TurmoilGameState } from './game/turmoil-game-state'
 import { WaitingForPlayersGameState } from './game/waiting-for-players-game-state'
 import {
 	BeforeColonyTradeEvent,
@@ -55,12 +65,9 @@ import {
 	Player,
 	ProductionChangedEvent,
 	ProjectBoughtEvent,
+	TerraformingRatingChangedEvent,
 	TilePlacedEvent,
 } from './player'
-import { ColoniesProductionGameState } from './game/colonies-production-game-state'
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
-import { buildEvents } from './events/buildEvents'
-import { GameEvent } from './events/eventTypes'
 
 export interface GameConfig {
 	bots: number
@@ -190,6 +197,7 @@ export class Game {
 			.addState(new PreludeGameState(this))
 			.addState(new SolarPhaseGameState(this))
 			.addState(new ColoniesProductionGameState(this))
+			.addState(new TurmoilGameState(this))
 
 		this.sm.setState(GameStateValue.WaitingForPlayers)
 	}
@@ -244,6 +252,27 @@ export class Game {
 			)
 		}
 
+		for (const player of state.players) {
+			if (
+				typeof player.cardPriceChanges === 'undefined' &&
+				'cardPriceChange' in player
+			) {
+				player.cardPriceChanges = [{ change: player.cardPriceChange as number }]
+			}
+
+			if (
+				typeof player.tagPriceChanges === 'undefined' &&
+				'tagPriceChange' in player
+			) {
+				player.tagPriceChanges = Object.entries(
+					player.tagPriceChange as Record<CardCategory, number>,
+				).map(([tag, change]) => ({
+					change: change as number,
+					tag: +tag as CardCategory,
+				}))
+			}
+		}
+
 		this.config = config
 
 		this.state = state
@@ -288,9 +317,35 @@ export class Game {
 			this.lastGameState = deepCopy(this.state)
 		} else {
 			const events = buildEvents(this.lastGameState, this.state)
+
 			this.state.events.push(...events)
 
 			this.lastGameState = deepCopy(this.state)
+		}
+	}
+
+	startEventsCollector() {
+		const copy = deepCopy(this.state)
+
+		return {
+			startState: copy,
+			collectAndPush: (
+				build: (events: GameEvent[]) => GameEvent,
+				{ markAsProcessed }: { markAsProcessed?: boolean } = {},
+			) => {
+				const collectedEvents = buildEvents(copy, this.state)
+
+				if (markAsProcessed === undefined || markAsProcessed) {
+					collectedEvents.forEach((event) => {
+						event.processed = true
+					})
+				}
+
+				this.state.events.push(build(collectedEvents), ...collectedEvents)
+				this.lastGameState = deepCopy(this.state)
+
+				return collectedEvents
+			},
 		}
 	}
 
@@ -335,6 +390,11 @@ export class Game {
 		player.onTilePlaced.on(this.handleTilePlaced)
 		player.onProjectBought.on(this.handleProjectBought)
 		player.onProductionChanged.on(this.handlePlayerProductionChanged)
+
+		player.onTerraformingRatingChanged.on(
+			this.handlePlayerTerraformingRatingChanged,
+		)
+
 		player.onBeforeColonyTrade.on(this.handleBeforeColonyTrade)
 		player.onColonyBuilt.on(this.handleColonyBuilt)
 
@@ -483,6 +543,8 @@ export class Game {
 
 	handleNewGeneration = (generation: number) => {
 		this.state.players.forEach((player) => {
+			player.terraformRatingIncreasedThisGeneration = false
+
 			player.usedCards
 				.map((c) => [c, CardsLookupApi.get(c.code)] as const)
 				.forEach(([s, c]) => {
@@ -522,6 +584,12 @@ export class Game {
 					)
 				})
 		})
+
+		if (this.state.committee.enabled) {
+			getRulingParty(this.state)?.policy.passive.forEach((p) => {
+				p.onTilePlaced?.({ game: this.state, cell, player: playedBy.state })
+			})
+		}
 	}
 
 	handlePlayerProductionChanged = ({
@@ -549,6 +617,19 @@ export class Game {
 					)
 				})
 		})
+	}
+
+	handlePlayerTerraformingRatingChanged = (
+		event: TerraformingRatingChangedEvent,
+	) => {
+		if (this.state.committee.enabled) {
+			getRulingParty(this.state)?.policy.passive.forEach((p) => {
+				p.onPlayerRatingChanged?.({
+					game: this.state,
+					player: event.player.state,
+				})
+			})
+		}
 	}
 
 	all(state: PlayerStateValue) {

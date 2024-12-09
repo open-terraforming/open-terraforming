@@ -2,8 +2,10 @@ import { CardResource, GameProgress, Resource } from '@shared/cards'
 import { CompetitionType } from '@shared/competitions'
 import {
 	ColonyState,
+	CommitteePartyState,
 	GridCellContent,
 	GridCellOther,
+	PlayerId,
 	StandardProjectType,
 	UsedCardState,
 } from '@shared/index'
@@ -37,6 +39,14 @@ export enum EventType {
 	TileClaimed,
 	WorldGovernmentTerraforming,
 	MarsTerraformed,
+	CommitteePartyDelegateChange,
+	CommitteePartyLeaderChanged,
+	CommitteeDominantPartyChanged,
+	CurrentGlobalEventExecuted,
+	GlobalEventsChanged,
+	NewGovernment,
+	PlayerMovedDelegate,
+	CommitteePartyActivePolicyActivated,
 }
 
 export type StartingSetup = {
@@ -212,34 +222,114 @@ export type MarsTerraformed = {
 	type: EventType.MarsTerraformed
 }
 
-export type GameEvent =
-	| CardPlayed
-	| CardsReceived
-	| CardUsed
-	| ResourcesChanged
-	| ProductionChanged
-	| CardResourceChanged
-	| GameProgressChanged
-	| TilePlaced
-	| CorporationPicked
-	| RatingChanged
-	| MilestoneBought
-	| CompetitionSponsored
-	| PlayingChanged
-	| NewGeneration
-	| ProductionPhase
-	| ProductionDone
-	| ColonyBuilt
-	| ColonyActivated
-	| ColonyTrading
-	| ColonyTradingStepChanged
-	| PlayerTradeFleetsChange
-	| StandardProjectBought
-	| TileAcquired
-	| StartingSetup
-	| TileClaimed
-	| WorldGovernmentTerraforming
-	| MarsTerraformed
+export type CommitteePartyDelegateChange = {
+	type: EventType.CommitteePartyDelegateChange
+	partyCode: string
+	playerId: number | null
+	change: number
+}
+
+export type CommitteePartyLeaderChanged = {
+	type: EventType.CommitteePartyLeaderChanged
+	partyCode: string
+	playerId: number | null
+}
+
+export type CommitteeDominantPartyChanged = {
+	type: EventType.CommitteeDominantPartyChanged
+	partyCode: string
+}
+
+export type GlobalEventExecuted = {
+	type: EventType.CurrentGlobalEventExecuted
+	eventCode: string
+	/** Key is player id */
+	influencePerPlayer: Record<number, number>
+	changes: GameEvent[]
+}
+
+export type GlobalEventsChanged = {
+	type: EventType.GlobalEventsChanged
+	previous: {
+		distant: string | null
+		coming: string | null
+		current: string | null
+	}
+	current: {
+		distant: string | null
+		coming: string | null
+		current: string | null
+	}
+	changes: GameEvent[]
+}
+
+export type NewGovernment = {
+	type: EventType.NewGovernment
+	oldRulingParty: string
+	newRulingParty: string
+	oldChairman: PlayerId | null
+	newChairman: PlayerId | null
+	changes: GameEvent[]
+}
+
+export type BaseGameEvent = {
+	processed?: boolean
+}
+
+export type PlayerMovedDelegate = {
+	type: EventType.PlayerMovedDelegate
+	playerId: number
+	change: number
+	partyCode: string
+	changes: GameEvent[]
+	partyState: CommitteePartyState
+}
+
+export type CommitteePartyActivePolicyActivated = {
+	type: EventType.CommitteePartyActivePolicyActivated
+	playerId: number
+	partyCode: string
+	changes: GameEvent[]
+}
+
+export type GameEvent = BaseGameEvent &
+	(
+		| CardPlayed
+		| CardsReceived
+		| CardUsed
+		| ResourcesChanged
+		| ProductionChanged
+		| CardResourceChanged
+		| GameProgressChanged
+		| TilePlaced
+		| CorporationPicked
+		| RatingChanged
+		| MilestoneBought
+		| CompetitionSponsored
+		| PlayingChanged
+		| NewGeneration
+		| ProductionPhase
+		| ProductionDone
+		| ColonyBuilt
+		| ColonyActivated
+		| ColonyTrading
+		| ColonyTradingStepChanged
+		| PlayerTradeFleetsChange
+		| StandardProjectBought
+		| TileAcquired
+		| StartingSetup
+		| TileClaimed
+		| WorldGovernmentTerraforming
+		| MarsTerraformed
+		| CommitteePartyDelegateChange
+		| CommitteePartyLeaderChanged
+		| CommitteeDominantPartyChanged
+		| GlobalEventExecuted
+		| GlobalEventsChanged
+		| NewGovernment
+		| PlayerMovedDelegate
+		| CommitteePartyActivePolicyActivated
+	)
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
 	id: number

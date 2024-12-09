@@ -7,12 +7,7 @@ type Props = {
 
 export const StandardProjectModal = ({ onClose }: Props) => {
 	return (
-		<Modal
-			contentStyle={{ minWidth: '600px' }}
-			open={true}
-			header={'Standard projects'}
-			onClose={onClose}
-		>
+		<Modal open={true} header={'Standard projects'} onClose={onClose}>
 			<StandardProjectsList onClose={onClose} />
 		</Modal>
 	)

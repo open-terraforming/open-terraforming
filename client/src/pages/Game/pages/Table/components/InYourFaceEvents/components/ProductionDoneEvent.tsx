@@ -1,8 +1,8 @@
-import styled, { keyframes } from 'styled-components'
+import { useAppStore, usePlayersMap } from '@/utils/hooks'
 import { ProductionDone } from '@shared/index'
-import { PlayerDidHeader } from './PlayerDidHeader'
-import { SymbolsEventLog } from './SymbolsEventLog'
-import { useAppStore } from '@/utils/hooks'
+import styled, { keyframes } from 'styled-components'
+import { PlayerWithEvents } from './PlayerWithEvents'
+import { SomethingHappenedHeader } from './SomethingHappenedHeader'
 
 type Props = {
 	event: ProductionDone
@@ -10,6 +10,7 @@ type Props = {
 
 export const ProductionDoneEvent = ({ event }: Props) => {
 	const currentPlayerId = useAppStore((state) => state.game.playerId)
+	const playersMap = usePlayersMap()
 
 	// Put the current player first
 	const sorted = event.players.slice().sort((a, b) => {
@@ -26,21 +27,16 @@ export const ProductionDoneEvent = ({ event }: Props) => {
 
 	return (
 		<>
-			{sorted.map((event, i) => {
-				return (
-					<ProductionContainer
-						key={event.playerId}
-						style={{ animationDelay: `${i * 250}ms` }}
-					>
-						<PlayerDidHeader playerId={event.playerId} thing={' produced'} />
-						<SymbolsEventLog
-							events={[event]}
-							currentPlayerId={event.playerId}
-							maxWidth="25rem"
-						/>
-					</ProductionContainer>
-				)
-			})}
+			<SomethingHappenedHeader>Production</SomethingHappenedHeader>
+
+			{sorted.map((event, i) => (
+				<StyledEvents
+					key={event.playerId}
+					style={{ animationDelay: `${i * 250}ms` }}
+					player={playersMap[event.playerId]}
+					events={[event]}
+				/>
+			))}
 		</>
 	)
 }
@@ -50,7 +46,8 @@ const fadeIn = keyframes`
 	100% { opacity: 1; transform: scale(1) }
 `
 
-const ProductionContainer = styled.div`
+const StyledEvents = styled(PlayerWithEvents)`
+	width: 25rem;
 	position: relative;
 	animation-name: ${fadeIn};
 	animation-duration: 0.25s;

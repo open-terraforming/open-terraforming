@@ -1,6 +1,9 @@
 import { GridCellContent } from '../../gameState'
 import { LavaCells } from '../../map'
-import { cardCategoryCountCondition, gameProgressConditionMax } from '../conditions'
+import {
+	cardCategoryCountCondition,
+	gameProgressConditionMax,
+} from '../conditions'
 import { getTopCards, placeTile, productionChange } from '../effectsGrouped'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
 import { card } from '../utils'

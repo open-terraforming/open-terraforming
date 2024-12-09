@@ -6,12 +6,13 @@ import {
 	solarPhaseTerraform,
 } from '@shared/index'
 import { placeTileAction, PlayerActionType } from '@shared/player-actions'
-import { f, pushPendingAction } from '@shared/utils'
-import { PlayerBaseAction } from '../action'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof solarPhaseTerraform>['data']
 
-export class SolarPhaseTerraform extends PlayerBaseAction<Args> {
+export class SolarPhaseTerraform extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.SolarPhaseTerraform]
 	gameStates = [GameStateValue.SolarPhase]
 

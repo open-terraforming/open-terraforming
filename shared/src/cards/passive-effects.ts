@@ -1,10 +1,18 @@
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { PLAYER_PRODUCTION_TO_RESOURCE } from '../constants'
-import { GridCellContent, GridCellOther, StandardProjectType } from '../gameState'
+import {
+	GridCellContent,
+	GridCellOther,
+	StandardProjectType,
+} from '../gameState'
 import { playCardAction } from '../player-actions'
 import { tileWithArticle } from '../texts'
 import { withUnits } from '../units'
-import { adjacentCells, drawCard, f, pushPendingAction, range } from '../utils'
+import { adjacentCells } from '@shared/utils/adjacentCells'
+import { drawCard } from '@shared/utils/drawCard'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { range } from '@shared/utils/range'
 import { effectArg } from './args'
 import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
@@ -20,7 +28,12 @@ import {
 	SymbolType,
 	WithOptional,
 } from './types'
-import { gamePlayer, resourceProduction, updatePlayerResource } from './utils'
+import {
+	gamePlayer,
+	progressSymbol,
+	resourceProduction,
+	updatePlayerResource,
+} from './utils'
 
 export const passiveEffect = (
 	e: WithOptional<CardPassiveEffect, 'symbols'>,
@@ -300,6 +313,11 @@ export const resourceForProgress = (
 			`Receive {0} when ${progress} is increased`,
 			withUnits(res, amount),
 		),
+		symbols: [
+			progressSymbol[progress],
+			{ symbol: SymbolType.Colon },
+			{ resource: res, count: amount },
+		],
 		onProgress: ({ player }, p) => {
 			if (p === progress) {
 				updatePlayerResource(player, res, amount)
@@ -308,7 +326,7 @@ export const resourceForProgress = (
 	})
 }
 
-export const resetProgressBonus = (amount: number) =>
+export const oneTimeProgressBonus = (amount: number) =>
 	passiveEffect({
 		description:
 			amount < 30
@@ -318,6 +336,7 @@ export const resetProgressBonus = (amount: number) =>
 						amount,
 					)
 				: 'Ignore global requirements for the next card you play this generation.',
+		onPlay: ({ player }) => (player.progressConditionBonus += amount),
 		onCardBought: ({ player, card }, playedCard, _cardIndex, playedBy) => {
 			if (
 				playedBy.id === player.id &&
@@ -336,25 +355,37 @@ export const resetProgressBonus = (amount: number) =>
 		},
 	})
 
-export const resetCardPriceChange = (amount: number) =>
+export const oneTimeCardPriceChange = (amount: number) =>
 	passiveEffect({
 		description: f(
 			`The next card you play this generation costs {0} MC less.`,
 			-amount,
 		),
+		onPlay: ({ player, card }) => {
+			player.cardPriceChanges.push({
+				change: amount,
+				sourceCardIndex: card.index,
+			})
+		},
 		onCardBought: ({ player, card }, playedCard, _cardIndex, playedBy) => {
 			if (
 				playedBy.id === player.id &&
 				card.code !== playedCard.code &&
 				card.data === undefined
 			) {
-				player.cardPriceChange -= amount
+				player.cardPriceChanges = player.cardPriceChanges.filter(
+					(item) => item.sourceCardIndex !== card.index,
+				)
+
 				card.data = true
 			}
 		},
 		onGenerationEnd: ({ player, card }) => {
 			if (card.data === undefined) {
-				player.cardPriceChange -= amount
+				player.cardPriceChanges = player.cardPriceChanges.filter(
+					(item) => item.sourceCardIndex !== card.index,
+				)
+
 				card.data = true
 			}
 		},
@@ -460,8 +491,8 @@ export const drawCardWhenBuyingCard = (minCardCost: number) =>
 			{ symbol: SymbolType.Colon },
 			{ symbol: SymbolType.Card },
 		],
-		onCardBought: ({ player, game }, card) => {
-			if (card.cost >= minCardCost) {
+		onCardBought: ({ player, game }, card, _, playedBy) => {
+			if (player.id === playedBy.id && card.cost >= minCardCost) {
 				player.cards.push(drawCard(game))
 			}
 		},
@@ -479,5 +510,61 @@ export const increaseIncomeStepBeforeTrading = (amount: number) =>
 				ColoniesLookupApi.get(colony.code).tradeIncome.slots.length - 1,
 				colony.step + amount,
 			)
+		},
+	})
+
+export const orePriceChange = (change: number) =>
+	passiveEffect({
+		description: `Ore is worth ${withUnits('money', change)} extra`,
+		symbols: [
+			{ resource: 'ore' as const },
+			{ symbol: SymbolType.Colon },
+			{ resource: 'money' as const, count: 1, forceSign: true },
+		],
+		onPlay: ({ player }) => {
+			player.orePrice += change
+		},
+	})
+
+export const titanPriceChange = (change: number) =>
+	passiveEffect({
+		description: `Titan is worth ${withUnits('money', change)} extra`,
+		symbols: [
+			{ resource: 'titan' as const },
+			{ symbol: SymbolType.Colon },
+			{ resource: 'money' as const, count: 1, forceSign: true },
+		],
+		onPlay: ({ player }) => {
+			player.titanPrice += change
+		},
+	})
+
+export const changeProgressConditionBonus = (change: number) =>
+	passiveEffect({
+		description: f(
+			'Your global requirements are +{0} or -{1} steps, your choice in each case',
+			change,
+			change,
+		),
+		onPlay: ({ player }) => (player.progressConditionBonus += change),
+	})
+
+export const changeProgressConditionBonusPerTag = (
+	category: CardCategory,
+	change: number,
+) =>
+	passiveEffect({
+		description: f(
+			'Your global requirements are +{0} or -{1} steps (your choice) for cards with {2} tag',
+			change,
+			change,
+			CardCategory[category],
+		),
+		onPlay: ({ player }) => {
+			if (!player.progressConditionBonusByTag[category]) {
+				player.progressConditionBonusByTag[category] = change
+			} else {
+				player.progressConditionBonusByTag[category] += change
+			}
 		},
 	})

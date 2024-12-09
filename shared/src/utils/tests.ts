@@ -1,12 +1,12 @@
 import { Game } from '@shared/game/game'
 import { Player } from '@shared/game/player'
-import { PlayerBaseAction } from '@shared/game/player/action'
+import { PlayerBaseActionHandler } from '@shared/game/player/action'
 import { StartGameAction } from '@shared/game/player/actions/start-game'
 import { DummyGameLockSystem } from '@shared/lib/dummy-game-lock-system'
 import { NullLogger } from '@shared/lib/null-logger'
 
 export const prepareGame = (
-	actionBuilder?: (p: Player) => PlayerBaseAction,
+	actionBuilder?: (p: Player) => PlayerBaseActionHandler,
 ) => {
 	const game = new Game(new DummyGameLockSystem(), new NullLogger())
 	const player = new Player(game)

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { initialGameState, initialPlayerState } from '@shared/states'
-import { range } from '@shared/utils'
+import { range } from '@shared/utils/range'
 import { CardsLookupApi, CardEffectTarget } from '@shared/cards'
 import { getPossibleArgs } from '../args/get-possible-args'
 import { emptyCardState } from '@shared/cards/utils'

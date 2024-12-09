@@ -36,3 +36,11 @@ export const GAME_PROGRESS_VALUES = [
 
 /** Resources that can be used to trade with a colony */
 export const COLONY_TRADE_RESOURCES = ['money', 'energy', 'titan'] as const
+
+/** How should progress value be multiplied when displayed to user */
+export const GAME_PROGRESS_MULTIPLIERS = {
+	temperature: 2,
+	oxygen: 1,
+	oceans: 1,
+	venus: 2,
+}

@@ -1,17 +1,19 @@
 import {
 	CardEffectArgument,
-	CardEffectTarget,
 	CardEffectArgumentType,
+	CardEffectTarget,
 } from '@shared/cards'
-import { PlayerArg } from './PlayerArg'
 import { UsedCardState } from '@shared/index'
-import { ResourceArg } from './ResourceArg'
-import { ChoiceArg } from './ChoiceArg'
 import { CardArg } from './CardArg'
-import { PlayerResourceArg } from './PlayerResourceArg'
-import { ResourceTypeArg } from './ResourceTypeArg'
-import { ProductionArg } from './ProductionArg'
 import { CardResourceAmountArg } from './CardResourceAmountArg'
+import { ChoiceArg } from './ChoiceArg'
+import { CommitteePartyArg } from './CommitteePartyArg'
+import { CommitteePartyMemberArg } from './CommitteePartyMemberArg'
+import { PlayerArg } from './PlayerArg'
+import { PlayerResourceArg } from './PlayerResourceArg'
+import { ProductionArg } from './ProductionArg'
+import { ResourceArg } from './ResourceArg'
+import { ResourceTypeArg } from './ResourceTypeArg'
 
 type Props = {
 	arg: CardEffectArgument
@@ -77,6 +79,10 @@ export const Arg = ({
 					onChange={onChange}
 				/>
 			)
+		case CardEffectTarget.CommitteeParty:
+			return <CommitteePartyArg arg={arg} onChange={onChange} />
+		case CardEffectTarget.CommitteePartyMember:
+			return <CommitteePartyMemberArg arg={arg} onChange={onChange} />
 		default:
 			return (
 				<div style={{ color: '#FFB0B7' }}>

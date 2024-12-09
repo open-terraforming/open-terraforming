@@ -460,3 +460,6 @@ export const applyDiff = (target: any, diff: any) => {
 		target[key] = value
 	})
 }
+
+export const sum = <T>(items: T[], selector: (item: T) => number) =>
+	items.reduce((acc, item) => acc + selector(item), 0)

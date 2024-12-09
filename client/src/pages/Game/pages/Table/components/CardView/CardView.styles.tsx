@@ -1,42 +1,80 @@
+import mars from '@/assets/mars-icon.png'
 import { media } from '@/styles/media'
 import { CardType } from '@shared/cards'
-import { rgba, lighten, darken } from 'polished'
+import { darken, lighten, rgba } from 'polished'
 import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from './components/Symbols'
-import mars from '@/assets/mars-icon.png'
 
 export const Head = styled.div`
 	display: flex;
 	align-items: center;
 	height: 2rem;
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: ${({ theme }) => rgba(theme.colors.background, 1)};
+		clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 0 100%);
+	}
 `
 
-export const HeadSymbols = styled(Symbols)<{ $ok?: boolean }>`
-	border: 0.2rem solid ${({ $ok }) => ($ok ? '#225e34' : '#ff3333')};
-	margin-left: 2.5rem;
-	background-color: ${({ $ok }) =>
-		$ok ? rgba(0, 255, 0, 0.1) : 'rgba(255, 0, 0, 0.5)'};
+export const HeadSymbols = styled(Symbols)<{
+	$ok?: boolean
+	$plain?: boolean
+	$faded?: boolean
+}>`
+	border: 0.2rem solid
+		${({ $ok, $plain }) => ($plain ? '#aaa' : $ok ? '#225e34' : '#ff3333')};
+	margin-left: 0.2rem;
+	background-color: ${({ $ok, $plain }) =>
+		$plain
+			? 'rgba(43, 40, 40, 0.1)'
+			: $ok
+				? 'rgba(0, 255, 0, 0.1)'
+				: 'rgba(255, 0, 0, 0.5)'};
 
 	> div {
 		padding-top: 0.1rem;
 		padding-bottom: 0.1rem;
 	}
+
+	${(props) =>
+		props.$faded &&
+		css`
+			opacity: 0.5;
+		`}
+
+	position: relative;
+	z-index: 2;
 `
 
 export const Action = styled.div<{
 	$hasSymbols: boolean
 	$highlight?: boolean
+	$highlightNoAnimation?: boolean
+	$fade?: boolean
 }>`
 	padding: 0.5rem;
 
-	${({ theme, $highlight }) =>
+	${({ $fade }) =>
+		$fade &&
+		css`
+			opacity: 0.5;
+		`}
+
+	${({ theme, $highlight, $highlightNoAnimation }) =>
 		$highlight
 			? css`
 					background: ${rgba(lighten(0.05, theme.colors.background), 1)};
 					border: 0.2rem solid ${lighten(0.1, theme.colors.border)};
-					animation-name: ${actionPop};
-					animation-duration: 0.5s;
-					animation-iteration-count: 1;
+					${!$highlightNoAnimation &&
+					css`
+						animation-name: ${actionPop};
+						animation-duration: 0.5s;
+						animation-iteration-count: 1;
+					`}
 				`
 			: css`
 					border: 0.1rem solid ${theme.colors.border};
@@ -82,35 +120,71 @@ export const ActionTitle = styled.div<{ $highlight?: boolean }>`
 				`};
 `
 
-export const Cost = styled.div<{ affordable: boolean }>`
+const CostBase = styled.div`
+	background: ${({ theme }) => rgba(theme.colors.background, 1)};
+	width: 2.5rem;
+	height: 2.5rem;
+	line-height: 2.5rem;
+	text-align: center;
+	border-radius: 4px;
+	font-size: 150%;
+	margin-top: -0.5rem;
+	margin-left: -0.5rem;
+	cursor: default;
+`
+
+export const AdjustedCost = styled(CostBase)<{ $affordable: boolean }>`
+	position: relative;
+	z-index: 2;
+	cursor: default;
+
+	${(props) =>
+		props.$affordable
+			? css`
+					border: 2px solid rgb(255, 255, 104);
+					color: rgb(255, 255, 104);
+				`
+			: css`
+					border: 2px solid rgba(255, 135, 135, 1);
+					color: rgba(255, 135, 135, 1);
+				`}
+`
+
+export const OriginalCost = styled(CostBase)<{
+	$affordable: boolean
+	$isAdjusted: boolean
+}>`
+	position: relative;
+	z-index: 1;
+
+	${(props) =>
+		props.$affordable
+			? css`
+					border: 2px solid rgb(255, 255, 104);
+					color: rgb(255, 255, 104);
+				`
+			: css`
+					border: 2px solid rgba(255, 135, 135, 1);
+					color: rgba(255, 135, 135, 1);
+				`}
+
+	${(props) =>
+		props.$isAdjusted &&
+		(props.$affordable
+			? css`
+					border: 2px solid rgb(121, 121, 51);
+					color: rgb(121, 121, 51);
+				`
+			: css`
+					border: 2px solid #b45050;
+					color: #b45050;
+				`)}
+`
+
+export const Cost = styled.div`
 	height: 2rem;
-
-	> div {
-		background: ${({ theme }) => rgba(theme.colors.background, 1)};
-
-		position: absolute;
-
-		${(props) =>
-			props.affordable
-				? css`
-						border: 2px solid rgb(255, 255, 104);
-						color: rgb(255, 255, 104);
-					`
-				: css`
-						border: 2px solid rgba(255, 135, 135, 1);
-						color: rgba(255, 135, 135, 1);
-					`}
-
-		width: 2.5rem;
-		height: 2.5rem;
-		line-height: 2.5rem;
-		text-align: center;
-		border-radius: 4px;
-		font-size: 150%;
-		float: left;
-		margin-top: -0.5rem;
-		margin-left: -0.5rem;
-	}
+	position: relative;
+	z-index: 2;
 `
 
 export const Categories = styled.div`
@@ -128,6 +202,8 @@ export const Title = styled.div`
 	font-size: 100%;
 	margin-left: -1px;
 	margin-right: -1px;
+	position: relative;
+	z-index: 1;
 `
 
 export const Description = styled.div`
@@ -137,6 +213,8 @@ export const Description = styled.div`
 	flex-grow: 1;
 	font-size: 85%;
 	text-align: center;
+	background: ${({ theme }) => rgba(theme.colors.background, 1)};
+	clip-path: polygon(0 0, 100% 0, 100% 100%, 7px 100%, 0 calc(100% - 7px));
 
 	> div {
 		margin-bottom: 0.25rem;
@@ -154,6 +232,7 @@ export const VP = styled.div<{ $corporation?: boolean }>`
 					position: absolute;
 					top: 2.5rem;
 					right: 0.5rem;
+					float: right;
 				`
 			: css`
 					clear: both;
@@ -186,6 +265,9 @@ export const Image = styled.div`
 	background-repeat: no-repeat;
 	flex-shrink: 0;
 	flex-grow: 0;
+	position: relative;
+	z-index: 1;
+	margin-bottom: 0.2rem;
 `
 
 type ContainerCtx = {
@@ -198,10 +280,28 @@ type ContainerCtx = {
 }
 
 export const Container = styled.div<ContainerCtx>`
-	border: 0.2rem solid
-		${(props) =>
+	padding: 0.2rem;
+	position: relative;
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: ${(props) =>
 			darken(props.$faded ? 0.3 : 0, props.theme.colors.cards[props.type])};
-	background: ${({ theme }) => rgba(theme.colors.background, 1)};
+		clip-path: polygon(
+			0 0,
+			calc(100% - 7px) 0,
+			100% 7px,
+			100% 100%,
+			7px 100%,
+			0 calc(100% - 7px)
+		);
+		z-index: 0;
+	}
+
+	z-index: 1;
+	box-sizing: border-box;
 	width: 240px;
 	flex-shrink: 0;
 	min-width: 0;
@@ -243,21 +343,10 @@ export const Container = styled.div<ContainerCtx>`
 			width: 300px;
 			height: 200px;
 			max-height: 200px;
-			display: block;
 
 			${Title} {
-				float: left;
 				margin-left: -1px;
 				margin-top: -1px;
-			}
-
-			${Head} {
-				float: right;
-			}
-
-			${Description} {
-				clear: both;
-				max-height: 150px;
 			}
 		`}
 
@@ -294,4 +383,12 @@ export const Container = styled.div<ContainerCtx>`
 
 export const FadedSymbols = styled(Symbols)`
 	opacity: 0.5;
+`
+
+export const CorporationTitle = styled.div`
+	display: flex;
+
+	${Head} {
+		flex: 1;
+	}
 `

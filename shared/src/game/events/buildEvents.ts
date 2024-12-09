@@ -1,10 +1,15 @@
-import { CardsLookupApi, CardType, GameProgress, Resource } from '@shared/cards'
+import { CardsLookupApi, GameProgress, Resource } from '@shared/cards'
 import { resourceProduction } from '@shared/cards/utils'
-import { GameState, GameStateValue, GridCellContent } from '@shared/index'
+import { GameState, GridCellContent } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { isMarsTerraformed } from '@shared/utils'
+import { groupBy } from '@shared/utils'
 import { objDiff } from '@shared/utils/collections'
-import { EventType, GameEvent } from './eventTypes'
+import { isMarsTerraformed } from '@shared/utils/isMarsTerraformed'
+import {
+	CommitteePartyDelegateChange,
+	EventType,
+	GameEvent,
+} from './eventTypes'
 
 const resources: Resource[] = [
 	'money',
@@ -16,26 +21,6 @@ const resources: Resource[] = [
 ]
 
 const progress: GameProgress[] = ['oxygen', 'temperature', 'venus']
-
-const EVENTS_ATE_BY_CARD_CHANGES = [
-	EventType.CardsReceived,
-	EventType.ResourcesChanged,
-	EventType.ProductionChanged,
-	EventType.CardResourceChanged,
-	EventType.GameProgressChanged,
-	EventType.RatingChanged,
-	EventType.ColonyActivated,
-	EventType.PlayerTradeFleetsChange,
-	EventType.TileAcquired,
-]
-
-const EVENTS_WITH_CHANGES = [
-	EventType.CardPlayed,
-	EventType.CardUsed,
-	EventType.StandardProjectBought,
-	EventType.ColonyBuilt,
-	EventType.ColonyTrading,
-] as const
 
 export const buildEvents = (lastGame: GameState, game: GameState) => {
 	const diff = objDiff(lastGame, game)
@@ -75,38 +60,10 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 				return
 			}
 
-			const oldColony = lastGame.colonies[+colonyIndex]
-			const newColony = game.colonies[+colonyIndex]
-
-			if (colony.playersAtSteps) {
-				const players = Object.entries(colony.playersAtSteps)
-
-				for (const [, playerId] of players) {
-					newEvents.push({
-						type: EventType.ColonyBuilt,
-						playerId,
-						colony: +colonyIndex,
-						state: { ...newColony },
-						changes: [],
-					})
-				}
-			}
-
 			if (colony.active) {
 				newEvents.push({
 					type: EventType.ColonyActivated,
 					colony: +colonyIndex,
-				})
-			}
-
-			if (typeof colony.currentlyTradingPlayer === 'number') {
-				newEvents.push({
-					type: EventType.ColonyTrading,
-					playerId: colony.currentlyTradingPlayer,
-					colony: +colonyIndex,
-					at: oldColony.step,
-					state: { ...newColony },
-					changes: [],
 				})
 			}
 
@@ -115,27 +72,6 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 					type: EventType.ColonyTradingStepChanged,
 					colony: +colonyIndex,
 					change: colony.step - lastGame.colonies[+colonyIndex].step,
-				})
-			}
-		})
-	}
-
-	if (diff.standardProjects) {
-		Object.entries(diff.standardProjects).forEach(([index, project]) => {
-			const oldProject = lastGame.standardProjects[+index]
-
-			if (!oldProject) {
-				return
-			}
-
-			if (project.usedByPlayerIds) {
-				Object.values(project.usedByPlayerIds).forEach((playerId) => {
-					newEvents.push({
-						type: EventType.StandardProjectBought,
-						playerId,
-						project: oldProject.type,
-						changes: [],
-					})
 				})
 			}
 		})
@@ -157,51 +93,6 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 			if (gameChanges) {
 				if (gameChanges.usedCards) {
-					// First add "card played" event before any other changes
-					Object.entries(gameChanges.usedCards).forEach(
-						([cardIndex, cardChanges]) => {
-							if (!cardChanges) {
-								return
-							}
-
-							const oldCard = player.usedCards[parseInt(cardIndex)]
-							const newCard = newPlayer.usedCards[parseInt(cardIndex)]
-
-							if (!oldCard) {
-								if (
-									CardsLookupApi.get(newCard.code).type !==
-										CardType.Corporation &&
-									CardsLookupApi.get(newCard.code).type !== CardType.Prelude
-								) {
-									playerEvents.push({
-										type: EventType.CardPlayed,
-										playerId: player.id,
-										card: newCard.code,
-										changes: [],
-									})
-								}
-							} else {
-								const card = CardsLookupApi.get(oldCard.code)
-
-								if (
-									cardChanges.played === true &&
-									card.type === CardType.Action
-								) {
-									playerEvents.push({
-										type: EventType.CardUsed,
-										playerId: player.id,
-										card: oldCard.code,
-										index: parseInt(cardIndex),
-										changes: [],
-										state: {
-											...newCard,
-										},
-									})
-								}
-							}
-						},
-					)
-
 					// Next add card resource changes
 					Object.entries(gameChanges.usedCards).forEach(
 						([cardIndex, cardChanges]) => {
@@ -383,23 +274,92 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 		})
 	}
 
-	if (diff.state === GameStateValue.GenerationEnding) {
-		newEvents.push({
-			type: EventType.ProductionPhase,
-		})
-	}
+	if (diff.committee) {
+		if (diff.committee.parties) {
+			for (const [index, party] of Object.entries(diff.committee.parties)) {
+				const prevParty = lastGame.committee.parties[+index]
+				const nextParty = game.committee.parties[+index]
 
-	const changes = newEvents.filter((e) =>
-		EVENTS_ATE_BY_CARD_CHANGES.includes(e.type),
-	)
+				if (!prevParty) {
+					continue
+				}
 
-	for (const eventTypeWithChanges of EVENTS_WITH_CHANGES) {
-		const eventWithChanges = newEvents.find(
-			(e) => e.type === eventTypeWithChanges,
-		)
+				if (party.members || party.leader) {
+					const newMembers = groupBy(
+						nextParty.members.map((m) => m.playerId?.id ?? null),
+						(m) => m,
+					)
 
-		if (eventWithChanges && 'changes' in eventWithChanges) {
-			eventWithChanges.changes = changes
+					const oldMembers = groupBy(
+						prevParty.members.map((m) => m.playerId?.id ?? null),
+						(m) => m,
+					)
+
+					if (prevParty.leader) {
+						const oldLeaderId = prevParty.leader?.playerId?.id ?? null
+
+						oldMembers.set(oldLeaderId, [
+							...(oldMembers.get(oldLeaderId) ?? []),
+							oldLeaderId,
+						])
+					}
+
+					if (nextParty.leader) {
+						const newLeaderId = nextParty.leader?.playerId?.id ?? null
+
+						newMembers.set(newLeaderId, [
+							...(newMembers.get(newLeaderId) ?? []),
+							newLeaderId,
+						])
+					}
+
+					const changes = new Map<number | null, number>()
+
+					for (const [playerId, members] of newMembers) {
+						if (!oldMembers.has(playerId)) {
+							changes.set(playerId, members.length)
+						} else {
+							const prevCount = oldMembers.get(playerId)!.length
+
+							if (prevCount !== members.length) {
+								changes.set(playerId, members.length - prevCount)
+							}
+						}
+					}
+
+					for (const [playerId, members] of oldMembers) {
+						if (!newMembers.has(playerId)) {
+							changes.set(playerId, -members.length)
+						}
+					}
+
+					newEvents.push(
+						...Array.from(changes).map(
+							([playerId, change]): CommitteePartyDelegateChange => ({
+								type: EventType.CommitteePartyDelegateChange,
+								partyCode: prevParty.code,
+								playerId: playerId ?? null,
+								change,
+							}),
+						),
+					)
+				}
+
+				if (party.leader) {
+					newEvents.push({
+						type: EventType.CommitteePartyLeaderChanged,
+						partyCode: prevParty.code,
+						playerId: party.leader.playerId?.id ?? null,
+					})
+				}
+			}
+		}
+
+		if (diff.committee.dominantParty) {
+			newEvents.push({
+				type: EventType.CommitteeDominantPartyChanged,
+				partyCode: diff.committee.dominantParty,
+			})
 		}
 	}
 

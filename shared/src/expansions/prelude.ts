@@ -1,6 +1,6 @@
 import { expansion, ExpansionType } from './types'
 import { CardSpecial, CardsLookupApi, CardType } from '../cards'
-import { shuffle } from '../utils'
+import { shuffle } from '@shared/utils/shuffle'
 
 export const preludeExpansion = expansion({
 	type: ExpansionType.Prelude,

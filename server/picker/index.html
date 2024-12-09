@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#ffffff" />
+		<title>Card picker</title>
+		<link href="lib/croppr.min.css" rel="stylesheet"/>
+		<style>
+			body { font-family: Arial, sans-serif; }
+
+			.progress { background-color: #aaa; border-radius: 5px; overflow: hidden; margin-bottom: 10px; }
+			.progress .inner { padding: 0.5rem; background-color: rgb(73, 214, 73); text-align: right; box-sizing: border-box; }
+
+			input[type=file] {
+				display: block;
+				padding: 50px;
+				background-color: #eee;
+				border: 1px dashed #ccc;
+				margin: 1rem auto;
+				box-sizing: border-box;
+				width: 90%;
+			}
+
+			#save {
+				margin-left: 20px;
+				padding: 20px;
+			}
+		</style>
+		
+		<script src="lib/croppr.min.js"></script>
+	</head>
+	<body>
+		<div class="progress"><div class="inner" id="progress"></div></div>
+		<div style="display: flex"><h2 id="card_title">...</h2> <button id="save">Save</button></div>
+		<input type="file" id="file" /> 
+		<img id="image" />
+		<iframe id="iframe" width="100%" height="800px"></iframe>
+	</body>
+	<script type="text/javascript">
+		const $iframe = document.getElementById('iframe');
+		const $cardTitle = document.getElementById('card_title');
+		const $fileInput = document.getElementById('file');
+		const $saveButton = document.getElementById('save');
+		const $image = document.getElementById('image');
+		const $progress = document.getElementById('progress');
+		
+		const getNextCard = async () => {
+			const card = await fetch('/api/card/next');
+			const cardJson = await card.json();
+			return cardJson.card;
+		}
+
+		const saveCardImage = async (code, imageAsBase64, cutX, cutY, cutW, cutH) => {
+			const response = await fetch(`/api/card/${code}/image`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					imageData: imageAsBase64,
+					cutX,
+					cutY,
+					cutW,
+					cutH
+				})
+			});
+
+			return response.json();
+		}
+
+		const updateProgress = async () => {
+			const response = await fetch('/api/progress');
+			const progress = await response.json();
+
+			$progress.style.width = `${(progress.done.length / progress.all.length)*100}%`;
+			$progress.innerText = `${progress.done.length} / ${progress.all.length}`;
+		}
+
+		let currentCard = null;
+
+		const loadCard = async () => {
+			currentCard = await getNextCard();
+			
+			const cardCode = currentCard.code
+			$cardTitle.innerText = cardCode
+			$fileInput.value = ''
+
+			if (croppr) {
+				croppr.destroy();
+				croppr = null;
+				$image.src = '';
+			}
+		}
+
+		let currentCrop = {}
+		let croppr
+
+		$fileInput.onchange = async (event) => {
+			const file = event.target.files[0];
+			const reader = new FileReader();
+			reader.onload = async (event) => {
+				$image.src = event.target.result;
+				$image.onload = async () => {
+					if (croppr) {
+						croppr.destroy();
+					}
+
+					croppr = new Croppr($image, {
+						aspectRatio: currentCard.type === 5 ? 1 : 0.5,
+						onCropEnd: async (data) => {
+							currentCrop = {...data}
+						}
+					});
+					croppr.reset();
+				}
+			}
+			reader.readAsDataURL(file);
+		}
+
+		$saveButton.onclick = async () => {
+			const cutX = currentCrop.x;
+			const cutY = currentCrop.y;
+			const cutW = currentCrop.width;
+			const cutH = currentCrop.height;
+			const imageAsBase64 = $image.src;
+			const cardCode = $cardTitle.innerText;
+			await saveCardImage(cardCode, imageAsBase64, cutX, cutY, cutW, cutH);
+			loadCard();
+			updateProgress();
+		}
+
+		async function loadIframeUrl() {
+			const response = await fetch('/api/config');
+			const config = await response.json();
+
+			$iframe.src = config.iframePath;
+		}
+
+		loadIframeUrl();
+		loadCard();
+		updateProgress();
+	</script>
+</html>

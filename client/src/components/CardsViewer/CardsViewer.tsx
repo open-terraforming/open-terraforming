@@ -1,5 +1,7 @@
 import { useLocale } from '@/context/LocaleContext'
 import { StatelessCardView } from '@/pages/Game/pages/Table/components/CardView/StatelessCardView'
+import { media } from '@/styles/media'
+import { useAppStore } from '@/utils/hooks'
 import {
 	CardCategory,
 	CardsLookupApi,
@@ -13,8 +15,8 @@ import { Flex } from '../Flex/Flex'
 import { Modal } from '../Modal/Modal'
 import { CardsSpecialFilter } from './components/CardsSpecialFilter'
 import { CardsTagsFilter } from './components/CardsTagsFilter'
-import { media } from '@/styles/media'
 import { CardsTypeFilter } from './components/CardsTypeFilter'
+import { CardCheatAddModal } from './components/CardCheatAddModal'
 
 type Props = {
 	onClose: () => void
@@ -26,6 +28,10 @@ export const CardsViewer = ({ onClose }: Props) => {
 	const [tags, setTags] = useState<CardCategory[]>([])
 	const [specials, setSpecials] = useState<CardSpecial[]>([])
 	const [types, setTypes] = useState<CardType[]>([])
+	const [cheatAddCardCode, setCheatAddCardCode] = useState<string>()
+
+	const player = useAppStore((state) => state.game.player)
+	const isAdmin = player.admin
 
 	const debouncedSearch = useDebouncedValue(search, 100)
 
@@ -90,6 +96,14 @@ export const CardsViewer = ({ onClose }: Props) => {
 		[allCards, debouncedSearch, tags, specials, types],
 	)
 
+	const handleCardClick = (code: string) => {
+		if (!isAdmin) {
+			return
+		}
+
+		setCheatAddCardCode(code)
+	}
+
 	return (
 		<Modal
 			open
@@ -97,6 +111,13 @@ export const CardsViewer = ({ onClose }: Props) => {
 			onClose={onClose}
 			contentStyle={{ minWidth: '1100px', maxWidth: '1100px' }}
 		>
+			{cheatAddCardCode && (
+				<CardCheatAddModal
+					code={cheatAddCardCode}
+					onClose={() => setCheatAddCardCode(undefined)}
+				/>
+			)}
+
 			<StyledFlex>
 				<div style={{ flex: 1, marginRight: '2rem' }}>
 					<SearchField
@@ -123,7 +144,8 @@ export const CardsViewer = ({ onClose }: Props) => {
 						card={card}
 						affordable={true}
 						isPlayable={true}
-						hover={false}
+						evaluate={false}
+						onClick={isAdmin ? () => handleCardClick(card.code) : undefined}
 					/>
 				))}
 			</StyledContainer>

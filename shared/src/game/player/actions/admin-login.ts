@@ -1,9 +1,9 @@
 import { adminLogin } from '@shared/index'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof adminLogin>['data']
 
-export class AdminLoginAction extends PlayerBaseAction<Args> {
+export class AdminLoginAction extends PlayerBaseActionHandler<Args> {
 	states = []
 	gameStates = []
 

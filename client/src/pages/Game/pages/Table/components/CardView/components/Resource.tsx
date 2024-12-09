@@ -24,6 +24,15 @@ export const Resource = ({ card, state, onCorporation }: Props) => {
 }
 
 const Container = styled.div<{ $onCorporation?: boolean }>`
+	background: ${({ theme }) => theme.colors.background};
+	color: #fff;
+	display: flex;
+	align-items: center;
+
+	> span {
+		margin-right: 0.5rem;
+	}
+
 	${({ $onCorporation }) =>
 		!$onCorporation
 			? css`
@@ -33,17 +42,10 @@ const Container = styled.div<{ $onCorporation?: boolean }>`
 					float: left;
 				`
 			: css`
-					margin-right: 0.5rem;
 					padding: 0.35rem 0.5rem;
-					float: right;
+					top: 3rem;
+					left: 1.1rem;
+					position: absolute;
+					background: ${({ theme }) => theme.colors.border};
 				`}
-
-	background: ${({ theme }) => theme.colors.background};
-	color: #fff;
-	display: flex;
-	align-items: center;
-
-	> span {
-		margin-right: 0.5rem;
-	}
 `

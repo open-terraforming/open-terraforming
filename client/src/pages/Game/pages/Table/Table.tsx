@@ -17,11 +17,12 @@ import { Spectator } from './components/Spectator/Spectator'
 import { StartPicker } from './components/StartPicker/StartPicker'
 import { SolarPhaseTerraformPicker } from './components/SolarPhaseTerraformPicker/SolarPhaseTerraformPicker'
 import { ColoniesModal } from './components/ColoniesModal/ColoniesModal'
-import { ColoniesLookupApi } from '@shared/expansions/colonies/ColoniesLookupApi'
 import { useApi } from '@/context/ApiContext'
 import { changeColonyStep } from '@shared/actions'
 import { AddCardResourceModal } from './components/Controls/components/AddCardResourceModal'
 import { GameModalsProvider } from '@/context/GameModalsContext'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
+import { DiscardCardsModal } from './components/DiscardCardsModal'
 
 const Table = () => {
 	const pending = useAppStore((state) => state.game.pendingAction)
@@ -79,17 +80,19 @@ const Table = () => {
 				{pending?.type === PlayerActionType.BuildColony && (
 					<ColoniesModal
 						freeColonizePick
+						disableClose
 						allowDuplicateColonies={pending.data.allowMoreColoniesPerColony}
 						onClose={() => null}
 					/>
 				)}
 
 				{pending?.type === PlayerActionType.TradeWithColony && (
-					<ColoniesModal freeTradePick onClose={() => null} />
+					<ColoniesModal freeTradePick disableClose onClose={() => null} />
 				)}
 
 				{pending?.type === PlayerActionType.ChangeColonyStep && (
 					<ColoniesModal
+						disableClose
 						customAction={(index) => {
 							const colony = colonies[index]
 							const colonyInfo = ColoniesLookupApi.get(colony.code)
@@ -112,6 +115,10 @@ const Table = () => {
 
 				{pending?.type === PlayerActionType.AddCardResource && (
 					<AddCardResourceModal pendingAction={pending} />
+				)}
+
+				{pending?.type === PlayerActionType.DiscardCards && (
+					<DiscardCardsModal count={pending.data.count} />
 				)}
 
 				<GameContainer>

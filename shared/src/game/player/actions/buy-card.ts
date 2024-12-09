@@ -4,13 +4,18 @@ import {
 	emptyCardState,
 	updatePlayerResource,
 } from '@shared/cards/utils'
-import { buyCard, GameStateValue, PlayerStateValue } from '@shared/index'
-import { PlayerBaseAction } from '../action'
+import {
+	buyCard,
+	EventType,
+	GameStateValue,
+	PlayerStateValue,
+} from '@shared/index'
 import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
+import { PlayerBaseActionHandler } from '../action'
 
 type Args = ReturnType<typeof buyCard>['data']
 
-export class BuyCardAction extends PlayerBaseAction<Args> {
+export class BuyCardAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
@@ -115,6 +120,8 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 
 		this.logger.log(`Bought ${card.code} with`, JSON.stringify(args))
 
+		const collector = this.startCollectingEvents()
+
 		updatePlayerResource(this.player, 'money', -Math.max(0, cost))
 		updatePlayerResource(this.player, 'titan', -useTitan)
 		updatePlayerResource(this.player, 'ore', -useOre)
@@ -135,6 +142,13 @@ export class BuyCardAction extends PlayerBaseAction<Args> {
 		})
 
 		this.parent.game.checkMilestones()
+
+		collector.collectAndPush((changes) => ({
+			type: EventType.CardPlayed,
+			playerId: this.player.id,
+			card: card.code,
+			changes,
+		}))
 
 		if (!this.pendingAction) {
 			this.actionPlayed()

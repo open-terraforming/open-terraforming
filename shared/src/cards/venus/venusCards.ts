@@ -4,9 +4,15 @@ import {
 	cardResourcesAnywhereCondition,
 	gameProgressConditionMax,
 	gameProgressConditionMin,
+	joinedCardCountCondition,
 	terraformRatingMin,
 } from '../conditions'
+import { moneyOrResPayment } from '../effects/moneyOrResPayment'
+import { resourceAsPaymentForTags } from '../effects/resourceAsPaymentForTags'
 import {
+	anyCardAnyResourceChange,
+	anyCardResourceChange,
+	anyCardResourceChangePerTag,
 	cardResourceAnyAmountChange,
 	cardResourceChange,
 	discardCard,
@@ -15,9 +21,6 @@ import {
 	getTopCards,
 	hasCardTagsVoidEffect,
 	joinedEffects,
-	anyCardAnyResourceChange,
-	anyCardResourceChange,
-	anyCardResourceChangePerTag,
 	otherPlayersGetTopCards,
 	placeCity,
 	placeTile,
@@ -27,15 +30,13 @@ import {
 	resourceChange,
 	resourceChangeByArg,
 	resourcesForTiles,
-	deprecatedTagPriceChange,
 	terraformRatingChange,
 } from '../effectsGrouped'
 import { cardResourcePerCardPlayed } from '../passive-effects'
-import { resourceAsPaymentForTags } from '../effects/resourceAsPaymentForTags'
+import { tagPriceChange } from '../passive-effects/tagPriceChange'
 import { Card, CardCategory, CardSpecial, CardType } from '../types'
 import { card, prependRightArrow, withRightArrow } from '../utils'
 import { vpsForCardResources } from '../vps'
-import { moneyOrResPayment } from '../effects/moneyOrResPayment'
 
 export const venusCards: Card[] = [
 	card({
@@ -387,9 +388,11 @@ export const venusCards: Card[] = [
 		categories: [],
 		special: [CardSpecial.Venus],
 		conditions: [
-			cardCategoryCountCondition(CardCategory.Venus, 1),
-			cardCategoryCountCondition(CardCategory.Earth, 1),
-			cardCategoryCountCondition(CardCategory.Jupiter, 1),
+			joinedCardCountCondition([
+				{ category: CardCategory.Venus, value: 1 },
+				{ category: CardCategory.Earth, value: 1 },
+				{ category: CardCategory.Jupiter, value: 1 },
+			]),
 		],
 		victoryPoints: 2,
 	}),
@@ -419,9 +422,11 @@ export const venusCards: Card[] = [
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Venus],
 		conditions: [
-			cardCategoryCountCondition(CardCategory.Venus, 1),
-			cardCategoryCountCondition(CardCategory.Earth, 1),
-			cardCategoryCountCondition(CardCategory.Jupiter, 1),
+			joinedCardCountCondition([
+				{ category: CardCategory.Venus, value: 1 },
+				{ category: CardCategory.Earth, value: 1 },
+				{ category: CardCategory.Jupiter, value: 1 },
+			]),
 		],
 		playEffects: [productionChange('ore', 2)],
 	}),
@@ -440,9 +445,11 @@ export const venusCards: Card[] = [
 		cost: 11,
 		categories: [CardCategory.Building],
 		conditions: [
-			cardCategoryCountCondition(CardCategory.Venus, 1),
-			cardCategoryCountCondition(CardCategory.Earth, 1),
-			cardCategoryCountCondition(CardCategory.Jupiter, 1),
+			joinedCardCountCondition([
+				{ category: CardCategory.Venus, value: 1 },
+				{ category: CardCategory.Earth, value: 1 },
+				{ category: CardCategory.Jupiter, value: 1 },
+			]),
 		],
 		playEffects: [terraformRatingChange(2)],
 	}),
@@ -493,9 +500,11 @@ export const venusCards: Card[] = [
 		categories: [],
 		special: [CardSpecial.Venus],
 		conditions: [
-			cardCategoryCountCondition(CardCategory.Venus, 1),
-			cardCategoryCountCondition(CardCategory.Earth, 1),
-			cardCategoryCountCondition(CardCategory.Jupiter, 1),
+			joinedCardCountCondition([
+				{ category: CardCategory.Venus, value: 1 },
+				{ category: CardCategory.Earth, value: 1 },
+				{ category: CardCategory.Jupiter, value: 1 },
+			]),
 		],
 		playEffects: [getTopCards(2)],
 	}),
@@ -653,7 +662,7 @@ export const venusCards: Card[] = [
 		cost: 9,
 		categories: [CardCategory.Venus, CardCategory.Space],
 		special: [CardSpecial.Venus],
-		playEffects: [deprecatedTagPriceChange(CardCategory.Venus, -2)],
+		passiveEffects: [tagPriceChange(CardCategory.Venus, -2)],
 	}),
 	card({
 		code: 'venusian_animals',

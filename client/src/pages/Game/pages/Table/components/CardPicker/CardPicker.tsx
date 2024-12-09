@@ -182,7 +182,8 @@ export const CardPicker = ({
 								<CardView
 									card={c}
 									selected={selected.includes(i)}
-									fade={false}
+									evaluateMode="sponsoring"
+									player={player}
 									onClick={
 										!loading
 											? () => {

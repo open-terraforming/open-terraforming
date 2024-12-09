@@ -1,6 +1,7 @@
 import { GameStateValue, PlayerStateValue } from '@shared/index'
 import { pickCardsAction } from '@shared/player-actions'
-import { drawCards, pushPendingAction } from '@shared/utils'
+import { drawCards } from '@shared/utils/drawCards'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { BaseGameState } from './base-game-state'
 
 export class ResearchPhaseGameState extends BaseGameState {

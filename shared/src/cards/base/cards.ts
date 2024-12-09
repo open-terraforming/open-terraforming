@@ -14,27 +14,26 @@ import {
 	ownedCellTypeCondition,
 	productionCondition,
 } from '../conditions'
+import { exchangeProduction } from '../effects/exchange-production'
+import { productionForTags } from '../effects/production-for-tags'
+import { voidEffect } from '../effects/voidEffect'
 import {
 	addResourceToCard,
+	anyCardResourceChange,
 	cardExchange,
-	deprecatedCardPriceChange,
 	cardResourceChange,
 	cardsForResource,
-	changeProgressConditionBonus,
 	claimCell,
 	convertResource,
 	convertTopCardToCardResource,
 	doNothing,
 	duplicateProduction,
-	earthCardPriceChange,
 	effectChoice,
 	exchangeResources,
 	gameProcessChange,
 	getTopCards,
 	joinedEffects,
 	moneyOrResForOcean,
-	orePriceChange,
-	anyCardResourceChange,
 	pickTopCards,
 	placeOcean,
 	placeTile,
@@ -51,33 +50,33 @@ import {
 	resourceForCities,
 	resourcesForPlayersTags,
 	resourcesForTiles,
-	spaceCardPriceChange,
 	terraformRatingChange,
 	terraformRatingForTags,
-	titanPriceChange,
 	triggerCardResourceChange,
 } from '../effectsGrouped'
-import { exchangeProduction } from '../effects/exchange-production'
-import { productionForTags } from '../effects/production-for-tags'
-import { voidEffect } from '../effects/voidEffect'
 import {
 	cardExchangeEffect,
 	cardResourcePerAnybodyTilePlaced,
 	cardResourcePerCardPlayed,
 	cardResourcePerTilePlaced,
+	changeProgressConditionBonus,
 	changeResourceFromNeighbor,
 	emptyPassiveEffect,
+	oneTimeCardPriceChange,
+	oneTimeProgressBonus,
+	orePriceChange,
 	playWhenCard,
 	productionChangeAfterPlace,
 	productionPerPlacedTile,
-	resetCardPriceChange,
-	resetProgressBonus,
 	resourceForStandardProject,
 	resourcePerCardPlayed,
 	resourcePerPlacedTile,
+	titanPriceChange,
 } from '../passive-effects'
+import { cardPriceChange } from '../passive-effects/cardPriceChange'
+import { tagPriceChange } from '../passive-effects/tagPriceChange'
 import { Card, CardCategory, CardSpecial, CardType, SymbolType } from '../types'
-import { card, noDesc, withRightArrow } from '../utils'
+import { card, withRightArrow } from '../utils'
 import {
 	minCardResourceToVP,
 	vpsForAdjacentTiles,
@@ -301,12 +300,12 @@ export const baseCards: Card[] = [
 		],
 		special: [CardSpecial.CorporationsEra],
 		playEffects: [
-			deprecatedCardPriceChange(-1),
 			placeTile({
 				type: GridCellContent.City,
 				conditions: [PlacementCode.NoOceans, PlacementCode.Isolated],
 			}),
 		],
+		passiveEffects: [cardPriceChange(-1)],
 	}),
 	card({
 		code: 'phobos_space_haven',
@@ -360,7 +359,7 @@ export const baseCards: Card[] = [
 		cost: 10,
 		categories: [CardCategory.Space],
 		special: [CardSpecial.CorporationsEra],
-		playEffects: [spaceCardPriceChange(-2)],
+		passiveEffects: [tagPriceChange(CardCategory.Space, -2)],
 		victoryPoints: 1,
 	}),
 	card({
@@ -850,7 +849,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Earth],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 2,
-		playEffects: [deprecatedCardPriceChange(-2)],
+		passiveEffects: [cardPriceChange(-2)],
 	}),
 	card({
 		code: 'advanced_alloys',
@@ -858,7 +857,7 @@ export const baseCards: Card[] = [
 		cost: 9,
 		categories: [CardCategory.Science],
 		special: [CardSpecial.CorporationsEra],
-		playEffects: [orePriceChange(1), titanPriceChange(1)],
+		passiveEffects: [orePriceChange(1), titanPriceChange(1)],
 	}),
 	card({
 		code: 'birds',
@@ -948,7 +947,8 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Power, CardCategory.Science],
 		special: [CardSpecial.CorporationsEra],
 		conditions: [cardCategoryCountCondition(CardCategory.Science, 4)],
-		playEffects: [productionChange('energy', 4), spaceCardPriceChange(-2)],
+		playEffects: [productionChange('energy', 4)],
+		passiveEffects: [tagPriceChange(CardCategory.Space, -2)],
 	}),
 	card({
 		code: 'giant_ice_asteroid',
@@ -1088,7 +1088,8 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Power, CardCategory.Science],
 		special: [CardSpecial.CorporationsEra],
 		conditions: [cardCategoryCountCondition(CardCategory.Science, 5)],
-		playEffects: [spaceCardPriceChange(-2), productionChange('energy', 6)],
+		playEffects: [productionChange('energy', 6)],
+		passiveEffects: [tagPriceChange(CardCategory.Space, -2)],
 	}),
 	card({
 		code: 'physics_complex',
@@ -1194,7 +1195,7 @@ export const baseCards: Card[] = [
 		cost: 1,
 		categories: [CardCategory.Earth],
 		special: [CardSpecial.CorporationsEra],
-		playEffects: [earthCardPriceChange(-3)],
+		passiveEffects: [tagPriceChange(CardCategory.Earth, -3)],
 	}),
 	card({
 		code: 'acquired_company',
@@ -1692,7 +1693,7 @@ export const baseCards: Card[] = [
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: 3,
 		conditions: [cardCategoryCountCondition(CardCategory.Science, 7)],
-		playEffects: [deprecatedCardPriceChange(-2)],
+		passiveEffects: [cardPriceChange(-2)],
 	}),
 	card({
 		code: 'investment_loan',
@@ -1715,7 +1716,7 @@ export const baseCards: Card[] = [
 		cost: 12,
 		categories: [CardCategory.Science],
 		victoryPoints: 1,
-		playEffects: [changeProgressConditionBonus(2)],
+		passiveEffects: [changeProgressConditionBonus(2)],
 	}),
 	card({
 		code: 'caretaker_contract',
@@ -1839,11 +1840,8 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Space],
 		victoryPoints: 1,
 		conditions: [gameProgressConditionMin('oxygen', 5)],
-		playEffects: [
-			spaceCardPriceChange(-2),
-			productionChange('energy', -1),
-			productionChange('money', 2),
-		],
+		playEffects: [productionChange('energy', -1), productionChange('money', 2)],
+		passiveEffects: [tagPriceChange(CardCategory.Space, -2)],
 	}),
 	card({
 		code: 'import_of_advanced_ghg',
@@ -2151,8 +2149,7 @@ export const baseCards: Card[] = [
 		categories: [CardCategory.Event],
 		special: [CardSpecial.CorporationsEra],
 		victoryPoints: -1,
-		playEffects: [noDesc(deprecatedCardPriceChange(-8))],
-		passiveEffects: [resetCardPriceChange(-8)],
+		passiveEffects: [oneTimeCardPriceChange(-8)],
 	}),
 	card({
 		code: 'lagrange_observatory',
@@ -2265,8 +2262,7 @@ export const baseCards: Card[] = [
 		type: CardType.Event,
 		cost: 4,
 		categories: [CardCategory.Event, CardCategory.Science],
-		playEffects: [noDesc(changeProgressConditionBonus(2))],
-		passiveEffects: [resetProgressBonus(2)],
+		passiveEffects: [oneTimeProgressBonus(2)],
 	}),
 	card({
 		code: 'medical_lab',

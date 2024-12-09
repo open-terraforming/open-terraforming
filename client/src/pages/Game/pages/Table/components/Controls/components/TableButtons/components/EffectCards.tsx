@@ -14,9 +14,14 @@ export const EffectCards = ({ onClick }: Props) => {
 
 	const cards = useMemo(
 		() =>
-			player.usedCards.filter(
-				(state) => CardsLookupApi.get(state.code).type === CardType.Effect,
-			),
+			player.usedCards.filter((state) => {
+				const info = CardsLookupApi.get(state.code)
+
+				return (
+					info.type === CardType.Effect ||
+					(info.type === CardType.Corporation && info.passiveEffects.length > 0)
+				)
+			}),
 		[player],
 	)
 
@@ -33,7 +38,15 @@ export const EffectCards = ({ onClick }: Props) => {
 			onMouseOver={() => setOpened(true)}
 			onMouseLeave={() => setOpened(false)}
 		>
-			<CardsView cards={cards} play open={opened} openable={false} />
+			<CardsView
+				cards={cards}
+				play
+				open={opened}
+				openable={false}
+				hideAdjustedPrice
+				highlightAction
+				highlightActionNoAnimation
+			/>
 		</CardsCounter>
 	)
 }

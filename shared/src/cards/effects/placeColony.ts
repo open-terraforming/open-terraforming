@@ -1,5 +1,5 @@
 import { buildColonyAction } from '@shared/player-actions'
-import { pushPendingAction } from '@shared/utils'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { SymbolType } from '../types'
 import { effect } from './types'
 

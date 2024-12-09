@@ -8,7 +8,8 @@ import {
 } from './gameState'
 import { canPlaceAnywhere } from './placements'
 import { placeTileAction } from './player-actions'
-import { keyMap, pushPendingAction } from './utils'
+import { pushPendingAction } from './utils/pushPendingAction'
+import { keyMap } from './utils/keyMap'
 
 export interface StandardProjectContext {
 	player: PlayerState
@@ -83,6 +84,7 @@ const ProjectsList = [
 		conditions: [({ game }) => game.temperature < game.map.temperature],
 		execute: ({ game, player }) => {
 			player.terraformRating += 1
+			player.terraformRatingIncreasedThisGeneration = true
 			game.temperature += 1
 		},
 	}),
@@ -132,7 +134,7 @@ const ProjectsList = [
 	}),
 	project({
 		type: StandardProjectType.GreeneryForPlants,
-		description: 'Greenery using pants',
+		description: 'Greenery using plants',
 		cost: ({ player }) => player.greeneryCost,
 		resource: 'plants',
 		conditions: [canPlaceTile(GridCellContent.Forest)],
@@ -153,6 +155,7 @@ const ProjectsList = [
 		conditions: [({ game }) => game.temperature < game.map.temperature],
 		execute: ({ game, player }) => {
 			player.terraformRating += 1
+			player.terraformRatingIncreasedThisGeneration = true
 			game.temperature += 1
 		},
 	}),
@@ -163,6 +166,7 @@ const ProjectsList = [
 		conditions: [canIncreaseProgress('venus')],
 		execute: ({ game, player }) => {
 			player.terraformRating += 1
+			player.terraformRatingIncreasedThisGeneration = true
 			game.venus += 1
 		},
 	}),

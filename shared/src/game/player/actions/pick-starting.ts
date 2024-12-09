@@ -7,16 +7,16 @@ import {
 	PlayerStateValue,
 } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { f } from '@shared/utils'
+import { f } from '@shared/utils/f'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
-import { PlayerBaseAction } from '../action'
+import { PlayerBaseActionHandler } from '../action'
 import { simulateCardPassiveEffectsOnStart } from '@shared/utils/simulateCardPassiveEffectsOnStart'
 import { deepCopy } from '@shared/utils/collections'
 import { buildEvents } from '@shared/game/events/buildEvents'
 
 type Args = ReturnType<typeof pickStarting>['data']
 
-export class PickStartingAction extends PlayerBaseAction<Args> {
+export class PickStartingAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Picking]
 	gameStates = [GameStateValue.Starting]
 

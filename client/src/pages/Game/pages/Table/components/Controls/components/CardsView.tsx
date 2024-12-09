@@ -1,5 +1,5 @@
 import { setTableState } from '@/store/modules/table'
-import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { useAppDispatch, useAppStore, usePlayerState } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import { rgba } from 'polished'
@@ -12,6 +12,9 @@ type Props = {
 	cards: UsedCardState[]
 	play?: boolean
 	openable?: boolean
+	hideAdjustedPrice?: boolean
+	highlightAction?: boolean
+	highlightActionNoAnimation?: boolean
 }
 
 export const CardsView = ({
@@ -19,6 +22,9 @@ export const CardsView = ({
 	cards,
 	play = false,
 	openable = true,
+	hideAdjustedPrice,
+	highlightAction,
+	highlightActionNoAnimation,
 }: Props) => {
 	const theme = useTheme()
 	const dispatch = useAppDispatch()
@@ -26,6 +32,7 @@ export const CardsView = ({
 	const [mounted, setMounted] = useState(false)
 	const [opening, setOpening] = useState(open)
 	const closing = useRef<ReturnType<typeof setTimeout>>()
+	const player = usePlayerState()
 
 	useEffect(() => {
 		if (closing.current !== undefined) {
@@ -99,7 +106,11 @@ export const CardsView = ({
 						<Card
 							card={CardsLookupApi.get(c.code)}
 							state={play ? c : undefined}
-							fade={false}
+							hideAdjustedPrice={hideAdjustedPrice}
+							highlightAction={highlightAction}
+							highlightActionNoAnimation={highlightActionNoAnimation}
+							evaluateMode="playing"
+							player={player}
 						/>
 					</CV>
 				))}

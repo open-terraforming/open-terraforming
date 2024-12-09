@@ -1,5 +1,6 @@
 import { Button, DialogWrapper } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
+import { usePopout } from '@/components/Popout/usePopout'
 import { useGameState } from '@/utils/hooks'
 import { ExpansionType } from '@shared/expansions/types'
 import { useState } from 'react'
@@ -12,8 +13,9 @@ import { MilestonesModal } from '../MilestonesModal/MilestonesModal'
 import { StandardProjectsList } from '../StandardProjectModal/components/StandardProjectsList'
 import { StandardProjectModal } from '../StandardProjectModal/StandardProjectModal'
 import { ColoniesButton } from './components/ColoniesButton'
+import { CommitteeButton } from './components/CommitteeButton'
+import { GlobalEventsButton } from './components/GlobalEventsButton'
 import { HeaderEventDisplay } from './components/HeaderEventDisplay'
-import { usePopout } from '@/components/Popout/usePopout'
 
 export const Header = () => {
 	const game = useGameState()
@@ -59,7 +61,11 @@ export const Header = () => {
 	const coloniesPopout = usePopout({
 		trigger: coloniesButton,
 		position: 'bottom-center',
-		content: <ColoniesList />,
+		content: (
+			<ColoniesListWrapper>
+				<ColoniesList />
+			</ColoniesListWrapper>
+		),
 		sticky: true,
 		openDelay: 300,
 	})
@@ -71,7 +77,6 @@ export const Header = () => {
 				{competitionsPopout}
 				{standardProjectsPopout}
 				{coloniesPopout}
-
 				<Flex align="flex-start">
 					<DialogWrapper
 						dialog={(close) => <MilestonesModal onClose={close} />}
@@ -110,12 +115,14 @@ export const Header = () => {
 							</StyledButton>
 						)}
 					</DialogWrapper>
-				</Flex>
-				{game.expansions.includes(ExpansionType.Colonies) && (
-					<Flex justify="center">
+				</Flex>{' '}
+				<Flex justify="center" align="flex-start" gap="0.5rem">
+					{game.globalEvents.enabled && <GlobalEventsButton />}
+					{game.expansions.includes(ExpansionType.Colonies) && (
 						<ColoniesButton ref={setColoniesButton} />
-					</Flex>
-				)}
+					)}
+					{game.committee.enabled && <CommitteeButton />}
+				</Flex>
 			</E>
 			<HeaderEventDisplay />
 		</>
@@ -150,4 +157,8 @@ const StandardButton = styled(StyledButton)`
 
 const Counter = styled.div`
 	padding: 0.5rem 0.2rem;
+`
+
+const ColoniesListWrapper = styled.div`
+	max-width: 50rem;
 `

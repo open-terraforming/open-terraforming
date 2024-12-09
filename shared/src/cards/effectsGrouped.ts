@@ -14,15 +14,13 @@ import {
 } from '../player-actions'
 import { otherWithArticle, specialToStr, tileWithArticle } from '../texts'
 import { withUnits } from '../units'
-import {
-	allCells,
-	drawCard,
-	drawCards,
-	drawPreludeCards,
-	f,
-	flatten,
-	pushPendingAction,
-} from '../utils'
+import { allCells } from '@shared/utils/allCells'
+import { drawPreludeCards } from '@shared/utils/drawPreludeCards'
+import { drawCard } from '@shared/utils/drawCard'
+import { drawCards } from '@shared/utils/drawCards'
+import { f } from '@shared/utils/f'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { flatten } from '@shared/utils/flatten'
 import { progressToSymbol } from '../utils/progressToSymbol'
 import {
 	cardArg,
@@ -32,20 +30,20 @@ import {
 	resourceTypeArg,
 } from './args'
 import {
-	cardCategoryCountCondition,
+	cardAcceptsAnyResource,
 	cardAcceptsResource,
+	cardAnyResourceCondition,
+	cardCategoryCountCondition,
+	cardHasCategory,
 	cardResourceCondition,
 	cellTypeCondition,
 	condition,
 	gameCardsCondition,
+	playerCardsInHandCondition,
 	productionCondition,
 	resourceCondition,
-	unprotectedPlayerResource,
-	cardHasCategory,
-	cardAcceptsAnyResource,
-	cardAnyResourceCondition,
-	playerCardsInHandCondition,
 	unprotectedCard,
+	unprotectedPlayerResource,
 } from './conditions'
 import { effect } from './effects/types'
 import { CardsLookupApi } from './lookup'
@@ -64,16 +62,17 @@ import {
 	SymbolType,
 } from './types'
 import {
+	countGridContent,
 	countGridContentOnMars,
+	countTagsWithoutEvents,
 	gamePlayer,
 	productions,
 	resourceProduction,
 	resToPrice,
 	updatePlayerProduction,
 	updatePlayerResource,
-	countTagsWithoutEvents,
-	countGridContent,
 } from './utils'
+import { tagsCountHint } from './cardHints'
 
 export const resourceChange = (res: Resource, change: number, spend = false) =>
 	effect({
@@ -106,8 +105,8 @@ export const productionChange = (res: Resource, change: number) => {
 		symbols: [{ resource: res, production: true, count: change }],
 		description:
 			change > 0
-				? `+ ${change} ${res} production`
-				: `- ${-change} ${res} production`,
+				? `+${change} ${res} production`
+				: `-${-change} ${res} production`,
 		perform: ({ player }) => {
 			player[prod] += change
 		},
@@ -416,6 +415,7 @@ export const gameProcessChange = (res: GameProgress, change: number) => {
 			if (update > 0) {
 				game[res] += update
 				player.terraformRating += update
+				player.terraformRatingIncreasedThisGeneration = true
 			}
 		},
 	})
@@ -524,11 +524,15 @@ export const terraformRatingChange = (change: number) =>
 	effect({
 		description:
 			change >= 0
-				? `+ ${change} Terraform Rating`
-				: `- ${-change} Terraform Rating`,
+				? `+${change} Terraform Rating`
+				: `-${-change} Terraform Rating`,
 		symbols: [{ symbol: SymbolType.TerraformingRating, count: change }],
 		perform: ({ player }) => {
 			player.terraformRating += change
+
+			if (change > 0) {
+				player.terraformRatingIncreasedThisGeneration = true
+			}
 		},
 	})
 
@@ -642,10 +646,11 @@ export const anyCardResourceChange = (
 				: [
 						condition({
 							description: `Player has to have a card that accepts ${res}`,
-							evaluate: ({ player }) =>
+							evaluate: ({ player, card }) =>
 								!!player.usedCards
 									.map((c) => ({ card: CardsLookupApi.get(c.code), state: c }))
-									.find(({ card }) => card.resource === res),
+									.find(({ card }) => card.resource === res) ||
+								CardsLookupApi.get(card.code).resource === res,
 						}),
 					],
 		description:
@@ -957,6 +962,7 @@ export const productionChangeForTags = (
 			{ symbol: SymbolType.Colon },
 			{ tag, count: tagCount },
 		],
+		hints: [tagsCountHint([tag])],
 		perform: ({ player }) => {
 			updatePlayerProduction(
 				player,
@@ -1084,6 +1090,7 @@ export const hasCardTagsVoidEffect = (category: CardCategory, count: number) =>
 		description: f('Have {0} {1} tags', count, CardCategory[category]),
 		conditions: [cardCategoryCountCondition(category, count)],
 		symbols: [{ tag: category, count }, { symbol: SymbolType.Colon }],
+		hints: [tagsCountHint([category])],
 		// eslint-disable-next-line @typescript-eslint/no-empty-function
 		perform: () => {},
 	})
@@ -1277,43 +1284,6 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 		},
 	})
 
-/** @deprecated use cardPriceChange passive effect */
-export const deprecatedCardPriceChange = (change: number) =>
-	effect({
-		description: `Effect: When you play a card, you pay ${withUnits(
-			'money',
-			-change,
-		)} less for it`,
-		perform: ({ player }) => {
-			player.cardPriceChange += change
-		},
-	})
-
-/** @deprecated use tagPriceChange passiveEffect */
-export const spaceCardPriceChange = (change: number) =>
-	deprecatedTagPriceChange(CardCategory.Space, change)
-
-/** @deprecated use tagPriceChange passiveEffect */
-export const earthCardPriceChange = (change: number) =>
-	deprecatedTagPriceChange(CardCategory.Earth, change)
-
-/** @deprecated use tagPriceChange passiveEffect */
-export const deprecatedTagPriceChange = (tag: CardCategory, change: number) =>
-	effect({
-		description: `Effect: When you play a ${
-			CardCategory[tag]
-		} card, you pay ${withUnits('money', -change)} less for it`,
-		symbols: [
-			{ tag },
-			{ symbol: SymbolType.Colon },
-			{ resource: 'money', count: change },
-		],
-		perform: ({ player }) => {
-			const prev = player.tagPriceChange[tag] ?? 0
-			player.tagPriceChange[tag] = prev + change
-		},
-	})
-
 export const productionChangeIfTags = (
 	res: Resource,
 	amount: number,
@@ -1323,6 +1293,7 @@ export const productionChangeIfTags = (
 	effect({
 		...productionChange(res, amount),
 		conditions: [cardCategoryCountCondition(tag, tagCount)],
+		hints: [tagsCountHint([tag])],
 		description: `+ ${amount} production if you have ${tagCount} ${CardCategory[tag]} tags`,
 	})
 
@@ -1332,32 +1303,6 @@ export const claimCell = () =>
 			'Place your marker on any area. Only you will be able to place tiles on this area.',
 		perform: ({ player }) => {
 			pushPendingAction(player, claimTileAction())
-		},
-	})
-
-export const orePriceChange = (change: number) =>
-	effect({
-		description: `Effect: Ore is worth ${withUnits('money', change)} extra`,
-		symbols: [
-			{ resource: 'ore' as const },
-			{ symbol: SymbolType.Colon },
-			{ resource: 'money' as const, count: 1, forceSign: true },
-		],
-		perform: ({ player }) => {
-			player.orePrice += change
-		},
-	})
-
-export const titanPriceChange = (change: number) =>
-	effect({
-		description: `Effect: Titan is worth ${withUnits('money', change)} extra`,
-		symbols: [
-			{ resource: 'titan' as const },
-			{ symbol: SymbolType.Colon },
-			{ resource: 'money' as const, count: 1, forceSign: true },
-		],
-		perform: ({ player }) => {
-			player.titanPrice += change
 		},
 	})
 
@@ -1514,6 +1459,7 @@ export const productionForPlayersTags = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: resPerCard, production: true },
 		],
+		hints: [tagsCountHint([tag], !self)],
 		perform: ({ game, player }) => {
 			updatePlayerProduction(
 				player,
@@ -1549,9 +1495,16 @@ export const terraformRatingForTags = (tag: CardCategory, amount: number) =>
 			{ symbol: SymbolType.RightArrow },
 			{ symbol: SymbolType.TerraformingRating, count: amount },
 		],
+		hints: [tagsCountHint([tag])],
 		perform: ({ player, card }) => {
-			player.terraformRating +=
+			const change =
 				countTagsWithoutEvents([...player.usedCards, card.code], tag) * amount
+
+			player.terraformRating += change
+
+			if (change > 0) {
+				player.terraformRatingIncreasedThisGeneration = true
+			}
 		},
 	})
 
@@ -1571,6 +1524,7 @@ export const resourcesForPlayersTags = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, count: resPerCard },
 		],
+		hints: [tagsCountHint([tag], !self)],
 		perform: ({ game, player }) => {
 			updatePlayerResource(
 				player,
@@ -1595,6 +1549,35 @@ export const resourcesForPlayersTags = (
 
 					return acc
 				}, 0),
+			)
+		},
+	})
+}
+
+export const resourceForAllPlayersTags = (
+	tag: CardCategory,
+	res: Resource,
+	resPerCard: number,
+) => {
+	return effect({
+		description: `Gain ${withUnits(res, resPerCard)} per every ${
+			CardCategory[tag]
+		} tag in play`,
+		type: CardEffectType.Production,
+		symbols: [
+			{ resource: res, count: resPerCard },
+			{ symbol: SymbolType.Slash },
+			{ tag, other: true },
+		],
+		hints: [tagsCountHint([tag], true)],
+		perform: ({ game, player }) => {
+			updatePlayerResource(
+				player,
+				res,
+				game.players.reduce(
+					(acc, p) => acc + countTagsWithoutEvents(p.usedCards, tag),
+					0,
+				) * resPerCard,
 			)
 		},
 	})
@@ -1669,16 +1652,6 @@ export const exchangeResources = (srcRes: Resource, dstRes: Resource) =>
 			updatePlayerResource(player, srcRes, -amount)
 			updatePlayerResource(player, dstRes, amount)
 		},
-	})
-
-export const changeProgressConditionBonus = (change: number) =>
-	effect({
-		description: f(
-			'Effect: Your global requirements are +{0} or -{1} steps, your choice in each case',
-			change,
-			change,
-		),
-		perform: ({ player }) => (player.progressConditionBonus += change),
 	})
 
 export const emptyEffect = (description: string, symbols: CardSymbol[] = []) =>

@@ -13,15 +13,15 @@ export const defaultScoringCoefficients = () => ({
 		maxCardsCost: 0.3,
 	},
 
-	terraformingRating: 8,
-	victoryPoints: 7,
+	terraformingRating: 7,
+	victoryPoints: 6,
 	titanPrice: 3,
 	orePrice: 2,
 	cardPriceChange: 1,
 	cardPriceChangePerTag: 1,
 	cardCount: 0.3,
-	playableCardsScore: 0.1,
-	playableCardsCountScore: 0.5,
+	playableCardsScore: 0.05,
+	playableCardsCountScore: 0.02,
 
 	usedCards: {
 		victoryPoints: 5,
@@ -51,7 +51,7 @@ export const defaultScoringCoefficients = () => ({
 	coloniesCount: 1,
 
 	resources: {
-		money: 0.4,
+		money: 0.6,
 		ore: 0.7,
 		titan: 0.8,
 		plants: 1,
@@ -89,5 +89,19 @@ export const defaultScoringCoefficients = () => ({
 		sponsorCompetition: 0.2,
 		playCard: 1,
 		draftCard: 0.5,
+	},
+
+	committee: {
+		delegatesCount: 0.2,
+		leaderOfDominantParty: 1,
+		leaderOfParty: 0.3,
+
+		lastGeneration: {
+			leaderOfParty: 1,
+		},
+	},
+
+	globalEvents: {
+		influence: 0.5,
 	},
 })

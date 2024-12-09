@@ -1,4 +1,4 @@
-import { range } from '@shared/utils'
+import { range } from './range'
 
 export const randomPlayerColor = (usedColors: string[] = []) => {
 	while (true) {

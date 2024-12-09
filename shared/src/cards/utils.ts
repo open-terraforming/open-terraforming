@@ -1,3 +1,4 @@
+import { sum } from '@shared/utils/collections'
 import {
 	GameState,
 	GridCell,
@@ -7,7 +8,8 @@ import {
 	UsedCardState,
 } from '../gameState'
 import { withUnits } from '../units'
-import { allCells, tiles } from '../utils'
+import { allCells } from '@shared/utils/allCells'
+import { tiles } from '@shared/utils/tiles'
 import { CardsLookupApi } from './lookup'
 import {
 	Card,
@@ -164,7 +166,10 @@ export const isCardActionable = (card: Card, ctx: CardCallbackContext) =>
 	card.actionEffects.length > 0 &&
 	!card.actionEffects.find((e) => e.conditions.find((c) => !c.evaluate(ctx)))
 
-export const emptyCardState = (cardCode: string, index = -1) => ({
+export const emptyCardState = (
+	cardCode: string,
+	index = -1,
+): UsedCardState => ({
 	code: cardCode,
 	index,
 	played: false,
@@ -175,6 +180,7 @@ export const emptyCardState = (cardCode: string, index = -1) => ({
 	floaters: 0,
 	asteroids: 0,
 	camps: 0,
+	preservation: 0,
 })
 
 export const minimalCardPrice = (card: Card, player: PlayerGameState) =>
@@ -186,18 +192,33 @@ export const minimalCardPrice = (card: Card, player: PlayerGameState) =>
 				: 0) -
 			(card.categories.includes(CardCategory.Space)
 				? player?.titan * player?.titanPrice
-				: 0),
+				: 0) -
+			player.usedCards
+				.map((c) => ({ state: c, card: CardsLookupApi.get(c.code) }))
+				.filter(({ card }) => card.resourcesUsableAsMoney)
+				.reduce(
+					(acc, { state, card }) =>
+						acc +
+						(card.resourcesUsableAsMoney?.categories?.some((c) =>
+							card.categories.includes(c),
+						) && card.resource
+							? state[card.resource] * card.resourcesUsableAsMoney.amount
+							: 0),
+					0,
+				),
 	)
 
 export const adjustedCardPrice = (card: Card, player: PlayerGameState) =>
 	Math.max(
 		0,
 		card.cost +
-			card.categories.reduce(
-				(acc, c) => acc + (player.tagPriceChange[c] ?? 0),
-				0,
+			sum(card.categories, (c) =>
+				sum(
+					player.tagPriceChanges.filter((ch) => ch.tag === c),
+					(ch) => ch.change,
+				),
 			) +
-			player.cardPriceChange,
+			sum(player.cardPriceChanges, (c) => c.change),
 	)
 
 export const updatePlayerResource = (
@@ -263,16 +284,40 @@ export const progressSymbol: Record<GameProgress, Readonly<CardSymbol>> = {
  */
 export const countTagsWithoutEvents = (
 	cards: (string | UsedCardState)[],
-	tag: CardCategory,
+	tag: CardCategory | CardCategory[],
+	includeAny: boolean = true,
 ) => {
+	if (!Array.isArray(tag)) {
+		tag = [tag]
+	}
+
 	return cards
 		.map((c) => CardsLookupApi.get(typeof c === 'string' ? c : c.code))
 		.filter((c) => c.type !== CardType.Event)
 		.reduce(
 			(acc, c) =>
 				acc +
-				c.categories.filter((cat) => cat === tag || cat === CardCategory.Any)
-					.length,
+				c.categories.filter(
+					(cat) =>
+						tag.includes(cat) || (includeAny && cat === CardCategory.Any),
+				).length,
 			0,
 		)
+}
+
+/**
+ * Counts tags, excluding action cards
+ */
+export const countUniqueTagsWithoutEvents = (
+	cards: (string | UsedCardState)[],
+	includeAny: boolean = true,
+) => {
+	return new Set(
+		cards
+			.map((c) => CardsLookupApi.get(typeof c === 'string' ? c : c.code))
+			.filter((c) => c.type !== CardType.Event)
+			.flatMap((c) =>
+				c.categories.filter((c) => includeAny || c !== CardCategory.Any),
+			),
+	).size
 }

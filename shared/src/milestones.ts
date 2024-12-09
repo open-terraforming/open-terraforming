@@ -1,5 +1,8 @@
 import { GameState, PlayerState, GridCellContent } from './gameState'
-import { allCells, keyMap, voidReduce, tiles } from './utils'
+import { allCells } from './utils/allCells'
+import { tiles } from './utils/tiles'
+import { voidReduce } from './utils/voidReduce'
+import { keyMap } from './utils/keyMap'
 import { CardsLookupApi, CardCategory, CardType } from './cards'
 import { resources, resourceProduction } from './cards/utils'
 

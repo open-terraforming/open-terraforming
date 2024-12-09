@@ -70,6 +70,8 @@ export enum MessageType {
 	TradeWithColony,
 	ChangeColonyStep,
 	AddBot,
+	ActivateRulingPolicy,
+	AddDelegateToParty,
 	GameStateFull,
 }
 
@@ -327,6 +329,18 @@ export const addBot = () =>
 		data: {},
 	}) as const
 
+export const activateRulingPolicyActionRequest = (index: number) =>
+	({
+		type: MessageType.ActivateRulingPolicy,
+		data: { index },
+	}) as const
+
+export const addDelegateToPartyActionRequest = (party: string) =>
+	({
+		type: MessageType.AddDelegateToParty,
+		data: { party },
+	}) as const
+
 export type GameMessage =
 	| ReturnType<typeof joinRequest>
 	| ReturnType<typeof joinResponse>
@@ -364,3 +378,5 @@ export type GameMessage =
 	| ReturnType<typeof changeColonyStep>
 	| ReturnType<typeof addBot>
 	| ReturnType<typeof gameStateFull>
+	| ReturnType<typeof activateRulingPolicyActionRequest>
+	| ReturnType<typeof addDelegateToPartyActionRequest>

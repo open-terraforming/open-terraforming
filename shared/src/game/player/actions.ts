@@ -1,12 +1,17 @@
 import { GameMessage, MessageType } from '@shared/actions'
 import { Player } from '../player'
-import { PlayerBaseAction } from './action'
+import { PlayerBaseActionHandler } from './action'
+import { ActivateRulingPolicyActionHandler } from './actions/activate-ruling-policy-action-handler'
+import { AddBotAction } from './actions/add-bot'
 import { AddCardResourceAction } from './actions/add-card-resource-action'
+import { AddDelegateToPartyActionHandler } from './actions/add-delegate-to-party-action-handler'
 import { AdminChangeAction } from './actions/admin-change'
 import { AdminLoginAction } from './actions/admin-login'
+import { BuildColonyAction } from './actions/build-colony'
 import { BuyCardAction } from './actions/buy-card'
 import { BuyMilestoneAction } from './actions/buy-milestone'
 import { BuyStandardProjectAction } from './actions/buy-standard-project'
+import { ChangeColonyStep } from './actions/change-colony-step'
 import { ClaimTileAction } from './actions/claim-tile'
 import { DiscardCardsAction } from './actions/discard-cards'
 import { DraftCardAction } from './actions/draft-card'
@@ -23,13 +28,10 @@ import { SponsorCompetitionAction } from './actions/sponsor-competition'
 import { StartGameAction } from './actions/start-game'
 import { ToggleReadyAction } from './actions/toggle-ready'
 import { TradeWithColonyAction } from './actions/trade-with-colony'
-import { BuildColonyAction } from './actions/build-colony'
-import { ChangeColonyStep } from './actions/change-colony-step'
-import { AddBotAction } from './actions/add-bot'
 
 export class PlayerActions {
 	player: Player
-	actions: Record<MessageType, PlayerBaseAction | null>
+	actions: Record<MessageType, PlayerBaseActionHandler | null>
 
 	constructor(player: Player) {
 		this.player = player
@@ -76,6 +78,12 @@ export class PlayerActions {
 			[MessageType.BuildColony]: new BuildColonyAction(this.player),
 			[MessageType.ChangeColonyStep]: new ChangeColonyStep(this.player),
 			[MessageType.AddBot]: new AddBotAction(this.player),
+			[MessageType.ActivateRulingPolicy]: new ActivateRulingPolicyActionHandler(
+				this.player,
+			),
+			[MessageType.AddDelegateToParty]: new AddDelegateToPartyActionHandler(
+				this.player,
+			),
 		}
 	}
 

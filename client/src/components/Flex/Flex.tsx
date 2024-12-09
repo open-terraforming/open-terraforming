@@ -9,6 +9,7 @@ export const Flex = styled.div<{
 		| 'space-between'
 		| 'space-around'
 	direction?: 'row' | 'column'
+	wrap?: 'wrap' | 'nowrap' | 'wrap-reverse'
 	gap?: string | number
 }>`
 	display: flex;
@@ -18,5 +19,6 @@ export const Flex = styled.div<{
 		justify-content: ${props.justify || 'flex-start'};
 		flex-direction: ${props.direction || 'row'};
 		gap: ${props.gap || '0'};
+		flex-wrap: ${props.wrap || 'nowrap'};
 	`}
 `
