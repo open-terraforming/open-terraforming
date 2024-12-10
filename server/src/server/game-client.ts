@@ -4,6 +4,7 @@ import { MyEvent } from '@/utils/events'
 import { obfuscateGame } from '@/utils/game'
 import { CardsLookupApi } from '@shared/cards'
 import { Player } from '@shared/game/player'
+import { GlobalEventsLookupApi } from '@shared/GlobalEventsLookupApi'
 import {
 	GameMessage,
 	GameState,
@@ -22,12 +23,15 @@ import {
 	spectateResponse,
 	VERSION,
 } from '@shared/index'
-import { nonEmptyStringLength, sanitize, shuffle } from '@shared/utils'
+import {
+	getProtocolDiff,
+	nonEmptyStringLength,
+	sanitize,
+	shuffle,
+} from '@shared/utils'
 import { decode, encode } from 'msgpack-lite'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
-import { objDiff } from '@shared/utils/collections'
-import { GlobalEventsLookupApi } from '@shared/GlobalEventsLookupApi'
 
 enum ClientState {
 	Initializing,
@@ -295,7 +299,7 @@ export class Client {
 			})
 
 			if (this.lastSyncedState) {
-				const diff = objDiff(this.lastSyncedState, gameToSync)
+				const diff = getProtocolDiff(this.lastSyncedState, gameToSync)
 				this.send(gameStateUpdate(diff))
 			} else {
 				this.send(gameStateFull(gameToSync))

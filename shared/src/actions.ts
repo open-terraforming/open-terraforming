@@ -3,7 +3,7 @@ import { CompetitionType } from './competitions'
 import { GameInfo } from './extra'
 import { GameState, GridCellLocation, StandardProjectType } from './gameState'
 import { MilestoneType } from './milestones'
-import { ObjectDiff } from './utils/collections'
+import { ProtocolDiff } from './utils'
 
 /**
  * Deep partial, where Arrays can also be objects with numeric indexes (updating only specific array key)
@@ -124,7 +124,7 @@ export const serverMessage = (message: string) =>
 export const gameStateFull = (data: GameState) =>
 	({ type: MessageType.GameStateFull, data }) as const
 
-export const gameStateUpdate = (data: ObjectDiff<GameState>) =>
+export const gameStateUpdate = (data: ProtocolDiff<GameState>) =>
 	({ type: MessageType.GameStateUpdate, data }) as const
 
 export const pickStarting = (

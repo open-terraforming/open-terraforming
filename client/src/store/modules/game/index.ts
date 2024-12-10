@@ -1,17 +1,20 @@
+import { objDiff } from '@/utils/collections'
+import { GameInfo } from '@shared/extra'
 import {
-	applyDiff,
 	deepCopy,
+	GameEvent,
 	GameState,
-	ObjectDiff,
 	PlayerState,
 	PlayerStateValue,
 } from '@shared/index'
-import { keyMap, pendingActions } from '@shared/utils'
-import { initialGameState, initialPlayerState } from '@shared/states'
-import { GameEvent } from '@shared/index'
-import { GameInfo } from '@shared/extra'
 import { PlayerAction } from '@shared/player-actions'
-import { objDiff } from '@/utils/collections'
+import { initialGameState, initialPlayerState } from '@shared/states'
+import {
+	applyProtocolDiff,
+	keyMap,
+	pendingActions,
+	ProtocolDiff,
+} from '@shared/utils'
 
 type State = Readonly<typeof initialState>
 
@@ -41,7 +44,7 @@ export default (state = initialState, action: Action): State => {
 					: action.state
 
 			if (action.type === SET_GAME_STATE_DIFF) {
-				applyDiff(newState, action.state)
+				applyProtocolDiff(newState, action.state)
 			}
 
 			const player = state.spectating
@@ -123,7 +126,7 @@ export const setGameState = (state: GameState) =>
 		state,
 	}) as const
 
-export const setGameStateDiff = (state: ObjectDiff<GameState>) =>
+export const setGameStateDiff = (state: ProtocolDiff<GameState>) =>
 	({
 		type: SET_GAME_STATE_DIFF,
 		state,
