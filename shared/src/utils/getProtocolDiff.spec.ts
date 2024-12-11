@@ -27,10 +27,10 @@ describe(getProtocolDiff.name, () => {
 		const diff = getProtocolDiff(objA, objB)
 
 		expect(diff).toEqual({
-			b: { v: 3 },
+			b: { s: 3 },
 			c: null,
-			d: { v: null },
-			e: { v: { a: { v: 2 }, c: null } },
+			d: { s: null },
+			e: { v: { a: { s: 2 }, c: null } },
 		})
 	})
 
@@ -51,9 +51,9 @@ describe(getProtocolDiff.name, () => {
 			expect(diff).toEqual({
 				a: {
 					v: {
-						0: { v: 2 },
-						1: { v: 3 },
-						2: { v: 4 },
+						0: { s: 2 },
+						1: { s: 3 },
+						2: { s: 4 },
 					},
 				},
 			})
@@ -77,6 +77,36 @@ describe(getProtocolDiff.name, () => {
 					v: {
 						2: null,
 						length: { v: 2 },
+					},
+				},
+			})
+		})
+
+		it('new object item', () => {
+			type TestType = { a: { b: number }[] }
+
+			const objA: TestType = {
+				a: [{ b: 1 }, { b: 2 }],
+			}
+
+			const objB: TestType = {
+				a: [
+					{ b: 1 },
+					{ b: 3 },
+					{
+						b: 4,
+					},
+				],
+			}
+
+			const diff = getProtocolDiff(objA, objB)
+
+			expect(diff).toEqual({
+				a: {
+					v: {
+						1: { v: { b: { s: 3 } } },
+						2: { s: { b: 4 } },
+						length: { v: 3 },
 					},
 				},
 			})

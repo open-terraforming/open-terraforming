@@ -57,7 +57,10 @@ const valueDiff = (
 					const [hasDiff, diffValue] = valueDiff(aValue[i], bValue[i])
 
 					if (hasDiff) {
-						if (diffValue === undefined) {
+						if (
+							diffValue === undefined ||
+							('s' in diffValue && diffValue.s === undefined)
+						) {
 							diff[i] = null
 						} else {
 							diff[i] = diffValue
