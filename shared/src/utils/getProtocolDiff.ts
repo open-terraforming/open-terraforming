@@ -41,14 +41,13 @@ const valueDiff = <TValue>(
 		return [false]
 	}
 
-	// Scalars should be compared directly
-	if (typeof aValue !== 'object' && aValue !== bValue) {
-		return [true, { s: bValue }]
-	}
+	// Scalars and nulls should be compared directly
+	if (typeof aValue !== 'object' || aValue === null || bValue === null) {
+		if (aValue !== bValue) {
+			return [true, { s: bValue }]
+		}
 
-	// One is null, but the other one isn't
-	if ((aValue === null || bValue === null) && aValue !== bValue) {
-		return [true, { s: bValue }]
+		return [false]
 	}
 
 	// Compare two arrays
@@ -81,6 +80,8 @@ const valueDiff = <TValue>(
 		if (Object.keys(diff).length > 0) {
 			return [true, { v: diff as ProtocolDiff<TValue> }]
 		}
+
+		return [false]
 	}
 
 	// Compare two objects
