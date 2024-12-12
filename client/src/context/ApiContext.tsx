@@ -217,45 +217,12 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 				}
 
 				case MessageType.GameStateFull: {
-					dispatch(
-						setClientState({
-							sessions: {
-								...sessions,
-								[sessionKey]: {
-									...sessions[sessionKey]!,
-									name: m.data.name,
-									generation: m.data.generation,
-									finished: m.data.state === GameStateValue.Ended,
-									lastUpdateAt: Date.now(),
-								},
-							},
-						}),
-					)
-
 					dispatch(setGameState(m.data))
 
 					break
 				}
 
 				case MessageType.GameStateUpdate: {
-					// TODO: This needs the whole state to be performed
-					/*
-					dispatch(
-						setClientState({
-							sessions: {
-								...sessions,
-								[sessionKey]: {
-									...sessions[sessionKey]!,
-									name: m.data.name,
-									generation: m.data.generation,
-									finished: m.data.state === GameStateValue.Ended,
-									lastUpdateAt: Date.now(),
-								},
-							},
-						}),
-					)
-						*/
-
 					dispatch(setGameStateDiff(m.data))
 					break
 				}
