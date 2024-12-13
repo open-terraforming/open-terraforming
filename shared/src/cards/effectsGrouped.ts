@@ -17,6 +17,7 @@ import {
 	claimTileAction,
 	pickCardsAction,
 	pickPreludesAction,
+	placeTileAction,
 	sponsorCompetitionAction,
 } from '../player-actions'
 import { otherWithArticle, specialToStr, tileWithArticle } from '../texts'
@@ -423,6 +424,60 @@ export const gameProcessChange = (res: GameProgress, change: number) => {
 	})
 }
 
+export function placeTileAsPending({
+	type,
+	other,
+	special,
+	conditions,
+}: {
+	type: GridCellContent
+	other?: GridCellOther
+	special?: GridCellSpecial[]
+	isolated?: boolean
+	allowOcean?: boolean
+	conditions?: PlacementCode[]
+}) {
+	const placementState = {
+		type,
+		other,
+		special,
+		conditions,
+	}
+
+	return effect({
+		args: [],
+		description:
+			`Place ${other ? otherWithArticle(other) : tileWithArticle(type)}` +
+			(conditions && conditions.length > 0
+				? ` (${conditions
+						?.map((c) => PlacementConditionsLookup.get(c).description)
+						.join(', ')})`
+				: '') +
+			(special && special.length > 0
+				? ` on ${special?.map((c) => specialToStr(c)).join(' or ')}`
+				: ''),
+		conditions: [
+			condition({
+				evaluate: ({ game, player }) =>
+					!!allCells(game).find((c) =>
+						canPlace(game, player, c, placementState),
+					),
+			}),
+		],
+		symbols: [{ tile: type, tileOther: other }],
+		perform: ({ player, card, game }) => {
+			if (type === GridCellContent.Ocean && game.oceans >= game.map.oceans) {
+				return
+			}
+
+			pushPendingAction(
+				player,
+				placeTileAction({ ...placementState, ownerCard: card.index }),
+			)
+		},
+	})
+}
+
 export function placeTile({
 	type,
 	other,
@@ -479,7 +534,10 @@ export function placeTile({
 				position.length !== 3 ||
 				typeof position[0] !== 'number' ||
 				typeof position[1] !== 'number' ||
-				(position[2] !== null && typeof position[2] !== 'number')
+				// TODO: Why do we keep receiving both null and undefined here?
+				(position[2] !== null &&
+					position[2] !== undefined &&
+					typeof position[2] !== 'number')
 			) {
 				throw new Error('Invalid position supplied ' + JSON.stringify(position))
 			}

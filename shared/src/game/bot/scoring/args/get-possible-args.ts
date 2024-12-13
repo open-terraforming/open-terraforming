@@ -168,7 +168,7 @@ const getPossibleOptions = (
 
 			return allCells(game)
 				.filter((c) => canPlace(game, player, c, tilePlacementState))
-				.map((c) => [c.x, c.y, c.location])
+				.map((c) => [c.x, c.y, c.location ?? null])
 		}
 
 		case CardEffectTarget.CardResourceCount: {
