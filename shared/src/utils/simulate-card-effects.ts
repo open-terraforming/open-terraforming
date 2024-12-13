@@ -22,11 +22,15 @@ export const simulateCardEffects = (
 	}
 
 	effects.forEach((e) => {
-		e.perform({
-			card: emptyCardState(card),
-			game,
-			player,
-		})
+		e.perform(
+			{
+				card: emptyCardState(card),
+				game,
+				player,
+			},
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			...([] as any),
+		)
 	})
 
 	return { game, player }

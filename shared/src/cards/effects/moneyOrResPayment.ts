@@ -8,7 +8,7 @@ import { effect } from './types'
 export const moneyOrResPayment = (res: 'ore' | 'titan', cost: number) =>
 	effect({
 		args: [
-			effectArg({
+			effectArg<number>({
 				type: CardEffectTarget.Resource,
 				resource: res,
 				descriptionPrefix: `Use`,

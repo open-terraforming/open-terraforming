@@ -36,7 +36,8 @@ export const getBestArgs = (
 							game: copyGame,
 							card: copyState,
 						},
-						...effectArgs[ei],
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						...(effectArgs[ei] as any),
 					)
 				})
 			} catch (e) {

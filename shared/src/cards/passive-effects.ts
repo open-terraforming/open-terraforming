@@ -396,7 +396,8 @@ export const asFirstAction = (effect: CardEffect) =>
 		description: '',
 		onGenerationStarted: (ctx, generation) => {
 			if (generation === 1) {
-				effect.perform(ctx)
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				effect.perform(ctx, ...([] as any))
 			}
 		},
 	})

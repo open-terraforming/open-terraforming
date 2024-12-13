@@ -158,7 +158,7 @@ const getPossibleOptions = (
 				])
 		}
 
-		case CardEffectTarget.Cell: {
+		case CardEffectTarget.Tile: {
 			// TODO: Seems to be unused
 			return [-1]
 		}
@@ -217,7 +217,10 @@ export const getPossibleArgs = (
 ): CardEffectArgumentType[][][] => {
 	return effects.map((e) =>
 		e.args.length > 0
-			? e.args.map((a) => shuffle(getPossibleOptions(s, player, game, a, card)))
+			? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+				e.args.map((a: any) =>
+					shuffle(getPossibleOptions(s, player, game, a, card)),
+				)
 			: [[]],
 	)
 }

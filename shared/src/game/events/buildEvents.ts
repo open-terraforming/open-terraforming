@@ -39,7 +39,11 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 						playerId: cellChange.placedById as number,
 						tile: cellChange.content,
 						other: cellChange.other,
-						cell: { x: currentCell.x, y: currentCell.y },
+						cell: {
+							x: currentCell.x,
+							y: currentCell.y,
+							location: currentCell.location,
+						},
 					})
 				}
 

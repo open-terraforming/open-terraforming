@@ -12,7 +12,7 @@ const validators: Record<CardEffectTarget, ArgValidator | null> = {
 	[CardEffectTarget.Card]: cardArgValidator,
 	[CardEffectTarget.Player]: playerArgValidator,
 	[CardEffectTarget.ResourceType]: productionTypeArgValidator,
-	[CardEffectTarget.Cell]: null,
+	[CardEffectTarget.Tile]: null,
 	[CardEffectTarget.EffectChoice]: null,
 	[CardEffectTarget.PlayerCardResource]: null,
 	[CardEffectTarget.PlayerResource]: null,

@@ -118,7 +118,8 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 				}
 
 				// TODO: More checks
-				e.args.forEach((a, ai) => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				e.args.forEach((a: any, ai: number) => {
 					const value = playArguments[i][ai]
 
 					/*
@@ -158,7 +159,8 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 		playArguments: CardEffectArgumentType[][],
 	) {
 		effects.forEach((e, i) => {
-			e.perform(ctx, ...(playArguments[i] || []))
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			e.perform(ctx, ...((playArguments[i] || []) as any))
 		})
 
 		this.parent.filterPendingActions()

@@ -1,23 +1,22 @@
+import { PlacementState } from '@shared/placements'
 import { unprotectedCard } from './conditions'
 import {
 	CardCondition,
 	CardEffect,
 	CardEffectArgument,
 	CardEffectTarget,
-	CellCondition,
 	WithOptional,
 	ResourceCondition,
 	CommitteePartyCondition,
+	CardEffectArgumentType,
+	Resource,
 } from './types'
+import { GridCellLocation } from '..'
 
-export const effectArg = (
+export const effectArg = <TResult = CardEffectArgumentType>(
 	c: WithOptional<
 		CardEffectArgument,
-		| 'playerConditions'
-		| 'cardConditions'
-		| 'optional'
-		| 'cellConditions'
-		| 'resourceConditions'
+		'playerConditions' | 'cardConditions' | 'optional' | 'resourceConditions'
 	>,
 ) =>
 	({
@@ -27,10 +26,11 @@ export const effectArg = (
 		resourceConditions: [],
 		optional: true,
 		...c,
-	}) as CardEffectArgument
+	}) as CardEffectArgument<TResult>
 
 export const effectChoiceArg = (effects: CardEffect[]) =>
-	effectArg({
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	effectArg<[choice: number, choiceParams: any[]]>({
 		type: CardEffectTarget.EffectChoice,
 		effects,
 	})
@@ -39,41 +39,48 @@ export const cardArg = (
 	conditions: CardCondition[] = [],
 	descriptionPrefix?: string,
 	descriptionPostfix?: string,
+	extra?: Partial<CardEffectArgument>,
 ) =>
-	effectArg({
+	effectArg<number>({
 		type: CardEffectTarget.Card,
 		cardConditions: conditions,
 		descriptionPrefix,
 		descriptionPostfix,
+		...extra,
 	})
 
-export const cellArg = (
-	conditions: CellCondition[],
+export const tileArg = (
+	state: PlacementState,
 	descriptionPrefix?: string,
 	descriptionPostfix?: string,
 ) =>
-	effectArg({
-		type: CardEffectTarget.Cell,
+	effectArg<[x: number, y: number, location: GridCellLocation | undefined]>({
+		type: CardEffectTarget.Tile,
 		descriptionPrefix,
 		descriptionPostfix,
-		cellConditions: conditions,
+		cellPlacementState: state,
 	})
 
-export const playerCardArg = (conditions: CardCondition[] = [], amount = 0) =>
-	effectArg({
+export const playerCardArg = (
+	conditions: CardCondition[] = [],
+	amount = 0,
+	extra?: Partial<CardEffectArgument>,
+) =>
+	effectArg<[player: number, cardIndex: number]>({
 		type: CardEffectTarget.PlayerCardResource,
 		cardConditions: [...conditions, unprotectedCard()],
 		amount,
+		...extra,
 	})
 
 export const resourceTypeArg = (resourceConditions: ResourceCondition[] = []) =>
-	effectArg({
+	effectArg<Resource>({
 		type: CardEffectTarget.ResourceType,
 		resourceConditions,
 	})
 
 export const committeePartyArg = (conditions?: CommitteePartyCondition[]) =>
-	effectArg({
+	effectArg<string>({
 		type: CardEffectTarget.CommitteeParty,
 		committeePartyConditions: conditions,
 	})
@@ -81,7 +88,7 @@ export const committeePartyArg = (conditions?: CommitteePartyCondition[]) =>
 export const committeePartyMemberArg = (
 	conditions?: CommitteePartyCondition[],
 ) =>
-	effectArg({
+	effectArg<[partyCode: string, memberPlayerId: number | null]>({
 		type: CardEffectTarget.CommitteePartyMember,
 		committeePartyConditions: conditions,
 	})
