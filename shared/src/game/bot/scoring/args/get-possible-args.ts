@@ -15,7 +15,8 @@ import { emptyCardState, resources } from '@shared/cards/utils'
 import { getBestArgs } from '../getBestArgs'
 import { assertNever } from '@shared/utils/assertNever'
 import { AiScoringCoefficients } from '../defaultScoringCoefficients'
-import { deduplicate } from '@shared/utils'
+import { allCells, deduplicate } from '@shared/utils'
+import { canPlace } from '@shared/placements'
 
 export const cardsList = (list: (string | UsedCardState)[]) => {
 	return new CardsCollection(
@@ -159,8 +160,15 @@ const getPossibleOptions = (
 		}
 
 		case CardEffectTarget.Tile: {
-			// TODO: Seems to be unused
-			return [-1]
+			const { tilePlacementState } = a
+
+			if (!tilePlacementState) {
+				throw new Error('Tile arg requires tilePlacementState prop')
+			}
+
+			return allCells(game)
+				.filter((c) => canPlace(game, player, c, tilePlacementState))
+				.map((c) => [c.x, c.y, c.location])
 		}
 
 		case CardEffectTarget.CardResourceCount: {
