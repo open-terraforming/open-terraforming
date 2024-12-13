@@ -6,6 +6,7 @@ import { GridCellLocation } from '@shared/gameState'
 import { useRef } from 'react'
 import { TileIcon } from '../../TileIcon/TileIcon'
 import { ArgContainer } from './ArgContainer'
+import { Flex } from '@/components/Flex/Flex'
 
 type Props = {
 	arg: CardEffectArgument
@@ -40,13 +41,15 @@ export const TileArg = ({ arg, onChange }: Props) => {
 
 	return (
 		<ArgContainer>
-			<span>{arg.descriptionPrefix}</span>
+			<Flex gap="0.5rem">
+				<span>{arg.descriptionPrefix ?? 'Place'}</span>
 
-			<TileIcon content={tilePlacementState.type} />
+				<TileIcon content={tilePlacementState.type} />
 
-			<Button onClick={handlePick}>Pick location</Button>
+				<Button onClick={handlePick}>Pick location</Button>
 
-			<span>{arg.descriptionPostfix}</span>
+				<span>{arg.descriptionPostfix}</span>
+			</Flex>
 		</ArgContainer>
 	)
 }
