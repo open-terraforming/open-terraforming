@@ -28,6 +28,7 @@ export interface ModalProps {
 	headerStyle?: CSSProperties
 	bodyStyle?: CSSProperties
 	footerStyle?: CSSProperties
+	backgroundStyle?: CSSProperties
 	header?: ReactNode | RenderCallback
 	footer?: ReactNode | RenderCallback
 	open?: boolean
@@ -44,6 +45,7 @@ let modalPortal: HTMLDivElement | null = null
 export const Modal = ({
 	children,
 	contentStyle,
+	backgroundStyle,
 	header,
 	footer,
 	open,
@@ -98,6 +100,7 @@ export const Modal = ({
 				<PopupBackground
 					onClick={allowClose ? handleTameClose : undefined}
 					closing={isClosing}
+					style={backgroundStyle}
 				>
 					<Popup
 						style={contentStyle}

@@ -1,4 +1,4 @@
-import { PlacementState } from '@shared/placements'
+import { canPlace, PlacementState } from '@shared/placements'
 import { cellByCoords, updatePlayerResource } from '@shared/cards/utils'
 import {
 	GameState,
@@ -35,6 +35,10 @@ export const applyTilePlace = ({
 
 	if (!cell) {
 		throw new Error('Cell not found')
+	}
+
+	if (!canPlace(game, player, cell, state)) {
+		throw new Error(`You cannot place the tile here`)
 	}
 
 	cell.content = state.type

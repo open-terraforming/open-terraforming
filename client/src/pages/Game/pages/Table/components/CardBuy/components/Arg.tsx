@@ -14,6 +14,7 @@ import { PlayerResourceArg } from './PlayerResourceArg'
 import { ProductionArg } from './ProductionArg'
 import { ResourceArg } from './ResourceArg'
 import { ResourceTypeArg } from './ResourceTypeArg'
+import { TileArg } from './TileArg'
 
 type Props = {
 	arg: CardEffectArgument
@@ -83,6 +84,8 @@ export const Arg = ({
 			return <CommitteePartyArg arg={arg} onChange={onChange} />
 		case CardEffectTarget.CommitteePartyMember:
 			return <CommitteePartyMemberArg arg={arg} onChange={onChange} />
+		case CardEffectTarget.Tile:
+			return <TileArg arg={arg} onChange={onChange} />
 		default:
 			return (
 				<div style={{ color: '#FFB0B7' }}>

@@ -1,6 +1,6 @@
 import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
-import { useAppStore } from '@/utils/hooks'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { claimTile, placeTile } from '@shared/actions'
 import { GridCell, GridCellLocation, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
@@ -10,6 +10,7 @@ import { Cell } from './components/Cell'
 import { CellOverlay } from './components/CellOverlay'
 import { ExpansionType } from '@shared/expansions/types'
 import { VenusButton } from './components/VenusButton'
+import { setTableState } from '@/store/modules/table'
 
 const cellPos = (x: number, y: number) => {
 	if (y % 2 === 1) {
@@ -22,12 +23,18 @@ const cellPos = (x: number, y: number) => {
 export const GameMap = () => {
 	const api = useApi()
 
+	const dispatch = useAppDispatch()
+
 	const hasVenus = useAppStore((state) =>
 		state.game.state?.expansions.includes(ExpansionType.Venus),
 	)
 
 	const map = useAppStore((state) => state.game.state?.map)
 	const highlighted = useAppStore((state) => state.game.highlightedCells)
+
+	const pickingCellForBuyArg = useAppStore(
+		(state) => state.table.pickingCellForBuyArg,
+	)
 
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [delayFunction] = useState(0)
@@ -79,7 +86,7 @@ export const GameMap = () => {
 	const placing =
 		isPlaying && pending && pending.type === PlayerActionType.PlaceTile
 			? pending.state
-			: undefined
+			: pickingCellForBuyArg?.state
 
 	const claiming = !!(
 		isPlaying &&
@@ -88,10 +95,23 @@ export const GameMap = () => {
 	)
 
 	const handleCellClick = (cell: GridCell) => {
+		if (pickingCellForBuyArg) {
+			pickingCellForBuyArg.onPick(cell.x, cell.y, cell.location ?? null)
+			dispatch(setTableState({ pickingCellForBuyArg: undefined }))
+
+			return
+		}
+
 		if (placing) {
 			api.send(placeTile(cell.x, cell.y, cell.location))
-		} else if (claiming) {
+
+			return
+		}
+
+		if (claiming) {
 			api.send(claimTile(cell.x, cell.y, cell.location))
+
+			return
 		}
 	}
 

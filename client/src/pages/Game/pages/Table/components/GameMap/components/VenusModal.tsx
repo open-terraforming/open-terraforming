@@ -1,5 +1,5 @@
 import { Modal } from '@/components/Modal/Modal'
-import { useAppStore } from '@/utils/hooks'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import venusBackground from '@/assets/venus-background.png'
 import styled from 'styled-components'
 import { GridCell, GridCellLocation } from '@shared/index'
@@ -9,6 +9,7 @@ import { Cell } from './Cell'
 import { VenusProgress } from '../../GlobalState/components/VenusProgress'
 import { useApi } from '@/context/ApiContext'
 import { placeTile } from '@shared/actions'
+import { setTableState } from '@/store/modules/table'
 
 type Props = {
 	open: boolean
@@ -25,15 +26,29 @@ const cellPos = (x: number, y: number) => {
 }
 
 export const VenusModal = ({ open, onClose, placing }: Props) => {
+	const dispatch = useAppDispatch()
+
 	const map = useAppStore((state) => state.game.state?.map)
 	const game = useAppStore((state) => state.game.state)
 	const api = useApi()
+
+	const pickingCellForBuyArg = useAppStore(
+		(state) => state.table.pickingCellForBuyArg,
+	)
 
 	const venusMap = map.grid.map((col) =>
 		col.filter((c) => c.enabled && c.location === GridCellLocation.Venus),
 	)
 
 	const handleCellClick = (cell: GridCell) => {
+		if (pickingCellForBuyArg) {
+			pickingCellForBuyArg.onPick(cell.x, cell.y, cell.location ?? null)
+			dispatch(setTableState({ pickingCellForBuyArg: undefined }))
+			onClose()
+
+			return
+		}
+
 		if (placing) {
 			api.send(placeTile(cell.x, cell.y, cell.location))
 		}

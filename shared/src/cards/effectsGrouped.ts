@@ -479,9 +479,9 @@ export function placeTile({
 				position.length !== 3 ||
 				typeof position[0] !== 'number' ||
 				typeof position[1] !== 'number' ||
-				(position[2] !== undefined && typeof position[2] !== 'number')
+				(position[2] !== null && typeof position[2] !== 'number')
 			) {
-				throw new Error('Invalid position supplied')
+				throw new Error('Invalid position supplied ' + JSON.stringify(position))
 			}
 
 			applyTilePlace({
@@ -489,7 +489,7 @@ export function placeTile({
 				position: {
 					x: position[0],
 					y: position[1],
-					location: position[2],
+					location: position[2] ?? undefined,
 				},
 				player,
 				state: { ...placementState, ownerCard: card.index },
@@ -1300,7 +1300,7 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 				position: {
 					x: position[0],
 					y: position[1],
-					location: position[2],
+					location: position[2] ?? undefined,
 				},
 				player: ctx.player,
 				state: { type: GridCellContent.Ocean, ownerCard: ctx.card.index },

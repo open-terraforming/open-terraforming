@@ -7,12 +7,13 @@ import { playerArgValidator } from './args/player-arg-validator'
 import { productionArgValidator } from './args/production-arg-validator'
 import { productionTypeArgValidator } from './args/production-type-arg-validator'
 import { ArgValidator, ValidatorContext } from './args/types'
+import { tileArgValidator } from './args/tileArgValidator.ts'
 
 const validators: Record<CardEffectTarget, ArgValidator | null> = {
 	[CardEffectTarget.Card]: cardArgValidator,
 	[CardEffectTarget.Player]: playerArgValidator,
 	[CardEffectTarget.ResourceType]: productionTypeArgValidator,
-	[CardEffectTarget.Tile]: null,
+	[CardEffectTarget.Tile]: tileArgValidator,
 	[CardEffectTarget.EffectChoice]: null,
 	[CardEffectTarget.PlayerCardResource]: null,
 	[CardEffectTarget.PlayerResource]: null,

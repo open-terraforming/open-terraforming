@@ -1,8 +1,21 @@
+import { GridCellLocation } from '@shared/gameState'
+import { PlacementState } from '@shared/placements'
+
 type State = Readonly<typeof initialState>
 
 const initialState = {
 	buyingCardIndex: undefined as number | undefined,
 	playingCardIndex: undefined as number | undefined,
+	pickingCellForBuyArg: undefined as
+		| undefined
+		| {
+				state: PlacementState
+				onPick: (
+					x: number,
+					y: number,
+					location: GridCellLocation | null,
+				) => void
+		  },
 }
 
 export default (state = initialState, action: Action): State => {

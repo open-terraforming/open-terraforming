@@ -28,11 +28,12 @@ type Props = {
 	onClose: () => void
 	buying: boolean
 	forced?: boolean
+	hidden?: boolean
 }
 
 type Keyframes = ReturnType<typeof keyframes>
 
-export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
+export const CardBuy = ({ index, onClose, buying, forced, hidden }: Props) => {
 	const api = useApi()
 	const state = useAppStore((state) => state.game.player)
 
@@ -165,6 +166,9 @@ export const CardBuy = ({ index, onClose, buying, forced }: Props) => {
 			open={true}
 			onClose={onClose}
 			allowClose={!forced}
+			backgroundStyle={
+				hidden ? { visibility: 'hidden', pointerEvents: 'none' } : undefined
+			}
 			footer={(_close, animate) => (
 				<>
 					<Button

@@ -23,6 +23,11 @@ export const Controls = () => {
 
 	const buyingCardIndex = useAppStore((state) => state.table.buyingCardIndex)
 	const playingCardIndex = useAppStore((state) => state.table.playingCardIndex)
+
+	const pickingCellForBuyArg = useAppStore(
+		(state) => state.table.pickingCellForBuyArg,
+	)
+
 	const state = player
 
 	const pending =
@@ -38,6 +43,7 @@ export const Controls = () => {
 		<Container faded={!!pending}>
 			{pending?.type === PlayerActionType.PlayCard && (
 				<CardBuy
+					hidden={!!pickingCellForBuyArg}
 					buying={false}
 					key={`${pending.cardIndex}_${pendingActionIndex}`}
 					index={pending.cardIndex}
@@ -47,6 +53,7 @@ export const Controls = () => {
 
 			{playingCardIndex !== undefined && (
 				<CardBuy
+					hidden={!!pickingCellForBuyArg}
 					buying={false}
 					index={playingCardIndex}
 					onClose={() =>
@@ -61,6 +68,7 @@ export const Controls = () => {
 
 			{buyingCardIndex !== undefined && (
 				<CardBuy
+					hidden={!!pickingCellForBuyArg}
 					buying={true}
 					index={buyingCardIndex}
 					onClose={() =>

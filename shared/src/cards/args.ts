@@ -54,11 +54,11 @@ export const tileArg = (
 	descriptionPrefix?: string,
 	descriptionPostfix?: string,
 ) =>
-	effectArg<[x: number, y: number, location: GridCellLocation | undefined]>({
+	effectArg<[x: number, y: number, location: GridCellLocation | null]>({
 		type: CardEffectTarget.Tile,
 		descriptionPrefix,
 		descriptionPostfix,
-		cellPlacementState: state,
+		tilePlacementState: state,
 	})
 
 export const playerCardArg = (

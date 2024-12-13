@@ -224,7 +224,7 @@ export interface CardEffectArgumentBase<TResult> {
 	resourceConditions: ResourceCondition[]
 	committeePartyConditions?: CommitteePartyCondition[]
 	/** Conditions for tile target */
-	cellPlacementState?: PlacementState
+	tilePlacementState?: PlacementState
 	drawnCards?: number
 	amount?: number
 	maxAmount?: number | MaxAmountCallback
