@@ -123,21 +123,6 @@ export const GameMap = () => {
 									}}
 									width={18 / width}
 									height={20 / height}
-									highlighted={highlighted.some(
-										(h) =>
-											h.x === cell.x &&
-											h.y === cell.y &&
-											h.location === cell.location,
-									)}
-									faded={
-										highlighted.length > 0 &&
-										!highlighted.some(
-											(h) =>
-												h.x === cell.x &&
-												h.y === cell.y &&
-												h.location === cell.location,
-										)
-									}
 								/>
 							)),
 					)}
@@ -171,24 +156,6 @@ export const GameMap = () => {
 											key={`${cell.x},${cell.y}`}
 											pos={cellPos(cell.x, cell.y)}
 											onClick={() => handleCellClick(cell)}
-											highlighted={
-												highlighted !== undefined &&
-												highlighted.some(
-													(h) =>
-														h.x === cell.x &&
-														h.y === cell.y &&
-														h.location === cell.location,
-												)
-											}
-											faded={
-												highlighted.length > 0 &&
-												!highlighted.some(
-													(h) =>
-														h.x === cell.x &&
-														h.y === cell.y &&
-														h.location === cell.location,
-												)
-											}
 										/>
 									)),
 							)}

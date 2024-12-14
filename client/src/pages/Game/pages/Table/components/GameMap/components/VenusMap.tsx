@@ -26,8 +26,6 @@ export const VenusMap = ({ placing, onCellClick }: Props) => {
 		col.filter((c) => c.enabled && c.location === GridCellLocation.Venus),
 	)
 
-	const highlighted = useAppStore((state) => state.game.highlightedCells)
-
 	return (
 		<WholeContainer>
 			<BackgroundContainer>
@@ -46,21 +44,6 @@ export const VenusMap = ({ placing, onCellClick }: Props) => {
 							}}
 							width={18 / 128}
 							height={20 / 128}
-							highlighted={highlighted.some(
-								(h) =>
-									h.x === cell.x &&
-									h.y === cell.y &&
-									h.location === cell.location,
-							)}
-							faded={
-								highlighted.length > 0 &&
-								!highlighted.some(
-									(h) =>
-										h.x === cell.x &&
-										h.y === cell.y &&
-										h.location === cell.location,
-								)
-							}
 						/>
 					)),
 				)}
@@ -83,21 +66,6 @@ export const VenusMap = ({ placing, onCellClick }: Props) => {
 									delayFunction={0}
 									onClick={() => onCellClick?.(cell)}
 									pos={cellPos(cell.x, cell.y)}
-									highlighted={highlighted.some(
-										(h) =>
-											h.x === cell.x &&
-											h.y === cell.y &&
-											h.location === cell.location,
-									)}
-									faded={
-										highlighted.length > 0 &&
-										!highlighted.some(
-											(h) =>
-												h.x === cell.x &&
-												h.y === cell.y &&
-												h.location === cell.location,
-										)
-									}
 								/>
 							)),
 						)}
