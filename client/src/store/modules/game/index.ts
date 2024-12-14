@@ -1,4 +1,9 @@
-import { GameState, PlayerState, PlayerStateValue } from '@shared/index'
+import {
+	GameState,
+	GridCellLocation,
+	PlayerState,
+	PlayerStateValue,
+} from '@shared/index'
 import { keyMap, pendingActions } from '@shared/utils'
 import { initialGameState, initialPlayerState } from '@shared/states'
 import { GameEvent } from '@shared/index'
@@ -19,7 +24,11 @@ const initialState = {
 	interrupted: false,
 	spectating: false,
 	events: [] as GameEvent[],
-	highlightedCells: [] as { x: number; y: number }[],
+	highlightedCells: [] as {
+		x: number
+		y: number
+		location: GridCellLocation | undefined
+	}[],
 	resultsShown: false,
 }
 
@@ -117,7 +126,9 @@ export const setGameInfo = (info: GameInfo) =>
 		info,
 	}) as const
 
-export const setGameHighlightedCells = (cells: { x: number; y: number }[]) =>
+export const setGameHighlightedCells = (
+	cells: { x: number; y: number; location: GridCellLocation | undefined }[],
+) =>
 	({
 		type: SET_GAME_HIGHLIGHTED_CELLS,
 		highlightedCells: cells,

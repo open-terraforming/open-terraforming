@@ -1,16 +1,17 @@
 import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
+import { setTableState } from '@/store/modules/table'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { claimTile, placeTile } from '@shared/actions'
+import { ExpansionType } from '@shared/expansions/types'
 import { GridCell, GridCellLocation, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Cell } from './components/Cell'
 import { CellOverlay } from './components/CellOverlay'
-import { ExpansionType } from '@shared/expansions/types'
 import { VenusButton } from './components/VenusButton'
-import { setTableState } from '@/store/modules/table'
+import { VenusMap } from './components/VenusMap'
 
 const cellPos = (x: number, y: number) => {
 	if (y % 2 === 1) {
@@ -39,40 +40,6 @@ export const GameMap = () => {
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [delayFunction] = useState(0)
 
-	/*
-	useWindowEvent('mousemove', (e: MouseEvent) => {
-		if (containerRef.current) {
-			const windowRatio = window.innerHeight / window.innerWidth
-
-			const ratio = [
-				e.clientX / window.innerWidth - 0.5,
-				e.clientY / window.innerHeight - 0.5
-			]
-
-			const planetOffset = 80
-			const backgroundOffset = 30
-
-			const offset = [
-				-ratio[0] * planetOffset,
-				-ratio[1] * planetOffset * windowRatio
-			]
-
-			const bgOffset = [
-				-ratio[0] * backgroundOffset,
-				-ratio[1] * backgroundOffset * windowRatio
-			]
-
-			containerRef.current.style.transform = `translate(${offset[0]}px, ${offset[1]}px)`
-
-			const stars = document.getElementById('stars')
-
-			if (stars) {
-				stars.style.backgroundPosition = `${bgOffset[0]}px ${bgOffset[1]}px`
-			}
-		}
-	})
-	*/
-
 	const pending = useAppStore((state) => state.game.pendingAction)
 
 	const isPlaying = useAppStore(
@@ -92,6 +59,10 @@ export const GameMap = () => {
 		isPlaying &&
 		pending &&
 		pending.type === PlayerActionType.ClaimTile
+	)
+
+	const venusHighlighted = highlighted.some(
+		(h) => h.location === GridCellLocation.Venus,
 	)
 
 	const handleCellClick = (cell: GridCell) => {
@@ -115,18 +86,17 @@ export const GameMap = () => {
 		}
 	}
 
-	/*
-	useInterval(() => {
-		setDelayFunction(Math.round(Math.random() * (delayFunctions.length - 1)))
-	}, 15000)
-	*/
-
 	const width = ((map?.width || 0) + 0.5) * 18
 	const height = ((map?.height || 0) + 0.5) * 20 * 0.75
 
 	return map ? (
 		<Container ref={containerRef}>
-			<Inner>
+			{venusHighlighted && (
+				<VenusOverlay>
+					<VenusMap />
+				</VenusOverlay>
+			)}
+			<Inner style={{ ...(venusHighlighted && { opacity: 0.1 }) }}>
 				<InnerInner>
 					<Background>
 						<img src={background} />
@@ -154,11 +124,19 @@ export const GameMap = () => {
 									width={18 / width}
 									height={20 / height}
 									highlighted={highlighted.some(
-										(h) => h.x === cell.x && h.y === cell.y,
+										(h) =>
+											h.x === cell.x &&
+											h.y === cell.y &&
+											h.location === cell.location,
 									)}
 									faded={
 										highlighted.length > 0 &&
-										!highlighted.some((h) => h.x === cell.x && h.y === cell.y)
+										!highlighted.some(
+											(h) =>
+												h.x === cell.x &&
+												h.y === cell.y &&
+												h.location === cell.location,
+										)
 									}
 								/>
 							)),
@@ -196,13 +174,19 @@ export const GameMap = () => {
 											highlighted={
 												highlighted !== undefined &&
 												highlighted.some(
-													(h) => h.x === cell.x && h.y === cell.y,
+													(h) =>
+														h.x === cell.x &&
+														h.y === cell.y &&
+														h.location === cell.location,
 												)
 											}
 											faded={
 												highlighted.length > 0 &&
 												!highlighted.some(
-													(h) => h.x === cell.x && h.y === cell.y,
+													(h) =>
+														h.x === cell.x &&
+														h.y === cell.y &&
+														h.location === cell.location,
 												)
 											}
 										/>
@@ -270,4 +254,13 @@ const Background = styled.div`
 		border-radius: 50%;
 		box-shadow: 0px 0px 20px 14px rgba(200, 200, 255, 0.4);
 	}
+`
+
+const VenusOverlay = styled.div`
+	position: absolute;
+	inset: 0;
+	z-index: 5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `

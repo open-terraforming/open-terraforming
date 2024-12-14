@@ -36,6 +36,7 @@ type Keyframes = ReturnType<typeof keyframes>
 export const CardBuy = ({ index, onClose, buying, forced, hidden }: Props) => {
 	const api = useApi()
 	const state = useAppStore((state) => state.game.player)
+	const highlightedCells = useAppStore((state) => state.game.highlightedCells)
 
 	const cardState = useMemo(
 		() => (!buying ? state?.usedCards[index] : undefined),
@@ -166,9 +167,10 @@ export const CardBuy = ({ index, onClose, buying, forced, hidden }: Props) => {
 			open={true}
 			onClose={onClose}
 			allowClose={!forced}
-			backgroundStyle={
-				hidden ? { visibility: 'hidden', pointerEvents: 'none' } : undefined
-			}
+			backgroundStyle={{
+				...(hidden && { visibility: 'hidden', pointerEvents: 'none' }),
+				...(highlightedCells.length && { opacity: 0.1 }),
+			}}
 			footer={(_close, animate) => (
 				<>
 					<Button
