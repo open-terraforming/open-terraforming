@@ -147,7 +147,13 @@ export const SymbolsEventLog = ({
 			}
 
 			case EventType.TilePlaced: {
-				return [{ tile: event.tile, tileOther: event.other }]
+				return [
+					{
+						tile: event.tile,
+						tileOther: event.other,
+						highlightCell: event.cell,
+					},
+				]
 			}
 
 			case EventType.CommitteePartyDelegateChange: {

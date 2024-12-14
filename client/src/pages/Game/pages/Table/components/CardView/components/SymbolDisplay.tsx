@@ -22,6 +22,8 @@ import { CommitteePartyIcon } from '@/components/CommitteePartyIcon'
 import { usePopout } from '@/components/Popout/usePopout'
 import { useState } from 'react'
 import { VpCount } from '../../EndGame/components/VpCount'
+import { useAppDispatch } from '@/utils/hooks'
+import { setGameHighlightedCells } from '@/store/modules/game'
 
 type Props = {
 	symbol: CardSymbol
@@ -175,6 +177,7 @@ export const SymbolDisplay = ({
 	noSpacing,
 	noVerticalSpacing,
 }: Props) => {
+	const dispatch = useAppDispatch()
 	const [sElement, setSElement] = useState<HTMLDivElement | null>(null)
 
 	const countStr =
@@ -191,6 +194,18 @@ export const SymbolDisplay = ({
 		content: s.title,
 		disableAnimation: true,
 	})
+
+	const handleMouseOver = () => {
+		if (!s.highlightCell) {
+			return
+		}
+
+		dispatch(setGameHighlightedCells([s.highlightCell]))
+	}
+
+	const handleMouseOut = () => {
+		dispatch(setGameHighlightedCells([]))
+	}
 
 	return (
 		<S
@@ -215,6 +230,8 @@ export const SymbolDisplay = ({
 				s.symbol === SymbolType.BigPlus ||
 				s.symbol === SymbolType.Player
 			}
+			onMouseOver={s.highlightCell && handleMouseOver}
+			onMouseOut={s.highlightCell && handleMouseOut}
 		>
 			{((countStr && countStr.length > 0) || countSymbol) && (
 				<Count>

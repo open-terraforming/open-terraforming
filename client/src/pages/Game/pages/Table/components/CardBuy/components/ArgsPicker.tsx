@@ -25,7 +25,6 @@ export const ArgsPicker = ({
 	const [values, setValues] = useState([] as CardEffectArgumentType[])
 
 	useEffect(() => {
-		console.log('OnChange', values)
 		onChange(values)
 	}, [values])
 

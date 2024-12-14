@@ -21,7 +21,12 @@ import {
 	spectateResponse,
 	VERSION,
 } from '@shared/index'
-import { nonEmptyStringLength, sanitize, shuffle } from '@shared/utils'
+import {
+	nonEmptyStringLength,
+	sanitize,
+	shuffle,
+	stripUndefined,
+} from '@shared/utils'
 import { decode, encode } from 'msgpack-lite'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
@@ -258,7 +263,7 @@ export class Client {
 	}
 
 	send(update: GameMessage) {
-		this.socket.send(encode(update))
+		this.socket.send(encode(stripUndefined(update)))
 	}
 
 	sendUpdate(game: GameState) {

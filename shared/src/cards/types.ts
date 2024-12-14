@@ -347,4 +347,10 @@ export interface CardSymbol {
 	committeeParty?: string
 	postfix?: string
 	victoryPoints?: number
+	/** highlights cell on hover over the symbol, intended for FE only */
+	highlightCell?: {
+		x: number
+		y: number
+		location: GridCellLocation | undefined
+	}
 }

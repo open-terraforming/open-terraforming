@@ -8,6 +8,7 @@ import {
 } from '@shared/events'
 import { encode, decode } from 'msgpack-lite'
 import { NodeLogger } from '@/lib/node-logger'
+import { stripUndefined } from '@shared/utils'
 
 export class EventClient {
 	get logger() {
@@ -82,7 +83,8 @@ export class EventClient {
 	send(event: RealtimeEvent) {
 		if (this.playerId !== undefined) {
 			this.logger.info('Sending', event)
-			this.socket.send(encode(event))
+			// Strip undefined is required due to: https://github.com/kawanet/msgpack-lite/issues/71
+			this.socket.send(encode(stripUndefined(event)))
 		}
 	}
 }
