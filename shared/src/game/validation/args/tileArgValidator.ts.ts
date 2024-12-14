@@ -6,7 +6,8 @@ export const tileArgValidator = argValidator(
 	({ a, ctx: { game, player }, value }) => {
 		if (
 			!Array.isArray(value) ||
-			value.length !== 3 ||
+			value.length < 2 ||
+			value.length > 3 ||
 			typeof value[0] !== 'number' ||
 			typeof value[1] !== 'number' ||
 			(value[2] !== null && typeof value[2] !== 'number')

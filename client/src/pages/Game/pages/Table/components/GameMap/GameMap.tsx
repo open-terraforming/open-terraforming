@@ -1,8 +1,9 @@
 import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
-import { setTableState } from '@/store/modules/table'
+import { popFrontendAction, setTableState } from '@/store/modules/table'
+import { PendingFrontendActionType } from '@/store/modules/table/frontendActions'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
-import { claimTile, placeTile } from '@shared/actions'
+import { buyStandardProject, claimTile, placeTile } from '@shared/actions'
 import { ExpansionType } from '@shared/expansions/types'
 import { GridCell, GridCellLocation, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
@@ -37,6 +38,10 @@ export const GameMap = () => {
 		(state) => state.table.pickingCellForBuyArg,
 	)
 
+	const frontendPending = useAppStore(
+		(state) => state.table.pendingFrontendActions[0],
+	)
+
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [delayFunction] = useState(0)
 
@@ -50,10 +55,18 @@ export const GameMap = () => {
 			state.game.player?.state === PlayerStateValue.SolarPhaseTerraform,
 	)
 
+	const frontendTilePick =
+		frontendPending &&
+		frontendPending.type === PendingFrontendActionType.PickTile
+			? frontendPending
+			: undefined
+
 	const placing =
 		isPlaying && pending && pending.type === PlayerActionType.PlaceTile
 			? pending.state
-			: pickingCellForBuyArg?.state
+			: frontendTilePick
+				? frontendTilePick.state
+				: pickingCellForBuyArg?.state
 
 	const claiming = !!(
 		isPlaying &&
@@ -66,6 +79,18 @@ export const GameMap = () => {
 	)
 
 	const handleCellClick = (cell: GridCell) => {
+		if (frontendTilePick) {
+			api.send(
+				buyStandardProject(frontendTilePick.project, [
+					{ x: cell.x, y: cell.y, location: cell.location },
+				]),
+			)
+
+			dispatch(popFrontendAction())
+
+			return
+		}
+
 		if (pickingCellForBuyArg) {
 			pickingCellForBuyArg.onPick(cell.x, cell.y, cell.location ?? null)
 			dispatch(setTableState({ pickingCellForBuyArg: undefined }))

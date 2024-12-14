@@ -3,6 +3,7 @@ import { CompetitionType } from './competitions'
 import { GameInfo } from './extra'
 import { GameState, GridCellLocation, StandardProjectType } from './gameState'
 import { MilestoneType } from './milestones'
+import { StandardProjectArgValue } from './projects'
 
 /**
  * Deep partial, where Arrays can also be objects with numeric indexes (updating only specific array key)
@@ -195,13 +196,13 @@ export const adminChange = (state: UpdateDeepPartial<GameState>) =>
 
 export const buyStandardProject = (
 	project: StandardProjectType,
-	cards: number[] = [],
+	args: StandardProjectArgValue[],
 ) =>
 	({
 		type: MessageType.BuyStandardProject,
 		data: {
 			project,
-			cards,
+			args,
 		},
 	}) as const
 
