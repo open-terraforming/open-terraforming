@@ -31,7 +31,7 @@ import {
 	resourceTypeArg,
 	tileArg,
 } from './args'
-import { tagsCountHint } from './cardHints'
+import { tagsCountHint, tileCountHint } from './cardHints'
 import {
 	cardAcceptsAnyResource,
 	cardAcceptsResource,
@@ -904,6 +904,7 @@ export const anyCardResourceChangePerTag = (
 							: ''
 					}`,
 		symbols: [{ cardResource: res, count: amount }],
+		hints: [tagsCountHint([tag])],
 		perform: ({ player }, cardIndex: number) => {
 			if (typeof cardIndex === 'number' && cardIndex >= 0) {
 				const cardState = player.usedCards[cardIndex]
@@ -1235,6 +1236,7 @@ export const resourceForCities = (
 				? `${withUnits(res, resPerCity)} for each city on Mars`
 				: `${withUnits(res, 1)} per ${Math.ceil(1 / resPerCity)} cities on Mars`
 		}`,
+		hints: [tileCountHint(GridCellContent.City, { onMarsOnly: true })],
 		perform: ({ player, game }) => {
 			updatePlayerResource(player, costRes, -cost)
 
@@ -1269,6 +1271,7 @@ export const resourcesForTiles = (
 			{ symbol: SymbolType.SlashSmall },
 			{ tile },
 		],
+		hints: [tileCountHint(tile, { onMarsOnly })],
 		perform: ({ player, game }) => {
 			updatePlayerResource(
 				player,
@@ -1301,6 +1304,7 @@ export const productionForTiles = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, production: true, count: Math.max(1, resPerTile) },
 		],
+		hints: [tileCountHint(tile, { onMarsOnly: true })],
 		perform: ({ player, game }) => {
 			updatePlayerProduction(
 				player,
