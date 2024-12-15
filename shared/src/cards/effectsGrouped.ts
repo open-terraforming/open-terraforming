@@ -519,28 +519,6 @@ export function placeTile({
 		],
 		symbols: [{ tile: type, tileOther: other }],
 		perform: ({ player, card, game }, position) => {
-			// TODO: What about when player should place tile that's no longer placeable?
-			/*
-			// Only limited number of ocean tiles an be placed
-			if (type === GridCellContent.Ocean && game.oceans >= game.map.oceans) {
-				return
-			}
-			*/
-
-			// This should never happen, but lets just check
-			if (
-				!Array.isArray(position) ||
-				position.length !== 3 ||
-				typeof position[0] !== 'number' ||
-				typeof position[1] !== 'number' ||
-				// TODO: Why do we keep receiving both null and undefined here?
-				(position[2] !== null &&
-					position[2] !== undefined &&
-					typeof position[2] !== 'number')
-			) {
-				throw new Error('Invalid position supplied ' + JSON.stringify(position))
-			}
-
 			applyTilePlace({
 				game,
 				position: {

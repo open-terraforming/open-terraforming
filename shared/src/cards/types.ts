@@ -38,11 +38,17 @@ export type CardResource =
 
 export type GameProgress = 'oxygen' | 'temperature' | 'oceans' | 'venus'
 
+export type CardEffectArgumentTileValue = [
+	x: number,
+	y: number,
+	location: GridCellLocation | undefined,
+]
+
 export type CardEffectArgumentValue =
 	| number
 	| null
 	| string
-	| [x: number, y: number, location: GridCellLocation | undefined]
+	| CardEffectArgumentTileValue
 	| CardEffectArgumentValue[]
 
 export interface CardCallbackContext {

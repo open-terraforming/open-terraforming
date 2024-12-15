@@ -1,7 +1,12 @@
 import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
-import { useAppStore, useGameState, usePlayerState } from '@/utils/hooks'
+import {
+	useAppDispatch,
+	useAppStore,
+	useGameState,
+	usePlayerState,
+} from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import {
 	AnyCardEffectArgument,
@@ -18,13 +23,14 @@ import {
 	PlayerStateValue,
 } from '@shared/index'
 import { canPlaceAnywhere } from '@shared/placements'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { CardView } from '../CardView/CardView'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { ArgsPicker } from './components/ArgsPicker'
 import { CardResourceInput } from './components/CardResourceInput'
 import { ResourceInput } from './components/ResourceInput'
+import { setTableState } from '@/store/modules/table'
 
 type Props = {
 	index: number
@@ -38,6 +44,7 @@ type Keyframes = ReturnType<typeof keyframes>
 
 export const CardBuy = ({ index, onClose, buying, forced, hidden }: Props) => {
 	const api = useApi()
+	const dispatch = useAppDispatch()
 	const player = usePlayerState()
 	const game = useGameState()
 	const highlightedCells = useAppStore((state) => state.game.highlightedCells)
@@ -202,6 +209,16 @@ export const CardBuy = ({ index, onClose, buying, forced, hidden }: Props) => {
 			}),
 		)
 	}, [effectsArgs])
+
+	useEffect(() => {
+		return () => {
+			dispatch(
+				setTableState({
+					currentlySelectedTiles: [],
+				}),
+			)
+		}
+	}, [])
 
 	return player && card ? (
 		<Modal
