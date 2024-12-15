@@ -1,5 +1,5 @@
 import { adjacentCells } from './adjacentCells'
-import { GridCell, GridCellContent, GameState } from '..'
+import { GridCell, GridCellContent, GameState, GridCellLocation } from '..'
 import { FilteredCollection } from './FilteredCollection'
 
 export class TileCollection extends FilteredCollection<GridCell> {
@@ -33,7 +33,11 @@ export class TileCollection extends FilteredCollection<GridCell> {
 	}
 
 	onMars() {
-		return this.c((c: GridCell) => !c.outside)
+		return this.c(
+			(c: GridCell) =>
+				!c.outside &&
+				(c.location === undefined || c.location === GridCellLocation.Main),
+		)
 	}
 
 	hasCity = () => this.hasContent(GridCellContent.City)

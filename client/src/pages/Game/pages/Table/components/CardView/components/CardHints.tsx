@@ -11,6 +11,7 @@ import { rgba } from 'polished'
 import styled from 'styled-components'
 import { SymbolDisplay } from './SymbolDisplay'
 import { TagsCountCardHint } from './TagsCountCardHint'
+import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
 
 type Props = {
 	type: CardType
@@ -40,7 +41,7 @@ export const CardHints = ({ type, hints, player }: Props) => {
 
 			case CardHintType.TileCount:
 				return (
-					<Flex key={index}>
+					<Flex key={index} gap={'0.2rem'}>
 						<SmallSymbol symbol={{ tile: hint.tileType }} noSpacing />
 						{countGridContent(game, hint.tileType)}
 					</Flex>
@@ -48,9 +49,11 @@ export const CardHints = ({ type, hints, player }: Props) => {
 
 			case CardHintType.ColonyCount:
 				return (
-					<Flex key={index}>
+					<Flex key={index} gap={'0.2rem'}>
 						<SmallSymbol symbol={{ symbol: SymbolType.Colony }} noSpacing />
-						{getColoniesCount({ game })}
+						{hint.ownedOnly
+							? getPlayerColoniesCount({ game, player })
+							: getColoniesCount({ game })}
 					</Flex>
 				)
 		}

@@ -2,6 +2,7 @@ import { PLAYER_RESOURCE_TO_PRODUCTION } from '@shared/constants'
 import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPlayerColoniesCount'
 import { CardEffectType, Resource, SymbolType } from '../types'
 import { effect } from './types'
+import { colonyCountHint } from '../cardHints'
 
 export const productionChangePerOwnedColony = (
 	resource: Resource,
@@ -15,6 +16,7 @@ export const productionChangePerOwnedColony = (
 			{ symbol: SymbolType.Colony },
 		],
 		description: `+${amountPerColony} ${resource} production per each colony you own`,
+		hints: [colonyCountHint({ ownedOnly: true })],
 		perform: ({ player, game }) => {
 			const colonies = getPlayerColoniesCount({ player, game })
 
