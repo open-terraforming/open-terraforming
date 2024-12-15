@@ -1,17 +1,17 @@
 import { PlacementState } from '@shared/placements'
 import {
-	PlayerGameState,
-	GameState,
-	UsedCardState,
-	GridCell,
-	PlayerState,
-	GridCellContent,
-	GridCellOther,
 	ColonyState,
 	CommitteePartyState,
+	GameState,
+	GridCell,
+	GridCellContent,
 	GridCellLocation,
+	GridCellOther,
+	PlayerGameState,
+	PlayerState,
+	UsedCardState,
 } from '../gameState'
-import { StandardProject } from '../projects'
+import { AnyStandardProject } from '../projects'
 import { CardHint } from './cardHints'
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &
@@ -271,7 +271,7 @@ export interface CardPassiveEffect {
 	) => void
 	onStandardProject?: (
 		ctx: CardCallbackContext,
-		project: StandardProject,
+		project: AnyStandardProject,
 		playedBy: PlayerState,
 	) => void
 	onProgress?: (ctx: CardCallbackContext, progress: GameProgress) => void

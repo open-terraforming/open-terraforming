@@ -1,7 +1,7 @@
 import { ColoniesModal } from '@/pages/Game/pages/Table/components/ColoniesModal/ColoniesModal'
 import { ColonyTradeModal } from '@/pages/Game/pages/Table/components/ColoniesModal/components/ColonyTradeModal'
 import { CardModal } from '@/pages/Game/pages/Table/components/EventList/components/CardModal'
-import { SellCardsModal } from '@/pages/Game/pages/Table/components/StandardProjectModal/components/SellCardsModal'
+import { HandCardsPickerModal } from '@/pages/Game/pages/Table/components/StandardProjectModal/components/SellCardsModal'
 import { ColonyState } from '@shared/gameState'
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
 
@@ -61,7 +61,7 @@ export const GameModalsProvider = ({ children }: Props) => {
 			)}
 
 			{showSellCards && (
-				<SellCardsModal onClose={() => setSellCardsShown(false)} />
+				<HandCardsPickerModal onClose={() => setSellCardsShown(false)} />
 			)}
 
 			{showTradeWithColony && (

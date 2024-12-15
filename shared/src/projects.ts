@@ -38,10 +38,14 @@ export type StandardProjectArgValue =
 	| StandardProjectCardArgValue
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface StandardProjectArgument<TResult> {
-	type: StandardProjectArgumentType
-	tilePlacement?: PlacementState
-}
+export type StandardProjectArgument<TResult> =
+	| {
+			type: StandardProjectArgumentType.Tile
+			tilePlacement: PlacementState
+	  }
+	| {
+			type: StandardProjectArgumentType.CardsInHand
+	  }
 
 type ExtractArguments<TArguments> = {
 	[K in keyof TArguments]: TArguments[K] extends StandardProjectArgument<

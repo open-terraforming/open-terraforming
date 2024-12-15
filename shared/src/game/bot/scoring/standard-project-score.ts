@@ -1,15 +1,16 @@
-import { StandardProject } from '@shared/projects'
+import { AnyStandardProject, StandardProjectArgValue } from '@shared/projects'
 import { computeScore } from './computeScore'
 import { ScoringContext } from './types'
 import { copyGame } from './utils'
 
 export const standardProjectScore = (
 	ctx: ScoringContext,
-	project: StandardProject,
+	project: AnyStandardProject,
+	args: StandardProjectArgValue[],
 ) => {
 	const { gameCopy, playerCopy } = copyGame(ctx.game, ctx.player)
 
-	project.execute({ game: gameCopy, player: playerCopy }, [])
+	project.execute({ game: gameCopy, player: playerCopy }, ...args)
 
 	const cost = project.cost({ game: gameCopy, player: playerCopy })
 
