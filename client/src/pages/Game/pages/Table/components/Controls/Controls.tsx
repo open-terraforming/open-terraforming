@@ -12,6 +12,7 @@ import { HandButton } from './components/HandButton/HandButton'
 import { PendingDisplay } from './components/PendingDisplay'
 import { Resources } from './components/Resources/Resources'
 import { TableButtons } from './components/TableButtons/TableButtons'
+import { FrontendPendingDisplay } from './components/FrontendPendingDisplay'
 
 export const Controls = () => {
 	const api = useApi()
@@ -20,6 +21,10 @@ export const Controls = () => {
 	const isPlaying = useAppStore((state) => state.game.playing)
 	const pendingAction = useAppStore((state) => state.game.pendingAction)
 	const pendingActionIndex = usePlayerState().pendingActions.length
+
+	const frontendPending = useAppStore(
+		(state) => state.table.pendingFrontendActions[0],
+	)
 
 	const buyingCardIndex = useAppStore((state) => state.table.buyingCardIndex)
 	const playingCardIndex = useAppStore((state) => state.table.playingCardIndex)
@@ -98,6 +103,7 @@ export const Controls = () => {
 				</PassButton>
 			</Flexed>
 			{pending && <PendingDisplay pending={pending} />}
+			{frontendPending && <FrontendPendingDisplay pending={frontendPending} />}
 		</Container>
 	)
 }
