@@ -1,12 +1,14 @@
 import { useCallback } from 'react'
 import { Button } from '@/components'
 import { Projects } from '@shared/projects'
-import { StandardProjectType, buyStandardProject } from '@shared/index'
+import { GridCellContent, StandardProjectType } from '@shared/index'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTree } from '@fortawesome/free-solid-svg-icons'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
-import { useAppStore } from '@/utils/hooks'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { useApi } from '@/context/ApiContext'
+import { pushFrontendAction } from '@/store/modules/table'
+import { pickTileFrontendAction } from '@/store/modules/table/frontendActions'
 
 type Props = {
 	className?: string
@@ -14,6 +16,7 @@ type Props = {
 
 export const GreeneryButton = ({ className }: Props) => {
 	const api = useApi()
+	const dispatch = useAppDispatch()
 	const playing = useAppStore((state) => state.game.playing)
 	const player = useAppStore((state) => state.game.player)
 	const game = useAppStore((state) => state.game.state)
@@ -25,7 +28,14 @@ export const GreeneryButton = ({ className }: Props) => {
 
 	const buyForest = useCallback(() => {
 		if (player && usable) {
-			api.send(buyStandardProject(StandardProjectType.GreeneryForPlants))
+			dispatch(
+				pushFrontendAction(
+					pickTileFrontendAction(
+						{ type: GridCellContent.Forest },
+						StandardProjectType.GreeneryForPlants,
+					),
+				),
+			)
 		}
 	}, [player, api])
 
