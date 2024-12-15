@@ -27,8 +27,6 @@ export const tileArgValidator = argValidator(
 			throw new Error('Cell not found')
 		}
 
-		console.log(JSON.stringify(usedTiles), JSON.stringify(cell))
-
 		if (
 			usedTiles.some(
 				(t) => t.x === cell.x && t.y === cell.y && t.location === cell.location,
