@@ -1,7 +1,11 @@
 import { Button } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { setGameHighlightedCells } from '@/store/modules/game'
-import { setTableState } from '@/store/modules/table'
+import {
+	pushSelectedTile,
+	removeSelectedTile,
+	setTableState,
+} from '@/store/modules/table'
 import { useAppDispatch, useGameState, usePlayerState } from '@/utils/hooks'
 import { CardEffectArgument } from '@shared/cards'
 import { GridCellLocation } from '@shared/gameState'
@@ -23,10 +27,33 @@ export const TileArg = ({ arg, onChange }: Props) => {
 	const game = useGameState()
 	const player = usePlayerState()
 	const { tilePlacementState } = arg
-	const [location, setLocation] = useState<TileArgValue>()
+	const [selectedLocation, setSelectedLocation] = useState<TileArgValue>()
 
 	const onChangeRef = useRef(onChange)
 	onChangeRef.current = onChange
+
+	const handlePickResult = (
+		x: number,
+		y: number,
+		location: GridCellLocation | null,
+	) => {
+		if (selectedLocation) {
+			dispatch(
+				removeSelectedTile(
+					selectedLocation[0],
+					selectedLocation[1],
+					selectedLocation[2] ?? undefined,
+				),
+			)
+		}
+
+		onChangeRef.current([x, y, location])
+		setSelectedLocation([x, y, location])
+		dispatch(pushSelectedTile(x, y, location ?? undefined))
+	}
+
+	const handlePickResultRef = useRef(handlePickResult)
+	handlePickResultRef.current = handlePickResult
 
 	if (!tilePlacementState) {
 		throw new Error('TileArg: No tile placement state')
@@ -46,8 +73,7 @@ export const TileArg = ({ arg, onChange }: Props) => {
 				pickingCellForBuyArg: {
 					state: tilePlacementState,
 					onPick: (x, y, location) => {
-						onChangeRef.current([x, y, location])
-						setLocation([x, y, location])
+						handlePickResultRef.current(x, y, location)
 					},
 				},
 			}),
@@ -55,13 +81,13 @@ export const TileArg = ({ arg, onChange }: Props) => {
 	}
 
 	const handleMouseEnter = () => {
-		if (location) {
+		if (selectedLocation) {
 			dispatch(
 				setGameHighlightedCells([
 					{
-						x: location[0],
-						y: location[1],
-						location: location[2] ?? undefined,
+						x: selectedLocation[0],
+						y: selectedLocation[1],
+						location: selectedLocation[2] ?? undefined,
 					},
 				]),
 			)
@@ -78,9 +104,23 @@ export const TileArg = ({ arg, onChange }: Props) => {
 			const { x, y, location } = choice
 
 			onChangeRef.current([x, y, location ?? null])
-			setLocation([x, y, location ?? null])
+			setSelectedLocation([x, y, location ?? null])
 		}
 	}, [choices])
+
+	useEffect(() => {
+		return () => {
+			if (selectedLocation) {
+				dispatch(
+					removeSelectedTile(
+						selectedLocation[0],
+						selectedLocation[1],
+						selectedLocation[2] ?? undefined,
+					),
+				)
+			}
+		}
+	}, [])
 
 	return (
 		<ArgContainer>
@@ -108,8 +148,10 @@ export const TileArg = ({ arg, onChange }: Props) => {
 
 					{choices.length > 1 && (
 						<>
-							{!location && <Button onClick={handlePick}>Pick location</Button>}
-							{location && (
+							{!selectedLocation && (
+								<Button onClick={handlePick}>Pick location</Button>
+							)}
+							{selectedLocation && (
 								<Button onClick={handlePick}>Change location</Button>
 							)}
 						</>
