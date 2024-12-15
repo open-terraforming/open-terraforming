@@ -3,7 +3,7 @@ import { argValidator } from './argValidator'
 import { cellByCoords } from '@shared/cards/utils'
 
 export const tileArgValidator = argValidator(
-	({ a, ctx: { game, player }, value }) => {
+	({ a, ctx: { game, player }, usedTiles, value }) => {
 		if (
 			!Array.isArray(value) ||
 			value.length < 2 ||
@@ -25,6 +25,16 @@ export const tileArgValidator = argValidator(
 
 		if (!cell) {
 			throw new Error('Cell not found')
+		}
+
+		console.log(JSON.stringify(usedTiles), JSON.stringify(cell))
+
+		if (
+			usedTiles.some(
+				(t) => t.x === cell.x && t.y === cell.y && t.location === cell.location,
+			)
+		) {
+			throw new Error('This tile has already been used')
 		}
 
 		if (!canPlace(game, player, cell, a.tilePlacementState)) {
