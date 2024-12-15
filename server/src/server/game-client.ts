@@ -28,7 +28,7 @@ import {
 	nonEmptyStringLength,
 	sanitize,
 	shuffle,
-	stripUndefined
+	stripUndefined,
 } from '@shared/utils'
 import { decode, encode } from 'msgpack-lite'
 import WebSocket from 'ws'
