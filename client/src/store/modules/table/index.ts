@@ -1,6 +1,6 @@
 import { GridCellLocation } from '@shared/gameState'
 import { PlacementState } from '@shared/placements'
-import { FrontendAction } from './frontendActions'
+import { FrontendPendingAction } from './frontendActions'
 
 type State = Readonly<typeof initialState>
 
@@ -17,7 +17,7 @@ const initialState = {
 					location: GridCellLocation | null,
 				) => void
 		  },
-	pendingFrontendActions: [] as FrontendAction[],
+	pendingFrontendActions: [] as FrontendPendingAction[],
 }
 
 export default (state = initialState, action: Action): State => {
@@ -66,7 +66,7 @@ export const setTableState = (state: Partial<State>) =>
 		state,
 	}) as const
 
-export const pushFrontendAction = (action: FrontendAction) =>
+export const pushFrontendAction = (action: FrontendPendingAction) =>
 	({
 		type: TABLE_PUSH_FRONTEND_ACTION,
 		action,

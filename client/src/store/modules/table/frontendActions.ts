@@ -1,14 +1,14 @@
 import { StandardProjectType } from '@shared/gameState'
 import { PlacementState } from '@shared/placements'
 
-export enum PendingFrontendActionType {
+export enum FrontendPendingActionType {
 	PickHandCards = 1,
 	PickTile,
 }
 
 export const pickHandCardsFrontendAction = (project: StandardProjectType) =>
 	({
-		type: PendingFrontendActionType.PickHandCards,
+		type: FrontendPendingActionType.PickHandCards,
 		project,
 	}) as const
 
@@ -17,7 +17,7 @@ export const pickTileFrontendAction = (
 	project: StandardProjectType,
 ) =>
 	({
-		type: PendingFrontendActionType.PickTile,
+		type: FrontendPendingActionType.PickTile,
 		state,
 		project,
 	}) as const
@@ -28,6 +28,6 @@ export type PickHandCardsFrontendAction = ReturnType<
 
 export type PickTileFrontendAction = ReturnType<typeof pickTileFrontendAction>
 
-export type FrontendAction =
+export type FrontendPendingAction =
 	| PickHandCardsFrontendAction
 	| PickTileFrontendAction

@@ -1,8 +1,8 @@
 import { Button } from '@/components'
 import { popFrontendAction } from '@/store/modules/table'
 import {
-	FrontendAction,
-	PendingFrontendActionType,
+	FrontendPendingAction,
+	FrontendPendingActionType,
 } from '@/store/modules/table/frontendActions'
 import { useAppDispatch } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
@@ -11,7 +11,7 @@ import { useMemo } from 'react'
 import styled from 'styled-components'
 
 type Props = {
-	pending: FrontendAction
+	pending: FrontendPendingAction
 }
 
 export const FrontendPendingDisplay = ({ pending }: Props) => {
@@ -19,9 +19,9 @@ export const FrontendPendingDisplay = ({ pending }: Props) => {
 
 	const text = useMemo(() => {
 		switch (pending.type) {
-			case PendingFrontendActionType.PickHandCards:
+			case FrontendPendingActionType.PickHandCards:
 				return 'Picking cards'
-			case PendingFrontendActionType.PickTile:
+			case FrontendPendingActionType.PickTile:
 				return 'Placing tile'
 		}
 	}, [pending])

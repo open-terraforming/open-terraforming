@@ -23,7 +23,7 @@ import { AddCardResourceModal } from './components/Controls/components/AddCardRe
 import { GameModalsProvider } from '@/context/GameModalsContext'
 import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { DiscardCardsModal } from './components/DiscardCardsModal'
-import { PendingFrontendActionType } from '@/store/modules/table/frontendActions'
+import { FrontendPendingActionType } from '@/store/modules/table/frontendActions'
 import { HandCardsPickerModal } from './components/StandardProjectModal/components/SellCardsModal'
 
 const Table = () => {
@@ -129,7 +129,7 @@ const Table = () => {
 				)}
 
 				{frontendPending &&
-					frontendPending.type === PendingFrontendActionType.PickHandCards && (
+					frontendPending.type === FrontendPendingActionType.PickHandCards && (
 						<HandCardsPickerModal
 							action={frontendPending}
 							project={frontendPending.project}

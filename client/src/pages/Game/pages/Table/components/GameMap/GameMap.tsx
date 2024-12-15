@@ -1,7 +1,7 @@
 import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
 import { popFrontendAction, setTableState } from '@/store/modules/table'
-import { PendingFrontendActionType } from '@/store/modules/table/frontendActions'
+import { FrontendPendingActionType } from '@/store/modules/table/frontendActions'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { buyStandardProject, claimTile, placeTile } from '@shared/actions'
 import { ExpansionType } from '@shared/expansions/types'
@@ -57,7 +57,7 @@ export const GameMap = () => {
 
 	const frontendTilePick =
 		frontendPending &&
-		frontendPending.type === PendingFrontendActionType.PickTile
+		frontendPending.type === FrontendPendingActionType.PickTile
 			? frontendPending
 			: undefined
 
