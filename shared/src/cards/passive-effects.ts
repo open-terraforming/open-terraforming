@@ -19,7 +19,6 @@ import { CardsLookupApi } from './lookup'
 import {
 	CardCategory,
 	CardEffect,
-	CardEffectTarget,
 	CardPassiveEffect,
 	CardResource,
 	CardSymbol,
@@ -28,6 +27,7 @@ import {
 	SymbolType,
 	WithOptional,
 } from './types'
+import { CardEffectTarget } from './args'
 import {
 	gamePlayer,
 	progressSymbol,
@@ -406,7 +406,7 @@ export const changeResourceFromNeighbor = (res: Resource, amount: number) => ({
 	action: effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Player,
+				type: CardEffectTarget.Player as const,
 				optional: true,
 				resource: res,
 				playerConditions: [

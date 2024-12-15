@@ -33,7 +33,7 @@ export const FrontendPendingDisplay = ({ pending }: Props) => {
 	return (
 		<Fade>
 			<Info>{text}</Info>
-			<Button onClick={cancel} icon={faTimes}>
+			<Button schema="transparent" onClick={cancel} icon={faTimes}>
 				Cancel
 			</Button>
 		</Fade>
@@ -46,12 +46,12 @@ const Fade = styled.div`
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: ${({ theme }) => rgba(theme.colors.background, 0.5)};
+	background: ${({ theme }) => rgba(theme.colors.background, 0.8)};
 	z-index: 5;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	flex-direction: column;
+	flex-direction: row;
 `
 
 const Info = styled.div`

@@ -126,7 +126,7 @@ const getPossibleOptions = (
 			).concat(a.optional ? [[-1, 0]] : [])
 		}
 
-		case CardEffectTarget.Resource: {
+		case CardEffectTarget.ResourceCount: {
 			return range(1, player[a.resource as Resource] + 1)
 		}
 
@@ -183,7 +183,7 @@ const getPossibleOptions = (
 			return [range(0, maximumCount + 1)]
 		}
 
-		case CardEffectTarget.Production: {
+		case CardEffectTarget.ProductionCount: {
 			// TODO: We need to find out what the maximum amount is and then pick the best value
 			//    This is used for "exchange production" effect so we somehow need to know how much source production we have
 			return [1]

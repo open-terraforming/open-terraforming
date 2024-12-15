@@ -1,4 +1,3 @@
-import { PlacementState } from '@shared/placements'
 import {
 	ColonyState,
 	CommitteePartyState,
@@ -13,6 +12,7 @@ import {
 } from '../gameState'
 import { AnyStandardProject } from '../projects'
 import { CardHint } from './cardHints'
+import { CardEffectArgument, CardEffectArgumentTypeToResultMap } from './args'
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &
 	Partial<Pick<T, K>>
@@ -161,8 +161,6 @@ export enum CardEffectType {
 
 export interface CardEffect<
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	// T extends Array<CardEffectArgumentType | undefined> = any,
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	TArguments extends CardEffectArgument<any>[] = any,
 > {
 	args: TArguments
@@ -174,69 +172,16 @@ export interface CardEffect<
 	hints?: CardHint[]
 	perform: (
 		ctx: CardCallbackContext,
-		...args: ExtractArguments<TArguments>
+		...args: ExtractCardArguments<TArguments>
 	) => void
 }
 
-export type ExtractArguments<TArguments> = {
+export type ExtractCardArguments<TArguments> = {
 	[K in keyof TArguments]: TArguments[K] extends CardEffectArgument<infer V>
-		? V
+		? V extends keyof CardEffectArgumentTypeToResultMap
+			? CardEffectArgumentTypeToResultMap[V]
+			: never
 		: never
-}
-
-export enum CardEffectTarget {
-	// Type - player: number
-	Player = 1,
-	// Type - [player: number, amount: number]
-	PlayerResource,
-	// Type - amount: number
-	Resource,
-	// Type - resource: Resource
-	ResourceType,
-	// Type - amount: number
-	Production,
-	// Type - cardIndex: number
-	Card,
-	// Type - [player: number, cardIndex: number]
-	PlayerCardResource,
-	// Type - [choice: number, choiceParams: any[]]
-	EffectChoice,
-	// Type - [x: number, y: number, position: GridCellLocation | undefined]
-	Tile,
-	// Type - amount: number
-	CardResourceCount,
-	// Type - partyCode: string
-	CommitteeParty,
-	// Type - [partyCode: string, memberPlayerId: number | null]
-	CommitteePartyMember,
-}
-
-export type CardEffectArgument<TResult = CardEffectArgumentType> =
-	CardEffectArgumentBase<TResult>
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface CardEffectArgumentBase<TResult> {
-	type: CardEffectTarget
-	descriptionPrefix?: string
-	descriptionPostfix?: string
-	playerConditions: PlayerCondition[]
-	cardConditions: CardCondition[]
-	resourceConditions: ResourceCondition[]
-	committeePartyConditions?: CommitteePartyCondition[]
-	/** Conditions for tile target */
-	tilePlacementState?: PlacementState
-	drawnCards?: number
-	amount?: number
-	maxAmount?: number | MaxAmountCallback
-	optional: boolean
-	resource?: Resource
-	production?: Production
-	fromHand?: boolean
-	effects?: CardEffect[]
-	minAmount?: number
-	/** Allow selecting the card being played as the target - used for CARD inside playEffects */
-	allowSelfCard?: boolean
-	skipCurrentCard?: boolean
 }
 
 export type MaxAmountCallback = (ctx: CardCallbackContext) => number

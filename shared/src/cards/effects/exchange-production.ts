@@ -1,9 +1,5 @@
-import {
-	Resource,
-	CardEffectTarget,
-	SymbolType,
-	CardEffectType,
-} from '../types'
+import { Resource, SymbolType, CardEffectType } from '../types'
+import { CardEffectTarget } from '../args'
 import { effectArg } from '../args'
 import { withUnits } from '../../units'
 import { productionCondition } from '../conditions'
@@ -14,7 +10,7 @@ export const exchangeProduction = (srcRes: Resource, dstRes: Resource) =>
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Production,
+				type: CardEffectTarget.ProductionCount as const,
 				resource: srcRes,
 				descriptionPrefix: 'Exchange',
 				descriptionPostfix: `production for ${dstRes} production`,
