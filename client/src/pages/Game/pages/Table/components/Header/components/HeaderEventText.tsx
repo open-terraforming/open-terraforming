@@ -4,11 +4,7 @@ import { Milestones } from '@shared/milestones'
 import { rgba } from 'polished'
 import { useEffect } from 'react'
 import styled, { css, keyframes } from 'styled-components'
-import {
-	CompetitionSponsored,
-	EventType,
-	MilestoneBought,
-} from '@shared/index'
+import { CompetitionSponsored, EventType, MilestoneBought } from '@shared/index'
 
 export type HeaderEvent = (MilestoneBought | CompetitionSponsored) & {
 	id: number

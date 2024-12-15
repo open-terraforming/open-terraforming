@@ -33,7 +33,7 @@ const initialState = {
 	highlightedCells: [] as {
 		x: number
 		y: number
-		location: GridCellLocation | undefined
+		location?: GridCellLocation
 	}[],
 	resultsShown: false,
 }
@@ -151,7 +151,7 @@ export const setGameInfo = (info: GameInfo) =>
 	}) as const
 
 export const setGameHighlightedCells = (
-	cells: { x: number; y: number; location: GridCellLocation | undefined }[],
+	cells: { x: number; y: number; location?: GridCellLocation }[],
 ) =>
 	({
 		type: SET_GAME_HIGHLIGHTED_CELLS,
