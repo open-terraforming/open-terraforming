@@ -4,6 +4,7 @@ import {
 	deepCopy,
 	GameEvent,
 	GameState,
+	GridCellLocation,
 	PlayerState,
 	PlayerStateValue,
 } from '@shared/index'
@@ -29,7 +30,11 @@ const initialState = {
 	interrupted: false,
 	spectating: false,
 	events: [] as GameEvent[],
-	highlightedCells: [] as { x: number; y: number }[],
+	highlightedCells: [] as {
+		x: number
+		y: number
+		location?: GridCellLocation
+	}[],
 	resultsShown: false,
 }
 
@@ -145,7 +150,9 @@ export const setGameInfo = (info: GameInfo) =>
 		info,
 	}) as const
 
-export const setGameHighlightedCells = (cells: { x: number; y: number }[]) =>
+export const setGameHighlightedCells = (
+	cells: { x: number; y: number; location?: GridCellLocation }[],
+) =>
 	({
 		type: SET_GAME_HIGHLIGHTED_CELLS,
 		highlightedCells: cells,

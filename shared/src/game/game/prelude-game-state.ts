@@ -29,7 +29,8 @@ export class PreludeGameState extends BaseGameState {
 				}
 
 				card.playEffects.forEach((e) => {
-					e.perform(ctx)
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					e.perform(ctx, ...([] as any))
 				})
 
 				this.game.currentPlayerInstance.filterPendingActions()

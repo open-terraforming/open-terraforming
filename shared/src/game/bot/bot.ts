@@ -71,6 +71,7 @@ import { tradeWithColonyScore } from './scoring/tradeWithColonyScore'
 import { ScoringContext } from './scoring/types'
 import { useCardScore } from './scoring/use-card-score'
 import { pickBest } from './scoring/utils'
+import { getBestProjectArgs } from './scoring/args/getBestProjectArgs'
 
 export type BotOptions = ReturnType<typeof defaultOptions>
 
@@ -700,11 +701,19 @@ export class Bot extends Player {
 								)
 							) {
 								if (p.type !== StandardProjectType.SellPatents) {
+									const args = getBestProjectArgs(
+										this.game.state,
+										this.state,
+										p,
+										this.scoringContext,
+									)
+
 									actions.push(
 										action(
 											'buyStandardProject ' + StandardProjectType[p.type],
-											standardProjectScore(this.scoringContext, p),
-											() => this.performAction(buyStandardProject(p.type, [])),
+											standardProjectScore(this.scoringContext, p, args),
+											() =>
+												this.performAction(buyStandardProject(p.type, args)),
 										),
 									)
 								}

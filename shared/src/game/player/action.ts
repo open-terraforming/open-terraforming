@@ -3,7 +3,7 @@ import {
 	CardCallbackContext,
 	CardCondition,
 	CardEffect,
-	CardEffectArgumentType,
+	CardEffectArgumentValue,
 	CardPassiveEffect,
 } from '@shared/cards'
 import { GameStateValue, PlayerStateValue } from '@shared/index'
@@ -87,7 +87,7 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 	checkCardConditions(
 		card: Card,
 		ctx: CardCallbackContext,
-		playArguments: CardEffectArgumentType[][],
+		playArguments: CardEffectArgumentValue[][],
 		action = false,
 	) {
 		const errorConditions = [
@@ -118,7 +118,8 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 				}
 
 				// TODO: More checks
-				e.args.forEach((a, ai) => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				e.args.forEach((a: any, ai: number) => {
 					const value = playArguments[i][ai]
 
 					/*
@@ -155,10 +156,11 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 	runCardEffects(
 		effects: CardEffect[],
 		ctx: CardCallbackContext,
-		playArguments: CardEffectArgumentType[][],
+		playArguments: CardEffectArgumentValue[][],
 	) {
 		effects.forEach((e, i) => {
-			e.perform(ctx, ...(playArguments[i] || []))
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			e.perform(ctx, ...((playArguments[i] || []) as any))
 		})
 
 		this.parent.filterPendingActions()

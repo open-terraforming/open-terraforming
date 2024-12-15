@@ -4,6 +4,7 @@ import {
 	adminLogin,
 	MessageType,
 } from '@shared/index'
+import { stripUndefined } from '@shared/utils'
 import { encode, decode } from 'msgpack-lite'
 
 export class Client {
@@ -28,7 +29,7 @@ export class Client {
 
 		console.log('Outgoing', MessageType[msg.type], msg)
 
-		return this.socket?.send(encode(msg))
+		return this.socket?.send(encode(stripUndefined(msg)))
 	}
 
 	connect() {

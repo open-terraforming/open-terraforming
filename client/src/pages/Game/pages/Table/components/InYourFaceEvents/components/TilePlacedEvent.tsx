@@ -8,24 +8,20 @@ import { PlayerDidHeader } from './PlayerDidHeader'
 
 type Props = {
 	event: TilePlaced
-	onOpacityChange: (opacity: number) => void
 }
 
-export const TilePlacedEvent = ({ event, onOpacityChange }: Props) => {
+export const TilePlacedEvent = ({ event }: Props) => {
 	const dispatch = useAppDispatch()
 
 	const handleMouseOver = () => {
-		onOpacityChange(0.1)
 		dispatch(setGameHighlightedCells([event.cell]))
 	}
 
 	const handleMouseLeave = () => {
-		onOpacityChange(1)
 		dispatch(setGameHighlightedCells([]))
 	}
 
 	useEffect(() => {
-		onOpacityChange(1)
 		dispatch(setGameHighlightedCells([]))
 	}, [])
 

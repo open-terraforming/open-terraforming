@@ -1,8 +1,9 @@
-import { CardEffectArgumentType, GameProgress } from './cards'
+import { CardEffectArgumentValue, GameProgress } from './cards'
 import { CompetitionType } from './competitions'
 import { GameInfo } from './extra'
 import { GameState, GridCellLocation, StandardProjectType } from './gameState'
 import { MilestoneType } from './milestones'
+import { StandardProjectArgValue } from './projects'
 import { ProtocolDiff } from './utils'
 
 /**
@@ -149,7 +150,7 @@ export const buyCard = (
 	useOre: number,
 	useTitan: number,
 	useCards: Record<string, number>,
-	args: CardEffectArgumentType[][],
+	args: CardEffectArgumentValue[][],
 ) =>
 	({
 		type: MessageType.BuyCard,
@@ -165,7 +166,7 @@ export const sellCard = (card: string, index: number) =>
 export const playCard = (
 	card: string,
 	index: number,
-	args: CardEffectArgumentType[][],
+	args: CardEffectArgumentValue[][],
 ) =>
 	({
 		type: MessageType.PlayCard,
@@ -200,13 +201,13 @@ export const adminChange = (state: UpdateDeepPartial<GameState>) =>
 
 export const buyStandardProject = (
 	project: StandardProjectType,
-	cards: number[] = [],
+	args: StandardProjectArgValue[],
 ) =>
 	({
 		type: MessageType.BuyStandardProject,
 		data: {
 			project,
-			cards,
+			args,
 		},
 	}) as const
 

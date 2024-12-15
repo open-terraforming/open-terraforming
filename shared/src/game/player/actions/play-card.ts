@@ -10,6 +10,7 @@ import { deepCopy } from '@shared/utils/collections'
 import { f } from '@shared/utils/f'
 import { processCardsToDiscard } from '@shared/utils/processCardsToDiscard'
 import { PlayerBaseActionHandler } from '../action'
+import { cellByCoords } from '@shared/cards/utils'
 
 type Args = ReturnType<typeof playCard>['data']
 
@@ -79,17 +80,28 @@ export class PlayCardAction extends PlayerBaseActionHandler<Args> {
 
 		this.parent.game.checkMilestones()
 
-		collector.collectAndPush(
-			(changes) =>
-				({
-					type: EventType.CardUsed,
-					playerId: this.player.id,
-					card: card.code,
-					index: index,
-					changes,
-					state: deepCopy(cardState),
-				}) as const,
-		)
+		collector.collectAndPush((changes) => {
+			// TODO: This is terrible! We should have a better way to handle this
+			changes.forEach((c) => {
+				if (c.type !== EventType.TilePlaced) {
+					return
+				}
+
+				this.parent.onTilePlaced.emit({
+					cell: cellByCoords(this.game, c.cell.x, c.cell.y, c.cell.location),
+					player: this.parent,
+				})
+			})
+
+			return {
+				type: EventType.CardUsed,
+				playerId: this.player.id,
+				card: card.code,
+				index: index,
+				changes,
+				state: deepCopy(cardState),
+			} as const
+		})
 
 		if (top) {
 			this.popAction()

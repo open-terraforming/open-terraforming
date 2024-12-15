@@ -28,6 +28,7 @@ import {
 	nonEmptyStringLength,
 	sanitize,
 	shuffle,
+	stripUndefined,
 } from '@shared/utils'
 import { decode, encode } from 'msgpack-lite'
 import WebSocket from 'ws'
@@ -264,7 +265,7 @@ export class Client {
 	}
 
 	send(update: GameMessage) {
-		this.socket.send(encode(update))
+		this.socket.send(encode(stripUndefined(update)))
 	}
 
 	sendUpdate(game: GameState) {

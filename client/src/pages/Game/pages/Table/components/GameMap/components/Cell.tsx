@@ -16,8 +16,6 @@ type Props = {
 	claiming?: boolean
 	delayFunction: number
 	onClick: () => void
-	highlighted?: boolean
-	faded?: boolean
 }
 
 const hexPoints = '-8.5,4.4 -8.5,-4.5 0,-9.5 8.5,-4.5 8.5,4.5 0,9.5'
@@ -60,9 +58,19 @@ export const Cell = ({
 	onClick,
 	claiming,
 	delayFunction,
-	faded,
-	highlighted,
 }: Props) => {
+	const highlightedCells = useAppStore((state) => state.game.highlightedCells)
+
+	const highlighted = highlightedCells.some(
+		(h) => h.x === cell.x && h.y === cell.y && h.location === cell.location,
+	)
+
+	const faded =
+		highlightedCells.length > 0 &&
+		!highlightedCells.some(
+			(h) => h.x === cell.x && h.y === cell.y && h.location === cell.location,
+		)
+
 	const [hover, setHover] = useState(false)
 	const [container, setContainer] = useState(null as SVGElement | null)
 
