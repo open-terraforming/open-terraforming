@@ -1,15 +1,21 @@
+import { objDiff } from '@/utils/collections'
+import { GameInfo } from '@shared/extra'
 import {
+	deepCopy,
+	GameEvent,
 	GameState,
 	GridCellLocation,
 	PlayerState,
 	PlayerStateValue,
 } from '@shared/index'
-import { keyMap, pendingActions } from '@shared/utils'
-import { initialGameState, initialPlayerState } from '@shared/states'
-import { GameEvent } from '@shared/index'
-import { GameInfo } from '@shared/extra'
 import { PlayerAction } from '@shared/player-actions'
-import { objDiff } from '@/utils/collections'
+import { initialGameState, initialPlayerState } from '@shared/states'
+import {
+	applyProtocolDiff,
+	keyMap,
+	pendingActions,
+	ProtocolDiff,
+} from '@shared/utils'
 
 type State = Readonly<typeof initialState>
 
@@ -34,27 +40,38 @@ const initialState = {
 
 export default (state = initialState, action: Action): State => {
 	switch (action.type) {
-		case SET_GAME_STATE: {
+		case SET_GAME_STATE:
+
+		case SET_GAME_STATE_DIFF: {
+			const newState =
+				action.type === SET_GAME_STATE_DIFF
+					? deepCopy(state.state)
+					: action.state
+
+			if (action.type === SET_GAME_STATE_DIFF) {
+				applyProtocolDiff(newState, action.state)
+			}
+
 			const player = state.spectating
 				? undefined
-				: action.state.players.find((p) => p.id === state.playerId)
+				: newState.players.find((p) => p.id === state.playerId)
 
 			const pendingAction = player && pendingActions(player)[0]
 
 			console.groupCollapsed('Game changed')
-			console.log('GAME', action.state)
-			console.log('DIFF', objDiff(state.state, action.state))
+			console.log('GAME', newState)
+			console.log('DIFF', objDiff(state.state, newState))
 			console.groupEnd()
 
 			return {
 				...state,
-				state: action.state,
+				state: newState,
 				player: player ?? state.player,
-				playerMap: keyMap(action.state.players, 'id'),
+				playerMap: keyMap(newState.players, 'id'),
 				pendingAction,
 				playing: player?.state === PlayerStateValue.Playing && !pendingAction,
 				interrupted: !!pendingAction,
-				events: action.state.events,
+				events: newState.events,
 			}
 		}
 
@@ -102,6 +119,7 @@ export default (state = initialState, action: Action): State => {
 }
 
 const SET_GAME_STATE = 'SET_GAME_STATE'
+const SET_GAME_STATE_DIFF = 'SET_GAME_STATE_DIFF'
 const SET_GAME_PLAYER = 'SET_GAME_PLAYER'
 const SET_GAME_INFO = 'SET_GAME_INFO'
 const SET_GAME_HIGHLIGHTED_CELLS = 'SET_GAME_HIGHLIGHTED_CELLS'
@@ -110,6 +128,12 @@ const SET_GAME_RESULTS_SHOWN = 'SET_GAME_RESULTS_SHOWN'
 export const setGameState = (state: GameState) =>
 	({
 		type: SET_GAME_STATE,
+		state,
+	}) as const
+
+export const setGameStateDiff = (state: ProtocolDiff<GameState>) =>
+	({
+		type: SET_GAME_STATE_DIFF,
 		state,
 	}) as const
 
@@ -144,5 +168,6 @@ type Action =
 	| ReturnType<typeof setGameState>
 	| ReturnType<typeof setGamePlayer>
 	| ReturnType<typeof setGameInfo>
+	| ReturnType<typeof setGameStateDiff>
 	| ReturnType<typeof setGameHighlightedCells>
 	| ReturnType<typeof setGameResultsShown>

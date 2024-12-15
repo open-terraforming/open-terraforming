@@ -13,6 +13,7 @@ import { defaultTheme } from '@/themes/defaultTheme'
 import { greenTheme } from '@/themes/greenTheme'
 import { redTheme } from '@/themes/redTheme'
 import { SoundController } from './components/SoundController'
+import { SessionController } from './components/SessionController'
 
 const THEME_MAP = {
 	default: defaultTheme,
@@ -62,6 +63,7 @@ export const App = () => {
 
 				<ApiErrorMessage />
 				<SoundController />
+				<SessionController />
 			</AppContainer>
 		</ThemeProvider>
 	)

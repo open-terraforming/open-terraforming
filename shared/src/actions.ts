@@ -4,6 +4,7 @@ import { GameInfo } from './extra'
 import { GameState, GridCellLocation, StandardProjectType } from './gameState'
 import { MilestoneType } from './milestones'
 import { StandardProjectArgValue } from './projects'
+import { ProtocolDiff } from './utils'
 
 /**
  * Deep partial, where Arrays can also be objects with numeric indexes (updating only specific array key)
@@ -72,6 +73,7 @@ export enum MessageType {
 	AddBot,
 	ActivateRulingPolicy,
 	AddDelegateToParty,
+	GameStateFull,
 }
 
 export const handshakeRequest = (version: string) =>
@@ -120,7 +122,10 @@ export const playerPass = (force = false) =>
 export const serverMessage = (message: string) =>
 	({ type: MessageType.ServerMessage, data: { message } }) as const
 
-export const gameStateUpdate = (data: GameState) =>
+export const gameStateFull = (data: GameState) =>
+	({ type: MessageType.GameStateFull, data }) as const
+
+export const gameStateUpdate = (data: ProtocolDiff<GameState>) =>
 	({ type: MessageType.GameStateUpdate, data }) as const
 
 export const pickStarting = (
@@ -373,5 +378,6 @@ export type GameMessage =
 	| ReturnType<typeof tradeWithColony>
 	| ReturnType<typeof changeColonyStep>
 	| ReturnType<typeof addBot>
+	| ReturnType<typeof gameStateFull>
 	| ReturnType<typeof activateRulingPolicyActionRequest>
 	| ReturnType<typeof addDelegateToPartyActionRequest>

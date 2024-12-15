@@ -4,9 +4,11 @@ import { MyEvent } from '@/utils/events'
 import { obfuscateGame } from '@/utils/game'
 import { CardsLookupApi } from '@shared/cards'
 import { Player } from '@shared/game/player'
+import { GlobalEventsLookupApi } from '@shared/GlobalEventsLookupApi'
 import {
 	GameMessage,
 	GameState,
+	gameStateFull,
 	gameStateUpdate,
 	GameStateValue,
 	HandshakeError,
@@ -22,15 +24,15 @@ import {
 	VERSION,
 } from '@shared/index'
 import {
+	getProtocolDiff,
 	nonEmptyStringLength,
 	sanitize,
 	shuffle,
-	stripUndefined,
+	stripUndefined
 } from '@shared/utils'
 import { decode, encode } from 'msgpack-lite'
 import WebSocket from 'ws'
 import { GameServer } from './game-server'
-import { GlobalEventsLookupApi } from '@shared/GlobalEventsLookupApi'
 
 enum ClientState {
 	Initializing,
@@ -51,7 +53,7 @@ export class Client {
 	cardDictionary?: Record<string, string>
 	globalEventsDictionary?: Record<string, string>
 
-	lastState?: GameState
+	lastSyncedState?: GameState
 
 	player?: Player
 
@@ -292,14 +294,19 @@ export class Client {
 		}
 
 		if (this.player || this.spectator) {
-			this.send(
-				gameStateUpdate(
-					obfuscateGame(game, this.player?.id ?? -1, {
-						cards: this.cardDictionary,
-						globalEvents: this.globalEventsDictionary,
-					}),
-				),
-			)
+			const gameToSync = obfuscateGame(game, this.player?.id ?? -1, {
+				cards: this.cardDictionary,
+				globalEvents: this.globalEventsDictionary,
+			})
+
+			if (this.lastSyncedState) {
+				const diff = getProtocolDiff(this.lastSyncedState, gameToSync)
+				this.send(gameStateUpdate(diff))
+			} else {
+				this.send(gameStateFull(gameToSync))
+			}
+
+			this.lastSyncedState = gameToSync
 		}
 	}
 }
