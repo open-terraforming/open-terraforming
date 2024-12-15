@@ -7,7 +7,7 @@ import { buyStandardProject, claimTile, placeTile } from '@shared/actions'
 import { ExpansionType } from '@shared/expansions/types'
 import { GridCell, GridCellLocation, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { useRef, useState } from 'react'
+import { MouseEvent, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Cell } from './components/Cell'
 import { CellOverlay } from './components/CellOverlay'
@@ -111,6 +111,13 @@ export const GameMap = () => {
 		}
 	}
 
+	const handleRightClick = (e: MouseEvent) => {
+		if (frontendTilePick) {
+			e.preventDefault()
+			dispatch(popFrontendAction())
+		}
+	}
+
 	const width = ((map?.width || 0) + 0.5) * 18
 	const height = ((map?.height || 0) + 0.5) * 20 * 0.75
 
@@ -155,6 +162,7 @@ export const GameMap = () => {
 					<svg
 						viewBox={`0 0 ${width} ${height}`}
 						style={{ overflow: 'visible' }}
+						onContextMenu={handleRightClick}
 					>
 						<defs>
 							<radialGradient id="Ocean" cx="0.5" cy="0.5" r="0.5">
