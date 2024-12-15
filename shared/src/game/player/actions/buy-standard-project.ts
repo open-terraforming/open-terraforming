@@ -52,7 +52,7 @@ export class BuyStandardProjectAction extends PlayerBaseActionHandler<Args> {
 
 		this.parent.onProjectBought.emit({
 			player: this.parent,
-			project,
+			project: project,
 		})
 
 		projectState.usedByPlayerIds.push(this.player.id)

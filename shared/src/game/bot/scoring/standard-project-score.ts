@@ -10,7 +10,8 @@ export const standardProjectScore = (
 ) => {
 	const { gameCopy, playerCopy } = copyGame(ctx.game, ctx.player)
 
-	project.execute({ game: gameCopy, player: playerCopy }, ...args)
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	project.execute({ game: gameCopy, player: playerCopy }, ...(args as any))
 
 	const cost = project.cost({ game: gameCopy, player: playerCopy })
 

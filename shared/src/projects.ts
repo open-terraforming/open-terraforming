@@ -34,34 +34,31 @@ export interface StandardProjectTileArgValue {
 export type StandardProjectCardArgValue = number[]
 
 export type StandardProjectArgValue =
-	| StandardProjectTileArgValue
-	| StandardProjectCardArgValue
+	StandardProjectArgumentValueMap[StandardProjectArgumentType]
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export type StandardProjectArgument<TResult> =
-	| {
-			type: StandardProjectArgumentType.Tile
-			tilePlacement: PlacementState
-	  }
-	| {
-			type: StandardProjectArgumentType.CardsInHand
-	  }
+export type StandardProjectArgument =
+	| ReturnType<typeof tileProjectArg>
+	| typeof cardsProjectArg
+
+export interface StandardProjectArgumentValueMap {
+	[StandardProjectArgumentType.Tile]: StandardProjectTileArgValue
+	[StandardProjectArgumentType.CardsInHand]: StandardProjectCardArgValue
+}
 
 type ExtractArguments<TArguments> = {
-	[K in keyof TArguments]: TArguments[K] extends StandardProjectArgument<
-		infer V
-	>
-		? V
+	[K in keyof TArguments]: TArguments[K] extends {
+		type: infer T
+	}
+		? T extends keyof StandardProjectArgumentValueMap
+			? StandardProjectArgumentValueMap[T]
+			: never
 		: never
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyStandardProject = StandardProject<StandardProjectArgument<any>[]>
+export type AnyStandardProject = StandardProject<any>
 
-export interface StandardProject<
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	TArgs extends StandardProjectArgument<any>[] = [],
-> {
+export interface StandardProject<TArgs extends StandardProjectArgument[] = []> {
 	args?: TArgs
 	type: StandardProjectType
 	description: string
@@ -74,10 +71,7 @@ export interface StandardProject<
 	) => void
 }
 
-const project = <
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	TArgs extends StandardProjectArgument<any>[] = [],
->(
+const project = <TArgs extends StandardProjectArgument[] = []>(
 	s: WithOptional<StandardProject<TArgs>, 'conditions' | 'resource'>,
 ): StandardProject<TArgs> => ({
 	resource: 'money',
@@ -102,23 +96,26 @@ const canIncreaseProgress =
 		return game[process] < game.map[process]
 	}
 
-const projectArg = <TResult>(arg: StandardProjectArgument<TResult>) => arg
-
-const cardsProjectArg = projectArg<number[]>({
+const cardsProjectArg = {
 	type: StandardProjectArgumentType.CardsInHand,
-})
+} as const
 
 const tileProjectArg = (placement: PlacementState) =>
-	projectArg<StandardProjectTileArgValue>({
+	({
 		type: StandardProjectArgumentType.Tile,
 		tilePlacement: placement,
-	})
+	}) as const
 
 const placeTileExecute =
 	(
 		placement: PlacementState,
 	): StandardProject<
-		[StandardProjectArgument<StandardProjectTileArgValue>]
+		[
+			{
+				type: StandardProjectArgumentType.Tile
+				tilePlacement: PlacementState
+			},
+		]
 	>['execute'] =>
 	({ game, player }, position) => {
 		if (
