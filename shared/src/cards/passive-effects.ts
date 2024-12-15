@@ -27,7 +27,7 @@ import {
 	SymbolType,
 	WithOptional,
 } from './types'
-import { CardEffectTarget } from './args'
+import { CardEffectArgumentType } from './args'
 import {
 	gamePlayer,
 	progressSymbol,
@@ -406,7 +406,7 @@ export const changeResourceFromNeighbor = (res: Resource, amount: number) => ({
 	action: effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Player as const,
+				type: CardEffectArgumentType.Player as const,
 				optional: true,
 				resource: res,
 				playerConditions: [

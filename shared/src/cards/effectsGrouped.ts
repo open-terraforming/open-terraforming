@@ -53,7 +53,7 @@ import { CardsLookupApi } from './lookup'
 import {
 	CardCategory,
 	CardEffect,
-	CardEffectArgumentType,
+	CardEffectArgumentValue,
 	CardEffectType,
 	CardResource,
 	CardSymbol,
@@ -63,7 +63,7 @@ import {
 	Resource,
 	SymbolType,
 } from './types'
-import { CardEffectArgument, CardEffectTarget } from './args'
+import { CardEffectArgument, CardEffectArgumentType } from './args'
 import {
 	countGridContent,
 	countGridContentOnMars,
@@ -136,7 +136,7 @@ export const playerResourceChange = (
 							change > 0
 								? `Give ${withUnits(res, change)} to`
 								: `Remove ${withUnits(res, -change)} from`,
-						type: CardEffectTarget.Player as const,
+						type: CardEffectArgumentType.Player as const,
 						optional: false,
 						resource: res,
 						playerConditions:
@@ -152,7 +152,7 @@ export const playerResourceChange = (
 					})
 				: effectArg({
 						descriptionPrefix: change > 0 ? 'Give to' : `Remove from`,
-						type: CardEffectTarget.PlayerResource as const,
+						type: CardEffectArgumentType.PlayerResource as const,
 						maxAmount: Math.abs(change),
 						resource: res,
 						optional,
@@ -255,7 +255,7 @@ export const playerResourceChangeWithTagCondition = (
 							change > 0
 								? `Give ${withUnits(res, change)} to`
 								: `Remove ${withUnits(res, -change)} from`,
-						type: CardEffectTarget.Player as const,
+						type: CardEffectArgumentType.Player as const,
 						optional: false,
 						resource: res,
 						playerConditions:
@@ -272,7 +272,7 @@ export const playerResourceChangeWithTagCondition = (
 					})
 				: effectArg({
 						descriptionPrefix: change > 0 ? 'Give to' : `Remove from`,
-						type: CardEffectTarget.PlayerResource as const,
+						type: CardEffectArgumentType.PlayerResource as const,
 						maxAmount: Math.abs(change),
 						resource: res,
 						optional,
@@ -359,7 +359,7 @@ export const playerProductionChange = (res: Resource, change: number) => {
 	return effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Player as const,
+				type: CardEffectArgumentType.Player as const,
 				playerConditions:
 					change < 0 && res !== 'money'
 						? [productionCondition(res, -change) as PlayerCondition]
@@ -619,7 +619,7 @@ export const effectChoice = (effects: CardEffect[], smallSlash = false) =>
 		args: [effectChoiceArg(effects)],
 		conditions: [
 			condition({
-				evaluate: (ctx, args: [number, CardEffectArgumentType[]]) => {
+				evaluate: (ctx, args: [number, CardEffectArgumentValue[]]) => {
 					const [chosenEffect, chosenArgs] = args || [undefined, []]
 
 					if (chosenEffect === undefined) {
@@ -654,7 +654,7 @@ export const effectChoice = (effects: CardEffect[], smallSlash = false) =>
 				),
 		),
 		description: effects.map((e) => e.description || '').join(' OR '),
-		perform: (ctx, args: [number, CardEffectArgumentType[]]) => {
+		perform: (ctx, args: [number, CardEffectArgumentValue[]]) => {
 			const [chosenEffect, chosenArgs] = args || [undefined, []]
 
 			const effect = effects[chosenEffect]
@@ -947,7 +947,7 @@ export const cardResourceAnyAmountChange = (
 		args: [
 			// TODO: This wasn't properly validated
 			effectArg({
-				type: CardEffectTarget.CardResourceCount as const,
+				type: CardEffectArgumentType.CardResourceCount as const,
 				minAmount: 1,
 				descriptionPostfix,
 			}),
@@ -1141,7 +1141,7 @@ export const discardCard = () =>
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Card as const,
+				type: CardEffectArgumentType.Card as const,
 				fromHand: true,
 				descriptionPrefix: 'Discard',
 				// TODO: This param doesn't work!
@@ -1314,7 +1314,7 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.ResourceCount as const,
+				type: CardEffectArgumentType.ResourceCount as const,
 				resource: res,
 				descriptionPrefix: `Use`,
 				descriptionPostfix: `to pay`,
@@ -1400,7 +1400,7 @@ export const cardExchange = () =>
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Card as const,
+				type: CardEffectArgumentType.Card as const,
 				cardConditions: [],
 				descriptionPrefix: 'Discard',
 				fromHand: true,
@@ -1718,7 +1718,7 @@ export const exchangeResources = (srcRes: Resource, dstRes: Resource) =>
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.ResourceCount as const,
+				type: CardEffectArgumentType.ResourceCount as const,
 				resource: srcRes,
 				descriptionPrefix: 'Exchange',
 				descriptionPostfix: `for ${dstRes}`,

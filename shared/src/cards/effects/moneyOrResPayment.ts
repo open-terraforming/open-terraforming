@@ -2,7 +2,7 @@ import { withUnits } from '@shared/units'
 import { effectArg } from '../args'
 import { condition } from '../conditions'
 import { SymbolType } from '../types'
-import { CardEffectTarget } from '../args'
+import { CardEffectArgumentType } from '../args'
 import { resToPrice, updatePlayerResource } from '../utils'
 import { effect } from './types'
 
@@ -10,7 +10,7 @@ export const moneyOrResPayment = (res: 'ore' | 'titan', cost: number) =>
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.ResourceCount as const,
+				type: CardEffectArgumentType.ResourceCount as const,
 				resource: res,
 				descriptionPrefix: `Use`,
 				descriptionPostfix: `instead of $`,

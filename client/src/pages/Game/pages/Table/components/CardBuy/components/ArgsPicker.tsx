@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
 import {
-	CardEffectArgumentType,
 	CardEffect,
 	CardEffectArgument,
+	CardEffectArgumentValue,
 } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
+import { useEffect, useState } from 'react'
 import { Arg } from './Arg'
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 	card: string
 	cardState: UsedCardState
 	handCardIndex?: number
-	onChange: (args: CardEffectArgumentType[]) => void
+	onChange: (args: CardEffectArgumentValue[]) => void
 }
 
 export const ArgsPicker = ({
@@ -22,7 +22,7 @@ export const ArgsPicker = ({
 	handCardIndex,
 	onChange,
 }: Props) => {
-	const [values, setValues] = useState([] as CardEffectArgumentType[])
+	const [values, setValues] = useState([] as CardEffectArgumentValue[])
 
 	useEffect(() => {
 		onChange(values)

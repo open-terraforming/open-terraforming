@@ -1,4 +1,4 @@
-import { CardEffect, CardEffectArgumentType } from '@shared/cards'
+import { CardEffect, CardEffectArgumentValue } from '@shared/cards'
 import { GameState, PlayerState, UsedCardState } from '@shared/index'
 import { sortBy } from '@shared/utils/sortBy'
 import { deepCopy } from '@shared/utils/collections'
@@ -17,8 +17,8 @@ export const getBestArgs = (
 
 	const evalEffect = (
 		effectIndex: number,
-		effectArgs: CardEffectArgumentType[][],
-	): { score: number; args: CardEffectArgumentType[][] } => {
+		effectArgs: CardEffectArgumentValue[][],
+	): { score: number; args: CardEffectArgumentValue[][] } => {
 		if (effectIndex === effects.length) {
 			const copyGame = deepCopy(game)
 			const copyPlayer = copyGame.players.find((p) => p.id === player.id)
@@ -58,7 +58,7 @@ export const getBestArgs = (
 				args: [...effectArgs],
 			}
 		} else {
-			const combinations = [] as CardEffectArgumentType[][]
+			const combinations = [] as CardEffectArgumentValue[][]
 
 			argCombinations(0, possibleArguments[effectIndex], [], combinations)
 
@@ -80,9 +80,9 @@ export const getBestArgs = (
 
 	const argCombinations = (
 		argIndex: number,
-		choices: CardEffectArgumentType[][],
-		result: CardEffectArgumentType[],
-		results: CardEffectArgumentType[][],
+		choices: CardEffectArgumentValue[][],
+		result: CardEffectArgumentValue[],
+		results: CardEffectArgumentValue[][],
 	) => {
 		if (argIndex === choices.length) {
 			results.push(result)

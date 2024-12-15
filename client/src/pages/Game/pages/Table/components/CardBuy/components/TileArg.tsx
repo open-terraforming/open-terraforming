@@ -84,26 +84,40 @@ export const TileArg = ({ arg, onChange }: Props) => {
 
 	return (
 		<ArgContainer>
-			<Flex gap="0.5rem" justify="center">
-				<span>{arg.descriptionPrefix ?? 'Place'}</span>
-
-				<div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+			{choices.length === 0 && (
+				<Flex>
+					No valid locations for{' '}
 					<TileIcon
 						content={tilePlacementState.type}
 						other={tilePlacementState.other}
 						size="2.5rem"
 					/>
-				</div>
+				</Flex>
+			)}
+			{choices.length > 1 && (
+				<Flex gap="0.5rem" justify="center">
+					<span>{arg.descriptionPrefix ?? 'Place'}</span>
 
-				{choices.length > 1 && (
-					<>
-						{!location && <Button onClick={handlePick}>Pick location</Button>}
-						{location && <Button onClick={handlePick}>Change location</Button>}
-					</>
-				)}
+					<div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+						<TileIcon
+							content={tilePlacementState.type}
+							other={tilePlacementState.other}
+							size="2.5rem"
+						/>
+					</div>
 
-				<span>{arg.descriptionPostfix}</span>
-			</Flex>
+					{choices.length > 1 && (
+						<>
+							{!location && <Button onClick={handlePick}>Pick location</Button>}
+							{location && (
+								<Button onClick={handlePick}>Change location</Button>
+							)}
+						</>
+					)}
+
+					<span>{arg.descriptionPostfix}</span>
+				</Flex>
+			)}
 		</ArgContainer>
 	)
 }

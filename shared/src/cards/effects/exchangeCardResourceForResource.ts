@@ -2,7 +2,7 @@ import { withUnits } from '@shared/units'
 import { effectArg } from '../args'
 import { cardResourceCondition } from '../conditions'
 import { CardResource, Resource, SymbolType } from '../types'
-import { CardEffectTarget } from '../args'
+import { CardEffectArgumentType } from '../args'
 import { updatePlayerResource } from '../utils'
 import { effect } from './types'
 
@@ -14,7 +14,7 @@ export const exchangeCardResourceForResource = (
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.CardResourceCount as const,
+				type: CardEffectArgumentType.CardResourceCount as const,
 				descriptionPrefix: 'Exchange',
 				descriptionPostfix: `for ${dstResCount} ${dstRes} each`,
 			}),

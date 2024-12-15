@@ -1,15 +1,15 @@
-import { useState, useEffect, useMemo } from 'react'
-import { CardEffectArgument, CardEffectArgumentType } from '@shared/cards'
+import { useAppStore } from '@/utils/hooks'
+import { CardEffectArgument, CardEffectArgumentValue } from '@shared/cards'
+import { emptyCardState } from '@shared/cards/utils'
+import { UsedCardState } from '@shared/index'
+import { useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { ArgContainer } from './ArgContainer'
 import { ArgsPicker } from './ArgsPicker'
-import { useAppStore } from '@/utils/hooks'
-import { emptyCardState } from '@shared/cards/utils'
-import { UsedCardState } from '@shared/index'
 
 type Props = {
 	arg: CardEffectArgument
-	onChange: (v: [number, CardEffectArgumentType[]]) => void
+	onChange: (v: [number, CardEffectArgumentValue[]]) => void
 	card: string
 	cardState: UsedCardState
 }
@@ -38,7 +38,7 @@ export const ChoiceArg = ({ arg, onChange, card, cardState }: Props) => {
 	)
 
 	const [selected, setSelected] = useState((choices[0]?.index || 0) as number)
-	const [args, setArgs] = useState([] as CardEffectArgumentType[][])
+	const [args, setArgs] = useState([] as CardEffectArgumentValue[][])
 
 	useEffect(() => {
 		if (selected !== undefined) {

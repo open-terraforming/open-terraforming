@@ -1,7 +1,7 @@
 import {
 	CardEffectArgument,
 	CardEffectArgumentType,
-	CardEffectTarget,
+	CardEffectArgumentValue,
 } from '@shared/cards'
 import { UsedCardState } from '@shared/index'
 import { CardArg } from './CardArg'
@@ -21,7 +21,7 @@ type Props = {
 	card: string
 	cardState: UsedCardState
 	handCardIndex?: number
-	onChange: (v: CardEffectArgumentType) => void
+	onChange: (v: CardEffectArgumentValue) => void
 }
 
 export const Arg = ({
@@ -32,11 +32,11 @@ export const Arg = ({
 	handCardIndex,
 }: Props) => {
 	switch (arg.type) {
-		case CardEffectTarget.Player:
+		case CardEffectArgumentType.Player:
 			return <PlayerArg arg={arg} card={cardState} onChange={onChange} />
-		case CardEffectTarget.Resource:
+		case CardEffectArgumentType.ResourceCount:
 			return <ResourceArg arg={arg} onChange={onChange} card={cardState} />
-		case CardEffectTarget.EffectChoice:
+		case CardEffectArgumentType.EffectChoice:
 			return (
 				<ChoiceArg
 					arg={arg}
@@ -45,7 +45,7 @@ export const Arg = ({
 					onChange={onChange}
 				/>
 			)
-		case CardEffectTarget.Card:
+		case CardEffectArgumentType.Card:
 			return (
 				<CardArg
 					arg={arg}
@@ -54,7 +54,7 @@ export const Arg = ({
 					cardState={cardState}
 				/>
 			)
-		case CardEffectTarget.PlayerCardResource:
+		case CardEffectArgumentType.PlayerCardResource:
 			return (
 				<CardArg
 					arg={arg}
@@ -64,15 +64,15 @@ export const Arg = ({
 					cardState={cardState}
 				/>
 			)
-		case CardEffectTarget.PlayerResource:
+		case CardEffectArgumentType.PlayerResource:
 			return (
 				<PlayerResourceArg card={cardState} arg={arg} onChange={onChange} />
 			)
-		case CardEffectTarget.ResourceType:
+		case CardEffectArgumentType.ResourceType:
 			return <ResourceTypeArg arg={arg} onChange={onChange} />
-		case CardEffectTarget.Production:
+		case CardEffectArgumentType.ProductionCount:
 			return <ProductionArg arg={arg} card={cardState} onChange={onChange} />
-		case CardEffectTarget.CardResourceCount:
+		case CardEffectArgumentType.CardResourceCount:
 			return (
 				<CardResourceAmountArg
 					cardState={cardState}
@@ -80,16 +80,16 @@ export const Arg = ({
 					onChange={onChange}
 				/>
 			)
-		case CardEffectTarget.CommitteeParty:
+		case CardEffectArgumentType.CommitteeParty:
 			return <CommitteePartyArg arg={arg} onChange={onChange} />
-		case CardEffectTarget.CommitteePartyMember:
+		case CardEffectArgumentType.CommitteePartyMember:
 			return <CommitteePartyMemberArg arg={arg} onChange={onChange} />
-		case CardEffectTarget.Tile:
+		case CardEffectArgumentType.Tile:
 			return <TileArg arg={arg} onChange={onChange} />
 		default:
 			return (
 				<div style={{ color: '#FFB0B7' }}>
-					Unknown argument {CardEffectTarget[arg.type]}
+					Unknown argument {CardEffectArgumentType[arg.type]}
 				</div>
 			)
 	}

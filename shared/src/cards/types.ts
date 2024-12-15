@@ -38,12 +38,12 @@ export type CardResource =
 
 export type GameProgress = 'oxygen' | 'temperature' | 'oceans' | 'venus'
 
-export type CardEffectArgumentType =
+export type CardEffectArgumentValue =
 	| number
 	| null
 	| string
 	| [x: number, y: number, location: GridCellLocation | undefined]
-	| CardEffectArgumentType[]
+	| CardEffectArgumentValue[]
 
 export interface CardCallbackContext {
 	game: GameState
@@ -134,7 +134,7 @@ export interface Card {
 
 export type CardCondition<
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	T extends (CardEffectArgumentType | undefined)[] = any,
+	T extends (CardEffectArgumentValue | undefined)[] = any,
 > = {
 	description?: string
 	symbols: CardSymbol[]

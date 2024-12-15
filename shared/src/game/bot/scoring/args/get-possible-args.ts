@@ -1,8 +1,8 @@
 import {
 	CardEffect,
 	CardEffectArgument,
+	CardEffectArgumentValue,
 	CardEffectArgumentType,
-	CardEffectTarget,
 	Resource,
 	CardsLookupApi,
 } from '@shared/cards'
@@ -42,9 +42,9 @@ const getPossibleOptions = (
 	game: GameState,
 	a: CardEffectArgument,
 	card: UsedCardState,
-): CardEffectArgumentType[] => {
+): CardEffectArgumentValue[] => {
 	switch (a.type) {
-		case CardEffectTarget.Card: {
+		case CardEffectArgumentType.Card: {
 			return a.fromHand
 				? cardsList(player.cards)
 						.fits(game, player, a.cardConditions)
@@ -54,7 +54,7 @@ const getPossibleOptions = (
 						.map((c) => player.usedCards.indexOf(c.state))
 		}
 
-		case CardEffectTarget.Player: {
+		case CardEffectArgumentType.Player: {
 			return game.players
 				.filter(
 					(other) =>
@@ -72,7 +72,7 @@ const getPossibleOptions = (
 				.concat(a.optional ? [-1] : [])
 		}
 
-		case CardEffectTarget.PlayerResource: {
+		case CardEffectArgumentType.PlayerResource: {
 			const res = a.resource
 
 			if (!res) {
@@ -99,7 +99,7 @@ const getPossibleOptions = (
 			).concat([[-1, 0]])
 		}
 
-		case CardEffectTarget.PlayerCardResource: {
+		case CardEffectArgumentType.PlayerCardResource: {
 			return flatten(
 				game.players
 					.filter((other) => other.id !== player.id)
@@ -126,11 +126,11 @@ const getPossibleOptions = (
 			).concat(a.optional ? [[-1, 0]] : [])
 		}
 
-		case CardEffectTarget.ResourceCount: {
+		case CardEffectArgumentType.ResourceCount: {
 			return range(1, player[a.resource as Resource] + 1)
 		}
 
-		case CardEffectTarget.ResourceType: {
+		case CardEffectArgumentType.ResourceType: {
 			return resources.filter(
 				(r) =>
 					a.resourceConditions.find((c) => !c({ player, game }, r)) ===
@@ -138,7 +138,7 @@ const getPossibleOptions = (
 			)
 		}
 
-		case CardEffectTarget.EffectChoice: {
+		case CardEffectArgumentType.EffectChoice: {
 			const effects = a.effects || []
 
 			return effects
@@ -159,7 +159,7 @@ const getPossibleOptions = (
 				])
 		}
 
-		case CardEffectTarget.Tile: {
+		case CardEffectArgumentType.Tile: {
 			const { tilePlacementState } = a
 
 			if (!tilePlacementState) {
@@ -171,7 +171,7 @@ const getPossibleOptions = (
 				.map((c) => [c.x, c.y, c.location ?? null])
 		}
 
-		case CardEffectTarget.CardResourceCount: {
+		case CardEffectArgumentType.CardResourceCount: {
 			const cardResource = CardsLookupApi.get(card.code).resource
 
 			if (!cardResource) {
@@ -183,13 +183,13 @@ const getPossibleOptions = (
 			return [range(0, maximumCount + 1)]
 		}
 
-		case CardEffectTarget.ProductionCount: {
+		case CardEffectArgumentType.ProductionCount: {
 			// TODO: We need to find out what the maximum amount is and then pick the best value
 			//    This is used for "exchange production" effect so we somehow need to know how much source production we have
 			return [1]
 		}
 
-		case CardEffectTarget.CommitteeParty: {
+		case CardEffectArgumentType.CommitteeParty: {
 			return game.committee.parties
 				.filter(
 					(p) =>
@@ -199,7 +199,7 @@ const getPossibleOptions = (
 				.map((p) => p.code)
 		}
 
-		case CardEffectTarget.CommitteePartyMember: {
+		case CardEffectArgumentType.CommitteePartyMember: {
 			const parties = game.committee.parties.filter(
 				(p) =>
 					!a.committeePartyConditions ||
@@ -222,7 +222,7 @@ export const getPossibleArgs = (
 	game: GameState,
 	effects: CardEffect[],
 	card: UsedCardState,
-): CardEffectArgumentType[][][] => {
+): CardEffectArgumentValue[][][] => {
 	return effects.map((e) =>
 		e.args.length > 0
 			? // eslint-disable-next-line @typescript-eslint/no-explicit-any

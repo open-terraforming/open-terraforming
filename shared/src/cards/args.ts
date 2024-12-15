@@ -13,7 +13,7 @@ import {
 } from './types'
 import { GridCellLocation } from '@shared/gameState'
 
-export enum CardEffectTarget {
+export enum CardEffectArgumentType {
 	Player = 1,
 	PlayerResource,
 	ResourceCount,
@@ -29,10 +29,12 @@ export enum CardEffectTarget {
 }
 
 export type CardEffectArgument<
-	TType extends CardEffectTarget = CardEffectTarget,
+	TType extends CardEffectArgumentType = CardEffectArgumentType,
 > = CardEffectArgumentBase<TType>
 
-export interface CardEffectArgumentBase<TType extends CardEffectTarget> {
+export type AnyCardEffectArgument = CardEffectArgument<CardEffectArgumentType>
+
+export interface CardEffectArgumentBase<TType extends CardEffectArgumentType> {
 	type: TType
 	descriptionPrefix?: string
 	descriptionPostfix?: string
@@ -57,29 +59,32 @@ export interface CardEffectArgumentBase<TType extends CardEffectTarget> {
 }
 
 export interface CardEffectArgumentTypeToResultMap {
-	[CardEffectTarget.Player]: number
-	[CardEffectTarget.PlayerResource]: number
-	[CardEffectTarget.ResourceCount]: number
-	[CardEffectTarget.ResourceType]: Resource
-	[CardEffectTarget.ProductionCount]: number
-	[CardEffectTarget.Card]: number
-	[CardEffectTarget.PlayerCardResource]: [player: number, cardIndex: number]
+	[CardEffectArgumentType.Player]: number
+	[CardEffectArgumentType.PlayerResource]: number
+	[CardEffectArgumentType.ResourceCount]: number
+	[CardEffectArgumentType.ResourceType]: Resource
+	[CardEffectArgumentType.ProductionCount]: number
+	[CardEffectArgumentType.Card]: number
+	[CardEffectArgumentType.PlayerCardResource]: [
+		player: number,
+		cardIndex: number,
+	]
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	[CardEffectTarget.EffectChoice]: [choice: number, choiceParams: any[]]
-	[CardEffectTarget.Tile]: [
+	[CardEffectArgumentType.EffectChoice]: [choice: number, choiceParams: any[]]
+	[CardEffectArgumentType.Tile]: [
 		x: number,
 		y: number,
 		location: GridCellLocation | null,
 	]
-	[CardEffectTarget.CardResourceCount]: number
-	[CardEffectTarget.CommitteeParty]: string
-	[CardEffectTarget.CommitteePartyMember]: [
+	[CardEffectArgumentType.CardResourceCount]: number
+	[CardEffectArgumentType.CommitteeParty]: string
+	[CardEffectArgumentType.CommitteePartyMember]: [
 		partyCode: string,
 		memberPlayerId: number | null,
 	]
 }
 
-export const effectArg = <TType extends CardEffectTarget>(
+export const effectArg = <TType extends CardEffectArgumentType>(
 	c: WithOptional<
 		CardEffectArgument<TType>,
 		'playerConditions' | 'cardConditions' | 'optional' | 'resourceConditions'
@@ -96,7 +101,7 @@ export const effectArg = <TType extends CardEffectTarget>(
 
 export const effectChoiceArg = (effects: CardEffect[]) =>
 	effectArg({
-		type: CardEffectTarget.EffectChoice,
+		type: CardEffectArgumentType.EffectChoice,
 		effects,
 	})
 
@@ -104,10 +109,10 @@ export const cardArg = (
 	conditions: CardCondition[] = [],
 	descriptionPrefix?: string,
 	descriptionPostfix?: string,
-	extra?: Partial<CardEffectArgument<CardEffectTarget.Card>>,
+	extra?: Partial<CardEffectArgument<CardEffectArgumentType.Card>>,
 ) =>
 	effectArg({
-		type: CardEffectTarget.Card,
+		type: CardEffectArgumentType.Card,
 		cardConditions: conditions,
 		descriptionPrefix,
 		descriptionPostfix,
@@ -120,7 +125,7 @@ export const tileArg = (
 	descriptionPostfix?: string,
 ) =>
 	effectArg({
-		type: CardEffectTarget.Tile,
+		type: CardEffectArgumentType.Tile,
 		descriptionPrefix,
 		descriptionPostfix,
 		tilePlacementState: state,
@@ -129,10 +134,12 @@ export const tileArg = (
 export const playerCardArg = (
 	conditions: CardCondition[] = [],
 	amount = 0,
-	extra?: Partial<CardEffectArgument<CardEffectTarget.PlayerCardResource>>,
+	extra?: Partial<
+		CardEffectArgument<CardEffectArgumentType.PlayerCardResource>
+	>,
 ) =>
 	effectArg({
-		type: CardEffectTarget.PlayerCardResource,
+		type: CardEffectArgumentType.PlayerCardResource,
 		cardConditions: [...conditions, unprotectedCard()],
 		amount,
 		...extra,
@@ -140,13 +147,13 @@ export const playerCardArg = (
 
 export const resourceTypeArg = (resourceConditions: ResourceCondition[] = []) =>
 	effectArg({
-		type: CardEffectTarget.ResourceType,
+		type: CardEffectArgumentType.ResourceType,
 		resourceConditions,
 	})
 
 export const committeePartyArg = (conditions?: CommitteePartyCondition[]) =>
 	effectArg({
-		type: CardEffectTarget.CommitteeParty,
+		type: CardEffectArgumentType.CommitteeParty,
 		committeePartyConditions: conditions,
 	})
 
@@ -154,6 +161,6 @@ export const committeePartyMemberArg = (
 	conditions?: CommitteePartyCondition[],
 ) =>
 	effectArg({
-		type: CardEffectTarget.CommitteePartyMember,
+		type: CardEffectArgumentType.CommitteePartyMember,
 		committeePartyConditions: conditions,
 	})
