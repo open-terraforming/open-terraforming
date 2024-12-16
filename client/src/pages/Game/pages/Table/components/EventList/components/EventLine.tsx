@@ -5,14 +5,9 @@ import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi, Resource } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
-import {
-	ColonyState,
-	EventType,
-	GameEvent,
-	PlayerState,
-	StandardProjectType,
-} from '@shared/index'
+import { ColonyState, EventType, GameEvent, PlayerState } from '@shared/index'
 import { Milestones } from '@shared/milestones'
+import { Projects } from '@shared/projects'
 import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
 import { ucFirst } from '@shared/utils'
@@ -69,12 +64,25 @@ const ColonySpan = ({ colony }: { colony: ColonyState }) => {
 	)
 }
 
+const GlobalEventSpan = ({ eventCode }: { eventCode: string }) => {
+	const locale = useLocale()
+	const { openGlobalEventModal } = useGameModals()
+
+	return (
+		<>
+			<CardSpanE onClick={() => openGlobalEventModal(eventCode)}>
+				{locale.globalEvents[eventCode]}
+			</CardSpanE>
+		</>
+	)
+}
+
 const formatTime = (time: number) => {
 	const hours = Math.floor(time / 3600000)
 	const minutes = Math.floor((time % 3600000) / 60000)
 	const seconds = ((time % 60000) / 1000).toFixed(0)
 
-	return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+	return `${hours > 0 ? hours + ':' : ''}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
 
 export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
@@ -261,7 +269,7 @@ export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} /> bought{' '}
-						{StandardProjectType[event.project]}
+						{Projects[event.project].description}
 					</>
 				)
 			case EventType.TileAcquired:
@@ -320,20 +328,24 @@ export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
 					</InlineFlex>
 				)
 			case EventType.CurrentGlobalEventExecuted:
-				return <>{locale.globalEvents[event.eventCode]} global event</>
+				return (
+					<>
+						<GlobalEventSpan eventCode={event.eventCode} /> global event
+					</>
+				)
 			case EventType.GlobalEventsChanged:
 				return (
 					<>
 						{event.current.distant && (
 							<>
-								{locale.globalEvents[event.current.distant]} is new distant
-								event
+								<GlobalEventSpan eventCode={event.current.distant} /> is new
+								distant event
 							</>
 						)}
 						{event.current.current && (
 							<>
-								, {locale.globalEvents[event.current.current]} is new current
-								event
+								, <GlobalEventSpan eventCode={event.current.current} /> is new
+								current event
 							</>
 						)}
 					</>
@@ -355,14 +367,24 @@ export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
 
 	return content ? (
 		<E animation={animated}>
-			{timestamp &&
-				formatTime((event.t ?? 0) - new Date(game.started).getTime())}{' '}
+			{timestamp && (
+				<TimestampE>
+					{formatTime((event.t ?? 0) - new Date(game.started).getTime())}
+				</TimestampE>
+			)}
 			{content}
 		</E>
 	) : (
 		<></>
 	)
 }
+
+const TimestampE = styled.span`
+	width: 3.4rem;
+	display: inline-block;
+	text-align: right;
+	margin-right: 0.25rem;
+`
 
 const E = styled.div<{ animation: boolean }>`
 	overflow: hidden;
