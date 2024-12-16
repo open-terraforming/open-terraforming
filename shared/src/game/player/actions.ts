@@ -23,7 +23,7 @@ import { PickPreludesAction } from './actions/pick-preludes'
 import { PickStartingAction } from './actions/pick-starting'
 import { PlaceTileAction } from './actions/place-tile'
 import { PlayCardAction } from './actions/play-card'
-import { SolarPhaseTerraform } from './actions/solar-phase-terraform'
+import { WorldGovernmentTerraform } from './actions/solar-phase-terraform'
 import { SponsorCompetitionAction } from './actions/sponsor-competition'
 import { StartGameAction } from './actions/start-game'
 import { ToggleReadyAction } from './actions/toggle-ready'
@@ -71,7 +71,7 @@ export class PlayerActions {
 			[MessageType.StartGame]: new StartGameAction(this.player),
 			[MessageType.PlayerPass]: new PassAction(this.player),
 			[MessageType.DraftCard]: new DraftCardAction(this.player),
-			[MessageType.SolarPhaseTerraform]: new SolarPhaseTerraform(this.player),
+			[MessageType.WorldGovernmentTerraform]: new WorldGovernmentTerraform(this.player),
 			[MessageType.AddCardResource]: new AddCardResourceAction(this.player),
 			[MessageType.DiscardCards]: new DiscardCardsAction(this.player),
 			[MessageType.TradeWithColony]: new TradeWithColonyAction(this.player),

@@ -1,17 +1,17 @@
 import { ExpansionType } from '@shared/expansions/types'
 import { GameStateValue, PlayerStateValue } from '@shared/gameState'
-import { solarPhaseTerraformAction } from '@shared/player-actions'
+import { worldGovernmentTerraformAction } from '@shared/player-actions'
 import { hasExpansion } from '@shared/utils/hasExpansion'
 import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { BaseGameState } from './base-game-state'
 
-export class SolarPhaseGameState extends BaseGameState {
-	name = GameStateValue.SolarPhase
+export class WorldGovernmentTerraformingGameState extends BaseGameState {
+	name = GameStateValue.WorldGovernmentTerraforming
 
 	onEnter() {
 		const player = this.state.players[this.state.startingPlayer]
-		player.state = PlayerStateValue.SolarPhaseTerraform
-		pushPendingAction(player, solarPhaseTerraformAction())
+		player.state = PlayerStateValue.WorldGovernmentTerraform
+		pushPendingAction(player, worldGovernmentTerraformAction())
 		this.game.updated()
 	}
 

@@ -3,24 +3,24 @@ import {
 	GameStateValue,
 	GridCellContent,
 	PlayerStateValue,
-	solarPhaseTerraform,
+	worldGovernmentTerraform,
 } from '@shared/index'
 import { placeTileAction, PlayerActionType } from '@shared/player-actions'
 import { f } from '@shared/utils/f'
 import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { PlayerBaseActionHandler } from '../action'
 
-type Args = ReturnType<typeof solarPhaseTerraform>['data']
+type Args = ReturnType<typeof worldGovernmentTerraform>['data']
 
-export class SolarPhaseTerraform extends PlayerBaseActionHandler<Args> {
-	states = [PlayerStateValue.SolarPhaseTerraform]
-	gameStates = [GameStateValue.SolarPhase]
+export class WorldGovernmentTerraform extends PlayerBaseActionHandler<Args> {
+	states = [PlayerStateValue.WorldGovernmentTerraform]
+	gameStates = [GameStateValue.WorldGovernmentTerraforming]
 
 	perform({ progress }: Args) {
 		const top = this.pendingAction
 
-		if (top?.type !== PlayerActionType.SolarPhaseTerraform) {
-			throw new Error('Top action is not solar phase terraform')
+		if (top?.type !== PlayerActionType.WorldGovernmentTerraform) {
+			throw new Error('Top action is not world government terraform')
 		}
 
 		if (
