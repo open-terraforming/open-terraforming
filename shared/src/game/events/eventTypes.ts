@@ -274,6 +274,7 @@ export type NewGovernment = {
 }
 
 export type BaseGameEvent = {
+	t: number
 	processed?: boolean
 }
 

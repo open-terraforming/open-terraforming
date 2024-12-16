@@ -1,3 +1,4 @@
+import { GlobalEventModal } from '@/components/GlobalEventModal'
 import { ColoniesModal } from '@/pages/Game/pages/Table/components/ColoniesModal/ColoniesModal'
 import { ColonyTradeModal } from '@/pages/Game/pages/Table/components/ColoniesModal/components/ColonyTradeModal'
 import { CardModal } from '@/pages/Game/pages/Table/components/EventList/components/CardModal'
@@ -15,6 +16,7 @@ type TradeWithColonyProps = {
 
 type GameModalsContextType = {
 	openCardModal: (cardCode: string) => void
+	openGlobalEventModal: (eventCode: string) => void
 	openColoniesModal: () => void
 	openTradeWithColonyModal: (props: TradeWithColonyProps) => void
 }
@@ -24,6 +26,7 @@ const GameModalsContext = createContext<GameModalsContextType | null>(null)
 export const GameModalsProvider = ({ children }: Props) => {
 	const [openedCardModals, setOpenedCardModals] = useState<string[]>([])
 	const [showColonies, setColoniesShown] = useState(false)
+	const [showGlobalEvent, setGlobalEventShown] = useState<string>()
 
 	const [showTradeWithColony, setTradeWithColonyShown] =
 		useState<TradeWithColonyProps>()
@@ -37,6 +40,7 @@ export const GameModalsProvider = ({ children }: Props) => {
 			openCardModal,
 			openColoniesModal: () => setColoniesShown(true),
 			openTradeWithColonyModal: (props) => setTradeWithColonyShown(props),
+			openGlobalEventModal: (eventCode) => setGlobalEventShown(eventCode),
 		}
 	}, [])
 
@@ -60,6 +64,13 @@ export const GameModalsProvider = ({ children }: Props) => {
 				<ColonyTradeModal
 					{...showTradeWithColony}
 					onClose={() => setTradeWithColonyShown(undefined)}
+				/>
+			)}
+
+			{showGlobalEvent && (
+				<GlobalEventModal
+					eventCode={showGlobalEvent}
+					onClose={() => setGlobalEventShown(undefined)}
 				/>
 			)}
 

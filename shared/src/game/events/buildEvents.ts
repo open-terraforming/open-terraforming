@@ -6,6 +6,7 @@ import { groupBy } from '@shared/utils'
 import { objDiff } from '@shared/utils/collections'
 import { isMarsTerraformed } from '@shared/utils/isMarsTerraformed'
 import {
+	BaseGameEvent,
 	CommitteePartyDelegateChange,
 	EventType,
 	GameEvent,
@@ -25,6 +26,7 @@ const progress: GameProgress[] = ['oxygen', 'temperature', 'venus']
 export const buildEvents = (lastGame: GameState, game: GameState) => {
 	const diff = objDiff(lastGame, game)
 	const newEvents = [] as GameEvent[]
+	const at = Date.now()
 
 	const tiles = diff.map?.grid
 
@@ -35,6 +37,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 				if (cellChange.content) {
 					newEvents.push({
+						t: at,
 						type: EventType.TilePlaced,
 						playerId: cellChange.placedById as number,
 						tile: cellChange.content,
@@ -49,6 +52,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 				if (cellChange.claimantId !== undefined) {
 					newEvents.push({
+						t: at,
 						type: EventType.TileClaimed,
 						playerId: cellChange.ownerId as number,
 						tile: { x: currentCell.x, y: currentCell.y },
@@ -66,6 +70,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 			if (colony.active) {
 				newEvents.push({
+					t: at,
 					type: EventType.ColonyActivated,
 					colony: +colonyIndex,
 				})
@@ -73,6 +78,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 			if (typeof colony.step === 'number') {
 				newEvents.push({
+					t: at,
 					type: EventType.ColonyTradingStepChanged,
 					colony: +colonyIndex,
 					change: colony.step - lastGame.colonies[+colonyIndex].step,
@@ -114,6 +120,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 								if (card.resource && resourceChange !== undefined) {
 									playerEvents.push({
+										t: at,
 										type: EventType.CardResourceChanged,
 										playerId: player.id,
 										card: oldCard.code,
@@ -129,6 +136,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 				if (gameChanges.terraformRating) {
 					playerEvents.push({
+						t: at,
 						type: EventType.RatingChanged,
 						playerId: player.id,
 						amount: gameChanges.terraformRating - player.terraformRating,
@@ -142,6 +150,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 				if (resourceChanges.length > 0) {
 					playerEvents.push({
+						t: at,
 						type: EventType.ResourcesChanged,
 						playerId: player.id,
 						resources: Object.fromEntries(resourceChanges),
@@ -153,6 +162,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 					if (gameChanges[prod] !== undefined) {
 						playerEvents.push({
+							t: at,
 							type: EventType.ProductionChanged,
 							playerId: player.id,
 							resource: res,
@@ -163,6 +173,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 				if (gameChanges.corporation) {
 					playerEvents.push({
+						t: at,
 						type: EventType.CorporationPicked,
 						playerId: player.id,
 						corporation: gameChanges.corporation,
@@ -176,6 +187,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 					if (diff > 0) {
 						playerEvents.push({
+							t: at,
 							type: EventType.CardsReceived,
 							playerId: player.id,
 							amount: diff,
@@ -188,6 +200,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 					if (diff > 0) {
 						playerEvents.push({
+							t: at,
 							type: EventType.PlayerTradeFleetsChange,
 							playerId: player.id,
 							amount: diff,
@@ -204,6 +217,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 						switch (action.type) {
 							case PlayerActionType.PlaceTile: {
 								playerEvents.push({
+									t: at,
 									type: EventType.TileAcquired,
 									playerId: player.id,
 									tile: action.state?.type ?? GridCellContent.City,
@@ -226,6 +240,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 		isMarsTerraformed(game)
 	) {
 		newEvents.push({
+			t: at,
 			type: EventType.MarsTerraformed,
 		})
 	}
@@ -233,6 +248,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 	progress.forEach((p) => {
 		if (diff[p]) {
 			newEvents.push({
+				t: at,
 				type: EventType.GameProgressChanged,
 				progress: p,
 				amount: diff[p] - lastGame[p],
@@ -244,6 +260,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 		Object.values(diff.competitions).forEach((c) => {
 			if (c.playerId !== undefined && c.type !== undefined) {
 				newEvents.push({
+					t: at,
 					type: EventType.CompetitionSponsored,
 					playerId: c.playerId,
 					competition: c.type,
@@ -256,6 +273,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 		Object.values(diff.milestones).forEach((c) => {
 			if (c.playerId !== undefined && c.type !== undefined) {
 				newEvents.push({
+					t: at,
 					type: EventType.MilestoneBought,
 					playerId: c.playerId,
 					milestone: c.type,
@@ -266,6 +284,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 	if (diff.currentPlayer !== undefined) {
 		newEvents.push({
+			t: at,
 			type: EventType.PlayingChanged,
 			playing: diff.currentPlayer,
 		})
@@ -273,6 +292,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 	if (diff.generation !== undefined) {
 		newEvents.push({
+			t: at,
 			type: EventType.NewGeneration,
 			generation: diff.generation,
 		})
@@ -339,7 +359,9 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 					newEvents.push(
 						...Array.from(changes).map(
-							([playerId, change]): CommitteePartyDelegateChange => ({
+							([playerId, change]): CommitteePartyDelegateChange &
+								BaseGameEvent => ({
+								t: at,
 								type: EventType.CommitteePartyDelegateChange,
 								partyCode: prevParty.code,
 								playerId: playerId ?? null,
@@ -351,6 +373,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 				if (party.leader) {
 					newEvents.push({
+						t: at,
 						type: EventType.CommitteePartyLeaderChanged,
 						partyCode: prevParty.code,
 						playerId: party.leader.playerId?.id ?? null,
@@ -361,6 +384,7 @@ export const buildEvents = (lastGame: GameState, game: GameState) => {
 
 		if (diff.committee.dominantParty) {
 			newEvents.push({
+				t: at,
 				type: EventType.CommitteeDominantPartyChanged,
 				partyCode: diff.committee.dominantParty,
 			})
