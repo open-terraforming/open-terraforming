@@ -11,7 +11,7 @@ export enum PlayerActionType {
 	ClaimTile,
 	SponsorCompetition,
 	PickStarting,
-	SolarPhaseTerraform,
+	WorldGovernmentTerraform,
 	AddCardResource,
 	DiscardCards,
 	BuildColony,
@@ -86,9 +86,9 @@ export const pickStartingAction = (
 		preludesLimit,
 	}) as const
 
-export const solarPhaseTerraformAction = () =>
+export const worldGovernmentTerraformAction = () =>
 	({
-		type: PlayerActionType.SolarPhaseTerraform,
+		type: PlayerActionType.WorldGovernmentTerraform,
 	}) as const
 
 export const addCardResourceAction = (
@@ -134,7 +134,7 @@ export type PlayerAction =
 	| ReturnType<typeof claimTileAction>
 	| ReturnType<typeof draftCardAction>
 	| ReturnType<typeof pickStartingAction>
-	| ReturnType<typeof solarPhaseTerraformAction>
+	| ReturnType<typeof worldGovernmentTerraformAction>
 	| ReturnType<typeof addCardResourceAction>
 	| ReturnType<typeof discardCardsAction>
 	| ReturnType<typeof buildColonyAction>

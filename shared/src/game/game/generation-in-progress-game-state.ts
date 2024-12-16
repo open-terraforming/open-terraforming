@@ -47,7 +47,7 @@ export class GenerationInProgressGameState extends BaseGameState {
 					this.game.state.oxygen < this.game.state.map.oxygen ||
 					this.game.state.oceans < this.game.state.map.oceans)
 			) {
-				return GameStateValue.SolarPhase
+				return GameStateValue.WorldGovernmentTerraforming
 			}
 
 			if (this.game.state.colonies.length > 0) {

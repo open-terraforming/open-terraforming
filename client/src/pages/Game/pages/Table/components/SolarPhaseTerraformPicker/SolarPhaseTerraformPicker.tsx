@@ -4,7 +4,7 @@ import { Lore } from '@/components/Lore'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
-import { solarPhaseTerraform } from '@shared/actions'
+import { worldGovernmentTerraform } from '@shared/actions'
 import { GameProgress } from '@shared/cards'
 import { PlayerAction } from '@shared/player-actions'
 
@@ -17,7 +17,7 @@ export const SolarPhaseTerraformPicker = ({}: Props) => {
 	const game = useAppStore((state) => state.game.state)
 
 	const confirm = (progress: GameProgress) => () => {
-		api.send(solarPhaseTerraform(progress))
+		api.send(worldGovernmentTerraform(progress))
 	}
 
 	return (

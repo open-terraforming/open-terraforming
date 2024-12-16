@@ -76,7 +76,7 @@ const Table = () => {
 						/>
 					)}
 
-				{pending?.type === PlayerActionType.SolarPhaseTerraform && (
+				{pending?.type === PlayerActionType.WorldGovernmentTerraform && (
 					<SolarPhaseTerraformPicker action={pending} />
 				)}
 

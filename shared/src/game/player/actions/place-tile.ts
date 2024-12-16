@@ -11,13 +11,13 @@ export class PlaceTileAction extends PlayerBaseActionHandler<Args> {
 		PlayerStateValue.Playing,
 		PlayerStateValue.EndingTiles,
 		PlayerStateValue.Prelude,
-		PlayerStateValue.SolarPhaseTerraform,
+		PlayerStateValue.WorldGovernmentTerraform,
 	]
 	gameStates = [
 		GameStateValue.GenerationInProgress,
 		GameStateValue.EndingTiles,
 		GameStateValue.Prelude,
-		GameStateValue.SolarPhase,
+		GameStateValue.WorldGovernmentTerraforming,
 	]
 
 	perform({ x, y, location }: Args) {

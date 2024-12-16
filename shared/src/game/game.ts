@@ -21,7 +21,7 @@ import {
 	pickCards,
 	pickPreludes,
 	playerPass,
-	solarPhaseTerraform,
+	worldGovernmentTerraform,
 	UpdateDeepPartial,
 } from '@shared/index'
 import { Logger } from '@shared/lib/logger'
@@ -54,7 +54,7 @@ import { GenerationInProgressGameState } from './game/generation-in-progress-gam
 import { GenerationStartGameState } from './game/generation-start-game-state'
 import { PreludeGameState } from './game/prelude-game-state'
 import { ResearchPhaseGameState } from './game/research-phase-game-state'
-import { SolarPhaseGameState } from './game/solar-phase-game-state'
+import { WorldGovernmentTerraformingGameState } from './game/world-government-terraforming-game-state'
 import { StartingGameState } from './game/starting-game-state'
 import { TurmoilGameState } from './game/turmoil-game-state'
 import { WaitingForPlayersGameState } from './game/waiting-for-players-game-state'
@@ -195,7 +195,7 @@ export class Game {
 			.addState(new ResearchPhaseGameState(this))
 			.addState(new DraftGameState(this))
 			.addState(new PreludeGameState(this))
-			.addState(new SolarPhaseGameState(this))
+			.addState(new WorldGovernmentTerraformingGameState(this))
 			.addState(new ColoniesProductionGameState(this))
 			.addState(new TurmoilGameState(this))
 
@@ -699,14 +699,16 @@ export class Game {
 				try {
 					if (!p.state.connected) {
 						if (p.state.state !== PlayerStateValue.Playing) {
-							if (p.state.state === PlayerStateValue.SolarPhaseTerraform) {
+							if (p.state.state === PlayerStateValue.WorldGovernmentTerraform) {
 								const availableProgressValues = (
 									['oceans', 'temperature', 'oxygen'] as const
 								).filter(
 									(progress) => this.state[progress] < this.state.map[progress],
 								)
 
-								p.performAction(solarPhaseTerraform(availableProgressValues[0]))
+								p.performAction(
+									worldGovernmentTerraform(availableProgressValues[0]),
+								)
 							} else if (p.state.pendingActions.length > 0) {
 								p.state.pendingActions.forEach((a) => {
 									if (a.type === PlayerActionType.PickStarting) {

@@ -64,7 +64,7 @@ export enum MessageType {
 	SpectateResponse,
 	DraftCard,
 	PickStarting,
-	SolarPhaseTerraform,
+	WorldGovernmentTerraform,
 	AddCardResource,
 	DiscardCards,
 	BuildColony,
@@ -285,9 +285,9 @@ export const draftCard = (cards: number[]) =>
 		data: { cards },
 	}) as const
 
-export const solarPhaseTerraform = (progress: GameProgress) =>
+export const worldGovernmentTerraform = (progress: GameProgress) =>
 	({
-		type: MessageType.SolarPhaseTerraform,
+		type: MessageType.WorldGovernmentTerraform,
 		data: { progress },
 	}) as const
 
@@ -371,7 +371,7 @@ export type GameMessage =
 	| ReturnType<typeof spectateResponse>
 	| ReturnType<typeof draftCard>
 	| ReturnType<typeof pickStarting>
-	| ReturnType<typeof solarPhaseTerraform>
+	| ReturnType<typeof worldGovernmentTerraform>
 	| ReturnType<typeof addCardResource>
 	| ReturnType<typeof discardCards>
 	| ReturnType<typeof buildColony>
