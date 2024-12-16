@@ -325,16 +325,16 @@ export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
 				return (
 					<>
 						{event.current.distant && (
-							<div>
+							<>
 								{locale.globalEvents[event.current.distant]} is new distant
 								event
-							</div>
+							</>
 						)}
 						{event.current.current && (
-							<div>
-								{locale.globalEvents[event.current.current]} is new current
+							<>
+								, {locale.globalEvents[event.current.current]} is new current
 								event
-							</div>
+							</>
 						)}
 					</>
 				)
