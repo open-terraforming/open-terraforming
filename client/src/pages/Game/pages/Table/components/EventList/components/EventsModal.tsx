@@ -15,6 +15,7 @@ export const EventsModal = ({ onClose, events }: Props) => {
 			onClose={onClose}
 			header="Events"
 		>
+			{/* TODO: Windowed display mode to prevent lag */}
 			{[...events].reverse().map((e, i) => (
 				<EventLine key={i} event={e} animated={false} timestamp />
 			))}
