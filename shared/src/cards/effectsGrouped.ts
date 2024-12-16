@@ -1,4 +1,12 @@
+import { allCells } from '@shared/utils/allCells'
+import { applyTilePlace } from '@shared/utils/applyTilePlace'
+import { drawCard } from '@shared/utils/drawCard'
+import { drawCards } from '@shared/utils/drawCards'
+import { drawPreludeCards } from '@shared/utils/drawPreludeCards'
 import { enqueueForDiscard } from '@shared/utils/enqueueForDiscard'
+import { f } from '@shared/utils/f'
+import { flatten } from '@shared/utils/flatten'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
 import { GridCellContent, GridCellOther, GridCellSpecial } from '../gameState'
 import {
 	canPlace,
@@ -14,13 +22,6 @@ import {
 } from '../player-actions'
 import { otherWithArticle, specialToStr, tileWithArticle } from '../texts'
 import { withUnits } from '../units'
-import { allCells } from '@shared/utils/allCells'
-import { drawPreludeCards } from '@shared/utils/drawPreludeCards'
-import { drawCard } from '@shared/utils/drawCard'
-import { drawCards } from '@shared/utils/drawCards'
-import { f } from '@shared/utils/f'
-import { pushPendingAction } from '@shared/utils/pushPendingAction'
-import { flatten } from '@shared/utils/flatten'
 import { progressToSymbol } from '../utils/progressToSymbol'
 import {
 	cardArg,
@@ -28,7 +29,9 @@ import {
 	effectChoiceArg,
 	playerCardArg,
 	resourceTypeArg,
+	tileArg,
 } from './args'
+import { tagsCountHint, tileCountHint } from './cardHints'
 import {
 	cardAcceptsAnyResource,
 	cardAcceptsResource,
@@ -50,8 +53,7 @@ import { CardsLookupApi } from './lookup'
 import {
 	CardCategory,
 	CardEffect,
-	CardEffectArgumentType,
-	CardEffectTarget,
+	CardEffectArgumentValue,
 	CardEffectType,
 	CardResource,
 	CardSymbol,
@@ -61,6 +63,7 @@ import {
 	Resource,
 	SymbolType,
 } from './types'
+import { CardEffectArgument, CardEffectArgumentType } from './args'
 import {
 	countGridContent,
 	countGridContentOnMars,
@@ -72,7 +75,6 @@ import {
 	updatePlayerProduction,
 	updatePlayerResource,
 } from './utils'
-import { tagsCountHint } from './cardHints'
 
 export const resourceChange = (res: Resource, change: number, spend = false) =>
 	effect({
@@ -134,7 +136,7 @@ export const playerResourceChange = (
 							change > 0
 								? `Give ${withUnits(res, change)} to`
 								: `Remove ${withUnits(res, -change)} from`,
-						type: CardEffectTarget.Player,
+						type: CardEffectArgumentType.Player as const,
 						optional: false,
 						resource: res,
 						playerConditions:
@@ -150,7 +152,7 @@ export const playerResourceChange = (
 					})
 				: effectArg({
 						descriptionPrefix: change > 0 ? 'Give to' : `Remove from`,
-						type: CardEffectTarget.PlayerResource,
+						type: CardEffectArgumentType.PlayerResource as const,
 						maxAmount: Math.abs(change),
 						resource: res,
 						optional,
@@ -253,7 +255,7 @@ export const playerResourceChangeWithTagCondition = (
 							change > 0
 								? `Give ${withUnits(res, change)} to`
 								: `Remove ${withUnits(res, -change)} from`,
-						type: CardEffectTarget.Player,
+						type: CardEffectArgumentType.Player as const,
 						optional: false,
 						resource: res,
 						playerConditions:
@@ -270,7 +272,7 @@ export const playerResourceChangeWithTagCondition = (
 					})
 				: effectArg({
 						descriptionPrefix: change > 0 ? 'Give to' : `Remove from`,
-						type: CardEffectTarget.PlayerResource,
+						type: CardEffectArgumentType.PlayerResource as const,
 						maxAmount: Math.abs(change),
 						resource: res,
 						optional,
@@ -357,7 +359,7 @@ export const playerProductionChange = (res: Resource, change: number) => {
 	return effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Player,
+				type: CardEffectArgumentType.Player as const,
 				playerConditions:
 					change < 0 && res !== 'money'
 						? [productionCondition(res, -change) as PlayerCondition]
@@ -421,6 +423,60 @@ export const gameProcessChange = (res: GameProgress, change: number) => {
 	})
 }
 
+export function placeTileAsPending({
+	type,
+	other,
+	special,
+	conditions,
+}: {
+	type: GridCellContent
+	other?: GridCellOther
+	special?: GridCellSpecial[]
+	isolated?: boolean
+	allowOcean?: boolean
+	conditions?: PlacementCode[]
+}) {
+	const placementState = {
+		type,
+		other,
+		special,
+		conditions,
+	}
+
+	return effect({
+		args: [],
+		description:
+			`Place ${other ? otherWithArticle(other) : tileWithArticle(type)}` +
+			(conditions && conditions.length > 0
+				? ` (${conditions
+						?.map((c) => PlacementConditionsLookup.get(c).description)
+						.join(', ')})`
+				: '') +
+			(special && special.length > 0
+				? ` on ${special?.map((c) => specialToStr(c)).join(' or ')}`
+				: ''),
+		conditions: [
+			condition({
+				evaluate: ({ game, player }) =>
+					!!allCells(game).find((c) =>
+						canPlace(game, player, c, placementState),
+					),
+			}),
+		],
+		symbols: [{ tile: type, tileOther: other }],
+		perform: ({ player, card, game }) => {
+			if (type === GridCellContent.Ocean && game.oceans >= game.map.oceans) {
+				return
+			}
+
+			pushPendingAction(
+				player,
+				placeTileAction({ ...placementState, ownerCard: card.index }),
+			)
+		},
+	})
+}
+
 export function placeTile({
 	type,
 	other,
@@ -442,6 +498,7 @@ export function placeTile({
 	}
 
 	return effect({
+		args: [tileArg(placementState)],
 		description:
 			`Place ${other ? otherWithArticle(other) : tileWithArticle(type)}` +
 			(conditions && conditions.length > 0
@@ -461,19 +518,18 @@ export function placeTile({
 			}),
 		],
 		symbols: [{ tile: type, tileOther: other }],
-		perform: ({ player, card, game }) => {
-			// Only limited number of ocean tiles an be placed
-			if (type === GridCellContent.Ocean && game.oceans >= game.map.oceans) {
-				return
-			}
-
-			pushPendingAction(
+		perform: ({ player, card, game }, position) => {
+			applyTilePlace({
+				game,
+				position: {
+					x: position[0],
+					y: position[1],
+					location: position[2] ?? undefined,
+				},
 				player,
-				placeTileAction({
-					...placementState,
-					ownerCard: card.index,
-				}),
-			)
+				state: { ...placementState, ownerCard: card.index },
+				anonymous: false,
+			})
 		},
 	})
 }
@@ -541,7 +597,7 @@ export const effectChoice = (effects: CardEffect[], smallSlash = false) =>
 		args: [effectChoiceArg(effects)],
 		conditions: [
 			condition({
-				evaluate: (ctx, args: [number, CardEffectArgumentType[]]) => {
+				evaluate: (ctx, args: [number, CardEffectArgumentValue[]]) => {
 					const [chosenEffect, chosenArgs] = args || [undefined, []]
 
 					if (chosenEffect === undefined) {
@@ -576,7 +632,7 @@ export const effectChoice = (effects: CardEffect[], smallSlash = false) =>
 				),
 		),
 		description: effects.map((e) => e.description || '').join(' OR '),
-		perform: (ctx, args: [number, CardEffectArgumentType[]]) => {
+		perform: (ctx, args: [number, CardEffectArgumentValue[]]) => {
 			const [chosenEffect, chosenArgs] = args || [undefined, []]
 
 			const effect = effects[chosenEffect]
@@ -585,12 +641,14 @@ export const effectChoice = (effects: CardEffect[], smallSlash = false) =>
 				throw new Error(`Unknown effect choice ${chosenEffect}`)
 			}
 
-			effect.perform(ctx, ...chosenArgs)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			effect.perform(ctx, ...(chosenArgs as any))
 		},
 	})
 
 export const joinedEffects = (effects: CardEffect[], joinWord = 'and') =>
-	effect({
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	effect<CardEffectArgument<any>[]>({
 		args: flatten(effects.map((e) => e.args)),
 		description: effects.map((e) => e.description || '').join(` ${joinWord} `),
 		conditions: flatten(effects.map((e) => e.conditions)),
@@ -601,7 +659,8 @@ export const joinedEffects = (effects: CardEffect[], joinWord = 'and') =>
 			effects.forEach((e) => {
 				e.perform(
 					{ ...ctx, allArgs },
-					...(e.args.length > 0 ? args.splice(0, e.args.length) : []),
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					...((e.args.length > 0 ? args.splice(0, e.args.length) : []) as any),
 				)
 			})
 		},
@@ -614,19 +673,19 @@ export const anyCardResourceChange = (
 ) =>
 	effect({
 		args: [
-			{
-				...cardArg([
+			cardArg(
+				[
 					...(requiredCategory ? [cardHasCategory(requiredCategory)] : []),
 					...(amount < 0
 						? [cardResourceCondition(res, -amount)]
 						: [cardAcceptsResource(res)]),
-				]),
-				descriptionPrefix:
-					amount > 0
-						? `Add ${withUnits(res, amount)} to`
-						: `Remove ${withUnits(res, -amount)} from`,
-				allowSelfCard: true,
-			},
+				],
+				amount > 0
+					? `Add ${withUnits(res, amount)} to`
+					: `Remove ${withUnits(res, -amount)} from`,
+				undefined,
+				{ allowSelfCard: true },
+			),
 		],
 		conditions:
 			amount < 0
@@ -704,18 +763,17 @@ export const anyCardAnyResourceChange = (
 ) =>
 	effect({
 		args: [
-			{
-				...cardArg([
+			cardArg(
+				[
 					...(requiredCategory ? [cardHasCategory(requiredCategory)] : []),
 					...(amount < 0
 						? [cardAnyResourceCondition(-amount)]
 						: [cardAcceptsAnyResource()]),
-				]),
-				descriptionPrefix:
-					amount > 0
-						? `Add ${amount} of any resource to`
-						: `Remove ${-amount} of any resource from`,
-			},
+				],
+				amount > 0
+					? `Add ${amount} of any resource to`
+					: `Remove ${-amount} of any resource from`,
+			),
 		],
 		conditions:
 			amount < 0
@@ -774,18 +832,17 @@ export const anyCardResourceChangePerTag = (
 ) =>
 	effect({
 		args: [
-			{
-				...cardArg([
+			cardArg(
+				[
 					...(requiredCategory ? [cardHasCategory(requiredCategory)] : []),
 					...(amount < 0
 						? [cardResourceCondition(res, -amount)]
 						: [cardAcceptsResource(res)]),
-				]),
-				descriptionPrefix:
-					amount > 0
-						? `Add 1 per ${CardCategory[tag]} of ${res} to`
-						: `Remove 1 per ${CardCategory[tag]} of ${res} from`,
-			},
+				],
+				amount > 0
+					? `Add 1 per ${CardCategory[tag]} of ${res} to`
+					: `Remove 1 per ${CardCategory[tag]} of ${res} from`,
+			),
 		],
 		conditions:
 			amount < 0
@@ -825,6 +882,7 @@ export const anyCardResourceChangePerTag = (
 							: ''
 					}`,
 		symbols: [{ cardResource: res, count: amount }],
+		hints: [tagsCountHint([tag])],
 		perform: ({ player }, cardIndex: number) => {
 			if (typeof cardIndex === 'number' && cardIndex >= 0) {
 				const cardState = player.usedCards[cardIndex]
@@ -868,7 +926,7 @@ export const cardResourceAnyAmountChange = (
 		args: [
 			// TODO: This wasn't properly validated
 			effectArg({
-				type: CardEffectTarget.CardResourceCount,
+				type: CardEffectArgumentType.CardResourceCount as const,
 				minAmount: 1,
 				descriptionPostfix,
 			}),
@@ -885,19 +943,19 @@ export const cardResourceAnyAmountChange = (
 export const playerCardResourceChange = (res: CardResource, amount: number) =>
 	effect({
 		args: [
-			{
-				...playerCardArg(
-					amount < 0
-						? [cardResourceCondition(res, -amount)]
-						: [cardAcceptsResource(res)],
-					Math.abs(amount),
-				),
-				optional: false,
-				descriptionPrefix:
-					amount > 0
-						? `add ${amount} ${res} to `
-						: `remove ${-amount} ${res} from`,
-			},
+			playerCardArg(
+				amount < 0
+					? [cardResourceCondition(res, -amount)]
+					: [cardAcceptsResource(res)],
+				Math.abs(amount),
+				{
+					optional: false,
+					descriptionPrefix:
+						amount > 0
+							? `add ${amount} ${res} to `
+							: `remove ${-amount} ${res} from`,
+				},
+			),
 		],
 		conditions:
 			amount < 0
@@ -1062,7 +1120,7 @@ export const discardCard = () =>
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Card,
+				type: CardEffectArgumentType.Card as const,
 				fromHand: true,
 				descriptionPrefix: 'Discard',
 				// TODO: This param doesn't work!
@@ -1156,6 +1214,7 @@ export const resourceForCities = (
 				? `${withUnits(res, resPerCity)} for each city on Mars`
 				: `${withUnits(res, 1)} per ${Math.ceil(1 / resPerCity)} cities on Mars`
 		}`,
+		hints: [tileCountHint(GridCellContent.City, { onMarsOnly: true })],
 		perform: ({ player, game }) => {
 			updatePlayerResource(player, costRes, -cost)
 
@@ -1190,6 +1249,7 @@ export const resourcesForTiles = (
 			{ symbol: SymbolType.SlashSmall },
 			{ tile },
 		],
+		hints: [tileCountHint(tile, { onMarsOnly })],
 		perform: ({ player, game }) => {
 			updatePlayerResource(
 				player,
@@ -1222,6 +1282,7 @@ export const productionForTiles = (
 			{ symbol: SymbolType.RightArrow },
 			{ resource: res, production: true, count: Math.max(1, resPerTile) },
 		],
+		hints: [tileCountHint(tile, { onMarsOnly: true })],
 		perform: ({ player, game }) => {
 			updatePlayerProduction(
 				player,
@@ -1235,12 +1296,13 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Resource,
+				type: CardEffectArgumentType.ResourceCount as const,
 				resource: res,
 				descriptionPrefix: `Use`,
 				descriptionPostfix: `to pay`,
 			}),
-		],
+			tileArg({ type: GridCellContent.Ocean }),
+		] as const,
 		conditions: [
 			condition({
 				evaluate: ({ player }) =>
@@ -1258,7 +1320,7 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 			{ symbol: SymbolType.RightArrow },
 			{ tile: GridCellContent.Ocean },
 		],
-		perform: (ctx, value: number) => {
+		perform: (ctx, value, position) => {
 			if (value > ctx.player[res]) {
 				throw new Error(`Player don't have that much ${res}`)
 			}
@@ -1272,7 +1334,17 @@ export const moneyOrResForOcean = (res: 'ore' | 'titan', cost: number) =>
 				value,
 			)
 
-			placeTile({ type: GridCellContent.Ocean }).perform(ctx)
+			applyTilePlace({
+				game: ctx.game,
+				position: {
+					x: position[0],
+					y: position[1],
+					location: position[2] ?? undefined,
+				},
+				player: ctx.player,
+				state: { type: GridCellContent.Ocean, ownerCard: ctx.card.index },
+				anonymous: false,
+			})
 
 			updatePlayerResource(ctx.player, res, -usedRes)
 
@@ -1310,7 +1382,7 @@ export const cardExchange = () =>
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Card,
+				type: CardEffectArgumentType.Card as const,
 				cardConditions: [],
 				descriptionPrefix: 'Discard',
 				fromHand: true,
@@ -1436,8 +1508,10 @@ export const duplicateProduction = (type: CardCategory) =>
 			const cardData = CardsLookupApi.get(card.code)
 
 			cardData.playEffects.forEach((e) => {
+				// TODO: Lets hope there're no card arguments here...
 				if (e.type === CardEffectType.Production) {
-					e.perform({ ...ctx, card })
+					// eslint-disable-next-line @typescript-eslint/no-explicit-any
+					e.perform({ ...ctx, card }, ...([] as any))
 				}
 			})
 		},
@@ -1626,7 +1700,7 @@ export const exchangeResources = (srcRes: Resource, dstRes: Resource) =>
 	effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Resource,
+				type: CardEffectArgumentType.ResourceCount as const,
 				resource: srcRes,
 				descriptionPrefix: 'Exchange',
 				descriptionPostfix: `for ${dstRes}`,

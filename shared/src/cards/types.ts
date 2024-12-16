@@ -1,16 +1,18 @@
 import {
-	PlayerGameState,
-	GameState,
-	UsedCardState,
-	GridCell,
-	PlayerState,
-	GridCellContent,
-	GridCellOther,
 	ColonyState,
 	CommitteePartyState,
+	GameState,
+	GridCell,
+	GridCellContent,
+	GridCellLocation,
+	GridCellOther,
+	PlayerGameState,
+	PlayerState,
+	UsedCardState,
 } from '../gameState'
-import { StandardProject } from '../projects'
+import { AnyStandardProject } from '../projects'
 import { CardHint } from './cardHints'
+import { CardEffectArgument, CardEffectArgumentTypeToResultMap } from './args'
 
 export type WithOptional<T, K extends keyof T> = Omit<T, K> &
 	Partial<Pick<T, K>>
@@ -36,11 +38,18 @@ export type CardResource =
 
 export type GameProgress = 'oxygen' | 'temperature' | 'oceans' | 'venus'
 
-export type CardEffectArgumentType =
+export type CardEffectArgumentTileValue = [
+	x: number,
+	y: number,
+	location: GridCellLocation | undefined,
+]
+
+export type CardEffectArgumentValue =
 	| number
 	| null
 	| string
-	| CardEffectArgumentType[]
+	| CardEffectArgumentTileValue
+	| CardEffectArgumentValue[]
 
 export interface CardCallbackContext {
 	game: GameState
@@ -131,7 +140,7 @@ export interface Card {
 
 export type CardCondition<
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	T extends (CardEffectArgumentType | undefined)[] = any,
+	T extends (CardEffectArgumentValue | undefined)[] = any,
 > = {
 	description?: string
 	symbols: CardSymbol[]
@@ -158,66 +167,27 @@ export enum CardEffectType {
 
 export interface CardEffect<
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	T extends Array<CardEffectArgumentType | undefined> = any,
+	TArguments extends CardEffectArgument<any>[] = any,
 > {
-	args: CardEffectArgument[]
+	args: TArguments
 	conditions: CardCondition[]
 	description?: string
 	type: CardEffectType
 	symbols: CardSymbol[]
 	aiScore: number | ((ctx: CardCallbackContext) => number)
 	hints?: CardHint[]
-	perform: (ctx: CardCallbackContext, ...args: T) => void
+	perform: (
+		ctx: CardCallbackContext,
+		...args: ExtractCardArguments<TArguments>
+	) => void
 }
 
-export enum CardEffectTarget {
-	// Type - player: number
-	Player = 1,
-	// Type - [player: number, amount: number]
-	PlayerResource,
-	// Type - amount: number
-	Resource,
-	// Type - resource: Resource
-	ResourceType,
-	// Type - amount: number
-	Production,
-	// Type - cardIndex: number
-	Card,
-	// Type - [player: number, cardIndex: number]
-	PlayerCardResource,
-	// Type - [choice: number, choiceParams: any[]]
-	EffectChoice,
-	// Type - [x: number, y: number]
-	Cell,
-	// Type - amount: number
-	CardResourceCount,
-	// Type - partyCode: string
-	CommitteeParty,
-	// Type - [partyCode: string, memberPlayerId: number | null]
-	CommitteePartyMember,
-}
-
-export interface CardEffectArgument {
-	type: CardEffectTarget
-	descriptionPrefix?: string
-	descriptionPostfix?: string
-	playerConditions: PlayerCondition[]
-	cardConditions: CardCondition[]
-	cellConditions: CellCondition[]
-	resourceConditions: ResourceCondition[]
-	committeePartyConditions?: CommitteePartyCondition[]
-	drawnCards?: number
-	amount?: number
-	maxAmount?: number | MaxAmountCallback
-	optional: boolean
-	resource?: Resource
-	production?: Production
-	fromHand?: boolean
-	effects?: CardEffect[]
-	minAmount?: number
-	/** Allow selecting the card being played as the target - used for CARD inside playEffects */
-	allowSelfCard?: boolean
-	skipCurrentCard?: boolean
+export type ExtractCardArguments<TArguments> = {
+	[K in keyof TArguments]: TArguments[K] extends CardEffectArgument<infer V>
+		? V extends keyof CardEffectArgumentTypeToResultMap
+			? CardEffectArgumentTypeToResultMap[V]
+			: never
+		: never
 }
 
 export type MaxAmountCallback = (ctx: CardCallbackContext) => number
@@ -252,7 +222,7 @@ export interface CardPassiveEffect {
 	) => void
 	onStandardProject?: (
 		ctx: CardCallbackContext,
-		project: StandardProject,
+		project: AnyStandardProject,
 		playedBy: PlayerState,
 	) => void
 	onProgress?: (ctx: CardCallbackContext, progress: GameProgress) => void
@@ -328,4 +298,10 @@ export interface CardSymbol {
 	committeeParty?: string
 	postfix?: string
 	victoryPoints?: number
+	/** highlights cell on hover over the symbol, intended for FE only */
+	highlightCell?: {
+		x: number
+		y: number
+		location: GridCellLocation | undefined
+	}
 }

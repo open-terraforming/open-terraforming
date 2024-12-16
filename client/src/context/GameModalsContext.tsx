@@ -1,7 +1,6 @@
 import { ColoniesModal } from '@/pages/Game/pages/Table/components/ColoniesModal/ColoniesModal'
 import { ColonyTradeModal } from '@/pages/Game/pages/Table/components/ColoniesModal/components/ColonyTradeModal'
 import { CardModal } from '@/pages/Game/pages/Table/components/EventList/components/CardModal'
-import { SellCardsModal } from '@/pages/Game/pages/Table/components/StandardProjectModal/components/SellCardsModal'
 import { ColonyState } from '@shared/gameState'
 import { createContext, ReactNode, useContext, useMemo, useState } from 'react'
 
@@ -17,7 +16,6 @@ type TradeWithColonyProps = {
 type GameModalsContextType = {
 	openCardModal: (cardCode: string) => void
 	openColoniesModal: () => void
-	openSellCardsModal: () => void
 	openTradeWithColonyModal: (props: TradeWithColonyProps) => void
 }
 
@@ -26,7 +24,6 @@ const GameModalsContext = createContext<GameModalsContextType | null>(null)
 export const GameModalsProvider = ({ children }: Props) => {
 	const [openedCardModals, setOpenedCardModals] = useState<string[]>([])
 	const [showColonies, setColoniesShown] = useState(false)
-	const [showSellCards, setSellCardsShown] = useState(false)
 
 	const [showTradeWithColony, setTradeWithColonyShown] =
 		useState<TradeWithColonyProps>()
@@ -39,7 +36,6 @@ export const GameModalsProvider = ({ children }: Props) => {
 		return {
 			openCardModal,
 			openColoniesModal: () => setColoniesShown(true),
-			openSellCardsModal: () => setSellCardsShown(true),
 			openTradeWithColonyModal: (props) => setTradeWithColonyShown(props),
 		}
 	}, [])
@@ -58,10 +54,6 @@ export const GameModalsProvider = ({ children }: Props) => {
 
 			{showColonies && (
 				<ColoniesModal onClose={() => setColoniesShown(false)} />
-			)}
-
-			{showSellCards && (
-				<SellCardsModal onClose={() => setSellCardsShown(false)} />
 			)}
 
 			{showTradeWithColony && (

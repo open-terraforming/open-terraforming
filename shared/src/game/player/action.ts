@@ -3,10 +3,16 @@ import {
 	CardCallbackContext,
 	CardCondition,
 	CardEffect,
+	CardEffectArgumentTileValue,
 	CardEffectArgumentType,
+	CardEffectArgumentValue,
 	CardPassiveEffect,
 } from '@shared/cards'
-import { GameStateValue, PlayerStateValue } from '@shared/index'
+import {
+	GameStateValue,
+	GridCellLocation,
+	PlayerStateValue,
+} from '@shared/index'
 import { f } from '@shared/utils/f'
 import { getPlayerIndex } from '@shared/utils/getPlayerIndex'
 import { GameEvent } from '../events/eventTypes'
@@ -87,7 +93,7 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 	checkCardConditions(
 		card: Card,
 		ctx: CardCallbackContext,
-		playArguments: CardEffectArgumentType[][],
+		playArguments: CardEffectArgumentValue[][],
 		action = false,
 	) {
 		const errorConditions = [
@@ -111,54 +117,65 @@ export abstract class PlayerBaseActionHandler<Args = unknown> {
 			)
 		}
 
-		if (action) {
-			card.actionEffects.forEach((e, i) => {
-				if (!playArguments[i]) {
-					playArguments[i] = []
+		const usedTiles = [] as {
+			x: number
+			y: number
+			location?: GridCellLocation
+		}[]
+
+		const effects = action ? card.actionEffects : card.playEffects
+
+		effects.forEach((e, i) => {
+			if (!playArguments[i]) {
+				playArguments[i] = []
+			}
+
+			// TODO: More checks
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			e.args.forEach((a: any, ai: number) => {
+				const value = playArguments[i][ai]
+
+				try {
+					validateArgValue({
+						a,
+						card,
+						ctx,
+						value,
+						usedTiles,
+					})
+				} catch (e) {
+					throw new Error(
+						f(
+							'{0}: Effect {1} argument {2} - {3}',
+							card.code,
+							i,
+							ai,
+							String(e),
+						),
+					)
 				}
 
-				// TODO: More checks
-				e.args.forEach((a, ai) => {
-					const value = playArguments[i][ai]
+				if (a.type === CardEffectArgumentType.Tile && value) {
+					const valueAsTile = value as CardEffectArgumentTileValue
 
-					/*
-					if (value === undefined) {
-						throw new Error(
-							`${card.code}: No value specified for effect ${i} argument ${ai}`
-						)
-					}
-					*/
-
-					try {
-						validateArgValue({
-							a,
-							card,
-							ctx,
-							value,
-						})
-					} catch (e) {
-						throw new Error(
-							f(
-								'{0}: Effect {1} argument {2} - {3}',
-								card.code,
-								i,
-								ai,
-								String(e),
-							),
-						)
-					}
-				})
+					usedTiles.push({
+						x: valueAsTile[0],
+						y: valueAsTile[1],
+						location: valueAsTile[2] ?? undefined,
+					})
+				}
 			})
-		}
+		})
 	}
 
 	runCardEffects(
 		effects: CardEffect[],
 		ctx: CardCallbackContext,
-		playArguments: CardEffectArgumentType[][],
+		playArguments: CardEffectArgumentValue[][],
 	) {
 		effects.forEach((e, i) => {
-			e.perform(ctx, ...(playArguments[i] || []))
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			e.perform(ctx, ...((playArguments[i] || []) as any))
 		})
 
 		this.parent.filterPendingActions()

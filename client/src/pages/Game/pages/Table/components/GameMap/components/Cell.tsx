@@ -16,8 +16,6 @@ type Props = {
 	claiming?: boolean
 	delayFunction: number
 	onClick: () => void
-	highlighted?: boolean
-	faded?: boolean
 }
 
 const hexPoints = '-8.5,4.4 -8.5,-4.5 0,-9.5 8.5,-4.5 8.5,4.5 0,9.5'
@@ -60,9 +58,20 @@ export const Cell = ({
 	onClick,
 	claiming,
 	delayFunction,
-	faded,
-	highlighted,
 }: Props) => {
+	const highlightedCells = useAppStore((state) => state.game.highlightedCells)
+	const picked = useAppStore((state) => state.table.currentlySelectedTiles)
+
+	const highlighted = highlightedCells.some(
+		(h) => h.x === cell.x && h.y === cell.y && h.location === cell.location,
+	)
+
+	const faded =
+		highlightedCells.length > 0 &&
+		!highlightedCells.some(
+			(h) => h.x === cell.x && h.y === cell.y && h.location === cell.location,
+		)
+
 	const [hover, setHover] = useState(false)
 	const [container, setContainer] = useState(null as SVGElement | null)
 
@@ -99,6 +108,10 @@ export const Cell = ({
 	const active =
 		(!!placing && canPlace(game, player, cell, placing)) ||
 		(!!claiming && isClaimable(cell))
+
+	const isPicked = picked.some(
+		(p) => p.x === cell.x && p.y === cell.y && p.location === cell.location,
+	)
 
 	const otherIcon = cell.other ? OtherIcons[cell.other] : undefined
 
@@ -137,7 +150,7 @@ export const Cell = ({
 	}, [placing, active])
 
 	const handleMouseEnter = useCallback(() => {
-		setHover(active && !claiming)
+		setHover(!isPicked && active && !claiming)
 	}, [active, claiming])
 
 	const handleMouseLeave = useCallback(() => {
@@ -151,9 +164,10 @@ export const Cell = ({
 			gridType={cell.type}
 			gridContent={cell.content}
 			gridHover={hover}
-			gridActive={placing || claiming ? active : undefined}
+			gridActive={(placing || claiming) && !isPicked ? active : undefined}
+			gridPicked={isPicked}
 			transform={`translate(${pos.x},${pos.y})`}
-			onClick={active ? onClick : undefined}
+			onClick={active && !isPicked ? onClick : undefined}
 			ref={(e) => setContainer(e)}
 			style={{ ...(faded && { opacity: 0.5 }) }}
 			highlighted={highlighted}
@@ -286,6 +300,7 @@ const StyledHex = styled.g<{
 	gridActive?: boolean
 	gridHover?: boolean
 	highlighted?: boolean
+	gridPicked?: boolean
 }>`
 	${(props) =>
 		props.gridActive === false &&
@@ -359,6 +374,13 @@ const StyledHex = styled.g<{
 					css`
 						stroke: rgba(255, 66, 66, 0.8);
 					`}
+
+		${(props) =>
+			props.gridPicked &&
+			css`
+				fill: rgba(179, 255, 0, 0.548);
+				cursor: pointer;
+			`}
 	}
 `
 

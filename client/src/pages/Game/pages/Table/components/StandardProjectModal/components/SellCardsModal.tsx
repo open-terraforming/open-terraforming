@@ -1,20 +1,24 @@
 import { Button } from '@/components'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
-import { usePlayerState } from '@/utils/hooks'
+import { PickHandCardsFrontendAction } from '@/store/modules/table/frontendActions'
+import { useAppDispatch, usePlayerState } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { CardsLookupApi } from '@shared/cards'
 import { buyStandardProject, StandardProjectType } from '@shared/index'
 import { withUnits } from '@shared/units'
 import { useMemo, useState } from 'react'
 import { CardDisplay, CardInfo } from '../../CardDisplay/CardDisplay'
+import { popFrontendAction } from '@/store/modules/table'
 
 type Props = {
-	onClose: () => void
+	project: StandardProjectType
+	action: PickHandCardsFrontendAction
 }
 
-export const SellCardsModal = ({ onClose }: Props) => {
+export const HandCardsPickerModal = ({ project }: Props) => {
 	const api = useApi()
+	const dispatch = useAppDispatch()
 	const player = usePlayerState()
 	const playerCards = player.cards
 	const [selected, setSelected] = useState([] as CardInfo[])
@@ -34,21 +38,20 @@ export const SellCardsModal = ({ onClose }: Props) => {
 	)
 
 	const handleConfirm = () => {
-		api.send(
-			buyStandardProject(
-				StandardProjectType.SellPatents,
-				selected.map((c) => c.index),
-			),
-		)
+		api.send(buyStandardProject(project, [selected.map((c) => c.index)]))
 
-		onClose()
+		dispatch(popFrontendAction())
+	}
+
+	const handleClose = () => {
+		dispatch(popFrontendAction())
 	}
 
 	return (
 		<Modal
 			contentStyle={{ minWidth: '80%' }}
 			open={true}
-			onClose={onClose}
+			onClose={handleClose}
 			footer={
 				<>
 					{selected.length > 0 && (
@@ -56,7 +59,7 @@ export const SellCardsModal = ({ onClose }: Props) => {
 							Sell cards for {withUnits('money', selected.length)}
 						</Button>
 					)}
-					<Button schema={'transparent'} onClick={onClose} icon={faTimes}>
+					<Button schema={'transparent'} onClick={handleClose} icon={faTimes}>
 						Cancel
 					</Button>
 				</>

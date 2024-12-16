@@ -1,5 +1,6 @@
 export { CardsLookupApi } from './lookup'
 export * from './types'
+export * from './args'
 import { coloniesCorporations } from '@shared/expansions/colonies/coloniesCorporations'
 import { coloniesCards } from '@shared/expansions/colonies/coloniesCards'
 import { baseCards } from './base/cards'

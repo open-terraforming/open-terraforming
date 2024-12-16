@@ -6,7 +6,7 @@ import { CardsLookupApi } from './lookup'
 import {
 	CardCategory,
 	CardCondition,
-	CardEffectArgumentType,
+	CardEffectArgumentValue,
 	CardResource,
 	CardType,
 	GameProgress,
@@ -17,7 +17,7 @@ import {
 import { countGridContent, progressSymbol, resourceProduction } from './utils'
 import { progressHint, tagsCountHint } from './cardHints'
 
-export const condition = <T extends (CardEffectArgumentType | undefined)[]>(
+export const condition = <T extends (CardEffectArgumentValue | undefined)[]>(
 	c: WithOptional<CardCondition<T>, 'symbols'>,
 ): CardCondition<T> => ({ symbols: [], ...c })
 

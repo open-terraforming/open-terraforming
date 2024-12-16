@@ -67,9 +67,9 @@ export const TagsCountCardHint = ({ player, hint }: Props) => {
 				) : undefined
 			}
 		>
-			<Flex>
+			<Flex gap="0.25rem">
 				{hint.tags.map((t) => (
-					<Flex key={t} gap={'0.2rem'}>
+					<Flex key={t} gap={'0.1rem'}>
 						<Tag tag={t} size="sm" />
 						{hint.allPlayers
 							? sum(game.players, (p) => countTagsWithoutEvents(p.usedCards, t))

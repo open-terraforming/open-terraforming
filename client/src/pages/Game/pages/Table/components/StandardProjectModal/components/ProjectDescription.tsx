@@ -1,15 +1,15 @@
 import { SymbolType } from '@shared/cards'
 import { GridCellContent, StandardProjectType } from '@shared/index'
-import { StandardProject } from '@shared/projects'
+import { AnyStandardProject } from '@shared/projects'
 import styled from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
 
 type Props = {
-	project: StandardProject
+	project: AnyStandardProject
 	cost: number
 }
 
-const typeToContent = (project: StandardProject, cost: number) => {
+const typeToContent = (project: AnyStandardProject, cost: number) => {
 	switch (project.type) {
 		case StandardProjectType.SellPatents:
 			return (

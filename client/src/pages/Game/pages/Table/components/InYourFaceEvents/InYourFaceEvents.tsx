@@ -48,10 +48,14 @@ const PROCESSABLE_EVENTS = [
 
 export const InYourFaceEvents = () => {
 	const player = useAppStore((state) => state.game.player)
+
+	const highlighted = useAppStore(
+		(state) => state.game.highlightedCells.length > 0,
+	)
+
 	const [shown, toggleShown, setShown] = useToggle()
 	const [rendered, setRendered] = useState(false)
 	const [events, setEvents] = useState<GameEvent[]>([])
-	const [opacity, setOpacity] = useState(1)
 	const t = useLocale()
 
 	const current = events[0]
@@ -206,7 +210,7 @@ export const InYourFaceEvents = () => {
 			case EventType.ProductionDone:
 				return <ProductionDoneEvent event={event} />
 			case EventType.TilePlaced:
-				return <TilePlacedEvent event={event} onOpacityChange={setOpacity} />
+				return <TilePlacedEvent event={event} />
 			case EventType.MarsTerraformed:
 				return <MarsTerraformedEvent />
 			case EventType.GlobalEventsChanged:
@@ -242,7 +246,10 @@ export const InYourFaceEvents = () => {
 			</MinimizedButton>
 			{current && rendered && (
 				<Portal>
-					<DisplayContainer style={{ opacity }} $shown={shown}>
+					<DisplayContainer
+						style={{ opacity: highlighted ? 0.1 : 1 }}
+						$shown={shown}
+					>
 						<NextEvents
 							style={{ marginTop: `-${events.slice(1, 5).length * 0.85}rem` }}
 						>
