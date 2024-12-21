@@ -1,12 +1,15 @@
 import { ReactNode } from 'react'
 import styled from 'styled-components'
 
-type Props = {
-	tab: string
-	tabs: { content: ReactNode; key: string }[]
+type Props<TTab> = {
+	tab: TTab
+	tabs: { content: ReactNode; key: TTab }[]
 }
 
-export const TabsContent = ({ tab, tabs }: Props) => {
+export const TabsContent = <TTab extends string | number>({
+	tab,
+	tabs,
+}: Props<TTab>) => {
 	return <Content>{tabs.find(({ key }) => key === tab)?.content}</Content>
 }
 

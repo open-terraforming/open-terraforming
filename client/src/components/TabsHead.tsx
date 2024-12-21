@@ -3,14 +3,19 @@ import { ReactNode } from 'react'
 import { css, styled } from 'styled-components'
 import { Box } from './Box'
 
-type Props = {
-	tab: string
-	setTab: (tab: string) => void
-	tabs: { title: ReactNode; key: string }[]
+type Props<TTab> = {
+	tab: TTab
+	setTab: (tab: TTab) => void
+	tabs: { title: ReactNode; key: TTab }[]
 	suffix?: ReactNode
 }
 
-export const TabsHead = ({ tab, tabs, setTab, suffix }: Props) => {
+export const TabsHead = <TTab extends string | number>({
+	tab,
+	tabs,
+	setTab,
+	suffix,
+}: Props<TTab>) => {
 	return (
 		<Head gap="0.25rem" align="flex-end">
 			{tabs.map(({ title, key }) => (
