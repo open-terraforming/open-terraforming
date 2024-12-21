@@ -1,5 +1,4 @@
 import { Button } from '@/components'
-import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { PickHandCardsFrontendAction } from '@/store/modules/table/frontendActions'
 import { useAppDispatch, usePlayerState } from '@/utils/hooks'
@@ -8,7 +7,10 @@ import { CardsLookupApi } from '@shared/cards'
 import { buyStandardProject, StandardProjectType } from '@shared/index'
 import { withUnits } from '@shared/units'
 import { useMemo, useState } from 'react'
-import { CardDisplay, CardInfo } from '../../CardDisplay/CardDisplay'
+import {
+	CardDisplayModal,
+	CardInfo,
+} from '../../CardDisplayModal/CardDisplayModal'
 import { popFrontendAction } from '@/store/modules/table'
 
 type Props = {
@@ -48,9 +50,15 @@ export const HandCardsPickerModal = ({ project }: Props) => {
 	}
 
 	return (
-		<Modal
+		<CardDisplayModal
+			cards={cards}
+			selected={selected}
+			onSelect={(cards) => {
+				setSelected(cards)
+			}}
+			player={player}
+			evaluateMode="viewing"
 			contentStyle={{ minWidth: '80%' }}
-			open={true}
 			onClose={handleClose}
 			footer={
 				<>
@@ -64,16 +72,6 @@ export const HandCardsPickerModal = ({ project }: Props) => {
 					</Button>
 				</>
 			}
-		>
-			<CardDisplay
-				cards={cards}
-				selected={selected}
-				onSelect={(cards) => {
-					setSelected(cards)
-				}}
-				player={player}
-				evaluateMode="viewing"
-			/>
-		</Modal>
+		/>
 	)
 }

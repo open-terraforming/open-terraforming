@@ -1,4 +1,3 @@
-import { Modal } from '@/components/Modal/Modal'
 import { setTableState } from '@/store/modules/table'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
@@ -7,7 +6,7 @@ import {
 	isCardPlayable,
 	minimalCardPrice,
 } from '@shared/cards/utils'
-import { CardDisplay } from '../CardDisplay/CardDisplay'
+import { CardDisplayModal } from '../CardDisplayModal/CardDisplayModal'
 
 export const Hand = ({
 	onClose,
@@ -59,22 +58,17 @@ export const Hand = ({
 	}
 
 	return (
-		<Modal
-			open={true}
-			contentStyle={{ minWidth: '80%' }}
+		<CardDisplayModal
 			onClose={onClose}
 			header={'Cards in your hand'}
-			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
-		>
-			<CardDisplay
-				player={player}
-				evaluateMode="buying"
-				onSelect={(c) => {
-					handleSelect(c.length > 0 ? c[c.length - 1].index : undefined)
-				}}
-				selected={[]}
-				cards={cards.map((c, i) => ({ card: c, index: i }))}
-			/>
-		</Modal>
+			contentStyle={{ minWidth: '80%' }}
+			player={player}
+			evaluateMode="buying"
+			onSelect={(c) => {
+				handleSelect(c.length > 0 ? c[c.length - 1].index : undefined)
+			}}
+			selected={[]}
+			cards={cards.map((c, i) => ({ card: c, index: i }))}
+		/>
 	)
 }

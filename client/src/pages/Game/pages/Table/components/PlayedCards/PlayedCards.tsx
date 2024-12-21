@@ -1,9 +1,11 @@
-import { Modal } from '@/components/Modal/Modal'
 import { setTableState } from '@/store/modules/table'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { CardsLookupApi, CardType } from '@shared/cards'
 import { isCardActionable } from '@shared/cards/utils'
-import { CardDisplay, CardInfo } from '../CardDisplay/CardDisplay'
+import {
+	CardDisplayModal,
+	CardInfo,
+} from '../CardDisplayModal/CardDisplayModal'
 
 type Props = {
 	onClose: () => void
@@ -58,22 +60,17 @@ export const PlayedCards = ({ onClose, defaultType }: Props) => {
 	}
 
 	return (
-		<Modal
-			open
-			allowClose
+		<CardDisplayModal
+			cards={cards || []}
+			onSelect={handleSelect}
+			selected={[]}
+			defaultType={defaultType}
+			hideAdjustedPrice
+			evaluateMode="playing"
+			player={player}
 			contentStyle={{ minWidth: '90%' }}
 			onClose={onClose}
 			header={'Cards on table'}
-		>
-			<CardDisplay
-				cards={cards || []}
-				onSelect={handleSelect}
-				selected={[]}
-				defaultType={defaultType}
-				hideAdjustedPrice
-				evaluateMode="playing"
-				player={player}
-			/>
-		</Modal>
+		/>
 	)
 }

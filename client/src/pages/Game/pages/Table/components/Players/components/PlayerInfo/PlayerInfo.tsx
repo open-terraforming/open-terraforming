@@ -1,11 +1,10 @@
-import { Modal } from '@/components/Modal/Modal'
 import { cardsToCardList } from '@/utils/cards'
 import { useAppStore } from '@/utils/hooks'
+import { Resource } from '@shared/cards'
 import { useMemo } from 'react'
 import styled from 'styled-components'
-import { CardDisplay } from '../../../CardDisplay/CardDisplay'
+import { CardDisplayModal } from '../../../CardDisplayModal/CardDisplayModal'
 import { ResourceIcon } from '../../../ResourceIcon/ResourceIcon'
-import { Resource } from '@shared/cards'
 
 type Props = {
 	playerId: number
@@ -50,69 +49,77 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 	}
 
 	return (
-		<Modal
-			open={true}
+		<CardDisplayModal
+			cards={cards}
+			hover={false}
+			onSelect={() => {
+				void 0
+			}}
+			selected={[]}
+			player={player}
+			evaluateMode="viewing"
 			onClose={onClose}
 			header={`${player.name}`}
 			contentStyle={{ minWidth: '80%' }}
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
-		>
-			<Info>
-				<ResItem
-					res="money"
-					value={state.money}
-					production={state.moneyProduction}
-				/>
-				<ResItem res="ore" value={state.ore} production={state.oreProduction} />
-				<ResItem
-					res="titan"
-					value={state.titan}
-					production={state.titanProduction}
-				/>
-				<ResItem
-					res="plants"
-					value={state.plants}
-					production={state.plantsProduction}
-				/>
-				<ResItem
-					res="energy"
-					value={state.energy}
-					production={state.energyProduction}
-				/>
-				<ResItem
-					res="heat"
-					value={state.heat}
-					production={state.heatProduction}
-				/>
-				<InfoItem>
-					<Value>Cards in hand</Value>
-					<Production>{state.cards.length}</Production>
-				</InfoItem>
-				<InfoItem>
-					<Value>On table</Value>
-					<Production>{state.usedCards.length}</Production>
-				</InfoItem>
-			</Info>
+			postfix={
+				<Info>
+					<InfoItem>
+						<Value>TR</Value>
+						<Production>{state.terraformRating}</Production>
+					</InfoItem>
 
-			<CardDisplay
-				cards={cards}
-				hover={false}
-				onSelect={() => {
-					void 0
-				}}
-				selected={[]}
-				player={player}
-				evaluateMode="viewing"
-			/>
-		</Modal>
+					<ResItem
+						res="money"
+						value={state.money}
+						production={state.moneyProduction}
+					/>
+					<ResItem
+						res="ore"
+						value={state.ore}
+						production={state.oreProduction}
+					/>
+					<ResItem
+						res="titan"
+						value={state.titan}
+						production={state.titanProduction}
+					/>
+					<ResItem
+						res="plants"
+						value={state.plants}
+						production={state.plantsProduction}
+					/>
+					<ResItem
+						res="energy"
+						value={state.energy}
+						production={state.energyProduction}
+					/>
+					<ResItem
+						res="heat"
+						value={state.heat}
+						production={state.heatProduction}
+					/>
+					<InfoItem>
+						<Value>Cards in hand</Value>
+						<Production>{state.cards.length}</Production>
+					</InfoItem>
+					<InfoItem>
+						<Value>On table</Value>
+						<Production>{state.usedCards.length}</Production>
+					</InfoItem>
+				</Info>
+			}
+		/>
 	)
 }
 
 const Info = styled.div`
 	display: flex;
 	flex-wrap: wrap;
-	margin-bottom: 1rem;
 	justify-content: center;
+	border-top: 2px solid ${({ theme }) => theme.colors.border};
+	padding: 1rem;
+	background-color: ${({ theme }) => theme.colors.background};
 `
 
 const InfoItem = styled.div`
