@@ -6,6 +6,7 @@ import { Projects } from '@shared/projects'
 import { otherToStr, tileToStr } from '@shared/texts'
 import { styled } from 'styled-components'
 import { PlayerDidHeader } from './PlayerDidHeader'
+import { useGameState } from '@/utils/hooks'
 
 type Props = {
 	event: GameEvent
@@ -13,6 +14,7 @@ type Props = {
 
 export const InYourFaceEventTitle = ({ event }: Props) => {
 	const t = useLocale()
+	const game = useGameState()
 
 	switch (event.type) {
 		case EventType.CardPlayed:
@@ -52,7 +54,7 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					noSpacing
 					playerId={event.playerId}
-					thing={` built colony on ${t.colonies[event.colony]}`}
+					thing={` built colony on ${t.colonies[game.colonies[event.colony].code]}`}
 				/>
 			)
 		case EventType.ColonyTrading:
@@ -60,7 +62,7 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					noSpacing
 					playerId={event.playerId}
-					thing={` traded with ${t.colonies[event.colony]} colony`}
+					thing={` traded with ${t.colonies[game.colonies[event.colony].code]} colony`}
 				/>
 			)
 		case EventType.StandardProjectBought:

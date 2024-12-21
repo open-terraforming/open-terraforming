@@ -6,6 +6,7 @@ import { useMemo } from 'react'
 import styled from 'styled-components'
 import { InYourFaceEventTitle } from '../../InYourFaceEvents/components/InYourFaceEventTitle'
 import { isInYourFaceEvent } from '../../InYourFaceEvents/utils/isInYourFaceEvent'
+import { lighten } from 'polished'
 
 type Props = {
 	onClick: (e: GameEvent) => void
@@ -47,4 +48,8 @@ const Timestamp = styled.div`
 
 const Line = styled(Box)`
 	cursor: pointer;
+
+	&:hover {
+		background-color: ${({ theme }) => lighten(0.1, theme.colors.background)};
+	}
 `
