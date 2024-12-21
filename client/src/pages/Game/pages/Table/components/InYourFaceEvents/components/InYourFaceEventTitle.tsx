@@ -1,7 +1,10 @@
-import { EventType, GameEvent } from '@shared/index'
+import { EventType, GameEvent, GridCellContent } from '@shared/index'
 import { PlayerDidHeader } from './PlayerDidHeader'
 import { styled } from 'styled-components'
 import { useLocale } from '@/context/LocaleContext'
+import { Competitions } from '@shared/competitions'
+import { Milestones } from '@shared/milestones'
+import { Projects } from '@shared/projects'
 
 type Props = {
 	event: GameEvent
@@ -16,7 +19,7 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					noSpacing
 					playerId={event.playerId}
-					thing=" played card"
+					thing={` played ${t.cards[event.card]}`}
 				/>
 			)
 		case EventType.CardUsed:
@@ -24,7 +27,7 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					noSpacing
 					playerId={event.playerId}
-					thing=" used card"
+					thing={` used ${t.cards[event.card]}`}
 				/>
 			)
 		case EventType.CompetitionSponsored:
@@ -32,7 +35,7 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					noSpacing
 					playerId={event.playerId}
-					thing=" sponsored competition"
+					thing={` sponsored ${Competitions[event.competition].title} competition`}
 				/>
 			)
 		case EventType.MilestoneBought:
@@ -40,7 +43,7 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					noSpacing
 					playerId={event.playerId}
-					thing=" bought milestone"
+					thing={` bought ${Milestones[event.milestone].title} milestone`}
 				/>
 			)
 		case EventType.ColonyBuilt:
@@ -48,7 +51,7 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					noSpacing
 					playerId={event.playerId}
-					thing=" built colony"
+					thing={` built colony on ${t.colonies[event.colony]}`}
 				/>
 			)
 		case EventType.ColonyTrading:
@@ -56,7 +59,7 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					noSpacing
 					playerId={event.playerId}
-					thing=" traded with colony"
+					thing={` traded with ${t.colonies[event.colony]} colony`}
 				/>
 			)
 		case EventType.StandardProjectBought:
@@ -64,7 +67,7 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					playerId={event.playerId}
 					noSpacing
-					thing=" bought standard project"
+					thing={` bought ${Projects[event.project].description} project`}
 				/>
 			)
 		case EventType.StartingSetup:
@@ -80,7 +83,7 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					playerId={event.playerId}
 					noSpacing
-					thing=" placed tile"
+					thing={` placed ${GridCellContent[event.tile]} tile`}
 				/>
 			)
 		case EventType.ProductionDone:

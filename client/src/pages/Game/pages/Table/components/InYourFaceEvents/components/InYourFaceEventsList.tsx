@@ -78,7 +78,7 @@ export const InYourFaceEventsList = ({ onClose }: Props) => {
 
 			{listMode &&
 				allEventsReversed.map((e, i) => (
-					<Box
+					<Line
 						key={i}
 						onClick={() => {
 							setIndex(allEvents.length - 1 - i)
@@ -87,7 +87,7 @@ export const InYourFaceEventsList = ({ onClose }: Props) => {
 					>
 						<Timestamp>{formatTime(e.t - gameStart.getTime())}</Timestamp>
 						<InYourFaceEventTitle event={e} />
-					</Box>
+					</Line>
 				))}
 		</Modal>
 	)
@@ -97,4 +97,8 @@ const Timestamp = styled.div`
 	width: 4rem;
 	text-align: right;
 	margin-right: 0.5rem;
+`
+
+const Line = styled(Box)`
+	cursor: pointer;
 `
