@@ -1,10 +1,11 @@
-import { EventType, GameEvent, GridCellContent } from '@shared/index'
-import { PlayerDidHeader } from './PlayerDidHeader'
-import { styled } from 'styled-components'
 import { useLocale } from '@/context/LocaleContext'
 import { Competitions } from '@shared/competitions'
+import { EventType, GameEvent } from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { Projects } from '@shared/projects'
+import { otherToStr, tileToStr } from '@shared/texts'
+import { styled } from 'styled-components'
+import { PlayerDidHeader } from './PlayerDidHeader'
 
 type Props = {
 	event: GameEvent
@@ -83,7 +84,11 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 				<PlayerDidHeader
 					playerId={event.playerId}
 					noSpacing
-					thing={` placed ${GridCellContent[event.tile]} tile`}
+					thing={` placed ${
+						event.other !== undefined && event.other !== null
+							? otherToStr(event.other)
+							: tileToStr(event.tile)
+					} tile`}
 				/>
 			)
 		case EventType.ProductionDone:
