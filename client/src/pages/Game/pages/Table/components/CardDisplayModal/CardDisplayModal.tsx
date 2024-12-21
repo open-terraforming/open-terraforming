@@ -176,20 +176,18 @@ export const CardDisplayModal = <T extends CardInfo>({
 			}
 			footer={footer}
 		>
-			<div style={{ flex: 1 }}>
-				<TabsHead
-					tab={type}
-					setTab={setType}
-					tabs={types.map(([cat, t, count]) => ({
-						title: (
-							<Flex>
-								{t} <FilterCount>{count}</FilterCount>
-							</Flex>
-						),
-						key: cat,
-					}))}
-				/>
-			</div>
+			<TabsHead
+				tab={type}
+				setTab={setType}
+				tabs={types.map(([cat, t, count]) => ({
+					title: (
+						<Flex>
+							{t} <FilterCount>{count}</FilterCount>
+						</Flex>
+					),
+					key: cat,
+				}))}
+			/>
 
 			<Flex align="stretch" gap="0.25rem">
 				<CardsContainer playableOnly={playable}>
