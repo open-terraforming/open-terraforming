@@ -2,15 +2,16 @@ import { isNotUndefined, mapRight } from '@/utils/collections'
 import { Card, CardCategory, CardType } from '@shared/cards'
 import { PlayerState, UsedCardState } from '@shared/index'
 import { CSSProperties, ReactNode, useEffect, useMemo, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 import { NoCards } from '../CardsContainer/CardsContainer'
 import { CardEvaluateMode, CardView } from '../CardView/CardView'
 import { Tag } from '../CardView/components/Tag'
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { media } from '@/styles/media'
-import { lighten } from 'polished'
+import { darken, lighten } from 'polished'
 import { Modal } from '@/components/Modal/Modal'
 import { Flex } from '@/components/Flex/Flex'
+import { TabsHead } from '@/components/TabsHead'
 
 export type CardInfo = {
 	card: Card
@@ -56,6 +57,8 @@ export const CardDisplayModal = <T extends CardInfo>({
 	hideClose,
 	prefix,
 }: Props<T>) => {
+	const theme = useTheme()
+
 	const [type, setType] = useState(defaultType)
 	const [playable, setPlayable] = useState(false)
 
@@ -148,12 +151,16 @@ export const CardDisplayModal = <T extends CardInfo>({
 		<Modal
 			open={true}
 			contentStyle={contentStyle}
-			bodyStyle={bodyStyle}
+			bodyStyle={{ ...bodyStyle, padding: 0 }}
+			headerStyle={{
+				backgroundColor: darken(0.05, theme.colors.background),
+				padding: '0.5rem 1rem',
+			}}
 			onClose={onClose}
 			hideClose={hideClose}
 			header={
 				<Header>
-					<div>{header}</div>
+					{header}
 					{filters && (
 						<Filters>
 							{(evaluateMode === 'playing' || evaluateMode === 'buying') && (
@@ -163,21 +170,6 @@ export const CardDisplayModal = <T extends CardInfo>({
 									label="Only playable"
 								/>
 							)}
-
-							<Types>
-								{types.map(([cat, t, count]) => (
-									<FilterItem
-										selected={cat === type}
-										onClick={() => {
-											setType(cat)
-										}}
-										key={cat === undefined ? -1 : cat}
-									>
-										<Type>{t}</Type>
-										<Count>{count}</Count>
-									</FilterItem>
-								))}
-							</Types>
 						</Filters>
 					)}
 				</Header>
@@ -185,6 +177,21 @@ export const CardDisplayModal = <T extends CardInfo>({
 			footer={footer}
 		>
 			{prefix}
+
+			<div style={{ flex: 1 }}>
+				<TabsHead
+					tab={type}
+					setTab={setType}
+					tabs={types.map(([cat, t, count]) => ({
+						title: (
+							<Flex>
+								{t} <FilterCount>{count}</FilterCount>
+							</Flex>
+						),
+						key: cat,
+					}))}
+				/>
+			</div>
 
 			<Flex align="stretch" gap="0.25rem">
 				<CardsContainer playableOnly={playable}>
@@ -263,15 +270,8 @@ const CardsContainer = styled.div<{ playableOnly: boolean }>`
 		`}
 `
 
-const Types = styled.div`
-	display: flex;
-	justify-content: center;
-	align-items: center;
-`
-
 const Categories = styled(Flex)`
 	flex-direction: column;
-	gap: 0.5rem;
 	align-items: stretch;
 `
 
@@ -292,6 +292,13 @@ const Count = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
+
+	flex: 1;
+`
+
+const FilterCount = styled.div`
+	margin-left: 0.5rem;
+	opacity: 0.7;
 `
 
 const Type = styled.div`
@@ -300,10 +307,10 @@ const Type = styled.div`
 
 const FilterItem = styled.div<{ selected: boolean }>`
 	cursor: pointer;
+	border: 2px solid ${({ theme }) => theme.colors.border};
+	border-top: none;
+	border-right: none;
 	display: flex;
-	margin-right: 0.3rem;
-
-	background-color: ${({ theme }) => theme.colors.border};
 
 	${(props) =>
 		props.selected &&

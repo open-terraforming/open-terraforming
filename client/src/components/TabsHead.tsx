@@ -10,7 +10,7 @@ type Props<TTab> = {
 	suffix?: ReactNode
 }
 
-export const TabsHead = <TTab extends string | number>({
+export const TabsHead = <TTab extends string | number | undefined>({
 	tab,
 	tabs,
 	setTab,
