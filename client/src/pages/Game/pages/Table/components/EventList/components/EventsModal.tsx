@@ -1,6 +1,7 @@
 import { Modal } from '@/components/Modal/Modal'
 import { TabsContent } from '@/components/TabsContent'
 import { TabsHead } from '@/components/TabsHead'
+import { useAppStore } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GameEvent } from '@shared/index'
@@ -9,15 +10,19 @@ import { styled } from 'styled-components'
 import { InYourFaceEventModal } from '../../InYourFaceEventModal'
 import { EventLine } from './EventLine'
 import { GroupedEventsList } from './GroupedEventsList'
-import { useAppStore } from '@/utils/hooks'
 
 type Props = {
 	events: GameEvent[]
 	onClose: () => void
 }
 
+enum Tabs {
+	ALL = 'all',
+	GROUPED = 'grouped',
+}
+
 export const EventsModal = ({ onClose, events }: Props) => {
-	const [tab, setTab] = useState('all')
+	const [tab, setTab] = useState(Tabs.ALL)
 	const [detail, setDetail] = useState<GameEvent>()
 
 	const highlighted = useAppStore(
@@ -44,8 +49,8 @@ export const EventsModal = ({ onClose, events }: Props) => {
 				tab={tab}
 				setTab={setTab}
 				tabs={[
-					{ title: 'All', key: 'all' },
-					{ title: 'Grouped', key: 'grouped' },
+					{ title: 'All', key: Tabs.ALL },
+					{ title: 'Grouped', key: Tabs.GROUPED },
 				]}
 				suffix={
 					<CloseButton>
@@ -58,7 +63,7 @@ export const EventsModal = ({ onClose, events }: Props) => {
 				tab={tab}
 				tabs={[
 					{
-						key: 'all',
+						key: Tabs.ALL,
 						content: (
 							<EventsList>
 								{[...events].reverse().map((e, i) => (
@@ -68,7 +73,7 @@ export const EventsModal = ({ onClose, events }: Props) => {
 						),
 					},
 					{
-						key: 'grouped',
+						key: Tabs.GROUPED,
 						content: (
 							<EventsList>
 								<GroupedEventsList onClick={(e) => setDetail(e)} />
