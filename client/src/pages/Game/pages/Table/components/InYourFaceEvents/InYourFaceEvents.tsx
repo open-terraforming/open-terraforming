@@ -5,46 +5,13 @@ import { useAppStore, useToggle } from '@/utils/hooks'
 import { useGameEventsHandler } from '@/utils/useGameEventsHandler'
 import { faBell, faChevronDown } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { EventType, GameEvent } from '@shared/index'
+import { GameEvent } from '@shared/index'
 import { useCallback, useEffect, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
-import { CardPlayedEvent } from './components/CardPlayedEvent'
-import { CardUsedEvent } from './components/CardUsedEvent'
-import { ColonyBuiltEvent } from './components/ColonyBuiltEvent'
-import { ColonyTradingEvent } from './components/ColonyTradingEvent'
-import { CompetitionSponsoredEvent } from './components/CompetitionSponsoredEvent'
-import { CurrentGlobalEventExecutedEvent } from './components/CurrentGlobalEventExecuted'
-import { GlobalEventsChangedEvent } from './components/GlobalEventsChangedEvent'
-import { MarsTerraformedEvent } from './components/MarsTerraformedEvent'
-import { MilestoneBoughtEvent } from './components/MilestoneBoughtEvent'
-import { NewGovernmentEvent } from './components/NewGovernmentEvent'
-import { PlayerDidHeader } from './components/PlayerDidHeader'
-import { PlayerMovedDelegateEvent } from './components/PlayerMovedDelegateEvent'
-import { ProductionDoneEvent } from './components/ProductionDoneEvent'
-import { StandardProjectBoughtEvent } from './components/StandardProjectBoughtEvent'
-import { StartingSetupEvent } from './components/StartingSetupEvent'
-import { TilePlacedEvent } from './components/TilePlacedEvent'
-import { CommitteePartyActivePolicyActivatedEvent } from './components/CommitteePartyActivePolicyActivatedEvent'
-import { useLocale } from '@/context/LocaleContext'
-
-const PROCESSABLE_EVENTS = [
-	EventType.CardPlayed,
-	EventType.CardUsed,
-	EventType.StandardProjectBought,
-	EventType.MilestoneBought,
-	EventType.CompetitionSponsored,
-	EventType.ColonyBuilt,
-	EventType.ColonyTrading,
-	EventType.StartingSetup,
-	EventType.ProductionDone,
-	EventType.TilePlaced,
-	EventType.MarsTerraformed,
-	EventType.GlobalEventsChanged,
-	EventType.CurrentGlobalEventExecuted,
-	EventType.NewGovernment,
-	EventType.PlayerMovedDelegate,
-	EventType.CommitteePartyActivePolicyActivated,
-]
+import { InYourFaceEvent } from './components/InYourFaceEvent'
+import { InYourFaceEventsList } from './components/InYourFaceEventsList'
+import { InYourFaceEventTitle } from './components/InYourFaceEventTitle'
+import { isInYourFaceEvent } from './utils/isInYourFaceEvent'
 
 export const InYourFaceEvents = () => {
 	const player = useAppStore((state) => state.game.player)
@@ -56,7 +23,7 @@ export const InYourFaceEvents = () => {
 	const [shown, toggleShown, setShown] = useToggle()
 	const [rendered, setRendered] = useState(false)
 	const [events, setEvents] = useState<GameEvent[]>([])
-	const t = useLocale()
+	const [showList, toggleList] = useToggle()
 
 	const current = events[0]
 
@@ -65,11 +32,7 @@ export const InYourFaceEvents = () => {
 			return
 		}
 
-		if (event.processed) {
-			return
-		}
-
-		if (PROCESSABLE_EVENTS.includes(event.type)) {
+		if (isInYourFaceEvent({ event })) {
 			setEvents((events) => [...events, event])
 		}
 	})
@@ -84,153 +47,17 @@ export const InYourFaceEvents = () => {
 		}
 	}, [shown])
 
-	const renderEventHead = useCallback((event: GameEvent) => {
-		switch (event.type) {
-			case EventType.CardPlayed:
-				return (
-					<PlayerDidHeader
-						noSpacing
-						playerId={event.playerId}
-						thing=" played card"
-					/>
-				)
-			case EventType.CardUsed:
-				return (
-					<PlayerDidHeader
-						noSpacing
-						playerId={event.playerId}
-						thing=" used card"
-					/>
-				)
-			case EventType.CompetitionSponsored:
-				return (
-					<PlayerDidHeader
-						noSpacing
-						playerId={event.playerId}
-						thing=" sponsored competition"
-					/>
-				)
-			case EventType.MilestoneBought:
-				return (
-					<PlayerDidHeader
-						noSpacing
-						playerId={event.playerId}
-						thing=" bought milestone"
-					/>
-				)
-			case EventType.ColonyBuilt:
-				return (
-					<PlayerDidHeader
-						noSpacing
-						playerId={event.playerId}
-						thing=" built colony"
-					/>
-				)
-			case EventType.ColonyTrading:
-				return (
-					<PlayerDidHeader
-						noSpacing
-						playerId={event.playerId}
-						thing=" traded with colony"
-					/>
-				)
-			case EventType.StandardProjectBought:
-				return (
-					<PlayerDidHeader
-						playerId={event.playerId}
-						noSpacing
-						thing=" bought standard project"
-					/>
-				)
-			case EventType.StartingSetup:
-				return (
-					<PlayerDidHeader
-						playerId={event.playerId}
-						noSpacing
-						thing=" picked their starting setup"
-					/>
-				)
-			case EventType.TilePlaced:
-				return (
-					<PlayerDidHeader
-						playerId={event.playerId}
-						noSpacing
-						thing=" placed tile"
-					/>
-				)
-			case EventType.ProductionDone:
-				return <CenterText>Production</CenterText>
-			case EventType.MarsTerraformed:
-				return <CenterText>Mars terraformed</CenterText>
-			case EventType.GlobalEventsChanged:
-				return <CenterText>Global events changed</CenterText>
-			case EventType.CurrentGlobalEventExecuted:
-				return <CenterText>Global event executed</CenterText>
-			case EventType.NewGovernment:
-				return <CenterText>New government</CenterText>
-			case EventType.PlayerMovedDelegate:
-				return (
-					<PlayerDidHeader
-						playerId={event.playerId}
-						noSpacing
-						thing={` added delegate to ${t.committeeParties[event.partyCode]}`}
-					/>
-				)
-			case EventType.CommitteePartyActivePolicyActivated:
-				return (
-					<PlayerDidHeader
-						playerId={event.playerId}
-						noSpacing
-						thing=" used ruling policy"
-					/>
-				)
-			default:
-				return null
-		}
-	}, [])
-
-	const renderEvent = useCallback((event: GameEvent) => {
-		switch (event.type) {
-			case EventType.CardPlayed:
-				return <CardPlayedEvent event={event} />
-			case EventType.CardUsed:
-				return <CardUsedEvent event={event} />
-			case EventType.StandardProjectBought:
-				return <StandardProjectBoughtEvent event={event} />
-			case EventType.MilestoneBought:
-				return <MilestoneBoughtEvent event={event} />
-			case EventType.CompetitionSponsored:
-				return <CompetitionSponsoredEvent event={event} />
-			case EventType.ColonyBuilt:
-				return <ColonyBuiltEvent event={event} />
-			case EventType.ColonyTrading:
-				return <ColonyTradingEvent event={event} />
-			case EventType.StartingSetup:
-				return <StartingSetupEvent event={event} />
-			case EventType.ProductionDone:
-				return <ProductionDoneEvent event={event} />
-			case EventType.TilePlaced:
-				return <TilePlacedEvent event={event} />
-			case EventType.MarsTerraformed:
-				return <MarsTerraformedEvent />
-			case EventType.GlobalEventsChanged:
-				return <GlobalEventsChangedEvent event={event} />
-			case EventType.CurrentGlobalEventExecuted:
-				return <CurrentGlobalEventExecutedEvent event={event} />
-			case EventType.NewGovernment:
-				return <NewGovernmentEvent event={event} />
-			case EventType.PlayerMovedDelegate:
-				return <PlayerMovedDelegateEvent event={event} />
-			case EventType.CommitteePartyActivePolicyActivated:
-				return <CommitteePartyActivePolicyActivatedEvent event={event} />
-			default:
-				return null
-		}
-	}, [])
-
 	const handleDismiss = useCallback(() => {
 		setEvents((events) => events.slice(1))
 	}, [])
+
+	const handleShow = () => {
+		if (current) {
+			toggleShown()
+		} else {
+			toggleList()
+		}
+	}
 
 	useEffect(() => {
 		setShown(true)
@@ -238,12 +65,14 @@ export const InYourFaceEvents = () => {
 
 	return (
 		<>
-			<MinimizedButton onClick={toggleShown} noClip>
+			<MinimizedButton onClick={handleShow} noClip>
 				<ButtonIcon>
 					<FontAwesomeIcon icon={faBell} />
 				</ButtonIcon>
 				<ButtonCount>{events.length}</ButtonCount>
 			</MinimizedButton>
+			{showList && <InYourFaceEventsList onClose={toggleList} />}
+
 			{current && rendered && (
 				<Portal>
 					<DisplayContainer
@@ -269,7 +98,7 @@ export const InYourFaceEvents = () => {
 												marginRight: `${(indexReversed + 1) * 0.5}rem`,
 											}}
 										>
-											{renderEventHead(e)}
+											<InYourFaceEventTitle event={e} />
 										</NextEvent>
 									)
 								})}
@@ -291,7 +120,7 @@ export const InYourFaceEvents = () => {
 							</Actions>
 							{/* TODO: Hotfix to reset animations for new events even when they're the same type - better solution? */}
 							<Event key={JSON.stringify(current)}>
-								{renderEvent(current)}
+								<InYourFaceEvent event={current} />
 							</Event>
 							<div></div>
 						</Inner>
@@ -394,10 +223,6 @@ const NextEvents = styled.div`
 	position: absolute;
 	margin-top: -1rem;
 	width: 30rem;
-`
-
-const CenterText = styled.div`
-	text-align: center;
 `
 
 const MinimizedButton = styled(Button)`

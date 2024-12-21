@@ -1,11 +1,19 @@
 import { useGameModals } from '@/context/GameModalsContext'
 import { useLocale } from '@/context/LocaleContext'
-import { useAppStore } from '@/utils/hooks'
+import { setGameHighlightedCells } from '@/store/modules/game'
+import { formatTime } from '@/utils/formatTime'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi, Resource } from '@shared/cards'
 import { Competitions } from '@shared/competitions'
-import { ColonyState, EventType, GameEvent, PlayerState } from '@shared/index'
+import {
+	ColonyState,
+	EventType,
+	GameEvent,
+	PlayerState,
+	TilePlaced,
+} from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { Projects } from '@shared/projects'
 import { otherToStr, tileToStr } from '@shared/texts'
@@ -31,6 +39,30 @@ const PlayerSpan = ({ player }: { player: PlayerState }) => (
 		{player?.name}
 	</span>
 )
+
+const TileSpan = ({ tile }: { tile: TilePlaced }) => {
+	const dispatch = useAppDispatch()
+
+	const handleMouseOver = () => {
+		dispatch(setGameHighlightedCells([tile.cell]))
+	}
+
+	const handleMouseOut = () => {
+		dispatch(setGameHighlightedCells([]))
+	}
+
+	return (
+		<span
+			style={{ color: '#91c8ff', cursor: 'pointer' }}
+			onClick={handleMouseOver}
+			onMouseOut={handleMouseOut}
+		>
+			{tile.other !== undefined && tile.other !== null
+				? otherToStr(tile.other)
+				: tileToStr(tile.tile)}
+		</span>
+	)
+}
 
 const PartySpan = ({ party }: { party: string }) => {
 	const locale = useLocale()
@@ -75,14 +107,6 @@ const GlobalEventSpan = ({ eventCode }: { eventCode: string }) => {
 			</CardSpanE>
 		</>
 	)
-}
-
-const formatTime = (time: number) => {
-	const hours = Math.floor(time / 3600000)
-	const minutes = Math.floor((time % 3600000) / 60000)
-	const seconds = ((time % 60000) / 1000).toFixed(0)
-
-	return `${hours > 0 ? hours + ':' : ''}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
 }
 
 export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
@@ -175,11 +199,7 @@ export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
 						{player && <PlayerSpan player={players[event.playerId]} />}
 						{!player && 'World government'}
 						{' placed '}
-						<CardSpanE>
-							{event.other !== undefined && event.other !== null
-								? otherToStr(event.other)
-								: tileToStr(event.tile)}
-						</CardSpanE>
+						<TileSpan tile={event} />
 					</>
 				)
 			case EventType.CompetitionSponsored:
@@ -380,7 +400,7 @@ export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
 }
 
 const TimestampE = styled.span`
-	width: 3.4rem;
+	width: 4rem;
 	display: inline-block;
 	text-align: right;
 	margin-right: 0.25rem;

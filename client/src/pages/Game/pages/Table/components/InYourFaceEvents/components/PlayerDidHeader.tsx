@@ -1,6 +1,7 @@
 import { useAppStore } from '@/utils/hooks'
 import { ReactNode } from 'react'
 import { SomethingHappenedHeader } from './SomethingHappenedHeader'
+import { lighten } from 'polished'
 
 type Props = {
 	playerId: number
@@ -18,7 +19,13 @@ export const PlayerDidHeader = ({ playerId, thing, noSpacing }: Props) => {
 
 	return (
 		<SomethingHappenedHeader $noSpacing={noSpacing}>
-			<span style={{ color: player?.color }}>{displayName}</span>
+			<span
+				style={{
+					color: player?.color ? lighten(0.2, player.color) : undefined,
+				}}
+			>
+				{displayName}
+			</span>
 			{thing}
 		</SomethingHappenedHeader>
 	)

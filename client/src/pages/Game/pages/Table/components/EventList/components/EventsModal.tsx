@@ -1,24 +1,108 @@
 import { Modal } from '@/components/Modal/Modal'
-import { EventLine } from './EventLine'
+import { TabsContent } from '@/components/TabsContent'
+import { TabsHead } from '@/components/TabsHead'
+import { useAppStore } from '@/utils/hooks'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GameEvent } from '@shared/index'
+import { useMemo, useState } from 'react'
+import { styled } from 'styled-components'
+import { InYourFaceEventModal } from '../../InYourFaceEventModal'
+import { EventLine } from './EventLine'
+import { GroupedEventsList } from './GroupedEventsList'
 
 type Props = {
 	events: GameEvent[]
 	onClose: () => void
 }
 
+enum Tabs {
+	ALL = 'all',
+	GROUPED = 'grouped',
+}
+
 export const EventsModal = ({ onClose, events }: Props) => {
+	const [tab, setTab] = useState(Tabs.ALL)
+	const [detail, setDetail] = useState<GameEvent>()
+
+	const highlighted = useAppStore(
+		(store) => store.game.highlightedCells.length > 0,
+	)
+
+	const tabs = useMemo(
+		() => [
+			{
+				title: 'All',
+				key: Tabs.ALL,
+				content: (
+					<EventsList>
+						{[...events].reverse().map((e, i) => (
+							<EventLine key={i} event={e} animated={false} timestamp />
+						))}
+					</EventsList>
+				),
+			},
+			{
+				title: 'Grouped',
+				key: Tabs.GROUPED,
+				content: (
+					<EventsList>
+						<GroupedEventsList onClick={(e) => setDetail(e)} />
+					</EventsList>
+				),
+			},
+		],
+		[events],
+	)
+
 	return (
 		<Modal
 			open={true}
-			contentStyle={{ minWidth: '500px' }}
+			contentStyle={{
+				minWidth: '600px',
+				maxWidth: '600px',
+			}}
+			backgroundStyle={highlighted ? { opacity: 0.1 } : undefined}
 			onClose={onClose}
-			header="Events"
+			bodyStyle={{
+				padding: 0,
+				display: 'flex',
+				flexDirection: 'column',
+				overflow: 'auto',
+			}}
 		>
-			{/* TODO: Windowed display mode to prevent lag */}
-			{[...events].reverse().map((e, i) => (
-				<EventLine key={i} event={e} animated={false} timestamp />
-			))}
+			<TabsHead
+				tab={tab}
+				setTab={setTab}
+				tabs={tabs}
+				suffix={
+					<CloseButton>
+						<FontAwesomeIcon icon={faTimes} onClick={onClose} />
+					</CloseButton>
+				}
+			/>
+
+			<TabsContent tab={tab} tabs={tabs} />
+
+			{detail && (
+				<InYourFaceEventModal
+					event={detail}
+					onClose={() => setDetail(undefined)}
+				/>
+			)}
 		</Modal>
 	)
 }
+
+const EventsList = styled.div`
+	padding: 0.5rem;
+`
+
+const CloseButton = styled.div`
+	display: flex;
+	align-items: center;
+	padding: 0 0.5rem;
+	cursor: pointer;
+	margin-left: auto;
+	align-self: center;
+`
