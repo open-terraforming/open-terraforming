@@ -373,7 +373,7 @@ export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
 }
 
 const TimestampE = styled.span`
-	width: 3.4rem;
+	width: 4rem;
 	display: inline-block;
 	text-align: right;
 	margin-right: 0.25rem;

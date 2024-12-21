@@ -5,7 +5,7 @@ import { useAppStore } from '@/utils/hooks'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { GameEvent } from '@shared/index'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { styled } from 'styled-components'
 import { InYourFaceEventModal } from '../../InYourFaceEventModal'
 import { EventLine } from './EventLine'
@@ -29,6 +29,32 @@ export const EventsModal = ({ onClose, events }: Props) => {
 		(store) => store.game.highlightedCells.length > 0,
 	)
 
+	const tabs = useMemo(
+		() => [
+			{
+				title: 'All',
+				key: Tabs.ALL,
+				content: (
+					<EventsList>
+						{[...events].reverse().map((e, i) => (
+							<EventLine key={i} event={e} animated={false} timestamp />
+						))}
+					</EventsList>
+				),
+			},
+			{
+				title: 'Grouped',
+				key: Tabs.GROUPED,
+				content: (
+					<EventsList>
+						<GroupedEventsList onClick={(e) => setDetail(e)} />
+					</EventsList>
+				),
+			},
+		],
+		[events],
+	)
+
 	return (
 		<Modal
 			open={true}
@@ -48,10 +74,7 @@ export const EventsModal = ({ onClose, events }: Props) => {
 			<TabsHead
 				tab={tab}
 				setTab={setTab}
-				tabs={[
-					{ title: 'All', key: Tabs.ALL },
-					{ title: 'Grouped', key: Tabs.GROUPED },
-				]}
+				tabs={tabs}
 				suffix={
 					<CloseButton>
 						<FontAwesomeIcon icon={faTimes} onClick={onClose} />
@@ -59,29 +82,8 @@ export const EventsModal = ({ onClose, events }: Props) => {
 				}
 			/>
 
-			<TabsContent
-				tab={tab}
-				tabs={[
-					{
-						key: Tabs.ALL,
-						content: (
-							<EventsList>
-								{[...events].reverse().map((e, i) => (
-									<EventLine key={i} event={e} animated={false} timestamp />
-								))}
-							</EventsList>
-						),
-					},
-					{
-						key: Tabs.GROUPED,
-						content: (
-							<EventsList>
-								<GroupedEventsList onClick={(e) => setDetail(e)} />
-							</EventsList>
-						),
-					},
-				]}
-			/>
+			<TabsContent tab={tab} tabs={tabs} />
+
 			{detail && (
 				<InYourFaceEventModal
 					event={detail}

@@ -42,7 +42,7 @@ export const GroupedEventsList = ({ onClick }: Props) => {
 const Timestamp = styled.div`
 	width: 4rem;
 	text-align: right;
-	margin-right: 0.5rem;
+	margin-right: 0.25rem;
 `
 
 const Line = styled(Box)`
