@@ -36,7 +36,7 @@ type Props<T extends CardInfo> = {
 	contentStyle?: CSSProperties
 	bodyStyle?: CSSProperties
 	hideClose?: boolean
-	prefix?: ReactNode
+	postfix?: ReactNode
 }
 
 export const CardDisplayModal = <T extends CardInfo>({
@@ -55,7 +55,7 @@ export const CardDisplayModal = <T extends CardInfo>({
 	header,
 	footer,
 	hideClose,
-	prefix,
+	postfix,
 }: Props<T>) => {
 	const theme = useTheme()
 
@@ -176,8 +176,6 @@ export const CardDisplayModal = <T extends CardInfo>({
 			}
 			footer={footer}
 		>
-			{prefix}
-
 			<div style={{ flex: 1 }}>
 				<TabsHead
 					tab={type}
@@ -241,6 +239,8 @@ export const CardDisplayModal = <T extends CardInfo>({
 					))}
 				</Categories>
 			</Flex>
+
+			{postfix}
 		</Modal>
 	)
 }

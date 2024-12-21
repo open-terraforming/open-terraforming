@@ -62,8 +62,13 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 			header={`${player.name}`}
 			contentStyle={{ minWidth: '80%' }}
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
-			prefix={
+			postfix={
 				<Info>
+					<InfoItem>
+						<Value>TR</Value>
+						<Production>{state.terraformRating}</Production>
+					</InfoItem>
+
 					<ResItem
 						res="money"
 						value={state.money}
@@ -111,8 +116,10 @@ export const PlayerInfo = ({ playerId, onClose }: Props) => {
 const Info = styled.div`
 	display: flex;
 	flex-wrap: wrap;
-	margin-bottom: 1rem;
 	justify-content: center;
+	border-top: 2px solid ${({ theme }) => theme.colors.border};
+	padding: 1rem;
+	background-color: ${({ theme }) => theme.colors.background};
 `
 
 const InfoItem = styled.div`
