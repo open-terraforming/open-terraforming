@@ -14,7 +14,8 @@ test('playerResourceChange should change resources of right player', () => {
 			player: state.players[0],
 			game: state,
 		},
-		[state.players[1].id, 2],
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		[state.players[1].id, 2] as any,
 	)
 
 	expect(state.players[0].ore).toBe(2)
@@ -34,7 +35,8 @@ test("playerResourceChange won't remove more than player owns", () => {
 				player: state.players[0],
 				game: state,
 			},
-			[state.players[1].id, 5],
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			[state.players[1].id, 5] as any,
 		)
 	}).toThrow()
 
@@ -53,7 +55,8 @@ test('playerResourceChange is limited by maximum number of resources', () => {
 			player: state.players[0],
 			game: state,
 		},
-		[state.players[1].id, 10],
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		[state.players[1].id, 10] as any,
 	)
 
 	expect(state.players[1].ore).toBe(15)
@@ -70,7 +73,8 @@ test('playerResourceChange removes exact amount when not optional', () => {
 			player: state.players[0],
 			game: state,
 		},
-		[state.players[1].id, 3],
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		[state.players[1].id, 3] as any,
 	)
 
 	expect(state.players[1].ore).toBe(15)

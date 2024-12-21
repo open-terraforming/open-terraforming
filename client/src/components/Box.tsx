@@ -9,16 +9,17 @@ type Props = {
 	$pr?: number
 	$pb?: number
 	$pl?: number
-	$m?: number
-	$mx?: number
-	$my?: number
-	$mt?: number
-	$mr?: number
-	$mb?: number
-	$ml?: number
+	$m?: number | 'auto'
+	$mx?: number | 'auto'
+	$my?: number | 'auto'
+	$mt?: number | 'auto'
+	$mr?: number | 'auto'
+	$mb?: number | 'auto'
+	$ml?: number | 'auto'
 }
 
-const spacing = (value: number) => `${value * 0.25}rem`
+const spacing = (value: number | 'auto') =>
+	value === 'auto' ? value : `${value * 0.25}rem`
 
 export const Box = styled(Flex)<Props>`
 	${({ $p }) => $p && `padding: ${spacing($p)};`}

@@ -19,7 +19,6 @@ import { CardsLookupApi } from './lookup'
 import {
 	CardCategory,
 	CardEffect,
-	CardEffectTarget,
 	CardPassiveEffect,
 	CardResource,
 	CardSymbol,
@@ -28,6 +27,7 @@ import {
 	SymbolType,
 	WithOptional,
 } from './types'
+import { CardEffectArgumentType } from './args'
 import {
 	gamePlayer,
 	progressSymbol,
@@ -396,7 +396,8 @@ export const asFirstAction = (effect: CardEffect) =>
 		description: '',
 		onGenerationStarted: (ctx, generation) => {
 			if (generation === 1) {
-				effect.perform(ctx)
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				effect.perform(ctx, ...([] as any))
 			}
 		},
 	})
@@ -405,7 +406,7 @@ export const changeResourceFromNeighbor = (res: Resource, amount: number) => ({
 	action: effect({
 		args: [
 			effectArg({
-				type: CardEffectTarget.Player,
+				type: CardEffectArgumentType.Player as const,
 				optional: true,
 				resource: res,
 				playerConditions: [

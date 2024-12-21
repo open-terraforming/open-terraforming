@@ -1,6 +1,8 @@
 import { useGameModals } from '@/context/GameModalsContext'
 import { useLocale } from '@/context/LocaleContext'
-import { useAppStore } from '@/utils/hooks'
+import { setGameHighlightedCells } from '@/store/modules/game'
+import { formatTime } from '@/utils/formatTime'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { CardsLookupApi, Resource } from '@shared/cards'
@@ -10,9 +12,10 @@ import {
 	EventType,
 	GameEvent,
 	PlayerState,
-	StandardProjectType,
+	TilePlaced,
 } from '@shared/index'
 import { Milestones } from '@shared/milestones'
+import { Projects } from '@shared/projects'
 import { otherToStr, tileToStr } from '@shared/texts'
 import { withUnits } from '@shared/units'
 import { ucFirst } from '@shared/utils'
@@ -27,6 +30,7 @@ import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 type Props = {
 	event: GameEvent
 	animated: boolean
+	timestamp?: boolean
 	onDone?: () => void
 }
 
@@ -35,6 +39,30 @@ const PlayerSpan = ({ player }: { player: PlayerState }) => (
 		{player?.name}
 	</span>
 )
+
+const TileSpan = ({ tile }: { tile: TilePlaced }) => {
+	const dispatch = useAppDispatch()
+
+	const handleMouseOver = () => {
+		dispatch(setGameHighlightedCells([tile.cell]))
+	}
+
+	const handleMouseOut = () => {
+		dispatch(setGameHighlightedCells([]))
+	}
+
+	return (
+		<span
+			style={{ color: '#91c8ff', cursor: 'pointer' }}
+			onClick={handleMouseOver}
+			onMouseOut={handleMouseOut}
+		>
+			{tile.other !== undefined && tile.other !== null
+				? otherToStr(tile.other)
+				: tileToStr(tile.tile)}
+		</span>
+	)
+}
 
 const PartySpan = ({ party }: { party: string }) => {
 	const locale = useLocale()
@@ -68,7 +96,20 @@ const ColonySpan = ({ colony }: { colony: ColonyState }) => {
 	)
 }
 
-export const EventLine = ({ event, animated, onDone }: Props) => {
+const GlobalEventSpan = ({ eventCode }: { eventCode: string }) => {
+	const locale = useLocale()
+	const { openGlobalEventModal } = useGameModals()
+
+	return (
+		<>
+			<CardSpanE onClick={() => openGlobalEventModal(eventCode)}>
+				{locale.globalEvents[eventCode]}
+			</CardSpanE>
+		</>
+	)
+}
+
+export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
 	const locale = useLocale()
 	const players = useAppStore((state) => state.game.playerMap)
 	const game = useAppStore((state) => state.game.state)
@@ -158,11 +199,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 						{player && <PlayerSpan player={players[event.playerId]} />}
 						{!player && 'World government'}
 						{' placed '}
-						<CardSpanE>
-							{event.other !== undefined && event.other !== null
-								? otherToStr(event.other)
-								: tileToStr(event.tile)}
-						</CardSpanE>
+						<TileSpan tile={event} />
 					</>
 				)
 			case EventType.CompetitionSponsored:
@@ -252,7 +289,7 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 				return (
 					<>
 						<PlayerSpan player={players[event.playerId]} /> bought{' '}
-						{StandardProjectType[event.project]}
+						{Projects[event.project].description}
 					</>
 				)
 			case EventType.TileAcquired:
@@ -269,11 +306,11 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					</>
 				)
 			case EventType.StartingSetup:
-				return <></>
+				return null
 			case EventType.ProductionDone:
-				return <></>
+				return null
 			case EventType.WorldGovernmentTerraforming:
-				return <></>
+				return null
 			case EventType.MarsTerraformed:
 				return <>Mars terraformed</>
 			case EventType.CommitteeDominantPartyChanged:
@@ -311,21 +348,25 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					</InlineFlex>
 				)
 			case EventType.CurrentGlobalEventExecuted:
-				return <>{locale.globalEvents[event.eventCode]} global event</>
+				return (
+					<>
+						<GlobalEventSpan eventCode={event.eventCode} /> global event
+					</>
+				)
 			case EventType.GlobalEventsChanged:
 				return (
 					<>
 						{event.current.distant && (
-							<div>
-								{locale.globalEvents[event.current.distant]} is new distant
-								event
-							</div>
+							<>
+								<GlobalEventSpan eventCode={event.current.distant} /> is new
+								distant event
+							</>
 						)}
 						{event.current.current && (
-							<div>
-								{locale.globalEvents[event.current.current]} is new current
-								event
-							</div>
+							<>
+								, <GlobalEventSpan eventCode={event.current.current} /> is new
+								current event
+							</>
 						)}
 					</>
 				)
@@ -336,16 +377,34 @@ export const EventLine = ({ event, animated, onDone }: Props) => {
 					</>
 				)
 			case EventType.PlayerMovedDelegate:
-				return <></>
+				return null
 			case EventType.CommitteePartyActivePolicyActivated:
-				return <></>
+				return null
 		}
 
 		assertNever(event)
 	}, [event, players])
 
-	return <E animation={animated}>{content}</E>
+	return content ? (
+		<E animation={animated}>
+			{timestamp && (
+				<TimestampE>
+					{formatTime((event.t ?? 0) - new Date(game.started).getTime())}
+				</TimestampE>
+			)}
+			{content}
+		</E>
+	) : (
+		<></>
+	)
 }
+
+const TimestampE = styled.span`
+	width: 4rem;
+	display: inline-block;
+	text-align: right;
+	margin-right: 0.25rem;
+`
 
 const E = styled.div<{ animation: boolean }>`
 	overflow: hidden;

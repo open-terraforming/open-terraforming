@@ -3,6 +3,7 @@ import { getPlayerColoniesCount } from '@shared/expansions/colonies/utils/getPla
 import { withUnits } from '@shared/units'
 import { CardEffectType, Resource, SymbolType } from '../types'
 import { effect } from './types'
+import { colonyCountHint } from '../cardHints'
 
 export const resourcesForColonies = (
 	resource: Resource,
@@ -17,6 +18,7 @@ export const resourcesForColonies = (
 			{ symbol: SymbolType.SlashSmall },
 			{ symbol: SymbolType.Colony, other: !selfOnly },
 		],
+		hints: [colonyCountHint({ ownedOnly: selfOnly })],
 		perform: ({ player, game }) => {
 			player[resource] +=
 				(selfOnly

@@ -20,7 +20,11 @@ export const Head = styled.div`
 	}
 `
 
-export const HeadSymbols = styled(Symbols)<{ $ok?: boolean; $plain?: boolean }>`
+export const HeadSymbols = styled(Symbols)<{
+	$ok?: boolean
+	$plain?: boolean
+	$faded?: boolean
+}>`
 	border: 0.2rem solid
 		${({ $ok, $plain }) => ($plain ? '#aaa' : $ok ? '#225e34' : '#ff3333')};
 	margin-left: 0.2rem;
@@ -36,6 +40,12 @@ export const HeadSymbols = styled(Symbols)<{ $ok?: boolean; $plain?: boolean }>`
 		padding-bottom: 0.1rem;
 	}
 
+	${(props) =>
+		props.$faded &&
+		css`
+			opacity: 0.5;
+		`}
+
 	position: relative;
 	z-index: 2;
 `
@@ -44,8 +54,15 @@ export const Action = styled.div<{
 	$hasSymbols: boolean
 	$highlight?: boolean
 	$highlightNoAnimation?: boolean
+	$fade?: boolean
 }>`
 	padding: 0.5rem;
+
+	${({ $fade }) =>
+		$fade &&
+		css`
+			opacity: 0.5;
+		`}
 
 	${({ theme, $highlight, $highlightNoAnimation }) =>
 		$highlight

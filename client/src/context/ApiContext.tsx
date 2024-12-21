@@ -2,7 +2,12 @@ import { Client } from '@/api/api'
 import { getWebsocketUrl } from '@/api/utils'
 import { ApiState, setApiError, setApiState } from '@/store/modules/api'
 import { setClientState } from '@/store/modules/client'
-import { setGameInfo, setGamePlayer, setGameState } from '@/store/modules/game'
+import {
+	setGameInfo,
+	setGamePlayer,
+	setGameState,
+	setGameStateDiff,
+} from '@/store/modules/game'
 import { useAppStore } from '@/utils/hooks'
 import {
 	GameStateValue,
@@ -211,23 +216,14 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 					break
 				}
 
-				case MessageType.GameStateUpdate: {
-					dispatch(
-						setClientState({
-							sessions: {
-								...sessions,
-								[sessionKey]: {
-									...sessions[sessionKey]!,
-									name: m.data.name,
-									generation: m.data.generation,
-									finished: m.data.state === GameStateValue.Ended,
-									lastUpdateAt: Date.now(),
-								},
-							},
-						}),
-					)
-
+				case MessageType.GameStateFull: {
 					dispatch(setGameState(m.data))
+
+					break
+				}
+
+				case MessageType.GameStateUpdate: {
+					dispatch(setGameStateDiff(m.data))
 					break
 				}
 

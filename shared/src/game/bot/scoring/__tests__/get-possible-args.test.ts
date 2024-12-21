@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { initialGameState, initialPlayerState } from '@shared/states'
 import { range } from '@shared/utils/range'
-import { CardsLookupApi, CardEffectTarget } from '@shared/cards'
+import {
+	CardsLookupApi,
+	CardEffectArgumentType,
+	AnyCardEffectArgument,
+} from '@shared/cards'
 import { getPossibleArgs } from '../args/get-possible-args'
 import { emptyCardState } from '@shared/cards/utils'
 import { getBestArgs } from '../getBestArgs'
@@ -49,13 +53,16 @@ it('should prepare arguments correctly', () => {
 	)
 
 	effectsArgs.forEach((e, ei) => {
-		card.actionEffects[ei].args.forEach((a, ai) => {
-			console.log(
-				`Possible args for ${ei} -> ${ai} (${CardEffectTarget[a.type]})`,
+		// eslint-disable-next-line prettier/prettier
+		(card.actionEffects[ei].args as AnyCardEffectArgument[]).forEach(
+			(a, ai) => {
+				console.log(
+					`Possible args for ${ei} -> ${ai} (${CardEffectArgumentType[a.type]})`,
 
-				pretty(e[ai]),
-			)
-		})
+					pretty(e[ai]),
+				)
+			},
+		)
 	})
 
 	console.log(pretty(effectsArgs))

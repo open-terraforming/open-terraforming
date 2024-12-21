@@ -5,14 +5,16 @@ import { rgba } from 'polished'
 import { useEffect } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import {
+	BaseGameEvent,
 	CompetitionSponsored,
 	EventType,
 	MilestoneBought,
 } from '@shared/index'
 
-export type HeaderEvent = (MilestoneBought | CompetitionSponsored) & {
-	id: number
-}
+export type HeaderEvent = BaseGameEvent &
+	(MilestoneBought | CompetitionSponsored) & {
+		id: number
+	}
 
 type Props = {
 	ev: HeaderEvent

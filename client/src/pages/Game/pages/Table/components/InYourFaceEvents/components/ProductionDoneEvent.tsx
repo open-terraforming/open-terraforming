@@ -1,5 +1,5 @@
 import { useAppStore, usePlayersMap } from '@/utils/hooks'
-import { ProductionDone } from '@shared/index'
+import { GameEvent, ProductionDone } from '@shared/index'
 import styled, { keyframes } from 'styled-components'
 import { PlayerWithEvents } from './PlayerWithEvents'
 import { SomethingHappenedHeader } from './SomethingHappenedHeader'
@@ -34,7 +34,7 @@ export const ProductionDoneEvent = ({ event }: Props) => {
 					key={event.playerId}
 					style={{ animationDelay: `${i * 250}ms` }}
 					player={playersMap[event.playerId]}
-					events={[event]}
+					events={[event as GameEvent]}
 				/>
 			))}
 		</>

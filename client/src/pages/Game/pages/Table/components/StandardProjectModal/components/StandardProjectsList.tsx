@@ -1,11 +1,16 @@
 import { Button } from '@/components'
 import { useApi } from '@/context/ApiContext'
-import { useGameModals } from '@/context/GameModalsContext'
-import { useAppStore } from '@/utils/hooks'
+import { pushFrontendAction } from '@/store/modules/table'
+import {
+	pickHandCardsFrontendAction,
+	pickTileFrontendAction,
+} from '@/store/modules/table/frontendActions'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { buyStandardProject, StandardProjectType } from '@shared/index'
 import {
+	AnyStandardProject,
 	Projects,
-	StandardProject,
+	StandardProjectArgumentType,
 	StandardProjectContext,
 } from '@shared/projects'
 import { useMemo } from 'react'
@@ -22,11 +27,11 @@ const HIDDEN_PROJECTS = [
 ]
 
 export const StandardProjectsList = ({ onClose }: Props) => {
+	const dispatch = useAppDispatch()
 	const api = useApi()
 	const game = useAppStore((state) => state.game.state)
 	const player = useAppStore((state) => state.game.player)
 	const playing = useAppStore((state) => state.game.playing)
-	const { openSellCardsModal } = useGameModals()
 
 	const projects = game.standardProjects
 		.filter((p) => !HIDDEN_PROJECTS.includes(p.type))
@@ -41,17 +46,39 @@ export const StandardProjectsList = ({ onClose }: Props) => {
 		[game, player],
 	)
 
-	const handleSubmit = (p: StandardProject) => {
-		if (p.type === StandardProjectType.SellPatents) {
-			openSellCardsModal()
-		} else {
-			api.send(buyStandardProject(p.type))
-			onClose?.()
-		}
-	}
+	const handleSubmit = (p: AnyStandardProject) => {
+		if (p.args) {
+			if (p.args.length !== 1) {
+				throw new Error('Only 1 argument is supported right now')
+			}
 
-	if (!game || !player) {
-		return <>No game / player</>
+			const arg = p.args[0]
+
+			switch (arg.type) {
+				case StandardProjectArgumentType.CardsInHand: {
+					dispatch(pushFrontendAction(pickHandCardsFrontendAction(p.type)))
+					break
+				}
+
+				case StandardProjectArgumentType.Tile: {
+					if (!arg.tilePlacement) {
+						throw new Error('Tile placement is required')
+					}
+
+					dispatch(
+						pushFrontendAction(
+							pickTileFrontendAction(arg.tilePlacement, p.type),
+						),
+					)
+
+					break
+				}
+			}
+		} else {
+			api.send(buyStandardProject(p.type, []))
+		}
+
+		onClose?.()
 	}
 
 	return (

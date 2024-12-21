@@ -4,6 +4,7 @@ import {
 	ColonyState,
 	CommitteePartyState,
 	GridCellContent,
+	GridCellLocation,
 	GridCellOther,
 	PlayerId,
 	StandardProjectType,
@@ -111,7 +112,7 @@ export type TilePlaced = {
 	type: typeof EventType.TilePlaced
 	tile: GridCellContent
 	other?: GridCellOther
-	cell: { x: number; y: number }
+	cell: { x: number; y: number; location: GridCellLocation | undefined }
 	playerId: number
 }
 
@@ -273,6 +274,7 @@ export type NewGovernment = {
 }
 
 export type BaseGameEvent = {
+	t: number
 	processed?: boolean
 }
 

@@ -1,15 +1,18 @@
 import background from '@/assets/mars-background.jpg'
 import { useApi } from '@/context/ApiContext'
-import { useAppStore } from '@/utils/hooks'
-import { claimTile, placeTile } from '@shared/actions'
+import { popFrontendAction, setTableState } from '@/store/modules/table'
+import { FrontendPendingActionType } from '@/store/modules/table/frontendActions'
+import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { buyStandardProject, claimTile, placeTile } from '@shared/actions'
+import { ExpansionType } from '@shared/expansions/types'
 import { GridCell, GridCellLocation, PlayerStateValue } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
-import { useRef, useState } from 'react'
+import { MouseEvent, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { Cell } from './components/Cell'
 import { CellOverlay } from './components/CellOverlay'
-import { ExpansionType } from '@shared/expansions/types'
 import { VenusButton } from './components/VenusButton'
+import { VenusMap } from './components/VenusMap'
 
 const cellPos = (x: number, y: number) => {
 	if (y % 2 === 1) {
@@ -22,49 +25,25 @@ const cellPos = (x: number, y: number) => {
 export const GameMap = () => {
 	const api = useApi()
 
+	const dispatch = useAppDispatch()
+
 	const hasVenus = useAppStore((state) =>
 		state.game.state?.expansions.includes(ExpansionType.Venus),
 	)
 
 	const map = useAppStore((state) => state.game.state?.map)
-	const highlighted = useAppStore((state) => state.game.highlightedCell)
+	const highlighted = useAppStore((state) => state.game.highlightedCells)
+
+	const pickingCellForBuyArg = useAppStore(
+		(state) => state.table.pickingCellForBuyArg,
+	)
+
+	const frontendPending = useAppStore(
+		(state) => state.table.pendingFrontendActions[0],
+	)
 
 	const containerRef = useRef<HTMLDivElement>(null)
 	const [delayFunction] = useState(0)
-
-	/*
-	useWindowEvent('mousemove', (e: MouseEvent) => {
-		if (containerRef.current) {
-			const windowRatio = window.innerHeight / window.innerWidth
-
-			const ratio = [
-				e.clientX / window.innerWidth - 0.5,
-				e.clientY / window.innerHeight - 0.5
-			]
-
-			const planetOffset = 80
-			const backgroundOffset = 30
-
-			const offset = [
-				-ratio[0] * planetOffset,
-				-ratio[1] * planetOffset * windowRatio
-			]
-
-			const bgOffset = [
-				-ratio[0] * backgroundOffset,
-				-ratio[1] * backgroundOffset * windowRatio
-			]
-
-			containerRef.current.style.transform = `translate(${offset[0]}px, ${offset[1]}px)`
-
-			const stars = document.getElementById('stars')
-
-			if (stars) {
-				stars.style.backgroundPosition = `${bgOffset[0]}px ${bgOffset[1]}px`
-			}
-		}
-	})
-	*/
 
 	const pending = useAppStore((state) => state.game.pendingAction)
 
@@ -73,13 +52,21 @@ export const GameMap = () => {
 			state.game.player?.state === PlayerStateValue.Playing ||
 			state.game.player?.state === PlayerStateValue.EndingTiles ||
 			state.game.player?.state === PlayerStateValue.Prelude ||
-			state.game.player?.state === PlayerStateValue.SolarPhaseTerraform,
+			state.game.player?.state === PlayerStateValue.WorldGovernmentTerraform,
 	)
+
+	const frontendTilePick =
+		frontendPending &&
+		frontendPending.type === FrontendPendingActionType.PickTile
+			? frontendPending
+			: undefined
 
 	const placing =
 		isPlaying && pending && pending.type === PlayerActionType.PlaceTile
 			? pending.state
-			: undefined
+			: frontendTilePick
+				? frontendTilePick.state
+				: pickingCellForBuyArg?.state
 
 	const claiming = !!(
 		isPlaying &&
@@ -87,26 +74,61 @@ export const GameMap = () => {
 		pending.type === PlayerActionType.ClaimTile
 	)
 
+	const venusHighlighted = highlighted.some(
+		(h) => h.location === GridCellLocation.Venus,
+	)
+
 	const handleCellClick = (cell: GridCell) => {
+		if (frontendTilePick) {
+			api.send(
+				buyStandardProject(frontendTilePick.project, [
+					{ x: cell.x, y: cell.y, location: cell.location },
+				]),
+			)
+
+			dispatch(popFrontendAction())
+
+			return
+		}
+
+		if (pickingCellForBuyArg) {
+			pickingCellForBuyArg.onPick(cell.x, cell.y, cell.location ?? null)
+			dispatch(setTableState({ pickingCellForBuyArg: undefined }))
+
+			return
+		}
+
 		if (placing) {
 			api.send(placeTile(cell.x, cell.y, cell.location))
-		} else if (claiming) {
+
+			return
+		}
+
+		if (claiming) {
 			api.send(claimTile(cell.x, cell.y, cell.location))
+
+			return
 		}
 	}
 
-	/*
-	useInterval(() => {
-		setDelayFunction(Math.round(Math.random() * (delayFunctions.length - 1)))
-	}, 15000)
-	*/
+	const handleRightClick = (e: MouseEvent) => {
+		if (frontendTilePick) {
+			e.preventDefault()
+			dispatch(popFrontendAction())
+		}
+	}
 
 	const width = ((map?.width || 0) + 0.5) * 18
 	const height = ((map?.height || 0) + 0.5) * 20 * 0.75
 
 	return map ? (
 		<Container ref={containerRef}>
-			<Inner>
+			{venusHighlighted && (
+				<VenusOverlay>
+					<VenusMap />
+				</VenusOverlay>
+			)}
+			<Inner style={{ ...(venusHighlighted && { opacity: 0.1 }) }}>
 				<InnerInner>
 					<Background>
 						<img src={background} />
@@ -133,15 +155,6 @@ export const GameMap = () => {
 									}}
 									width={18 / width}
 									height={20 / height}
-									highlighted={
-										highlighted !== undefined &&
-										highlighted.x === cell.x &&
-										highlighted.y === cell.y
-									}
-									faded={
-										highlighted !== undefined &&
-										(highlighted.x !== cell.x || highlighted.y !== cell.y)
-									}
 								/>
 							)),
 					)}
@@ -149,6 +162,7 @@ export const GameMap = () => {
 					<svg
 						viewBox={`0 0 ${width} ${height}`}
 						style={{ overflow: 'visible' }}
+						onContextMenu={handleRightClick}
 					>
 						<defs>
 							<radialGradient id="Ocean" cx="0.5" cy="0.5" r="0.5">
@@ -175,15 +189,6 @@ export const GameMap = () => {
 											key={`${cell.x},${cell.y}`}
 											pos={cellPos(cell.x, cell.y)}
 											onClick={() => handleCellClick(cell)}
-											highlighted={
-												highlighted !== undefined &&
-												highlighted.x === cell.x &&
-												highlighted.y === cell.y
-											}
-											faded={
-												highlighted !== undefined &&
-												(highlighted.x !== cell.x || highlighted.y !== cell.y)
-											}
 										/>
 									)),
 							)}
@@ -249,4 +254,13 @@ const Background = styled.div`
 		border-radius: 50%;
 		box-shadow: 0px 0px 20px 14px rgba(200, 200, 255, 0.4);
 	}
+`
+
+const VenusOverlay = styled.div`
+	position: absolute;
+	inset: 0;
+	z-index: 5;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `

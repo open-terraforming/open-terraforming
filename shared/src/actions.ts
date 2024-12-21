@@ -1,8 +1,10 @@
-import { CardEffectArgumentType, GameProgress } from './cards'
+import { CardEffectArgumentValue, GameProgress } from './cards'
 import { CompetitionType } from './competitions'
 import { GameInfo } from './extra'
 import { GameState, GridCellLocation, StandardProjectType } from './gameState'
 import { MilestoneType } from './milestones'
+import { StandardProjectArgValue } from './projects'
+import { ProtocolDiff } from './utils'
 
 /**
  * Deep partial, where Arrays can also be objects with numeric indexes (updating only specific array key)
@@ -62,7 +64,7 @@ export enum MessageType {
 	SpectateResponse,
 	DraftCard,
 	PickStarting,
-	SolarPhaseTerraform,
+	WorldGovernmentTerraform,
 	AddCardResource,
 	DiscardCards,
 	BuildColony,
@@ -71,6 +73,7 @@ export enum MessageType {
 	AddBot,
 	ActivateRulingPolicy,
 	AddDelegateToParty,
+	GameStateFull,
 }
 
 export const handshakeRequest = (version: string) =>
@@ -119,7 +122,10 @@ export const playerPass = (force = false) =>
 export const serverMessage = (message: string) =>
 	({ type: MessageType.ServerMessage, data: { message } }) as const
 
-export const gameStateUpdate = (data: GameState) =>
+export const gameStateFull = (data: GameState) =>
+	({ type: MessageType.GameStateFull, data }) as const
+
+export const gameStateUpdate = (data: ProtocolDiff<GameState>) =>
 	({ type: MessageType.GameStateUpdate, data }) as const
 
 export const pickStarting = (
@@ -144,7 +150,7 @@ export const buyCard = (
 	useOre: number,
 	useTitan: number,
 	useCards: Record<string, number>,
-	args: CardEffectArgumentType[][],
+	args: CardEffectArgumentValue[][],
 ) =>
 	({
 		type: MessageType.BuyCard,
@@ -160,7 +166,7 @@ export const sellCard = (card: string, index: number) =>
 export const playCard = (
 	card: string,
 	index: number,
-	args: CardEffectArgumentType[][],
+	args: CardEffectArgumentValue[][],
 ) =>
 	({
 		type: MessageType.PlayCard,
@@ -195,13 +201,13 @@ export const adminChange = (state: UpdateDeepPartial<GameState>) =>
 
 export const buyStandardProject = (
 	project: StandardProjectType,
-	cards: number[] = [],
+	args: StandardProjectArgValue[],
 ) =>
 	({
 		type: MessageType.BuyStandardProject,
 		data: {
 			project,
-			cards,
+			args,
 		},
 	}) as const
 
@@ -279,9 +285,9 @@ export const draftCard = (cards: number[]) =>
 		data: { cards },
 	}) as const
 
-export const solarPhaseTerraform = (progress: GameProgress) =>
+export const worldGovernmentTerraform = (progress: GameProgress) =>
 	({
-		type: MessageType.SolarPhaseTerraform,
+		type: MessageType.WorldGovernmentTerraform,
 		data: { progress },
 	}) as const
 
@@ -365,12 +371,13 @@ export type GameMessage =
 	| ReturnType<typeof spectateResponse>
 	| ReturnType<typeof draftCard>
 	| ReturnType<typeof pickStarting>
-	| ReturnType<typeof solarPhaseTerraform>
+	| ReturnType<typeof worldGovernmentTerraform>
 	| ReturnType<typeof addCardResource>
 	| ReturnType<typeof discardCards>
 	| ReturnType<typeof buildColony>
 	| ReturnType<typeof tradeWithColony>
 	| ReturnType<typeof changeColonyStep>
 	| ReturnType<typeof addBot>
+	| ReturnType<typeof gameStateFull>
 	| ReturnType<typeof activateRulingPolicyActionRequest>
 	| ReturnType<typeof addDelegateToPartyActionRequest>

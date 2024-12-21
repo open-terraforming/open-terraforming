@@ -3,9 +3,7 @@ import {
 	gameProcessChange,
 	getTopCards,
 	getTopCardsWithTag,
-	placeCity,
-	placeOcean,
-	placeTile,
+	placeTileAsPending,
 	productionChange,
 	resourceChange,
 	terraformRatingChange,
@@ -33,7 +31,7 @@ export const preludePreludes: Card[] = [
 		categories: [CardCategory.Power],
 		special: [CardSpecial.Prelude],
 		playEffects: [
-			placeTile({ type: GridCellContent.Ocean }),
+			placeTileAsPending({ type: GridCellContent.Ocean }),
 			productionChange('energy', 2),
 			resourceChange('money', -3),
 		],
@@ -98,7 +96,7 @@ export const preludePreludes: Card[] = [
 		special: [CardSpecial.Prelude],
 		playEffects: [
 			productionChange('plants', 1),
-			placeTile({ type: GridCellContent.City }),
+			placeTileAsPending({ type: GridCellContent.City }),
 		],
 	}),
 	card({
@@ -125,7 +123,7 @@ export const preludePreludes: Card[] = [
 		categories: [CardCategory.Plant],
 		special: [CardSpecial.Prelude],
 		playEffects: [
-			placeTile({ type: GridCellContent.Forest }),
+			placeTileAsPending({ type: GridCellContent.Forest }),
 			getTopCardsWithTag(2, CardCategory.Plant),
 		],
 	}),
@@ -143,7 +141,10 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [],
 		special: [CardSpecial.Prelude],
-		playEffects: [placeOcean(), placeOcean()],
+		playEffects: [
+			placeTileAsPending({ type: GridCellContent.Ocean }),
+			placeTileAsPending({ type: GridCellContent.Ocean }),
+		],
 	}),
 	card({
 		code: 'huge_asteroid',
@@ -262,7 +263,10 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Building],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('heat', 2), placeOcean()],
+		playEffects: [
+			productionChange('heat', 2),
+			placeTileAsPending({ type: GridCellContent.Ocean }),
+		],
 	}),
 	card({
 		code: 'power_generation',
@@ -286,7 +290,10 @@ export const preludePreludes: Card[] = [
 		cost: 0,
 		categories: [CardCategory.Building, CardCategory.City],
 		special: [CardSpecial.Prelude],
-		playEffects: [productionChange('money', 2), placeCity()],
+		playEffects: [
+			productionChange('money', 2),
+			placeTileAsPending({ type: GridCellContent.City }),
+		],
 	}),
 	card({
 		code: 'smelting_plant',

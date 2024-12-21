@@ -12,6 +12,7 @@ import { HandButton } from './components/HandButton/HandButton'
 import { PendingDisplay } from './components/PendingDisplay'
 import { Resources } from './components/Resources/Resources'
 import { TableButtons } from './components/TableButtons/TableButtons'
+import { FrontendPendingDisplay } from './components/FrontendPendingDisplay'
 
 export const Controls = () => {
 	const api = useApi()
@@ -21,8 +22,17 @@ export const Controls = () => {
 	const pendingAction = useAppStore((state) => state.game.pendingAction)
 	const pendingActionIndex = usePlayerState().pendingActions.length
 
+	const frontendPending = useAppStore(
+		(state) => state.table.pendingFrontendActions[0],
+	)
+
 	const buyingCardIndex = useAppStore((state) => state.table.buyingCardIndex)
 	const playingCardIndex = useAppStore((state) => state.table.playingCardIndex)
+
+	const pickingCellForBuyArg = useAppStore(
+		(state) => state.table.pickingCellForBuyArg,
+	)
+
 	const state = player
 
 	const pending =
@@ -38,6 +48,7 @@ export const Controls = () => {
 		<Container faded={!!pending}>
 			{pending?.type === PlayerActionType.PlayCard && (
 				<CardBuy
+					hidden={!!pickingCellForBuyArg}
 					buying={false}
 					key={`${pending.cardIndex}_${pendingActionIndex}`}
 					index={pending.cardIndex}
@@ -47,6 +58,7 @@ export const Controls = () => {
 
 			{playingCardIndex !== undefined && (
 				<CardBuy
+					hidden={!!pickingCellForBuyArg}
 					buying={false}
 					index={playingCardIndex}
 					onClose={() =>
@@ -61,6 +73,7 @@ export const Controls = () => {
 
 			{buyingCardIndex !== undefined && (
 				<CardBuy
+					hidden={!!pickingCellForBuyArg}
 					buying={true}
 					index={buyingCardIndex}
 					onClose={() =>
@@ -90,6 +103,7 @@ export const Controls = () => {
 				</PassButton>
 			</Flexed>
 			{pending && <PendingDisplay pending={pending} />}
+			{frontendPending && <FrontendPendingDisplay pending={frontendPending} />}
 		</Container>
 	)
 }

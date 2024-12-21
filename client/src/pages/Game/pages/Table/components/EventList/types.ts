@@ -1,5 +1,11 @@
-import { NewGeneration, PlayingChanged, ProductionPhase } from '@shared/index'
+import {
+	BaseGameEvent,
+	NewGeneration,
+	PlayingChanged,
+	ProductionPhase,
+} from '@shared/index'
 
-export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {
-	id: number
-}
+export type PopEvent = BaseGameEvent &
+	(PlayingChanged | NewGeneration | ProductionPhase) & {
+		id: number
+	}

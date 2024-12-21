@@ -21,15 +21,20 @@ export const progressHint = (progress: GameProgress) =>
 		progress,
 	}) as const
 
-export const tileCountHint = (type: GridCellContent) =>
+export const tileCountHint = (
+	type: GridCellContent,
+	extra?: { onMarsOnly?: boolean },
+) =>
 	({
 		type: CardHintType.TileCount,
 		tileType: type,
+		...extra,
 	}) as const
 
-export const colonyCountHint = () =>
+export const colonyCountHint = (props?: { ownedOnly?: boolean }) =>
 	({
 		type: CardHintType.ColonyCount,
+		...props,
 	}) as const
 
 export type CardHint =

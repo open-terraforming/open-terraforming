@@ -29,7 +29,7 @@ export enum GameStateValue {
 	/** Players are playing their prelude cards */
 	Prelude,
 	/** After production phase this phase allows the current player to increase one progress */
-	SolarPhase,
+	WorldGovernmentTerraforming,
 	/** After solar phase or at the end of generation, colonies increase one step */
 	ColoniesProduction,
 	/** Turmoil state */
@@ -55,8 +55,8 @@ export enum PlayerStateValue {
 	WaitingForTurn,
 	/** Playing prelude cards */
 	Prelude,
-	/** Picking what to terraform during the Solar Phase */
-	SolarPhaseTerraform,
+	/** Picking what to terraform during the WG terraforming */
+	WorldGovernmentTerraform,
 }
 
 /** Interface to make it obvious something is player ID */

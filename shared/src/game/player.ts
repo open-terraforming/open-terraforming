@@ -12,20 +12,20 @@ import {
 	PlayerAction,
 	PlayerActionType,
 } from '@shared/player-actions'
-import { StandardProject } from '@shared/projects'
+import { AnyStandardProject } from '@shared/projects'
 import { initialPlayerState } from '@shared/states'
 import { allCells } from '@shared/utils/allCells'
-import { pushPendingAction } from '@shared/utils/pushPendingAction'
-import { pendingActions } from '@shared/utils/pendingActions'
-import { range } from '@shared/utils/range'
 import { deepCopy } from '@shared/utils/collections'
 import { MyEvent } from '@shared/utils/events'
+import { mapCards } from '@shared/utils/mapCards'
+import { pendingActions } from '@shared/utils/pendingActions'
+import { pushPendingAction } from '@shared/utils/pushPendingAction'
+import { range } from '@shared/utils/range'
 import { getVictoryPoints } from '@shared/vps'
 import { v4 as uuidv4 } from 'uuid'
 import { generateSession } from '../utils/generate-session'
 import { Game } from './game'
 import { PlayerActions } from './player/actions'
-import { mapCards } from '@shared/utils/mapCards'
 
 export interface CardBoughtEvent {
 	player: Player
@@ -45,7 +45,7 @@ export interface ProductionChangedEvent {
 }
 
 export interface ProjectBoughtEvent {
-	project: StandardProject
+	project: AnyStandardProject
 	player: Player
 }
 

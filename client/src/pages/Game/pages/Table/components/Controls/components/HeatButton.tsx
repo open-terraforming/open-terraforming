@@ -20,7 +20,7 @@ export const HeatButton = () => {
 
 	const buyTemperature = () => {
 		if (player && usable) {
-			api.send(buyStandardProject(StandardProjectType.TemperatureForHeat))
+			api.send(buyStandardProject(StandardProjectType.TemperatureForHeat, []))
 		}
 	}
 

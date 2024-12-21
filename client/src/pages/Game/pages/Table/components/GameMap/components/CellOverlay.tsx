@@ -10,6 +10,7 @@ import { specialToStr } from '@shared/texts'
 import styled from 'styled-components'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { TileIcon } from '../../TileIcon/TileIcon'
+import { useAppStore } from '@/utils/hooks'
 
 type Props = {
 	cell: GridCell
@@ -17,11 +18,17 @@ type Props = {
 	width: number
 	height: number
 	placing?: PlacementState
-	highlighted?: boolean
-	faded?: boolean
 }
 
-export const CellOverlay = ({ cell, pos, width, height, faded }: Props) => {
+export const CellOverlay = ({ cell, pos, width, height }: Props) => {
+	const highlightedCells = useAppStore((state) => state.game.highlightedCells)
+
+	const faded =
+		highlightedCells.length > 0 &&
+		!highlightedCells.some(
+			(h) => h.x === cell.x && h.y === cell.y && h.location === cell.location,
+		)
+
 	return (
 		<HexOverlay
 			style={{

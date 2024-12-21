@@ -33,7 +33,7 @@ import {
 	playCard,
 	playerPass,
 	playerReady,
-	solarPhaseTerraform,
+	worldGovernmentTerraform,
 	sponsorCompetition,
 	tradeWithColony,
 } from '@shared/index'
@@ -71,6 +71,7 @@ import { tradeWithColonyScore } from './scoring/tradeWithColonyScore'
 import { ScoringContext } from './scoring/types'
 import { useCardScore } from './scoring/use-card-score'
 import { pickBest } from './scoring/utils'
+import { getBestProjectArgs } from './scoring/args/getBestProjectArgs'
 
 export type BotOptions = ReturnType<typeof defaultOptions>
 
@@ -457,7 +458,7 @@ export class Bot extends Player {
 				}
 			}
 
-			case PlayerActionType.SolarPhaseTerraform: {
+			case PlayerActionType.WorldGovernmentTerraform: {
 				// TODO: Scoring?
 				const availableProgressValues = (
 					['oceans', 'temperature', 'oxygen'] as const
@@ -468,7 +469,7 @@ export class Bot extends Player {
 
 				const progress = shuffle(availableProgressValues)[0]
 
-				return this.performAction(solarPhaseTerraform(progress))
+				return this.performAction(worldGovernmentTerraform(progress))
 			}
 
 			case PlayerActionType.AddCardResource: {
@@ -611,7 +612,7 @@ export class Bot extends Player {
 				break
 			}
 
-			case PlayerStateValue.SolarPhaseTerraform: {
+			case PlayerStateValue.WorldGovernmentTerraform: {
 				const pending = this.pendingAction
 
 				if (pending) {
@@ -700,11 +701,19 @@ export class Bot extends Player {
 								)
 							) {
 								if (p.type !== StandardProjectType.SellPatents) {
+									const args = getBestProjectArgs(
+										this.game.state,
+										this.state,
+										p,
+										this.scoringContext,
+									)
+
 									actions.push(
 										action(
 											'buyStandardProject ' + StandardProjectType[p.type],
-											standardProjectScore(this.scoringContext, p),
-											() => this.performAction(buyStandardProject(p.type, [])),
+											standardProjectScore(this.scoringContext, p, args),
+											() =>
+												this.performAction(buyStandardProject(p.type, args)),
 										),
 									)
 								}

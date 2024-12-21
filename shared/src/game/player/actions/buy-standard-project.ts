@@ -16,7 +16,7 @@ export class BuyStandardProjectAction extends PlayerBaseActionHandler<Args> {
 	states = [PlayerStateValue.Playing]
 	gameStates = [GameStateValue.GenerationInProgress]
 
-	perform({ project: projectType, cards }: Args) {
+	perform({ project: projectType, args }: Args) {
 		if (this.pendingAction) {
 			throw new Error("You've got pending actions to attend to")
 		}
@@ -43,7 +43,8 @@ export class BuyStandardProjectAction extends PlayerBaseActionHandler<Args> {
 		const collector = this.startCollectingEvents()
 
 		updatePlayerResource(this.player, project.resource, -project.cost(ctx))
-		project.execute(ctx, cards)
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		project.execute(ctx, ...(args as any[]))
 
 		this.logger.log(
 			f('Bought standard project {0}', StandardProjectType[projectType]),
@@ -51,7 +52,7 @@ export class BuyStandardProjectAction extends PlayerBaseActionHandler<Args> {
 
 		this.parent.onProjectBought.emit({
 			player: this.parent,
-			project,
+			project: project,
 		})
 
 		projectState.usedByPlayerIds.push(this.player.id)
