@@ -118,6 +118,8 @@ export const CardDisplayModal = <T extends CardInfo>({
 		[cards],
 	)
 
+	const typeFilter = useMemo(() => filterByType(type), [type])
+
 	const types = useMemo(
 		() =>
 			[
@@ -130,8 +132,7 @@ export const CardDisplayModal = <T extends CardInfo>({
 				[CardType.Corporation, 'Corporation'] as const,
 			]
 				.map(
-					([c, title]) =>
-						[c, title, cards.filter(filterByType(c)).length] as const,
+					([c, title]) => [c, title, cards.filter(typeFilter).length] as const,
 				)
 				.filter(([, , count]) => count > 0),
 		[cards],
@@ -141,7 +142,7 @@ export const CardDisplayModal = <T extends CardInfo>({
 		() =>
 			cards.filter(
 				(ci) =>
-					filterByType(type)(ci) &&
+					typeFilter(ci) &&
 					(selectedCategory === undefined ||
 						((selectedCategory === CardCategory.Event ||
 							ci.card.type !== CardType.Event) &&
