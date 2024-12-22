@@ -1,17 +1,24 @@
+import { Checkbox } from '@/components/Checkbox/Checkbox'
+import { Flex } from '@/components/Flex/Flex'
+import { Modal } from '@/components/Modal/Modal'
+import { TabsHead } from '@/components/TabsHead'
+import { media } from '@/styles/media'
 import { isNotUndefined, mapRight } from '@/utils/collections'
 import { Card, CardCategory, CardType } from '@shared/cards'
 import { PlayerState, UsedCardState } from '@shared/index'
-import { CSSProperties, ReactNode, useEffect, useMemo, useState } from 'react'
+import { darken, lighten } from 'polished'
+import {
+	CSSProperties,
+	ReactNode,
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+} from 'react'
 import styled, { css, useTheme } from 'styled-components'
 import { NoCards } from '../CardsContainer/CardsContainer'
 import { CardEvaluateMode, CardView } from '../CardView/CardView'
 import { Tag } from '../CardView/components/Tag'
-import { Checkbox } from '@/components/Checkbox/Checkbox'
-import { media } from '@/styles/media'
-import { darken, lighten } from 'polished'
-import { Modal } from '@/components/Modal/Modal'
-import { Flex } from '@/components/Flex/Flex'
-import { TabsHead } from '@/components/TabsHead'
 
 export type CardInfo = {
 	card: Card
@@ -37,30 +44,6 @@ type Props<T extends CardInfo> = {
 	bodyStyle?: CSSProperties
 	hideClose?: boolean
 	postfix?: ReactNode
-}
-
-const filterByType = (c: CardType | undefined) => (ci: CardInfo) => {
-	if (c === undefined) {
-		return true
-	}
-
-	if (
-		c === CardType.Effect &&
-		ci.card.type === CardType.Corporation &&
-		ci.card.passiveEffects.length > 0
-	) {
-		return true
-	}
-
-	if (
-		c === CardType.Action &&
-		ci.card.type === CardType.Corporation &&
-		ci.card.actionEffects.length > 0
-	) {
-		return true
-	}
-
-	return ci.card.type === c
 }
 
 export const CardDisplayModal = <T extends CardInfo>({
@@ -118,7 +101,32 @@ export const CardDisplayModal = <T extends CardInfo>({
 		[cards],
 	)
 
-	const typeFilter = useMemo(() => filterByType(type), [type])
+	const typeFilter = useCallback(
+		(ci: CardInfo) => {
+			if (type === undefined) {
+				return true
+			}
+
+			if (
+				type === CardType.Effect &&
+				ci.card.type === CardType.Corporation &&
+				ci.card.passiveEffects.length > 0
+			) {
+				return true
+			}
+
+			if (
+				type === CardType.Action &&
+				ci.card.type === CardType.Corporation &&
+				ci.card.actionEffects.length > 0
+			) {
+				return true
+			}
+
+			return ci.card.type === type
+		},
+		[type],
+	)
 
 	const types = useMemo(
 		() =>
