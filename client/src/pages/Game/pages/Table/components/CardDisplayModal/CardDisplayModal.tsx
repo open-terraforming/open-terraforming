@@ -39,6 +39,30 @@ type Props<T extends CardInfo> = {
 	postfix?: ReactNode
 }
 
+const filterByType = (c: CardType | undefined) => (ci: CardInfo) => {
+	if (c === undefined) {
+		return true
+	}
+
+	if (
+		c === CardType.Effect &&
+		ci.card.type === CardType.Corporation &&
+		ci.card.passiveEffects.length > 0
+	) {
+		return true
+	}
+
+	if (
+		c === CardType.Action &&
+		ci.card.type === CardType.Corporation &&
+		ci.card.actionEffects.length > 0
+	) {
+		return true
+	}
+
+	return ci.card.type === c
+}
+
 export const CardDisplayModal = <T extends CardInfo>({
 	onSelect,
 	selected,
@@ -107,12 +131,7 @@ export const CardDisplayModal = <T extends CardInfo>({
 			]
 				.map(
 					([c, title]) =>
-						[
-							c,
-							title,
-							cards.filter((ci) => c === undefined || ci.card.type === c)
-								.length,
-						] as const,
+						[c, title, cards.filter(filterByType(c)).length] as const,
 				)
 				.filter(([, , count]) => count > 0),
 		[cards],
@@ -122,7 +141,7 @@ export const CardDisplayModal = <T extends CardInfo>({
 		() =>
 			cards.filter(
 				(ci) =>
-					(type === undefined || ci.card.type === type) &&
+					filterByType(type)(ci) &&
 					(selectedCategory === undefined ||
 						((selectedCategory === CardCategory.Event ||
 							ci.card.type !== CardType.Event) &&
