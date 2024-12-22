@@ -19,6 +19,7 @@ import { pendingActions } from '@shared/utils'
 import { lighten } from 'polished'
 import { Tooltip } from '@/components'
 import { PlayerHover } from './PlayerHover'
+import { numberWithSuffix } from '@/utils/numberWithSuffix'
 
 // TODO: Map pending actions to strings too
 
@@ -129,8 +130,8 @@ export const Player = ({
 								fixedWidth
 							/>
 							{pending
-								? `${state.actionsPlayed}/2 `
-								: `Action ${state.actionsPlayed} of 2`}
+								? `${state.actionsPlayed + 1}/2 `
+								: `${numberWithSuffix(state.actionsPlayed + 1)} action of 2`}
 
 							{pending && `${pendingToStr[pending.type]}`}
 						</>
