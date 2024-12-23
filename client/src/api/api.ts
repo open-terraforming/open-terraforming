@@ -166,7 +166,7 @@ export class FrontendGameClient {
 		}
 	}
 
-	private reconnect() {
+	reconnect() {
 		if (!this.gameId) {
 			return
 		}
