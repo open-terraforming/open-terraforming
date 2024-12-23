@@ -130,10 +130,13 @@ export class FrontendGameClient {
 
 			// Attempt to reconnect, but limit it to 5 times
 			if (this.reconnectCount < 5) {
-				this.reconnectTimeout = setTimeout(() => {
-					this.reconnectTimeout = undefined
-					this.reconnect()
-				}, 100)
+				this.reconnectTimeout = setTimeout(
+					() => {
+						this.reconnectTimeout = undefined
+						this.reconnect()
+					},
+					1 + this.reconnectCount * 300,
+				)
 
 				this.reconnectCount++
 
