@@ -9,7 +9,7 @@ import {
 	useEffect,
 	useState,
 } from 'react'
-import { getWebsocketUrl } from '@/api/utils'
+import { getWebsocketServer } from '@/api/utils'
 
 export const EventsContext = createContext<EventsClient | null>(null)
 
@@ -34,7 +34,7 @@ export const EventsContextProvider = ({
 		if (apiState === ApiState.Joined && !client) {
 			setClient(
 				new EventsClient(
-					getWebsocketUrl(gameId ? `game/${gameId}/events` : ''),
+					getWebsocketServer(gameId ? `game/${gameId}/events` : ''),
 				),
 			)
 		}
