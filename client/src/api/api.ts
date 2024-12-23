@@ -153,7 +153,7 @@ export class FrontendGameClient {
 			return
 		}
 
-		this.connect(this.gameId)
+		this.connectToCurrentGameId()
 	}
 
 	dispose() {
