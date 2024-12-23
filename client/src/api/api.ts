@@ -11,10 +11,18 @@ enum SocketCloseCodes {
 	UserRequest = 3001,
 }
 
+export enum FrontendGameClientState {
+	Disconnected,
+	Connecting,
+	Connected,
+}
+
 export class FrontendGameClient {
 	server: string
 	socket?: WebSocket
 	gameId?: string
+
+	state = FrontendGameClientState.Disconnected
 
 	onDisconnected?: () => void
 	onConnected?: () => void
@@ -56,6 +64,7 @@ export class FrontendGameClient {
 			this.socket?.close(SocketCloseCodes.UserRequest)
 			this.socket = undefined
 			this.gameId = undefined
+			this.state = FrontendGameClientState.Disconnected
 
 			return
 		}
@@ -95,7 +104,12 @@ export class FrontendGameClient {
 	private connectToCurrentGameId() {
 		const url = this.getFullUrl()
 
+		if (this.socket) {
+			this.dispose()
+		}
+
 		this.socket = new WebSocket(url)
+		this.state = FrontendGameClientState.Connecting
 
 		const connectionTimeout = setTimeout(() => {
 			if (this.socket?.readyState !== this.socket?.OPEN) {
@@ -105,6 +119,7 @@ export class FrontendGameClient {
 
 		this.socket.onopen = () => {
 			clearTimeout(connectionTimeout)
+			this.state = FrontendGameClientState.Connected
 			this.onConnected?.()
 		}
 
@@ -130,6 +145,8 @@ export class FrontendGameClient {
 
 			// Attempt to reconnect, but limit it to 5 times
 			if (this.reconnectCount < 5) {
+				this.state = FrontendGameClientState.Connecting
+
 				this.reconnectTimeout = setTimeout(
 					() => {
 						this.reconnectTimeout = undefined
@@ -144,6 +161,7 @@ export class FrontendGameClient {
 			}
 
 			// We failed to connect, so we're disconnected
+			this.state = FrontendGameClientState.Disconnected
 			this.onDisconnected?.()
 		}
 	}
@@ -159,5 +177,6 @@ export class FrontendGameClient {
 	dispose() {
 		this.socket?.close(SocketCloseCodes.UserRequest)
 		this.socket = undefined
+		this.state = FrontendGameClientState.Disconnected
 	}
 }
