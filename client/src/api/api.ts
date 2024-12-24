@@ -1,28 +1,47 @@
 import {
-	GameMessage,
 	adminChange,
 	adminLogin,
+	GameMessage,
 	MessageType,
 } from '@shared/index'
 import { stripUndefined } from '@shared/utils'
-import { encode, decode } from 'msgpack-lite'
+import { decode, encode } from 'msgpack-lite'
 
-export class Client {
+enum SocketCloseCodes {
+	UserRequest = 3001,
+}
+
+export enum FrontendGameClientState {
+	Disconnected,
+	Connecting,
+	Connected,
+}
+
+export class FrontendGameClient {
 	server: string
 	socket?: WebSocket
 	gameId?: string
 
-	onOpen?: () => void
-	onClose?: () => void
+	state = FrontendGameClientState.Disconnected
+
+	onDisconnected?: () => void
+	onConnected?: () => void
 	onMessage?: (data: GameMessage) => void
 
-	constructor(server: string, gameId: string) {
+	reconnectCount = 0
+	reconnectTimeout?: ReturnType<typeof setTimeout>
+
+	constructor(server: string) {
 		this.server = server
-		this.gameId = gameId
-		this.connect()
+
+		this.exposeAdminCommands()
 	}
 
 	send(msg: GameMessage) {
+		if (!this.socket) {
+			throw new Error('No socket')
+		}
+
 		if (typeof msg !== 'object') {
 			throw new Error('Trying to send non-object - no!')
 		}
@@ -32,18 +51,77 @@ export class Client {
 		return this.socket?.send(encode(stripUndefined(msg)))
 	}
 
-	connect() {
-		this.socket = new WebSocket(this.server)
+	connect(gameId: string | null) {
+		// We're already connected to this game, do nothing
+		if (gameId === this.gameId) {
+			return
+		}
 
-		const timeout = setTimeout(() => {
+		// No game means we should disconnect and be done with it
+		if (!gameId) {
+			this.resetReconnectTimeout()
+
+			this.socket?.close(SocketCloseCodes.UserRequest)
+			this.socket = undefined
+			this.gameId = undefined
+			this.state = FrontendGameClientState.Disconnected
+
+			return
+		}
+
+		this.gameId = gameId
+		this.reconnectCount = 0
+		this.resetReconnectTimeout()
+		this.connectToCurrentGameId()
+	}
+
+	private resetReconnectTimeout() {
+		if (this.reconnectTimeout) {
+			clearTimeout(this.reconnectTimeout)
+			this.reconnectTimeout = undefined
+		}
+	}
+
+	private exposeAdminCommands() {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, padding-line-between-statements
+		;(window as any)['adminLogin'] = (password: string) => {
+			this.send(adminLogin(password))
+		}
+
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		;(window as any)['adminSend'] = (data: any) => {
+			this.send(adminChange(data))
+		}
+	}
+
+	private getFullUrl() {
+		return (this.server + `/api/ws/game/${this.gameId}/`).replace(
+			/\/{2,}/g,
+			'/',
+		)
+	}
+
+	private connectToCurrentGameId() {
+		const url = this.getFullUrl()
+
+		if (this.socket) {
+			this.dispose()
+		}
+
+		this.socket = new WebSocket(url)
+		this.state = FrontendGameClientState.Connecting
+
+		const connectionTimeout = setTimeout(() => {
 			if (this.socket?.readyState !== this.socket?.OPEN) {
 				this.socket?.close()
 			}
 		}, 2 * 1000)
 
 		this.socket.onopen = () => {
-			clearTimeout(timeout)
-			this.onOpen?.()
+			clearTimeout(connectionTimeout)
+			this.state = FrontendGameClientState.Connected
+			this.reconnectCount = 0
+			this.onConnected?.()
 		}
 
 		this.socket.onmessage = async (msg) => {
@@ -60,26 +138,46 @@ export class Client {
 			}
 		}
 
-		this.socket.onclose = () => {
-			this.onClose?.()
-		}
+		this.socket.onclose = (ev) => {
+			// Do nothing when it was requested by us
+			if (ev.code === SocketCloseCodes.UserRequest) {
+				return
+			}
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		;(window as any)['adminLogin'] = (password: string) => {
-			this.send(adminLogin(password))
-		}
+			// Attempt to reconnect, but limit it to 5 times
+			if (this.reconnectCount < 5) {
+				this.state = FrontendGameClientState.Connecting
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		;(window as any)['adminSend'] = (data: any) => {
-			this.send(adminChange(data))
+				this.reconnectTimeout = setTimeout(
+					() => {
+						this.reconnectTimeout = undefined
+						this.reconnect()
+					},
+					1 + this.reconnectCount * 300,
+				)
+
+				this.reconnectCount++
+
+				return
+			}
+
+			// We failed to connect, so we're disconnected
+			this.state = FrontendGameClientState.Disconnected
+			this.onDisconnected?.()
 		}
 	}
 
 	reconnect() {
-		this.connect()
+		if (!this.gameId) {
+			return
+		}
+
+		this.connectToCurrentGameId()
 	}
 
-	disconnect() {
-		this.socket?.close()
+	dispose() {
+		this.socket?.close(SocketCloseCodes.UserRequest)
+		this.socket = undefined
+		this.state = FrontendGameClientState.Disconnected
 	}
 }

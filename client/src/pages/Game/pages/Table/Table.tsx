@@ -1,30 +1,29 @@
 import { Button } from '@/components'
+import { useApi } from '@/context/ApiContext'
+import { GameModalsProvider } from '@/context/GameModalsContext'
+import { FrontendPendingActionType } from '@/store/modules/table/frontendActions'
 import { useAppStore } from '@/utils/hooks'
 import { faChevronUp } from '@fortawesome/free-solid-svg-icons'
+import { changeColonyStep } from '@shared/actions'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import { PlayerActionType } from '@shared/player-actions'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { ColoniesModal } from './components/ColoniesModal/ColoniesModal'
 import { CompetitionsModal } from './components/CompetitionsModal/CompetitionsModal'
+import { AddCardResourceModal } from './components/Controls/components/AddCardResourceModal'
 import { Controls } from './components/Controls/Controls'
+import { DiscardCardsModal } from './components/DiscardCardsModal'
 import { EventList } from './components/EventList/EventList'
 import { GameMap } from './components/GameMap/GameMap'
 import { GlobalState } from './components/GlobalState/GlobalState'
 import { Header } from './components/Header/Header'
-import { Mouses } from './components/Mouses/Mouses'
 import { PendingCardPicker } from './components/PendingCardPicker/PendingCardPicker'
 import { Players } from './components/Players/Players'
-import { Spectator } from './components/Spectator/Spectator'
-import { StartPicker } from './components/StartPicker/StartPicker'
 import { SolarPhaseTerraformPicker } from './components/SolarPhaseTerraformPicker/SolarPhaseTerraformPicker'
-import { ColoniesModal } from './components/ColoniesModal/ColoniesModal'
-import { useApi } from '@/context/ApiContext'
-import { changeColonyStep } from '@shared/actions'
-import { AddCardResourceModal } from './components/Controls/components/AddCardResourceModal'
-import { GameModalsProvider } from '@/context/GameModalsContext'
-import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
-import { DiscardCardsModal } from './components/DiscardCardsModal'
-import { FrontendPendingActionType } from '@/store/modules/table/frontendActions'
+import { Spectator } from './components/Spectator/Spectator'
 import { HandCardsPickerModal } from './components/StandardProjectModal/components/SellCardsModal'
+import { StartPicker } from './components/StartPicker/StartPicker'
 
 const Table = () => {
 	const pending = useAppStore((state) => state.game.pendingAction)
@@ -60,8 +59,6 @@ const Table = () => {
 	return (
 		<GameModalsProvider>
 			<TableContainer>
-				<Mouses />
-
 				{pending?.type === PlayerActionType.PickStarting && <StartPicker />}
 
 				{!pickerHidden &&
