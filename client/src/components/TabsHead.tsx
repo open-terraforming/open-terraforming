@@ -19,7 +19,11 @@ export const TabsHead = <TTab extends string | number | undefined>({
 	return (
 		<Head gap="0.25rem" align="flex-end">
 			{tabs.map(({ title, key }) => (
-				<Tab $active={key === tab} key={key} onClick={() => setTab(key)}>
+				<Tab
+					$active={key === tab}
+					key={key ?? '$undefined$'}
+					onClick={() => setTab(key)}
+				>
 					{title}
 				</Tab>
 			))}
