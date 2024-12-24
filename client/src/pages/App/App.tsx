@@ -23,7 +23,6 @@ const THEME_MAP = {
 
 export const App = () => {
 	const apiState = useAppStore((state) => state.api.state)
-	const reconnecting = useAppStore((state) => state.api.reconnecting)
 	const dispatch = useAppDispatch()
 	const theme = useAppStore((state) => state.settings.data.theme)
 
@@ -48,8 +47,6 @@ export const App = () => {
 		dispatch(loadSettings())
 	}, [])
 
-	console.log({ apiState: ApiState[apiState], reconnecting })
-
 	return (
 		<ThemeProvider theme={themeData}>
 			<AppContainer id="stars">
@@ -58,8 +55,7 @@ export const App = () => {
 				{apiState !== ApiState.Ready && apiState !== ApiState.Joined && (
 					<Connect />
 				)}
-				{(apiState === ApiState.Joined ||
-					(apiState === ApiState.Connected && reconnecting)) && <Game />}
+				{apiState === ApiState.Joined && <Game />}
 
 				<ApiErrorMessage />
 				<SoundController />
