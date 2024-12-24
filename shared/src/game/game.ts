@@ -23,6 +23,7 @@ import {
 	playerPass,
 	worldGovernmentTerraform,
 	UpdateDeepPartial,
+	GAME_PROGRESS_VALUES,
 } from '@shared/index'
 import { Logger } from '@shared/lib/logger'
 import { StateMachine } from '@shared/lib/state-machine'
@@ -297,7 +298,12 @@ export class Game {
 		})
 
 		this.sm.currentState = this.sm.findState(this.state.state)
-		this.currentProgress = {} as Record<GameProgress, number | undefined>
+
+		this.currentProgress = Object.fromEntries(
+			GAME_PROGRESS_VALUES.map((progress) => [progress, this.state[progress]]),
+		) as Record<GameProgress, number | undefined>
+
+		this.lastGameState = null
 	}
 
 	updated = () => {
@@ -312,6 +318,8 @@ export class Game {
 	}
 
 	buildEventsAfterStateChange() {
+		console.log('buildEventsAfterStateChange')
+
 		if (this.lastGameState === null) {
 			// TODO: Better cloning logic?
 			this.lastGameState = deepCopy(this.state)
