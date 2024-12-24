@@ -43,13 +43,7 @@ export const App = () => {
 		}
 	}, [theme, enableAnimations])
 
-	// Load settings from localStorage
-	useEffect(() => {
-		dispatch(loadSettings())
-	}, [])
-
-	// Change game id when navigation happens
-	useWindowEvent('hashchange', () => {
+	const handleLocationChange = () => {
 		const parsedGameId = location.hash.substring(1).trim()
 
 		if (parsedGameId !== gameId) {
@@ -60,7 +54,20 @@ export const App = () => {
 				}),
 			)
 		}
-	})
+	}
+
+	// Load settings from localStorage
+	useEffect(() => {
+		dispatch(loadSettings())
+	}, [])
+
+	// Detect location on load
+	useEffect(() => {
+		handleLocationChange()
+	}, [])
+
+	// Change game id when navigation happens
+	useWindowEvent('hashchange', handleLocationChange)
 
 	return (
 		<ThemeProvider theme={themeData}>
