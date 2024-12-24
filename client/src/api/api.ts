@@ -120,6 +120,7 @@ export class FrontendGameClient {
 		this.socket.onopen = () => {
 			clearTimeout(connectionTimeout)
 			this.state = FrontendGameClientState.Connected
+			this.reconnectCount = 0
 			this.onConnected?.()
 		}
 
