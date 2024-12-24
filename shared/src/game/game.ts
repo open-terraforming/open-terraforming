@@ -318,8 +318,6 @@ export class Game {
 	}
 
 	buildEventsAfterStateChange() {
-		console.log('buildEventsAfterStateChange')
-
 		if (this.lastGameState === null) {
 			// TODO: Better cloning logic?
 			this.lastGameState = deepCopy(this.state)
