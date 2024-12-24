@@ -27,6 +27,7 @@ export const ApiContext = createContext<FrontendGameClient | null>(null)
 export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 	const dispatch = useDispatch()
 	const sessions = useAppStore((state) => state.client.sessions)
+	const state = useAppStore((state) => state.api.state)
 	const gameId = useAppStore((state) => state.api.gameId)
 	const sessionKey = gameId || 'single'
 
@@ -53,12 +54,14 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 						}),
 					)
 				} else {
-					dispatch(
-						setApiState({
-							state: ApiState.Connected,
-							error: undefined,
-						}),
-					)
+					if (state === ApiState.Connecting) {
+						dispatch(
+							setApiState({
+								state: ApiState.Connected,
+								error: undefined,
+							}),
+						)
+					}
 
 					dispatch(
 						setClientState({
