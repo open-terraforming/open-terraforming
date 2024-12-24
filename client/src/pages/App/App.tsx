@@ -1,8 +1,8 @@
 import background from '@/assets/stars.jpg'
-import { ApiState } from '@/store/modules/api'
+import { ApiState, setApiState } from '@/store/modules/api'
 import { loadSettings } from '@/store/modules/settings'
 import { GlobalStyle } from '@/styles/global'
-import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { useAppDispatch, useAppStore, useWindowEvent } from '@/utils/hooks'
 import { useEffect, useMemo } from 'react'
 import styled, { ThemeProvider } from 'styled-components'
 import { Connect } from '../Connect/Connect'
@@ -23,6 +23,7 @@ const THEME_MAP = {
 
 export const App = () => {
 	const apiState = useAppStore((state) => state.api.state)
+	const gameId = useAppStore((state) => state.api.gameId)
 	const dispatch = useAppDispatch()
 	const theme = useAppStore((state) => state.settings.data.theme)
 
@@ -42,10 +43,31 @@ export const App = () => {
 		}
 	}, [theme, enableAnimations])
 
+	const handleLocationChange = () => {
+		const parsedGameId = location.hash.substring(1).trim()
+
+		if (parsedGameId !== gameId) {
+			dispatch(
+				setApiState({
+					state: ApiState.Ready,
+					gameId: parsedGameId || undefined,
+				}),
+			)
+		}
+	}
+
 	// Load settings from localStorage
 	useEffect(() => {
 		dispatch(loadSettings())
 	}, [])
+
+	// Detect location on load
+	useEffect(() => {
+		handleLocationChange()
+	}, [])
+
+	// Change game id when navigation happens
+	useWindowEvent('hashchange', handleLocationChange)
 
 	return (
 		<ThemeProvider theme={themeData}>

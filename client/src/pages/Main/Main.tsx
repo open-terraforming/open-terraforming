@@ -5,7 +5,7 @@ import { CardsViewer } from '@/components/CardsViewer/CardsViewer'
 import { DialogButton } from '@/components/DialogButton/DialogButton'
 import { Mars } from '@/components/Mars/Mars'
 import { Modal } from '@/components/Modal/Modal'
-import { ApiState, setApiInfo, setApiState } from '@/store/modules/api'
+import { setApiInfo } from '@/store/modules/api'
 import { useAppStore } from '@/utils/hooks'
 import {
 	faCog,
@@ -34,21 +34,6 @@ export const Main = () => {
 	const [info, setInfo] = useState(null as ServerInfo | null)
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState(null as string | null)
-
-	useEffect(() => {
-		if (location.hash) {
-			const gameId = location.hash.substr(1)
-
-			if (gameId.length > 0) {
-				dispatch(
-					setApiState({
-						state: ApiState.Connecting,
-						gameId,
-					}),
-				)
-			}
-		}
-	}, [])
 
 	const update = () => {
 		setLoading(true)
