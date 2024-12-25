@@ -34,6 +34,7 @@ export class LocalServer {
 
 	load = (s: GameState, c: GameConfig) => {
 		this.game.load(s, c)
+		this.handleGameUpdate(this.game.state)
 	}
 
 	handleGameUpdate = async (s: GameState) => {

@@ -210,6 +210,16 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 		if (isLocal) {
 			const client = new LocalServer(new DummyGameLockSystem())
 			const localId = gameId?.split('/')[1]
+
+			client.onMessage.on(handleMessage)
+
+			client.onUpdate.on((s) => {
+				localStorage['ot-local-' + localId] = JSON.stringify({
+					game: s,
+					config: client.game.config,
+				})
+			})
+
 			const storedGame = localStorage['ot-local-' + localId]
 
 			if (storedGame) {
@@ -220,15 +230,6 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 
 				client.load(data.game, data.config)
 			}
-
-			client.onMessage.on(handleMessage)
-
-			client.onUpdate.on((s) => {
-				localStorage['ot-local-' + localId] = JSON.stringify({
-					game: s,
-					config: client.game.config,
-				})
-			})
 
 			setTimeout(() => handleConnected())
 
