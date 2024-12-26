@@ -1,28 +1,23 @@
 import { Button } from '@/components'
 import { Box } from '@/components/Box'
-import { DialogButton } from '@/components/DialogButton/DialogButton'
-import { ExportSavedGamesButton } from '@/components/ExportSavedGamesButton/ExportSavedGamesButton'
 import { Flex } from '@/components/Flex/Flex'
-import { ImportSavedGamesModal } from '@/components/ImportSavedGamesModal/ImportSavedGamesModal'
-import { Modal } from '@/components/Modal/Modal'
 import { ApiState, setApiState } from '@/store/modules/api'
-import { setClientState } from '@/store/modules/client'
+import { SavedSessionInfo, setClientState } from '@/store/modules/client'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import {
 	extractGameIdFromLocal,
 	localGamesStore,
 } from '@/utils/localGamesStore'
 import { numberWithSuffix } from '@/utils/numberWithSuffix'
-import { faPlay, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons'
-import { darken } from 'polished'
+import { faPlay, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useMemo } from 'react'
 import styled from 'styled-components'
 
 type Props = {
-	onClose: () => void
+	games: [id: string, session: SavedSessionInfo][]
 }
 
-export const ContinueModal = ({ onClose }: Props) => {
+export const SavedGamesList = ({ games }: Props) => {
 	const sessions = useAppStore((state) => state.client.sessions)
 	const dispatch = useAppDispatch()
 
@@ -48,15 +43,12 @@ export const ContinueModal = ({ onClose }: Props) => {
 	}
 
 	const sessionsItems = useMemo(
-		() =>
-			Object.entries(sessions).sort(
-				([, a], [, b]) => b.lastUpdateAt - a.lastUpdateAt,
-			),
-		[sessions],
+		() => games.slice().sort(([, a], [, b]) => b.lastUpdateAt - a.lastUpdateAt),
+		[games],
 	)
 
 	return (
-		<Modal onClose={onClose} open header="Continue">
+		<Box $p={2} direction="column" align="stretch" gap="0.25rem">
 			{sessionsItems.map(([id, session]) => (
 				<GameItem key={id}>
 					<Button icon={faTrash} onClick={handleRemove(id)}></Button>
@@ -77,34 +69,12 @@ export const ContinueModal = ({ onClose }: Props) => {
 					</Button>
 				</GameItem>
 			))}
-
-			{Object.keys(sessions).length > 0 && (
-				<>
-					<Spitter />
-					<Flex justify="center" gap="0.5rem">
-						<ExportSavedGamesButton />
-						<DialogButton
-							dialog={(onClose) => <ImportSavedGamesModal onClose={onClose} />}
-							icon={faUpload}
-						>
-							Import sessions
-						</DialogButton>
-					</Flex>
-				</>
-			)}
-		</Modal>
+		</Box>
 	)
 }
 
-const Spitter = styled.div`
-	background-color: ${({ theme }) => darken(0.05, theme.colors.border)};
-	height: 2px;
-	margin: 1.5rem 0 1rem 0;
-`
-
 const GameItem = styled(Flex)`
 	gap: 1rem;
-	margin: 1rem 0;
 	align-items: center;
 `
 
