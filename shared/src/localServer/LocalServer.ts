@@ -7,17 +7,17 @@ import {
 	serverMessage,
 } from '@shared/actions'
 import { Game, GameConfig, GameLockSystem } from '@shared/game/game'
-import { MyEvent } from '@shared/utils/events'
-import { GameState } from '../gameState'
-import { ConsoleLogger } from './ConsoleLogger'
-import { LocalClient } from './LocalClient'
+import { Player } from '@shared/game/player'
 import { deepCopy } from '@shared/utils/collections'
+import { MyEvent } from '@shared/utils/events'
+import { GameState, PlayerStateValue } from '../gameState'
+import { ConsoleLogger } from './ConsoleLogger'
 
 export class LocalServer {
-	logger = new ConsoleLogger('GameServer')
+	logger = new ConsoleLogger('LocalServer')
 
 	game: Game
-	localClient: LocalClient
+	player?: Player
 
 	onMessage = new MyEvent<GameMessage>()
 	onUpdate = new MyEvent<GameState>()
@@ -25,8 +25,6 @@ export class LocalServer {
 	constructor(lockSystem: GameLockSystem, config?: Partial<GameConfig>) {
 		this.game = new Game(lockSystem, this.logger, config)
 		this.game.onStateUpdated.on(this.handleGameUpdate)
-
-		this.localClient = new LocalClient(this)
 	}
 
 	connect = () => {}
@@ -34,6 +32,7 @@ export class LocalServer {
 
 	load = (s: GameState, c: GameConfig) => {
 		this.game.load(s, c)
+
 		this.handleGameUpdate(this.game.state)
 	}
 
@@ -48,19 +47,33 @@ export class LocalServer {
 		}
 
 		if (message.type === MessageType.JoinRequest) {
-			this.localClient.player.state.name = message.data.name ?? 'Player'
+			const existingLocalPlayer = (this.player = this.game.players.find(
+				(p) => p.state.bot === false,
+			))
+
+			if (existingLocalPlayer) {
+				this.player = existingLocalPlayer
+				this.player.state.connected = true
+			} else {
+				this.player = new Player(this.game)
+				this.player.state.state = PlayerStateValue.Waiting
+				this.player.state.name = message.data.name ?? 'Player'
+				this.player.state.connected = true
+
+				this.game.add(this.player)
+			}
 
 			return this.onMessage.emit(
 				joinResponse(
 					undefined,
-					this.localClient.player.state.session,
-					this.localClient.player.state.id,
+					this.player.state.session,
+					this.player.state.id,
 				),
 			)
 		}
 
 		try {
-			this.localClient.player.performAction(message)
+			this.player?.performAction(message)
 		} catch (e) {
 			this.logger.error(e)
 

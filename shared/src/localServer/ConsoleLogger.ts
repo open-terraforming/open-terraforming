@@ -9,35 +9,39 @@ export class ConsoleLogger implements Logger {
 	}
 
 	get prefix() {
-		return new Date().toISOString().substr(11) + ' ' + this.category
+		return [
+			`%c${new Date().toISOString().substr(11)} %c${this.category}`,
+			'color: gray',
+			'color: green',
+		]
 	}
 
 	log(...args: any[]) {
-		console.log(this.prefix, ...args)
+		console.log(...this.prefix, ...args)
 	}
 
 	info(...args: any[]) {
-		console.info(this.prefix, ...args)
+		console.info(...this.prefix, ...args)
 	}
 
 	warn(...args: any[]) {
-		console.warn(this.prefix, ...args)
+		console.warn(...this.prefix, ...args)
 	}
 
 	trace(...args: any[]) {
-		console.trace(this.prefix, ...args)
+		console.trace(...this.prefix, ...args)
 	}
 
 	error(...args: any[]) {
-		console.error(this.prefix, ...args)
+		console.error(...this.prefix, ...args)
 	}
 
 	group(...args: any[]) {
-		console.group(this.prefix, ...args)
+		console.group(...this.prefix, ...args)
 	}
 
 	groupCollapsed(...args: any[]) {
-		console.groupCollapsed(this.prefix, ...args)
+		console.groupCollapsed(...this.prefix, ...args)
 	}
 
 	groupEnd() {
