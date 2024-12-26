@@ -14,6 +14,10 @@ import { GameState, PlayerStateValue } from '../gameState'
 import { ConsoleLogger } from './ConsoleLogger'
 
 export class LocalServer {
+	get gameId() {
+		return this.game.state.id
+	}
+
 	logger = new ConsoleLogger('LocalServer')
 
 	game: Game
@@ -22,9 +26,14 @@ export class LocalServer {
 	onMessage = new MyEvent<GameMessage>()
 	onUpdate = new MyEvent<GameState>()
 
-	constructor(lockSystem: GameLockSystem, config?: Partial<GameConfig>) {
+	constructor(
+		lockSystem: GameLockSystem,
+		config: Partial<GameConfig>,
+		id: string,
+	) {
 		this.game = new Game(lockSystem, this.logger, config)
 		this.game.onStateUpdated.on(this.handleGameUpdate)
+		this.game.state.id = id
 	}
 
 	connect = () => {}

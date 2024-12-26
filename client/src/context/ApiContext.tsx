@@ -112,32 +112,34 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 							error,
 						}),
 					)
-				} else {
-					dispatch(setGamePlayer(id as number, false))
 
-					dispatch(
-						setClientState({
-							id,
-							sessions: {
-								...sessions,
-								[sessionKey]: {
-									session: session ?? '',
-									name: '',
-									generation: 0,
-									finished: false,
-									lastUpdateAt: Date.now(),
-								},
-							},
-						}),
-					)
-
-					dispatch(
-						setApiState({
-							state: ApiState.Joined,
-							error: undefined,
-						}),
-					)
+					break
 				}
+
+				dispatch(setGamePlayer(id as number, false))
+
+				dispatch(
+					setClientState({
+						id,
+						sessions: {
+							...sessions,
+							[sessionKey]: {
+								session: session ?? '',
+								name: '',
+								generation: 0,
+								finished: false,
+								lastUpdateAt: Date.now(),
+							},
+						},
+					}),
+				)
+
+				dispatch(
+					setApiState({
+						state: ApiState.Joined,
+						error: undefined,
+					}),
+				)
 
 				break
 			}
@@ -203,7 +205,12 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 
 	const client = useMemo(() => {
 		if (isLocal) {
-			const client = new LocalServer(new DummyGameLockSystem(), localGameConfig)
+			const client = new LocalServer(
+				new DummyGameLockSystem(),
+				localGameConfig ?? {},
+				gameId ?? 'local',
+			)
+
 			const localId = gameId?.split('/')[1]
 
 			client.onMessage.on(handleMessage)
