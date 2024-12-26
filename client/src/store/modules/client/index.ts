@@ -17,7 +17,7 @@ const SESSIONS_STORAGE_KEY = 'ot-saved-sessions'
 let sessions = {} as Record<string, SavedSessionInfo>
 
 try {
-	if (localStorage['sessions']) {
+	if (localStorage[SESSIONS_STORAGE_KEY]) {
 		sessions = JSON.parse(localStorage[SESSIONS_STORAGE_KEY])
 	}
 } catch {
