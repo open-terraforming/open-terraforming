@@ -9,10 +9,10 @@ import {
 	setGameStateDiff,
 } from '@/store/modules/game'
 import { useAppStore } from '@/utils/hooks'
+import { localGamesStore } from '@/utils/localGamesStore'
 import { useRefCallback } from '@/utils/useRefCallback'
 import {
 	GameMessage,
-	GameState,
 	GameStateValue,
 	handshakeRequest,
 	JoinError,
@@ -21,10 +21,9 @@ import {
 	VERSION,
 } from '@shared/index'
 import { DummyGameLockSystem } from '@shared/lib/dummy-game-lock-system'
+import { LocalServer } from '@shared/localServer/LocalServer'
 import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
-import { LocalServer } from '@shared/localServer/LocalServer'
-import { GameConfig } from '@shared/game/game'
 
 export const ApiContext = createContext<FrontendGameClient | null>(null)
 
@@ -215,21 +214,18 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 			client.onMessage.on(handleMessage)
 
 			client.onUpdate.on((s) => {
-				localStorage['ot-local-' + localId] = JSON.stringify({
-					game: s,
-					config: client.game.config,
-				})
+				if (localId) {
+					localGamesStore.setGame(localId, {
+						state: s,
+						config: client.game.config,
+					})
+				}
 			})
 
-			const storedGame = localStorage['ot-local-' + localId]
+			const storedGame = localId && localGamesStore.getGame(localId)
 
 			if (storedGame) {
-				const data = JSON.parse(storedGame) as {
-					game: GameState
-					config: GameConfig
-				}
-
-				client.load(data.game, data.config)
+				client.load(storedGame.state, storedGame.config)
 			}
 
 			setTimeout(() => handleConnected())

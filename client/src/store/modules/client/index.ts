@@ -4,7 +4,7 @@ import { GameConfig } from '@shared/game/game'
 
 type State = Readonly<typeof initialState>
 
-type SavedSessionInfo = {
+export type SavedSessionInfo = {
 	name: string
 	generation: number
 	finished: boolean

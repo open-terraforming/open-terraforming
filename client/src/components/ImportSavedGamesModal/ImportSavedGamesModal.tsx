@@ -1,5 +1,7 @@
 import { setClientState } from '@/store/modules/client'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { localGamesStore } from '@/utils/localGamesStore'
+import { ExportedGames } from '@/utils/types'
 import { faUpload } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import { Button } from '../Button/Button'
@@ -23,7 +25,18 @@ export const ImportSavedGamesModal = ({ onClose }: Props) => {
 		}
 
 		try {
-			const importedSessions = JSON.parse(contents)
+			const importedSessions = JSON.parse(contents) as ExportedGames
+
+			for (const [key, value] of Object.entries(importedSessions)) {
+				if (key.startsWith('local/') && value.local) {
+					localGamesStore.setGame(key.replace('local/', ''), {
+						state: value.local.state,
+						config: value.local.config,
+					})
+				}
+
+				delete value.local
+			}
 
 			dispatch(
 				setClientState({
