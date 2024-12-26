@@ -30,7 +30,7 @@ export const ApiContext = createContext<FrontendGameClient | null>(null)
 export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 	const dispatch = useDispatch()
 	const sessions = useAppStore((state) => state.client.sessions)
-	// const state = useAppStore((state) => state.api.state)
+	const state = useAppStore((state) => state.api.state)
 	const localGameConfig = useAppStore((state) => state.client.localGameConfig)
 	const gameId = useAppStore((state) => state.api.gameId)
 	const sessionKey = gameId || 'single'
@@ -59,14 +59,14 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 						}),
 					)
 				} else {
-					//if (state === ApiState.Connecting) {
-					dispatch(
-						setApiState({
-							state: ApiState.Connected,
-							error: undefined,
-						}),
-					)
-					//}
+					if (state !== ApiState.Joined) {
+						dispatch(
+							setApiState({
+								state: ApiState.Connected,
+								error: undefined,
+							}),
+						)
+					}
 
 					dispatch(
 						setClientState({
@@ -80,11 +80,6 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 					}
 
 					const session = sessions[sessionKey]
-
-					console.log(
-						'Received response, state:',
-						info && GameStateValue[info?.state],
-					)
 
 					if (info?.state !== GameStateValue.WaitingForPlayers) {
 						if (session || isLocal) {

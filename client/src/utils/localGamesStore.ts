@@ -1,9 +1,11 @@
 import { GameConfig } from '@shared/game/game'
 import { GameState } from '@shared/gameState'
 
+const LOCAL_GAMES_PREFIX = 'ot-local-'
+
 export const localGamesStore = {
 	getGame(gameId: string) {
-		const data = localStorage['ot-local-' + gameId]
+		const data = localStorage[LOCAL_GAMES_PREFIX + gameId]
 
 		if (!data) {
 			return null
@@ -13,6 +15,6 @@ export const localGamesStore = {
 	},
 
 	setGame(gameId: string, data: { state: GameState; config: GameConfig }) {
-		localStorage['ot-local-' + gameId] = JSON.stringify(data)
+		localStorage[LOCAL_GAMES_PREFIX + gameId] = JSON.stringify(data)
 	},
 }
