@@ -46,6 +46,30 @@ type Props<T extends CardInfo> = {
 	postfix?: ReactNode
 }
 
+const createTypeFilter = (type: CardType | undefined) => (ci: CardInfo) => {
+	if (type === undefined) {
+		return true
+	}
+
+	if (
+		type === CardType.Effect &&
+		ci.card.type === CardType.Corporation &&
+		ci.card.passiveEffects.length > 0
+	) {
+		return true
+	}
+
+	if (
+		type === CardType.Action &&
+		ci.card.type === CardType.Corporation &&
+		ci.card.actionEffects.length > 0
+	) {
+		return true
+	}
+
+	return ci.card.type === type
+}
+
 export const CardDisplayModal = <T extends CardInfo>({
 	onSelect,
 	selected,
@@ -101,32 +125,7 @@ export const CardDisplayModal = <T extends CardInfo>({
 		[cards],
 	)
 
-	const typeFilter = useCallback(
-		(ci: CardInfo) => {
-			if (type === undefined) {
-				return true
-			}
-
-			if (
-				type === CardType.Effect &&
-				ci.card.type === CardType.Corporation &&
-				ci.card.passiveEffects.length > 0
-			) {
-				return true
-			}
-
-			if (
-				type === CardType.Action &&
-				ci.card.type === CardType.Corporation &&
-				ci.card.actionEffects.length > 0
-			) {
-				return true
-			}
-
-			return ci.card.type === type
-		},
-		[type],
-	)
+	const currentTypeFilter = useCallback(createTypeFilter(type), [type])
 
 	const types = useMemo(
 		() =>
@@ -140,7 +139,8 @@ export const CardDisplayModal = <T extends CardInfo>({
 				[CardType.Corporation, 'Corporation'] as const,
 			]
 				.map(
-					([c, title]) => [c, title, cards.filter(typeFilter).length] as const,
+					([c, title]) =>
+						[c, title, cards.filter(createTypeFilter(c)).length] as const,
 				)
 				.filter(([, , count]) => count > 0),
 		[cards],
@@ -150,7 +150,7 @@ export const CardDisplayModal = <T extends CardInfo>({
 		() =>
 			cards.filter(
 				(ci) =>
-					typeFilter(ci) &&
+					currentTypeFilter(ci) &&
 					(selectedCategory === undefined ||
 						((selectedCategory === CardCategory.Event ||
 							ci.card.type !== CardType.Event) &&
@@ -174,6 +174,8 @@ export const CardDisplayModal = <T extends CardInfo>({
 			)
 		}
 	}, [type, selectedCategory])
+
+	console.log(types)
 
 	return (
 		<Modal
