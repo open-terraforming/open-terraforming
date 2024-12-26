@@ -175,8 +175,6 @@ export const CardDisplayModal = <T extends CardInfo>({
 		}
 	}, [type, selectedCategory])
 
-	console.log(types)
-
 	return (
 		<Modal
 			open={true}
