@@ -1,4 +1,5 @@
 import { Button } from '@/components'
+import { Box } from '@/components/Box'
 import { DialogButton } from '@/components/DialogButton/DialogButton'
 import { ExportSavedGamesButton } from '@/components/ExportSavedGamesButton/ExportSavedGamesButton'
 import { Flex } from '@/components/Flex/Flex'
@@ -11,8 +12,10 @@ import {
 	extractGameIdFromLocal,
 	localGamesStore,
 } from '@/utils/localGamesStore'
+import { numberWithSuffix } from '@/utils/numberWithSuffix'
 import { faPlay, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons'
 import { darken } from 'polished'
+import { useMemo } from 'react'
 import styled from 'styled-components'
 
 type Props = {
@@ -44,19 +47,29 @@ export const ContinueModal = ({ onClose }: Props) => {
 		)
 	}
 
+	const sessionsItems = useMemo(
+		() =>
+			Object.entries(sessions).sort(
+				([, a], [, b]) => b.lastUpdateAt - a.lastUpdateAt,
+			),
+		[sessions],
+	)
+
 	return (
 		<Modal onClose={onClose} open header="Continue">
-			{Object.entries(sessions).map(([id, session]) => (
+			{sessionsItems.map(([id, session]) => (
 				<GameItem key={id}>
 					<Button icon={faTrash} onClick={handleRemove(id)}></Button>
 					<Info>
-						<div>{session.name}</div>
-						<InfoLine>
-							{new Date(session.lastUpdateAt).toLocaleString(undefined, {
-								dateStyle: 'medium',
-								timeStyle: 'short',
-							})}
-							{' - '}Generation {session.generation}
+						<div>{session.name || '<<No name>>'}</div>
+						<InfoLine gap="0.25rem">
+							<div>{numberWithSuffix(session.generation)} generation</div>
+							<Box $ml="auto">
+								{new Date(session.lastUpdateAt).toLocaleString(undefined, {
+									dateStyle: 'medium',
+									timeStyle: 'short',
+								})}
+							</Box>
 						</InfoLine>
 					</Info>
 					<Button icon={faPlay} onClick={handleJoin(id)}>

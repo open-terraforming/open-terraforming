@@ -7,8 +7,6 @@ const LOCAL_GAMES_PREFIX = 'ot-local-'
 
 export const extractGameIdFromLocal = (gameId: string) => gameId.split('/')[1]
 
-// TODO: Handle local storage file size limits somehow
-
 const bufferToBase64 = (encodedBuffer: Buffer) => {
 	let binary = ''
 	const bytes = new Uint8Array(encodedBuffer)
