@@ -45,7 +45,14 @@ export const localGamesStore = {
 		const encodedBuffer = encode(stripUndefined(data))
 		const base64Buffer = bufferToBase64(encodedBuffer)
 
-		localStorage[LOCAL_GAMES_PREFIX + gameId] = base64Buffer
+		try {
+			localStorage[LOCAL_GAMES_PREFIX + gameId] = base64Buffer
+		} catch {
+			// TODO: Better handling on FE?
+			alert(
+				'Cannot save game, local storage is probably full. Delete some existing local games to continue saving.',
+			)
+		}
 	},
 
 	removeGame(gameId: string) {
