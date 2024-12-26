@@ -188,7 +188,7 @@ export const NewGameModal = ({ onClose, local }: Props) => {
 			<Modal
 				open={true}
 				onClose={onClose}
-				header="Start a new game"
+				header={local ? 'Start a new local game' : 'Start a new online game'}
 				footer={(close) => (
 					<>
 						<Button
