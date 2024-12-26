@@ -31,7 +31,8 @@ export const ApiContext = createContext<FrontendGameClient | null>(null)
 export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 	const dispatch = useDispatch()
 	const sessions = useAppStore((state) => state.client.sessions)
-	const state = useAppStore((state) => state.api.state)
+	// const state = useAppStore((state) => state.api.state)
+	const localGameConfig = useAppStore((state) => state.client.localGameConfig)
 	const gameId = useAppStore((state) => state.api.gameId)
 	const sessionKey = gameId || 'single'
 	const isLocal = gameId?.startsWith('local/')
@@ -208,7 +209,7 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 
 	const client = useMemo(() => {
 		if (isLocal) {
-			const client = new LocalServer(new DummyGameLockSystem())
+			const client = new LocalServer(new DummyGameLockSystem(), localGameConfig)
 			const localId = gameId?.split('/')[1]
 
 			client.onMessage.on(handleMessage)

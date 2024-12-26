@@ -1,5 +1,6 @@
 import { GameStateValue } from '@shared/index'
 import { GameInfo } from '@shared/extra'
+import { GameConfig } from '@shared/game/game'
 
 type State = Readonly<typeof initialState>
 
@@ -29,6 +30,7 @@ const initialState = {
 	id: undefined as number | undefined,
 	gameState: undefined as GameStateValue | undefined,
 	info: undefined as GameInfo | undefined,
+	localGameConfig: undefined as GameConfig | undefined,
 }
 
 export default (state = initialState, action: Actions): State => {
