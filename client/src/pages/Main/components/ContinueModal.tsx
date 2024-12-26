@@ -7,6 +7,10 @@ import { Modal } from '@/components/Modal/Modal'
 import { ApiState, setApiState } from '@/store/modules/api'
 import { setClientState } from '@/store/modules/client'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import {
+	extractGameIdFromLocal,
+	localGamesStore,
+} from '@/utils/localGamesStore'
 import { faPlay, faTrash, faUpload } from '@fortawesome/free-solid-svg-icons'
 import { darken } from 'polished'
 import styled from 'styled-components'
@@ -24,6 +28,10 @@ export const ContinueModal = ({ onClose }: Props) => {
 			delete sessions[id]
 
 			dispatch(setClientState({ sessions: { ...sessions } }))
+
+			if (id.startsWith('local/')) {
+				localGamesStore.removeGame(extractGameIdFromLocal(id))
+			}
 		}
 	}
 
