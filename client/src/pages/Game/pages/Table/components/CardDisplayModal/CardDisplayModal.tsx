@@ -6,7 +6,7 @@ import { media } from '@/styles/media'
 import { isNotUndefined, mapRight } from '@/utils/collections'
 import { Card, CardCategory, CardType } from '@shared/cards'
 import { PlayerState, UsedCardState } from '@shared/index'
-import { darken, lighten } from 'polished'
+import { lighten } from 'polished'
 import {
 	CSSProperties,
 	ReactNode,
@@ -15,7 +15,7 @@ import {
 	useMemo,
 	useState,
 } from 'react'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 import { NoCards } from '../CardsContainer/CardsContainer'
 import { CardEvaluateMode, CardView } from '../CardView/CardView'
 import { Tag } from '../CardView/components/Tag'
@@ -88,8 +88,6 @@ export const CardDisplayModal = <T extends CardInfo>({
 	hideClose,
 	postfix,
 }: Props<T>) => {
-	const theme = useTheme()
-
 	const [type, setType] = useState(defaultType)
 	const [playable, setPlayable] = useState(false)
 
@@ -175,35 +173,18 @@ export const CardDisplayModal = <T extends CardInfo>({
 		}
 	}, [type, selectedCategory])
 
-	console.log(types)
-
 	return (
 		<Modal
 			open={true}
 			contentStyle={contentStyle}
 			bodyStyle={{ ...bodyStyle, padding: 0 }}
 			headerStyle={{
-				backgroundColor: darken(0.05, theme.colors.background),
+				borderBottom: 'none',
 				padding: '0.5rem 1rem',
 			}}
 			onClose={onClose}
 			hideClose={hideClose}
-			header={
-				<Header>
-					{header}
-					{filters && (
-						<Filters>
-							{(evaluateMode === 'playing' || evaluateMode === 'buying') && (
-								<Checkbox
-									checked={playable}
-									onChange={(v) => setPlayable(v)}
-									label="Only playable"
-								/>
-							)}
-						</Filters>
-					)}
-				</Header>
-			}
+			header={header}
 			footer={footer}
 		>
 			<TabsHead
@@ -217,6 +198,19 @@ export const CardDisplayModal = <T extends CardInfo>({
 					),
 					key: cat,
 				}))}
+				suffix={
+					filters ? (
+						<Filters>
+							{(evaluateMode === 'playing' || evaluateMode === 'buying') && (
+								<Checkbox
+									checked={playable}
+									onChange={(v) => setPlayable(v)}
+									label="Only playable"
+								/>
+							)}
+						</Filters>
+					) : undefined
+				}
 			/>
 
 			<Flex align="stretch" gap="0.25rem">
@@ -305,12 +299,10 @@ const Categories = styled(Flex)`
 
 const Filters = styled.div`
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
 	font-size: 1rem;
 	margin-left: auto;
-	margin-right: 2rem;
-	gap: 0.5rem;
+	align-self: center;
 `
 
 const Count = styled.div`
@@ -354,8 +346,4 @@ const FilterItem = styled.div<{ selected: boolean }>`
 const FilterTag = styled(FilterItem)`
 	margin-right: 0;
 	margin-left: 0.3rem;
-`
-
-const Header = styled(Flex)`
-	flex: 1;
 `
