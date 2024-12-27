@@ -2,6 +2,7 @@ import { darken } from 'polished'
 import { ReactNode } from 'react'
 import { css, styled } from 'styled-components'
 import { Box } from './Box'
+import { darkStripedBackground } from '@/styles/mixins'
 
 type Props<TTab> = {
 	tab: TTab
@@ -38,6 +39,7 @@ const Head = styled(Box)`
 	border-bottom: 2px solid ${({ theme }) => theme.colors.border};
 	flex-grow: 0;
 	flex-shrink: 0;
+	${darkStripedBackground}
 `
 
 const Tab = styled.div<{ $active: boolean }>`
