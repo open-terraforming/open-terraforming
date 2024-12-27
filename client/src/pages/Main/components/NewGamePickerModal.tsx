@@ -24,11 +24,10 @@ export const NewGamePickerModal = ({ onClose }: Props) => {
 
 	return (
 		<>
-			<ModalNoBackground
+			<Modal
 				open={mode === undefined}
 				onClose={onClose}
-				contentStyle={{ background: 'none' }}
-				header={<ModalTitle innerSpacing>New game</ModalTitle>}
+				header={<ModalTitle>Start a New game</ModalTitle>}
 				hideClose
 			>
 				<Box align="stretch" gap="0.5rem">
@@ -57,23 +56,17 @@ export const NewGamePickerModal = ({ onClose }: Props) => {
 						</Box>
 					</ModeChoice>
 				</Box>
-			</ModalNoBackground>
+			</Modal>
 			{mode === NewGameMode.Local && <NewGameModal onClose={onClose} local />}
 			{mode === NewGameMode.Online && <NewGameModal onClose={onClose} />}
 		</>
 	)
 }
 
-const ModalNoBackground = styled(Modal)`
-	.modal-popup > .inner {
-		background: none;
-	}
-`
-
-const ModalTitle = styled(ClippedBox)`
-	flex: 1;
+const ModalTitle = styled.div`
 	text-transform: uppercase;
 	text-align: center;
+	flex: 1;
 `
 
 const ModeChoice = styled(ClippedBox)`
