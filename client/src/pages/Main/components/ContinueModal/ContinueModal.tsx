@@ -8,9 +8,7 @@ import { TabsHead } from '@/components/TabsHead'
 import { useAppStore } from '@/utils/hooks'
 import { faUpload } from '@fortawesome/free-solid-svg-icons'
 import { partition } from '@shared/utils'
-import { darken } from 'polished'
 import { useMemo, useState } from 'react'
-import styled, { useTheme } from 'styled-components'
 import { SavedGamesList } from './components/SavedGamesList'
 
 type Props = {
@@ -27,7 +25,6 @@ export const ContinueModal = ({ onClose }: Props) => {
 	const [tab, setTab] = useState(Tabs.All)
 
 	const sessions = useAppStore((state) => state.client.sessions)
-	const theme = useTheme()
 
 	const tabs = useMemo(() => {
 		const all = Object.entries(sessions)
@@ -65,17 +62,11 @@ export const ContinueModal = ({ onClose }: Props) => {
 				overflow: 'auto',
 			}}
 			headerStyle={{
-				backgroundColor: darken(0.05, theme.colors.background),
+				borderBottom: 'none',
 			}}
-		>
-			<TabsHead tab={tab} setTab={setTab} tabs={tabs} />
-
-			<TabsContent tab={tab} tabs={tabs} />
-
-			{Object.keys(sessions).length > 0 && (
-				<BottomBox>
-					<Spitter />
-					<Box $mb={4} justify="center" gap="0.5rem">
+			footer={
+				Object.keys(sessions).length > 0 && (
+					<Box justify="center" gap="0.5rem">
 						<ExportSavedGamesButton />
 						<DialogButton
 							dialog={(onClose) => <ImportSavedGamesModal onClose={onClose} />}
@@ -84,19 +75,12 @@ export const ContinueModal = ({ onClose }: Props) => {
 							Import sessions
 						</DialogButton>
 					</Box>
-				</BottomBox>
-			)}
+				)
+			}
+		>
+			<TabsHead tab={tab} setTab={setTab} tabs={tabs} />
+
+			<TabsContent tab={tab} tabs={tabs} />
 		</Modal>
 	)
 }
-
-const Spitter = styled.div`
-	background-color: ${({ theme }) => darken(0.05, theme.colors.border)};
-	height: 2px;
-	margin: 0 0 1rem 0;
-`
-
-const BottomBox = styled.div`
-	flex-grow: 0;
-	flex-shrink: 0;
-`
