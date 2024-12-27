@@ -1,18 +1,21 @@
+import { darkStripedBackground } from '@/styles/mixins'
+import { darken } from 'polished'
 import styled, { css } from 'styled-components'
 
 export const Header = styled.div`
-	padding: 1rem 1.2rem;
+	padding: 0.8rem 1rem;
 	text-align: left;
 	font-size: 125%;
 	display: flex;
 	align-items: center;
+	background-color: ${({ theme }) => darken(0.05, theme.colors.background)};
+	${darkStripedBackground}
+
+	border-bottom: 2px solid ${({ theme }) => theme.colors.border};
 `
 
 export const Body = styled.div<{ hasHeader?: boolean; hasFooter?: boolean }>`
-	${(props) => css`
-		padding: ${props.hasHeader ? '0' : '1rem'} 1.2rem
-			${props.hasFooter ? '0' : '1rem'} 1.2rem;
-	`}
+	padding: 0.8rem 1rem 0.8rem 1rem;
 	overflow: auto;
 	flex: 1;
 	min-height: 0;
@@ -24,6 +27,11 @@ export const Footer = styled.div<{ stretchFooterButtons: boolean }>`
 	display: flex;
 	justify-content: flex-end;
 	align-items: center;
+
+	background-color: ${({ theme }) => darken(0.05, theme.colors.background)};
+	${darkStripedBackground}
+
+	border-top: 2px solid ${({ theme }) => theme.colors.border};
 
 	> button {
 		display: inline-block;
