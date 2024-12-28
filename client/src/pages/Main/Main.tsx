@@ -6,7 +6,7 @@ import { DialogButton } from '@/components/DialogButton/DialogButton'
 import { Mars } from '@/components/Mars/Mars'
 import { Modal } from '@/components/Modal/Modal'
 import { setApiInfo } from '@/store/modules/api'
-import { useAppStore } from '@/utils/hooks'
+import { localSessionsStore } from '@/utils/localSessionsStore'
 import {
 	faCog,
 	faInfo,
@@ -28,8 +28,7 @@ import { SettingsModal } from './components/SettingsModal'
 
 export const Main = () => {
 	const dispatch = useDispatch()
-
-	const sessions = useAppStore((state) => state.client.sessions)
+	const sessions = localSessionsStore.sessions
 
 	const [info, setInfo] = useState(null as ServerInfo | null)
 	const [loading, setLoading] = useState(true)
