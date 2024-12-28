@@ -21,6 +21,7 @@ const PROCESSABLE_EVENTS = [
 	EventType.NewGovernment,
 	EventType.PlayerMovedDelegate,
 	EventType.CommitteePartyActivePolicyActivated,
+	EventType.Started,
 ]
 
 export const isInYourFaceEvent = ({ event }: Params) => {

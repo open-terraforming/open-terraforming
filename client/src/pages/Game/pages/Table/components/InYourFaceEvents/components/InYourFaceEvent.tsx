@@ -16,6 +16,7 @@ import { ProductionDoneEvent } from './ProductionDoneEvent'
 import { StandardProjectBoughtEvent } from './StandardProjectBoughtEvent'
 import { StartingSetupEvent } from './StartingSetupEvent'
 import { TilePlacedEvent } from './TilePlacedEvent'
+import { GameStartedEvent } from './GameStartedEvent'
 
 type Props = {
 	event: GameEvent
@@ -56,6 +57,8 @@ export const InYourFaceEvent = ({ event }: Props) => {
 				return <PlayerMovedDelegateEvent event={event} />
 			case EventType.CommitteePartyActivePolicyActivated:
 				return <CommitteePartyActivePolicyActivatedEvent event={event} />
+			case EventType.Started:
+				return <GameStartedEvent event={event} />
 			default:
 				return null
 		}
