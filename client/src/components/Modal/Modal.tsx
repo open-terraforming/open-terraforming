@@ -8,6 +8,7 @@ import {
 	MouseEvent,
 	ReactNode,
 	useCallback,
+	useEffect,
 	useState,
 } from 'react'
 import ReactDOM from 'react-dom'
@@ -93,6 +94,13 @@ export const Modal = ({
 			onClose()
 		}
 	})
+
+	useEffect(() => {
+		if (open) {
+			setIsClosing(false)
+			setClosingAnimation(undefined)
+		}
+	}, [open])
 
 	const popup = (
 		<>

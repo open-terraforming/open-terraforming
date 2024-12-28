@@ -1,5 +1,6 @@
 import { Checkbox } from '@/components/Checkbox/Checkbox'
 import { Flex } from '@/components/Flex/Flex'
+import { MinimizeIcon } from '@/components/MinimizeIcon'
 import { Modal } from '@/components/Modal/Modal'
 import { TabsHead } from '@/components/TabsHead'
 import { media } from '@/styles/media'
@@ -44,6 +45,7 @@ type Props<T extends CardInfo> = {
 	bodyStyle?: CSSProperties
 	hideClose?: boolean
 	postfix?: ReactNode
+	closeAsMinimize?: boolean
 }
 
 const createTypeFilter = (type: CardType | undefined) => (ci: CardInfo) => {
@@ -87,6 +89,7 @@ export const CardDisplayModal = <T extends CardInfo>({
 	footer,
 	hideClose,
 	postfix,
+	closeAsMinimize,
 }: Props<T>) => {
 	const [type, setType] = useState(defaultType)
 	const [playable, setPlayable] = useState(false)
@@ -186,6 +189,7 @@ export const CardDisplayModal = <T extends CardInfo>({
 			hideClose={hideClose}
 			header={header}
 			footer={footer}
+			closeIcon={closeAsMinimize ? <MinimizeIcon /> : undefined}
 		>
 			<TabsHead
 				tab={type}

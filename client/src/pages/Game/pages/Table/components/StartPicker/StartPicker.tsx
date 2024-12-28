@@ -1,4 +1,5 @@
 import { Button, Message } from '@/components'
+import { MinimizeIcon } from '@/components/MinimizeIcon'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore, useGameState, usePlayerState } from '@/utils/hooks'
@@ -15,13 +16,18 @@ import { CardView } from '../CardView/CardView'
 import { CorporationPicker } from '../CorporationPicker/CorporationPicker'
 import { MiniCardView } from '../MiniCardView/MiniCardView'
 
+type Props = {
+	open: boolean
+	onClose: () => void
+}
+
 enum Section {
 	Corporation,
 	Cards,
 	Preludes,
 }
 
-export const StartPicker = () => {
+export const StartPicker = ({ open, onClose }: Props) => {
 	const api = useApi()
 	const pendingAction = useAppStore((state) => state.game.pendingAction)
 	const game = useGameState()
@@ -96,8 +102,9 @@ export const StartPicker = () => {
 
 	return (
 		<Modal
-			open
-			allowClose={false}
+			open={open}
+			onClose={onClose}
+			closeIcon={<MinimizeIcon />}
 			header={<h2>Starting hand</h2>}
 			footerStyle={{ justifyContent: 'center' }}
 			footer={
