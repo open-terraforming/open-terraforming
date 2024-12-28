@@ -1,8 +1,10 @@
 import { Button } from '@/components'
 import { HelpMessage } from '@/components/HelpMessage/HelpMessage'
+import { MinimizeIcon } from '@/components/MinimizeIcon'
 import { Modal } from '@/components/Modal/Modal'
 import { cards as cardNames } from '@/i18n/en/cards'
 import { help } from '@/i18n/en/help'
+import { optionalAnimation } from '@/styles/optionalAnimation'
 import { useAppStore } from '@/utils/hooks'
 import { CardsLookupApi } from '@shared/cards'
 import { useMemo, useState } from 'react'
@@ -11,9 +13,6 @@ import { CardsContainer } from '../CardsContainer/CardsContainer'
 import { CardView } from '../CardView/CardView'
 import { ResourceIcon } from '../ResourceIcon/ResourceIcon'
 import { CardPickerHeader } from './components/CardPickerHeader'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'
-import { optionalAnimation } from '@/styles/optionalAnimation'
 
 export enum PickerType {
 	Cards,
@@ -165,9 +164,7 @@ export const CardPicker = ({
 				</Button>
 			}
 			bodyStyle={{ display: 'flex', flexDirection: 'column' }}
-			closeIcon={
-				closeAsMinimize ? <FontAwesomeIcon icon={faChevronDown} /> : undefined
-			}
+			closeIcon={closeAsMinimize ? <MinimizeIcon /> : undefined}
 		>
 			<CardsContainer style={{ flex: 1 }}>
 				{cardsToPick?.map(
