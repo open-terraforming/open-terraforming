@@ -1,20 +1,18 @@
-import { useAppStore } from '@/utils/hooks'
+import { localGamesStore } from '@/utils/localGamesStore'
+import { localSessionsStore } from '@/utils/localSessionsStore'
+import { ExportedGames } from '@/utils/types'
 import { faDownload } from '@fortawesome/free-solid-svg-icons'
+import { deepCopy } from '@shared/index'
 import { saveAs } from 'file-saver'
 import { Button } from '../Button/Button'
-import { deepCopy } from '@shared/index'
-import { ExportedGames } from '@/utils/types'
-import { localGamesStore } from '@/utils/localGamesStore'
 
 type Props = {
 	className?: string
 }
 
 export const ExportSavedGamesButton = ({ className }: Props) => {
-	const sessions = useAppStore((s) => s.client.sessions)
-
 	const handleExport = () => {
-		const data = deepCopy(sessions) as ExportedGames
+		const data = deepCopy(localSessionsStore.sessions) as ExportedGames
 
 		for (const [key, value] of Object.entries(data)) {
 			if (key.startsWith('local/')) {

@@ -1,6 +1,6 @@
-import { SavedSessionInfo } from '@/store/modules/client'
 import { GameConfig } from '@shared/game/game'
 import { GameState } from '@shared/gameState'
+import { SavedSessionInfo } from './localSessionsStore'
 
 export type ExportedGames = Record<
 	string,

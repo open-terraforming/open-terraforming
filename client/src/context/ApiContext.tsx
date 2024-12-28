@@ -10,6 +10,7 @@ import {
 } from '@/store/modules/game'
 import { useAppStore } from '@/utils/hooks'
 import { localGamesStore } from '@/utils/localGamesStore'
+import { localSessionsStore } from '@/utils/localSessionsStore'
 import { useRefCallback } from '@/utils/useRefCallback'
 import {
 	GameMessage,
@@ -29,7 +30,6 @@ export const ApiContext = createContext<FrontendGameClient | null>(null)
 
 export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 	const dispatch = useDispatch()
-	const sessions = useAppStore((state) => state.client.sessions)
 	const state = useAppStore((state) => state.api.state)
 	const localGameConfig = useAppStore((state) => state.client.localGameConfig)
 	const gameId = useAppStore((state) => state.api.gameId)
@@ -79,7 +79,7 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 						dispatch(setGameInfo(info))
 					}
 
-					const session = sessions[sessionKey]
+					const session = localSessionsStore.getGameData(sessionKey)
 
 					if (info?.state !== GameStateValue.WaitingForPlayers) {
 						if (session || isLocal) {
@@ -95,14 +95,7 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 				const { error, session, id } = m.data
 
 				if (error === JoinError.InvalidSession) {
-					const newSessions = { ...sessions }
-					delete newSessions[sessionKey]
-
-					dispatch(
-						setClientState({
-							sessions: newSessions,
-						}),
-					)
+					localSessionsStore.removeGameData(sessionKey)
 				}
 
 				if (error) {
@@ -121,18 +114,16 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 				dispatch(
 					setClientState({
 						id,
-						sessions: {
-							...sessions,
-							[sessionKey]: {
-								session: session ?? '',
-								name: '',
-								generation: 0,
-								finished: false,
-								lastUpdateAt: Date.now(),
-							},
-						},
 					}),
 				)
+
+				localSessionsStore.setGameData(sessionKey, {
+					session: session ?? '',
+					name: '',
+					generation: 0,
+					finished: false,
+					lastUpdateAt: Date.now(),
+				})
 
 				dispatch(
 					setApiState({

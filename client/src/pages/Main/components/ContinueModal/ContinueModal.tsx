@@ -5,7 +5,7 @@ import { ImportSavedGamesModal } from '@/components/ImportSavedGamesModal/Import
 import { Modal } from '@/components/Modal/Modal'
 import { TabsContent } from '@/components/TabsContent'
 import { TabsHead } from '@/components/TabsHead'
-import { useAppStore } from '@/utils/hooks'
+import { localSessionsStore } from '@/utils/localSessionsStore'
 import { faUpload } from '@fortawesome/free-solid-svg-icons'
 import { partition } from '@shared/utils'
 import { useMemo, useState } from 'react'
@@ -23,8 +23,7 @@ enum Tabs {
 
 export const ContinueModal = ({ onClose }: Props) => {
 	const [tab, setTab] = useState(Tabs.All)
-
-	const sessions = useAppStore((state) => state.client.sessions)
+	const sessions = localSessionsStore.use()
 
 	const tabs = useMemo(() => {
 		const all = Object.entries(sessions)

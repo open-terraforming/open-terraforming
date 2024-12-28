@@ -2,12 +2,15 @@ import { Button } from '@/components'
 import { Box } from '@/components/Box'
 import { Flex } from '@/components/Flex/Flex'
 import { ApiState, setApiState } from '@/store/modules/api'
-import { SavedSessionInfo, setClientState } from '@/store/modules/client'
-import { useAppDispatch, useAppStore } from '@/utils/hooks'
+import { useAppDispatch } from '@/utils/hooks'
 import {
 	extractGameIdFromLocal,
 	localGamesStore,
 } from '@/utils/localGamesStore'
+import {
+	localSessionsStore,
+	SavedSessionInfo,
+} from '@/utils/localSessionsStore'
 import { numberWithSuffix } from '@/utils/numberWithSuffix'
 import { faPlay, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useMemo } from 'react'
@@ -18,14 +21,11 @@ type Props = {
 }
 
 export const SavedGamesList = ({ games }: Props) => {
-	const sessions = useAppStore((state) => state.client.sessions)
 	const dispatch = useAppDispatch()
 
 	const handleRemove = (id: string) => () => {
 		if (confirm('Are you sure you want to forget this game?')) {
-			delete sessions[id]
-
-			dispatch(setClientState({ sessions: { ...sessions } }))
+			localSessionsStore.removeGameData(id)
 
 			if (id.startsWith('local/')) {
 				localGamesStore.removeGame(extractGameIdFromLocal(id))

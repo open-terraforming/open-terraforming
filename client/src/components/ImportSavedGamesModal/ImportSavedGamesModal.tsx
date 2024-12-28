@@ -1,6 +1,5 @@
-import { setClientState } from '@/store/modules/client'
-import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { localGamesStore } from '@/utils/localGamesStore'
+import { localSessionsStore } from '@/utils/localSessionsStore'
 import { ExportedGames } from '@/utils/types'
 import { faUpload } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
@@ -12,9 +11,6 @@ type Props = {
 }
 
 export const ImportSavedGamesModal = ({ onClose }: Props) => {
-	const currentSessions = useAppStore((s) => s.client.sessions)
-
-	const dispatch = useAppDispatch()
 	const [file, setFile] = useState<File>()
 
 	const handleImport = async () => {
@@ -38,14 +34,7 @@ export const ImportSavedGamesModal = ({ onClose }: Props) => {
 				delete value.local
 			}
 
-			dispatch(
-				setClientState({
-					sessions: {
-						...currentSessions,
-						...importedSessions,
-					},
-				}),
-			)
+			localSessionsStore.append(importedSessions)
 
 			onClose()
 		} catch (e) {
