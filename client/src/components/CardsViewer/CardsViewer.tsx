@@ -17,6 +17,7 @@ import { CardsSpecialFilter } from './components/CardsSpecialFilter'
 import { CardsTagsFilter } from './components/CardsTagsFilter'
 import { CardsTypeFilter } from './components/CardsTypeFilter'
 import { CardCheatAddModal } from './components/CardCheatAddModal'
+import { darkStripedBackground } from '@/styles/mixins'
 
 type Props = {
 	onClose: () => void
@@ -107,9 +108,16 @@ export const CardsViewer = ({ onClose }: Props) => {
 	return (
 		<Modal
 			open
-			header="Cards Viewer"
+			header={'Cards viewer'}
 			onClose={onClose}
 			contentStyle={{ minWidth: '1100px', maxWidth: '1100px' }}
+			headerStyle={{ borderBottom: 'none' }}
+			bodyStyle={{
+				padding: 0,
+				display: 'flex',
+				flexDirection: 'column',
+				overflow: 'auto',
+			}}
 		>
 			{cheatAddCardCode && (
 				<CardCheatAddModal
@@ -118,8 +126,8 @@ export const CardsViewer = ({ onClose }: Props) => {
 				/>
 			)}
 
-			<StyledFlex>
-				<div style={{ flex: 1, marginRight: '2rem' }}>
+			<StyledFlex gap="1.5rem">
+				<div style={{ flex: 1 }}>
 					<SearchField
 						type="text"
 						placeholder="Search"
@@ -156,6 +164,9 @@ export const CardsViewer = ({ onClose }: Props) => {
 const StyledContainer = styled.div`
 	display: flex;
 	flex-wrap: wrap;
+	flex: 1;
+	overflow: auto;
+	padding: 1rem;
 `
 
 const SearchField = styled.input`
@@ -164,6 +175,13 @@ const SearchField = styled.input`
 `
 
 const StyledFlex = styled(Flex)`
+	flex-grow: 0;
+	flex-shrink: 0;
+	padding: 0.25rem 1rem;
+	border-bottom: 2px solid ${({ theme }) => theme.colors.border};
+
+	${darkStripedBackground}
+
 	${media.medium} {
 		flex-direction: column;
 	}
