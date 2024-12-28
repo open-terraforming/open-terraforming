@@ -7,6 +7,7 @@ import { Modal } from '@/components/Modal/Modal'
 import { MultiSelect } from '@/components/MultiSelect/MultiSelect'
 import { NumberInput } from '@/components/NumberInput/NumberInput'
 import { ApiState, setApiState } from '@/store/modules/api'
+import { setClientState } from '@/store/modules/client'
 import { useAppDispatch, useAppStore } from '@/utils/hooks'
 import { faRobot, faTimes } from '@fortawesome/free-solid-svg-icons'
 import { ExpansionType } from '@shared/expansions/types'
@@ -18,6 +19,7 @@ import { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 type Props = {
+	local?: boolean
 	onClose: () => void
 }
 
@@ -46,8 +48,9 @@ const EXPANSIONS_OPTIONS = [
 	},
 ]
 
-export const NewGameModal = ({ onClose }: Props) => {
+export const NewGameModal = ({ onClose, local }: Props) => {
 	const dispatch = useAppDispatch()
+
 	const [error, setError] = useState(null as string | null)
 	const [name, setName] = useState('')
 	const [mode, setMode] = useState(GameModeType.Standard)
@@ -94,6 +97,40 @@ export const NewGameModal = ({ onClose }: Props) => {
 
 	const handleCreate = async () => {
 		if (!valid || loading) {
+			return
+		}
+
+		if (local) {
+			dispatch(
+				setClientState({
+					localGameConfig: {
+						name,
+						mode,
+						map,
+						bots,
+						public: isPublic,
+						spectatorsAllowed: spectators,
+						expansions,
+						draft,
+						solarPhase: wgTerraforming,
+						fastBots,
+						adminPassword: 'local',
+						debugBots: false,
+						everybodyIsAdmin: false,
+						fastProduction: false,
+						instantBots: false,
+						maxBots: 5,
+					},
+				}),
+			)
+
+			dispatch(
+				setApiState({
+					state: ApiState.Connecting,
+					gameId: `local/${Date.now()}`,
+				}),
+			)
+
 			return
 		}
 
@@ -151,7 +188,7 @@ export const NewGameModal = ({ onClose }: Props) => {
 			<Modal
 				open={true}
 				onClose={onClose}
-				header="Start a new game"
+				header={local ? 'Start a new local game' : 'Start a new online game'}
 				footer={(close) => (
 					<>
 						<Button
@@ -209,41 +246,45 @@ export const NewGameModal = ({ onClose }: Props) => {
 						/>
 					)}
 
-					{serverInfo?.publicGames.enabled && (
-						<Checkbox
-							checked={isPublic}
-							onChange={(v) => setPublic(v)}
-							label="Public (Allow players to join using server browser)"
-						/>
-					)}
+					{!local && (
+						<>
+							{serverInfo?.publicGames.enabled && (
+								<Checkbox
+									checked={isPublic}
+									onChange={(v) => setPublic(v)}
+									label="Public (Allow players to join using server browser)"
+								/>
+							)}
 
-					<Checkbox
-						checked={spectators}
-						onChange={(v) => setSpectators(v)}
-						label="Allow spectators"
-					/>
-
-					<Checkbox
-						checked={disablePlayersAfterDisconnecting}
-						onChange={(v) => setDisablePlayersAfterDisconnecting(v)}
-						label="Disable players after disconnecting - their turns will be automatically skipped"
-					/>
-
-					{disablePlayersAfterDisconnecting && (
-						<TimeoutField align="center" gap={'0.5rem'}>
-							<div>After</div>
-							<TimeoutInput
-								value={disablePlayersAfterDisconnectingInSeconds?.toString()}
-								onChange={(v) =>
-									setDisablePlayersAfterDisconnectingInSeconds(+v)
-								}
-								type="number"
-								step="1"
-								min="5"
-								max="216000"
+							<Checkbox
+								checked={spectators}
+								onChange={(v) => setSpectators(v)}
+								label="Allow spectators"
 							/>
-							<div>seconds</div>
-						</TimeoutField>
+
+							<Checkbox
+								checked={disablePlayersAfterDisconnecting}
+								onChange={(v) => setDisablePlayersAfterDisconnecting(v)}
+								label="Disable players after disconnecting - their turns will be automatically skipped"
+							/>
+
+							{disablePlayersAfterDisconnecting && (
+								<TimeoutField align="center" gap={'0.5rem'}>
+									<div>After</div>
+									<TimeoutInput
+										value={disablePlayersAfterDisconnectingInSeconds?.toString()}
+										onChange={(v) =>
+											setDisablePlayersAfterDisconnectingInSeconds(+v)
+										}
+										type="number"
+										step="1"
+										min="5"
+										max="216000"
+									/>
+									<div>seconds</div>
+								</TimeoutField>
+							)}
+						</>
 					)}
 				</Field>
 

@@ -16,6 +16,7 @@ type Props = {
 	$mr?: number | 'auto'
 	$mb?: number | 'auto'
 	$ml?: number | 'auto'
+	$flex?: number | string
 }
 
 const spacing = (value: number | 'auto') =>
@@ -40,4 +41,5 @@ export const Box = styled(Flex)<Props>`
 	${({ $mr }) => $mr && `margin-right: ${spacing($mr)};`}
 	${({ $mb }) => $mb && `margin-bottom: ${spacing($mb)};`}
 	${({ $ml }) => $ml && `margin-left: ${spacing($ml)};`}
+	${({ $flex }) => $flex && `flex: ${$flex};`}
 `

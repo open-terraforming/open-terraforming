@@ -20,10 +20,10 @@ import { ServerInfo } from '@shared/extra'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
-import { ContinueModal } from './components/ContinueModal'
+import { ContinueModal } from './components/ContinueModal/ContinueModal'
 import { Footer } from './components/Footer'
 import { GamesListModal } from './components/GamesListModal'
-import { NewGameModal } from './components/NewGameModal'
+import { NewGamePickerModal } from './components/NewGamePickerModal'
 import { SettingsModal } from './components/SettingsModal'
 
 export const Main = () => {
@@ -81,7 +81,9 @@ export const Main = () => {
 							</DialogButton>
 						)}
 
-						<DialogWrapper dialog={(close) => <NewGameModal onClose={close} />}>
+						<DialogWrapper
+							dialog={(close) => <NewGamePickerModal onClose={close} />}
+						>
 							{(open) => (
 								<Button
 									onClick={open}
