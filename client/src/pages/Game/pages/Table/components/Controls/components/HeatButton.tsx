@@ -1,11 +1,16 @@
+import { Button } from '@/components'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore, useGameState, usePlayerState } from '@/utils/hooks'
-import { Button } from '@/components'
+import {
+	faArrowRight,
+	faThermometerHalf,
+} from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThermometerHalf } from '@fortawesome/free-solid-svg-icons'
-import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
 import { StandardProjectType, buyStandardProject } from '@shared/index'
 import { Projects } from '@shared/projects'
+import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
+import { Flex } from '@/components/Flex/Flex'
+import styled from 'styled-components'
 
 export const HeatButton = () => {
 	const api = useApi()
@@ -24,19 +29,31 @@ export const HeatButton = () => {
 		}
 	}
 
+	const cost = project.cost({ game, player })
+
 	return (
-		<Button
+		<IncreaseButton
 			noClip
 			disabled={!usable}
 			onClick={buyTemperature}
 			tooltip={
 				<>
-					{`Increase temperature for ${project.cost({ game, player })}`}
+					{`Increase temperature for ${cost}`}
 					<ResourceIcon margin res={project.resource} />
 				</>
 			}
 		>
-			+<FontAwesomeIcon icon={faThermometerHalf} />
-		</Button>
+			<Flex gap="0.25rem">
+				<div>
+					{cost} <ResourceIcon res={project.resource} />
+				</div>
+				<FontAwesomeIcon icon={faArrowRight} />{' '}
+				<FontAwesomeIcon icon={faThermometerHalf} />
+			</Flex>
+		</IncreaseButton>
 	)
 }
+
+const IncreaseButton = styled(Button)`
+	padding: 0.25rem 0.25rem;
+`
