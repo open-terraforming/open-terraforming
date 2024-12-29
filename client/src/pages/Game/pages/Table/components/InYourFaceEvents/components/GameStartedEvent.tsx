@@ -10,9 +10,7 @@ import { Started } from '@shared/index'
 import { Milestones } from '@shared/milestones'
 import { styled } from 'styled-components'
 import { ColonyDisplay } from '../../ColoniesModal/components/ColonyDisplay'
-import { CompetitionDisplay } from '../../CompetitionsModal/components/CompetitionDisplay'
 import { GlobalEventsDisplay } from '../../GlobalEventsModal/components/GlobalEventsDisplay'
-import { MilestoneDisplay } from '../../MilestonesModal/components/MilestoneDisplay'
 
 type Props = {
 	event: Started
@@ -54,45 +52,30 @@ export const GameStartedEvent = ({ event }: Props) => {
 					</ClippedBox>
 				)}
 
-				<Flex gap="0.25rem" align="stretch">
-					<div>
-						<ClippedBox>
-							<ClippedBoxTitle $spacing>Milestones</ClippedBoxTitle>
-							<Box
-								$p={2}
-								justify="center"
-								gap="0.25rem"
-								wrap="wrap"
-								align="stretch"
-							>
-								{game.map.milestones.map((m) => (
-									<MilestoneContainer key={m}>
-										<MilestoneDisplay
-											milestone={Milestones[m]}
-											playing={false}
-										/>
-									</MilestoneContainer>
-								))}
-							</Box>
-						</ClippedBox>
-						{event.globalEvents && (
-							<Box $mt={2} direction="column" align="stretch">
-								<ClippedBox>
-									<ClippedBoxTitle $spacing>Global Events</ClippedBoxTitle>
-									<Box $p={2} justify="center">
-										<GlobalEventsDisplay
-											comingEvent={event.globalEvents.coming}
-											currentEvent={event.globalEvents.current}
-											distantEvent={event.globalEvents.distant}
-										/>
-									</Box>
-								</ClippedBox>
-							</Box>
-						)}
-					</div>
-
-					<ClippedBox>
-						<ClippedBoxTitle $spacing>Competitions</ClippedBoxTitle>
+				<ClippedBox>
+					<ClippedBoxTitle $spacing>Milestones & Competitions</ClippedBoxTitle>
+					<Flex>
+						<Box
+							$p={2}
+							justify="center"
+							gap="0.25rem"
+							wrap="wrap"
+							align="stretch"
+						>
+							{game.map.milestones.map((m) => (
+								<MilestoneContainer key={m}>
+									<ClippedBox>
+										<ClippedBoxTitle $spacing>
+											{Milestones[m].title}
+										</ClippedBoxTitle>
+										<Box $p={2}>
+											<div>{Milestones[m].description}</div>
+											<Box $ml="auto">{Milestones[m].limit}</Box>
+										</Box>
+									</ClippedBox>
+								</MilestoneContainer>
+							))}
+						</Box>
 						<Box
 							$p={2}
 							justify="center"
@@ -106,13 +89,28 @@ export const GameStartedEvent = ({ event }: Props) => {
 										<ClippedBoxTitle $spacing>
 											{Competitions[c].title}
 										</ClippedBoxTitle>
-										{Competitions[c].description}
+										<Box $p={2}>{Competitions[c].description}</Box>
 									</ClippedBox>
 								</MilestoneContainer>
 							))}
 						</Box>
-					</ClippedBox>
-				</Flex>
+					</Flex>
+				</ClippedBox>
+
+				{event.globalEvents && (
+					<Box $mt={2} direction="column" align="stretch">
+						<ClippedBox>
+							<ClippedBoxTitle $spacing>Global Events</ClippedBoxTitle>
+							<Box $p={2} justify="center">
+								<GlobalEventsDisplay
+									comingEvent={event.globalEvents.coming}
+									currentEvent={event.globalEvents.current}
+									distantEvent={event.globalEvents.distant}
+								/>
+							</Box>
+						</ClippedBox>
+					</Box>
+				)}
 			</Box>
 		</Container>
 	)
