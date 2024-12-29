@@ -1,14 +1,12 @@
 import { useApi } from '@/context/ApiContext'
-import { setClientState } from '@/store/modules/client'
-import { useAppDispatch, useAppStore, useGameState } from '@/utils/hooks'
+import { useGameState } from '@/utils/hooks'
+import { localSessionsStore } from '@/utils/localSessionsStore'
 import { GameStateValue } from '@shared/gameState'
 import { useEffect } from 'react'
 
 export const SessionController = () => {
-	const dispatch = useAppDispatch()
 	const api = useApi()
 	const game = useGameState()
-	const sessions = useAppStore((state) => state.client.sessions)
 
 	// Update session data when game changes
 	useEffect(() => {
@@ -25,20 +23,12 @@ export const SessionController = () => {
 		}
 
 		// Save some basic game info into session store
-		dispatch(
-			setClientState({
-				sessions: {
-					...sessions,
-					[sessionKey]: {
-						...sessions[sessionKey],
-						name: game.name,
-						generation: game.generation,
-						finished: game.state === GameStateValue.Ended,
-						lastUpdateAt: Date.now(),
-					},
-				},
-			}),
-		)
+		localSessionsStore.setGameData(sessionKey, {
+			name: game.name,
+			generation: game.generation,
+			finished: game.state === GameStateValue.Ended,
+			lastUpdateAt: Date.now(),
+		})
 	}, [game])
 
 	return <></>

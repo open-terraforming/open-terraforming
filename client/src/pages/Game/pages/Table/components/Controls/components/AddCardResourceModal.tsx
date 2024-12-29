@@ -1,5 +1,6 @@
 import { Button } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
+import { MinimizeIcon } from '@/components/MinimizeIcon'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { useLocale } from '@/context/LocaleContext'
@@ -16,9 +17,10 @@ import { Symbols } from '../../CardView/components/Symbols'
 
 type Props = {
 	pendingAction: ReturnType<typeof addCardResourceAction>
+	onClose: () => void
 }
 
-export const AddCardResourceModal = ({ pendingAction }: Props) => {
+export const AddCardResourceModal = ({ pendingAction, onClose }: Props) => {
 	const player = usePlayerState()
 	const game = useGameState()
 	const api = useApi()
@@ -58,8 +60,8 @@ export const AddCardResourceModal = ({ pendingAction }: Props) => {
 	return (
 		<Modal
 			open
-			hideClose
-			allowClose={false}
+			onClose={onClose}
+			closeIcon={<MinimizeIcon />}
 			footer={
 				selected && (
 					<ConfirmButton onClick={handleConfirm}>

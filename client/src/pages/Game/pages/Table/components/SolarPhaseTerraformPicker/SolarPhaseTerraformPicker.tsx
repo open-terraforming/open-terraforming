@@ -1,6 +1,7 @@
 import { Button, Message } from '@/components'
 import { Flex } from '@/components/Flex/Flex'
 import { Lore } from '@/components/Lore'
+import { MinimizeIcon } from '@/components/MinimizeIcon'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore } from '@/utils/hooks'
@@ -10,9 +11,10 @@ import { PlayerAction } from '@shared/player-actions'
 
 type Props = {
 	action: PlayerAction
+	onClose: () => void
 }
 
-export const SolarPhaseTerraformPicker = ({}: Props) => {
+export const SolarPhaseTerraformPicker = ({ onClose }: Props) => {
 	const api = useApi()
 	const game = useAppStore((state) => state.game.state)
 
@@ -21,7 +23,12 @@ export const SolarPhaseTerraformPicker = ({}: Props) => {
 	}
 
 	return (
-		<Modal header="World Government Terraforming" open allowClose={false}>
+		<Modal
+			header="World Government Terraforming"
+			open
+			onClose={onClose}
+			closeIcon={<MinimizeIcon />}
+		>
 			<div>
 				<Flex direction="column" style={{ gap: 10 }}>
 					<Lore>

@@ -6,7 +6,7 @@ import { DialogButton } from '@/components/DialogButton/DialogButton'
 import { Mars } from '@/components/Mars/Mars'
 import { Modal } from '@/components/Modal/Modal'
 import { setApiInfo } from '@/store/modules/api'
-import { useAppStore } from '@/utils/hooks'
+import { localSessionsStore } from '@/utils/localSessionsStore'
 import {
 	faCog,
 	faInfo,
@@ -20,16 +20,15 @@ import { ServerInfo } from '@shared/extra'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import styled from 'styled-components'
-import { ContinueModal } from './components/ContinueModal'
+import { ContinueModal } from './components/ContinueModal/ContinueModal'
 import { Footer } from './components/Footer'
 import { GamesListModal } from './components/GamesListModal'
-import { NewGameModal } from './components/NewGameModal'
+import { NewGamePickerModal } from './components/NewGamePickerModal'
 import { SettingsModal } from './components/SettingsModal'
 
 export const Main = () => {
 	const dispatch = useDispatch()
-
-	const sessions = useAppStore((state) => state.client.sessions)
+	const sessions = localSessionsStore.sessions
 
 	const [info, setInfo] = useState(null as ServerInfo | null)
 	const [loading, setLoading] = useState(true)
@@ -81,7 +80,9 @@ export const Main = () => {
 							</DialogButton>
 						)}
 
-						<DialogWrapper dialog={(close) => <NewGameModal onClose={close} />}>
+						<DialogWrapper
+							dialog={(close) => <NewGamePickerModal onClose={close} />}
+						>
 							{(open) => (
 								<Button
 									onClick={open}

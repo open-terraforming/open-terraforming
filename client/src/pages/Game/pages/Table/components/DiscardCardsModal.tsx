@@ -8,9 +8,10 @@ import { CardDisplayModal, CardInfo } from './CardDisplayModal/CardDisplayModal'
 
 type Props = {
 	count: number
+	onClose: () => void
 }
 
-export const DiscardCardsModal = ({ count }: Props) => {
+export const DiscardCardsModal = ({ count, onClose }: Props) => {
 	const api = useApi()
 	const player = usePlayerState()
 	const playerCards = player.cards
@@ -41,7 +42,7 @@ export const DiscardCardsModal = ({ count }: Props) => {
 	return (
 		<CardDisplayModal
 			contentStyle={{ minWidth: '80%' }}
-			hideClose={true}
+			onClose={onClose}
 			header="Discard cards"
 			footer={
 				<>
@@ -57,6 +58,7 @@ export const DiscardCardsModal = ({ count }: Props) => {
 			onSelect={selectedChanged}
 			player={player}
 			evaluateMode="viewing"
+			closeAsMinimize
 		/>
 	)
 }

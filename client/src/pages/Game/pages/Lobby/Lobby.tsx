@@ -22,7 +22,9 @@ const Lobby = () => {
 	const players = useAppStore((state) => state.game.state?.players)
 	const player = useAppStore((state) => state.game.player)
 	const info = useAppStore((state) => state.game.info)
+	const gameId = useAppStore((state) => state.api.gameId)
 	const isReady = player?.state === PlayerStateValue.Ready
+	const isLocal = gameId?.startsWith('local/')
 
 	const allReady =
 		players.find((p) => p.state !== PlayerStateValue.Ready) === undefined
@@ -66,7 +68,7 @@ const Lobby = () => {
 					</>
 				}
 			>
-				{info && <LobbyInviteLink id={info.id} />}
+				{!isLocal && info && <LobbyInviteLink id={info.id} />}
 				<Flex align="flex-start">
 					<Players>
 						{players?.map((p) => (

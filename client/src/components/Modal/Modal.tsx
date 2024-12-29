@@ -8,6 +8,7 @@ import {
 	MouseEvent,
 	ReactNode,
 	useCallback,
+	useEffect,
 	useState,
 } from 'react'
 import ReactDOM from 'react-dom'
@@ -23,6 +24,7 @@ type RenderCallback = (
 ) => ReactNode
 
 export interface ModalProps {
+	className?: string
 	children: ReactNode | RenderCallback
 	contentStyle?: CSSProperties
 	headerStyle?: CSSProperties
@@ -43,6 +45,7 @@ export interface ModalProps {
 let modalPortal: HTMLDivElement | null = null
 
 export const Modal = ({
+	className,
 	children,
 	contentStyle,
 	backgroundStyle,
@@ -94,6 +97,13 @@ export const Modal = ({
 		}
 	})
 
+	useEffect(() => {
+		if (open) {
+			setIsClosing(false)
+			setClosingAnimation(undefined)
+		}
+	}, [open])
+
 	const popup = (
 		<>
 			{open && (
@@ -101,13 +111,19 @@ export const Modal = ({
 					onClick={allowClose ? handleTameClose : undefined}
 					closing={isClosing}
 					style={backgroundStyle}
+					className={className}
 				>
 					<Popup
 						style={contentStyle}
 						closing={isClosing}
 						closeAnimation={closingAnimation}
+						className="modal-popup"
 					>
-						<Dialog role="dialog" onClick={stopEvent}>
+						<Dialog
+							role="dialog"
+							onClick={stopEvent}
+							className="modal-popup-dialog"
+						>
 							{header && (
 								<Header style={headerStyle}>
 									{typeof header === 'function'

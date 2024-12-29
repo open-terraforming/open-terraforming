@@ -9,7 +9,7 @@ type Props = {
 
 export const CardsTypeFilter = ({ types, setTypes }: Props) => {
 	return (
-		<Flex>
+		<Flex gap="0.5rem">
 			{Object.entries(CardType)
 				.filter(([key]) => isNaN(Number(key)))
 				.map(([key, value]) => (
@@ -33,7 +33,7 @@ export const CardsTypeFilter = ({ types, setTypes }: Props) => {
 
 const StyledTag = styled.div<{ $selected: boolean }>`
 	opacity: ${(props) => (props.$selected ? 1 : 0.5)};
-	padding: 0.5rem;
-	margin: 0.5rem;
+	padding: 0.5rem 0.5rem 0.25rem 0.5rem;
+	margin: 0.5rem 0 0.25rem 0;
 	cursor: pointer;
 `

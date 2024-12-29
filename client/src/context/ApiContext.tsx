@@ -9,6 +9,8 @@ import {
 	setGameStateDiff,
 } from '@/store/modules/game'
 import { useAppStore } from '@/utils/hooks'
+import { localGamesStore } from '@/utils/localGamesStore'
+import { localSessionsStore } from '@/utils/localSessionsStore'
 import { useRefCallback } from '@/utils/useRefCallback'
 import {
 	GameMessage,
@@ -19,6 +21,8 @@ import {
 	MessageType,
 	VERSION,
 } from '@shared/index'
+import { DummyGameLockSystem } from '@shared/lib/dummy-game-lock-system'
+import { LocalServer } from '@shared/localServer/LocalServer'
 import { createContext, ReactNode, useContext, useEffect, useMemo } from 'react'
 import { useDispatch } from 'react-redux'
 
@@ -26,10 +30,11 @@ export const ApiContext = createContext<FrontendGameClient | null>(null)
 
 export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 	const dispatch = useDispatch()
-	const sessions = useAppStore((state) => state.client.sessions)
 	const state = useAppStore((state) => state.api.state)
+	const localGameConfig = useAppStore((state) => state.client.localGameConfig)
 	const gameId = useAppStore((state) => state.api.gameId)
 	const sessionKey = gameId || 'single'
+	const isLocal = gameId?.startsWith('local/')
 
 	const handleConnected = useRefCallback(() => {
 		client.send(handshakeRequest(VERSION))
@@ -54,7 +59,7 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 						}),
 					)
 				} else {
-					if (state === ApiState.Connecting) {
+					if (state !== ApiState.Joined) {
 						dispatch(
 							setApiState({
 								state: ApiState.Connected,
@@ -74,11 +79,11 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 						dispatch(setGameInfo(info))
 					}
 
-					const session = sessions[sessionKey]
+					const session = localSessionsStore.getGameData(sessionKey)
 
 					if (info?.state !== GameStateValue.WaitingForPlayers) {
-						if (session) {
-							client.send(joinRequest(undefined, session.session))
+						if (session || isLocal) {
+							client.send(joinRequest(undefined, session?.session))
 						}
 					}
 				}
@@ -90,14 +95,7 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 				const { error, session, id } = m.data
 
 				if (error === JoinError.InvalidSession) {
-					const newSessions = { ...sessions }
-					delete newSessions[sessionKey]
-
-					dispatch(
-						setClientState({
-							sessions: newSessions,
-						}),
-					)
+					localSessionsStore.removeGameData(sessionKey)
 				}
 
 				if (error) {
@@ -107,32 +105,32 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 							error,
 						}),
 					)
-				} else {
-					dispatch(setGamePlayer(id as number, false))
 
-					dispatch(
-						setClientState({
-							id,
-							sessions: {
-								...sessions,
-								[sessionKey]: {
-									session: session ?? '',
-									name: '',
-									generation: 0,
-									finished: false,
-									lastUpdateAt: Date.now(),
-								},
-							},
-						}),
-					)
-
-					dispatch(
-						setApiState({
-							state: ApiState.Joined,
-							error: undefined,
-						}),
-					)
+					break
 				}
+
+				dispatch(setGamePlayer(id as number, false))
+
+				dispatch(
+					setClientState({
+						id,
+					}),
+				)
+
+				localSessionsStore.setGameData(sessionKey, {
+					session: session ?? '',
+					name: '',
+					generation: 0,
+					finished: false,
+					lastUpdateAt: Date.now(),
+				})
+
+				dispatch(
+					setApiState({
+						state: ApiState.Joined,
+						error: undefined,
+					}),
+				)
 
 				break
 			}
@@ -197,6 +195,37 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 	})
 
 	const client = useMemo(() => {
+		if (isLocal) {
+			const client = new LocalServer(
+				new DummyGameLockSystem(),
+				localGameConfig ?? {},
+				gameId ?? 'local',
+			)
+
+			const localId = gameId?.split('/')[1]
+
+			client.onMessage.on(handleMessage)
+
+			client.onUpdate.on((s) => {
+				if (localId) {
+					localGamesStore.setGame(localId, {
+						state: s,
+						config: client.game.config,
+					})
+				}
+			})
+
+			const storedGame = localId && localGamesStore.getGame(localId)
+
+			if (storedGame) {
+				client.load(storedGame.state, storedGame.config)
+			}
+
+			setTimeout(() => handleConnected())
+
+			return client
+		}
+
 		const client = new FrontendGameClient(getWebsocketServer())
 
 		client.onConnected = handleConnected
@@ -204,7 +233,7 @@ export const ApiContextProvider = ({ children }: { children: ReactNode }) => {
 		client.onMessage = handleMessage
 
 		return client
-	}, [handleConnected, handleDisconnected, handleMessage])
+	}, [isLocal, handleConnected, handleDisconnected, handleMessage])
 
 	useEffect(() => {
 		client.connect(gameId)
