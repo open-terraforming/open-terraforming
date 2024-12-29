@@ -10,6 +10,7 @@ import { GridCellContent, StandardProjectType } from '@shared/index'
 import { Projects } from '@shared/projects'
 import { useCallback } from 'react'
 import { ResourceIcon } from '../../ResourceIcon/ResourceIcon'
+import { styled } from 'styled-components'
 
 type Props = {
 	className?: string
@@ -43,7 +44,7 @@ export const GreeneryButton = ({ className }: Props) => {
 	}, [player, api])
 
 	return (
-		<Button
+		<IncreaseButton
 			noClip
 			className={className}
 			disabled={!usable}
@@ -62,6 +63,10 @@ export const GreeneryButton = ({ className }: Props) => {
 				<FontAwesomeIcon icon={faArrowRight} />{' '}
 				<FontAwesomeIcon icon={faTree} />
 			</Flex>
-		</Button>
+		</IncreaseButton>
 	)
 }
+
+const IncreaseButton = styled(Button)`
+	padding: 0.25rem 0.25rem;
+`
