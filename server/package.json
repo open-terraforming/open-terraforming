@@ -15,6 +15,9 @@
     "lint": "eslint \"src/\" --ext .ts"
   },
   "author": "Jan Zípek",
+	"engines": {
+		"node": "^24.0.0"
+	},
   "license": "AGPL-3.0-or-later",
   "devDependencies": {
     "@types/express": "^4.17.21",
