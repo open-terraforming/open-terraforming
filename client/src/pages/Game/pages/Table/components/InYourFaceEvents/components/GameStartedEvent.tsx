@@ -138,6 +138,8 @@ const SubTitle = styled.div`
 `
 
 const MilestoneContainer = styled.div`
+	max-width: 25rem;
 	width: 25rem;
 	text-align: left;
+	overflow: hidden;
 `
