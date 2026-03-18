@@ -5,7 +5,7 @@ import { ClippedBoxTitle } from '@/components/ClippedBoxTitle'
 import { Flex } from '@/components/Flex/Flex'
 import { Modal } from '@/components/Modal/Modal'
 import { useGameState } from '@/utils/hooks'
-import { faUser } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight, faUser } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { Competitions } from '@shared/competitions'
 import { Started } from '@shared/index'
@@ -28,7 +28,11 @@ export const GameSetupOverviewModal = ({ open, event, onClose }: Props) => {
 			open={open}
 			onClose={onClose}
 			header={<h2>Game Setup</h2>}
-			footer={<Button onClick={onClose}>Continue</Button>}
+			footer={
+				<Button onClick={onClose} icon={faArrowRight}>
+					Continue To Starting Hand
+				</Button>
+			}
 			footerStyle={{ justifyContent: 'center' }}
 		>
 			<Container>
