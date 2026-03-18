@@ -32,7 +32,7 @@ export const RulingPartyDisplay = ({ party }: { party: CommitteeParty }) => {
 	}
 
 	return (
-		<Container>
+		<Container backdrop>
 			<Tooltip content={t.help.committeeRulingParty}>
 				<Title>
 					<TitleLabel>Ruling party</TitleLabel>

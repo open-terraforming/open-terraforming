@@ -13,7 +13,7 @@ type Props = {
 
 export const DelegatesBox = ({ title, delegates }: Props) => {
 	return (
-		<ClippedBox style={{ flex: 1 }}>
+		<ClippedBox style={{ flex: 1 }} backdrop>
 			<Title>{title}</Title>
 			<Delegates>
 				<DelegatesView delegates={delegates} />
