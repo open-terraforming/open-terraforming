@@ -39,7 +39,7 @@ export const GameSetupOverviewModal = ({ open, event, onClose }: Props) => {
 				<Box gap="0.5rem" wrap="wrap">
 					<Flex gap="0.5rem" align="flex-start">
 						{!!event.colonies?.length && (
-							<ClippedBox>
+							<ClippedBox backdrop>
 								<ClippedBoxTitle $spacing>Colonies</ClippedBoxTitle>
 								<Box $p={2} wrap="wrap" justify="center" align="stretch">
 									{event.colonies.map((c, index) => (
@@ -74,7 +74,7 @@ export const GameSetupOverviewModal = ({ open, event, onClose }: Props) => {
 							</ClippedBox>
 
 							<Box $mt={1}>
-								<ClippedBox>
+								<ClippedBox backdrop>
 									<ClippedBoxTitle $spacing>
 										Milestones & Competitions
 									</ClippedBoxTitle>
@@ -112,7 +112,7 @@ export const GameSetupOverviewModal = ({ open, event, onClose }: Props) => {
 
 							{event.globalEvents && (
 								<Box $mt={2} direction="column" align="stretch">
-									<ClippedBox>
+									<ClippedBox backdrop>
 										<ClippedBoxTitle $spacing>Global Events</ClippedBoxTitle>
 										<Box $p={2} justify="center">
 											<GlobalEventsDisplay

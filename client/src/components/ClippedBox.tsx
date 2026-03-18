@@ -1,4 +1,4 @@
-import { stripedBackground } from '@/styles/mixins'
+import { darkStripedBackground, stripedBackground } from '@/styles/mixins'
 import { CSSProperties, ReactNode } from 'react'
 import { css, styled } from 'styled-components'
 
@@ -8,6 +8,7 @@ type Props = {
 	children?: ReactNode
 	style?: CSSProperties
 	clipSize?: string
+	backdrop?: boolean
 	onClick?: () => void
 	innerSpacing?: boolean
 }
@@ -19,6 +20,7 @@ export const ClippedBox = ({
 	onClick,
 	clipSize = '7px',
 	innerSpacing,
+	backdrop,
 }: Props) => {
 	return (
 		<OuterBorder
@@ -27,7 +29,12 @@ export const ClippedBox = ({
 			$clipSize={clipSize}
 			onClick={onClick}
 		>
-			<Inner className="inner" $clipSize={clipSize} $spacing={innerSpacing}>
+			<Inner
+				className="inner"
+				$clipSize={clipSize}
+				$spacing={innerSpacing}
+				$backdrop={backdrop}
+			>
 				{children}
 			</Inner>
 		</OuterBorder>
@@ -50,7 +57,11 @@ const OuterBorder = styled.div<{ $clipSize: string }>`
 	`}
 `
 
-const Inner = styled.div<{ $clipSize: string; $spacing?: boolean }>`
+const Inner = styled.div<{
+	$clipSize: string
+	$spacing?: boolean
+	$backdrop?: boolean
+}>`
 	height: 100%;
 	box-sizing: border-box;
 
@@ -60,7 +71,8 @@ const Inner = styled.div<{ $clipSize: string; $spacing?: boolean }>`
 			padding: 0.5rem;
 		`}
 
-	${stripedBackground()}
+	${({ $backdrop }) =>
+		$backdrop ? darkStripedBackground : stripedBackground()}
 
 	${({ $clipSize }) => css`
 		clip-path: polygon(
