@@ -191,15 +191,15 @@ export const NewGameModal = ({ onClose, local }: Props) => {
 				header={local ? 'Start a new local game' : 'Start a new online game'}
 				footer={(close) => (
 					<>
+						<Button icon={faTimes} onClick={close} schema="transparent">
+							Cancel
+						</Button>
 						<Button
 							disabled={!valid}
 							isLoading={loading}
 							onClick={handleCreate}
 						>
 							Create
-						</Button>
-						<Button icon={faTimes} onClick={close} schema="transparent">
-							Cancel
 						</Button>
 					</>
 				)}
