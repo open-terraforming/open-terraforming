@@ -31,7 +31,7 @@ export const GlobalEventView = ({
 	)
 
 	return (
-		<Container>
+		<Container backdrop>
 			<Title>{t.globalEvents[globalEvent.code]}</Title>
 			<Inner>
 				<Delegates $faded={!!highlightEffect}>

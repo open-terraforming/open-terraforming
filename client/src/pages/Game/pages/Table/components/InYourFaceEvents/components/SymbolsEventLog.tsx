@@ -180,7 +180,7 @@ export const SymbolsEventLog = ({
 					{
 						symbol: SymbolType.PartyLeader,
 						color: !event.playerId ? '#ccc' : players[event.playerId].color,
-						title: `${!event.playerId ? 'Neutral' : players[event.playerId].name} is now party leader`,
+						title: `${!event.playerId ? 'Neutral' : players[event.playerId].name} is now party leader of ${t.committeeParties[event.partyCode]}`,
 						noRightSpacing: true,
 					},
 					{ committeeParty: event.partyCode, noSpacing: true },

@@ -143,7 +143,7 @@ export const ColonyDisplay = ({
 	}
 
 	return (
-		<ClippedBox style={{ margin: '0.5rem' }}>
+		<ClippedBox style={{ margin: '0.5rem' }} backdrop>
 			<ClippedBoxTitle $spacing $centered={false}>
 				{t.colonies[info.code]}
 			</ClippedBoxTitle>
