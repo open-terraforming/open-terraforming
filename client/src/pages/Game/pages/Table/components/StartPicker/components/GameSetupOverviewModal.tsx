@@ -34,7 +34,7 @@ export const GameSetupOverviewModal = ({ open, event, onClose }: Props) => {
 			<Container>
 				<Box gap="0.5rem" wrap="wrap">
 					<Flex gap="0.5rem" align="flex-start">
-						{event.colonies && (
+						{!!event.colonies?.length && (
 							<ClippedBox>
 								<ClippedBoxTitle $spacing>Colonies</ClippedBoxTitle>
 								<Box $p={2} wrap="wrap" justify="center" align="stretch">
@@ -68,19 +68,14 @@ export const GameSetupOverviewModal = ({ open, event, onClose }: Props) => {
 									))}
 								</Box>
 							</ClippedBox>
-							<Box $mt={1} $flex={1}>
+
+							<Box $mt={1}>
 								<ClippedBox>
 									<ClippedBoxTitle $spacing>
 										Milestones & Competitions
 									</ClippedBoxTitle>
 									<Flex>
-										<Box
-											$p={2}
-											justify="center"
-											gap="0.25rem"
-											wrap="wrap"
-											align="stretch"
-										>
+										<Box $p={2} direction="column" gap="0.25rem">
 											{game.map.milestones.map((m) => (
 												<MilestoneContainer key={m}>
 													<ClippedBox>
@@ -95,13 +90,7 @@ export const GameSetupOverviewModal = ({ open, event, onClose }: Props) => {
 												</MilestoneContainer>
 											))}
 										</Box>
-										<Box
-											$p={2}
-											justify="center"
-											gap="0.25rem"
-											wrap="wrap"
-											align="stretch"
-										>
+										<Box $p={2} direction="column" gap="0.25rem">
 											{game.map.competitions.map((c) => (
 												<MilestoneContainer key={c}>
 													<ClippedBox>
@@ -116,6 +105,7 @@ export const GameSetupOverviewModal = ({ open, event, onClose }: Props) => {
 									</Flex>
 								</ClippedBox>
 							</Box>
+
 							{event.globalEvents && (
 								<Box $mt={2} direction="column" align="stretch">
 									<ClippedBox>
@@ -140,11 +130,9 @@ export const GameSetupOverviewModal = ({ open, event, onClose }: Props) => {
 
 const Container = styled.div`
 	text-align: center;
-	margin: 1rem 3rem;
 `
 
 const MilestoneContainer = styled.div`
-	max-width: 25rem;
 	width: 25rem;
 	text-align: left;
 	overflow: hidden;
