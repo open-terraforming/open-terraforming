@@ -9,8 +9,11 @@ export const ClippedBoxTitle = styled.div<{
 	text-transform: uppercase;
 
 	${({ $centered }) =>
-		$centered &&
-		css`
-			text-align: center;
-		`}
+		$centered
+			? css`
+					text-align: center;
+				`
+			: css`
+					text-align: left;
+				`}
 `

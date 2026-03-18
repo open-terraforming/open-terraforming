@@ -137,11 +137,17 @@ const popAnimation = keyframes`
 `
 
 const Inner = styled(ClippedBox)`
+	max-height: 75vh;
+	overflow: auto;
+
 	> .inner {
 		position: relative;
-		max-height: 80%;
 		box-sizing: border-box;
 		padding: 0.5rem;
+		max-height: 75vh;
+		overflow: auto;
+		display: flex;
+		flex-direction: column;
 	}
 `
 
@@ -162,6 +168,8 @@ const Event = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	flex: 1;
+	overflow: auto;
 `
 
 const minimizeToTopLeft = keyframes`

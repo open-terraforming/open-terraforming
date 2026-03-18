@@ -48,6 +48,7 @@ export enum EventType {
 	NewGovernment,
 	PlayerMovedDelegate,
 	CommitteePartyActivePolicyActivated,
+	Started,
 }
 
 export type StartingSetup = {
@@ -294,6 +295,21 @@ export type CommitteePartyActivePolicyActivated = {
 	changes: GameEvent[]
 }
 
+export type Started = {
+	type: EventType.Started
+	colonies?: ColonyState[]
+	globalEvents?: {
+		current: string | null
+		coming: string | null
+		distant: string | null
+	}
+	players: {
+		id: number
+		name: string
+		color: string
+	}[]
+}
+
 export type GameEvent = BaseGameEvent &
 	(
 		| CardPlayed
@@ -331,6 +347,7 @@ export type GameEvent = BaseGameEvent &
 		| NewGovernment
 		| PlayerMovedDelegate
 		| CommitteePartyActivePolicyActivated
+		| Started
 	)
 
 export type PopEvent = (PlayingChanged | NewGeneration | ProductionPhase) & {

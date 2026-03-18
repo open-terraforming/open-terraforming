@@ -1,4 +1,6 @@
 import { Button, Tooltip } from '@/components'
+import { ClippedBox } from '@/components/ClippedBox'
+import { ClippedBoxTitle } from '@/components/ClippedBoxTitle'
 import { Flex } from '@/components/Flex/Flex'
 import { useApi } from '@/context/ApiContext'
 import { useGameModals } from '@/context/GameModalsContext'
@@ -11,6 +13,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { buildColony, tradeWithColony } from '@shared/actions'
+import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 import {
 	canBuildColony,
 	canTradeWithColony,
@@ -24,7 +27,6 @@ import { darken, lighten } from 'polished'
 import { Fragment, ReactNode } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { Symbols } from '../../CardView/components/Symbols'
-import { ColoniesLookupApi } from '@shared/ColoniesLookupApi'
 
 type Props = {
 	index: number
@@ -141,10 +143,10 @@ export const ColonyDisplay = ({
 	}
 
 	return (
-		<Container>
-			<Title>
-				<TitleName>{t.colonies[info.code]}</TitleName>
-			</Title>
+		<ClippedBox style={{ margin: '0.5rem' }}>
+			<ClippedBoxTitle $spacing $centered={false}>
+				{t.colonies[info.code]}
+			</ClippedBoxTitle>
 
 			<Info>
 				<div>
@@ -302,7 +304,7 @@ export const ColonyDisplay = ({
 					)}
 				</Actions>
 			)}
-		</Container>
+		</ClippedBox>
 	)
 }
 
@@ -311,27 +313,10 @@ const PlayerColony = styled.div`
 	height: 1rem;
 `
 
-const Container = styled.div`
-	border: 2px solid ${({ theme }) => theme.colors.border};
-	margin: 0.5rem;
-	display: flex;
-	flex-direction: column;
-`
-
-const Title = styled.div`
-	background-color: ${({ theme }) => theme.colors.border};
-	display: flex;
-	text-transform: uppercase;
-`
-
-const TitleName = styled.div`
-	padding: 0.5rem;
-`
-
 const Actions = styled(Flex)`
 	justify-content: flex-end;
 	gap: 0.5rem;
-	margin-top: 0.5rem;
+	margin-top: 0.25rem;
 `
 
 const Action = styled(Button)`
@@ -347,6 +332,7 @@ const SlotRect = styled.div<{ $highlighted: boolean }>`
 	align-items: center;
 	justify-content: center;
 	position: relative;
+	box-sizing: border-box;
 
 	${({ $highlighted, theme }) =>
 		$highlighted &&
@@ -368,6 +354,7 @@ const Slot = styled.div`
 const Slots = styled(Flex)`
 	padding: 0 0.5rem;
 	align-items: flex-end;
+	margin-bottom: 0.25rem;
 `
 
 const popOut = keyframes`
@@ -388,7 +375,6 @@ const SlotLabel = styled.div<{
 	$isStop: boolean
 	$isHighlighted: boolean
 }>`
-	margin-left: 2px;
 	margin-top: 2px;
 	border: 2px solid transparent;
 	width: 3rem;
@@ -425,7 +411,7 @@ const SlotLabel = styled.div<{
 `
 
 const Info = styled(Flex)`
-	padding: 0.5rem;
+	padding: 0.25rem 0.5rem 0.5rem 0.5rem;
 	flex: 1;
 `
 

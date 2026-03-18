@@ -3,9 +3,10 @@ import { MinimizeIcon } from '@/components/MinimizeIcon'
 import { Modal } from '@/components/Modal/Modal'
 import { useApi } from '@/context/ApiContext'
 import { useAppStore, useGameState, usePlayerState } from '@/utils/hooks'
-import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faInfo } from '@fortawesome/free-solid-svg-icons'
 import { pickStarting } from '@shared/actions'
 import { CardsLookupApi } from '@shared/cards'
+import { EventType } from '@shared/index'
 import { PlayerActionType } from '@shared/player-actions'
 import { simulateCardEffects } from '@shared/utils/simulate-card-effects'
 import { simulateCardPassiveEffectsOnStart } from '@shared/utils/simulateCardPassiveEffectsOnStart'
@@ -15,6 +16,7 @@ import { CardPicker, PickerType } from '../CardPicker/CardPicker'
 import { CardView } from '../CardView/CardView'
 import { CorporationPicker } from '../CorporationPicker/CorporationPicker'
 import { MiniCardView } from '../MiniCardView/MiniCardView'
+import { GameSetupOverviewModal } from './components/GameSetupOverviewModal'
 
 type Props = {
 	open: boolean
@@ -33,6 +35,8 @@ export const StartPicker = ({ open, onClose }: Props) => {
 	const game = useGameState()
 	const player = usePlayerState()
 
+	const startedEvent = game.events.find((e) => e.type === EventType.Started)
+
 	const [loading, setLoading] = useState(false)
 
 	const [corporation, setCorporation] = useState(
@@ -41,8 +45,8 @@ export const StartPicker = ({ open, onClose }: Props) => {
 
 	const [cards, setCards] = useState([] as number[])
 	const [preludes, setPreludes] = useState([] as number[])
-
 	const [modal, setModal] = useState(undefined as Section | undefined)
+	const [showSetup, setShowSetup] = useState(true)
 
 	const availableMoney = useMemo(() => {
 		if (!corporation) {
@@ -101,130 +105,146 @@ export const StartPicker = ({ open, onClose }: Props) => {
 	const canContinue = affordable && hasCorporation && hasPreludes
 
 	return (
-		<Modal
-			open={open}
-			onClose={onClose}
-			closeIcon={<MinimizeIcon />}
-			header={<h2>Starting hand</h2>}
-			footerStyle={{ justifyContent: 'center' }}
-			footer={
-				<Button
-					onClick={handleDone}
-					disabled={loading || !canContinue}
-					isLoading={loading}
-					icon={faCheck}
-				>
-					{"I'm ready"}
-				</Button>
-			}
-		>
-			<PickItems>
-				<PickItem>
-					<PickItemLabel>Corporation</PickItemLabel>
-					<PickItemValue>
-						{corporation && (
-							<CardView
-								card={CardsLookupApi.get(corporation)}
-								hover={false}
-								evaluateMode="static"
-								player={player}
-							/>
+		<>
+			<Modal
+				open={open}
+				onClose={onClose}
+				closeIcon={<MinimizeIcon />}
+				header={<h2>Starting hand</h2>}
+				footerStyle={{ justifyContent: 'space-between' }}
+				footer={
+					<>
+						{startedEvent && (
+							<Button onClick={() => setShowSetup(true)} icon={faInfo}>
+								Show Game Setup
+							</Button>
 						)}
-					</PickItemValue>
-
-					<Button onClick={handlePicker(Section.Corporation)}>
-						{corporation ? 'Change corporation' : 'Pick corporation'}
-					</Button>
-				</PickItem>
-
-				<PickItem>
-					<PickItemLabel>Starting projects</PickItemLabel>
-					<PickItemValue>
-						{!affordable && (
-							<Message
-								message={`You don't have enough money to sponsor ${cards.length} projects.`}
-								type="error"
-							/>
-						)}
-
-						{cards.length > 0 && (
-							<PickCardsContainer>
-								{cards.map((p) => (
-									<MiniCardView key={p} card={pendingAction.cards[p]} />
-								))}
-							</PickCardsContainer>
-						)}
-					</PickItemValue>
-
-					<Button onClick={handlePicker(Section.Cards)}>Pick projects</Button>
-				</PickItem>
-
-				{game.prelude && (
+						<Button
+							onClick={handleDone}
+							disabled={loading || !canContinue}
+							isLoading={loading}
+							icon={faCheck}
+						>
+							{"I'm ready"}
+						</Button>
+					</>
+				}
+			>
+				<PickItems>
 					<PickItem>
-						<PickItemLabel>Preludes</PickItemLabel>
+						<PickItemLabel>Corporation</PickItemLabel>
 						<PickItemValue>
-							{preludes.length > 0 && (
+							{corporation && (
+								<CardView
+									card={CardsLookupApi.get(corporation)}
+									hover={false}
+									evaluateMode="static"
+									player={player}
+								/>
+							)}
+						</PickItemValue>
+
+						<Button onClick={handlePicker(Section.Corporation)}>
+							{corporation ? 'Change corporation' : 'Pick corporation'}
+						</Button>
+					</PickItem>
+
+					<PickItem>
+						<PickItemLabel>Starting projects</PickItemLabel>
+						<PickItemValue>
+							{!affordable && (
+								<Message
+									message={`You don't have enough money to sponsor ${cards.length} projects.`}
+									type="error"
+								/>
+							)}
+
+							{cards.length > 0 && (
 								<PickCardsContainer>
-									{preludes.map((p) => (
-										<MiniCardView
-											key={p}
-											card={pendingAction.preludes[p]}
-											extended
-										/>
+									{cards.map((p) => (
+										<MiniCardView key={p} card={pendingAction.cards[p]} />
 									))}
 								</PickCardsContainer>
 							)}
 						</PickItemValue>
 
-						<Button onClick={handlePicker(Section.Preludes)}>
-							Pick preludes
-						</Button>
+						<Button onClick={handlePicker(Section.Cards)}>Pick projects</Button>
 					</PickItem>
+
+					{game.prelude && (
+						<PickItem>
+							<PickItemLabel>Preludes</PickItemLabel>
+							<PickItemValue>
+								{preludes.length > 0 && (
+									<PickCardsContainer>
+										{preludes.map((p) => (
+											<MiniCardView
+												key={p}
+												card={pendingAction.preludes[p]}
+												extended
+											/>
+										))}
+									</PickCardsContainer>
+								)}
+							</PickItemValue>
+
+							<Button onClick={handlePicker(Section.Preludes)}>
+								Pick preludes
+							</Button>
+						</PickItem>
+					)}
+				</PickItems>
+
+				{modal === Section.Corporation && (
+					<CorporationPicker
+						corporations={pendingAction.corporations}
+						onClose={handleModalClose}
+						onSelect={(corp) => {
+							setCorporation(corp)
+							handleModalClose()
+						}}
+					/>
 				)}
-			</PickItems>
 
-			{modal === Section.Corporation && (
-				<CorporationPicker
-					corporations={pendingAction.corporations}
-					onClose={handleModalClose}
-					onSelect={(corp) => {
-						setCorporation(corp)
-						handleModalClose()
-					}}
+				{modal === Section.Cards && (
+					<CardPicker
+						type={PickerType.Cards}
+						cards={pendingAction.cards}
+						moneyOverride={availableMoney}
+						overrideCardPrice={sponsorCost}
+						closeable
+						selected={cards}
+						onClose={handleModalClose}
+						onSelect={(c) => {
+							setCards(c)
+							handleModalClose()
+						}}
+					/>
+				)}
+
+				{modal === Section.Preludes && (
+					<CardPicker
+						type={PickerType.Preludes}
+						cards={pendingAction.preludes}
+						limit={pendingAction.preludesLimit}
+						free
+						closeable
+						onClose={handleModalClose}
+						onSelect={(p) => {
+							setPreludes(p)
+							handleModalClose()
+						}}
+					/>
+				)}
+			</Modal>{' '}
+			{startedEvent && (
+				<GameSetupOverviewModal
+					open={showSetup}
+					event={startedEvent}
+					onClose={() => setShowSetup(false)}
 				/>
 			)}
-
-			{modal === Section.Cards && (
-				<CardPicker
-					type={PickerType.Cards}
-					cards={pendingAction.cards}
-					moneyOverride={availableMoney}
-					overrideCardPrice={sponsorCost}
-					closeable
-					selected={cards}
-					onClose={handleModalClose}
-					onSelect={(c) => {
-						setCards(c)
-						handleModalClose()
-					}}
-				/>
-			)}
-
-			{modal === Section.Preludes && (
-				<CardPicker
-					type={PickerType.Preludes}
-					cards={pendingAction.preludes}
-					limit={pendingAction.preludesLimit}
-					free
-					closeable
-					onClose={handleModalClose}
-					onSelect={(p) => {
-						setPreludes(p)
-						handleModalClose()
-					}}
-				/>
-			)}
-		</Modal>
+		</>
 	)
 }
 

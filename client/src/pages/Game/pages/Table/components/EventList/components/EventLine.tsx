@@ -380,6 +380,8 @@ export const EventLine = ({ event, animated, onDone, timestamp }: Props) => {
 				return null
 			case EventType.CommitteePartyActivePolicyActivated:
 				return null
+			case EventType.Started:
+				return null
 		}
 
 		assertNever(event)

@@ -103,6 +103,8 @@ export const InYourFaceEventTitle = ({ event }: Props) => {
 			return <CenterText>Global event executed</CenterText>
 		case EventType.NewGovernment:
 			return <CenterText>New government</CenterText>
+		case EventType.Started:
+			return <CenterText>Game started</CenterText>
 		case EventType.PlayerMovedDelegate:
 			return (
 				<PlayerDidHeader

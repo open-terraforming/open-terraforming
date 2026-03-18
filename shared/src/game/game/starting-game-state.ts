@@ -1,6 +1,12 @@
 import { Card, CardType } from '@shared/cards'
 import { Expansions } from '@shared/expansions'
-import { Colony, GameStateValue, PlayerStateValue } from '@shared/index'
+import {
+	Colony,
+	EventType,
+	GameStateValue,
+	PlayerStateValue,
+	Started,
+} from '@shared/index'
 import { PlayerColors } from '@shared/player-colors'
 import { shuffle } from '@shared/utils/shuffle'
 import { BaseGameState } from './base-game-state'
@@ -149,6 +155,23 @@ export class StartingGameState extends BaseGameState {
 		if (deduplicate(this.state.cards).length !== this.state.cards.length) {
 			this.logger.error('Duplicate cards found after game mode start')
 		}
+
+		this.game.pushEvent<Started>({
+			type: EventType.Started,
+			players: this.state.players.map((p) => ({
+				id: p.id,
+				name: p.name,
+				color: p.color,
+			})),
+			colonies: this.state.colonies ? this.state.colonies.slice() : undefined,
+			globalEvents: this.state.globalEvents.enabled
+				? {
+						coming: this.state.globalEvents.comingEvent,
+						current: this.state.globalEvents.currentEvent,
+						distant: this.state.globalEvents.distantEvent,
+					}
+				: undefined,
+		})
 	}
 
 	transition() {
