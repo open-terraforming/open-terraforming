@@ -1,4 +1,4 @@
-import { darkStripedBackground, stripedBackground } from '@/styles/mixins'
+import { stripedBackground } from '@/styles/mixins'
 import { CSSProperties, ReactNode } from 'react'
 import { css, styled } from 'styled-components'
 
@@ -71,8 +71,12 @@ const Inner = styled.div<{
 			padding: 0.5rem;
 		`}
 
-	${({ $backdrop }) =>
-		$backdrop ? darkStripedBackground : stripedBackground()}
+	${({ $backdrop, theme }) =>
+		$backdrop
+			? css`
+					background-color: ${theme.colors.background};
+				`
+			: stripedBackground()}
 
 	${({ $clipSize }) => css`
 		clip-path: polygon(
