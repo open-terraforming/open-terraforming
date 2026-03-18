@@ -55,7 +55,7 @@ export const GameSetupOverviewModal = ({ open, event, onClose }: Props) => {
 						)}
 
 						<div>
-							<ClippedBox>
+							<ClippedBox backdrop>
 								<ClippedBoxTitle $spacing>Players</ClippedBoxTitle>
 								<Box
 									$p={2}
