@@ -80,7 +80,7 @@ export class GamesStorage {
 				.filter((f) => f.isFile() && f.name.endsWith('.json'))
 				.map(async (f) => ({
 					id: f.name.replace(/\.json$/, ''),
-					lastModified: (await stat(join(f.path, f.name))).mtime,
+					lastModified: (await stat(join(f.parentPath, f.name))).mtime,
 				})),
 		)
 	}

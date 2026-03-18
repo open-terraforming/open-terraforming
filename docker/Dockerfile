@@ -1,4 +1,4 @@
-FROM node:20.9.0-alpine AS build-server
+FROM node:24.12.0-alpine AS build-server
 ARG OT_VERSION
 
 # Initialization
@@ -24,7 +24,7 @@ COPY shared/src ../shared/src
 RUN npm run build
 RUN echo "${OT_VERSION}" > /app/server/dist/version.txt
 
-FROM node:20.9.0-alpine AS build-server-depts
+FROM node:24.12.0-alpine AS build-server-depts
 ARG OT_VERSION
 
 # Initialization
@@ -37,7 +37,7 @@ COPY server/package-lock.json .
 COPY docker/removeDevDependencies.js .
 RUN npm install
 
-FROM node:20.9.0-alpine AS build-client
+FROM node:24.12.0-alpine AS build-client
 ARG OT_VERSION
 
 # Initialization
@@ -64,7 +64,7 @@ COPY shared/src ../shared/src
 RUN echo "VITE_APP_OT_VERSION=${OT_VERSION}" > .env.local
 RUN npm run build
 
-FROM node:20.9.0-alpine
+FROM node:24.12.0-alpine
 ARG OT_VERSION
 
 # Options
